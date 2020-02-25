@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector</AssemblyName>
+    <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector</RootNamespace>
+    <Copyright>Finnovation Labs Limited 2020</Copyright>
+    <Company>Finnovation Labs Limited</Company>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;CS0472</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;CS0472</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ApiClient\**" />
+    <EmbeddedResource Remove="ApiClient\**" />
+    <None Remove="ApiClient\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="FluentValidation" Version="8.6.1" />
+    <PackageReference Include="jose-jwt" Version="2.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModel.PaymentInitiation\OpenBanking.Library.Connector.ObModel.PaymentInitiation.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p2.csproj" />
+  </ItemGroup>
+
+</Project>
