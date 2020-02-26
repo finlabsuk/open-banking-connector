@@ -28,19 +28,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent
             }.JoinString(".");
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
-        public string ObSigningKid { get; set; }
+        public string SigningKeyId { get; set; }
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-        public string ObSigningKey { get; set; }
+        /// TODO: This will be replaced by a secret name
+        public string SigningKeySecretName { get; set; }
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string ObSigningPem { get; set; }
+        public string SigningCertificate { get; set; }
 
-        /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-        public string ObTransportKey { get; set; }
+        /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// TODO: This will be replaced by a secret name
+        public string TransportKeySecretName { get; set; }
 
-        /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string ObTransportPem { get; set; }
+        /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        public string TransportCertificate { get; set; }
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         public string DefaultFragmentRedirectUrl { get; set; }

@@ -10,7 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
     [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]
     public class SoftwareStatementProfile
     {
-        /// Software statement profile ID as string, e.g. "A.B.C"
+        /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
+        /// This is your choice; a meaningful name should help debugging throughout OBC.
         [Required]
         public string Id { get; set; }
 
@@ -20,25 +21,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
         [Required]
-        public string ObSigningKid { get; set; }
+        public string SigningKeyId { get; set; }
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// TODO: This will be replaced by a secret name
         [Required]
-        public string ObSigningKey { get; set; }
+        public string SigningKeySecretName { get; set; }
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         [Required]
-        public string ObSigningPem { get; set; }
+        public string SigningCertificate { get; set; }
 
-        /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// TODO: This will be replaced by a secret name
         [Required]
-        public string ObTransportKey { get; set; }
+        public string TransportKeySecretName { get; set; }
 
-        /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         [Required]
-        public string ObTransportPem { get; set; }
+        public string TransportCertificate { get; set; }
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
+       [Required]
         public string DefaultFragmentRedirectUrl { get; set; }
     }
 }

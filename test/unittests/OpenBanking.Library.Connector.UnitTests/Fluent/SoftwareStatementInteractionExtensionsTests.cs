@@ -19,9 +19,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
             var response = await requestBuilder.SoftwareStatementProfile()
                 .SoftwareStatementProfileId("0")
                 .SoftwareStatement("e30=.e30=.e30=")
-                .SigningKeyId("id")
-                .SigningCertificate("<signing key>", "<cert>")
-                .TransportCertificate("<transport key>", "<transport cert>")
+                .SigningKeyInfo("id", "<signing key>", "<cert>")
+                .TransportKeyInfo("<transport key>", "<transport cert>")
                 .DefaultFragmentRedirectUrl("https://test.com")
                 .SubmitAsync();
 

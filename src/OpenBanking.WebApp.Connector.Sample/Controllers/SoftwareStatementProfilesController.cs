@@ -65,9 +65,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             var statementResp = await _obRequestBuilder.SoftwareStatementProfile()
                 .SoftwareStatementProfileId(request.SoftwareStatementProfileId)
                 .SoftwareStatement(softwareStatement?.Value)
-                .SigningKeyId(signingKeyId?.Value)
-                .SigningCertificate(signingCertificateKey?.Value, signingCertificate?.Value)
-                .TransportCertificate(transportCertificateKey?.Value, transportCertificate?.Value)
+                .SigningKeyInfo(signingKeyId?.Value, signingCertificateKey?.Value, signingCertificate?.Value)
+                .TransportKeyInfo(transportCertificateKey?.Value, transportCertificate?.Value)
                 .DefaultFragmentRedirectUrl(_config.DefaultFragmentRedirectUrl)
                 .SubmitAsync();
 

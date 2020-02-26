@@ -31,11 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             var profile = new Connector.Model.Public.SoftwareStatementProfile
             {
                 DefaultFragmentRedirectUrl = "http://test.com",
-                ObSigningKey = "a",
-                ObSigningKid = "b",
-                ObSigningPem = "e30=",
-                ObTransportKey = "a",
-                ObTransportPem = "a",
+                SigningKeySecretName = "a",
+                SigningKeyId = "b",
+                SigningCertificate = "e30=",
+                TransportKeySecretName = "a",
+                TransportCertificate = "a",
                 SoftwareStatement = "e30=.e30=.e30="
             };
 

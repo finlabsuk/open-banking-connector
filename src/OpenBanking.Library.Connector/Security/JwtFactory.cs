@@ -20,14 +20,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             claims.ArgNotNull(nameof(claims));
 
             var headers = useOpenBankingJwtHeaders
-                ? CreateOpenBankingJwtHeaders(profile.ObSigningKid, profile.SoftwareStatementPayload.OrgId,
+                ? CreateOpenBankingJwtHeaders(profile.SigningKeyId, profile.SoftwareStatementPayload.OrgId,
                     profile.SoftwareStatementPayload.SoftwareId)
-                : CreateJwtHeaders(profile.ObSigningKid);
+                : CreateJwtHeaders(profile.SigningKeyId);
 
 
             var payloadJson = JsonConvert.SerializeObject(claims);
 
-            var privateKey = CertificateFactories.GetCertificate2FromPem(profile.ObSigningKey, profile.ObSigningPem);
+            var privateKey = CertificateFactories.GetCertificate2FromPem(profile.SigningKeySecretName, profile.SigningCertificate);
             var privateKeyRsa = privateKey.GetRSAPrivateKey();
 
             var result = JWT.Encode(payloadJson, privateKeyRsa, JwsAlgorithm.PS256, headers);

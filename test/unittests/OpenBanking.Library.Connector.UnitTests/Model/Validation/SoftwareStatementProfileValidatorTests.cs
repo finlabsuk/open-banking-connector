@@ -22,11 +22,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = $"{value}.{value}.{value}"
                 };
 
@@ -46,11 +46,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = value,
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = value,
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -71,11 +71,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = "a",
-                    ObSigningKid = value,
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = value,
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -95,11 +95,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = value,
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = value,
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -119,11 +119,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = value,
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = value,
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -143,11 +143,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = value,
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = value,
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -167,11 +167,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value.ToString(),
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 
@@ -192,11 +192,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value,
-                    ObSigningKey = "a",
-                    ObSigningKid = "a",
-                    ObSigningPem = "a",
-                    ObTransportKey = "a",
-                    ObTransportPem = "a",
+                    SigningKeySecretName = "a",
+                    SigningKeyId = "a",
+                    SigningCertificate = "a",
+                    TransportKeySecretName = "a",
+                    TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
 

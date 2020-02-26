@@ -46,33 +46,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             return context;
         }
 
-        public static SoftwareStatementProfileContext SigningKeyId(this SoftwareStatementProfileContext context,
-            string value)
-        {
-            context.ArgNotNull(nameof(context))
-                .GetOrCreateDefault(DataLens).ObSigningKid = value;
-
-            return context;
-        }
-
-        public static SoftwareStatementProfileContext SigningCertificate(this SoftwareStatementProfileContext context,
-            string key, string certificate)
+        public static SoftwareStatementProfileContext SigningKeyInfo(this SoftwareStatementProfileContext context,
+            string keyId,
+            string keySecretName,
+            string certificate
+            )
         {
             var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
-            data.ObSigningKey = key;
-            data.ObSigningPem = certificate;
+            data.SigningKeyId = keyId;
+            data.SigningKeySecretName = keySecretName;
+            data.SigningCertificate = certificate;
 
             return context;
         }
-
-        public static SoftwareStatementProfileContext TransportCertificate(this SoftwareStatementProfileContext context,
-            string key, string certificate)
+        
+        public static SoftwareStatementProfileContext TransportKeyInfo(this SoftwareStatementProfileContext context,
+            string keySecretName,
+            string certificate
+        )
         {
             var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
-            data.ObTransportKey = key;
-            data.ObTransportPem = certificate;
+            data.TransportKeySecretName = keySecretName;
+            data.TransportCertificate = certificate;
 
             return context;
         }
