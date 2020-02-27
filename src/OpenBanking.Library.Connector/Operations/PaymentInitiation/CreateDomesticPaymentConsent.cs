@@ -9,15 +9,16 @@ using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
+using BankClient = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClient;
 using OBWriteDomesticConsent =
     FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation.OBWriteDomesticConsent;
-using OpenBankingClient = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.OpenBankingClient;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Model.Ob.TokenEndpointResponse;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
@@ -56,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Load relevant objects
             var clientProfile = await _clientProfileRepo.GetAsync(consent.OpenBankingClientProfileId) ??
                                 throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var client = await _clientRepo.GetAsync(clientProfile.OpenBankingClientId) ??
+            var client = await _clientRepo.GetAsync(clientProfile.BankClientId) ??
                          throw new KeyNotFoundException("The OB Client Profile does not exist.");
             var softwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(client.SoftwareStatementProfileId) ??
@@ -94,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Generate URL for user auth
             var consentId = consentResponse.Data.ConsentId;
-            var redirectUrl = clientProfile.RedirectUrl;
+            var redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             var oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(client,
                 redirectUrl, new[] { "openid", "payments" },
                 consentId);
@@ -123,7 +124,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             };
         }
 
-        private async Task<TokenEndpointResponse> PostClientCredentialsGrant(string scope, OpenBankingClient client)
+        private async Task<TokenEndpointResponse> PostClientCredentialsGrant(string scope, BankClient client)
         {
             var ub = new UriBuilder(new Uri(client.OpenIdConfiguration.TokenEndpoint));
 
@@ -134,22 +135,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 { "grant_type", "client_credentials" },
                 { "scope", scope }
             };
-            if (client.OpenBankingClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+            if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
             {
-                keyValuePairs["client_id"] = client.OpenBankingRegistrationData.ClientId;
+                keyValuePairs["client_id"] = client.ClientRegistrationData.ClientId;
             }
-            else if (client.OpenBankingClientRegistrationClaims.TokenEndpointAuthMethod ==
+            else if (client.ClientRegistrationClaims.TokenEndpointAuthMethod ==
                      "client_secret_basic")
             {
-                client.OpenBankingRegistrationData.ClientSecret.InvalidOpOnNull("No client secret available.");
-                var authString = client.OpenBankingRegistrationData.ClientId + ":" +
-                                 client.OpenBankingRegistrationData.ClientSecret;
+                client.ClientRegistrationData.ClientSecret.InvalidOpOnNull("No client secret available.");
+                var authString = client.ClientRegistrationData.ClientId + ":" +
+                                 client.ClientRegistrationData.ClientSecret;
                 var plainTextBytes = Encoding.UTF8.GetBytes(authString);
                 authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
             }
             else
             {
-                if (client.OpenBankingClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+                if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
                 }

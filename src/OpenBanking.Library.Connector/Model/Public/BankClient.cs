@@ -6,8 +6,8 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
 {
-    [PersistenceEquivalent(typeof(Persistent.OpenBankingClient))]
-    public class OpenBankingClient
+    [PersistenceEquivalent(typeof(Persistent.BankClient))]
+    public class BankClient
     {
         [JsonProperty("softwareStatementProfileId")]
         public string SoftwareStatementProfileId { get; set; }
@@ -19,15 +19,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
         public string XFapiFinancialId { get; set; }
 
         [JsonProperty("openIdOverrides")]
-        public OpenIdConfigurationOverrides OpenIdOverrides { get; set; }
+        public OpenIdConfigurationOverrides OpenIdConfigurationOverrides { get; set; }
 
         [JsonProperty("httpMtlsOverrides")]
         public HttpClientMtlsConfigurationOverrides HttpMtlsOverrides { get; set; }
 
         [JsonProperty("registrationClaimsOverrides")]
-        public OpenBankingClientRegistrationClaimsOverrides RegistrationClaimsOverrides { get; set; }
+        public OpenBankingClientRegistrationClaimsOverrides ClientRegistrationClaimsOverrides { get; set; }
 
         [JsonProperty("registrationResponseOverrides")]
-        public ClientRegistrationResponseOverrides RegistrationResponseOverrides { get; set; }
+        public ClientRegistrationResponseOverrides ClientRegistrationDataOverrides { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using NSubstitute;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
@@ -26,7 +27,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IOpenBankingClientRepository>(),
                 Substitute.For<ISoftwareStatementProfileRepository>(),
                 Substitute.For<IEntityMapper>(),
-                Substitute.For<IDomesticConsentRepository>());
+                Substitute.For<IDomesticConsentRepository>(),
+                Substitute.For<IApiProfileRepository>()
+            );
         }
 
 
@@ -43,7 +46,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IOpenBankingClientRepository>(),
                 Substitute.For<IOpenBankingClientProfileRepository>(),
                 Substitute.For<ISoftwareStatementProfileRepository>(),
-                Substitute.For<IDomesticConsentRepository>());
+                Substitute.For<IDomesticConsentRepository>(),
+                Substitute.For<IApiProfileRepository>());
         }
     }
 }

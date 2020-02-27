@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -18,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IKeySecretProvider keySecretProvider, IApiClient apiClient, ICertificateReader certificateReader,
             IOpenBankingClientProfileRepository clientProfileRepository, IOpenBankingClientRepository clientRepository,
             ISoftwareStatementProfileRepository softwareStatementRepo, IEntityMapper entityMapper,
-            IDomesticConsentRepository domesticConsentRepo)
+            IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepository)
         {
             CertificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
             ApiClient = apiClient.ArgNotNull(nameof(ApiClient));
@@ -30,6 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ClientRepository = clientRepository.ArgNotNull(nameof(clientRepository));
             SoftwareStatementRepository = softwareStatementRepo.ArgNotNull(nameof(softwareStatementRepo));
             DomesticConsentRepository = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
+            ApiProfileRepository = apiProfileRepository.ArgNotNull(nameof(apiProfileRepository));
         }
 
         public DateTimeOffset Created { get; set; }
@@ -43,5 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public ISoftwareStatementProfileRepository SoftwareStatementRepository { get; }
         public IDomesticConsentRepository DomesticConsentRepository { get; }
         public IEntityMapper EntityMapper { get; }
+
+        public IApiProfileRepository ApiProfileRepository { get; }
     }
 }

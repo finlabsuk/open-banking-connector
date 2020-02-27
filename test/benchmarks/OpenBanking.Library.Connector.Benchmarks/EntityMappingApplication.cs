@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     [GcServer(true)]
     public class EntityMappingApplication
     {
-        private OpenBankingClient _client;
+        private BankClient _client;
         private OBWriteDomesticDataInitiation _dataInitiation;
         private OBWriteDomesticConsent _domesticConsent;
         private EntityMapper _entityMapper;
@@ -66,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapClientProfile()
         {
-            _entityMapper.Map<Model.Persistent.OpenBankingClient>(_client);
+            _entityMapper.Map<Model.Persistent.BankClient>(_client);
         }
 
 
@@ -174,7 +174,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         };
 
 
-        private OpenBankingClient CreateClient() => new OpenBankingClient
+        private BankClient CreateClient() => new BankClient
         {
             IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
             HttpMtlsOverrides = new HttpClientMtlsConfigurationOverrides
@@ -182,11 +182,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 TlsCertificateVerification = "aaaa",
                 TlsRenegotiationSupport = "bbb"
             },
-            RegistrationResponseOverrides = new ClientRegistrationResponseOverrides
+            ClientRegistrationDataOverrides = new ClientRegistrationResponseOverrides
             {
                 GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList()
             },
-            RegistrationClaimsOverrides = new OpenBankingClientRegistrationClaimsOverrides
+            ClientRegistrationClaimsOverrides = new OpenBankingClientRegistrationClaimsOverrides
             {
                 GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList(),
                 RequestAudience = "audience",
@@ -195,7 +195,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 TokenEndpointAuthMethod = "method",
                 TokenEndpointAuthSigningAlgorithm = "alg"
             },
-            OpenIdOverrides = new OpenIdConfigurationOverrides
+            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
             {
                 RegistrationEndpointUrl = "https://ccccccccccccccccccccccccccccccccccccc.com"
             },

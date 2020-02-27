@@ -14,6 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         }
 
         internal OpenBankingContext Context { get; }
-        internal OpenBankingClient Data { get; set; }
+        internal BankClient Data { get; set; }
     }
 }

@@ -17,13 +17,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public static class ClientProfileInteractionExtensions
     {
-        private static readonly Lens<ClientProfileContext, OpenBankingClientProfile> DataLens =
+        private static readonly Lens<ClientProfileContext, BankClientProfile> DataLens =
             Lens.Create((ClientProfileContext c) => c.Data, (c, d) => c.Data = d);
 
-        private static readonly Lens<OpenBankingClientProfile, OpenBankingClient> ObClientLens =
-            Lens.Create((OpenBankingClientProfile c) => c.OpenBankingClient, (c, d) => c.OpenBankingClient = d);
+        private static readonly Lens<BankClientProfile, BankClient> ObClientLens =
+            Lens.Create((BankClientProfile c) => c.BankClient, (c, d) => c.BankClient = d);
 
-        public static ClientProfileContext Data(this ClientProfileContext context, OpenBankingClientProfile value)
+        public static ClientProfileContext Data(this ClientProfileContext context, BankClientProfile value)
         {
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
@@ -50,16 +50,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
             context.GetOrCreateDefault(DataLens)
                 .GetOrCreateDefault(ObClientLens).IssuerUrl = url;
-
-            return context;
-        }
-
-        public static ClientProfileContext RedirectUrl(this ClientProfileContext context, string url)
-        {
-            context.ArgNotNull(nameof(context));
-
-            context.GetOrCreateDefault(DataLens)
-                .RedirectUrl = url;
 
             return context;
         }
@@ -110,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             context.ArgNotNull(nameof(context));
 
             context.GetOrCreateDefault(DataLens)
-                .GetOrCreateDefault(ObClientLens).RegistrationClaimsOverrides = value;
+                .GetOrCreateDefault(ObClientLens).ClientRegistrationClaimsOverrides = value;
 
             return context;
         }
@@ -157,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         {
             var repo = context.Context.SoftwareStatementRepository;
 
-            return await repo.GetAsync(context.Data.OpenBankingClient.SoftwareStatementProfileId);
+            return await repo.GetAsync(context.Data.BankClient.SoftwareStatementProfileId);
         }
 
         private static IList<OpenBankingResponseMessage> Validate(ClientProfileContext context)

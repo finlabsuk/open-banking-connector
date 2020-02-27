@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Validation
 {
-    public class OpenBankingClientValidator : AbstractValidator<OpenBankingClient>
+    public class OpenBankingClientValidator : AbstractValidator<BankClient>
     {
         public OpenBankingClientValidator()
         {
@@ -19,23 +19,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Validation
         {
             RuleFor(x => x.SoftwareStatementProfileId)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(OpenBankingClient.SoftwareStatementProfileId)}.");
+                .WithMessage($"Missing or invalid {nameof(BankClient.SoftwareStatementProfileId)}.");
 
             RuleFor(x => x.IssuerUrl)
                 .Must(ValidationRules.IsUrl)
-                .WithMessage($"Missing or invalid {nameof(OpenBankingClient.IssuerUrl)}.");
+                .WithMessage($"Missing or invalid {nameof(BankClient.IssuerUrl)}.");
 
             RuleFor(x => x.XFapiFinancialId)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(OpenBankingClient.XFapiFinancialId)}.");
+                .WithMessage($"Missing or invalid {nameof(BankClient.XFapiFinancialId)}.");
 
             RuleFor(x => x.HttpMtlsOverrides)
                 .SetValidator(new HttpClientMtlsConfigurationOverridesValidator())
-                .WithMessage($"Missing or invalid {nameof(OpenBankingClient.HttpMtlsOverrides)}.");
+                .WithMessage($"Missing or invalid {nameof(BankClient.HttpMtlsOverrides)}.");
 
-            RuleFor(x => x.OpenIdOverrides)
+            RuleFor(x => x.OpenIdConfigurationOverrides)
                 .SetValidator(new OpenIdConfigurationOverridesValidator())
-                .WithMessage($"Missing or invalid {nameof(OpenBankingClient.OpenIdOverrides)}.");
+                .WithMessage($"Missing or invalid {nameof(BankClient.OpenIdConfigurationOverrides)}.");
         }
     }
 }

@@ -11,14 +11,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         internal ClientProfileContext(OpenBankingContext context)
         {
             Context = context.ArgNotNull(nameof(context));
-            Data = new OpenBankingClientProfile
+            Data = new BankClientProfile
             {
-                OpenBankingClient = new OpenBankingClient()
+                BankClient = new BankClient()
             };
         }
 
         internal OpenBankingContext Context { get; }
-        internal OpenBankingClientProfile Data { get; set; }
+        internal BankClientProfile Data { get; set; }
 
         internal string SoftwareStatementProfileId { get; set; }
     }

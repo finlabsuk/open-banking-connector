@@ -8,26 +8,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation
 {
-    public class MemoryOpenBankingClientRepository : IOpenBankingClientRepository
+    public class MemoryApiProfileRepository : IApiProfileRepository
     {
-        private readonly ConcurrentDictionary<string, BankClient> _cache =
-            new ConcurrentDictionary<string, BankClient>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly ConcurrentDictionary<string, ApiProfile> _cache =
+            new ConcurrentDictionary<string, ApiProfile>(StringComparer.InvariantCultureIgnoreCase);
 
-        public Task<BankClient> GetAsync(string id)
+        public Task<ApiProfile> GetAsync(string id)
         {
             if (_cache.TryGetValue(id, out var value))
             {
                 return value.ToTaskResult();
             }
 
-            return ((BankClient) null).ToTaskResult();
+            return ((ApiProfile) null).ToTaskResult();
         }
 
-        public Task<IQueryable<BankClient>> GetAsync(Expression<Func<BankClient, bool>> predicate)
+        public Task<IQueryable<ApiProfile>> GetAsync(Expression<Func<ApiProfile, bool>> predicate)
         {
             var where = predicate.ArgNotNull(nameof(predicate)).Compile();
 
@@ -38,21 +38,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return results.ToTaskResult();
         }
 
-        public async Task<BankClient> SetAsync(BankClient value)
+        public async Task<ApiProfile> SetAsync(ApiProfile value)
         {
             value.ArgNotNull(nameof(value));
 
-            if (value.Id == null)
+            var existingDto = (await GetAsync(c => c.Id == value.Id)).SingleOrDefault();
+            if (existingDto != null)
             {
-                var existingDto = (await GetAsync(c => c.IssuerUrl == value.IssuerUrl)).SingleOrDefault();
-                if (existingDto != null)
-                {
-                    value.Id = existingDto.Id;
-                }
-                else
-                {
-                    value.Id = Guid.NewGuid().ToString();
-                }
+                throw new InvalidOperationException("Object already exists");
             }
 
             return _cache.AddOrUpdate(value.Id, _ => value, (_, __) => value);

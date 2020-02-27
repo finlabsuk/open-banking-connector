@@ -309,7 +309,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
             }
         }
 
-        private static async Task<OpenBankingClientProfile> GetClientProfile(DomesticPaymentConsentContext context)
+        private static async Task<BankClientProfile> GetClientProfile(DomesticPaymentConsentContext context)
         {
             return await context.Context.ClientProfileRepository.GetAsync(context.OpenBankingClientProfileId);
         }

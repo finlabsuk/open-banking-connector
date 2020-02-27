@@ -13,11 +13,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public interface IOpenBankingClientRepository
     {
-        Task<OpenBankingClient> GetAsync(string id);
+        Task<BankClient> GetAsync(string id);
 
-        Task<IQueryable<OpenBankingClient>> GetAsync(Expression<Func<OpenBankingClient, bool>> predicate);
+        Task<IQueryable<BankClient>> GetAsync(Expression<Func<BankClient, bool>> predicate);
 
-        Task<OpenBankingClient> SetAsync(OpenBankingClient profile);
+        Task<BankClient> SetAsync(BankClient profile);
 
         Task<bool> DeleteAsync(string id);
 

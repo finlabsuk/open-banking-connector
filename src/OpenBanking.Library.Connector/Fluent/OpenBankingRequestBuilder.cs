@@ -8,12 +8,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public class OpenBankingRequestBuilder : IOpenBankingRequestBuilder
     {
         private readonly IApiClient _apiClient;
+        private readonly IApiProfileRepository _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
         private readonly IOpenBankingClientProfileRepository _clientProfileRepository;
         private readonly IOpenBankingClientRepository _clientRepository;
@@ -31,10 +33,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ICertificateReader certificateReader,
             IOpenBankingClientRepository clientRepository, IOpenBankingClientProfileRepository clientProfileRepository,
             ISoftwareStatementProfileRepository softwareStatementProfileRepo,
-            IDomesticConsentRepository domesticConsentRepo)
+            IDomesticConsentRepository domesticConsentRepo,
+            IApiProfileRepository apiProfileRepository)
             : this(new TimeProvider(), entityMapper, configurationProvider, logger, keySecretProvider, apiClient,
                 certificateReader,
-                clientRepository, clientProfileRepository, softwareStatementProfileRepo, domesticConsentRepo)
+                clientRepository, clientProfileRepository, softwareStatementProfileRepo, domesticConsentRepo,
+                apiProfileRepository)
         {
         }
 
@@ -44,7 +48,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ICertificateReader certificateReader,
             IOpenBankingClientRepository clientRepository, IOpenBankingClientProfileRepository clientProfileRepository,
             ISoftwareStatementProfileRepository softwareStatementProfileRepo,
-            IDomesticConsentRepository domesticConsentRepo)
+            IDomesticConsentRepository domesticConsentRepo,
+            IApiProfileRepository apiProfileRepository)
         {
             _clientRepository = clientRepository.ArgNotNull(nameof(clientRepository));
             _certificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
@@ -57,6 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             _clientProfileRepository = clientProfileRepository.ArgNotNull(nameof(clientProfileRepository));
             _softwareStatementRepo = softwareStatementProfileRepo.ArgNotNull(nameof(softwareStatementProfileRepo));
             _domesticConsentRepo = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
+            _apiProfileRepository = apiProfileRepository.ArgNotNull(nameof(apiProfileRepository));
         }
 
         public SoftwareStatementProfileContext SoftwareStatementProfile()
@@ -66,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             return new SoftwareStatementProfileContext(context);
         }
 
-        public ClientProfileContext ClientProfile(string softwareStatementProfileId)
+        public ClientProfileContext BankClientProfile(string softwareStatementProfileId)
         {
             softwareStatementProfileId.ArgNotNull(nameof(softwareStatementProfileId));
             var context = CreateContext();
@@ -115,12 +121,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             return new AuthorisationCallbackContext(context);
         }
 
+        public ApiProfileContext PaymentInitiationApiProfile()
+        {
+            var context = CreateContext();
+            return new ApiProfileContext(context);
+        }
+
         private OpenBankingContext CreateContext()
         {
             var context = new OpenBankingContext(_configurationProvider, _logger, _keySecretProvider, _apiClient,
                 _certificateReader,
                 _clientProfileRepository, _clientRepository, _softwareStatementRepo, _entityMapper,
-                _domesticConsentRepo)
+                _domesticConsentRepo, _apiProfileRepository)
             {
                 Created = _timeProvider.GetUtcNow()
             };

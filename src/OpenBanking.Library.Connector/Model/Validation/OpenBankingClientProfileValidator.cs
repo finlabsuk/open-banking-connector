@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Validation
 {
-    public class OpenBankingClientProfileValidator : AbstractValidator<OpenBankingClientProfile>
+    public class OpenBankingClientProfileValidator : AbstractValidator<BankClientProfile>
     {
         public OpenBankingClientProfileValidator()
         {
@@ -19,13 +19,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Validation
         {
             RuleFor(x => x.PaymentInitiationApiBaseUrl)
                 .Must(ValidationRules.IsUrl)
-                .WithMessage($"Invalid {nameof(OpenBankingClientProfile.PaymentInitiationApiBaseUrl)}: must be a URL.");
+                .WithMessage($"Invalid {nameof(BankClientProfile.PaymentInitiationApiBaseUrl)}: must be a URL.");
 
-            RuleFor(x => x.OpenBankingClient)
+            RuleFor(x => x.BankClient)
                 .Must(ValidationRules.IsNotNull)
-                .WithMessage($"Missing {nameof(OpenBankingClientProfile.OpenBankingClient)}.");
+                .WithMessage($"Missing {nameof(BankClientProfile.BankClient)}.");
 
-            RuleFor(x => x.OpenBankingClient)
+            RuleFor(x => x.BankClient)
                 .SetValidator(new OpenBankingClientValidator());
         }
     }

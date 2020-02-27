@@ -6,30 +6,29 @@ using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.AccountTransact
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent
 {
-    [PersistenceEquivalent(typeof(Persistent.OpenBankingClientProfile))]
-    public class OpenBankingClientProfile
+    public class BankClientProfile
     {
-        [JsonProperty("openBankingClient")]
-        public OpenBankingClient OpenBankingClient { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
 
-        [JsonProperty("redirectUrl")]
-        public string RedirectUrl { get; set; }
+        [JsonProperty("state")]
+        public string State { get; set; }
 
-        [JsonProperty("accountApiVersion")]
+        [JsonProperty("bankClientId")]
+        public string BankClientId { get; set; }
+
+        [JsonProperty("accountTransactionApiVersion")]
         public AccountApiVersion AccountTransactionApiVersion { get; set; }
 
-        [JsonProperty("accountApiUrl")]
+        [JsonProperty("accountTransactionApiBaseUrl")]
         public string AccountTransactionApiBaseUrl { get; set; }
 
-        [JsonProperty("paymentApiVersion")]
+        [JsonProperty("paymentInitiationApiVersion")]
         public ApiVersion PaymentInitiationApiVersion { get; set; }
 
-        [JsonProperty("paymentApiUrl")]
+        [JsonProperty("paymentInitiationApiBaseUrl")]
         public string PaymentInitiationApiBaseUrl { get; set; }
-
-        [JsonProperty("accountApiSettingsOverrides")]
-        public ApiSettingsOverrides AccountTransactionApiSettingsOverrides { get; set; }
     }
 }

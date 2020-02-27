@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
 
             // Set up a Software Statement and associated data (a "software statement profile") within our Servicing service. This should only be done once in the lifetime of Servicing.
-            var statementResp = await builder.SoftwareStatementProfile()
+            var softwareStatementProfileResp = await builder.SoftwareStatementProfile()
                 .SoftwareStatementProfileId("0")
                 .SoftwareStatement(TestConfig.GetValue("softwarestatement"))
                 .SigningKeyInfo(
@@ -36,16 +36,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .DefaultFragmentRedirectUrl(TestConfig.GetValue("defaultfragmentredirecturl"))
                 .SubmitAsync();
 
-            statementResp.Messages.Should().BeEmpty();
-            statementResp.Data.Should().NotBeNull();
-            statementResp.Data.Id.Should().NotBeNullOrWhiteSpace();
+            softwareStatementProfileResp.Messages.Should().BeEmpty();
+            softwareStatementProfileResp.Data.Should().NotBeNull();
+            softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
 
             // Register with a bank (create a client) and create a set of rules for communicating using that registration (a "client profile").
             // Bank registration uses a software statement to establish our identity in the eyes of the bank. This and other data are transmitted to the bank.
             // This is performed once per Bank.
-            var clientResp = await builder.ClientProfile(statementResp.Data.Id)
+            var bankClientProfileResp = await builder.BankClientProfile(softwareStatementProfileResp.Data.Id)
                 .IssuerUrl(TestConfig.GetValue("clientProfileIssuerUrl"))
-                .SoftwareStatementProfileId(statementResp.Data.Id)
+                .SoftwareStatementProfileId(softwareStatementProfileResp.Data.Id)
                 .XFapiFinancialId(TestConfig.GetValue("xFapiFinancialId"))
                 .AccountTransactionApi(TestConfig.GetEnumValue<AccountApiVersion>("accountApiVersion").Value,
                     TestConfig.GetValue("accountApiUrl"))
@@ -56,13 +56,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .SubmitAsync();
 
             // These are test assertions to ensure the bank says "request successfully processed". "Messages" enumerates all warnings & errors, and so is empty for this scenario.
-            clientResp.Should().NotBeNull();
-            clientResp.Messages.Should().BeEmpty();
-            clientResp.Data.Should().NotBeNull();
+            bankClientProfileResp.Should().NotBeNull();
+            bankClientProfileResp.Messages.Should().BeEmpty();
+            bankClientProfileResp.Data.Should().NotBeNull();
 
+            var paymentInitiationApiProfileResp = await builder.PaymentInitiationApiProfile()
+                .Id("NewPaymentProfile")
+                .BankClientProfileId(bankClientProfileResp.Data.Id)
+                .PaymentInitiationApiInfo(
+                    TestConfig.GetEnumValue<ApiVersion>("paymentApiVersion").Value,
+                    TestConfig.GetValue("paymentApiUrl"))
+                .SubmitAsync();
+
+            paymentInitiationApiProfileResp.Should().NotBeNull();
+            paymentInitiationApiProfileResp.Messages.Should().BeEmpty();
+            paymentInitiationApiProfileResp.Data.Should().NotBeNull();
+            
             // Create a consent object and transmit to the bank to support user authorisation of an intended domestic payment.
             // This is performed once per payment.
-            var consentResp = await builder.DomesticPaymentConsent(clientResp.Data.Id)
+            var consentResp = await builder.DomesticPaymentConsent(bankClientProfileResp.Data.Id)
                 .Merchant(null, null, PaymentContextCode.EcommerceGoods)
                 .CreditorAccount("BE56456394728288", "IBAN", "ACME DIY", "secondary-identif")
                 .DeliveryAddress(new OBRiskDeliveryAddress

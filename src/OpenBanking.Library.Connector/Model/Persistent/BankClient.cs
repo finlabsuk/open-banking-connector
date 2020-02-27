@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent
 {
-    public class OpenBankingClient
+    public class BankClient
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -29,9 +29,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent
         // TODO: Add MTLS configuration
 
         [JsonProperty("open_banking_client_registration_claims")]
-        public OpenBankingClientRegistrationClaims OpenBankingClientRegistrationClaims { get; set; }
+        public OpenBankingClientRegistrationClaims ClientRegistrationClaims { get; set; }
 
         [JsonProperty("open_banking_client_response")]
-        public OpenBankingRegistrationData OpenBankingRegistrationData { get; set; }
+        public OpenBankingRegistrationData ClientRegistrationData { get; set; }
     }
 }

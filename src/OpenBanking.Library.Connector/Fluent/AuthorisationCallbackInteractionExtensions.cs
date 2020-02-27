@@ -35,7 +35,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
             try
             {
-                var handler = new RedirectCallbackHandler(context.Context.ApiClient, context.Context.EntityMapper,
+                var handler = new RedirectCallbackHandler(context.Context.SoftwareStatementRepository,
+                    context.Context.ApiClient, context.Context.EntityMapper,
                     context.Context.ClientRepository, context.Context.ClientProfileRepository,
                     context.Context.DomesticConsentRepository);
 

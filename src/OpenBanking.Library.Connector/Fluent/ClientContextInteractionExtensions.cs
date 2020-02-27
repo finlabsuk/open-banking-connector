@@ -12,13 +12,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public static class ClientContextInteractionExtensions
     {
-        private static readonly Lens<ClientContext, OpenBankingClient> DataLens =
+        private static readonly Lens<ClientContext, BankClient> DataLens =
             Lens.Create((ClientContext c) => c.Data, (c, d) => c.Data = d);
 
-        private static readonly Lens<OpenBankingClient, OpenIdConfigurationOverrides> OpenIdLens =
-            Lens.Create((OpenBankingClient c) => c.OpenIdOverrides, (c, d) => c.OpenIdOverrides = d);
+        private static readonly Lens<BankClient, OpenIdConfigurationOverrides> OpenIdLens =
+            Lens.Create((BankClient c) => c.OpenIdConfigurationOverrides, (c, d) => c.OpenIdConfigurationOverrides = d);
 
-        public static ClientContext Data(this ClientContext context, OpenBankingClient value)
+        public static ClientContext Data(this ClientContext context, BankClient value)
         {
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public static ClientContext OpenIdOverrides(this ClientContext context, OpenIdConfigurationOverrides value)
         {
             context.ArgNotNull(nameof(context))
-                .GetOrCreateDefault(DataLens).OpenIdOverrides = value;
+                .GetOrCreateDefault(DataLens).OpenIdConfigurationOverrides = value;
 
             return context;
         }
@@ -83,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             OpenBankingClientRegistrationClaimsOverrides value)
         {
             context.ArgNotNull(nameof(context))
-                .GetOrCreateDefault(DataLens).RegistrationClaimsOverrides = value;
+                .GetOrCreateDefault(DataLens).ClientRegistrationClaimsOverrides = value;
 
             return context;
         }
@@ -92,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ClientRegistrationResponseOverrides value)
         {
             context.ArgNotNull(nameof(context))
-                .GetOrCreateDefault(DataLens).RegistrationResponseOverrides = value;
+                .GetOrCreateDefault(DataLens).ClientRegistrationDataOverrides = value;
 
             return context;
         }
@@ -127,13 +127,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             }
         }
 
-        private static async Task<OpenBankingClient> PersistOpenBankingClient(ClientContext context)
+        private static async Task<BankClient> PersistOpenBankingClient(ClientContext context)
         {
-            var dto = context.Context.EntityMapper.Map<Model.Persistent.OpenBankingClient>(context.Data);
+            var dto = context.Context.EntityMapper.Map<Model.Persistent.BankClient>(context.Data);
 
             var persistedDto = await context.Context.ClientRepository.SetAsync(dto);
 
-            return context.Context.EntityMapper.Map<OpenBankingClient>(persistedDto);
+            return context.Context.EntityMapper.Map<BankClient>(persistedDto);
         }
 
         private static IList<OpenBankingResponseMessage> Validate(ClientContext context)

@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetAsync_KnownId_ReturnsItem(string id, OpenBankingClientProfile value)
+        public Property GetAsync_KnownId_ReturnsItem(string id, BankClientProfile value)
         {
             Func<bool> rule = () =>
             {
@@ -42,8 +42,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property SetAsync_KnownId_ElementReplaced(string id, OpenBankingClientProfile value,
-            OpenBankingClientProfile value2)
+        public Property SetAsync_KnownId_ElementReplaced(string id, BankClientProfile value,
+            BankClientProfile value2)
         {
             Func<bool> rule = () =>
             {
@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property DeleteAsync_KnownId_ReturnsItem(string id, OpenBankingClientProfile value)
+        public Property DeleteAsync_KnownId_ReturnsItem(string id, BankClientProfile value)
         {
             Func<bool> rule = () =>
             {

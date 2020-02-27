@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                           throw new KeyNotFoundException("The Consent does not exist.");
             var obClientProfile = await _openBankingClientProfileRepo.GetAsync(consent.OpenBankingClientProfileId) ??
                                   throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var client = await _openBankingClientRepo.GetAsync(obClientProfile.OpenBankingClientId) ??
+            var client = await _openBankingClientRepo.GetAsync(obClientProfile.BankClientId) ??
                          throw new KeyNotFoundException("The OB Client Profile does not exist.");
             var softwareStatement = await _softwareStatementRepo.GetAsync(client.SoftwareStatementProfileId) ??
                                     throw new KeyNotFoundException("The Software statement does not exist.");
@@ -81,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         private static List<HttpHeader> CreateRequestHeaders(SoftwareStatementProfile softwareStatement,
             OBWriteDomestic2 payment,
-            OpenBankingClient client, TokenEndpointResponse tokenEndpointResponse)
+            BankClient client, TokenEndpointResponse tokenEndpointResponse)
         {
             var jwtFactory = new JwtFactory();
             var jwt = jwtFactory.CreateJwt(softwareStatement, payment, true);

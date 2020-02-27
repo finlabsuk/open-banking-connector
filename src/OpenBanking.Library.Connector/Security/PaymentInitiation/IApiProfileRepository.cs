@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation
 {
-    public interface IOpenBankingClientProfileRepository
+    public interface IApiProfileRepository
     {
-        Task<BankClientProfile> GetAsync(string id);
+        Task<ApiProfile> GetAsync(string id);
 
-        Task<IQueryable<BankClientProfile>> GetAsync(Expression<Func<BankClientProfile, bool>> predicate);
+        Task<IQueryable<ApiProfile>> GetAsync(Expression<Func<ApiProfile, bool>> predicate);
 
-        Task<BankClientProfile> SetAsync(BankClientProfile profile);
+        Task<ApiProfile> SetAsync(ApiProfile profile);
 
         Task<bool> DeleteAsync(string id);
 

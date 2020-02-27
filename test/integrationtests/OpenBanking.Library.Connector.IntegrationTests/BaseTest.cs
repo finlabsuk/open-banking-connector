@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;
 using NSubstitute;
 using RichardSzalay.MockHttp;
@@ -38,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 new MemoryOpenBankingClientRepository(),
                 new MemoryOpenBankingClientProfileRepository(),
                 new MemorySoftwareStatementProfileRepository(),
-                new MemoryDomesticConsentRepository());
+                new MemoryDomesticConsentRepository(),
+                new MemoryApiProfileRepository());
 
             return requestBuilder;
         }

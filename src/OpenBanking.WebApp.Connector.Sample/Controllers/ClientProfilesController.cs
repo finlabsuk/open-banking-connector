@@ -28,9 +28,9 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(PostOpenBankingClientProfileResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] OpenBankingClientProfile request)
+        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankClientProfile request)
         {
-            var clientResp = await _obRequestBuilder.ClientProfile(request.OpenBankingClient.SoftwareStatementProfileId)
+            var clientResp = await _obRequestBuilder.BankClientProfile(request.BankClient.SoftwareStatementProfileId)
                 .Data(request)
                 .SubmitAsync();
 

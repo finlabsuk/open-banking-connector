@@ -9,23 +9,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public class ClientResponse : OpenBankingResponse
     {
-        public ClientResponse(OpenBankingClient data)
+        public ClientResponse(BankClient data)
             : this((IList<OpenBankingResponseMessage>) null, data)
         {
         }
 
         public ClientResponse(OpenBankingResponseMessage message,
-            OpenBankingClient data)
+            BankClient data)
             : this(new[] { message }, data)
         {
         }
 
-        public ClientResponse(IList<OpenBankingResponseMessage> messages, OpenBankingClient data)
+        public ClientResponse(IList<OpenBankingResponseMessage> messages, BankClient data)
             : base(messages)
         {
             Data = data;
         }
 
-        public OpenBankingClient Data { get; }
+        public BankClient Data { get; }
     }
 }

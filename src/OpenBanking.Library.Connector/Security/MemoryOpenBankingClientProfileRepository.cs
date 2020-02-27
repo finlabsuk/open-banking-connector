@@ -14,21 +14,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public class MemoryOpenBankingClientProfileRepository : IOpenBankingClientProfileRepository
     {
-        private readonly ConcurrentDictionary<string, OpenBankingClientProfile> _cache =
-            new ConcurrentDictionary<string, OpenBankingClientProfile>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly ConcurrentDictionary<string, BankClientProfile> _cache =
+            new ConcurrentDictionary<string, BankClientProfile>(StringComparer.InvariantCultureIgnoreCase);
 
-        public Task<OpenBankingClientProfile> GetAsync(string id)
+        public Task<BankClientProfile> GetAsync(string id)
         {
             if (_cache.TryGetValue(id, out var value))
             {
                 return value.ToTaskResult();
             }
 
-            return ((OpenBankingClientProfile) null).ToTaskResult();
+            return ((BankClientProfile) null).ToTaskResult();
         }
 
-        public Task<IQueryable<OpenBankingClientProfile>> GetAsync(
-            Expression<Func<OpenBankingClientProfile, bool>> predicate)
+        public Task<IQueryable<BankClientProfile>> GetAsync(
+            Expression<Func<BankClientProfile, bool>> predicate)
         {
             var where = predicate.ArgNotNull(nameof(predicate)).Compile();
 
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return results.ToTaskResult();
         }
 
-        public Task<OpenBankingClientProfile> SetAsync(OpenBankingClientProfile profile)
+        public Task<BankClientProfile> SetAsync(BankClientProfile profile)
         {
             profile.ArgNotNull(nameof(profile));
             profile.Id.ArgNotNull(nameof(profile.Id));
