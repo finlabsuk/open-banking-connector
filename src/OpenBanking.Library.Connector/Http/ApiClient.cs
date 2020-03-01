@@ -4,6 +4,7 @@
 
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Newtonsoft.Json;
@@ -27,36 +28,64 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         }
 
 
-        public async Task<T> RequestJsonAsync<T>(HttpRequestMessage request)
+        public async Task<T> RequestJsonAsync<T>(HttpRequestMessage request, bool requestContentIsJson)
             where T : class
         {
             request.ArgNotNull(nameof(request));
 
             try
             {
-                _instrumentation.StartTrace(new HttpTraceInfo("Starting request", request.RequestUri));
+                // Make HTTP call
+                using var response = await _httpClient.SendAsync(request);
+                var json = await GetStringResponseAsync(response);
 
-                using (var response = await _httpClient.SendAsync(request))
+                // Generate HTTP request info trace
+                var requestTraceSb = new StringBuilder()
+                    .AppendLine("#### HTTP REQUEST")
+                    .AppendLine("######## REQUEST")
+                    .Append(request.ToString());
+                if (request.Content != null)
                 {
-                    var json = await GetStringResponseAsync(response);
-
-                    var traceInfo = new HttpTraceInfo("Ended request", request.RequestUri, response.StatusCode);
-                    if (!string.IsNullOrEmpty(json))
+                    var body = await request.Content.ReadAsStringAsync();
+                    requestTraceSb
+                        .AppendLine(",")
+                        .AppendLine("Body:");
+                    if (requestContentIsJson)
                     {
-                        traceInfo.Add("Response", json);
+                        dynamic parsedJson = JsonConvert.DeserializeObject(body);
+                        var jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                        requestTraceSb.AppendLine(jsonFormatted);
                     }
-
-                    _instrumentation.EndTrace(traceInfo);
-                    var _ = response.EnsureSuccessStatusCode();
-
-
-                    return json != null ? JsonConvert.DeserializeObject<T>(json) : null;
+                    else
+                    {
+                        requestTraceSb
+                            .AppendLine(body);
+                    }
                 }
+                else
+                {
+                    requestTraceSb.AppendLine();
+                }
+                requestTraceSb
+                    .AppendLine("######## RESPONSE")
+                    .AppendLine($"{response.ToString()},");
+                if (!string.IsNullOrEmpty(json))
+                {
+                    dynamic parsedJson = JsonConvert.DeserializeObject(json);
+                    var jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                    requestTraceSb.AppendLine("Body:");
+                    requestTraceSb.AppendLine(jsonFormatted);
+                }
+                _instrumentation.Info(requestTraceSb.ToString());
+
+                // Check HTTP status code
+                var _ = response.EnsureSuccessStatusCode();
+
+                return json != null ? JsonConvert.DeserializeObject<T>(json) : null;
             }
             catch (Exception ex)
             {
                 _instrumentation.Exception(ex, request.RequestUri.ToString());
-
                 throw;
             }
         }

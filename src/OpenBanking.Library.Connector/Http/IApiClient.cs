@@ -10,6 +10,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
     public interface IApiClient
     {
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
-        Task<T> RequestJsonAsync<T>(HttpRequestMessage request) where T : class;
+        Task<T> RequestJsonAsync<T>(HttpRequestMessage request, bool requestContentIsJson) where T : class;
     }
 }

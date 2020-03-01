@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             Method = HttpMethod.Get.ToString();
             MaxRedirects = 50;
-            UserAgent = "OpenBankingConnector.NET";
+            UserAgent = "OpenBankingConnector";
         }
 
         public Uri RequestUri { get; set; }

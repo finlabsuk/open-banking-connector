@@ -133,7 +133,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<Model.Ob.TokenEndpointResponse>(_apiClient);
+                .RequestJsonAsync<Model.Ob.TokenEndpointResponse>(_apiClient, false);
 
             var result = _mapper.Map<TokenEndpointResponse>(resp);
 

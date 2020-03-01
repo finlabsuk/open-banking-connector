@@ -90,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<OBWriteDomesticConsentResponse2>(_apiClient);
+                .RequestJsonAsync<OBWriteDomesticConsentResponse2>(_apiClient, true);
             // TODO: validate response
 
             // Generate URL for user auth
@@ -175,7 +175,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<TokenEndpointResponse>(_apiClient);
+                .RequestJsonAsync<TokenEndpointResponse>(_apiClient, false);
         }
     }
 }

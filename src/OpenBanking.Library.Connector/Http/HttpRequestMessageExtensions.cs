@@ -9,13 +9,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     internal static class HttpRequestMessageExtensions
     {
-        public static Task<T> RequestJsonAsync<T>(this HttpRequestMessage request, IApiClient client)
+        public static Task<T> RequestJsonAsync<T>(this HttpRequestMessage request, IApiClient client,
+            bool requestContentIsJson)
             where T : class
         {
             request.ArgNotNull(nameof(request));
             client.ArgNotNull(nameof(client));
 
-            return client.RequestJsonAsync<T>(request);
+            return client.RequestJsonAsync<T>(request, requestContentIsJson);
         }
     }
 }

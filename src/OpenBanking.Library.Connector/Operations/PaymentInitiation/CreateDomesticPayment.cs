@@ -72,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<OBWriteDomesticResponse2>(_apiClient);
+                .RequestJsonAsync<OBWriteDomesticResponse2>(_apiClient, true);
 
             var resp = _mapper.Map<OBWriteDomesticResponse>(paymentResponse);
 

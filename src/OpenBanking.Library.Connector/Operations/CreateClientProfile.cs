@@ -108,7 +108,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .SetContent(jwt)
                     .SetContentType("application/jwt")
                     .Create()
-                    .RequestJsonAsync<OpenBankingClientRegistrationResponse>(_apiClient);
+                    .RequestJsonAsync<OpenBankingClientRegistrationResponse>(_apiClient, false);
 
                 var openBankingClientResponse = new OpenBankingRegistrationData
                 {
@@ -176,7 +176,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetMethod(HttpMethod.Get)
                 .SetUri(ub.Uri)
                 .Create()
-                .RequestJsonAsync<OpenIdConfiguration>(_apiClient);
+                .RequestJsonAsync<OpenIdConfiguration>(_apiClient, false);
         }
     }
 }
