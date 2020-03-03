@@ -3,17 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
-    public class ClientContext
+    public class BankClientProfileContext
     {
-        internal ClientContext(OpenBankingContext context)
+        internal BankClientProfileContext(OpenBankingContext context)
         {
             Context = context.ArgNotNull(nameof(context));
         }
 
         internal OpenBankingContext Context { get; }
-        internal BankClient Data { get; set; }
+        internal BankClientProfile Data { get; set; }
     }
 }

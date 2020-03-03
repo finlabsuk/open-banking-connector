@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             var xfapi = "xfapi";
             var softwareStatementId = "softwareStatement";
 
-            var ctx = builder.Client();
+            var ctx = builder.BankClientProfile();
 
             var result = await ctx
                 .IssuerUrl(new Uri(issuerUrl))
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
             result.Messages.Should().HaveCount(0);
 
-            var repo = ctx.Context.ClientRepository;
+            var repo = ctx.Context.ClientProfileRepository;
             var ids = await repo.GetIdsAsync();
 
             var persistedResult = await repo.GetAsync(ids[0]);
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact]
         public async Task Repository_ClientUpserted()
         {
-            var ctx = CreateOpenBankingRequestBuilder().Client();
+            var ctx = CreateOpenBankingRequestBuilder().BankClientProfile();
 
             var issuerUrl = "http://aaa.com/";
             var xfapi2 = "xfapi2";
@@ -95,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             result2.Messages.Should().HaveCount(0);
 
 
-            var repo = ctx.Context.ClientRepository;
+            var repo = ctx.Context.ClientProfileRepository;
             var ids = await repo.GetIdsAsync();
 
             var persistedResult = await repo.GetAsync(ids[0]);

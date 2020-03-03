@@ -4,7 +4,7 @@
 
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankClientProfile request)
         {
-            var clientResp = await _obRequestBuilder.BankClientProfile(request.BankClient.SoftwareStatementProfileId)
+            var clientResp = await _obRequestBuilder.BankClientProfile()
                 .Data(request)
                 .SubmitAsync();
 

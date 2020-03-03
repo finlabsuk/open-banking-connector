@@ -11,6 +11,7 @@ using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
 using McMaster.Extensions.CommandLineUtils;
 using OBAddressTypeCode =
@@ -35,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     [GcServer(true)]
     public class EntityMappingApplication
     {
-        private BankClient _client;
+        private BankClientProfile _client;
         private OBWriteDomesticDataInitiation _dataInitiation;
         private OBWriteDomesticConsent _domesticConsent;
         private EntityMapper _entityMapper;
@@ -66,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapClientProfile()
         {
-            _entityMapper.Map<Model.Persistent.BankClient>(_client);
+            _entityMapper.Map<Model.Persistent.BankClientProfile>(_client);
         }
 
 
@@ -174,7 +175,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         };
 
 
-        private BankClient CreateClient() => new BankClient
+        private BankClientProfile CreateClient() => new BankClientProfile
         {
             IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
             HttpMtlsOverrides = new HttpClientMtlsConfigurationOverrides

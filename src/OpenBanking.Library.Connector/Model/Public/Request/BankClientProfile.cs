@@ -4,10 +4,10 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Request
 {
-    [PersistenceEquivalent(typeof(Persistent.BankClient))]
-    public class BankClient
+    [PersistenceEquivalent(typeof(Persistent.BankClientProfile))]
+    public class BankClientProfile
     {
         [JsonProperty("softwareStatementProfileId")]
         public string SoftwareStatementProfileId { get; set; }

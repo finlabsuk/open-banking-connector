@@ -31,16 +31,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
         }
 
         public static OAuth2RequestObjectClaims CreateOAuth2RequestObjectClaims(
-            Persistent.BankClient openBankingClient, string redirectUrl, string[] scope,
+            Persistent.BankClientProfile openBankingClient, string redirectUrl, string[] scope,
             string intentId)
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = openBankingClient.ClientRegistrationData.ClientId,
+                Iss = openBankingClient.BankClientRegistrationData.ClientId,
                 Aud = openBankingClient.IssuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
-                ClientId = openBankingClient.ClientRegistrationData.ClientId,
+                ClientId = openBankingClient.BankClientRegistrationData.ClientId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,

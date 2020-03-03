@@ -39,12 +39,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return results.ToTaskResult();
         }
 
-        public Task<BankClientProfile> SetAsync(BankClientProfile profile)
+        public async Task<BankClientProfile> SetAsync(BankClientProfile value)
         {
-            profile.ArgNotNull(nameof(profile));
-            profile.Id.ArgNotNull(nameof(profile.Id));
+            value.ArgNotNull(nameof(value));
 
-            return _cache.AddOrUpdate(profile.Id, _ => profile, (_, __) => profile).ToTaskResult();
+            if (value.Id == null)
+            {
+                var existingDto = (await GetAsync(c => c.IssuerUrl == value.IssuerUrl)).SingleOrDefault();
+                if (existingDto != null)
+                {
+                    value.Id = existingDto.Id;
+                }
+                else
+                {
+                    value.Id = Guid.NewGuid().ToString();
+                }
+            }
+
+            return _cache.AddOrUpdate(value.Id, _ => value, (_, __) => value);
         }
 
         public Task<bool> DeleteAsync(string id)

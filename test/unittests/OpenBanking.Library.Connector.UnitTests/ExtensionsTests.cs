@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [Fact]
         public void ToObjectDictionary_ScratchTest()
         {
-            var value = new OpenBankingClientRegistrationClaims
+            var value = new BankClientRegistrationClaims
             {
                 Aud = "some aud",
                 ApplicationType = "some application type",

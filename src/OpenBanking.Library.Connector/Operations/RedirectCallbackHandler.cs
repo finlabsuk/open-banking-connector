@@ -10,10 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using BankClient = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClient;
+using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClientProfile;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Model.Public.TokenEndpointResponse;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
@@ -24,22 +23,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IApiClient _apiClient;
         private readonly IDomesticConsentRepository _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientProfileRepo;
-        private readonly IOpenBankingClientRepository _openBankingClientRepo;
+        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
 
         public RedirectCallbackHandler(
             ISoftwareStatementProfileRepository softwareStatementProfileRepo,
             IApiClient apiClient, IEntityMapper mapper,
-            IOpenBankingClientRepository openBankingClientRepo,
-            IOpenBankingClientProfileRepository openBankingClientProfileRepo,
+            IOpenBankingClientProfileRepository openBankingClientRepo,
             IDomesticConsentRepository domesticConsentRepo)
         {
             _softwareStatementProfileRepo = softwareStatementProfileRepo.ArgNotNull(nameof(softwareStatementProfileRepo));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
             _mapper = mapper.ArgNotNull(nameof(mapper));
             _openBankingClientRepo = openBankingClientRepo.ArgNotNull(nameof(openBankingClientRepo));
-            _openBankingClientProfileRepo =
-                openBankingClientProfileRepo.ArgNotNull(nameof(openBankingClientProfileRepo));
             _domesticConsentRepo = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
         }
 
@@ -55,23 +50,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new KeyNotFoundException($"Consent with redirect state '{redirectData.Body.State}' not found.");
             }
 
-            var clientProfile = await _openBankingClientProfileRepo.GetAsync(consent.OpenBankingClientProfileId);
+            var clientProfile = await _openBankingClientRepo.GetAsync(consent.ApiProfileId);
             if (clientProfile == null)
             {
                 throw new KeyNotFoundException(
-                    $"Client profile with ID '{consent.OpenBankingClientProfileId}' not found.");
+                    $"Client profile with ID '{consent.ApiProfileId}' not found.");
             }
 
-            var client = await _openBankingClientRepo.GetAsync(clientProfile.BankClientId);
-                
-            var softwareStatementProfile = await _softwareStatementProfileRepo.GetAsync(client.SoftwareStatementProfileId) ??
+            var softwareStatementProfile = await _softwareStatementProfileRepo.GetAsync(clientProfile.SoftwareStatementProfileId) ??
                                     throw new KeyNotFoundException("The Software statement does not exist.");
 
 
             // Obtain token for consent
             var redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             var tokenEndpointResponse =
-                await PostAuthCodeGrant(redirectData.Body.AuthorisationCode, redirectUrl, client);
+                await PostAuthCodeGrant(redirectData.Body.AuthorisationCode, redirectUrl, clientProfile);
 
             // Update consent with token
             var value = _mapper.Map<Model.Persistent.TokenEndpointResponse>(tokenEndpointResponse);
@@ -80,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         private async Task<TokenEndpointResponse> PostAuthCodeGrant(string authCode, string redirectUrl,
-            BankClient client)
+            BankClientProfile client)
         {
             var ub = new UriBuilder(new Uri(client.OpenIdConfiguration.TokenEndpoint));
 
@@ -92,23 +85,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 { "redirect_uri", redirectUrl },
                 { "code", authCode }
             };
-            if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+            if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
             {
-                keyValuePairs["client_id"] = client.ClientRegistrationData.ClientId;
+                keyValuePairs["client_id"] = client.BankClientRegistrationData.ClientId;
             }
-            else if (client.ClientRegistrationClaims.TokenEndpointAuthMethod ==
+            else if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod ==
                      "client_secret_basic")
             {
-                client.ClientRegistrationData.ClientSecret.ArgNotNull(
+                client.BankClientRegistrationData.ClientSecret.ArgNotNull(
                     "No client secret available.");
-                var authString = client.ClientRegistrationData.ClientId + ":" +
-                                 client.ClientRegistrationData.ClientSecret;
+                var authString = client.BankClientRegistrationData.ClientId + ":" +
+                                 client.BankClientRegistrationData.ClientSecret;
                 var plainTextBytes = Encoding.UTF8.GetBytes(authString);
                 authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
             }
             else
             {
-                if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+                if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
                 }

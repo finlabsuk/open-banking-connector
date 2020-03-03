@@ -36,7 +36,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 new MemoryKeySecretProvider(),
                 GetApiClient(TestConfig),
                 new PemParsingCertificateReader(),
-                new MemoryOpenBankingClientRepository(),
                 new MemoryOpenBankingClientProfileRepository(),
                 new MemorySoftwareStatementProfileRepository(),
                 new MemoryDomesticConsentRepository(),

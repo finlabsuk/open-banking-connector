@@ -7,25 +7,25 @@ using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
-    public class ClientProfileResponse : OpenBankingResponse
+    public class BankClientProfileResponse : OpenBankingResponse
     {
-        public ClientProfileResponse(OpenBankingClientProfileResponse data)
+        public BankClientProfileResponse(Model.Public.Response.BankClientProfile data)
             : this((IList<OpenBankingResponseMessage>) null, data)
         {
         }
 
-        public ClientProfileResponse(OpenBankingResponseMessage message,
-            OpenBankingClientProfileResponse data)
+        public BankClientProfileResponse(OpenBankingResponseMessage message,
+            Model.Public.Response.BankClientProfile data)
             : this(new[] { message }, data)
         {
         }
 
-        public ClientProfileResponse(IList<OpenBankingResponseMessage> messages, OpenBankingClientProfileResponse data)
+        public BankClientProfileResponse(IList<OpenBankingResponseMessage> messages, Model.Public.Response.BankClientProfile data)
             : base(messages)
         {
             Data = data;
         }
 
-        public OpenBankingClientProfileResponse Data { get; }
+        public Model.Public.Response.BankClientProfile Data { get; }
     }
 }

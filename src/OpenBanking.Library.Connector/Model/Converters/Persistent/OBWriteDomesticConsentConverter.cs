@@ -16,17 +16,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Converters.Persist
         {
             return new DomesticConsent
             {
-                Id = source.OpenBankingClientProfileId,
+                Id = source.ApiProfileId,
 
                 ObWriteDomesticConsent = new Model.Persistent.PaymentInitiation.OBWriteDomesticConsent
                 {
                     Data = context.Mapper.Map<OBWriteDomesticConsentData>(source.Data),
-                    OpenBankingClientProfileId = source.OpenBankingClientProfileId,
+                    ApiProfileId = source.ApiProfileId,
                     Risk = context.Mapper.Map<OBRisk>(source.Risk)
                 },
                 IssuerUrl = "TODO",
                 SoftwareStatementProfileId = "TODO",
-                OpenBankingClientProfileId = source.OpenBankingClientProfileId,
+                ApiProfileId = source.ApiProfileId,
                 State = "TODO"
             };
         }

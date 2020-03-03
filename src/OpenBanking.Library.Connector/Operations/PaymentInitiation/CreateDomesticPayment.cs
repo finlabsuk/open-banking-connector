@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Model.Public.TokenEndpointResponse;
 
@@ -20,39 +21,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     public class CreateDomesticPayment
     {
         private readonly IApiClient _apiClient;
-        private readonly IDomesticConsentRepository _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientProfileRepo;
-        private readonly IOpenBankingClientRepository _openBankingClientRepo;
-        private readonly ISoftwareStatementProfileRepository _softwareStatementRepo;
+        private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
+        private readonly IDomesticConsentRepository _domesticConsentRepo;
+        private readonly IApiProfileRepository _apiProfileRepo;
 
-        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper,
-            ISoftwareStatementProfileRepository softwareStatementRepo,
-            IOpenBankingClientProfileRepository openBankingClientProfileRepo,
-            IOpenBankingClientRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo)
+        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
         {
-            _domesticConsentRepo = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
-            _openBankingClientProfileRepo =
-                openBankingClientProfileRepo.ArgNotNull(nameof(openBankingClientProfileRepo));
-            _openBankingClientRepo = openBankingClientRepo.ArgNotNull(nameof(openBankingClientRepo));
-            _mapper = mapper.ArgNotNull(nameof(mapper));
-            _apiClient = apiClient.ArgNotNull(nameof(apiClient));
-            _softwareStatementRepo = softwareStatementRepo.ArgNotNull(nameof(softwareStatementRepo));
+            _apiClient = apiClient;
+            _mapper = mapper;
+            _softwareStatementProfileRepo = softwareStatementRepo;
+            _openBankingClientRepo = openBankingClientRepo;
+            _domesticConsentRepo = domesticConsentRepo;
+            _apiProfileRepo = apiProfileRepo;
         }
 
         public async Task<OBWriteDomesticResponse> CreateAsync(string consentId)
         {
-            consentId.ArgNotNull(nameof(consentId));
-
             // Load relevant objects
-            var consent = await _domesticConsentRepo.GetAsync(consentId) ??
-                          throw new KeyNotFoundException("The Consent does not exist.");
-            var obClientProfile = await _openBankingClientProfileRepo.GetAsync(consent.OpenBankingClientProfileId) ??
-                                  throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var client = await _openBankingClientRepo.GetAsync(obClientProfile.BankClientId) ??
-                         throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var softwareStatement = await _softwareStatementRepo.GetAsync(client.SoftwareStatementProfileId) ??
-                                    throw new KeyNotFoundException("The Software statement does not exist.");
+            var consent = await _domesticConsentRepo.GetAsync(consentId) ?? throw new KeyNotFoundException("The Consent does not exist.");
+            var apiProfile = await _apiProfileRepo.GetAsync(consent.ApiProfileId) ?? throw new KeyNotFoundException("The API Profile does not exist.");
+            var bankClient = await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ?? throw new KeyNotFoundException("The Bank Client does not exist.");
+            var softwareStatementProfile = await _softwareStatementProfileRepo.GetAsync(bankClient.SoftwareStatementProfileId) ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
 
             // TODO: update token endpiont response generation
             var tokenEndpointResponse = new TokenEndpointResponse();
@@ -61,9 +52,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             var payment = _mapper.Map<OBWriteDomestic2>(consent);
             payment.Data.ConsentId = consentId;
             var payloadJson = JsonConvert.SerializeObject(payment);
-            var ub = new UriBuilder(new Uri(obClientProfile.PaymentInitiationApiBaseUrl + "/domestic-payments"));
+            var ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payments"));
 
-            var headers = CreateRequestHeaders(softwareStatement, payment, client, tokenEndpointResponse);
+            var headers = CreateRequestHeaders(softwareStatementProfile, payment, bankClient, tokenEndpointResponse);
 
             var paymentResponse = await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Post)
@@ -81,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         private static List<HttpHeader> CreateRequestHeaders(SoftwareStatementProfile softwareStatement,
             OBWriteDomestic2 payment,
-            BankClient client, TokenEndpointResponse tokenEndpointResponse)
+            BankClientProfile client, TokenEndpointResponse tokenEndpointResponse)
         {
             var jwtFactory = new JwtFactory();
             var jwt = jwtFactory.CreateJwt(softwareStatement, payment, true);

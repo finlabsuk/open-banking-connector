@@ -9,14 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;
-using BankClient = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClient;
+using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClientProfile;
 using OBWriteDomesticConsent =
     FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation.OBWriteDomesticConsent;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Model.Ob.TokenEndpointResponse;
@@ -26,28 +26,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     public class CreateDomesticPaymentConsent
     {
         private readonly IApiClient _apiClient;
-        private readonly IOpenBankingClientProfileRepository _clientProfileRepo;
-        private readonly IOpenBankingClientRepository _clientRepo;
-        private readonly IDomesticConsentRepository _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
         private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
+        private readonly IDomesticConsentRepository _domesticConsentRepo;
+        private readonly IApiProfileRepository _apiProfileRepo;
 
-        public CreateDomesticPaymentConsent(
-            IEntityMapper mapper,
-            IApiClient apiClient,
-            ISoftwareStatementProfileRepository softwareStatementProfileRepo,
-            IOpenBankingClientProfileRepository clientProfileRepo,
-            IOpenBankingClientRepository clientRepo,
-            IDomesticConsentRepository domesticConsentRepo
-        )
+        public CreateDomesticPaymentConsent(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
         {
-            _mapper = mapper.ArgNotNull(nameof(mapper));
-            _apiClient = apiClient.ArgNotNull(nameof(apiClient));
-            _softwareStatementProfileRepo =
-                softwareStatementProfileRepo.ArgNotNull(nameof(softwareStatementProfileRepo));
-            _clientProfileRepo = clientProfileRepo.ArgNotNull(nameof(clientProfileRepo));
-            _clientRepo = clientRepo.ArgNotNull(nameof(clientRepo));
-            _domesticConsentRepo = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
+            _apiClient = apiClient;
+            _mapper = mapper;
+            _softwareStatementProfileRepo = softwareStatementRepo;
+            _openBankingClientRepo = openBankingClientRepo;
+            _domesticConsentRepo = domesticConsentRepo;
+            _apiProfileRepo = apiProfileRepo;
         }
 
         public async Task<PaymentConsentResponse> CreateAsync(OBWriteDomesticConsent consent)
@@ -55,16 +47,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             consent.ArgNotNull(nameof(consent));
 
             // Load relevant objects
-            var clientProfile = await _clientProfileRepo.GetAsync(consent.OpenBankingClientProfileId) ??
-                                throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var client = await _clientRepo.GetAsync(clientProfile.BankClientId) ??
-                         throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var softwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(client.SoftwareStatementProfileId) ??
-                throw new KeyNotFoundException("The Software statement does not exist.");
+            var apiProfile = await _apiProfileRepo.GetAsync(consent.ApiProfileId) ?? throw new KeyNotFoundException("The API Profile does not exist.");
+            var bankClient = await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ?? throw new KeyNotFoundException("The Bank Client does not exist.");
+            var softwareStatementProfile = await _softwareStatementProfileRepo.GetAsync(bankClient.SoftwareStatementProfileId) ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
 
             // Get client credentials grant (we will not cache token for now but simply use to POST consent)
-            var tokenEndpointResponse = await PostClientCredentialsGrant("payments", client);
+            var tokenEndpointResponse = await PostClientCredentialsGrant("payments", bankClient);
             // TODO: validate the response???
             var consent2 = _mapper.Map<OBWriteDomesticConsent2>(consent);
 
@@ -73,11 +61,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             var jwt = jwtFactory.CreateJwt(softwareStatementProfile, consent2, true);
             var jwsComponents = jwt.Split('.');
             var jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
-            var ub = new UriBuilder(new Uri(clientProfile.PaymentInitiationApiBaseUrl + "/domestic-payment-consents"));
+            var ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payment-consents"));
             var payloadJson = JsonConvert.SerializeObject(consent2);
             var headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", client.XFapiFinancialId),
+                new HttpHeader("x-fapi-financial-id", bankClient.XFapiFinancialId),
                 new HttpHeader("Authorization", "Bearer " + tokenEndpointResponse.AccessToken),
                 new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
                 new HttpHeader("x-jws-signature", jwsSignature)
@@ -96,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Generate URL for user auth
             var consentId = consentResponse.Data.ConsentId;
             var redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
-            var oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(client,
+            var oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(bankClient,
                 redirectUrl, new[] { "openid", "payments" },
                 consentId);
             var requestObjectJwt = jwtFactory.CreateJwt(softwareStatementProfile, oAuth2RequestObjectClaims, false);
@@ -111,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 { "state", oAuth2RequestObjectClaims.State }
             };
             var queryString = keyValuePairs.ToUrlEncoded();
-            var authUrl = client.OpenIdConfiguration.AuthorizationEndpoint + "?" + queryString;
+            var authUrl = bankClient.OpenIdConfiguration.AuthorizationEndpoint + "?" + queryString;
 
             // Create and store persistent object
             var value = _mapper.Map<DomesticConsent>(consent);
@@ -124,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             };
         }
 
-        private async Task<TokenEndpointResponse> PostClientCredentialsGrant(string scope, BankClient client)
+        private async Task<TokenEndpointResponse> PostClientCredentialsGrant(string scope, BankClientProfile client)
         {
             var ub = new UriBuilder(new Uri(client.OpenIdConfiguration.TokenEndpoint));
 
@@ -135,22 +123,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 { "grant_type", "client_credentials" },
                 { "scope", scope }
             };
-            if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+            if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
             {
-                keyValuePairs["client_id"] = client.ClientRegistrationData.ClientId;
+                keyValuePairs["client_id"] = client.BankClientRegistrationData.ClientId;
             }
-            else if (client.ClientRegistrationClaims.TokenEndpointAuthMethod ==
+            else if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod ==
                      "client_secret_basic")
             {
-                client.ClientRegistrationData.ClientSecret.InvalidOpOnNull("No client secret available.");
-                var authString = client.ClientRegistrationData.ClientId + ":" +
-                                 client.ClientRegistrationData.ClientSecret;
+                client.BankClientRegistrationData.ClientSecret.InvalidOpOnNull("No client secret available.");
+                var authString = client.BankClientRegistrationData.ClientId + ":" +
+                                 client.BankClientRegistrationData.ClientSecret;
                 var plainTextBytes = Encoding.UTF8.GetBytes(authString);
                 authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
             }
             else
             {
-                if (client.ClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+                if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
                 }

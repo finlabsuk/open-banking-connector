@@ -21,8 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.Payment
         /// <summary>
         ///  OBClientProfile ID to use
         /// </summary>
-        [JsonProperty("openBankingClientProfileId")]
-        public string OpenBankingClientProfileId { get; set; }
+        [JsonProperty("apiProfileId")]
+        public string ApiProfileId { get; set; }
 
         /// <summary>
         ///     Gets or Sets Data

@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.Payment
             BaseUrl = baseUrl;
         }
 
-        public string Id { get; }
+        public string Id { get; set; }
 
         public string BankClientProfileId { get; }
 

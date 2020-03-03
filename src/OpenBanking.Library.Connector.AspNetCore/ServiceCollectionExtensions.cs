@@ -45,7 +45,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
             services.AddSingleton<ISoftwareStatementProfileRepository, MemorySoftwareStatementProfileRepository>();
             services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
-            services.AddSingleton<IOpenBankingClientRepository, MemoryOpenBankingClientRepository>();
             services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
             services.AddSingleton<IEntityMapper, EntityMapper>();
             services.AddTransient<IOpenBankingRequestBuilder, OpenBankingRequestBuilder>();

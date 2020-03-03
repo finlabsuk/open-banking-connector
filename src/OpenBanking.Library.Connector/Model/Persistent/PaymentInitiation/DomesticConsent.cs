@@ -20,8 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.Payment
         [JsonProperty("issuerUrl")]
         public string IssuerUrl { get; set; }
 
-        [JsonProperty("openBankingClientProfileId")]
-        public string OpenBankingClientProfileId { get; set; }
+        [JsonProperty("apiProfileId")]
+        public string ApiProfileId { get; set; }
 
         [JsonProperty("obWriteDomesticConsent")]
         public OBWriteDomesticConsent ObWriteDomesticConsent { get; set; }

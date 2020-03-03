@@ -275,9 +275,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         {
             context.ArgNotNull(nameof(context));
 
-            if (context.Data.OpenBankingClientProfileId == null)
+            if (context.Data.ApiProfileId == null)
             {
-                context.Data.OpenBankingClientProfileId = context.OpenBankingClientProfileId;
+                context.Data.ApiProfileId = context.OpenBankingClientProfileId;
             }
 
             var validationErrors = Validate(context);
@@ -289,12 +289,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
             try
             {
                 var createDomesticConsent = new CreateDomesticPaymentConsent(
-                    context.Context.EntityMapper,
                     context.Context.ApiClient,
+                    context.Context.EntityMapper,
                     context.Context.SoftwareStatementRepository,
                     context.Context.ClientProfileRepository,
-                    context.Context.ClientRepository,
-                    context.Context.DomesticConsentRepository
+                    context.Context.DomesticConsentRepository,
+                    context.Context.ApiProfileRepository
                 );
 
                 var result = await createDomesticConsent.CreateAsync(context.Data);

@@ -47,9 +47,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
             try
             {
-                var i = new CreateDomesticPayment(context.Context.ApiClient, context.Context.EntityMapper,
-                    context.Context.SoftwareStatementRepository, context.Context.ClientProfileRepository,
-                    context.Context.ClientRepository, context.Context.DomesticConsentRepository);
+                var i = new CreateDomesticPayment(
+                    context.Context.ApiClient,
+                    context.Context.EntityMapper,
+                    context.Context.SoftwareStatementRepository,
+                    context.Context.ClientProfileRepository,
+                    context.Context.DomesticConsentRepository,
+                    context.Context.ApiProfileRepository);
 
                 var resp = await i.CreateAsync(
                     context.Data.ConsentId

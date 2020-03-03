@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         internal OpenBankingContext(IConfigurationProvider configurationProvider,
             IInstrumentationClient instrumentation,
             IKeySecretProvider keySecretProvider, IApiClient apiClient, ICertificateReader certificateReader,
-            IOpenBankingClientProfileRepository clientProfileRepository, IOpenBankingClientRepository clientRepository,
+            IOpenBankingClientProfileRepository clientProfileRepository,
             ISoftwareStatementProfileRepository softwareStatementRepo, IEntityMapper entityMapper,
             IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepository)
         {
@@ -28,7 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             Instrumentation = instrumentation.ArgNotNull(nameof(instrumentation));
             KeySecretProvider = keySecretProvider.ArgNotNull(nameof(keySecretProvider));
             ClientProfileRepository = clientProfileRepository.ArgNotNull(nameof(clientProfileRepository));
-            ClientRepository = clientRepository.ArgNotNull(nameof(clientRepository));
             SoftwareStatementRepository = softwareStatementRepo.ArgNotNull(nameof(softwareStatementRepo));
             DomesticConsentRepository = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
             ApiProfileRepository = apiProfileRepository.ArgNotNull(nameof(apiProfileRepository));
@@ -40,7 +39,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public IConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretProvider KeySecretProvider { get; }
-        public IOpenBankingClientRepository ClientRepository { get; }
         public IOpenBankingClientProfileRepository ClientProfileRepository { get; }
         public ISoftwareStatementProfileRepository SoftwareStatementRepository { get; }
         public IDomesticConsentRepository DomesticConsentRepository { get; }

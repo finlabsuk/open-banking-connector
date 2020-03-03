@@ -57,7 +57,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     context.Context.ApiClient,
                     context.Context.SoftwareStatementRepository,
                     context.Context.ClientProfileRepository,
-                    context.Context.ClientRepository,
                     context.Context.ApiProfileRepository
                 );
 

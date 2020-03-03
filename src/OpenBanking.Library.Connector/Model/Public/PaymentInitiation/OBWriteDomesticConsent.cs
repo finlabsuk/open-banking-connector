@@ -31,8 +31,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInit
         /// <summary>
         ///  OBClientProfile ID to use
         /// </summary>
-        [JsonProperty("openBankingClientProfileId", Required = Required.Always)]
-        public string OpenBankingClientProfileId { get; set; }
+        [JsonProperty("apiProfileId", Required = Required.Always)]
+        public string ApiProfileId { get; set; }
 
         /// <summary>
         ///     Gets or Sets Data

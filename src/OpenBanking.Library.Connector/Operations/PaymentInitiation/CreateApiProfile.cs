@@ -15,17 +15,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     {
         private readonly IApiClient _apiClient;
         private readonly IApiProfileRepository _apiProfileRepo;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientProfileRepo;
-        private readonly IOpenBankingClientRepository _openBankingClientRepo;
+        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
         private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
 
         public CreateApiProfile(IApiClient apiClient, ISoftwareStatementProfileRepository softwareStatementProfileRepo,
-            IOpenBankingClientProfileRepository openBankingClientProfileRepo,
-            IOpenBankingClientRepository openBankingClientRepo, IApiProfileRepository apiProfileRepo)
+            IOpenBankingClientProfileRepository openBankingClientRepo, IApiProfileRepository apiProfileRepo)
         {
             _apiClient = apiClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
-            _openBankingClientProfileRepo = openBankingClientProfileRepo;
             _openBankingClientRepo = openBankingClientRepo;
             _apiProfileRepo = apiProfileRepo;
         }
@@ -33,9 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         public async Task<ApiProfile> CreateAsync(Model.Public.Request.PaymentInitiation.ApiProfile apiProfile)
         {
             // Load relevant objects
-            var bankClientProfile = await _openBankingClientProfileRepo.GetAsync(apiProfile.BankClientProfileId) ??
-                                    throw new KeyNotFoundException("The OB Client Profile does not exist.");
-            var bankClient = await _openBankingClientRepo.GetAsync(bankClientProfile.BankClientId) ??
+            var bankClient = await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ??
                              throw new KeyNotFoundException("The OB Client Profile does not exist.");
             var softwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(bankClient.SoftwareStatementProfileId) ??

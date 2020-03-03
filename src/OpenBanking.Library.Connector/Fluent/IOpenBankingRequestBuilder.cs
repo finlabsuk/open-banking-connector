@@ -10,9 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         SoftwareStatementProfileContext SoftwareStatementProfile();
 
-        ClientProfileContext BankClientProfile(string softwareStatementProfileId);
-
-        ClientContext Client();
+        BankClientProfileContext BankClientProfile();
 
         DomesticPaymentConsentContext DomesticPaymentConsent(string openBankingClientProfileId);
 

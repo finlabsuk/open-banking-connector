@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
@@ -43,14 +44,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // Register with a bank (create a client) and create a set of rules for communicating using that registration (a "client profile").
             // Bank registration uses a software statement to establish our identity in the eyes of the bank. This and other data are transmitted to the bank.
             // This is performed once per Bank.
-            var bankClientProfileResp = await builder.BankClientProfile(softwareStatementProfileResp.Data.Id)
-                .IssuerUrl(TestConfig.GetValue("clientProfileIssuerUrl"))
+            var bankClientProfileResp = await builder.BankClientProfile()
+                .IssuerUrl(new Uri(TestConfig.GetValue("clientProfileIssuerUrl")))
                 .SoftwareStatementProfileId(softwareStatementProfileResp.Data.Id)
                 .XFapiFinancialId(TestConfig.GetValue("xFapiFinancialId"))
-                .AccountTransactionApi(TestConfig.GetEnumValue<AccountApiVersion>("accountApiVersion").Value,
-                    TestConfig.GetValue("accountApiUrl"))
-                .PaymentInitiationApi(TestConfig.GetEnumValue<ApiVersion>("paymentApiVersion").Value,
-                    TestConfig.GetValue("paymentApiUrl"))
                 .OpenBankingClientRegistrationClaimsOverrides(
                     TestConfig.GetOpenBankingClientRegistrationClaimsOverrides())
                 .SubmitAsync();
@@ -61,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             bankClientProfileResp.Data.Should().NotBeNull();
 
             var paymentInitiationApiProfileResp = await builder.PaymentInitiationApiProfile()
-                .Id("NewPaymentProfile")
+                .Id("NewPaymentInitiationProfile")
                 .BankClientProfileId(bankClientProfileResp.Data.Id)
                 .PaymentInitiationApiInfo(
                     TestConfig.GetEnumValue<ApiVersion>("paymentApiVersion").Value,
@@ -74,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             
             // Create a consent object and transmit to the bank to support user authorisation of an intended domestic payment.
             // This is performed once per payment.
-            var consentResp = await builder.DomesticPaymentConsent(bankClientProfileResp.Data.Id)
+            var consentResp = await builder.DomesticPaymentConsent(paymentInitiationApiProfileResp.Data.Id)
                 .Merchant(null, null, PaymentContextCode.EcommerceGoods)
                 .CreditorAccount("BE56456394728288", "IBAN", "ACME DIY", "secondary-identif")
                 .DeliveryAddress(new OBRiskDeliveryAddress

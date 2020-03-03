@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Validation.Payment
 
         private void CreateRules()
         {
-            RuleFor(x => x.OpenBankingClientProfileId)
+            RuleFor(x => x.ApiProfileId)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Missing or invalid {nameof(OBWriteDomesticConsent.OpenBankingClientProfileId)}.");
+                .WithMessage($"Missing or invalid {nameof(OBWriteDomesticConsent.ApiProfileId)}.");
 
             RuleFor(x => x.Data)
                 .Must(ValidationRules.IsNotNull)

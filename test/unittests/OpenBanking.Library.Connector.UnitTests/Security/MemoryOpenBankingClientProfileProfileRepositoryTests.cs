@@ -56,11 +56,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
                 var __ = repo.SetAsync(value2).Result;
                 var item = repo.GetAsync(id).Result;
 
-                return item.Id == id && item.AccountTransactionApiBaseUrl == value2.AccountTransactionApiBaseUrl;
+                return item.Id == id && item.XFapiFinancialId == value2.XFapiFinancialId;
             };
 
             return rule.When(id != null && value != null && value2 != null &&
-                             value.AccountTransactionApiBaseUrl != value2.AccountTransactionApiBaseUrl);
+                             value.XFapiFinancialId != value2.XFapiFinancialId);
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
