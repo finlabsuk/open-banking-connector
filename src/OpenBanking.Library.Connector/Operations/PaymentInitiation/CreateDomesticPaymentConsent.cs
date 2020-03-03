@@ -12,7 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;

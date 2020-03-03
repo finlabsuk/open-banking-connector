@@ -1,4 +1,4 @@
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation
@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInit
     ///     scoring for Payments.
     /// </summary>
     [OpenBankingEquivalent(typeof(OBRisk1))]
-    [OpenBankingEquivalent(typeof(ObModel.PaymentInitiation.V3p1p2.Model.OBRisk1))]
+    [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.OBRisk1))]
     [PersistenceEquivalent(typeof(Model.Persistent.PaymentInitiation.OBRisk))]
     public class OBRisk
     {

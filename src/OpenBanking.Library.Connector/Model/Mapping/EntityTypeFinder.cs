@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
-using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model.Meta;
+using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Meta;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping
 {
@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping
                     return typeof(Meta);
 
                 case ApiVersion.V3P1P2:
-                    return typeof(ObModel.PaymentInitiation.V3p1p2.Model.Meta);
+                    return typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta);
 
                 default:
                     throw new NotSupportedException($"The version {version} is not supported.");

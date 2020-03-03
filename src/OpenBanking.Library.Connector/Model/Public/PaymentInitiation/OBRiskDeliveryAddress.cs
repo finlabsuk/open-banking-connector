@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Converters;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation
@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInit
     ///     Information that locates and identifies a specific address, as defined by postal services or in free format text.
     /// </summary>
     [OpenBankingEquivalent(typeof(OBRisk1DeliveryAddress), EquivalentTypeMapper = typeof(OBRiskDeliveryAddressConverter))]
-    [OpenBankingEquivalent(typeof(ObModel.PaymentInitiation.V3p1p2.Model.OBRisk1DeliveryAddress))]
+    [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.OBRisk1DeliveryAddress))]
     [PersistenceEquivalent(typeof(Persistent.PaymentInitiation.OBRiskDeliveryAddress))]
     public class OBRiskDeliveryAddress
     {

@@ -1,9 +1,9 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Converters;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p2.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using Newtonsoft.Json;
-using OBWriteDomestic2 = FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2;
+using OBWriteDomestic2 = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation
 {

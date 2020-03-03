@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.AspNetCore</AssemblyName>
     <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.AspNetCore</RootNamespace>
-    <Copyright>Finnovation Labs Limited 2020</Copyright>
+    <Copyright>Finnovation Labs Limited and Contributors</Copyright>
     <Company>Finnovation Labs Limited</Company>
   </PropertyGroup>
 

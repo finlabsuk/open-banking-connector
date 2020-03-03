@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.Benchmarks</AssemblyName>
     <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Benchmarks</RootNamespace>
-    <Copyright>Finnovation Labs Limited 2020</Copyright>
+    <Copyright>Finnovation Labs Limited and Contributors</Copyright>
     <Company>Finnovation Labs Limited</Company>
   </PropertyGroup>
 

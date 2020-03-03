@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModel.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation
@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInit
     ///     Information that locates and identifies a specific address, as defined by postal services.
     /// </summary>
     [OpenBankingEquivalent(typeof(OBPostalAddress6))]
-    [OpenBankingEquivalent(typeof(ObModel.PaymentInitiation.V3p1p2.Model.OBPostalAddress6))]
+    [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.OBPostalAddress6))]
     [PersistenceEquivalent(typeof(Persistent.PaymentInitiation.OBPostalAddress))]
     public class OBPostalAddress
     {

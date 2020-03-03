@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Model.Public
 {
-    [OpenBankingEquivalent(typeof(ObModel.PaymentInitiation.V3p1p1.Model.Meta))]
-    [OpenBankingEquivalent(typeof(ObModel.PaymentInitiation.V3p1p2.Model.Meta))]
+    [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p1.Model.Meta))]
+    [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta))]
     public class Meta
     {
         /// <summary>
