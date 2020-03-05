@@ -4,21 +4,21 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
-    public class ApiProfile
+    public class PaymentInitiationApiProfileResponse
     {
-        public ApiProfile(string id, string bankClientProfileId, ApiVersion apiVersion, string baseUrl)
+        public PaymentInitiationApiProfileResponse(string id, string bankClientProfileId, ApiVersion apiVersion, string baseUrl)
         {
             Id = id;
             BankClientProfileId = bankClientProfileId;
             ApiVersion = apiVersion;
             BaseUrl = baseUrl;
         }
-        
+
         [JsonProperty("id")]
         public string Id { get; }
-        
+
         [JsonProperty("bankClientProfileId")]
         public string BankClientProfileId { get; }
 

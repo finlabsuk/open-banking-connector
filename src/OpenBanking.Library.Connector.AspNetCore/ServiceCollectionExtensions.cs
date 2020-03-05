@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
@@ -46,6 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             services.AddSingleton<ISoftwareStatementProfileRepository, MemorySoftwareStatementProfileRepository>();
             services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
             services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
+            services.AddSingleton<IApiProfileRepository, MemoryApiProfileRepository>();
             services.AddSingleton<IEntityMapper, EntityMapper>();
             services.AddTransient<IOpenBankingRequestBuilder, OpenBankingRequestBuilder>();
             services.AddSingleton<IApiClient>(sp =>

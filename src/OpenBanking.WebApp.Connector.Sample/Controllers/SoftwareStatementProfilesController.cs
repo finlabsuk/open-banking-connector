@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
@@ -42,32 +43,32 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [ProducesResponseType(typeof(PostSoftwareStatementProfileResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostSoftwareStatementProfileAsync(
-            [FromBody] PostSoftwareStatementProfileRequest request)
+            [FromBody] SoftwareStatementProfile request)
         {
             var softwareStatement =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.SoftwareStatementProfileId,
+                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
                     KeySecrets.SoftwareStatement));
             var signingKeyId =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.SoftwareStatementProfileId,
+                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
                     KeySecrets.SigningKeyId));
             var signingCertificateKey =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.SoftwareStatementProfileId,
+                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
                     KeySecrets.SigningCertificateKey));
             var signingCertificate =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.SoftwareStatementProfileId,
+                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
                     KeySecrets.SigningCertificate));
             var transportCertificateKey = await _keySecrets.GetKeySecretAsync(
-                KeySecrets.GetName(request.SoftwareStatementProfileId, KeySecrets.TransportCertificateKey));
+                KeySecrets.GetName(request.Id, KeySecrets.TransportCertificateKey));
             var transportCertificate =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.SoftwareStatementProfileId,
+                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
                     KeySecrets.TransportCertificate));
 
             var statementResp = await _obRequestBuilder.SoftwareStatementProfile()
-                .Id(request.SoftwareStatementProfileId)
+                .Id(request.Id)
                 .SoftwareStatement(softwareStatement?.Value)
                 .SigningKeyInfo(signingKeyId?.Value, signingCertificateKey?.Value, signingCertificate?.Value)
                 .TransportKeyInfo(transportCertificateKey?.Value, transportCertificate?.Value)
-                .DefaultFragmentRedirectUrl(_config.DefaultFragmentRedirectUrl)
+                .DefaultFragmentRedirectUrl(request.DefaultFragmentRedirectUrl)
                 .SubmitAsync();
 
             var result = new PostSoftwareStatementProfileResponse(

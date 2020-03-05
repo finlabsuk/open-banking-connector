@@ -4,37 +4,39 @@
 
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
+using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
+namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.PaymentInitiation
 {
     [ApiController]
-    public class ClientProfilesController : ControllerBase
+    public class PaymentInitiationApiProfilesController : ControllerBase
     {
         private readonly IKeySecretProvider _keySecrets;
         private readonly IOpenBankingRequestBuilder _obRequestBuilder;
 
-        public ClientProfilesController(IOpenBankingRequestBuilder obRequestBuilder, IKeySecretProvider keySecrets)
+        public PaymentInitiationApiProfilesController(IOpenBankingRequestBuilder obRequestBuilder, IKeySecretProvider keySecrets)
         {
             _obRequestBuilder = obRequestBuilder;
             _keySecrets = keySecrets;
         }
 
-        [Route("client-profiles")]
+        [Route("pisp/api-profiles")]
         [HttpPost]
-        [ProducesResponseType(typeof(PostOpenBankingClientProfileResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(PaymentInitiationApiProfileHttpResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankClientProfile request)
+        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] PaymentInitiationApiProfile request)
         {
-            var clientResp = await _obRequestBuilder.BankClientProfile()
+            var clientResp = await _obRequestBuilder.PaymentInitiationApiProfile()
                 .Data(request)
                 .SubmitAsync();
 
-            var result = new PostOpenBankingClientProfileResponse(
+            var result = new PaymentInitiationApiProfileHttpResponse(
                 clientResp.Data,
                 clientResp.ToMessagesResponse()
             );

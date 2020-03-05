@@ -2,23 +2,23 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities
 {
-    public class PostDomesticConsentResponse
+    public class BankClientProfileHttpResponse
     {
-        public PostDomesticConsentResponse(MessagesResponse messages, PaymentConsentResponse data)
+        public BankClientProfileHttpResponse(BankClientProfileResponse data, MessagesResponse messages)
         {
-            Messages = messages;
             Data = data;
+            Messages = messages;
         }
+
+        [JsonProperty("data")]
+        public BankClientProfileResponse Data { get; set; }
 
         [JsonProperty("messages")]
         public MessagesResponse Messages { get; set; }
-
-        [JsonProperty("data")]
-        public PaymentConsentResponse Data { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         [JsonProperty("httpMtlsOverrides")]
         public HttpMtlsConfigurationOverrides HttpMtlsConfigurationOverrides { get; set; }
 
-        [JsonProperty("registrationClaimsOverrides")]
+        [JsonProperty("bankClientRegistrationClaimsOverrides")]
         public BankClientRegistrationClaimsOverrides BankClientRegistrationClaimsOverrides { get; set; }
 
         [JsonProperty("registrationResponseOverrides")]

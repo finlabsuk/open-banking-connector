@@ -108,10 +108,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return new AuthorisationCallbackContext(context);
         }
 
-        public ApiProfileContext PaymentInitiationApiProfile()
+        public PaymentInitiationApiProfileContext PaymentInitiationApiProfile()
         {
             var context = CreateContext();
-            return new ApiProfileContext(context);
+            return new PaymentInitiationApiProfileContext(context);
         }
 
         private OpenBankingContext CreateContext()

@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _openBankingClientRepo = openBankingClientRepo;
         }
         
-        public async Task<Models.Public.Response.BankClientProfile> CreateAsync(Models.Public.Request.BankClientProfile bankClientProfile)
+        public async Task<Models.Public.Response.BankClientProfileResponse> CreateAsync(Models.Public.Request.BankClientProfile bankClientProfile)
         {
             bankClientProfile.ArgNotNull(nameof(bankClientProfile));
 
@@ -116,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Return
-            return new Models.Public.Response.BankClientProfile(client);
+            return new Models.Public.Response.BankClientProfileResponse(client);
             
         }
 

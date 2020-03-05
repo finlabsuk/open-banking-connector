@@ -16,29 +16,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         public string Id { get; set; }
 
         /// Software statement as string, e.g. "A.B.C"
-        [Required]
         public string SoftwareStatement { get; set; }
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
-        [Required]
         public string SigningKeyId { get; set; }
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        [Required]
         public string SigningKeySecretName { get; set; }
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        [Required]
         public string SigningCertificate { get; set; }
 
         /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        [Required]
         public string TransportKeySecretName { get; set; }
 
         /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        [Required]
         public string TransportCertificate { get; set; }
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.

@@ -18,6 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         DomesticPaymentContext DomesticPayment(string domesticConsentId);
 
-        ApiProfileContext PaymentInitiationApiProfile();
+        PaymentInitiationApiProfileContext PaymentInitiationApiProfile();
     }
 }

@@ -7,16 +7,16 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
-    public class ApiProfileContext
+    public class PaymentInitiationApiProfileContext
     {
-        internal ApiProfileContext(OpenBankingContext context)
+        internal PaymentInitiationApiProfileContext(OpenBankingContext context)
         {
             Context = context;
         }
 
         internal OpenBankingContext Context { get; }
 
-        internal ApiProfile Data { get; set; }
+        internal PaymentInitiationApiProfile Data { get; set; }
 
         internal string Id { get; set; }
 

@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _apiProfileRepo = apiProfileRepo;
         }
 
-        public async Task<ApiProfile> CreateAsync(Models.Public.PaymentInitiation.Request.ApiProfile apiProfile)
+        public async Task<PaymentInitiationApiProfileResponse> CreateAsync(Models.Public.PaymentInitiation.Request.PaymentInitiationApiProfile apiProfile)
         {
             // Load relevant objects
             var bankClient = await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ??
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             await _apiProfileRepo.SetAsync(persistentApiProfile);
 
             // Return response object
-            return new ApiProfile(persistentApiProfile.Id, persistentApiProfile.BankClientProfileId,
+            return new PaymentInitiationApiProfileResponse(persistentApiProfile.Id, persistentApiProfile.BankClientProfileId,
                 persistentApiProfile.ApiVersion, persistentApiProfile.BaseUrl);
         }
     }

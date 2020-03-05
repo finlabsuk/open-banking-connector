@@ -10,27 +10,27 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
-    public static class ApiProfileContextInteractionExtensions
+    public static class PaymentInitiationApiProfileContextInteractionExtensions
     {
-        public static ApiProfileContext Data(this ApiProfileContext context, ApiProfile value)
+        public static PaymentInitiationApiProfileContext Data(this PaymentInitiationApiProfileContext context, PaymentInitiationApiProfile value)
         {
             context.Data = value;
             return context;
         }
 
-        public static ApiProfileContext Id(this ApiProfileContext context, string value)
+        public static PaymentInitiationApiProfileContext Id(this PaymentInitiationApiProfileContext context, string value)
         {
             context.Id = value;
             return context;
         }
 
-        public static ApiProfileContext BankClientProfileId(this ApiProfileContext context, string value)
+        public static PaymentInitiationApiProfileContext BankClientProfileId(this PaymentInitiationApiProfileContext context, string value)
         {
             context.BankClientProfileId = value;
             return context;
         }
 
-        public static ApiProfileContext PaymentInitiationApiInfo(this ApiProfileContext context,
+        public static PaymentInitiationApiProfileContext PaymentInitiationApiInfo(this PaymentInitiationApiProfileContext context,
             ApiVersion apiVersion,
             string baseUrl
         )
@@ -40,11 +40,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static async Task<ApiProfileResponse> SubmitAsync(this ApiProfileContext context)
+        public static async Task<PaymentInitiationApiProfileFluentResponse> SubmitAsync(this PaymentInitiationApiProfileContext context)
         {
             try
             {
-                var apiProfile = context.Data ?? new ApiProfile(
+                var apiProfile = context.Data ?? new PaymentInitiationApiProfile(
                     context.Id.ArgNotNullElseInvalidOp("Id not specified"),
                     context.BankClientProfileId.ArgNotNullElseInvalidOp(
                         "BankClientProfileId not specified"),
@@ -62,19 +62,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
                 var resp = await i.CreateAsync(apiProfile);
 
-                return new ApiProfileResponse(resp);
+                return new PaymentInitiationApiProfileFluentResponse(resp);
             }
             catch (AggregateException ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new ApiProfileResponse(ex.CreateErrorMessages(), null);
+                return new PaymentInitiationApiProfileFluentResponse(ex.CreateErrorMessages(), null);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new ApiProfileResponse(ex.CreateErrorMessage(), null);
+                return new PaymentInitiationApiProfileFluentResponse(ex.CreateErrorMessage(), null);
             }
         }
     }

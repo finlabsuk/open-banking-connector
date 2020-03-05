@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public class BankClientProfile
+    public class BankClientProfileResponse
     {
-        public BankClientProfile(Persistent.BankClientProfile  persistentProfile)
+        public BankClientProfileResponse(Persistent.BankClientProfile  persistentProfile)
         {
             Id = persistentProfile.Id;
             BankClientRegistrationClaims = persistentProfile.BankClientRegistrationClaims;

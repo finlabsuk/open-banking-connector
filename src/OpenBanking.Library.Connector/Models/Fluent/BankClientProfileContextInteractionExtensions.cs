@@ -109,43 +109,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static async Task<BankClientProfileResponse> UpsertAsync(this BankClientProfileContext context)
+        public static async Task<BankClientProfileFluentResponse> UpsertAsync(this BankClientProfileContext context)
         {
             context.ArgNotNull(nameof(context));
 
             var validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new BankClientProfileResponse(validationErrors, null);
+                return new BankClientProfileFluentResponse(validationErrors, null);
             }
 
             try
             {
                 var result = await PersistOpenBankingClient(context);
 
-                return new BankClientProfileResponse(result);
+                return new BankClientProfileFluentResponse(result);
             }
             catch (AggregateException ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new BankClientProfileResponse(ex.CreateErrorMessages(), null);
+                return new BankClientProfileFluentResponse(ex.CreateErrorMessages(), null);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new BankClientProfileResponse(ex.CreateErrorMessage(), null);
+                return new BankClientProfileFluentResponse(ex.CreateErrorMessage(), null);
             }
         }
 
-        private static async Task<Public.Response.BankClientProfile> PersistOpenBankingClient(BankClientProfileContext context)
+        private static async Task<Public.Response.BankClientProfileResponse> PersistOpenBankingClient(BankClientProfileContext context)
         {
             var dto = context.Context.EntityMapper.Map<Persistent.BankClientProfile>(context.Data);
 
             var persistedDto = await context.Context.ClientProfileRepository.SetAsync(dto);
 
-            return new Public.Response.BankClientProfile(persistedDto);
+            return new Public.Response.BankClientProfileResponse(persistedDto);
         }
 
         public static BankClientProfileContext BankClientRegistrationClaimsOverrides(
@@ -159,14 +159,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static async Task<BankClientProfileResponse> SubmitAsync(this BankClientProfileContext context)
+        public static async Task<BankClientProfileFluentResponse> SubmitAsync(this BankClientProfileContext context)
         {
             context.ArgNotNull(nameof(context));
 
             var validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new BankClientProfileResponse(validationErrors, null);
+                return new BankClientProfileFluentResponse(validationErrors, null);
             }
 
             try
@@ -180,19 +180,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
                 var resp = await i.CreateAsync(context.Data);
 
-                return new BankClientProfileResponse(resp);
+                return new BankClientProfileFluentResponse(resp);
             }
             catch (AggregateException ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new BankClientProfileResponse(ex.CreateErrorMessages(), null);
+                return new BankClientProfileFluentResponse(ex.CreateErrorMessages(), null);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new BankClientProfileResponse(ex.CreateErrorMessage(), null);
+                return new BankClientProfileFluentResponse(ex.CreateErrorMessage(), null);
             }
         }
 
