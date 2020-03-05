@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Response.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _apiProfileRepo = apiProfileRepo;
         }
 
-        public async Task<ApiProfile> CreateAsync(Model.Public.Request.PaymentInitiation.ApiProfile apiProfile)
+        public async Task<ApiProfile> CreateAsync(Models.Public.PaymentInitiation.Request.ApiProfile apiProfile)
         {
             // Load relevant objects
             var bankClient = await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ??
@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 throw new KeyNotFoundException("The Software statement does not exist.");
 
             // Create and store persistent object
-            var persistentApiProfile = new Model.Persistent.PaymentInitiation.ApiProfile(apiProfile.Id,
+            var persistentApiProfile = new Models.Persistent.PaymentInitiation.ApiProfile(apiProfile.Id,
                 apiProfile.BankClientProfileId,
                 apiProfile.ApiVersion, apiProfile.BaseUrl);
             await _apiProfileRepo.SetAsync(persistentApiProfile);

@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
@@ -23,12 +23,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
 
             var resultProfile = new SoftwareStatementProfile();
 
-            mapper.Map<SoftwareStatementProfile>(Arg.Any<Connector.Model.Public.SoftwareStatementProfile>())
+            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
             var interaction = new CreateSoftwareStatementProfile(repo, mapper);
 
-            var profile = new Connector.Model.Public.SoftwareStatementProfile
+            var profile = new Models.Public.SoftwareStatementProfile
             {
                 DefaultFragmentRedirectUrl = "http://test.com",
                 SigningKeySecretName = "a",

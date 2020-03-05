@@ -6,7 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {

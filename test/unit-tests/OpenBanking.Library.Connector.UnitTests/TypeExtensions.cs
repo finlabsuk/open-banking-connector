@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests

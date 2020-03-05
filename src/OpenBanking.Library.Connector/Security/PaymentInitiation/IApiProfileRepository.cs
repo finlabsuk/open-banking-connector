@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation
 {

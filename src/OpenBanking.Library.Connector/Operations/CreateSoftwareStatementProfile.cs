@@ -5,12 +5,12 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
-using SoftwareStatementProfile = FinnovationLabs.OpenBanking.Library.Connector.Model.Public.SoftwareStatementProfile;
+using SoftwareStatementProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         {
             profile.ArgNotNull(nameof(profile));
 
-            var value = _mapper.Map<Model.Persistent.SoftwareStatementProfile>(profile);
+            var value = _mapper.Map<Models.Persistent.SoftwareStatementProfile>(profile);
 
             value.State = "ok";
 

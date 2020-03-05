@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
@@ -43,13 +43,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
             return results.FirstOrDefault();
         }
 
-        public OpenBankingClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
+        public BankClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
         {
             var results = _providers.Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
                 .Where(v => v != null);
 
             // Populate default instance
-            return results.FirstOrDefault() ?? new OpenBankingClientRegistrationClaimsOverrides();
+            return results.FirstOrDefault() ?? new BankClientRegistrationClaimsOverrides();
         }
 
         public OpenIdConfiguration GetOpenBankingOpenIdConfiguration()

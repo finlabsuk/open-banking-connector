@@ -4,8 +4,8 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FluentAssertions;
 using TestStack.BDDfy.Xunit;
 
@@ -28,17 +28,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId(xfapi)
                 .SoftwareStatementProfileId(softwareStatementId)
-                .HttpMtlsOverrides(new HttpClientMtlsConfigurationOverrides
+                .HttpMtlsOverrides(new HttpMtlsConfigurationOverrides
                 {
                     TlsCertificateVerification = "aaa",
                     TlsRenegotiationSupport = "bbb"
                 })
-                .RegistrationClaimsOverrides(new OpenBankingClientRegistrationClaimsOverrides())
+                .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdOverrides(new OpenIdConfigurationOverrides
                 {
                     RegistrationEndpointUrl = "http://bbb.com"
                 })
-                .RegistrationResponseOverrides(new ClientRegistrationResponseOverrides())
+                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
                 .UpsertAsync();
 
             result.Messages.Should().HaveCount(0);
@@ -67,14 +67,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId("xfapi")
                 .SoftwareStatementProfileId("softwareStatement")
-                .HttpMtlsOverrides(new HttpClientMtlsConfigurationOverrides
+                .HttpMtlsOverrides(new HttpMtlsConfigurationOverrides
                 {
                     TlsCertificateVerification = "aaa",
                     TlsRenegotiationSupport = "bbb"
                 })
-                .RegistrationClaimsOverrides(new OpenBankingClientRegistrationClaimsOverrides())
+                .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new ClientRegistrationResponseOverrides())
+                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
                 .UpsertAsync();
 
             result1.Messages.Should().HaveCount(0);
@@ -83,14 +83,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId(xfapi2)
                 .SoftwareStatementProfileId(softwareStatementId2)
-                .HttpMtlsOverrides(new HttpClientMtlsConfigurationOverrides
+                .HttpMtlsOverrides(new HttpMtlsConfigurationOverrides
                 {
                     TlsCertificateVerification = "aaa",
                     TlsRenegotiationSupport = "bbb"
                 })
-                .RegistrationClaimsOverrides(new OpenBankingClientRegistrationClaimsOverrides())
+                .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new ClientRegistrationResponseOverrides())
+                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
                 .UpsertAsync();
             result2.Messages.Should().HaveCount(0);
 

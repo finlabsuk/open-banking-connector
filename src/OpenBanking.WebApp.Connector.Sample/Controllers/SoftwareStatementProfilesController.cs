@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
                     KeySecrets.TransportCertificate));
 
             var statementResp = await _obRequestBuilder.SoftwareStatementProfile()
-                .SoftwareStatementProfileId(request.SoftwareStatementProfileId)
+                .Id(request.SoftwareStatementProfileId)
                 .SoftwareStatement(softwareStatement?.Value)
                 .SigningKeyInfo(signingKeyId?.Value, signingCertificateKey?.Value, signingCertificate?.Value)
                 .TransportKeyInfo(transportCertificateKey?.Value, transportCertificate?.Value)

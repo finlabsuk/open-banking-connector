@@ -8,14 +8,14 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using McMaster.Extensions.CommandLineUtils;
 using OBAddressTypeCode =
-    FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation.OBAddressTypeCode;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.OBAddressTypeCode;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
@@ -60,14 +60,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapSoftwareStatement()
         {
-            _entityMapper.Map<Model.Persistent.SoftwareStatementProfile>(_softwareStatement);
+            _entityMapper.Map<Models.Persistent.SoftwareStatementProfile>(_softwareStatement);
         }
 
 
         [Benchmark]
         public void MapClientProfile()
         {
-            _entityMapper.Map<Model.Persistent.BankClientProfile>(_client);
+            _entityMapper.Map<Models.Persistent.BankClientProfile>(_client);
         }
 
 
@@ -178,16 +178,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private BankClientProfile CreateClient() => new BankClientProfile
         {
             IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
-            HttpMtlsOverrides = new HttpClientMtlsConfigurationOverrides
+            HttpMtlsConfigurationOverrides = new HttpMtlsConfigurationOverrides
             {
                 TlsCertificateVerification = "aaaa",
                 TlsRenegotiationSupport = "bbb"
             },
-            ClientRegistrationDataOverrides = new ClientRegistrationResponseOverrides
+            BankClientRegistrationDataOverrides = new BankClientRegistrationDataOverrides
             {
                 GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList()
             },
-            ClientRegistrationClaimsOverrides = new OpenBankingClientRegistrationClaimsOverrides
+            BankClientRegistrationClaimsOverrides = new BankClientRegistrationClaimsOverrides
             {
                 GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList(),
                 RequestAudience = "audience",

@@ -4,14 +4,14 @@
 
 using System;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model;
 using FluentAssertions;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
-using Meta = FinnovationLabs.OpenBanking.Library.Connector.Model.Public.Meta;
+using Meta = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Meta;
 using OBAddressTypeCode =
     FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model.OBAddressTypeCode;
 

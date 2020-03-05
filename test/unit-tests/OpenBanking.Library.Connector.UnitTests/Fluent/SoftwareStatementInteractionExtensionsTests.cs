@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FluentAssertions;
 using Xunit;
 
@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
             var requestBuilder = TestDataFactory.CreateMockRequestBuilder();
 
             var response = await requestBuilder.SoftwareStatementProfile()
-                .SoftwareStatementProfileId("0")
+                .Id("0")
                 .SoftwareStatement("e30=.e30=.e30=")
                 .SigningKeyInfo("id", "<signing key>", "<cert>")
                 .TransportKeyInfo("<transport key>", "<transport cert>")

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Jose;
 using Newtonsoft.Json;
 

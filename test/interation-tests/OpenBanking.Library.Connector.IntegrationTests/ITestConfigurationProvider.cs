@@ -2,8 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         T? GetEnumValue<T>(string key) where T : struct;
 
-        OpenBankingClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides();
+        BankClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides();
 
         OpenIdConfiguration GetOpenBankingOpenIdConfiguration();
     }

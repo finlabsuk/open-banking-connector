@@ -8,14 +8,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Validation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClientProfile;
+using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using OpenBankingClientRegistrationClaims =
-    FinnovationLabs.OpenBanking.Library.Connector.Model.Public.OpenBankingClientRegistrationClaims;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OpenBankingClientRegistrationClaims;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _openBankingClientRepo = openBankingClientRepo;
         }
         
-        public async Task<Model.Public.Response.BankClientProfile> CreateAsync(Model.Public.Request.BankClientProfile bankClientProfile)
+        public async Task<Models.Public.Response.BankClientProfile> CreateAsync(Models.Public.Request.BankClientProfile bankClientProfile)
         {
             bankClientProfile.ArgNotNull(nameof(bankClientProfile));
 
@@ -54,14 +54,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var registrationClaims = Factories.CreateRegistrationClaims(bankClientProfile.IssuerUrl,
                 softwareStatementProfile, false);
             var registrationClaimsOverrides =
-                bankClientProfile.ClientRegistrationClaimsOverrides;
+                bankClientProfile.BankClientRegistrationClaimsOverrides;
             if (registrationClaimsOverrides != null)
             {
                 registrationClaims.Aud = registrationClaimsOverrides.RequestAudience;
             }
 
             var persistentRegistrationClaims =
-                _mapper.Map<Model.Persistent.BankClientRegistrationClaims>(registrationClaims);
+                _mapper.Map<BankClientRegistrationClaims>(registrationClaims);
 
             // STEP 2
             // Check for existing Open Banking client for issuer URL
@@ -116,22 +116,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Return
-            return new Model.Public.Response.BankClientProfile(client);
+            return new Models.Public.Response.BankClientProfile(client);
             
         }
 
-        private async Task<Model.Persistent.BankClientProfile> PersistOpenBankingClient(
-            Model.Persistent.BankClientProfile value,
+        private async Task<BankClientProfile> PersistOpenBankingClient(
+            BankClientProfile value,
             OpenIdConfiguration openIdConfiguration,
             OpenBankingClientRegistrationClaims registrationClaims,
             BankClientRegistrationData openBankingRegistrationData
         )
         {
-            value.Id = Guid.NewGuid().ToString();
             value.State = "ok";
             value.OpenIdConfiguration = openIdConfiguration;
             value.BankClientRegistrationClaims =
-                _mapper.Map<Model.Persistent.BankClientRegistrationClaims>(registrationClaims);
+                _mapper.Map<BankClientRegistrationClaims>(registrationClaims);
             value.BankClientRegistrationData = openBankingRegistrationData;
 
             await _openBankingClientRepo.SetAsync(value);
@@ -139,8 +138,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             return value;
         }
 
-        private async Task<Model.Persistent.BankClientProfile> PersistOpenBankingClientProfile(
-            Model.Persistent.BankClientProfile value,
+        private async Task<BankClientProfile> PersistOpenBankingClientProfile(
+            BankClientProfile value,
             string openBankingClientId
         )
         {

@@ -9,11 +9,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.BankClientProfile;
-using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Model.Public.TokenEndpointResponse;
+using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
+using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await PostAuthCodeGrant(redirectData.Body.AuthorisationCode, redirectUrl, clientProfile);
 
             // Update consent with token
-            var value = _mapper.Map<Model.Persistent.TokenEndpointResponse>(tokenEndpointResponse);
+            var value = _mapper.Map<Models.Persistent.TokenEndpointResponse>(tokenEndpointResponse);
             consent.TokenEndpointResponse = value;
             await _domesticConsentRepo.SetAsync(consent);
         }
@@ -126,7 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<Model.Ob.TokenEndpointResponse>(_apiClient, false);
+                .RequestJsonAsync<Models.Ob.TokenEndpointResponse>(_apiClient, false);
 
             var result = _mapper.Map<TokenEndpointResponse>(resp);
 

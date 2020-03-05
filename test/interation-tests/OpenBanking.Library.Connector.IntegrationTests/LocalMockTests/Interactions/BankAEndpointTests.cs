@@ -4,9 +4,9 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Model.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FluentAssertions;
 using TestStack.BDDfy.Xunit;
 
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // includes the transport and signing keys associated with the software statement.
             // This is performed once in the lifetime of Servicing or in the case of using multiple identities to connect to banks, once per identity.
             var softwareStatementProfileResp = await builder.SoftwareStatementProfile()
-                .SoftwareStatementProfileId("0")
+                .Id("0")
                 .SoftwareStatement(TestConfig.GetValue("softwarestatement"))
                 .SigningKeyInfo(
                     TestConfig.GetValue("signingkeyid"),
@@ -47,10 +47,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // Bank registration uses a software statement to establish our identity in the eyes of the bank. This and other data are transmitted to the bank.
             // This is performed once per Bank.
             var bankClientProfileResp = await builder.BankClientProfile()
-                .IssuerUrl(new Uri(TestConfig.GetValue("clientProfileIssuerUrl")))
+                .Id("MyBankClientProfileId")
                 .SoftwareStatementProfileId(softwareStatementProfileResp.Data.Id)
+                .IssuerUrl(new Uri(TestConfig.GetValue("clientProfileIssuerUrl")))
                 .XFapiFinancialId(TestConfig.GetValue("xFapiFinancialId"))
-                .OpenBankingClientRegistrationClaimsOverrides(
+                .BankClientRegistrationClaimsOverrides(
                     TestConfig.GetOpenBankingClientRegistrationClaimsOverrides())
                 .SubmitAsync();
 
