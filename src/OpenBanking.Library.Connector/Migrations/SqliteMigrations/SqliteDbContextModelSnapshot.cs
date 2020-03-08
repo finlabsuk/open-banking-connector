@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.SqliteMigrati
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2");
 
-            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.SoftwareStatementProfile", b =>
+            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SoftwareStatementProfile", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -23,19 +23,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.SqliteMigrati
                     b.Property<string>("DefaultFragmentRedirectUrl")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ObSigningKey")
+                    b.Property<string>("SigningCertificate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ObSigningKid")
+                    b.Property<string>("SigningKeyId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ObSigningPem")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ObTransportKey")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ObTransportPem")
+                    b.Property<string>("SigningKeySecretName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SoftwareStatementHeaderBase64")
@@ -50,14 +44,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.SqliteMigrati
                     b.Property<string>("State")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("TransportCertificate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TransportKeySecretName")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("SoftwareStatementProfiles");
                 });
 
-            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.SoftwareStatementProfile", b =>
+            modelBuilder.Entity("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SoftwareStatementProfile", b =>
                 {
-                    b.OwnsOne("FinnovationLabs.OpenBanking.Library.Connector.Model.Persistent.SoftwareStatementPayload", "SoftwareStatementPayload", b1 =>
+                    b.OwnsOne("FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SoftwareStatementPayload", "SoftwareStatementPayload", b1 =>
                         {
                             b1.Property<string>("SoftwareStatementProfileId")
                                 .HasColumnType("TEXT");

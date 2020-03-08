@@ -2,25 +2,50 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Net.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
 {
+    public static class DbMethods
+    {
+        public static IHost CheckDbExists(this IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<BaseDbContext>();
+            var creator = context.Database.GetService<IRelationalDatabaseCreator>();
+
+            if (!creator.Exists())
+            {
+                throw new ApplicationException(
+                    "No database found. Run 'dotnet ef database update' in OpenBanking.WebApp.Connector root folder to create test DB.");
+            }
+
+            return host;
+        }
+    }
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddOpenBankingConnector(this IServiceCollection services,
-            IConfiguration config)
+            IConfiguration configuration)
         {
-            const string httpClientName = "OBC.NET";
+            const string httpClientName = "OBC";
 
             services.AddHttpClient(httpClientName)
                 .ConfigurePrimaryHttpMessageHandler(sp =>
@@ -34,22 +59,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                     return handler;
                 });
 
-            services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(config));
+            services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(configuration));
             services.AddSingleton<IInstrumentationClient, InstrumentationClient>();
             services.AddSingleton(sp =>
             {
                 var builder = new KeySecretBuilder();
                 var configProvider = sp.GetService<IConfigurationProvider>();
 
-                return builder.GetKeySecretProvider(config, configProvider.GetRuntimeConfiguration());
+                return builder.GetKeySecretProvider(configuration, configProvider.GetRuntimeConfiguration());
             });
-            services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
-            services.AddSingleton<ISoftwareStatementProfileRepository, MemorySoftwareStatementProfileRepository>();
-            services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
-            services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
-            services.AddSingleton<IApiProfileRepository, MemoryApiProfileRepository>();
-            services.AddSingleton<IEntityMapper, EntityMapper>();
-            services.AddTransient<IOpenBankingRequestBuilder, OpenBankingRequestBuilder>();
             services.AddSingleton<IApiClient>(sp =>
             {
                 var hcf = sp.GetService<IHttpClientFactory>();
@@ -58,6 +76,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
 
                 return new ApiClient(sp.GetService<IInstrumentationClient>(), client);
             });
+            services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
+            services.AddSingleton<ISoftwareStatementProfileRepository, MemorySoftwareStatementProfileRepository>();
+            services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
+            services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
+            services.AddSingleton<IApiProfileRepository, MemoryApiProfileRepository>();
+            services.AddSingleton<IEntityMapper, EntityMapper>();
+            
+            // Configure DB
+            switch (configuration["DbProvider"])
+            {
+                case "Sqlite":
+                    services
+                        // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
+                        .AddDbContext<BaseDbContext, SqliteDbContext>(options =>
+                        {
+                            var connectionString = configuration.GetConnectionString("SqliteDbContext");
+                            options.UseSqlite(
+                                connectionString
+                            );
+                        });
+                    break;
+                default:
+                    throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
+            }
+            services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
 
             return services;
         }

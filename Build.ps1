@@ -6,8 +6,8 @@ $ErrorActionPreference = "Stop"
 
 $solution = "FinnovationLabs.OpenBanking.Library.Connector.sln"
 $mainproj = "src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj"
-$testprojs = "test\UnitTests\OpenBanking.Library.Connector.UnitTests\OpenBanking.Library.Connector.UnitTests.csproj"
-$inttestprojs = "test\IntegrationTests\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj"
+$testprojs = "test\unit-tests\OpenBanking.Library.Connector.UnitTests\OpenBanking.Library.Connector.UnitTests.csproj"
+$inttestprojs = "test\integration-tests\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj"
 
 dotnet clean $solution -c $config
 

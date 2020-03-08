@@ -34,9 +34,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1", "src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj", "{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.IntegrationTests", "test\interation-tests\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj", "{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UnitTests", "test\unit-tests\OpenBanking.Library.Connector.UnitTests\OpenBanking.Library.Connector.UnitTests.csproj", "{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.IntegrationTests", "test\integration-tests\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj", "{A28EEF06-C50F-47C9-A951-3CC11F92CE7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,14 +76,14 @@ Global
 		{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,8 +100,8 @@ Global
 		{8AC41121-7AFF-48D4-8494-E0DE64A7368A} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C} = {61547328-A31D-4347-A5DA-9508ACD30976}
-		{9FBFFC2F-904B-42E0-9C56-C226F3E6C1EE} = {CA4EE3F7-1982-4EEA-8D10-45AC4AB32027}
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0} = {3576F9D1-9A6C-49B2-83A7-25782C3B505E}
+		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D} = {CA4EE3F7-1982-4EEA-8D10-45AC4AB32027}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5300F4B-F7BB-4404-9CD1-6C24FA33F834}

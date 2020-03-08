@@ -8,12 +8,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class BankClientProfileContext
     {
-        internal BankClientProfileContext(OpenBankingContext context)
+        internal BankClientProfileContext(ISharedContext context)
         {
             Context = context.ArgNotNull(nameof(context));
         }
 
-        internal OpenBankingContext Context { get; }
+        internal ISharedContext Context { get; }
         internal BankClientProfile Data { get; set; }
     }
 }

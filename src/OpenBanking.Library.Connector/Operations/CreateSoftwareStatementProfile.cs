@@ -5,10 +5,9 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
 using SoftwareStatementProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.SoftwareStatementProfile;
 
@@ -16,20 +15,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     public class CreateSoftwareStatementProfile
     {
-        private readonly IEntityMapper _mapper;
-        private readonly ISoftwareStatementProfileRepository _repo;
+        private readonly ISharedContext _sharedContext;
 
-        public CreateSoftwareStatementProfile(ISoftwareStatementProfileRepository repo, IEntityMapper mapper)
+        public CreateSoftwareStatementProfile(ISharedContext sharedContext)
         {
-            _repo = repo.ArgNotNull(nameof(repo));
-            _mapper = mapper.ArgNotNull(nameof(mapper));
+            _sharedContext = sharedContext;
         }
 
         public async Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfile profile)
         {
             profile.ArgNotNull(nameof(profile));
 
-            var value = _mapper.Map<Models.Persistent.SoftwareStatementProfile>(profile);
+            var value = _sharedContext.EntityMapper.Map<Models.Persistent.SoftwareStatementProfile>(profile);
 
             value.State = "ok";
 
@@ -48,7 +45,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var payloadString = Encoding.UTF8.GetString(payloadData);
             value.SoftwareStatementPayload = JsonConvert.DeserializeObject<SoftwareStatementPayload>(payloadString);
 
-            await _repo.SetAsync(value);
+            await _sharedContext.SoftwareStatementRepository.SetAsync(value);
+            await _sharedContext.DbContext.SoftwareStatementProfiles.AddAsync(value);
+            await _sharedContext.DbContext.SaveChangesAsync();
 
             return new SoftwareStatementProfileResponse(value.Id);
         }

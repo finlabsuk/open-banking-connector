@@ -9,12 +9,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 {
     public class PaymentInitiationApiProfileContext
     {
-        internal PaymentInitiationApiProfileContext(OpenBankingContext context)
+        internal PaymentInitiationApiProfileContext(ISharedContext context)
         {
             Context = context;
         }
 
-        internal OpenBankingContext Context { get; }
+        internal ISharedContext Context { get; }
 
         internal PaymentInitiationApiProfile Data { get; set; }
 

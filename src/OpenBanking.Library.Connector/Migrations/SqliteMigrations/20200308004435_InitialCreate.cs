@@ -25,11 +25,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.SqliteMigrati
                     SoftwareStatementPayload_OrgId = table.Column<string>(nullable: true),
                     SoftwareStatementPayload_OrgName = table.Column<string>(nullable: true),
                     SoftwwareStatementSignatureBase64 = table.Column<string>(nullable: true),
-                    ObSigningKid = table.Column<string>(nullable: true),
-                    ObSigningKey = table.Column<string>(nullable: true),
-                    ObSigningPem = table.Column<string>(nullable: true),
-                    ObTransportKey = table.Column<string>(nullable: true),
-                    ObTransportPem = table.Column<string>(nullable: true),
+                    SigningKeyId = table.Column<string>(nullable: true),
+                    SigningKeySecretName = table.Column<string>(nullable: true),
+                    SigningCertificate = table.Column<string>(nullable: true),
+                    TransportKeySecretName = table.Column<string>(nullable: true),
+                    TransportCertificate = table.Column<string>(nullable: true),
                     DefaultFragmentRedirectUrl = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

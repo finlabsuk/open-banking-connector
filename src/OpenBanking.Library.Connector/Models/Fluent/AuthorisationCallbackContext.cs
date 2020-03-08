@@ -8,12 +8,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class AuthorisationCallbackContext
     {
-        internal AuthorisationCallbackContext(OpenBankingContext context)
+        internal AuthorisationCallbackContext(ISharedContext context)
         {
             Context = context;
         }
 
-        internal OpenBankingContext Context { get; }
+        internal ISharedContext Context { get; }
 
         internal AuthorisationCallbackData Data { get; set; }
     }

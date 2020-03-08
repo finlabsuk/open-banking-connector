@@ -9,34 +9,37 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 {
     internal static class TestDataFactory
     {
-        public static OpenBankingContext CreateMockOpenBankingContext()
+        public static SharedContext CreateMockOpenBankingContext()
         {
-            return new OpenBankingContext(
+            return new SharedContext(
+                new SqliteDbContext(new DbContextOptions<SqliteDbContext>()),
+                Substitute.For<ICertificateReader>(),
+                Substitute.For<IApiClient>(),
                 Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IKeySecretProvider>(),
-                Substitute.For<IApiClient>(),
-                Substitute.For<ICertificateReader>(),
                 Substitute.For<IOpenBankingClientProfileRepository>(),
                 Substitute.For<ISoftwareStatementProfileRepository>(),
-                Substitute.For<IEntityMapper>(),
                 Substitute.For<IDomesticConsentRepository>(),
+                Substitute.For<IEntityMapper>(),
                 Substitute.For<IApiProfileRepository>()
             );
         }
 
 
-        public static OpenBankingRequestBuilder CreateMockRequestBuilder()
+        public static RequestBuilder CreateMockRequestBuilder()
         {
-            return new OpenBankingRequestBuilder(
+            return new RequestBuilder(
                 Substitute.For<ITimeProvider>(),
                 new EntityMapper(),
+                new SqliteDbContext(new DbContextOptions<SqliteDbContext>()), 
                 new DefaultConfigurationProvider(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IKeySecretProvider>(),
