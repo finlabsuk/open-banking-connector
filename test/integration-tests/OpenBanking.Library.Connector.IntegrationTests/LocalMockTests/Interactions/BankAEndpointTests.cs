@@ -38,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .DefaultFragmentRedirectUrl(TestConfig.GetValue("defaultfragmentredirecturl"))
                 .SubmitAsync();
 
+            softwareStatementProfileResp.Should().NotBeNull();
             softwareStatementProfileResp.Messages.Should().BeEmpty();
             softwareStatementProfileResp.Data.Should().NotBeNull();
             softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();

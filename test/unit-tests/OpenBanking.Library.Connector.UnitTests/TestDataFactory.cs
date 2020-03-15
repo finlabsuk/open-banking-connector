@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         public static SharedContext CreateMockOpenBankingContext()
         {
             return new SharedContext(
-                new SqliteDbContext(new DbContextOptions<SqliteDbContext>()),
+                Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>()),
                 Substitute.For<ICertificateReader>(),
                 Substitute.For<IApiClient>(),
                 Substitute.For<IConfigurationProvider>(),
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             return new RequestBuilder(
                 Substitute.For<ITimeProvider>(),
                 new EntityMapper(),
-                new SqliteDbContext(new DbContextOptions<SqliteDbContext>()), 
+                Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>()), 
                 new DefaultConfigurationProvider(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IKeySecretProvider>(),

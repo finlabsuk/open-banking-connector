@@ -28,14 +28,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<BaseDbContext>();
+            
+            // Delete/Create DB as required (should normally be commented out)
+            //context.Database.EnsureCreated();
+            
+            // Check DB exists
             var creator = context.Database.GetService<IRelationalDatabaseCreator>();
-
             if (!creator.Exists())
             {
                 throw new ApplicationException(
-                    "No database found. Run 'dotnet ef database update' in OpenBanking.WebApp.Connector root folder to create test DB.");
+                    "No database found. Run 'dotnet ef database update' in OpenBanking.WebApp.Connector.Sample root folder to create test DB.");
             }
-
+            
             return host;
         }
     }

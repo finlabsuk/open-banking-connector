@@ -94,7 +94,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 return new OpenBankingSoftwareStatementResponse(validationErrors, null);
             }
 
-            var creator = new CreateSoftwareStatementProfile(context.Context);
+            var creator = new CreateSoftwareStatementProfile(
+                context.Context.EntityMapper,
+                context.Context.SoftwareStatementRepository,
+                context.Context.DbContext
+                );
 
             var messages = new List<OpenBankingResponseMessage>();
 

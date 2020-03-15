@@ -3,10 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Xunit;
 
@@ -17,15 +20,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
+            var repo = Substitute.For<ISoftwareStatementProfileRepository>();
+            var mapper = Substitute.For<IEntityMapper>();
+            var db = Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>());
             
-            var sharedContext = Substitute.For<ISharedContext>();
-
             var resultProfile = new SoftwareStatementProfile();
 
-            sharedContext.EntityMapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
+            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
-            var interaction = new CreateSoftwareStatementProfile(sharedContext);
+            var interaction = new CreateSoftwareStatementProfile(mapper, repo, db);
 
             var profile = new Models.Public.SoftwareStatementProfile
             {
