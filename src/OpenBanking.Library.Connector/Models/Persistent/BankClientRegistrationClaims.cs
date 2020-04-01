@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
+    [Owned]
     public class BankClientRegistrationClaims
     {
         [JsonProperty("iss")]

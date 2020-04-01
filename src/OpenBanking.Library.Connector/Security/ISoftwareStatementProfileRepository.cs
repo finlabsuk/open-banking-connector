@@ -19,6 +19,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         Task<SoftwareStatementProfile> SetAsync(SoftwareStatementProfile profile);
 
+        Task SaveChangesAsync();
+
         Task<bool> DeleteAsync(string id);
 
         Task<IList<string>> GetIdsAsync();

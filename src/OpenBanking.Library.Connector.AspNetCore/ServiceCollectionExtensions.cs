@@ -30,6 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             var context = services.GetRequiredService<BaseDbContext>();
             
             // Delete/Create DB as required (should normally be commented out)
+            //context.Database.EnsureDeleted();
             //context.Database.EnsureCreated();
             
             // Check DB exists
@@ -81,7 +82,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 return new ApiClient(sp.GetService<IInstrumentationClient>(), client);
             });
             services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
-            services.AddSingleton<ISoftwareStatementProfileRepository, MemorySoftwareStatementProfileRepository>();
             services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
             services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
             services.AddSingleton<IApiProfileRepository, MemoryApiProfileRepository>();
@@ -104,6 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 default:
                     throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
             }
+            services.AddScoped<ISoftwareStatementProfileRepository, SoftwareStatementProfileRepository>();
             services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
 
             return services;

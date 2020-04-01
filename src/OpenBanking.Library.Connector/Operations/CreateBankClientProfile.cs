@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using Microsoft.EntityFrameworkCore;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using OpenBankingClientRegistrationClaims =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OpenBankingClientRegistrationClaims;
@@ -25,21 +27,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IEntityMapper _mapper;
         private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
         private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
+        private readonly BaseDbContext _db;
 
-        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementProfileRepo, IOpenBankingClientProfileRepository openBankingClientRepo)
+        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementProfileRepo, IOpenBankingClientProfileRepository openBankingClientRepo, BaseDbContext db)
         {
             _apiClient = apiClient;
             _mapper = mapper;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _openBankingClientRepo = openBankingClientRepo;
+            _db = db;
         }
-        
+
         public async Task<Models.Public.Response.BankClientProfileResponse> CreateAsync(Models.Public.Request.BankClientProfile bankClientProfile)
         {
             bankClientProfile.ArgNotNull(nameof(bankClientProfile));
 
             // Load relevant objects
-            var softwareStatementProfile = await _softwareStatementProfileRepo.GetAsync(bankClientProfile.SoftwareStatementProfileId) ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
+            var softwareStatementProfile = await
+                _softwareStatementProfileRepo.GetAsync(bankClientProfile.SoftwareStatementProfileId) ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
 
             // STEP 1
             // Compute claims associated with Open Banking client
@@ -68,10 +73,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // If we have an Open Banking client with the same issuer URL we will check if the claims match.
             // If they do, we will re-use this client.
             // Otherwise we will return an error as only support a single client per issuer URL at present.
-            var existingClient =
-                (await _openBankingClientRepo.GetAsync(c => c.IssuerUrl == bankClientProfile.IssuerUrl))
-                .SingleOrDefault();
-            if (existingClient != null)
+            var existingClient = await
+                _db.BankClientProfiles
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(c => c.IssuerUrl == bankClientProfile.IssuerUrl);
+            if (existingClient is object)
             {
                 if (existingClient.BankClientRegistrationClaims != persistentRegistrationClaims)
                 {
@@ -82,12 +88,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // STEP 3
             // Create new Open Banking client by posting JWT
-            string jwt = null; // null by default, will be defined if new client created
             BankClientProfile client;
-            if (existingClient == null)
+            if (existingClient is null)
             {
                 var jwtFactory = new JwtFactory();
-                jwt = jwtFactory.CreateJwt(softwareStatementProfile, registrationClaims, false);
+                var jwt = jwtFactory.CreateJwt(softwareStatementProfile, registrationClaims, false);
 
                 var registrationResponse = await new HttpRequestBuilder()
                     .SetMethod(HttpMethod.Post)
@@ -109,6 +114,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 client = _mapper.Map<BankClientProfile>(bankClientProfile);
                 client = await PersistOpenBankingClient(client, openIdConfiguration, registrationClaims,
                     openBankingClientResponse);
+                _db.Add(client);
+                await _db.SaveChangesAsync();
             }
             else
             {

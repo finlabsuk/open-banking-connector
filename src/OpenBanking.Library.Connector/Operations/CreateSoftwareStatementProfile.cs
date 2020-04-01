@@ -19,13 +19,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IEntityMapper _mapper;
         private readonly ISoftwareStatementProfileRepository _repo;
-        private readonly BaseDbContext _db;
 
-        public CreateSoftwareStatementProfile(IEntityMapper mapper, ISoftwareStatementProfileRepository repo, BaseDbContext db)
+        public CreateSoftwareStatementProfile(IEntityMapper mapper, ISoftwareStatementProfileRepository repo)
         {
             _mapper = mapper;
             _repo = repo;
-            _db = db;
         }
 
         public async Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfile profile)
@@ -53,8 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             await _repo.SetAsync(value);
 
-            await _db.SoftwareStatementProfiles.AddAsync(value);
-            await _db.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             return new SoftwareStatementProfileResponse(value.Id);
         }

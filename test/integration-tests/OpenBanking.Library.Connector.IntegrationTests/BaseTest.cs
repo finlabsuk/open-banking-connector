@@ -41,16 +41,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         private RequestBuilder CreateMockRequestBuilder()
         {
+            var _dB = new SqliteDbContext(_dbContextOptions);
             var requestBuilder = new RequestBuilder(
                 new EntityMapper(),
-                new SqliteDbContext(_dbContextOptions),
+                _dB,
                 new DefaultConfigurationProvider(),
                 new ConsoleInstrumentationClient(),
                 new MemoryKeySecretProvider(),
                 GetApiClient(TestConfig),
                 new PemParsingCertificateReader(),
                 new MemoryOpenBankingClientProfileRepository(),
-                new MemorySoftwareStatementProfileRepository(),
+                new SoftwareStatementProfileRepository(_dB),
                 new MemoryDomesticConsentRepository(),
                 new MemoryApiProfileRepository());
 

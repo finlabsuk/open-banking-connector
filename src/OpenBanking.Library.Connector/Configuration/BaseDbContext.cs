@@ -15,7 +15,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
         {
         }
 
-        public DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
+        // NB: must be vritual to support NSubstitute mocking
+        public virtual DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
+
+        // NB: must be vritual to support NSubstitute mocking
+        public virtual DbSet<BankClientProfile> BankClientProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +47,91 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
                             v => JsonConvert.DeserializeObject<string[]>(v)
                         );
                 });
+            
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.BankClientRegistrationClaims)
+                        .Property(e => e.GrantTypes)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.BankClientRegistrationClaims)
+                        .Property(e => e.ResponseTypes)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+            
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.BankClientRegistrationClaims)
+                        .Property(e => e.RedirectUris)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.BankClientRegistrationClaims)
+                        .Property(e => e.Scope)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.OpenIdConfiguration)
+                        .Property(e => e.ResponseTypesSupported)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.OpenIdConfiguration)
+                        .Property(e => e.ScopesSupported)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .OwnsOne(e => e.OpenIdConfiguration)
+                        .Property(e => e.ResponseModesSupported)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<string[]>(v)
+                        );
+                });
+            
         }
     }
 }

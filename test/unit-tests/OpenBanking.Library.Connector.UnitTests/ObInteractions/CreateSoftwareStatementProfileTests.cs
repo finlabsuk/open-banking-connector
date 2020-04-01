@@ -22,14 +22,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         {
             var repo = Substitute.For<ISoftwareStatementProfileRepository>();
             var mapper = Substitute.For<IEntityMapper>();
-            var db = Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>());
             
             var resultProfile = new SoftwareStatementProfile();
 
             mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
-            var interaction = new CreateSoftwareStatementProfile(mapper, repo, db);
+            var interaction = new CreateSoftwareStatementProfile(mapper, repo);
 
             var profile = new Models.Public.SoftwareStatementProfile
             {

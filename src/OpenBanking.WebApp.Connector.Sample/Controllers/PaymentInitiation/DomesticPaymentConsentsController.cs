@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             _obRequestBuilder = obRequestBuilder;
         }
 
-        [Route("domestic-payment-consents")]
+        [Route("pisp/domestic-payment-consents")]
         [HttpPost]
         [ProducesResponseType(typeof(DomesticPaymentConsentHttpResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]

@@ -175,7 +175,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     context.Context.ApiClient,
                     context.Context.EntityMapper,
                     context.Context.SoftwareStatementRepository,
-                    context.Context.ClientProfileRepository
+                    context.Context.ClientProfileRepository,
+                    context.Context.DbContext
                 );
 
                 var resp = await i.CreateAsync(context.Data);
