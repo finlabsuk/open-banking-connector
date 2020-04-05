@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
@@ -24,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IEntityMapper _entityMapper;
         private readonly IKeySecretProvider _keySecretProvider;
         private readonly IInstrumentationClient _logger;
-        private readonly ISoftwareStatementProfileRepository _softwareStatementRepo;
+        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementRepo;
         private readonly ITimeProvider _timeProvider;
 
         
@@ -34,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
             ICertificateReader certificateReader,
             IOpenBankingClientProfileRepository clientProfileRepository,
-            ISoftwareStatementProfileRepository softwareStatementProfileRepo,
+            IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDomesticConsentRepository domesticConsentRepo,
             IApiProfileRepository apiProfileRepository)
             : this(new TimeProvider(), entityMapper, baseDbContext, configurationProvider, logger, keySecretProvider, apiClient,
@@ -50,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
             ICertificateReader certificateReader,
             IOpenBankingClientProfileRepository clientProfileRepository,
-            ISoftwareStatementProfileRepository softwareStatementProfileRepo,
+            IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDomesticConsentRepository domesticConsentRepo,
             IApiProfileRepository apiProfileRepository)
         {

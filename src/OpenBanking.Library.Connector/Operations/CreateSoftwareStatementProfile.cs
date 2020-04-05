@@ -18,9 +18,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     public class CreateSoftwareStatementProfile
     {
         private readonly IEntityMapper _mapper;
-        private readonly ISoftwareStatementProfileRepository _repo;
+        private readonly IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> _repo;
 
-        public CreateSoftwareStatementProfile(IEntityMapper mapper, ISoftwareStatementProfileRepository repo)
+        public CreateSoftwareStatementProfile(IEntityMapper mapper, IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> repo)
         {
             _mapper = mapper;
             _repo = repo;

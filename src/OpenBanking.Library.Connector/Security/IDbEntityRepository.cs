@@ -7,17 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
-    public interface ISoftwareStatementProfileRepository
+    public interface IDbEntityRepository<TEntity>
     {
-        Task<SoftwareStatementProfile> GetAsync(string id);
+        Task<TEntity> GetAsync(string id);
 
-        Task<IQueryable<SoftwareStatementProfile>> GetAsync(Expression<Func<SoftwareStatementProfile, bool>> predicate);
+        Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
-        Task<SoftwareStatementProfile> SetAsync(SoftwareStatementProfile profile);
+        Task<TEntity> SetAsync(TEntity profile);
+
+        Task SaveChangesAsync();
 
         Task<bool> DeleteAsync(string id);
 

@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Microsoft.Data.Sqlite;
@@ -51,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 GetApiClient(TestConfig),
                 new PemParsingCertificateReader(),
                 new MemoryOpenBankingClientProfileRepository(),
-                new SoftwareStatementProfileRepository(_dB),
+                new DbEntityRepository<SoftwareStatementProfile>(_dB),
                 new MemoryDomesticConsentRepository(),
                 new MemoryApiProfileRepository());
 

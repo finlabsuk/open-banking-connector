@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
@@ -16,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IApiClient _apiClient;
         private readonly IApiProfileRepository _apiProfileRepo;
         private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
-        private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
 
-        public CreateApiProfile(IApiClient apiClient, ISoftwareStatementProfileRepository softwareStatementProfileRepo,
+        public CreateApiProfile(IApiClient apiClient, IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IOpenBankingClientProfileRepository openBankingClientRepo, IApiProfileRepository apiProfileRepo)
         {
             _apiClient = apiClient;

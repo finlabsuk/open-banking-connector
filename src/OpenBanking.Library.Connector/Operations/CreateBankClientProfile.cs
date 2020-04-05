@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using OpenBankingClientRegistrationClaims =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OpenBankingClientRegistrationClaims;
+using SoftwareStatementProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -25,11 +26,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IApiClient _apiClient;
         private readonly IEntityMapper _mapper;
-        private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
         private readonly BaseDbContext _db;
 
-        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementProfileRepo, IOpenBankingClientProfileRepository openBankingClientRepo, BaseDbContext db)
+        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo, IOpenBankingClientProfileRepository openBankingClientRepo, BaseDbContext db)
         {
             _apiClient = apiClient;
             _mapper = mapper;

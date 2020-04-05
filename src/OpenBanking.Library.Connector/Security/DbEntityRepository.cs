@@ -13,19 +13,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
-    public class SoftwareStatementProfileRepository : ISoftwareStatementProfileRepository
+    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity> where TEntity: class, IEntity
     {
         private readonly BaseDbContext _db;
 
-        public SoftwareStatementProfileRepository(BaseDbContext db)
+        public DbEntityRepository(BaseDbContext db)
         {
             _db = db;
         }
 
-        public async Task<SoftwareStatementProfile> GetAsync(string id)
+        public async Task<TEntity> GetAsync(string id)
         {
             var value = await
-                _db.SoftwareStatementProfiles
+                _db.Set<TEntity>()
                     .FindAsync(id);
             if (value is null)
             {
@@ -35,13 +35,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return value;
         }
 
-        public async Task<IQueryable<SoftwareStatementProfile>> GetAsync(
-            Expression<Func<SoftwareStatementProfile, bool>> predicate)
+        public async Task<IQueryable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<SoftwareStatementProfile> SetAsync(SoftwareStatementProfile value)
+        public async Task<TEntity> SetAsync(TEntity value)
         {
             // Input should be detached (untracked)
             if (_db.Entry(value).State != EntityState.Detached)
@@ -50,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             }
 
             var existingValue = await
-                _db.SoftwareStatementProfiles
+                _db.Set<TEntity>()
                     .FindAsync(value.Id);
             if (existingValue is null)
             {
@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public async Task<IList<string>> GetIdsAsync()
         {
-            IList<string> keys = _db.SoftwareStatementProfiles
+            IList<string> keys = _db.Set<TEntity>()
                 .Select(p => p.Id)
                 .ToList();
 

@@ -24,10 +24,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         private readonly RuntimeConfiguration _config;
         private readonly IKeySecretProvider _keySecrets;
         private readonly IOpenBankingRequestBuilder _obRequestBuilder;
-        private readonly ISoftwareStatementProfileRepository _profileRepo;
+        private readonly IDbEntityRepository<Library.Connector.Models.Persistent.SoftwareStatementProfile> _profileRepo;
 
         public SoftwareStatementController(IConfigurationProvider configProvider,
-            ISoftwareStatementProfileRepository profileRepo,
+            IDbEntityRepository<Library.Connector.Models.Persistent.SoftwareStatementProfile> profileRepo,
             IOpenBankingRequestBuilder obRequestBuilder, IKeySecretProvider keySecrets)
         {
             _config = configProvider.GetRuntimeConfiguration();

@@ -22,12 +22,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     {
         private readonly IApiClient _apiClient;
         private readonly IEntityMapper _mapper;
-        private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
         private readonly IDomesticConsentRepository _domesticConsentRepo;
         private readonly IApiProfileRepository _apiProfileRepo;
 
-        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper, ISoftwareStatementProfileRepository softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
+        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
         {
             _apiClient = apiClient;
             _mapper = mapper;

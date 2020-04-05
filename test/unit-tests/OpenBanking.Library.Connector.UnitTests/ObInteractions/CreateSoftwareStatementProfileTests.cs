@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
-            var repo = Substitute.For<ISoftwareStatementProfileRepository>();
+            var repo = Substitute.For<IDbEntityRepository<Models.Persistent.SoftwareStatementProfile>>();
             var mapper = Substitute.For<IEntityMapper>();
             
             var resultProfile = new SoftwareStatementProfile();

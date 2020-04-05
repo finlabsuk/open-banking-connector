@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IKeySecretProvider>(),
                 Substitute.For<IOpenBankingClientProfileRepository>(),
-                Substitute.For<ISoftwareStatementProfileRepository>(),
+                Substitute.For<IDbEntityRepository<Models.Persistent.SoftwareStatementProfile>>(),
                 Substitute.For<IDomesticConsentRepository>(),
                 Substitute.For<IEntityMapper>(),
                 Substitute.For<IApiProfileRepository>()
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IApiClient>(),
                 Substitute.For<ICertificateReader>(),
                 Substitute.For<IOpenBankingClientProfileRepository>(),
-                Substitute.For<ISoftwareStatementProfileRepository>(),
+                Substitute.For<IDbEntityRepository<Models.Persistent.SoftwareStatementProfile>>(),
                 Substitute.For<IDomesticConsentRepository>(),
                 Substitute.For<IApiProfileRepository>());
         }

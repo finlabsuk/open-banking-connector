@@ -4,7 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    public class SoftwareStatementProfile
+    public class SoftwareStatementProfile: IEntity
     {
         public string Id { get; set; }
 

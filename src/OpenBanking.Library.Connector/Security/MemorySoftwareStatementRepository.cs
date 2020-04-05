@@ -51,11 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return result.ToTaskResult();
         }
 
-        public async Task SaveChangesAsync()
-        {
-        }
-
-
         public Task<bool> DeleteAsync(string id)
         {
             return _cache.TryRemove(id, out _).ToTaskResult();

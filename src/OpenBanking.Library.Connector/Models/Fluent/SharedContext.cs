@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
@@ -14,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class SharedContext: ISharedContext
     {
-        internal SharedContext(BaseDbContext dbContext, ICertificateReader certificateReader, IApiClient apiClient, IConfigurationProvider configurationProvider, IInstrumentationClient instrumentation, IKeySecretProvider keySecretProvider, IOpenBankingClientProfileRepository clientProfileRepository, ISoftwareStatementProfileRepository softwareStatementRepository, IDomesticConsentRepository domesticConsentRepository, IEntityMapper entityMapper, IApiProfileRepository apiProfileRepository)
+        internal SharedContext(BaseDbContext dbContext, ICertificateReader certificateReader, IApiClient apiClient, IConfigurationProvider configurationProvider, IInstrumentationClient instrumentation, IKeySecretProvider keySecretProvider, IOpenBankingClientProfileRepository clientProfileRepository, IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository, IDomesticConsentRepository domesticConsentRepository, IEntityMapper entityMapper, IApiProfileRepository apiProfileRepository)
         {
             DbContext = dbContext;
             CertificateReader = certificateReader;
@@ -37,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretProvider KeySecretProvider { get; }
         public IOpenBankingClientProfileRepository ClientProfileRepository { get; }
-        public ISoftwareStatementProfileRepository SoftwareStatementRepository { get; }
+        public IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
         public IDomesticConsentRepository DomesticConsentRepository { get; }
         public IEntityMapper EntityMapper { get; }
         public IApiProfileRepository ApiProfileRepository { get; }

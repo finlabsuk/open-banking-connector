@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
         public void Info(string message)
         {
-            Write(_outWriter, message, ConsoleColor.White);
+            Write(_outWriter, message, null);
         }
 
         public void Warning(string message)
@@ -74,11 +74,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
             Write(_outWriter, msg, ConsoleColor.Red);
         }
 
-        private void Write(TextWriter target, string message, ConsoleColor color)
+        private void Write(TextWriter target, string message, ConsoleColor? color)
         {
             lock (Console.Out)
             {
-                Console.ForegroundColor = color;
+                if (color is { } value)
+                {
+                    Console.ForegroundColor = value; 
+                }
                 target.WriteLine(message);
                 Console.ResetColor();
             }

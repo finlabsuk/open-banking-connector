@@ -19,14 +19,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     public class RedirectCallbackHandler
     {
-        private readonly ISoftwareStatementProfileRepository _softwareStatementProfileRepo;
+        private readonly IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly IApiClient _apiClient;
         private readonly IDomesticConsentRepository _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
         private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
 
         public RedirectCallbackHandler(
-            ISoftwareStatementProfileRepository softwareStatementProfileRepo,
+            IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> softwareStatementProfileRepo,
             IApiClient apiClient, IEntityMapper mapper,
             IOpenBankingClientProfileRepository openBankingClientRepo,
             IDomesticConsentRepository domesticConsentRepo)
