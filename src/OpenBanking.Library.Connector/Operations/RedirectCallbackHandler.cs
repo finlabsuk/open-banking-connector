@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
@@ -21,15 +22,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly IApiClient _apiClient;
-        private readonly IDomesticConsentRepository _domesticConsentRepo;
+        private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
+        private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
 
         public RedirectCallbackHandler(
             IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> softwareStatementProfileRepo,
             IApiClient apiClient, IEntityMapper mapper,
-            IOpenBankingClientProfileRepository openBankingClientRepo,
-            IDomesticConsentRepository domesticConsentRepo)
+            IDbEntityRepository<BankClientProfile> openBankingClientRepo,
+            IDbEntityRepository<DomesticConsent> domesticConsentRepo)
         {
             _softwareStatementProfileRepo = softwareStatementProfileRepo.ArgNotNull(nameof(softwareStatementProfileRepo));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));

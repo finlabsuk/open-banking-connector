@@ -83,6 +83,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             consentResp.Should().NotBeNull();
             consentResp.Messages.Should().BeEmpty();
             consentResp.Data.Should().NotBeNull();
+            
+            // Check redirect matches above.
+            // Check scope = "openid payments"
+            // Check response type = "code id_token"
+            // Check client ID matches above
+            
+            // Call mock bank with auth URL and check.... then return auth code
+
+            // Call Fluent method to pass auth code (set up mock bank token endpoint)
+            
+            // Call Fluent method to make payment (set up mock bank payment endpoint)
+            
+            // All done!
+
         }
     }
 }

@@ -24,9 +24,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public async Task<TEntity> GetAsync(string id)
         {
-            var value = await
-                _db.Set<TEntity>()
-                    .FindAsync(id);
+            var value = await _db.Set<TEntity>()
+                .FindAsync(id);
             if (value is null)
             {
                 throw new KeyNotFoundException("Cannot find value with specified ID.");
@@ -38,9 +37,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
         public async Task<IQueryable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> predicate)
         {
-            throw new NotImplementedException();
+            var where = predicate.ArgNotNull(nameof(predicate));
+
+            var results = await _db.Set<TEntity>()
+                    .Where(where)
+                    .ToListAsync(); // To maintain non-volatile cache queries
+                
+            return results.AsQueryable();
         }
 
+        // NB: This is an UPSERT method.
         public async Task<TEntity> SetAsync(TEntity value)
         {
             // Input should be detached (untracked)
@@ -49,12 +55,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 throw new InvalidOperationException("Entity is tracked, no need to use set (upsert).");
             }
 
-            var existingValue = await
-                _db.Set<TEntity>()
-                    .FindAsync(value.Id);
+            var existingValue = await _db.Set<TEntity>()
+                .FindAsync(value.Id);
             if (existingValue is null)
             {
-                _db.Add(value);
+                await _db.AddAsync(value);
                 return value;
             }
             else
@@ -74,13 +79,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             throw new NotImplementedException();
         }
 
-        public async Task<IList<string>> GetIdsAsync()
+        public Task<IList<string>> GetIdsAsync()
         {
             IList<string> keys = _db.Set<TEntity>()
                 .Select(p => p.Id)
                 .ToList();
 
-            return keys;
+            return keys.ToTaskResult();
         }
     }
 }

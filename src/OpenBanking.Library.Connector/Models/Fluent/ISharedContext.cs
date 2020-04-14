@@ -8,8 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
@@ -22,10 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         IConfigurationProvider ConfigurationProvider { get; }
         IInstrumentationClient Instrumentation { get; }
         IKeySecretProvider KeySecretProvider { get; }
-        IOpenBankingClientProfileRepository ClientProfileRepository { get; }
+        IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
-        IDomesticConsentRepository DomesticConsentRepository { get; }
+        IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
         IEntityMapper EntityMapper { get; }
-        IApiProfileRepository ApiProfileRepository { get; }
+        IDbEntityRepository<ApiProfile> ApiProfileRepository { get; }
     }
 }

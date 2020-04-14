@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
-    public class DomesticConsent
+    public class DomesticConsent: IEntity
     {
         [JsonProperty("id")]
         public string Id { get; set; }

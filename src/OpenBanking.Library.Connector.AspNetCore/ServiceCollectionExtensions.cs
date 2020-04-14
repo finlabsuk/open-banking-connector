@@ -1,4 +1,4 @@
-﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -9,8 +9,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -82,9 +83,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 return new ApiClient(sp.GetService<IInstrumentationClient>(), client);
             });
             services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
-            services.AddSingleton<IDomesticConsentRepository, MemoryDomesticConsentRepository>();
-            services.AddSingleton<IOpenBankingClientProfileRepository, MemoryOpenBankingClientProfileRepository>();
-            services.AddSingleton<IApiProfileRepository, MemoryApiProfileRepository>();
             services.AddSingleton<IEntityMapper, EntityMapper>();
             
             // Configure DB
@@ -104,9 +102,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 default:
                     throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
             }
-            services
-                .AddScoped<IDbEntityRepository<Models.Persistent.SoftwareStatementProfile>,
-                    DbEntityRepository<Models.Persistent.SoftwareStatementProfile>>();
+            services.AddScoped<IDbEntityRepository<SoftwareStatementProfile>,
+                DbEntityRepository<SoftwareStatementProfile>>();
+            services.AddScoped<IDbEntityRepository<BankClientProfile>,
+                DbEntityRepository<BankClientProfile>>();
+            services.AddScoped<IDbEntityRepository<ApiProfile>,
+                DbEntityRepository<ApiProfile>>();
+            services.AddScoped<IDbEntityRepository<DomesticConsent>,
+                DbEntityRepository<DomesticConsent>>();
             services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
 
             return services;

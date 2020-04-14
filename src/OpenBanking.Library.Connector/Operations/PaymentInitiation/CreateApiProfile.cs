@@ -4,25 +4,22 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     public class CreateApiProfile
     {
-        private readonly IApiClient _apiClient;
-        private readonly IApiProfileRepository _apiProfileRepo;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
+        private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
+        private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
 
-        public CreateApiProfile(IApiClient apiClient, IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
-            IOpenBankingClientProfileRepository openBankingClientRepo, IApiProfileRepository apiProfileRepo)
+        public CreateApiProfile(IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
+            IDbEntityRepository<BankClientProfile> openBankingClientRepo, IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
-            _apiClient = apiClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _openBankingClientRepo = openBankingClientRepo;
             _apiProfileRepo = apiProfileRepo;
@@ -42,6 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 apiProfile.BankClientProfileId,
                 apiProfile.ApiVersion, apiProfile.BaseUrl);
             await _apiProfileRepo.SetAsync(persistentApiProfile);
+            await _apiProfileRepo.SaveChangesAsync();
 
             // Return response object
             return new PaymentInitiationApiProfileResponse(persistentApiProfile.Id, persistentApiProfile.BankClientProfileId,

@@ -144,6 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             var dto = context.Context.EntityMapper.Map<Persistent.BankClientProfile>(context.Data);
 
             var persistedDto = await context.Context.ClientProfileRepository.SetAsync(dto);
+            await context.Context.ClientProfileRepository.SaveChangesAsync();
 
             return new Public.Response.BankClientProfileResponse(persistedDto);
         }
@@ -175,8 +176,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     context.Context.ApiClient,
                     context.Context.EntityMapper,
                     context.Context.SoftwareStatementRepository,
-                    context.Context.ClientProfileRepository,
-                    context.Context.DbContext
+                    context.Context.ClientProfileRepository
                 );
 
                 var resp = await i.CreateAsync(context.Data);

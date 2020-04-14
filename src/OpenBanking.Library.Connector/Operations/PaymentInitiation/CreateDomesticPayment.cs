@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
 
@@ -23,11 +23,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IApiClient _apiClient;
         private readonly IEntityMapper _mapper;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
-        private readonly IDomesticConsentRepository _domesticConsentRepo;
-        private readonly IApiProfileRepository _apiProfileRepo;
+        private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
+        private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
+        private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
 
-        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
+        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper,
+            IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepo,
+            IDbEntityRepository<BankClientProfile> openBankingClientRepo,
+            IDbEntityRepository<DomesticConsent> domesticConsentRepo, IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _apiClient = apiClient;
             _mapper = mapper;

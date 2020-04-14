@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
         public void Info(string message)
         {
-            Write(_outWriter, message, null);
+            Write(_outWriter, message, ConsoleColor.White);
         }
 
         public void Warning(string message)

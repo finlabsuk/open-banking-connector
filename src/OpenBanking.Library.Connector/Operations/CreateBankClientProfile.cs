@@ -7,14 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using Microsoft.EntityFrameworkCore;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using OpenBankingClientRegistrationClaims =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OpenBankingClientRegistrationClaims;
@@ -27,16 +25,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IApiClient _apiClient;
         private readonly IEntityMapper _mapper;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
-        private readonly BaseDbContext _db;
+        private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
 
-        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo, IOpenBankingClientProfileRepository openBankingClientRepo, BaseDbContext db)
+        public CreateBankClientProfile(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo, IDbEntityRepository<BankClientProfile> openBankingClientRepo)
         {
             _apiClient = apiClient;
             _mapper = mapper;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _openBankingClientRepo = openBankingClientRepo;
-            _db = db;
         }
 
         public async Task<Models.Public.Response.BankClientProfileResponse> CreateAsync(Models.Public.Request.BankClientProfile bankClientProfile)
@@ -74,10 +70,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // If we have an Open Banking client with the same issuer URL we will check if the claims match.
             // If they do, we will re-use this client.
             // Otherwise we will return an error as only support a single client per issuer URL at present.
-            var existingClient = await
-                _db.BankClientProfiles
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(c => c.IssuerUrl == bankClientProfile.IssuerUrl);
+            var clientList = await _openBankingClientRepo
+                .GetAsync(c => c.IssuerUrl == bankClientProfile.IssuerUrl);
+            var existingClient = clientList
+                .SingleOrDefault();
             if (existingClient is object)
             {
                 if (existingClient.BankClientRegistrationClaims != persistentRegistrationClaims)
@@ -112,11 +108,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 };
 
                 // Create and store Open Banking client
-                client = _mapper.Map<BankClientProfile>(bankClientProfile);
-                client = await PersistOpenBankingClient(client, openIdConfiguration, registrationClaims,
+                var newClient = _mapper.Map<BankClientProfile>(bankClientProfile);
+                client = await PersistOpenBankingClient(newClient, openIdConfiguration, registrationClaims,
                     openBankingClientResponse);
-                _db.Add(client);
-                await _db.SaveChangesAsync();
+                await _openBankingClientRepo.SaveChangesAsync();
             }
             else
             {

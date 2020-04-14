@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {
@@ -215,10 +215,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new MemoryKeySecretProvider(),
                 new ApiClient(httpClient),
                 new PemParsingCertificateReader(),
-                new MemoryOpenBankingClientProfileRepository(),
+                new DbEntityRepository<BankClientProfile>(_dB),
                 new DbEntityRepository<SoftwareStatementProfile>(_dB),
-                new MemoryDomesticConsentRepository(),
-                new MemoryApiProfileRepository());
+                new DbEntityRepository<DomesticConsent>(_dB),
+                new DbEntityRepository<ApiProfile>(_dB));
 
             return requestBuilder;
         }

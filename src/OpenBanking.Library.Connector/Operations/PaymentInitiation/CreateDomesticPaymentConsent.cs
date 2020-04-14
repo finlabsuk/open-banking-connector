@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 using Newtonsoft.Json;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using OBWriteDomesticConsent =
@@ -28,11 +27,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IApiClient _apiClient;
         private readonly IEntityMapper _mapper;
         private readonly IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> _softwareStatementProfileRepo;
-        private readonly IOpenBankingClientProfileRepository _openBankingClientRepo;
-        private readonly IDomesticConsentRepository _domesticConsentRepo;
-        private readonly IApiProfileRepository _apiProfileRepo;
+        private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
+        private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
+        private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
 
-        public CreateDomesticPaymentConsent(IApiClient apiClient, IEntityMapper mapper, IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> softwareStatementRepo, IOpenBankingClientProfileRepository openBankingClientRepo, IDomesticConsentRepository domesticConsentRepo, IApiProfileRepository apiProfileRepo)
+        public CreateDomesticPaymentConsent(IApiClient apiClient, IEntityMapper mapper,
+            IDbEntityRepository<Models.Persistent.SoftwareStatementProfile> softwareStatementRepo,
+            IDbEntityRepository<BankClientProfile> openBankingClientRepo,
+            IDbEntityRepository<DomesticConsent> domesticConsentRepo, IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _apiClient = apiClient;
             _mapper = mapper;
@@ -103,7 +105,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Create and store persistent object
             var value = _mapper.Map<DomesticConsent>(consent);
-            value = await _domesticConsentRepo.SetAsync(value);
+            await _domesticConsentRepo.SetAsync(value);
+            await _domesticConsentRepo.SaveChangesAsync();
 
             return new PaymentConsentResponse
             {

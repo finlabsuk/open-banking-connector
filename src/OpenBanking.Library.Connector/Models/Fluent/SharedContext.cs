@@ -8,14 +8,19 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Security.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class SharedContext: ISharedContext
     {
-        internal SharedContext(BaseDbContext dbContext, ICertificateReader certificateReader, IApiClient apiClient, IConfigurationProvider configurationProvider, IInstrumentationClient instrumentation, IKeySecretProvider keySecretProvider, IOpenBankingClientProfileRepository clientProfileRepository, IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository, IDomesticConsentRepository domesticConsentRepository, IEntityMapper entityMapper, IApiProfileRepository apiProfileRepository)
+        internal SharedContext(BaseDbContext dbContext, ICertificateReader certificateReader, IApiClient apiClient,
+            IConfigurationProvider configurationProvider, IInstrumentationClient instrumentation,
+            IKeySecretProvider keySecretProvider, IDbEntityRepository<BankClientProfile> clientProfileRepository,
+            IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository,
+            IDbEntityRepository<DomesticConsent> domesticConsentRepository, IEntityMapper entityMapper,
+            IDbEntityRepository<ApiProfile> apiProfileRepository)
         {
             DbContext = dbContext;
             CertificateReader = certificateReader;
@@ -37,10 +42,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretProvider KeySecretProvider { get; }
-        public IOpenBankingClientProfileRepository ClientProfileRepository { get; }
+        public IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         public IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
-        public IDomesticConsentRepository DomesticConsentRepository { get; }
+        public IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
         public IEntityMapper EntityMapper { get; }
-        public IApiProfileRepository ApiProfileRepository { get; }
+        public IDbEntityRepository<ApiProfile> ApiProfileRepository { get; }
     }
 }

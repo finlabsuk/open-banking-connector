@@ -4,7 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
-    public class ApiProfile
+    public class ApiProfile: IEntity
     {
         public ApiProfile(string id, string bankClientProfileId, Public.PaymentInitiation.ApiVersion apiVersion,
             string baseUrl)
@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             BaseUrl = baseUrl;
         }
 
-        public string Id { get; set; }
+        public string Id { get; }
 
         public string BankClientProfileId { get; }
 

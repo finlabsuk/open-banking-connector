@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -15,11 +16,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
         {
         }
 
-        // NB: must be vritual to support NSubstitute mocking
-        public virtual DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
+        public DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
 
-        // NB: must be vritual to support NSubstitute mocking
-        public virtual DbSet<BankClientProfile> BankClientProfiles { get; set; }
+        public DbSet<BankClientProfile> BankClientProfiles { get; set; }
+        
+        public DbSet<ApiProfile> ApiProfiles { get; set; }
+        
+        public DbSet<DomesticConsent> DomesticConsents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -132,6 +135,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
                         );
                 });
             
+            modelBuilder.Entity<ApiProfile>(b =>
+            {
+                b.Property(e => e.Id);
+                b.Property(e => e.BankClientProfileId);                
+                b.Property(e => e.ApiVersion);
+                b.Property(e => e.BaseUrl);                
+            });
+
+            modelBuilder
+                .Entity<DomesticConsent>(c =>
+                {
+                    c
+                        .Property(e => e.ObWriteDomesticConsent)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<OBWriteDomesticConsent>(v)
+                        );
+                });
+
+            
+            modelBuilder
+                .Entity<DomesticConsent>(c =>
+                {
+                    c
+                        .Property(e => e.TokenEndpointResponse)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.DeserializeObject<TokenEndpointResponse>(v)
+                        );
+                });
+
         }
     }
 }

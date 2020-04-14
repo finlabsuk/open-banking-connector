@@ -25,6 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             var ctx = builder.BankClientProfile();
 
             var result = await ctx
+                .Id("BankClientProfileId")
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId(xfapi)
                 .SoftwareStatementProfileId(softwareStatementId)
@@ -64,6 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
 
             var result1 = await ctx
+                .Id("BankClientProfileId")
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId("xfapi")
                 .SoftwareStatementProfileId("softwareStatement")
