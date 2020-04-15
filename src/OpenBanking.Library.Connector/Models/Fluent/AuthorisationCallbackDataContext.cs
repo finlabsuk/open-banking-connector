@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
-    public class AuthorisationCallbackContext
+    public class AuthorisationCallbackDataContext
     {
-        internal AuthorisationCallbackContext(ISharedContext context)
+        internal AuthorisationCallbackDataContext(ISharedContext context)
         {
             Context = context;
         }
@@ -16,5 +17,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         internal ISharedContext Context { get; }
 
         internal AuthorisationCallbackData Data { get; set; }
+        
+        internal string ResponseMode { get; set; }
+        
+        internal AuthorisationCallbackPayload Response { get; set; }
+        
     }
 }

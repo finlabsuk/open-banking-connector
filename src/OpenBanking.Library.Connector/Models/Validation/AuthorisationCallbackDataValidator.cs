@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
@@ -17,20 +17,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         private void CreateRules()
         {
-            RuleFor(x => x.Method)
+            RuleFor(x => x.ResponseMode)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing {nameof(AuthorisationCallbackData.Method)}.");
-
-            RuleFor(x => x.Mode)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing {nameof(AuthorisationCallbackData.Mode)}.");
+                .WithMessage($"Missing {nameof(AuthorisationCallbackData.ResponseMode)}.");
 
 
-            RuleFor(x => x.Body)
+            RuleFor(x => x.Response)
                 .Must(ValidationRules.IsNotNull)
-                .WithMessage($"Missing {nameof(AuthorisationCallbackData.Body)}.");
+                .WithMessage($"Missing {nameof(AuthorisationCallbackData.Response)}.");
 
-            RuleFor(x => x.Body)
+            RuleFor(x => x.Response)
                 .SetValidator(new AuthorisationCallbackBodyValidator());
         }
     }

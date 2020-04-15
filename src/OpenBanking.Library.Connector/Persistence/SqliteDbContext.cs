@@ -4,7 +4,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     // SQLite-compatible DB context
     public class SqliteDbContext : BaseDbContext

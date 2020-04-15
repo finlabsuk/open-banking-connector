@@ -11,13 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         internal DomesticPaymentContext(ISharedContext context)
         {
             Context = context.ArgNotNull(nameof(context));
-            Data = new DomesticPaymentRequest();
         }
 
         internal ISharedContext Context { get; }
 
         internal DomesticPaymentRequest Data { get; set; }
 
-        internal string DomesticConsentId { get; set; }
+        internal string ConsentId { get; set; }
     }
 }

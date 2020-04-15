@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
 
             ctx.ConsentId(consentIdValue);
 
-            ctx.Data.ConsentId.Should().Be(consentIdValue);
+            ctx.ConsentId.Should().Be(consentIdValue);
         }
     }
 }

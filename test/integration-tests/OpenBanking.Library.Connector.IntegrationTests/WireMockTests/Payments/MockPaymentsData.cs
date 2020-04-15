@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {

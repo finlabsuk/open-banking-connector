@@ -18,6 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
         internal OBWriteDomesticConsent Data { get; set; }
 
-        internal string OpenBankingClientProfileId { get; set; }
+        internal string ApiProfileId { get; set; }
     }
 }

@@ -197,7 +197,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             }
         }
 
-        private static IList<OpenBankingResponseMessage> Validate(BankClientProfileContext context)
+        private static IList<FluentResponseMessage> Validate(BankClientProfileContext context)
         {
             return new OpenBankingClientValidator()
                 .Validate(context.Data)

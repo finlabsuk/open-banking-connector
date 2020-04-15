@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FluentAssertions;
 using Xunit;
@@ -16,29 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = null,
-                Body = null
-            };
-
-            var results = validator.Validate(data).Errors;
-
-            results.Should().HaveCount(2);
-        }
-
-        [Fact]
-        public void Validate_MethodIsNull()
-        {
-            var validator = new AuthorisationCallbackDataValidator();
-
-            var data = new AuthorisationCallbackData
-            {
-                Method = null,
-                Mode = "a",
-                Body = null
-            };
+            var data = new AuthorisationCallbackData(null, null);
 
             var results = validator.Validate(data).Errors;
 
@@ -50,12 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = null
-            };
+            var data = new AuthorisationCallbackData("a", null);
 
             var results = validator.Validate(data).Errors;
 
@@ -68,12 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = new AuthorisationCallbackInfo()
-            };
+            var data = new AuthorisationCallbackData("a", new AuthorisationCallbackPayload(null, null));
 
             var results = validator.Validate(data).Errors;
 
@@ -86,18 +55,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = new AuthorisationCallbackInfo
+            var data = new AuthorisationCallbackData("a",
+                new AuthorisationCallbackPayload("a", "a")
                 {
-                    AuthorisationCode = "a",
                     IdToken = "a",
                     Nonce = null,
-                    State = "a"
                 }
-            };
+            );
 
             var results = validator.Validate(data).Errors;
 

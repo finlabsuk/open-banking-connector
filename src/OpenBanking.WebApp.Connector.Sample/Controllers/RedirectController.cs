@@ -5,7 +5,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +27,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [ProducesResponseType(typeof(MessagesResponse), (int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostAuthorisationCallbackAsync([FromBody] AuthorisationCallbackData value)
         {
-            var resp = await _obRequestBuilder.AuthorisationCallback()
-                .SetData(value)
+            var resp = await _obRequestBuilder.AuthorisationCallbackData()
+                .Data(value)
                 .SubmitAsync();
 
             return resp.HasErrors

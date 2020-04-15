@@ -6,18 +6,24 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
-    public class AuthorisationCallbackInfo
+    public class AuthorisationCallbackPayload
     {
+        public AuthorisationCallbackPayload(string authorisationCode, string state)
+        {
+            AuthorisationCode = authorisationCode;
+            State = state;
+        }
+
         [JsonProperty("id_token")]
-        public string IdToken { get; set; }
+        public string IdToken { get; set; } = null;
 
         [JsonProperty("code")]
-        public string AuthorisationCode { get; set; }
+        public string AuthorisationCode { get; }
 
         [JsonProperty("state")]
-        public string State { get; set; }
+        public string State { get; }
 
         [JsonProperty("nonce", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string Nonce { get; set; }
+        public string Nonce { get; set; } = null;
     }
 }

@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     // DB provider-independent DB context
     public abstract class BaseDbContext : DbContext

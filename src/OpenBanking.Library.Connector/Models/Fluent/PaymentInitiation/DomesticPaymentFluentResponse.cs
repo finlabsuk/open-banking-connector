@@ -7,18 +7,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
-    public class DomesticPaymentResponse : OpenBankingResponse
+    public class DomesticPaymentFluentResponse : FluentResponse
     {
-        public DomesticPaymentResponse(OBWriteDataDomesticResponse data)
+        public DomesticPaymentFluentResponse(OBWriteDataDomesticResponse data)
         {
             Data = data;
         }
 
-        public DomesticPaymentResponse(OpenBankingResponseMessage message) : this(new[] { message })
+        public DomesticPaymentFluentResponse(FluentResponseMessage message) : this(new[] { message })
         {
         }
 
-        public DomesticPaymentResponse(IList<OpenBankingResponseMessage> messages) : base(messages)
+        public DomesticPaymentFluentResponse(IList<FluentResponseMessage> messages) : base(messages)
         {
         }
 

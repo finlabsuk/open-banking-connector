@@ -3,7 +3,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FluentAssertions;
 using System;
-using Xunit;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {
@@ -15,8 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public MockPaymentsTests(IMockPaymentData mockData, IMockPaymentServer mockPaymentsServer)
         {
-            this._mockData = mockData;
-            this._mockPaymentsServer = mockPaymentsServer; 
+            _mockData = mockData;
+            _mockPaymentsServer = mockPaymentsServer; 
         }
 
         public void RunMockPaymentTest()
@@ -89,12 +89,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             // Check response type = "code id_token"
             // Check client ID matches above
             
-            // Call mock bank with auth URL and check.... then return auth code
+            // Call mock bank with auth URL and check.... then return at least auth code and state....
 
-            // Call Fluent method to pass auth code (set up mock bank token endpoint)
+            // Call Fluent method to pass auth code and state (set up mock bank token endpoint)
+            var authCallbackDataResp = requestBuilder.AuthorisationCallbackData()
+                .ResponseMode("fragment")
+                .Response(new AuthorisationCallbackPayload(
+                    "TODO: place code from mock bank here",
+                    "TODO: extract state from consentResp.Data.AuthUrl and place here"
+                )
+                {
+                    Nonce = "TODO: extract nonce from consentResp.Data.AuthUrl and place here"
+                })
+                .SubmitAsync().Result;
+
+            //authCallbackDataResp.Should().NotBeNull();
+            //authCallbackDataResp.Messages.Should().BeEmpty();
+            //authCallbackDataResp.Data.Should().NotBeNull();
             
             // Call Fluent method to make payment (set up mock bank payment endpoint)
-            
+            var paymentResp = requestBuilder.DomesticPayment()
+                .ConsentId(consentResp.Data.ConsentId)
+                .SubmitAsync().Result;
+
+            //paymentResp.Should().NotBeNull();
+            //paymentResp.Messages.Should().BeEmpty();
+            //paymentResp.Data.Should().NotBeNull();
+
             // All done!
 
         }

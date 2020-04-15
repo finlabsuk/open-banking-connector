@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using BankClientProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankClientProfile;
 using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
 
@@ -44,11 +44,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             redirectData.ArgNotNull(nameof(redirectData));
 
             // Load relevant data objects
-            var consent = (await _domesticConsentRepo.GetAsync(dc => dc.State == redirectData.Body.State))
+            var consent = (await _domesticConsentRepo.GetAsync(dc => dc.State == redirectData.Response.State))
                 .FirstOrDefault();
             if (consent == null)
             {
-                throw new KeyNotFoundException($"Consent with redirect state '{redirectData.Body.State}' not found.");
+                throw new KeyNotFoundException($"Consent with redirect state '{redirectData.Response.State}' not found.");
             }
 
             var clientProfile = await _openBankingClientRepo.GetAsync(consent.ApiProfileId);
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Obtain token for consent
             var redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             var tokenEndpointResponse =
-                await PostAuthCodeGrant(redirectData.Body.AuthorisationCode, redirectUrl, clientProfile);
+                await PostAuthCodeGrant(redirectData.Response.AuthorisationCode, redirectUrl, clientProfile);
 
             // Update consent with token
             var value = _mapper.Map<Models.Persistent.TokenEndpointResponse>(tokenEndpointResponse);

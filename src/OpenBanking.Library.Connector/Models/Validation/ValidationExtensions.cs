@@ -12,10 +12,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
     internal static class ValidationExtensions
     {
-        public static IList<OpenBankingResponseMessage> GetOpenBankingResponses(this ValidationResult validationResult)
+        public static IList<FluentResponseMessage> GetOpenBankingResponses(this ValidationResult validationResult)
         {
-            var result = validationResult.Errors.Select(e => new OpenBankingResponseErrorMessage(e.ErrorMessage))
-                .Cast<OpenBankingResponseMessage>()
+            var result = validationResult.Errors.Select(e => new FluentResponseErrorMessage(e.ErrorMessage))
+                .Cast<FluentResponseMessage>()
                 .ToList();
 
             return result;

@@ -99,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 context.Context.SoftwareStatementRepository
                 );
 
-            var messages = new List<OpenBankingResponseMessage>();
+            var messages = new List<FluentResponseMessage>();
 
             try
             {
@@ -115,7 +115,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             }
         }
 
-        private static IList<OpenBankingResponseMessage> Validate(SoftwareStatementProfileContext context)
+        private static IList<FluentResponseMessage> Validate(SoftwareStatementProfileContext context)
         {
             return new SoftwareStatementProfileValidator()
                 .Validate(context.Data)

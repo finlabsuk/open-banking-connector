@@ -7,14 +7,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
-    public class OpenBankingSoftwareStatementResponse : OpenBankingResponse
+    public class OpenBankingSoftwareStatementResponse : FluentResponse
     {
-        internal OpenBankingSoftwareStatementResponse(OpenBankingResponseMessage message,
+        internal OpenBankingSoftwareStatementResponse(FluentResponseMessage message,
             SoftwareStatementProfileResponse data) : this(new[] { message }, data)
         {
         }
 
-        internal OpenBankingSoftwareStatementResponse(IList<OpenBankingResponseMessage> messages,
+        internal OpenBankingSoftwareStatementResponse(IList<FluentResponseMessage> messages,
             SoftwareStatementProfileResponse data) : base(messages)
         {
             Data = data;

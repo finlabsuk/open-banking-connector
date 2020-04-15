@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
 
-            context.OpenBankingClientProfileId = value;
+            context.ApiProfileId = value;
 
             return context;
         }
@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
 
-            context.OpenBankingClientProfileId = value;
+            context.ApiProfileId = value;
 
             return context;
         }
@@ -271,19 +271,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static async Task<DomesticPaymentConsentResponse> SubmitAsync(this DomesticPaymentConsentContext context)
+        public static async Task<DomesticPaymentConsentFluentResponse> SubmitAsync(this DomesticPaymentConsentContext context)
         {
             context.ArgNotNull(nameof(context));
 
             if (context.Data.ApiProfileId == null)
             {
-                context.Data.ApiProfileId = context.OpenBankingClientProfileId;
+                context.Data.ApiProfileId = context.ApiProfileId;
             }
 
             var validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new DomesticPaymentConsentResponse(validationErrors);
+                return new DomesticPaymentConsentFluentResponse(validationErrors);
             }
 
             try
@@ -299,22 +299,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
                 var result = await createDomesticConsent.CreateAsync(context.Data);
 
-                return new DomesticPaymentConsentResponse(result);
+                return new DomesticPaymentConsentFluentResponse(result);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new DomesticPaymentConsentResponse(ex.CreateErrorMessage());
+                return new DomesticPaymentConsentFluentResponse(ex.CreateErrorMessage());
             }
         }
 
         private static async Task<BankClientProfile> GetClientProfile(DomesticPaymentConsentContext context)
         {
-            return await context.Context.ClientProfileRepository.GetAsync(context.OpenBankingClientProfileId);
+            return await context.Context.ClientProfileRepository.GetAsync(context.ApiProfileId);
         }
 
-        private static IList<OpenBankingResponseMessage> Validate(DomesticPaymentConsentContext context)
+        private static IList<FluentResponseMessage> Validate(DomesticPaymentConsentContext context)
         {
             return new OBWriteDomesticConsentValidator()
                 .Validate(context.Data)

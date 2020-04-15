@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
@@ -91,27 +92,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
             return new DomesticPaymentConsentContext(context)
             {
-                OpenBankingClientProfileId = openBankingClientProfileId
+                ApiProfileId = openBankingClientProfileId
             };
         }
 
-        public DomesticPaymentContext DomesticPayment(string domesticConsentId)
+        public DomesticPaymentContext DomesticPayment()
         {
-            domesticConsentId.ArgNotNull(nameof(domesticConsentId));
-
             var context = CreateContext();
-
-            return new DomesticPaymentContext(context)
-            {
-                DomesticConsentId = domesticConsentId
-            };
+            return new DomesticPaymentContext(context);
         }
 
-        public AuthorisationCallbackContext AuthorisationCallback()
+        public AuthorisationCallbackDataContext AuthorisationCallbackData()
         {
             var context = CreateContext();
 
-            return new AuthorisationCallbackContext(context);
+            return new AuthorisationCallbackDataContext(context);
         }
 
         public PaymentInitiationApiProfileContext PaymentInitiationApiProfile()

@@ -9,26 +9,26 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities
 {
     internal static class MessagesResponseExtensions
     {
-        public static MessagesResponse ToMessagesResponse(this OpenBankingResponse value)
+        public static MessagesResponse ToMessagesResponse(this FluentResponse value)
         {
             if (value.Messages != null)
             {
                 var result = new MessagesResponse();
 
-                var infos = value.Messages.OfType<OpenBankingResponseInfoMessage>().Select(m => m.Message).ToList();
+                var infos = value.Messages.OfType<FluentResponseInfoMessage>().Select(m => m.Message).ToList();
                 if (infos.Count > 0)
                 {
                     result.InformationMessages = infos;
                 }
 
-                var warnings = value.Messages.OfType<OpenBankingResponseWarningMessage>().Select(m => m.Message)
+                var warnings = value.Messages.OfType<FluentResponseWarningMessage>().Select(m => m.Message)
                     .ToList();
                 if (warnings.Count > 0)
                 {
                     result.WarningMessages = warnings;
                 }
 
-                var errors = value.Messages.OfType<OpenBankingResponseErrorMessage>().Select(m => m.Message).ToList();
+                var errors = value.Messages.OfType<FluentResponseErrorMessage>().Select(m => m.Message).ToList();
                 if (errors.Count > 0)
                 {
                     result.ErrorMessages = errors;

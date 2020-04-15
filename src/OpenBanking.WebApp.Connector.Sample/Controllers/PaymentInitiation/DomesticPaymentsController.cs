@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DomesticPaymentsPostAsync([FromBody] DomesticPaymentRequest request)
         {
-            var resp = await _obRequestBuilder.DomesticPayment(request.ConsentId)
+            var resp = await _obRequestBuilder.DomesticPayment()
                 .Data(request)
                 .SubmitAsync();
 
