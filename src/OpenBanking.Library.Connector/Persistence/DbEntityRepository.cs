@@ -15,22 +15,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity> where TEntity: class, IEntity
     {
         private readonly BaseDbContext _db;
+        private readonly DbSet<TEntity> _dbSet;
 
         public DbEntityRepository(BaseDbContext db)
         {
             _db = db;
+            _dbSet = _db.Set<TEntity>();
         }
 
-        public async Task<TEntity> GetAsync(string id)
+        public ValueTask<TEntity> GetAsync(string id)
         {
-            var value = await _db.Set<TEntity>()
-                .FindAsync(id);
-            if (value is null)
-            {
-                throw new KeyNotFoundException("Cannot find value with specified ID.");
-            }
+            id.ArgNotNull(nameof(id));
 
-            return value;
+            return _db.Set<TEntity>()
+                .FindAsync(id);
         }
 
         public async Task<IQueryable<TEntity>> GetAsync(
@@ -46,45 +44,59 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         }
 
         // NB: This is an UPSERT method.
-        public async Task<TEntity> SetAsync(TEntity value)
+        public async Task<TEntity> SetAsync(TEntity instance)
         {
+            instance.ArgNotNull(nameof(instance));
+            
             // Input should be detached (untracked)
-            if (_db.Entry(value).State != EntityState.Detached)
+            if (_db.Entry(instance).State != EntityState.Detached)
             {
                 throw new InvalidOperationException("Entity is tracked, no need to use set (upsert).");
             }
 
             var existingValue = await _db.Set<TEntity>()
-                .FindAsync(value.Id);
+                .FindAsync(instance.Id);
             if (existingValue is null)
             {
-                await _db.AddAsync(value);
-                return value;
+                await _db.AddAsync(instance);
+                return instance;
             }
             else
             {
-                _db.Entry(existingValue).CurrentValues.SetValues(value);
+                _db.Entry(existingValue).CurrentValues.SetValues(instance);
                 return existingValue;
             }
         }
-
+        
         public async Task SaveChangesAsync()
         {
             await _db.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public Task DeleteAsync(TEntity instance)
         {
-            throw new NotImplementedException();
+            instance.ArgNotNull(nameof(instance));
+
+            if (
+                _db.Entry(instance).State == EntityState.Added ||
+                _db.Entry(instance).State == EntityState.Modified
+            )
+            {
+                throw new InvalidOperationException("Entity is in invalid tracking state for this operation.");
+            }
+
+            _db.Set<TEntity>()
+                .Remove(instance);
+            return ((TEntity) null).ToTaskResult();
         }
 
-        public Task<IList<string>> GetIdsAsync()
+        public Task<List<string>> GetIdsAsync()
         {
-            IList<string> keys = _db.Set<TEntity>()
+            var keys = _db.Set<TEntity>()
                 .Select(p => p.Id)
-                .ToList();
-
-            return keys.ToTaskResult();
+                .ToListAsync();
+            
+            return keys;
         }
     }
 }

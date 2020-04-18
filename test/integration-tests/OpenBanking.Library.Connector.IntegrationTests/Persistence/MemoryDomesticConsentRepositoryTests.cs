@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence
 {
     public class MemoryDomesticConsentRepositoryTests
     {
