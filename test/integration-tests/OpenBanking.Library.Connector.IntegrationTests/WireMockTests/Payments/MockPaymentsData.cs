@@ -210,7 +210,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             var _dB = new SqliteDbContext(_dbContextOptions);
             var requestBuilder = new RequestBuilder(
                 new EntityMapper(),
-                new SqliteDbContext(_dbContextOptions),
+                new DbMultiEntityMethods(_dB),
                 new DefaultConfigurationProvider(),
                 new ConsoleInstrumentationClient(),
                 new MemoryKeySecretProvider(),

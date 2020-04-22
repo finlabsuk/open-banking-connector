@@ -3,14 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Xunit;
 
@@ -21,17 +18,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
-            var repo = Substitute.For<IDbEntityRepository<Models.Persistent.SoftwareStatementProfile>>();
+            var repo = Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>();
+            var dbMethods = Substitute.For<IDbMultiEntityMethods>();
             var mapper = Substitute.For<IEntityMapper>();
             
             var resultProfile = new SoftwareStatementProfile();
 
-            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
+            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.Request.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
-            var interaction = new CreateSoftwareStatementProfile(mapper, repo);
+            var interaction = new CreateSoftwareStatementProfile(mapper, dbMethods, repo);
 
-            var profile = new Models.Public.SoftwareStatementProfile
+            var profile = new Models.Public.Request.SoftwareStatementProfile
             {
                 DefaultFragmentRedirectUrl = "http://test.com",
                 SigningKeySecretName = "a",

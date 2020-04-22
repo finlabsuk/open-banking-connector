@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -52,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             string certificate
             )
         {
-            var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
+            SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
             data.SigningKeyId = keyId;
             data.SigningKeySecretName = keySecretName;
@@ -60,13 +62,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
             return context;
         }
-        
+
         public static SoftwareStatementProfileContext TransportKeyInfo(this SoftwareStatementProfileContext context,
             string keySecretName,
             string certificate
         )
         {
-            var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
+            SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
             data.TransportKeySecretName = keySecretName;
             data.TransportCertificate = certificate;
@@ -88,22 +90,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         {
             context.ArgNotNull(nameof(context));
 
-            var validationErrors = Validate(context);
+            IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
                 return new OpenBankingSoftwareStatementResponse(validationErrors, null);
             }
 
-            var creator = new CreateSoftwareStatementProfile(
+            CreateSoftwareStatementProfile creator = new CreateSoftwareStatementProfile(
                 context.Context.EntityMapper,
+                context.Context.DbContextService,
                 context.Context.SoftwareStatementRepository
                 );
 
-            var messages = new List<FluentResponseMessage>();
+            List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
 
             try
             {
-                var response = await creator.CreateAsync(context.Data);
+                SoftwareStatementProfileResponse response = await creator.CreateAsync(context.Data);
 
                 return new OpenBankingSoftwareStatementResponse(messages, response);
             }

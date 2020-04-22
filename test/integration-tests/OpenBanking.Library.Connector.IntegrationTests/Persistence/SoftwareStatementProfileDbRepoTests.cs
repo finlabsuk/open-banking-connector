@@ -11,17 +11,19 @@ using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence
 {
-    public class SoftwareStatementProfileDbRepoTests: DbTest
+    public class SoftwareStatementProfileDbRepoTests : DbTest
     {
         private readonly DbEntityRepository<SoftwareStatementProfile> _repo;
+        private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITestOutputHelper _output;
 
         public SoftwareStatementProfileDbRepoTests(ITestOutputHelper output)
         {
-            _repo =  new DbEntityRepository<SoftwareStatementProfile>(_dB);
+            _repo = new DbEntityRepository<SoftwareStatementProfile>(_dB);
+            _dbMultiEntityMethods = new DbMultiEntityMethods(_dB);
             _output = output;
         }
-        
+
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property GetAsync_ReturnsEmpty(string id)
         {
@@ -38,19 +40,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         {
             Func<bool> rule = () =>
             {
-                var value = new SoftwareStatementProfile();
-                value.Id = id;
-                var _ = _repo.SetAsync(value).GetAwaiter().GetResult();
-                _repo.SaveChangesAsync().Wait();
+                SoftwareStatementProfile value = new SoftwareStatementProfile
+                {
+                    Id = id
+                };
+                SoftwareStatementProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id).Result.Id == id;
             };
 
             // Run test avoiding C null character
-            if ( !(id is null) && id.Contains("\0"))
+            if (!(id is null) && id.Contains("\0"))
             {
                 return true.ToProperty();
-            } else
+            }
+            else
             {
                 return rule.When(id != null);
             }
@@ -61,23 +66,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         {
             Func<bool> rule = () =>
             {
-                var value = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url1 };
-                var value2 = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url2 };
+                SoftwareStatementProfile value = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url1 };
+                SoftwareStatementProfile value2 = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url2 };
 
-                var _ = _repo.SetAsync(value).Result;
-                var __ = _repo.SetAsync(value2).Result;
-                _repo.SaveChangesAsync().Wait();
+                SoftwareStatementProfile _ = _repo.UpsertAsync(value).Result;
+                SoftwareStatementProfile __ = _repo.UpsertAsync(value2).Result;
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                var item = _repo.GetAsync(id).Result;
+                SoftwareStatementProfile item = _repo.GetAsync(id).Result;
 
                 return item.Id == id && item.DefaultFragmentRedirectUrl == value2.DefaultFragmentRedirectUrl;
             };
-            
+
             // Run test avoiding C null character
-            if ( !(id is null) && id.Contains("\0"))
+            if (!(id is null) && id.Contains("\0"))
             {
                 return true.ToProperty();
-            } else
+            }
+            else
             {
                 return rule.When(id != null && url1 != null && url2 != null && url1 != url2);
             }
@@ -88,13 +94,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         {
             Func<bool> rule = () =>
             {
-                var value = new SoftwareStatementProfile();
-                value.Id = id;
-                var _ = _repo.SetAsync(value).Result;
-                _repo.SaveChangesAsync().Wait();
+                SoftwareStatementProfile value = new SoftwareStatementProfile
+                {
+                    Id = id
+                };
+                SoftwareStatementProfile _ = _repo.UpsertAsync(value).Result;
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                _repo.DeleteAsync(value).Wait();
-                _repo.SaveChangesAsync().Wait();
+                _repo.RemoveAsync(value).Wait();
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id).Result == null;
             };

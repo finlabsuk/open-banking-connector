@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
             if (merchantCategory != null || merchantCustomerId != null || paymentContextCode.HasValue)
             {
-                var risk = context.GetOrCreateDefault(ConsentLens)
+                OBRisk risk = context.GetOrCreateDefault(ConsentLens)
                     .GetOrCreateDefault(RiskLens);
 
                 risk.MerchantCategoryCode = merchantCategory;
@@ -164,7 +164,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         {
             context.ArgNotNull(nameof(context));
 
-            var remittance = context.GetOrCreateDefault(ConsentLens)
+            OBWriteDomesticDataInitiationRemittanceInformation remittance = context.GetOrCreateDefault(ConsentLens)
                 .GetOrCreateDefault(ConsentDataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(RemittanceLens);
@@ -194,7 +194,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         {
             context.ArgNotNull(nameof(context));
 
-            var acct = context.GetOrCreateDefault(ConsentLens)
+            OBWriteDomesticDataInitiationCreditorAccount acct = context.GetOrCreateDefault(ConsentLens)
                 .GetOrCreateDefault(ConsentDataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(CreditorAccountLens);
@@ -228,7 +228,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         {
             context.ArgNotNull(nameof(context));
 
-            var acct = context.GetOrCreateDefault(ConsentLens)
+            OBWriteDomesticDataInitiationDebtorAccount acct = context.GetOrCreateDefault(ConsentLens)
                 .GetOrCreateDefault(ConsentDataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(DebtorAccountLens);
@@ -260,7 +260,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         {
             context.ArgNotNull(nameof(context));
 
-            var amt = context.GetOrCreateDefault(ConsentLens)
+            OBWriteDomesticDataInitiationInstructedAmount amt = context.GetOrCreateDefault(ConsentLens)
                 .GetOrCreateDefault(ConsentDataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(InstructedAmountLens);
@@ -280,7 +280,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
                 context.Data.ApiProfileId = context.ApiProfileId;
             }
 
-            var validationErrors = Validate(context);
+            IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
                 return new DomesticPaymentConsentFluentResponse(validationErrors);
@@ -288,16 +288,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
             try
             {
-                var createDomesticConsent = new CreateDomesticPaymentConsent(
+                CreateDomesticPaymentConsent createDomesticConsent = new CreateDomesticPaymentConsent(
                     context.Context.ApiClient,
                     context.Context.EntityMapper,
+                    context.Context.DbContextService,
                     context.Context.SoftwareStatementRepository,
                     context.Context.ClientProfileRepository,
-                    context.Context.DomesticConsentRepository,
-                    context.Context.ApiProfileRepository
+                    context.Context.ApiProfileRepository,
+                    context.Context.DomesticConsentRepository
                 );
 
-                var result = await createDomesticConsent.CreateAsync(context.Data);
+                PaymentConsentResponse result = await createDomesticConsent.CreateAsync(context.Data);
 
                 return new DomesticPaymentConsentFluentResponse(result);
             }

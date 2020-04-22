@@ -54,8 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
                 );
 
                 var i = new CreateApiProfile(
-                    context.Context.SoftwareStatementRepository,
-                    context.Context.ClientProfileRepository,
+                    context.Context.DbContextService,
                     context.Context.ApiProfileRepository
                 );
 

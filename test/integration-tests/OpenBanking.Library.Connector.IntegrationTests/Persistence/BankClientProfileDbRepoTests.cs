@@ -11,17 +11,19 @@ using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence
 {
-    public class BankClientProfileDbRepoTests: DbTest
+    public class BankClientProfileDbRepoTests : DbTest
     {
-        private readonly DbEntityRepository<BankClientProfile> _repo;
+        private readonly IDbEntityRepository<BankClientProfile> _repo;
+        private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITestOutputHelper _output;
 
         public BankClientProfileDbRepoTests(ITestOutputHelper output)
         {
-            _repo =  new DbEntityRepository<BankClientProfile>(_dB);
+            _repo = new DbEntityRepository<BankClientProfile>(_dB);
+            _dbMultiEntityMethods = new DbMultiEntityMethods(_dB);
             _output = output;
         }
-        
+
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property GetAsync_ReturnsEmpty(string id)
         {
@@ -39,17 +41,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             Func<bool> rule = () =>
             {
                 value.Id = id;
-                var _ = _repo.SetAsync(value).GetAwaiter().GetResult();
-                _repo.SaveChangesAsync().Wait();
+                BankClientProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id).Result.Id == id;
             };
-            
+
             // Run test avoiding C null character
-            if ( !(id is null) && id.Contains("\0"))
+            if (!(id is null) && id.Contains("\0"))
             {
                 return true.ToProperty();
-            } else
+            }
+            else
             {
                 return rule.When(id != null && value != null);
             }
@@ -64,20 +67,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 value.Id = id;
                 value2.Id = id;
 
-                var _ = _repo.SetAsync(value).Result;
-                var __ = _repo.SetAsync(value2).Result;
-                _repo.SaveChangesAsync().Wait();
-                
-                var item = _repo.GetAsync(id).Result;
+                BankClientProfile _ = _repo.UpsertAsync(value).Result;
+                BankClientProfile __ = _repo.UpsertAsync(value2).Result;
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
+
+                BankClientProfile item = _repo.GetAsync(id).Result;
 
                 return item.Id == id && item.XFapiFinancialId == value2.XFapiFinancialId;
             };
-            
+
             // Run test avoiding C null character
-            if ( !(id is null) && id.Contains("\0"))
+            if (!(id is null) && id.Contains("\0"))
             {
                 return true.ToProperty();
-            } else
+            }
+            else
             {
                 return rule.When(id != null && value != null && value2 != null &&
                                  value.XFapiFinancialId != value2.XFapiFinancialId);
@@ -90,11 +94,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             Func<bool> rule = () =>
             {
                 value.Id = id;
-                var _ = _repo.SetAsync(value).Result;
-                _repo.SaveChangesAsync().Wait();
+                BankClientProfile _ = _repo.UpsertAsync(value).Result;
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                _repo.DeleteAsync(value).Wait();
-                _repo.SaveChangesAsync().Wait();
+                _repo.RemoveAsync(value).Wait();
+                _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id).Result == null;
             };

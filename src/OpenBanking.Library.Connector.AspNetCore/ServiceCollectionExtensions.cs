@@ -103,6 +103,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 default:
                     throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
             }
+            services.AddScoped<IDbMultiEntityMethods,
+                DbMultiEntityMethods>();
             services.AddScoped<IDbEntityRepository<SoftwareStatementProfile>,
                 DbEntityRepository<SoftwareStatementProfile>>();
             services.AddScoped<IDbEntityRepository<BankClientProfile>,

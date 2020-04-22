@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// Class that captures a software statement and associated keys and certificates
     [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]

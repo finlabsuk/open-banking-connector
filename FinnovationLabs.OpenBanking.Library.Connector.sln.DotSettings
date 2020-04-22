@@ -180,6 +180,9 @@
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
 &lt;/Patterns&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/CSharpVarKeywordUsage/ForBuiltInTypes/@EntryValue">UseExplicitType</s:String>
+	<s:String x:Key="/Default/CodeStyle/CSharpVarKeywordUsage/ForOtherTypes/@EntryValue">UseExplicitType</s:String>
+	<s:String x:Key="/Default/CodeStyle/CSharpVarKeywordUsage/ForSimpleTypes/@EntryValue">UseExplicitType</s:String>
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">Licensed to Finnovation Labs Limited under one or more agreements.&#xD;
 Finnovation Labs Limited licenses this file to you under the MIT license.&#xD;
 See the LICENSE file in the project root for more information.&#xD;

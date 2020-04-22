@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {

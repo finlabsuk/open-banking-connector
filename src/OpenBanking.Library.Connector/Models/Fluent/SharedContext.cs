@@ -16,14 +16,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class SharedContext: ISharedContext
     {
-        internal SharedContext(BaseDbContext dbContext, ICertificateReader certificateReader, IApiClient apiClient,
-            IConfigurationProvider configurationProvider, IInstrumentationClient instrumentation,
-            IKeySecretProvider keySecretProvider, IDbEntityRepository<BankClientProfile> clientProfileRepository,
+        internal SharedContext(
+            ICertificateReader certificateReader,
+            IApiClient apiClient,
+            IConfigurationProvider configurationProvider,
+            IInstrumentationClient instrumentation,
+            IKeySecretProvider keySecretProvider,
+            IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository,
-            IDbEntityRepository<DomesticConsent> domesticConsentRepository, IEntityMapper entityMapper,
-            IDbEntityRepository<ApiProfile> apiProfileRepository)
+            IDbEntityRepository<DomesticConsent> domesticConsentRepository,
+            IEntityMapper entityMapper,
+            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IDbMultiEntityMethods dbContextService)
         {
-            DbContext = dbContext;
             CertificateReader = certificateReader;
             ApiClient = apiClient;
             ConfigurationProvider = configurationProvider;
@@ -34,9 +39,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             DomesticConsentRepository = domesticConsentRepository;
             EntityMapper = entityMapper;
             ApiProfileRepository = apiProfileRepository;
+            DbContextService = dbContextService;
         }
 
-        public BaseDbContext DbContext { get; }
         public DateTimeOffset Created { get; set; }
         public ICertificateReader CertificateReader { get; }
         public IApiClient ApiClient { get; }
@@ -48,5 +53,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
         public IEntityMapper EntityMapper { get; }
         public IDbEntityRepository<ApiProfile> ApiProfileRepository { get; }
+        public IDbMultiEntityMethods DbContextService { get; }
     }
 }

@@ -16,13 +16,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public interface ISharedContext
     {
-        BaseDbContext DbContext { get; }
         DateTimeOffset Created { get; set; }
         ICertificateReader CertificateReader { get; }
         IApiClient ApiClient { get; }
         IConfigurationProvider ConfigurationProvider { get; }
         IInstrumentationClient Instrumentation { get; }
         IKeySecretProvider KeySecretProvider { get; }
+        IDbMultiEntityMethods DbContextService { get; }
         IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
         IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }

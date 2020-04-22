@@ -12,7 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
-    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity> where TEntity: class, IEntity
+    /// <summary>
+    /// Entity- (type-) specific DB methods
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity> where TEntity : class, IEntity
     {
         private readonly BaseDbContext _db;
         private readonly DbSet<TEntity> _dbSet;
@@ -27,34 +31,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             id.ArgNotNull(nameof(id));
 
-            return _db.Set<TEntity>()
+            return _dbSet
                 .FindAsync(id);
         }
 
         public async Task<IQueryable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> predicate)
         {
-            var where = predicate.ArgNotNull(nameof(predicate));
+            Expression<Func<TEntity, bool>> where = predicate.ArgNotNull(nameof(predicate));
 
-            var results = await _db.Set<TEntity>()
+            List<TEntity> results = await _dbSet
                     .Where(where)
                     .ToListAsync(); // To maintain non-volatile cache queries
-                
+
             return results.AsQueryable();
         }
 
-        // NB: This is an UPSERT method.
-        public async Task<TEntity> SetAsync(TEntity instance)
+        public async Task<TEntity> UpsertAsync(TEntity instance)
         {
             instance.ArgNotNull(nameof(instance));
-            
+
             // Input should be detached (untracked)
             if (_db.Entry(instance).State != EntityState.Detached)
             {
                 throw new InvalidOperationException("Entity is tracked, no need to use set (upsert).");
             }
 
-            var existingValue = await _db.Set<TEntity>()
+            TEntity existingValue = await _dbSet
                 .FindAsync(instance.Id);
             if (existingValue is null)
             {
@@ -67,13 +70,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                 return existingValue;
             }
         }
-        
-        public async Task SaveChangesAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
 
-        public Task DeleteAsync(TEntity instance)
+        public Task RemoveAsync(TEntity instance)
         {
             instance.ArgNotNull(nameof(instance));
 
@@ -85,18 +83,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                 throw new InvalidOperationException("Entity is in invalid tracking state for this operation.");
             }
 
-            _db.Set<TEntity>()
-                .Remove(instance);
-            return ((TEntity) null).ToTaskResult();
+            _dbSet
+              .Remove(instance);
+            return ((TEntity)null).ToTaskResult();
         }
 
-        public Task<List<string>> GetIdsAsync()
+        public async Task<IQueryable<TEntity>> GetAllAsync()
         {
-            var keys = _db.Set<TEntity>()
-                .Select(p => p.Id)
-                .ToListAsync();
-            
-            return keys;
+            List<TEntity> instances = await _dbSet
+            .ToListAsync();
+
+            return instances.AsQueryable();
         }
     }
 }

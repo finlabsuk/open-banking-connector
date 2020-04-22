@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -21,7 +22,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         public static SharedContext CreateMockOpenBankingContext()
         {
             return new SharedContext(
-                Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>()),
                 Substitute.For<ICertificateReader>(),
                 Substitute.For<IApiClient>(),
                 Substitute.For<IConfigurationProvider>(),
@@ -31,7 +31,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>(),
                 Substitute.For<IDbEntityRepository<DomesticConsent>>(),
                 Substitute.For<IEntityMapper>(),
-                Substitute.For<IDbEntityRepository<ApiProfile>>()
+                Substitute.For<IDbEntityRepository<ApiProfile>>(),
+                Substitute.For<IDbMultiEntityMethods>()
             );
         }
 
@@ -41,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             return new RequestBuilder(
                 Substitute.For<ITimeProvider>(),
                 new EntityMapper(),
-                Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>()),
+                Substitute.For<IDbMultiEntityMethods>(),
                 new DefaultConfigurationProvider(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IKeySecretProvider>(),

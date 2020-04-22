@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
@@ -86,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [ProducesResponseType(typeof(MessagesResponse), (int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetSoftwareStatementProfileIdsAsync()
         {
-            var result = (await _profileRepo.GetIdsAsync()).OrderBy(x => x, StringComparer.InvariantCultureIgnoreCase);
+            var result = (await _profileRepo.GetAllAsync()).Select(x => x.Id).OrderBy(x => x, StringComparer.InvariantCultureIgnoreCase);
 
             return new OkObjectResult(result);
         }

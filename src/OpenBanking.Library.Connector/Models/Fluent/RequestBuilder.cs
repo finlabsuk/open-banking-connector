@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
     public class RequestBuilder : IOpenBankingRequestBuilder
     {
         private readonly IApiClient _apiClient;
-        private readonly BaseDbContext _baseDbContext;
+        private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
         private readonly IDbEntityRepository<BankClientProfile> _clientProfileRepository;
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         
         public RequestBuilder(IEntityMapper entityMapper,
-            BaseDbContext baseDbContext,
+            IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
             IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
             ICertificateReader certificateReader,
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
             IDbEntityRepository<ApiProfile> apiProfileRepository)
-            : this(new TimeProvider(), entityMapper, baseDbContext, configurationProvider, logger, keySecretProvider, apiClient,
+            : this(new TimeProvider(), entityMapper, dbContextService, configurationProvider, logger, keySecretProvider, apiClient,
                 certificateReader,
                 clientProfileRepository, softwareStatementProfileRepo, domesticConsentRepo,
                 apiProfileRepository)
@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         }
 
         internal RequestBuilder(ITimeProvider timeProvider, IEntityMapper entityMapper,
-            BaseDbContext baseDbContext,
+            IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
             IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
             ICertificateReader certificateReader,
@@ -59,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             _certificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
             _entityMapper = entityMapper.ArgNotNull(nameof(entityMapper));
-            _baseDbContext = baseDbContext;
+            _dbContextService = dbContextService;
             _configurationProvider = configurationProvider.ArgNotNull(nameof(configurationProvider));
             _logger = logger.ArgNotNull(nameof(logger));
             _keySecretProvider = keySecretProvider.ArgNotNull(nameof(keySecretProvider));
@@ -118,21 +118,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private ISharedContext CreateContext()
         {
             var context = new SharedContext(
-                _baseDbContext,
                 _certificateReader,
                 _apiClient,
                 _configurationProvider,
                 _logger,
-                _keySecretProvider, 
+                _keySecretProvider,
                 _clientProfileRepository,
-                _softwareStatementRepo, 
+                _softwareStatementRepo,
                 _domesticConsentRepo,
                 _entityMapper,
-                _apiProfileRepository)
+                _apiProfileRepository,
+                _dbContextService)
             {
                 Created = _timeProvider.GetUtcNow()
             };
-
             return context;
         }
     }

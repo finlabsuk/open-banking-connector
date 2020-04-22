@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
             var _dB = new SqliteDbContext(_dbContextOptions);
             var requestBuilder = new RequestBuilder(
                 new EntityMapper(),
-                _dB,
+                new DbMultiEntityMethods(_dB),
                 new DefaultConfigurationProvider(),
                 new ConsoleInstrumentationClient(),
                 new MemoryKeySecretProvider(),

@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FsCheck;

@@ -5,14 +5,26 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence
 {
-    public class MemoryDomesticConsentRepositoryTests
+    public class DomesticConsentRepoTests: DbTest
     {
+        private readonly IDbEntityRepository<DomesticConsent> _repo;
+        private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
+        private readonly ITestOutputHelper _output;
+
+        public DomesticConsentRepoTests(ITestOutputHelper output)
+        {
+            _repo = new DbEntityRepository<DomesticConsent>(_dB);
+            _dbMultiEntityMethods = new DbMultiEntityMethods(_dB);
+            _output = output;
+        }
+
         [Theory]
         [InlineData(1)]
         [InlineData(3)]
@@ -21,7 +33,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByUniqueProperty(int count)
         {
-            var cache = new MemoryDomesticConsentRepository();
             var items = Enumerable.Range(1, count)
                 .Select(i => new DomesticConsent
                 {
@@ -29,10 +40,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 }).ToList();
             foreach (var dc in items)
             {
-                await cache.SetAsync(dc);
+                await _repo.UpsertAsync(dc);
             }
+            _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await cache.GetAsync(x => x.Id == count.ToString());
+            var q = await _repo.GetAsync(x => x.Id == count.ToString());
 
             var results = q.ToList();
 
@@ -48,7 +60,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByAll(int count)
         {
-            var cache = new MemoryDomesticConsentRepository();
             var items = Enumerable.Range(1, count)
                 .Select(i => new DomesticConsent
                 {
@@ -56,10 +67,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 }).ToList();
             foreach (var dc in items)
             {
-                await cache.SetAsync(dc);
+                await _repo.UpsertAsync(dc);
             }
+            _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await cache.GetAsync(x => true);
+            var q = await _repo.GetAsync(x => true);
 
             var results = q.ToList();
 
@@ -74,7 +86,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetEmptySetByUniqueProperty(int count)
         {
-            var cache = new MemoryDomesticConsentRepository();
             var items = Enumerable.Range(1, count)
                 .Select(i => new DomesticConsent
                 {
@@ -82,10 +93,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 }).ToList();
             foreach (var dc in items)
             {
-                await cache.SetAsync(dc);
+                await _repo.UpsertAsync(dc);
             }
+            _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await cache.GetAsync(x => x.Id == count.ToString());
+            var q = await _repo.GetAsync(x => x.Id == count.ToString());
 
             var results = q.ToList();
 
