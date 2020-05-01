@@ -13,18 +13,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
-            var registrationClaims = new OpenBankingClientRegistrationClaims
+            OpenBankingClientRegistrationClaims registrationClaims = new OpenBankingClientRegistrationClaims
             {
                 Iss = sProfile.SoftwareStatementPayload.SoftwareId,
                 Aud = issuerUrl,
                 RedirectUris = sProfile.SoftwareStatementPayload.SoftwareRedirectUris,
                 SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
-                Scope = concatScopes
-                    ? new[] { sProfile.SoftwareStatementPayload.Scope }
-                    : sProfile.SoftwareStatementPayload.Scope.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                Scope = sProfile.SoftwareStatementPayload.Scope,
+                /*                Scope = concatScopes
+                                    ? new[] { sProfile.SoftwareStatementPayload.Scope }
+                                    : sProfile.SoftwareStatementPayload.Scope.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                */
                 SoftwareStatement = sProfile.SoftwareStatement,
                 TlsClientAuthSubjectDn =
-                    $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB"
+              $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB"
             };
 
             return registrationClaims;
@@ -34,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
             Persistent.BankClientProfile openBankingClient, string redirectUrl, string[] scope,
             string intentId)
         {
-            var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
+            OAuth2RequestObjectClaims oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
                 Iss = openBankingClient.BankClientRegistrationData.ClientId,
                 Aud = openBankingClient.IssuerUrl,

@@ -27,6 +27,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public OBWriteDomesticConsent ObWriteDomesticConsent { get; set; }
 
         [JsonProperty("tokenEndpointResponse")]
-        public TokenEndpointResponse TokenEndpointResponse { get; set; }
+        public TokenEndpointResponse? TokenEndpointResponse { get; set; }
     }
 }

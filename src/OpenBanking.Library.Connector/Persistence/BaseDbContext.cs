@@ -12,6 +12,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     // DB provider-independent DB context
     public abstract class BaseDbContext : DbContext
     {
+        // Use no JSON formatting by default.
+        protected virtual Formatting JsonFormatting { get; } = Formatting.None;
+
         protected BaseDbContext(DbContextOptions options) : base(options)
         {
         }
@@ -19,9 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         public DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
 
         public DbSet<BankClientProfile> BankClientProfiles { get; set; }
-        
+
         public DbSet<ApiProfile> ApiProfiles { get; set; }
-        
+
         public DbSet<DomesticConsent> DomesticConsents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,71 +34,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                 .Entity<SoftwareStatementProfile>(c =>
                 {
                     c
-                        .OwnsOne(e => e.SoftwareStatementPayload)
-                        .Property(e => e.SoftwareRedirectUris)
+                        .Property(e => e.SoftwareStatementPayload)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<SoftwareStatementProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.SoftwareStatementPayload)
-                        .Property(e => e.SoftwareRoles)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-            
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.BankClientRegistrationClaims)
-                        .Property(e => e.GrantTypes)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.BankClientRegistrationClaims)
-                        .Property(e => e.ResponseTypes)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-            
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.BankClientRegistrationClaims)
-                        .Property(e => e.RedirectUris)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.BankClientRegistrationClaims)
-                        .Property(e => e.Scope)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
+                            v => JsonConvert.DeserializeObject<SoftwareStatementPayload>(v)
                         );
                 });
 
@@ -106,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                         .OwnsOne(e => e.OpenIdConfiguration)
                         .Property(e => e.ResponseTypesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
                             v => JsonConvert.DeserializeObject<string[]>(v)
                         );
                 });
@@ -118,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                         .OwnsOne(e => e.OpenIdConfiguration)
                         .Property(e => e.ScopesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
                             v => JsonConvert.DeserializeObject<string[]>(v)
                         );
                 });
@@ -130,17 +72,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                         .OwnsOne(e => e.OpenIdConfiguration)
                         .Property(e => e.ResponseModesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
                             v => JsonConvert.DeserializeObject<string[]>(v)
                         );
                 });
-            
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .Property(e => e.BankClientRegistrationClaims)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
+                            v => JsonConvert.DeserializeObject<BankClientRegistrationClaims>(v)
+                        );
+                });
+
+            modelBuilder
+                .Entity<BankClientProfile>(c =>
+                {
+                    c
+                        .Property(e => e.BankClientRegistrationData)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
+                            v => JsonConvert.DeserializeObject<BankClientRegistrationData>(v)
+                        );
+                });
+
             modelBuilder.Entity<ApiProfile>(b =>
             {
                 b.Property(e => e.Id);
-                b.Property(e => e.BankClientProfileId);                
+                b.Property(e => e.BankClientProfileId);
                 b.Property(e => e.ApiVersion);
-                b.Property(e => e.BaseUrl);                
+                b.Property(e => e.BaseUrl);
             });
 
             modelBuilder
@@ -149,19 +113,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     c
                         .Property(e => e.ObWriteDomesticConsent)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
                             v => JsonConvert.DeserializeObject<OBWriteDomesticConsent>(v)
                         );
                 });
 
-            
+
             modelBuilder
                 .Entity<DomesticConsent>(c =>
                 {
                     c
                         .Property(e => e.TokenEndpointResponse)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v),
+                            v => JsonConvert.SerializeObject(v, JsonFormatting),
                             v => JsonConvert.DeserializeObject<TokenEndpointResponse>(v)
                         );
                 });

@@ -4,7 +4,6 @@
 
 using System;
 using System.Net.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
@@ -16,9 +15,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
@@ -27,22 +26,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
     {
         public static IHost CheckDbExists(this IHost host)
         {
-            using var scope = host.Services.CreateScope();
-            var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<BaseDbContext>();
-            
+            using IServiceScope scope = host.Services.CreateScope();
+            IServiceProvider services = scope.ServiceProvider;
+            BaseDbContext context = services.GetRequiredService<BaseDbContext>();
+
             // Delete/Create DB as required (should normally be commented out)
             //context.Database.EnsureDeleted();
             //context.Database.EnsureCreated();
-            
+
             // Check DB exists
-            var creator = context.Database.GetService<IRelationalDatabaseCreator>();
+            IRelationalDatabaseCreator creator = context.Database.GetService<IRelationalDatabaseCreator>();
             if (!creator.Exists())
             {
                 throw new ApplicationException(
                     "No database found. Run 'dotnet ef database update' in OpenBanking.WebApp.Connector.Sample root folder to create test DB.");
             }
-            
+
             return host;
         }
     }
@@ -57,9 +56,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             services.AddHttpClient(httpClientName)
                 .ConfigurePrimaryHttpMessageHandler(sp =>
                 {
-                    var secrets = sp.GetService<IKeySecretProvider>();
+                    IKeySecretProvider secrets = sp.GetService<IKeySecretProvider>();
 
-                    var handler = new HttpRequestBuilder()
+                    HttpMessageHandler handler = new HttpRequestBuilder()
                         .SetClientCertificates(CertificateFactories.GetCertificates(secrets))
                         .CreateMessageHandler();
 
@@ -70,22 +69,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
             services.AddSingleton<IInstrumentationClient, InstrumentationClient>();
             services.AddSingleton(sp =>
             {
-                var builder = new KeySecretBuilder();
-                var configProvider = sp.GetService<IConfigurationProvider>();
+                KeySecretBuilder builder = new KeySecretBuilder();
+                IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
 
                 return builder.GetKeySecretProvider(configuration, configProvider.GetRuntimeConfiguration());
             });
             services.AddSingleton<IApiClient>(sp =>
             {
-                var hcf = sp.GetService<IHttpClientFactory>();
+                IHttpClientFactory hcf = sp.GetService<IHttpClientFactory>();
 
-                var client = hcf.CreateClient(httpClientName);
+                HttpClient client = hcf.CreateClient(httpClientName);
 
                 return new ApiClient(sp.GetService<IInstrumentationClient>(), client);
             });
             services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
             services.AddSingleton<IEntityMapper, EntityMapper>();
-            
+
             // Configure DB
             switch (configuration["DbProvider"])
             {
@@ -94,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                         // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
                         .AddDbContext<BaseDbContext, SqliteDbContext>(options =>
                         {
-                            var connectionString = configuration.GetConnectionString("SqliteDbContext");
+                            string connectionString = configuration.GetConnectionString("SqliteDbContext");
                             options.UseSqlite(
                                 connectionString
                             );
@@ -103,6 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 default:
                     throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
             }
+
             services.AddScoped<IDbMultiEntityMethods,
                 DbMultiEntityMethods>();
             services.AddScoped<IDbEntityRepository<SoftwareStatementProfile>,

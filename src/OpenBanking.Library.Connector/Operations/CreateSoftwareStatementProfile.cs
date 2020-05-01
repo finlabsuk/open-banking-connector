@@ -3,13 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -46,12 +44,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             value.SoftwareStatementHeaderBase64 = softwareStatementComponentsBase64[0];
             value.SoftwareStatementPayloadBase64 = softwareStatementComponentsBase64[1];
+            value.SoftwareStatementPayload = value.SoftwareStatementPayloadFromBase64(softwareStatementComponentsBase64[1]);
             value.SoftwwareStatementSignatureBase64 = softwareStatementComponentsBase64[2];
-
-            byte[] payloadData
-                = Convert.FromBase64String(value.SoftwareStatementPayloadBase64);
-            string payloadString = Encoding.UTF8.GetString(payloadData);
-            value.SoftwareStatementPayload = JsonConvert.DeserializeObject<SoftwareStatementPayload>(payloadString);
 
             await _softwareStatementProfileRepo.UpsertAsync(value);
 

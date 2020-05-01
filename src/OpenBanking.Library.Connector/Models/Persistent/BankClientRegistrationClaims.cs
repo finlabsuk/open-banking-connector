@@ -3,17 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    [Owned]
+
     public class BankClientRegistrationClaims
     {
         [JsonProperty("iss")]
         public string Iss { get; set; }
-
+ 
         [JsonProperty("iat")]
         public DateTimeOffset Iat { get; set; } = DateTimeOffset.UtcNow;
 
@@ -24,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string Jti { get; set; } = Guid.NewGuid().ToString();
 
         [JsonProperty("client_id")]
-        public string ClientId { get; set; }
+        public string? ClientId { get; set; }
 
         [JsonProperty("token_endpoint_auth_method")]
         public string TokenEndpointAuthMethod { get; set; } = "tls_client_auth";
@@ -39,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string ApplicationType { get; set; } = "web";
 
         [JsonProperty("token_endpoint_auth_signing_alg")]
-        public string TokenEndpointAuthSigningAlg { get; set; }
+        public string? TokenEndpointAuthSigningAlg { get; set; }
 
         [JsonProperty("aud")]
         public string Aud { get; set; }

@@ -66,9 +66,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 softwareStatementProfile, false);
             BankClientRegistrationClaimsOverrides registrationClaimsOverrides =
                 bankClientProfile.BankClientRegistrationClaimsOverrides;
-            if (registrationClaimsOverrides != null)
+            if (!(registrationClaimsOverrides is null))
             {
-                registrationClaims.Aud = registrationClaimsOverrides.RequestAudience;
+                if (!(registrationClaimsOverrides.RequestAudience is null))
+                {
+                    registrationClaims.Aud = registrationClaimsOverrides.RequestAudience;
+                }
             }
 
             BankClientRegistrationClaims persistentRegistrationClaims =

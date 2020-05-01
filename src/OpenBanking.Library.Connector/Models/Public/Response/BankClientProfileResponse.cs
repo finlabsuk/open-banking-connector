@@ -9,6 +9,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
     public class BankClientProfileResponse
     {
+        public BankClientProfileResponse()
+        {
+        }
+
         public BankClientProfileResponse(BankClientProfile  persistentProfile)
         {
             Id = persistentProfile.Id;

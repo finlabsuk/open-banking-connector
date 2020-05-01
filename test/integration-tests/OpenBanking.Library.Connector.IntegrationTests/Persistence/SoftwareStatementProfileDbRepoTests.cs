@@ -24,6 +24,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             _output = output;
         }
 
+        /// <summary>
+        /// Confirm operation of generation of non-null strings without null chars
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public bool FsCheckStringNotNullAndContainsNoNulls_WorksCorrectly(StringNotNullAndContainsNoNulls s)
+        {
+            bool? outcome = !s.Item?.Contains("\0");
+            return outcome ?? false;
+        }
+
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property GetAsync_ReturnsEmpty(string id)
         {
@@ -35,68 +47,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             return rule.When(id != null);
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetAsync_KnownId_ReturnsItem(string id)
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property GetAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id)
         {
             Func<bool> rule = () =>
             {
                 SoftwareStatementProfile value = new SoftwareStatementProfile
                 {
-                    Id = id
+                    Id = id.Item
                 };
                 SoftwareStatementProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                return _repo.GetAsync(id).Result.Id == id;
+                return _repo.GetAsync(id.Item).Result.Id == id.Item;
             };
 
-            // Run test avoiding C null character
-            if (!(id is null) && id.Contains("\0"))
-            {
-                return true.ToProperty();
-            }
-            else
-            {
-                return rule.When(id != null);
-            }
+            return rule.ToProperty();
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property SetAsync_KnownId_ElementReplaced(string id, string url1, string url2)
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property SetAsync_KnownId_ElementReplaced(StringNotNullAndContainsNoNulls id, StringNotNullAndContainsNoNulls url1, StringNotNullAndContainsNoNulls url2)
         {
             Func<bool> rule = () =>
             {
-                SoftwareStatementProfile value = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url1 };
-                SoftwareStatementProfile value2 = new SoftwareStatementProfile { Id = id, DefaultFragmentRedirectUrl = url2 };
+                SoftwareStatementProfile value = new SoftwareStatementProfile { Id = id.Item, DefaultFragmentRedirectUrl = url1.Item };
+                SoftwareStatementProfile value2 = new SoftwareStatementProfile { Id = id.Item, DefaultFragmentRedirectUrl = url2.Item };
 
                 SoftwareStatementProfile _ = _repo.UpsertAsync(value).Result;
                 SoftwareStatementProfile __ = _repo.UpsertAsync(value2).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                SoftwareStatementProfile item = _repo.GetAsync(id).Result;
+                SoftwareStatementProfile item = _repo.GetAsync(id.Item).Result;
 
-                return item.Id == id && item.DefaultFragmentRedirectUrl == value2.DefaultFragmentRedirectUrl;
+                return item.Id == id.Item && item.DefaultFragmentRedirectUrl == value2.DefaultFragmentRedirectUrl;
             };
 
             // Run test avoiding C null character
-            if (!(id is null) && id.Contains("\0"))
-            {
-                return true.ToProperty();
-            }
-            else
-            {
-                return rule.When(id != null && url1 != null && url2 != null && url1 != url2);
-            }
+            return rule.When(url1 != url2);
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property DeleteAsync_KnownId_ReturnsItem(string id)
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property DeleteAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id)
         {
             Func<bool> rule = () =>
             {
                 SoftwareStatementProfile value = new SoftwareStatementProfile
                 {
-                    Id = id
+                    Id = id.Item
                 };
                 SoftwareStatementProfile _ = _repo.UpsertAsync(value).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
@@ -104,10 +101,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 _repo.RemoveAsync(value).Wait();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                return _repo.GetAsync(id).Result == null;
+                return _repo.GetAsync(id.Item).Result == null;
             };
 
-            return rule.When(id != null);
+            return rule.ToProperty();
         }
     }
 }

@@ -35,75 +35,61 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             return rule.When(id != null);
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetAsync_KnownId_ReturnsItem(string id, BankClientProfile value)
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property GetAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id, BankClientProfile value)
         {
             Func<bool> rule = () =>
             {
-                value.Id = id;
+                value.Id = id.Item;
                 BankClientProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                return _repo.GetAsync(id).Result.Id == id;
+                return _repo.GetAsync(id.Item).Result.Id == id.Item;
             };
 
             // Run test avoiding C null character
-            if (!(id is null) && id.Contains("\0"))
-            {
-                return true.ToProperty();
-            }
-            else
-            {
-                return rule.When(id != null && value != null);
-            }
+            return rule.When(value != null);
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property SetAsync_KnownId_ElementReplaced(string id, BankClientProfile value,
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property SetAsync_KnownId_ElementReplaced(StringNotNullAndContainsNoNulls id, BankClientProfile value,
             BankClientProfile value2)
         {
             Func<bool> rule = () =>
             {
-                value.Id = id;
-                value2.Id = id;
+                value.Id = id.Item;
+                value2.Id = id.Item;
 
                 BankClientProfile _ = _repo.UpsertAsync(value).Result;
                 BankClientProfile __ = _repo.UpsertAsync(value2).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                BankClientProfile item = _repo.GetAsync(id).Result;
+                BankClientProfile item = _repo.GetAsync(id.Item).Result;
 
-                return item.Id == id && item.XFapiFinancialId == value2.XFapiFinancialId;
+                return item.Id == id.Item && item.XFapiFinancialId == value2.XFapiFinancialId;
             };
 
             // Run test avoiding C null character
-            if (!(id is null) && id.Contains("\0"))
-            {
-                return true.ToProperty();
-            }
-            else
-            {
-                return rule.When(id != null && value != null && value2 != null &&
-                                 value.XFapiFinancialId != value2.XFapiFinancialId);
-            }
+            return rule.When(value != null && value2 != null &&
+                                             value.XFapiFinancialId != value2.XFapiFinancialId);
         }
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property DeleteAsync_KnownId_ReturnsItem(string id, BankClientProfile value)
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public Property DeleteAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id, BankClientProfile value)
         {
             Func<bool> rule = () =>
             {
-                value.Id = id;
+                value.Id = id.Item;
                 BankClientProfile _ = _repo.UpsertAsync(value).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 _repo.RemoveAsync(value).Wait();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                return _repo.GetAsync(id).Result == null;
+                return _repo.GetAsync(id.Item).Result == null;
             };
 
-            return rule.When(id != null && value != null);
+            return rule.When(value != null);
         }
     }
 }
