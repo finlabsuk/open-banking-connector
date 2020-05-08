@@ -67,23 +67,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Get client credentials grant (we will not cache token for now but simply use to POST consent)
             TokenEndpointResponse tokenEndpointResponse =
-                await PostClientCredentialsGrant("payments", bankClientProfile);
+                await PostClientCredentialsGrant(scope: "payments", client: bankClientProfile);
             // TODO: validate the response???
             OBWriteDomesticConsent2 consent2 = _mapper.Map<OBWriteDomesticConsent2>(consent);
 
             // Create new Open Banking consent by posting JWT
             JwtFactory jwtFactory = new JwtFactory();
-            string jwt = jwtFactory.CreateJwt(softwareStatementProfile, consent2, true);
+            string jwt = jwtFactory.CreateJwt(
+                profile: softwareStatementProfile,
+                claims: consent2,
+                useOpenBankingJwtHeaders: true);
             string[] jwsComponents = jwt.Split('.');
             string jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
             UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payment-consents"));
             string payloadJson = JsonConvert.SerializeObject(consent2);
             List<HttpHeader> headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", bankClientProfile.XFapiFinancialId),
-                new HttpHeader("Authorization", "Bearer " + tokenEndpointResponse.AccessToken),
-                new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
-                new HttpHeader("x-jws-signature", jwsSignature)
+                new HttpHeader(name: "x-fapi-financial-id", value: bankClientProfile.XFapiFinancialId),
+                new HttpHeader(name: "Authorization", value: "Bearer " + tokenEndpointResponse.AccessToken),
+                new HttpHeader(name: "x-idempotency-key", value: Guid.NewGuid().ToString()),
+                new HttpHeader(name: "x-jws-signature", value: jwsSignature)
             };
 
             OBWriteDomesticConsentResponse2 consentResponse = await new HttpRequestBuilder()
@@ -93,17 +96,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<OBWriteDomesticConsentResponse2>(_apiClient, true);
+                .RequestJsonAsync<OBWriteDomesticConsentResponse2>(client: _apiClient, requestContentIsJson: true);
             // TODO: validate response
 
             // Generate URL for user auth
             string consentId = consentResponse.Data.ConsentId;
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(
-                bankClientProfile,
-                redirectUrl, new[] { "openid", "payments" },
-                consentId);
-            string requestObjectJwt = jwtFactory.CreateJwt(softwareStatementProfile, oAuth2RequestObjectClaims, false);
+                openBankingClient: bankClientProfile,
+                redirectUrl: redirectUrl,
+                scope: new[] { "openid", "payments" },
+                intentId: consentId);
+            string requestObjectJwt = jwtFactory.CreateJwt(
+                profile: softwareStatementProfile,
+                claims: oAuth2RequestObjectClaims,
+                useOpenBankingJwtHeaders: false);
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
             {
                 { "response_type", oAuth2RequestObjectClaims.ResponseType },
@@ -166,11 +173,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Assemble headers
             List<HttpHeader> headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", client.XFapiFinancialId)
+                new HttpHeader(name: "x-fapi-financial-id", value: client.XFapiFinancialId)
             };
             if (authHeader != null)
             {
-                headers.Add(new HttpHeader("Authorization", authHeader));
+                headers.Add(new HttpHeader(name: "Authorization", value: authHeader));
             }
 
             return await new HttpRequestBuilder()
@@ -180,7 +187,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<TokenEndpointResponse>(_apiClient, false);
+                .RequestJsonAsync<TokenEndpointResponse>(client: _apiClient, requestContentIsJson: false);
         }
     }
 }

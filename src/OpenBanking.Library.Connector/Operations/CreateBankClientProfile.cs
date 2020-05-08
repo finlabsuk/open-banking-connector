@@ -19,7 +19,12 @@ using BankClientProfilePublic = FinnovationLabs.OpenBanking.Library.Connector.Mo
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public class CreateBankClientProfile
+    public interface ICreateBankClientProfile
+    {
+        Task<BankClientProfileResponse> CreateAsync(BankClientProfilePublic bankClientProfile);
+    }
+
+    public class CreateBankClientProfile : ICreateBankClientProfile
     {
         private readonly IApiClient _apiClient;
         private readonly IDbEntityRepository<BankClientProfile> _bankClientProfileRepo;
@@ -41,8 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _bankClientProfileRepo = bankClientProfileRepo;
         }
 
-        public async Task<BankClientProfileResponse> CreateAsync(
-            BankClientProfilePublic bankClientProfile)
+        public async Task<BankClientProfileResponse> CreateAsync(BankClientProfilePublic bankClientProfile)
         {
             bankClientProfile.ArgNotNull(nameof(bankClientProfile));
 
@@ -62,8 +66,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Create claims for client reg
             OpenBankingClientRegistrationClaims registrationClaims = Factories.CreateRegistrationClaims(
-                bankClientProfile.IssuerUrl,
-                softwareStatementProfile, false);
+                issuerUrl: bankClientProfile.IssuerUrl,
+                sProfile: softwareStatementProfile,
+                concatScopes: false);
             BankClientRegistrationClaimsOverrides registrationClaimsOverrides =
                 bankClientProfile.BankClientRegistrationClaimsOverrides;
             if (!(registrationClaimsOverrides is null))
@@ -101,7 +106,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             if (existingClient is null)
             {
                 JwtFactory jwtFactory = new JwtFactory();
-                string jwt = jwtFactory.CreateJwt(softwareStatementProfile, registrationClaims, false);
+                string jwt = jwtFactory.CreateJwt(
+                    profile: softwareStatementProfile,
+                    claims: registrationClaims,
+                    useOpenBankingJwtHeaders: false);
 
                 OpenBankingClientRegistrationResponse registrationResponse = await new HttpRequestBuilder()
                     .SetMethod(HttpMethod.Post)
@@ -109,7 +117,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .SetContent(jwt)
                     .SetContentType("application/jwt")
                     .Create()
-                    .RequestJsonAsync<OpenBankingClientRegistrationResponse>(_apiClient, false);
+                    .RequestJsonAsync<OpenBankingClientRegistrationResponse>(
+                        client: _apiClient,
+                        requestContentIsJson: false);
 
                 BankClientRegistrationData openBankingClientResponse = new BankClientRegistrationData
                 {
@@ -121,8 +131,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                 // Create and store Open Banking client
                 BankClientProfile newClient = _mapper.Map<BankClientProfile>(bankClientProfile);
-                client = await PersistOpenBankingClient(newClient, openIdConfiguration, registrationClaims,
-                    openBankingClientResponse);
+                client = await PersistOpenBankingClient(
+                    value: newClient,
+                    openIdConfiguration: openIdConfiguration,
+                    registrationClaims: registrationClaims,
+                    openBankingRegistrationData: openBankingClientResponse);
                 await _dbMultiEntityMethods.SaveChangesAsync();
             }
             else
@@ -138,8 +151,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             BankClientProfile value,
             OpenIdConfiguration openIdConfiguration,
             OpenBankingClientRegistrationClaims registrationClaims,
-            BankClientRegistrationData openBankingRegistrationData
-        )
+            BankClientRegistrationData openBankingRegistrationData)
         {
             value.State = "ok";
             value.OpenIdConfiguration = openIdConfiguration;
@@ -154,8 +166,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         private async Task<BankClientProfile> PersistOpenBankingClientProfile(
             BankClientProfile value,
-            string openBankingClientId
-        )
+            string openBankingClientId)
         {
             value.Id = Guid.NewGuid().ToString();
             value.State = "ok";
@@ -173,7 +184,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetMethod(HttpMethod.Get)
                 .SetUri(ub.Uri)
                 .Create()
-                .RequestJsonAsync<OpenIdConfiguration>(_apiClient, false);
+                .RequestJsonAsync<OpenIdConfiguration>(client: _apiClient, requestContentIsJson: false);
         }
     }
 }

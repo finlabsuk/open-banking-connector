@@ -3,19 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class OpenBankingSoftwareStatementResponse : FluentResponse
     {
-        internal OpenBankingSoftwareStatementResponse(FluentResponseMessage message,
-            SoftwareStatementProfileResponse data) : this(new[] { message }, data)
+        //internal
+        public OpenBankingSoftwareStatementResponse(
+            FluentResponseMessage message,
+            SoftwareStatementProfileResponse data) : this(messages: new[] { message }, data: data)
         {
         }
 
-        internal OpenBankingSoftwareStatementResponse(IList<FluentResponseMessage> messages,
+        //internal
+        public OpenBankingSoftwareStatementResponse(
+            IList<FluentResponseMessage> messages,
             SoftwareStatementProfileResponse data) : base(messages)
         {
             Data = data;

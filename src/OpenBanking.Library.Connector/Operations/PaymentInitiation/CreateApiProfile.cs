@@ -6,12 +6,18 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using PaymentInitiationApiProfilePublic = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.PaymentInitiationApiProfile;
+using PaymentInitiationApiProfilePublic =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.PaymentInitiationApiProfile;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
-    public class CreateApiProfile
+    public interface ICreateApiProfile
+    {
+        Task<PaymentInitiationApiProfileResponse> CreateAsync(PaymentInitiationApiProfilePublic apiProfile);
+    }
+
+    public class CreateApiProfile : ICreateApiProfile
     {
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
         private readonly IDbMultiEntityMethods _dbContextService;
@@ -26,17 +32,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         {
             // Create and store persistent object
             ApiProfile persistentApiProfile = new ApiProfile(
-                apiProfile.Id,
-                apiProfile.BankClientProfileId,
-                apiProfile.ApiVersion,
-                apiProfile.BaseUrl);
+                id: apiProfile.Id,
+                bankClientProfileId: apiProfile.BankClientProfileId,
+                apiVersion: apiProfile.ApiVersion,
+                baseUrl: apiProfile.BaseUrl);
             await _apiProfileRepo.UpsertAsync(persistentApiProfile);
             await _dbContextService.SaveChangesAsync();
 
             // Return response object
-            return new PaymentInitiationApiProfileResponse(persistentApiProfile.Id,
-                persistentApiProfile.BankClientProfileId,
-                persistentApiProfile.ApiVersion, persistentApiProfile.BaseUrl);
+            return new PaymentInitiationApiProfileResponse(
+                id: persistentApiProfile.Id,
+                bankClientProfileId: persistentApiProfile.BankClientProfileId,
+                apiVersion: persistentApiProfile.ApiVersion,
+                baseUrl: persistentApiProfile.BaseUrl);
         }
     }
 }

@@ -9,15 +9,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
     public class BankClientProfileResponse
     {
-        public BankClientProfileResponse()
-        {
-        }
-
-        public BankClientProfileResponse(BankClientProfile  persistentProfile)
+        public BankClientProfileResponse(BankClientProfile persistentProfile)
         {
             Id = persistentProfile.Id;
             BankClientRegistrationClaims = persistentProfile.BankClientRegistrationClaims;
-        }        
+        }
 
         /// ID used to uniquely identify object
         [JsonProperty("id")]

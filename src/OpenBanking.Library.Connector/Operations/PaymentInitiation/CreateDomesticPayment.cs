@@ -28,10 +28,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
 
-        public CreateDomesticPayment(IApiClient apiClient, IEntityMapper mapper,
+        public CreateDomesticPayment(
+            IApiClient apiClient,
+            IEntityMapper mapper,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepo,
             IDbEntityRepository<BankClientProfile> openBankingClientRepo,
-            IDbEntityRepository<DomesticConsent> domesticConsentRepo, IDbEntityRepository<ApiProfile> apiProfileRepo)
+            IDbEntityRepository<DomesticConsent> domesticConsentRepo,
+            IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _apiClient = apiClient;
             _mapper = mapper;
@@ -64,8 +67,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string payloadJson = JsonConvert.SerializeObject(payment);
             UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payments"));
 
-            List<HttpHeader> headers = CreateRequestHeaders(softwareStatementProfile, payment, bankClientProfile,
-                tokenEndpointResponse);
+            List<HttpHeader> headers = CreateRequestHeaders(
+                softwareStatement: softwareStatementProfile,
+                payment: payment,
+                client: bankClientProfile,
+                tokenEndpointResponse: tokenEndpointResponse);
 
             OBWriteDomesticResponse2 paymentResponse = await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Post)
@@ -74,27 +80,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<OBWriteDomesticResponse2>(_apiClient, true);
+                .RequestJsonAsync<OBWriteDomesticResponse2>(client: _apiClient, requestContentIsJson: true);
 
             OBWriteDomesticResponse resp = _mapper.Map<OBWriteDomesticResponse>(paymentResponse);
 
             return resp;
         }
 
-        private static List<HttpHeader> CreateRequestHeaders(SoftwareStatementProfile softwareStatement,
+        private static List<HttpHeader> CreateRequestHeaders(
+            SoftwareStatementProfile softwareStatement,
             OBWriteDomestic2 payment,
-            BankClientProfile client, TokenEndpointResponsePublic tokenEndpointResponse)
+            BankClientProfile client,
+            TokenEndpointResponsePublic tokenEndpointResponse)
         {
             JwtFactory jwtFactory = new JwtFactory();
-            string jwt = jwtFactory.CreateJwt(softwareStatement, payment, true);
+            string jwt = jwtFactory.CreateJwt(
+                profile: softwareStatement,
+                claims: payment,
+                useOpenBankingJwtHeaders: true);
             string[] jwsComponents = jwt.Split('.');
             string jwsSig = $"{jwsComponents[0]}..{jwsComponents[2]}";
             List<HttpHeader> headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", client.XFapiFinancialId),
-                new HttpHeader("Authorization", "Bearer " + tokenEndpointResponse.AccessToken),
-                new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
-                new HttpHeader("x-jws-signature", jwsSig)
+                new HttpHeader(name: "x-fapi-financial-id", value: client.XFapiFinancialId),
+                new HttpHeader(name: "Authorization", value: "Bearer " + tokenEndpointResponse.AccessToken),
+                new HttpHeader(name: "x-idempotency-key", value: Guid.NewGuid().ToString()),
+                new HttpHeader(name: "x-jws-signature", value: jwsSig)
             };
             return headers;
         }

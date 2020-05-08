@@ -8,10 +8,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using SoftwareStatementProfilePublic =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public class CreateSoftwareStatementProfile
+    public interface ICreateSoftwareStatementProfile
+    {
+        Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile);
+    }
+
+    public class CreateSoftwareStatementProfile : ICreateSoftwareStatementProfile
     {
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly IEntityMapper _mapper;
@@ -27,12 +35,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _softwareStatementProfileRepo = repo;
         }
 
-        public async Task<SoftwareStatementProfileResponse> CreateAsync(
-            Models.Public.Request.SoftwareStatementProfile profile)
+        public async Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile)
         {
             profile.ArgNotNull(nameof(profile));
 
-            SoftwareStatementProfile value = _mapper.Map<SoftwareStatementProfile>(profile);
+            SoftwareStatementProfile value =
+                _mapper.Map<SoftwareStatementProfile>(profile);
 
             value.State = "ok";
 
@@ -44,7 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             value.SoftwareStatementHeaderBase64 = softwareStatementComponentsBase64[0];
             value.SoftwareStatementPayloadBase64 = softwareStatementComponentsBase64[1];
-            value.SoftwareStatementPayload = value.SoftwareStatementPayloadFromBase64(softwareStatementComponentsBase64[1]);
+            value.SoftwareStatementPayload =
+                value.SoftwareStatementPayloadFromBase64(softwareStatementComponentsBase64[1]);
             value.SoftwwareStatementSignatureBase64 = softwareStatementComponentsBase64[2];
 
             await _softwareStatementProfileRepo.UpsertAsync(value);

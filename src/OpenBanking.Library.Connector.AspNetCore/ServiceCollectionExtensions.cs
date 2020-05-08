@@ -48,40 +48,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
 
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddOpenBankingConnector(this IServiceCollection services,
+        public static IServiceCollection AddOpenBankingConnector(
+            this IServiceCollection services,
             IConfiguration configuration)
         {
             const string httpClientName = "OBC";
 
             services.AddHttpClient(httpClientName)
-                .ConfigurePrimaryHttpMessageHandler(sp =>
-                {
-                    IKeySecretProvider secrets = sp.GetService<IKeySecretProvider>();
+                .ConfigurePrimaryHttpMessageHandler(
+                    sp =>
+                    {
+                        IKeySecretProvider secrets = sp.GetService<IKeySecretProvider>();
 
-                    HttpMessageHandler handler = new HttpRequestBuilder()
-                        .SetClientCertificates(CertificateFactories.GetCertificates(secrets))
-                        .CreateMessageHandler();
+                        HttpMessageHandler handler = new HttpRequestBuilder()
+                            .SetClientCertificates(CertificateFactories.GetCertificates(secrets))
+                            .CreateMessageHandler();
 
-                    return handler;
-                });
+                        return handler;
+                    });
 
             services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(configuration));
             services.AddSingleton<IInstrumentationClient, InstrumentationClient>();
-            services.AddSingleton(sp =>
-            {
-                KeySecretBuilder builder = new KeySecretBuilder();
-                IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
+            services.AddSingleton(
+                sp =>
+                {
+                    KeySecretBuilder builder = new KeySecretBuilder();
+                    IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
 
-                return builder.GetKeySecretProvider(configuration, configProvider.GetRuntimeConfiguration());
-            });
-            services.AddSingleton<IApiClient>(sp =>
-            {
-                IHttpClientFactory hcf = sp.GetService<IHttpClientFactory>();
+                    return builder.GetKeySecretProvider(
+                        config: configuration,
+                        obcConfig: configProvider.GetRuntimeConfiguration());
+                });
+            services.AddSingleton<IApiClient>(
+                sp =>
+                {
+                    IHttpClientFactory hcf = sp.GetService<IHttpClientFactory>();
 
-                HttpClient client = hcf.CreateClient(httpClientName);
+                    HttpClient client = hcf.CreateClient(httpClientName);
 
-                return new ApiClient(sp.GetService<IInstrumentationClient>(), client);
-            });
+                    return new ApiClient(instrumentation: sp.GetService<IInstrumentationClient>(), httpClient: client);
+                });
             services.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
             services.AddSingleton<IEntityMapper, EntityMapper>();
 
@@ -91,16 +97,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                 case "Sqlite":
                     services
                         // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
-                        .AddDbContext<BaseDbContext, SqliteDbContext>(options =>
-                        {
-                            string connectionString = configuration.GetConnectionString("SqliteDbContext");
-                            options.UseSqlite(
-                                connectionString
-                            );
-                        });
+                        .AddDbContext<BaseDbContext, SqliteDbContext>(
+                            options =>
+                            {
+                                string connectionString = configuration.GetConnectionString("SqliteDbContext");
+                                options.UseSqlite(connectionString);
+                            });
                     break;
                 default:
-                    throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
+                    throw new ArgumentException(message: "Unknown DB provider", paramName: configuration["DbProvider"]);
             }
 
             services.AddScoped<IDbMultiEntityMethods,

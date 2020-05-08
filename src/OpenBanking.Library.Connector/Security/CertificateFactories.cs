@@ -41,6 +41,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public static X509Certificate2 GetCertificate2FromPem(string privateKey, string pem)
         {
+            /*
+            string cleanedPem = Regex
+                    .Replace(pem, @"\r\n|\n\r|\n|\r", Environment.NewLine);
+            
+            string cleanedPrivateKey =  Regex
+                .Replace(privateKey, @"\r\n|\n\r|\n|\r", Environment.NewLine);
+                */
+
             using var publicKey = GetCertificate2FromPem(pem);
             var privateKeyBlocks = privateKey.Split("-", StringSplitOptions.RemoveEmptyEntries);
             var privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);

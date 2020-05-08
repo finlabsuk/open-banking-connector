@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OpenBankingConnector.Configuration": {
+      "commandName": "Executable",
+      "executablePath": "pwsh"
+    }
+  }
+}

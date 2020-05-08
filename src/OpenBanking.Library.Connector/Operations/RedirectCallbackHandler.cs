@@ -29,7 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         public RedirectCallbackHandler(
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
-            IApiClient apiClient, IEntityMapper mapper,
+            IApiClient apiClient,
+            IEntityMapper mapper,
             IDbEntityRepository<BankClientProfile> openBankingClientRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo)
         {
@@ -58,8 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             BankClientProfile clientProfile = await _openBankingClientRepo.GetAsync(consent.ApiProfileId);
             if (clientProfile == null)
             {
-                throw new KeyNotFoundException(
-                    $"Client profile with ID '{consent.ApiProfileId}' not found.");
+                throw new KeyNotFoundException($"Client profile with ID '{consent.ApiProfileId}' not found.");
             }
 
             SoftwareStatementProfile softwareStatementProfile =
@@ -70,7 +70,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Obtain token for consent
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             TokenEndpointResponsePublic tokenEndpointResponse =
-                await PostAuthCodeGrant(redirectData.Response.AuthorisationCode, redirectUrl, clientProfile);
+                await PostAuthCodeGrant(
+                    authCode: redirectData.Response.AuthorisationCode,
+                    redirectUrl: redirectUrl,
+                    client: clientProfile);
 
             // Update consent with token
             TokenEndpointResponse value =
@@ -79,7 +82,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             await _domesticConsentRepo.UpsertAsync(consent);
         }
 
-        private async Task<TokenEndpointResponsePublic> PostAuthCodeGrant(string authCode, string redirectUrl,
+        private async Task<TokenEndpointResponsePublic> PostAuthCodeGrant(
+            string authCode,
+            string redirectUrl,
             BankClientProfile client)
         {
             UriBuilder ub = new UriBuilder(new Uri(client.OpenIdConfiguration.TokenEndpoint));
@@ -99,8 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             else if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod ==
                      "client_secret_basic")
             {
-                client.BankClientRegistrationData.ClientSecret.ArgNotNull(
-                    "No client secret available.");
+                client.BankClientRegistrationData.ClientSecret.ArgNotNull("No client secret available.");
                 string authString = client.BankClientRegistrationData.ClientId + ":" +
                                     client.BankClientRegistrationData.ClientSecret;
                 byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
@@ -119,11 +123,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Assemble headers
             List<HttpHeader> headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", client.XFapiFinancialId)
+                new HttpHeader(name: "x-fapi-financial-id", value: client.XFapiFinancialId)
             };
             if (authHeader != null)
             {
-                headers.Add(new HttpHeader("Authorization", authHeader));
+                headers.Add(new HttpHeader(name: "Authorization", value: authHeader));
             }
 
             Models.Ob.TokenEndpointResponse resp = await new HttpRequestBuilder()
@@ -133,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<Models.Ob.TokenEndpointResponse>(_apiClient, false);
+                .RequestJsonAsync<Models.Ob.TokenEndpointResponse>(client: _apiClient, requestContentIsJson: false);
 
             TokenEndpointResponsePublic result = _mapper.Map<TokenEndpointResponsePublic>(resp);
 
