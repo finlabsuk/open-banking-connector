@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -20,24 +19,22 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
     [OutputType(typeof(BankClientProfileResponse))]
     public class NewPaymentInitiationApiProfileRecord : RecordBaseCmdlet
     {
-        private readonly ICreateApiProfile _createApiProfile;
-
         public NewPaymentInitiationApiProfileRecord() : base(
             verbName: "New",
             nounName: "PaymentInitiationApiProfileRecord")
         {
-            _createApiProfile = _serviceProvider.GetService<ICreateApiProfile>();
         }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public PaymentInitiationApiProfile? PaymentInitiationApiProfile { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessRecordInner(IServiceProvider services)
         {
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
-                PaymentInitiationApiProfileResponse response = _createApiProfile
+                ICreatePaymentInitiationApiProfile createApiProfile = services.GetService<ICreatePaymentInitiationApiProfile>();
+                PaymentInitiationApiProfileResponse response = createApiProfile
                     .CreateAsync(PaymentInitiationApiProfile)
                     .GetAwaiter()
                     .GetResult();
@@ -51,10 +48,6 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
                 PaymentInitiationApiProfileFluentResponse response =
                     new PaymentInitiationApiProfileFluentResponse(message: ex.CreateErrorMessage(), data: null);
             }
-
-            _streamWriter.Flush();
-            string outputString = Encoding.UTF8.GetString(_memoryStream.ToArray());
-            WriteVerbose(outputString);
         }
     }
 }

@@ -273,4 +273,7 @@ user.test.settings.json
 *.DS_Store
 
 # Databases
-/src/OpenBanking.WebApp.Connector/*.db
+src/OpenBanking.Library.Connector/*.db
+
+# PowerShell scripts
+src/OpenBankingConnector.Configuration/Scripts/

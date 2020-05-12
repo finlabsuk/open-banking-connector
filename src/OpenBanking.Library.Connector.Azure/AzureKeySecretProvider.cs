@@ -3,8 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
 
@@ -12,13 +11,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Azure
 {
     public class AzureKeySecretProvider : IKeySecretProvider
     {
-        public Task<KeySecret> GetKeySecretAsync(string key) => GetKeySecretAsync(KeySecret.DefaultVaultName, key);
+        public Task<KeySecret> GetKeySecretAsync(string key) =>
+            GetKeySecretAsync(vaultName: KeySecret.DefaultVaultName, key: key);
 
         public async Task<KeySecret> GetKeySecretAsync(string vaultName, string key)
         {
-            var value = await GetSecretAsync(vaultName, key);
+            var value = await GetSecretAsync(vaultName: vaultName, key: key);
 
-            return new KeySecret(vaultName, key, value);
+            return new KeySecret(vaultName: vaultName, key: key, value: value);
         }
 
 

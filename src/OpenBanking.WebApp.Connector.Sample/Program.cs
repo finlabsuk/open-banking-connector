@@ -2,10 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using FinnovationLabs.OpenBanking.Library.Connector.AspNetCore;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
 {
@@ -15,8 +16,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
         {
             var host = CreateHostBuilder(args)
                 .Build();
-            host.CheckDbExists()
-                .Run();
+            host.Services.CheckDbExists();
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

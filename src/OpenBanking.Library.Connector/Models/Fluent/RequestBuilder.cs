@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -17,11 +18,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
     public class RequestBuilder : IOpenBankingRequestBuilder
     {
         private readonly IApiClient _apiClient;
-        private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
         private readonly IDbEntityRepository<BankClientProfile> _clientProfileRepository;
         private readonly IConfigurationProvider _configurationProvider;
+        private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _entityMapper;
         private readonly IKeySecretProvider _keySecretProvider;
@@ -29,27 +30,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementRepo;
         private readonly ITimeProvider _timeProvider;
 
-        
-        public RequestBuilder(IEntityMapper entityMapper,
+
+        public RequestBuilder(
+            IEntityMapper entityMapper,
             IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
-            IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
+            IInstrumentationClient logger,
+            IKeySecretProvider keySecretProvider,
+            IApiClient apiClient,
             ICertificateReader certificateReader,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
             IDbEntityRepository<ApiProfile> apiProfileRepository)
-            : this(new TimeProvider(), entityMapper, dbContextService, configurationProvider, logger, keySecretProvider, apiClient,
-                certificateReader,
-                clientProfileRepository, softwareStatementProfileRepo, domesticConsentRepo,
-                apiProfileRepository)
+            : this(
+                timeProvider: new TimeProvider(),
+                entityMapper: entityMapper,
+                dbContextService: dbContextService,
+                configurationProvider: configurationProvider,
+                logger: logger,
+                keySecretProvider: keySecretProvider,
+                apiClient: apiClient,
+                certificateReader: certificateReader,
+                clientProfileRepository: clientProfileRepository,
+                softwareStatementProfileRepo: softwareStatementProfileRepo,
+                domesticConsentRepo: domesticConsentRepo,
+                apiProfileRepository: apiProfileRepository)
         {
         }
 
-        internal RequestBuilder(ITimeProvider timeProvider, IEntityMapper entityMapper,
+        internal RequestBuilder(
+            ITimeProvider timeProvider,
+            IEntityMapper entityMapper,
             IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
-            IInstrumentationClient logger, IKeySecretProvider keySecretProvider, IApiClient apiClient,
+            IInstrumentationClient logger,
+            IKeySecretProvider keySecretProvider,
+            IApiClient apiClient,
             ICertificateReader certificateReader,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
@@ -72,14 +89,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         public SoftwareStatementProfileContext SoftwareStatementProfile()
         {
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
 
             return new SoftwareStatementProfileContext(context);
         }
 
         public BankClientProfileContext BankClientProfile()
         {
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
 
             return new BankClientProfileContext(context);
         }
@@ -88,7 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         {
             openBankingClientProfileId.ArgNotNull(nameof(openBankingClientProfileId));
 
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
 
             return new DomesticPaymentConsentContext(context)
             {
@@ -98,37 +115,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         public DomesticPaymentContext DomesticPayment()
         {
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
             return new DomesticPaymentContext(context);
         }
 
         public AuthorisationCallbackDataContext AuthorisationCallbackData()
         {
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
 
             return new AuthorisationCallbackDataContext(context);
         }
 
         public PaymentInitiationApiProfileContext PaymentInitiationApiProfile()
         {
-            var context = CreateContext();
+            ISharedContext context = CreateContext();
             return new PaymentInitiationApiProfileContext(context);
         }
 
         private ISharedContext CreateContext()
         {
-            var context = new SharedContext(
-                _certificateReader,
-                _apiClient,
-                _configurationProvider,
-                _logger,
-                _keySecretProvider,
-                _clientProfileRepository,
-                _softwareStatementRepo,
-                _domesticConsentRepo,
-                _entityMapper,
-                _apiProfileRepository,
-                _dbContextService)
+            SharedContext context = new SharedContext(
+                certificateReader: _certificateReader,
+                apiClient: _apiClient,
+                configurationProvider: _configurationProvider,
+                instrumentation: _logger,
+                keySecretProvider: _keySecretProvider,
+                clientProfileRepository: _clientProfileRepository,
+                softwareStatementRepository: _softwareStatementRepo,
+                domesticConsentRepository: _domesticConsentRepo,
+                entityMapper: _entityMapper,
+                apiProfileRepository: _apiProfileRepository,
+                dbContextService: _dbContextService)
             {
                 Created = _timeProvider.GetUtcNow()
             };

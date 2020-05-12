@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenBanking.Library.Connector.AspNetCore\OpenBanking.Library.Connector.AspNetCore.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.NetGenericHost\OpenBanking.Library.Connector.NetGenericHost.csproj" />
   </ItemGroup>
 
 </Project>

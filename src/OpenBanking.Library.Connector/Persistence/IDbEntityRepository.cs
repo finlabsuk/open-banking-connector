@@ -10,7 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
-    public interface IDbEntityRepository<TEntity> where TEntity : class, IEntity
+    public interface IDbEntityRepository<TEntity>: IDisposable where TEntity : class, IEntity
     {
         ValueTask<TEntity> GetAsync(string id);
 

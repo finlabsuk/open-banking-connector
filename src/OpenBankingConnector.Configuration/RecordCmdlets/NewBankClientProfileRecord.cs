@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -18,36 +17,33 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
     [OutputType(typeof(BankClientProfileResponse))]
     public class NewBankClientProfileRecord : RecordBaseCmdlet
     {
-        private readonly ICreateBankClientProfile _createBankClientProfile;
-
         public NewBankClientProfileRecord() : base(verbName: "New", nounName: "BankClientProfileRecord")
         {
-            _createBankClientProfile = _serviceProvider.GetService<ICreateBankClientProfile>();
         }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public BankClientProfile? BankClientProfile { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessRecordInner(IServiceProvider services)
         {
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
-                var response = _createBankClientProfile
+                ICreateBankClientProfile createBankClientProfile = services.GetService<ICreateBankClientProfile>();
+                BankClientProfileResponse response = createBankClientProfile
                     .CreateAsync(BankClientProfile)
                     .GetAwaiter()
                     .GetResult();
-                var response2 = new BankClientProfileFluentResponse(messages: messages, data: response);
+                BankClientProfileFluentResponse response2 =
+                    new BankClientProfileFluentResponse(messages: messages, data: response);
                 WriteObject(response2);
             }
             catch (Exception ex)
             {
                 //context.Context.Instrumentation.Exception(ex);
-                var response = new OpenBankingSoftwareStatementResponse(message: ex.CreateErrorMessage(), data: null);
+                OpenBankingSoftwareStatementResponse response =
+                    new OpenBankingSoftwareStatementResponse(message: ex.CreateErrorMessage(), data: null);
             }
-            _streamWriter.Flush();
-            var outputString = (Encoding.UTF8).GetString(_memoryStream.ToArray());
-            WriteVerbose(outputString);
         }
     }
 }

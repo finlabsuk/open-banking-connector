@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.AspNetCore</AssemblyName>
-    <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.AspNetCore</RootNamespace>
+    <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost</AssemblyName>
+    <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost</RootNamespace>
     <Copyright>Finnovation Labs Limited and Contributors</Copyright>
     <Company>Finnovation Labs Limited</Company>
   </PropertyGroup>

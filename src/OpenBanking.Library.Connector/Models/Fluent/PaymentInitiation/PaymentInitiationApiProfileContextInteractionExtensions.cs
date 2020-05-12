@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
                     context.BaseUrl.ArgNotNullElseInvalidOp("AccountTransactionApiInfo not specified")
                 );
 
-                var i = new CreateApiProfile(
+                var i = new CreatePaymentInitiationApiProfile(
                     context.Context.DbContextService,
                     context.Context.ApiProfileRepository
                 );

@@ -7,6 +7,7 @@ using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -21,10 +22,11 @@ using RichardSzalay.MockHttp;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
-    public abstract class BaseTest: IDisposable
+    public abstract class BaseTest : IDisposable
     {
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<SqliteDbContext> _dbContextOptions;
+
         protected BaseTest()
         {
             TestConfig = new TestConfigurationProvider();
@@ -39,23 +41,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         public ITestConfigurationProvider TestConfig { get; }
 
+        public void Dispose()
+        {
+            _connection.Close(); // Deletes DB
+        }
+
         public IOpenBankingRequestBuilder CreateOpenBankingRequestBuilder() => CreateMockRequestBuilder();
 
         private RequestBuilder CreateMockRequestBuilder()
         {
             var _dB = new SqliteDbContext(_dbContextOptions);
             var requestBuilder = new RequestBuilder(
-                new EntityMapper(),
-                new DbMultiEntityMethods(_dB),
-                new DefaultConfigurationProvider(),
-                new ConsoleInstrumentationClient(),
-                new MemoryKeySecretProvider(),
-                GetApiClient(TestConfig),
-                new PemParsingCertificateReader(),
-                new DbEntityRepository<BankClientProfile>(_dB),
-                new DbEntityRepository<SoftwareStatementProfile>(_dB),
-                new DbEntityRepository<DomesticConsent>(_dB),
-                new DbEntityRepository<ApiProfile>(_dB));
+                entityMapper: new EntityMapper(),
+                dbContextService: new DbMultiEntityMethods(_dB),
+                configurationProvider: new DefaultConfigurationProvider(),
+                logger: new ConsoleInstrumentationClient(),
+                keySecretProvider: new MemoryKeySecretProvider(),
+                apiClient: GetApiClient(TestConfig),
+                certificateReader: new PemParsingCertificateReader(),
+                clientProfileRepository: new DbEntityRepository<BankClientProfile>(_dB),
+                softwareStatementProfileRepo: new DbEntityRepository<SoftwareStatementProfile>(_dB),
+                domesticConsentRepo: new DbEntityRepository<DomesticConsent>(_dB),
+                apiProfileRepository: new DbEntityRepository<ApiProfile>(_dB));
 
             return requestBuilder;
         }
@@ -70,31 +77,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 var openIdConfig = JsonConvert.SerializeObject(openIdConfigData);
 
 
-                mockHttp.When(HttpMethod.Get, "https://issuer.com/.well-known/openid-configuration")
-                    .Respond("application/json", openIdConfig);
+                mockHttp.When(method: HttpMethod.Get, url: "https://issuer.com/.well-known/openid-configuration")
+                    .Respond(mediaType: "application/json", content: openIdConfig);
 
-                mockHttp.When(HttpMethod.Get, "").Respond("application/json", "{}");
-                mockHttp.When(HttpMethod.Post, "").Respond("application/json", "{}");
+                mockHttp.When(method: HttpMethod.Get, url: "").Respond(mediaType: "application/json", content: "{}");
+                mockHttp.When(method: HttpMethod.Post, url: "").Respond(mediaType: "application/json", content: "{}");
 
                 var client = mockHttp.ToHttpClient();
 
-                return new ApiClient(Substitute.For<IInstrumentationClient>(), client);
+                return new ApiClient(instrumentation: Substitute.For<IInstrumentationClient>(), httpClient: client);
             }
 
             var certificate = CertificateFactories.GetCertificate2FromPem(
-                TestConfig.GetValue("transportcertificatekey"),
-                TestConfig.GetValue("transportCertificate"));
+                privateKey: TestConfig.GetValue("transportcertificatekey"),
+                pem: TestConfig.GetValue("transportCertificate"));
 
             var handler = new HttpRequestBuilder()
                 .SetClientCertificate(certificate)
                 .CreateMessageHandler();
 
             return ApiClientFactory.CreateApiClient(handler);
-        }
-
-        public void Dispose()
-        {
-            _connection.Close(); // Deletes DB
         }
     }
 }

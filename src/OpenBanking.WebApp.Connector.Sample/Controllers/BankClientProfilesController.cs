@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +26,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
 
         [Route("bank-client-profiles")]
         [HttpPost]
-        [ProducesResponseType(typeof(BankClientProfileHttpResponse), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(type: typeof(BankClientProfileHttpResponse), statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankClientProfile request)
         {
             var clientResp = await _obRequestBuilder.BankClientProfile()
@@ -35,9 +35,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
                 .SubmitAsync();
 
             var result = new BankClientProfileHttpResponse(
-                clientResp.Data,
-                clientResp.ToMessagesResponse()
-            );
+                data: clientResp.Data,
+                messages: clientResp.ToMessagesResponse());
 
             return clientResp.HasErrors
                 ? new BadRequestObjectResult(result.Messages) as IActionResult

@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using Microsoft.Extensions.Configuration;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
+namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Configuration
 {
     internal class AppsettingsConfigurationProvider : IConfigurationProvider
     {

@@ -5,9 +5,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
-    public static class KeySecrets
+    public static class Secrets
     {
         public const int MaxSoftwareStatements = 5;
         public const string SigningKeyId = "signingKeyId";
@@ -21,6 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             $"softwareStatementProfile.{softwareStatementId}.{name}";
 
         public static IEnumerable<string> GetThirdPartyCertificateNames() =>
-            Enumerable.Range(1, 100).Select(i => $"thirdPartyCertificate.{i}.pem");
+            Enumerable.Range(start: 1, count: 100).Select(i => $"thirdPartyCertificate.{i}.pem");
     }
 }

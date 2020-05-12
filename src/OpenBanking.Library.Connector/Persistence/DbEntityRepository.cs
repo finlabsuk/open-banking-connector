@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     /// Entity- (type-) specific DB methods
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity> where TEntity : class, IEntity
+    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity>, IDisposable where TEntity : class, IEntity 
     {
         private readonly BaseDbContext _db;
         private readonly DbSet<TEntity> _dbSet;
@@ -95,5 +95,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
             return instances.AsQueryable();
         }
+        
+        public void Dispose()
+        {
+           _db.Dispose();
+        }
+            
     }
 }

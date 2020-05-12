@@ -4,100 +4,65 @@
 
 using System;
 using System.IO;
-using System.Net.Http;
-using System.Text;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+//using System.Diagnostics;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using Microsoft.EntityFrameworkCore;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
-    public class RecordBaseCmdlet : BaseCmdlet, IDisposable
+    public abstract class RecordBaseCmdlet : BaseCmdlet
     {
-        protected readonly ServiceProvider _serviceProvider;
-        protected readonly MemoryStream _memoryStream;
-        protected readonly StreamWriter _streamWriter;
+        protected readonly IHost _host;
 
         public RecordBaseCmdlet(string verbName, string nounName) : base(verbName: verbName, nounName: nounName)
         {
-            // Register services
-            ServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IKeySecretProvider, MemoryKeySecretProvider>();
-            const string httpClientName = "OBC";
+            //Debugger.Launch();
 
-            //  Simplify to new ApiClient(new HttpClient()?
-            serviceCollection.AddHttpClient(httpClientName)
-                .ConfigurePrimaryHttpMessageHandler(
-                    sp =>
+            IHostBuilder builder = new HostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureAppConfiguration(
+                    (hostingContext, config) =>
                     {
-                        IKeySecretProvider secrets = sp.GetService<IKeySecretProvider>();
-
-                        HttpMessageHandler handler = new HttpRequestBuilder()
-                            .SetClientCertificates(CertificateFactories.GetCertificates(secrets))
-                            .CreateMessageHandler();
-
-                        return handler;
+                        config.AddJsonFile(
+                            path:
+                            "appsettings.json");
+                        config.AddEnvironmentVariables();
+                        config.AddUserSecrets<RecordBaseCmdlet>();
+                    })
+                .ConfigureServices(
+                    (hostContext, services) =>
+                    {
+                        //services.AddOptions();
+                        //services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
+                        services.AddOpenBankingConnector(hostContext.Configuration);
+                        services.AddScoped<ICreateSoftwareStatementProfile, CreateSoftwareStatementProfile>();
+                        services.AddScoped<ICreateBankClientProfile, CreateBankClientProfile>();
+                        services.AddScoped<ICreatePaymentInitiationApiProfile, CreatePaymentInitiationApiProfile>();
+                    })
+                .UseConsoleLifetime()
+                .ConfigureLogging(
+                    (hostingContext, logging) =>
+                    {
+                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                        logging.AddConsole();
                     });
-            serviceCollection.AddSingleton<IConfigurationProvider, DefaultConfigurationProvider>();
 
-            _memoryStream = new MemoryStream();
-            _streamWriter = new StreamWriter(_memoryStream, Encoding.UTF8);
-            serviceCollection.AddSingleton<IInstrumentationClient, ConsoleInstrumentationClient>(
-                s => new ConsoleInstrumentationClient(_streamWriter));
-            serviceCollection.AddSingleton<IApiClient>(
-                sp =>
-                {
-                    IHttpClientFactory hcf = sp.GetService<IHttpClientFactory>();
-
-                    HttpClient client = hcf.CreateClient(httpClientName);
-
-                    return new ApiClient(instrumentation: sp.GetService<IInstrumentationClient>(), httpClient: client);
-                });
-            serviceCollection.AddSingleton<ICertificateReader, PemParsingCertificateReader>();
-            serviceCollection.AddSingleton<IEntityMapper, EntityMapper>();
-
-            // Configure DB
-            serviceCollection
-                // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
-                .AddDbContext<BaseDbContext, SqliteDbContext>(
-                    optionsAction: options =>
-                    {
-                        string connectionString =
-                            "Data Source=C:/Repos/GitHub/markm77/open-banking-connector-csharp/src/OpenBanking.Library.Connector/sqliteTestDb.db";
-                        options.UseSqlite(connectionString);
-                    },
-                    contextLifetime: ServiceLifetime.Singleton,
-                    optionsLifetime: ServiceLifetime.Singleton);
-
-            serviceCollection.AddScoped<IDbMultiEntityMethods,
-                DbMultiEntityMethods>();
-            serviceCollection.AddScoped<IDbEntityRepository<SoftwareStatementProfile>,
-                DbEntityRepository<SoftwareStatementProfile>>();
-            serviceCollection.AddScoped<IDbEntityRepository<BankClientProfile>,
-                DbEntityRepository<BankClientProfile>>();
-            serviceCollection.AddScoped<IDbEntityRepository<ApiProfile>,
-                DbEntityRepository<ApiProfile>>();
-            serviceCollection.AddScoped<IDbEntityRepository<DomesticConsent>,
-                DbEntityRepository<DomesticConsent>>();
-
-            serviceCollection.AddScoped<ICreateSoftwareStatementProfile, CreateSoftwareStatementProfile>();
-            serviceCollection.AddScoped<ICreateBankClientProfile, CreateBankClientProfile>();
-
-            // Create service provider
-            _serviceProvider = serviceCollection.BuildServiceProvider();
+            _host = builder.Build();
+            _host.Start();
         }
 
-        public void Dispose()
+        protected abstract void ProcessRecordInner(IServiceProvider services);
+
+        protected override void ProcessRecord()
         {
-            _memoryStream.Dispose();
+            using IServiceScope serviceScope = _host.Services.CreateScope();
+            IServiceProvider services = serviceScope.ServiceProvider;
+            ProcessRecordInner(services);
         }
     }
 }

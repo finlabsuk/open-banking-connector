@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
@@ -16,18 +17,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
         {
             secrets.ArgNotNull(nameof(secrets));
 
-            var certificates = new List<X509Certificate2>();
+            List<X509Certificate2> certificates = new List<X509Certificate2>();
 
-            foreach (var x in Enumerable.Range(1, KeySecrets.MaxSoftwareStatements))
+            foreach (int x in Enumerable.Range(start: 1, count: Secrets.MaxSoftwareStatements))
             {
-                var certName = KeySecrets.GetName(x.ToString(), KeySecrets.TransportCertificate);
-                var cert = secrets.GetKeySecretAsync(certName).Result;
-                var keyName = KeySecrets.GetName(x.ToString(), KeySecrets.TransportCertificateKey);
-                var key = secrets.GetKeySecretAsync(keyName).Result;
+                string certName = Secrets.GetName(
+                    softwareStatementId: x.ToString(),
+                    name: Secrets.TransportCertificate);
+                KeySecret cert = secrets.GetKeySecretAsync(certName).Result;
+                string keyName = Secrets.GetName(
+                    softwareStatementId: x.ToString(),
+                    name: Secrets.TransportCertificateKey);
+                KeySecret key = secrets.GetKeySecretAsync(keyName).Result;
 
                 if (cert != null && key != null)
                 {
-                    var certificate = GetCertificate2FromPem(key.Value, cert.Value);
+                    X509Certificate2 certificate = GetCertificate2FromPem(privateKey: key.Value, pem: cert.Value);
 
                     if (certificate != null)
                     {
@@ -49,21 +54,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 .Replace(privateKey, @"\r\n|\n\r|\n|\r", Environment.NewLine);
                 */
 
-            using var publicKey = GetCertificate2FromPem(pem);
-            var privateKeyBlocks = privateKey.Split("-", StringSplitOptions.RemoveEmptyEntries);
-            var privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
-            using var rsa = RSA.Create();
+            using X509Certificate2 publicKey = GetCertificate2FromPem(pem);
+            string[] privateKeyBlocks = privateKey.Split(
+                separator: "-",
+                options: StringSplitOptions.RemoveEmptyEntries);
+            byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
+            using RSA rsa = RSA.Create();
 
             if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
             {
-                rsa.ImportPkcs8PrivateKey(privateKeyBytes, out _);
+                rsa.ImportPkcs8PrivateKey(source: privateKeyBytes, bytesRead: out _);
             }
             else if (privateKeyBlocks[0] == "BEGIN RSA PRIVATE KEY")
             {
-                rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
+                rsa.ImportRSAPrivateKey(source: privateKeyBytes, bytesRead: out _);
             }
 
-            using (var certWithKey = publicKey.CopyWithPrivateKey(rsa))
+            using (X509Certificate2 certWithKey = publicKey.CopyWithPrivateKey(rsa))
             {
                 return new X509Certificate2(certWithKey.Export(X509ContentType.Pkcs12));
             }
@@ -73,10 +80,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
         {
             if (pem.ArgNotNull(nameof(pem)).IsPemThumbprint())
             {
-                var publicKeyBlocks = pem.Split("-", StringSplitOptions.RemoveEmptyEntries);
+                string[] publicKeyBlocks = pem.Split(separator: "-", options: StringSplitOptions.RemoveEmptyEntries);
                 if (publicKeyBlocks.Length == 4)
                 {
-                    var publicKeyBytes = Convert.FromBase64String(publicKeyBlocks[1]);
+                    byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBlocks[1]);
                     return new X509Certificate2(publicKeyBytes);
                 }
             }

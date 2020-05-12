@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.AspNetCore;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -35,20 +35,24 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
                 //     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 //     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 // });
-                .AddNewtonsoftJson(options =>
-                    options.SerializerSettings.ContractResolver =
-                        new CamelCasePropertyNamesContractResolver());
+                .AddNewtonsoftJson(
+                    options =>
+                        options.SerializerSettings.ContractResolver =
+                            new CamelCasePropertyNamesContractResolver());
 
             // Configure Swagger
             services
-                .AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v1", new OpenApiInfo
+                .AddSwaggerGen(
+                    c =>
                     {
-                        Title = "Open Banking Connector",
-                        Version = "V1"
-                    });
-                })
+                        c.SwaggerDoc(
+                            name: "v1",
+                            info: new OpenApiInfo
+                            {
+                                Title = "Open Banking Connector",
+                                Version = "V1"
+                            });
+                    })
                 .AddSwaggerGenNewtonsoftSupport();
         }
 
@@ -68,7 +72,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
             AddStaticFiles(app);
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenBankingConnector.NET"); });
+            app.UseSwaggerUI(
+                c => { c.SwaggerEndpoint(url: "/swagger/v1/swagger.json", name: "OpenBankingConnector.NET"); });
 
             app.UseRouting();
 

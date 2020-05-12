@@ -2,15 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
-    public class DomesticConsent: IEntity
+    public class DomesticConsent : IEntity
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("state")]
         public string State { get; set; }
 
@@ -28,5 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         [JsonProperty("tokenEndpointResponse")]
         public TokenEndpointResponse? TokenEndpointResponse { get; set; }
+
+        [JsonProperty("id")]
+        public string Id { get; set; }
     }
 }

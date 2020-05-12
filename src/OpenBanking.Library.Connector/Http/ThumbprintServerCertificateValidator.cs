@@ -10,6 +10,7 @@ using System.Net.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
@@ -27,24 +28,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         public bool IsOk(HttpRequestMessage msg, X509Certificate2 cert, X509Chain chain, SslPolicyErrors errors)
         {
-            var tp = cert.Thumbprint;
+            string tp = cert.Thumbprint;
 
             return _thirdPartyThumbprints.Value.Contains(tp);
         }
 
         private async Task<IEnumerable<X509Certificate2>> GetServerCertificatesAsync()
         {
-            var pems = await KeySecrets.GetThirdPartyCertificateNames()
+            KeySecret[] pems = await Secrets.GetThirdPartyCertificateNames()
                 .Select(_keySecrets.GetKeySecretAsync)
                 .ToArray()
                 .WaitAll();
 
-            var result = new List<X509Certificate2>();
-            var rdr = new PemParsingCertificateReader();
+            List<X509Certificate2> result = new List<X509Certificate2>();
+            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-            foreach (var secret in pems.Where(ks => ks != null))
+            foreach (KeySecret secret in pems.Where(ks => ks != null))
             {
-                var cert = await rdr.GetCertificateAsync(secret.Value, new SecureString());
+                X509Certificate2 cert = await rdr.GetCertificateAsync(
+                    value: secret.Value,
+                    password: new SecureString());
                 if (cert != null)
                 {
                     result.Add(cert);

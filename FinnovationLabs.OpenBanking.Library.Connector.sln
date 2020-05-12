@@ -22,8 +22,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.Benchmarks", "test\benchmarks\OpenBanking.Library.Connector.Benchmarks\OpenBanking.Library.Connector.Benchmarks.csproj", "{184AC674-564C-4734-9D1F-0609950CCFBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.AspNetCore", "src\OpenBanking.Library.Connector.AspNetCore\OpenBanking.Library.Connector.AspNetCore.csproj", "{16BDB497-A478-498C-A8D8-30F2161B3DEA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.Azure", "src\OpenBanking.Library.Connector.Azure\OpenBanking.Library.Connector.Azure.csproj", "{6B10D427-8527-489F-8C02-55B4B2B566C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{733AE026-6B0C-4B17-8C15-92C590FDCE5E}"
@@ -40,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBankingConnector.Configuration", "src\OpenBankingConnector.Configuration\OpenBankingConnector.Configuration.csproj", "{07860F22-0828-46F8-988A-9DF51A6F1CDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.NetGenericHost", "src\OpenBanking.Library.Connector.NetGenericHost\OpenBanking.Library.Connector.NetGenericHost.csproj", "{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,10 +54,6 @@ Global
 		{184AC674-564C-4734-9D1F-0609950CCFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{184AC674-564C-4734-9D1F-0609950CCFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{184AC674-564C-4734-9D1F-0609950CCFBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16BDB497-A478-498C-A8D8-30F2161B3DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16BDB497-A478-498C-A8D8-30F2161B3DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16BDB497-A478-498C-A8D8-30F2161B3DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16BDB497-A478-498C-A8D8-30F2161B3DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B10D427-8527-489F-8C02-55B4B2B566C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B10D427-8527-489F-8C02-55B4B2B566C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B10D427-8527-489F-8C02-55B4B2B566C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +86,10 @@ Global
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,7 +100,6 @@ Global
 		{CA4EE3F7-1982-4EEA-8D10-45AC4AB32027} = {77ADDE55-61CD-4150-99EC-3348E752B70A}
 		{B58E9B57-918A-4947-81A3-7297F9F0DD35} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{184AC674-564C-4734-9D1F-0609950CCFBC} = {76A3A07A-4089-4D59-ADEE-9980F8F8E2AB}
-		{16BDB497-A478-498C-A8D8-30F2161B3DEA} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{6B10D427-8527-489F-8C02-55B4B2B566C4} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{733AE026-6B0C-4B17-8C15-92C590FDCE5E} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{8AC41121-7AFF-48D4-8494-E0DE64A7368A} = {61547328-A31D-4347-A5DA-9508ACD30976}
@@ -109,6 +108,7 @@ Global
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0} = {3576F9D1-9A6C-49B2-83A7-25782C3B505E}
 		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D} = {CA4EE3F7-1982-4EEA-8D10-45AC4AB32027}
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE} = {61547328-A31D-4347-A5DA-9508ACD30976}
+		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05} = {61547328-A31D-4347-A5DA-9508ACD30976}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5300F4B-F7BB-4404-9CD1-6C24FA33F834}

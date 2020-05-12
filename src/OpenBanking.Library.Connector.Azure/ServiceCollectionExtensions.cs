@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Azure
         ///     Add OpenBankingConnector's Azure dependencies. Execute this after other OBC dependency injections.
         /// </summary>
         /// <returns></returns>
-        public static IServiceCollection AddOpenBankingConnectorAzureDependencies(this IServiceCollection services,
+        public static IServiceCollection AddOpenBankingConnectorAzureDependencies(
+            this IServiceCollection services,
             IConfiguration config)
         {
             services.AddSingleton<IKeySecretProvider, AzureKeySecretProvider>();

@@ -7,13 +7,13 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Microsoft.Extensions.Logging;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
+namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Instrumentation
 {
-    internal class InstrumentationClient : IInstrumentationClient
+    internal class LoggerInstrumentationClient : IInstrumentationClient
     {
         private readonly ILogger<object> _logger;
 
-        public InstrumentationClient(ILogger<object> logger)
+        public LoggerInstrumentationClient(ILogger<object> logger)
         {
             _logger = logger;
         }

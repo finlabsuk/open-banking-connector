@@ -6,9 +6,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
     public class MemoryKeySecretProvider : IKeySecretProvider
     {
@@ -17,26 +16,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
         public MemoryKeySecretProvider(IEnumerable<KeySecret> secrets)
             : this()
         {
-            foreach (var secret in secrets.ArgNotNull(nameof(secrets)))
+            foreach (KeySecret secret in secrets.ArgNotNull(nameof(secrets)))
             {
-                var vault = _cache.GetOrAdd(secret.VaultName,
-                    new ConcurrentDictionary<string, KeySecret>(StringComparer.InvariantCultureIgnoreCase));
+                ConcurrentDictionary<string, KeySecret> vault = _cache.GetOrAdd(
+                    key: secret.VaultName,
+                    value: new ConcurrentDictionary<string, KeySecret>(StringComparer.InvariantCultureIgnoreCase));
 
-                vault.TryAdd(secret.Key, secret);
+                vault.TryAdd(key: secret.Key, value: secret);
             }
         }
 
         public MemoryKeySecretProvider()
         {
-            _cache = new ConcurrentDictionary<string, ConcurrentDictionary<string, KeySecret>>(StringComparer
-                .InvariantCultureIgnoreCase);
+            _cache = new ConcurrentDictionary<string, ConcurrentDictionary<string, KeySecret>>(
+                StringComparer
+                    .InvariantCultureIgnoreCase);
         }
 
 
         public Task<KeySecret> GetKeySecretAsync(string key)
         {
             key.ArgNotNull(nameof(key));
-            return GetKeySecretAsync(KeySecret.DefaultVaultName, key);
+            return GetKeySecretAsync(vaultName: KeySecret.DefaultVaultName, key: key);
         }
 
         public Task<KeySecret> GetKeySecretAsync(string vaultName, string key)
@@ -44,8 +45,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             vaultName.ArgNotNull(nameof(vaultName));
             key.ArgNotNull(nameof(key));
 
-            if (_cache.TryGetValue(vaultName, out var vault) &&
-                vault.TryGetValue(key, out var secret))
+            if (_cache.TryGetValue(key: vaultName, value: out ConcurrentDictionary<string, KeySecret> vault) &&
+                vault.TryGetValue(key: key, value: out KeySecret secret))
             {
                 return secret.ToTaskResult();
             }

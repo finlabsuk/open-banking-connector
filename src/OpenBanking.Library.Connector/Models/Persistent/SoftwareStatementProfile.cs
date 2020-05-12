@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -9,8 +10,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public class SoftwareStatementProfile : IEntity
     {
-        public string Id { get; set; }
-
         public string State { get; set; }
 
         public string SoftwareStatementHeaderBase64 { get; set; }
@@ -19,28 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string SoftwareStatementPayloadBase64 { get; set; }
 
         public SoftwareStatementPayload SoftwareStatementPayload { get; set; }
-
-        public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
-        {
-            string jsonData = JsonConvert.SerializeObject(payload);
-            return Base64UrlEncoder.Encode(jsonData);
-        }
-
-        public SoftwareStatementPayload SoftwareStatementPayloadFromBase64(string payloadBase64)
-        {
-            // Perform conversion
-            string payloadString = Base64UrlEncoder.Decode(payloadBase64);
-            SoftwareStatementPayload newObject = JsonConvert.DeserializeObject<SoftwareStatementPayload>(payloadString);
-
-            // Check reverse conversion works or throw
-            // (If reverse conversion fails, we can never re-generate base64 correctly)
-            // if (payloadBase64 != SoftwareStatementPayloadToBase64(newObject))
-            // {
-            //     throw new ArgumentException("Please update SoftwareStatementPayload type to support your software statement");
-            // }
-
-            return newObject;
-        }
 
         public string SoftwwareStatementSignatureBase64 { get; set; }
 
@@ -72,5 +49,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         public string DefaultFragmentRedirectUrl { get; set; }
+
+        public string Id { get; set; }
+
+        public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
+        {
+            string jsonData = JsonConvert.SerializeObject(payload);
+            return Base64UrlEncoder.Encode(jsonData);
+        }
+
+        public SoftwareStatementPayload SoftwareStatementPayloadFromBase64(string payloadBase64)
+        {
+            // Perform conversion
+            string payloadString = Base64UrlEncoder.Decode(payloadBase64);
+            SoftwareStatementPayload newObject = JsonConvert.DeserializeObject<SoftwareStatementPayload>(payloadString);
+
+            // Check reverse conversion works or throw
+            // (If reverse conversion fails, we can never re-generate base64 correctly)
+            // if (payloadBase64 != SoftwareStatementPayloadToBase64(newObject))
+            // {
+            //     throw new ArgumentException("Please update SoftwareStatementPayload type to support your software statement");
+            // }
+
+            return newObject;
+        }
     }
 }

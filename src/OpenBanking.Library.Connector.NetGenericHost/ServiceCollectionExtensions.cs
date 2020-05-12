@@ -1,4 +1,4 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -6,46 +6,23 @@ using System;
 using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
+namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
 {
-    public static class DbMethods
-    {
-        public static IHost CheckDbExists(this IHost host)
-        {
-            using IServiceScope scope = host.Services.CreateScope();
-            IServiceProvider services = scope.ServiceProvider;
-            BaseDbContext context = services.GetRequiredService<BaseDbContext>();
-
-            // Delete/Create DB as required (should normally be commented out)
-            //context.Database.EnsureDeleted();
-            //context.Database.EnsureCreated();
-
-            // Check DB exists
-            IRelationalDatabaseCreator creator = context.Database.GetService<IRelationalDatabaseCreator>();
-            if (!creator.Exists())
-            {
-                throw new ApplicationException(
-                    "No database found. Run 'dotnet ef database update' in OpenBanking.WebApp.Connector.Sample root folder to create test DB.");
-            }
-
-            return host;
-        }
-    }
-
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddOpenBankingConnector(
@@ -68,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.AspNetCore
                     });
 
             services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(configuration));
-            services.AddSingleton<IInstrumentationClient, InstrumentationClient>();
+            services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient>();
             services.AddSingleton(
                 sp =>
                 {

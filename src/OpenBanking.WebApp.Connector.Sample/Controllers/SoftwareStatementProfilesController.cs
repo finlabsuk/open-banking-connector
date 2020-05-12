@@ -8,11 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,11 +25,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         private readonly RuntimeConfiguration _config;
         private readonly IKeySecretProvider _keySecrets;
         private readonly IOpenBankingRequestBuilder _obRequestBuilder;
-        private readonly IDbEntityRepository<Library.Connector.Models.Persistent.SoftwareStatementProfile> _profileRepo;
+        private readonly IDbEntityRepository<SoftwareStatementProfile> _profileRepo;
 
-        public SoftwareStatementController(IConfigurationProvider configProvider,
-            IDbEntityRepository<Library.Connector.Models.Persistent.SoftwareStatementProfile> profileRepo,
-            IOpenBankingRequestBuilder obRequestBuilder, IKeySecretProvider keySecrets)
+        public SoftwareStatementController(
+            IConfigurationProvider configProvider,
+            IDbEntityRepository<SoftwareStatementProfile> profileRepo,
+            IOpenBankingRequestBuilder obRequestBuilder,
+            IKeySecretProvider keySecrets)
         {
             _config = configProvider.GetRuntimeConfiguration();
             _profileRepo = profileRepo;
@@ -40,40 +41,55 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
 
         [Route("software-statement-profiles")]
         [HttpPost]
-        [ProducesResponseType(typeof(PostSoftwareStatementProfileResponse), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            type: typeof(PostSoftwareStatementProfileResponse),
+            statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostSoftwareStatementProfileAsync(
-            [FromBody] SoftwareStatementProfile request)
+            [FromBody] Library.Connector.Models.Public.Request.SoftwareStatementProfile request)
         {
             var softwareStatement =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
-                    KeySecrets.SoftwareStatement));
+                await _keySecrets.GetKeySecretAsync(
+                    Secrets.GetName(
+                        softwareStatementId: request.Id,
+                        name: Secrets.SoftwareStatement));
             var signingKeyId =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
-                    KeySecrets.SigningKeyId));
+                await _keySecrets.GetKeySecretAsync(
+                    Secrets.GetName(
+                        softwareStatementId: request.Id,
+                        name: Secrets.SigningKeyId));
             var signingCertificateKey =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
-                    KeySecrets.SigningCertificateKey));
+                await _keySecrets.GetKeySecretAsync(
+                    Secrets.GetName(
+                        softwareStatementId: request.Id,
+                        name: Secrets.SigningCertificateKey));
             var signingCertificate =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
-                    KeySecrets.SigningCertificate));
+                await _keySecrets.GetKeySecretAsync(
+                    Secrets.GetName(
+                        softwareStatementId: request.Id,
+                        name: Secrets.SigningCertificate));
             var transportCertificateKey = await _keySecrets.GetKeySecretAsync(
-                KeySecrets.GetName(request.Id, KeySecrets.TransportCertificateKey));
+                Secrets.GetName(softwareStatementId: request.Id, name: Secrets.TransportCertificateKey));
             var transportCertificate =
-                await _keySecrets.GetKeySecretAsync(KeySecrets.GetName(request.Id,
-                    KeySecrets.TransportCertificate));
+                await _keySecrets.GetKeySecretAsync(
+                    Secrets.GetName(
+                        softwareStatementId: request.Id,
+                        name: Secrets.TransportCertificate));
 
             var statementResp = await _obRequestBuilder.SoftwareStatementProfile()
                 .Id(request.Id)
                 .SoftwareStatement(softwareStatement?.Value)
-                .SigningKeyInfo(signingKeyId?.Value, signingCertificateKey?.Value, signingCertificate?.Value)
-                .TransportKeyInfo(transportCertificateKey?.Value, transportCertificate?.Value)
+                .SigningKeyInfo(
+                    keyId: signingKeyId?.Value,
+                    keySecretName: signingCertificateKey?.Value,
+                    certificate: signingCertificate?.Value)
+                .TransportKeyInfo(
+                    keySecretName: transportCertificateKey?.Value,
+                    certificate: transportCertificate?.Value)
                 .DefaultFragmentRedirectUrl(request.DefaultFragmentRedirectUrl)
                 .SubmitAsync();
 
-            var result = new PostSoftwareStatementProfileResponse(
-                statementResp.ToMessagesResponse()
-            );
+            var result = new PostSoftwareStatementProfileResponse(statementResp.ToMessagesResponse());
 
             return statementResp.HasErrors
                 ? new BadRequestObjectResult(result.Messages) as IActionResult
@@ -83,11 +99,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
 
         [Route("software-statement-profiles")]
         [HttpGet]
-        [ProducesResponseType(typeof(IList<string>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(MessagesResponse), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(type: typeof(IList<string>), statusCode: (int) HttpStatusCode.OK)]
+        [ProducesResponseType(type: typeof(MessagesResponse), statusCode: (int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetSoftwareStatementProfileIdsAsync()
         {
-            var result = (await _profileRepo.GetAllAsync()).Select(x => x.Id).OrderBy(x => x, StringComparer.InvariantCultureIgnoreCase);
+            var result = (await _profileRepo.GetAllAsync()).Select(x => x.Id).OrderBy(
+                keySelector: x => x,
+                comparer: StringComparer.InvariantCultureIgnoreCase);
 
             return new OkObjectResult(result);
         }

@@ -14,7 +14,7 @@ using SoftwareStatementProfilePublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public interface ICreateSoftwareStatementProfile
+    public interface ICreateSoftwareStatementProfile: IDisposable
     {
         Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile);
     }
@@ -61,6 +61,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             return new SoftwareStatementProfileResponse(value.Id);
+        }
+
+        public void Dispose()
+        {
+            _softwareStatementProfileRepo.Dispose();
         }
     }
 }

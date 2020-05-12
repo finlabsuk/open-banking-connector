@@ -12,17 +12,17 @@ using PaymentInitiationApiProfilePublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
-    public interface ICreateApiProfile
+    public interface ICreatePaymentInitiationApiProfile
     {
         Task<PaymentInitiationApiProfileResponse> CreateAsync(PaymentInitiationApiProfilePublic apiProfile);
     }
 
-    public class CreateApiProfile : ICreateApiProfile
+    public class CreatePaymentInitiationApiProfile : ICreatePaymentInitiationApiProfile
     {
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
         private readonly IDbMultiEntityMethods _dbContextService;
 
-        public CreateApiProfile(IDbMultiEntityMethods dbContextService, IDbEntityRepository<ApiProfile> apiProfileRepo)
+        public CreatePaymentInitiationApiProfile(IDbMultiEntityMethods dbContextService, IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _dbContextService = dbContextService;
             _apiProfileRepo = apiProfileRepo;

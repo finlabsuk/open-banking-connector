@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FluentAssertions;
 using FsCheck;
 using FsCheck.Xunit;
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [InlineData(null, null, null)]
         public void Ctor_NullParameters_ExceptionThrown(string vault, string key, string value)
         {
-            Action a = () => new KeySecret(vault, key, value);
+            Action a = () => new KeySecret(vaultName: vault, key: key, value: value);
 
             a.Should().Throw<ArgumentNullException>();
         }
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             Func<bool> rule = () =>
             {
-                var ks = new KeySecret(vault, key, value);
+                var ks = new KeySecret(vaultName: vault, key: key, value: value);
 
                 return ks.VaultName == vault && ks.Key == key && ks.Value == value;
             };

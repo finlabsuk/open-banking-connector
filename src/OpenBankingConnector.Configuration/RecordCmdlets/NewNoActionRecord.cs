@@ -15,23 +15,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
-    [Cmdlet(verbName: VerbsCommon.New, nounName: "SoftwareStatementProfileRecord")]
+    [Cmdlet(verbName: VerbsCommon.New, nounName: "NoActionRecord")]
     [OutputType(typeof(BankClientProfileResponse))]
-    public class NewSoftwareStatementProfileRecord : RecordBaseCmdlet
+    public class NewNoActionRecord : RecordBaseCmdlet
     {
-        public NewSoftwareStatementProfileRecord() : base(verbName: "New", nounName: "SoftwareStatementProfileRecord")
+        public NewNoActionRecord() : base(verbName: "New", nounName: "NoActionRecord")
         {
             _host.Services.CheckDbExists();
         }
-
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public SoftwareStatementProfile? SoftwareStatementProfile { get; set; }
 
         protected override void ProcessRecordInner(IServiceProvider services)
         {
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
+                var SoftwareStatementProfile = new SoftwareStatementProfile();
                 ICreateSoftwareStatementProfile createSoftwareStatementProfile =
                     services.GetService<ICreateSoftwareStatementProfile>();
                 SoftwareStatementProfileResponse response = createSoftwareStatementProfile

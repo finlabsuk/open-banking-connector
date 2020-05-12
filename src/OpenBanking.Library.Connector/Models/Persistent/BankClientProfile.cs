@@ -2,14 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Newtonsoft.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    public class BankClientProfile: IEntity
+    public class BankClientProfile : IEntity
     {
-        public string Id { get; set; }
-
         public string State { get; set; }
 
         public string SoftwareStatementProfileId { get; set; }
@@ -25,5 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public BankClientRegistrationClaims BankClientRegistrationClaims { get; set; }
 
         public BankClientRegistrationData BankClientRegistrationData { get; set; }
+        public string Id { get; set; }
     }
 }
