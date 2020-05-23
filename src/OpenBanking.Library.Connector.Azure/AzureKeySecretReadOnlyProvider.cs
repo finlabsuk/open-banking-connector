@@ -4,12 +4,13 @@
 
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Azure
 {
-    public class AzureKeySecretProvider : IKeySecretProvider
+    public class AzureKeySecretReadOnlyProvider : IKeySecretReadOnlyProvider
     {
         public Task<KeySecret> GetKeySecretAsync(string key) =>
             GetKeySecretAsync(vaultName: KeySecret.DefaultVaultName, key: key);

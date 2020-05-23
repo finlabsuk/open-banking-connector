@@ -6,7 +6,7 @@ using System;
 using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                 .ConfigurePrimaryHttpMessageHandler(
                     sp =>
                     {
-                        IKeySecretProvider secrets = sp.GetService<IKeySecretProvider>();
+                        IKeySecretReadOnlyProvider secrets = sp.GetService<IKeySecretReadOnlyProvider>();
 
                         HttpMessageHandler handler = new HttpRequestBuilder()
                             .SetClientCertificates(CertificateFactories.GetCertificates(secrets))

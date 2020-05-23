@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -23,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
     public class SoftwareStatementController : ControllerBase
     {
         private readonly RuntimeConfiguration _config;
-        private readonly IKeySecretProvider _keySecrets;
+        private readonly IKeySecretReadOnlyProvider _keySecrets;
         private readonly IOpenBankingRequestBuilder _obRequestBuilder;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _profileRepo;
 
@@ -31,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             IConfigurationProvider configProvider,
             IDbEntityRepository<SoftwareStatementProfile> profileRepo,
             IOpenBankingRequestBuilder obRequestBuilder,
-            IKeySecretProvider keySecrets)
+            IKeySecretReadOnlyProvider keySecrets)
         {
             _config = configProvider.GetRuntimeConfiguration();
             _profileRepo = profileRepo;

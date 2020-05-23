@@ -6,7 +6,7 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         IApiClient ApiClient { get; }
         IConfigurationProvider ConfigurationProvider { get; }
         IInstrumentationClient Instrumentation { get; }
-        IKeySecretProvider KeySecretProvider { get; }
+        IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         IDbMultiEntityMethods DbContextService { get; }
         IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }

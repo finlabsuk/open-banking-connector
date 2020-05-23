@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
@@ -34,28 +35,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
     public sealed class FluentResponseInfoMessage : FluentResponseMessage
     {
-        internal FluentResponseInfoMessage(string message) : base(message)
-        {
-        }
+        internal FluentResponseInfoMessage(string message) : base(message) { }
     }
 
     public sealed class FluentResponseWarningMessage : FluentResponseMessage
     {
-        internal FluentResponseWarningMessage(string message) : base(message)
-        {
-        }
+        internal FluentResponseWarningMessage(string message) : base(message) { }
     }
 
     public sealed class FluentResponseErrorMessage : FluentResponseMessage
     {
-        internal FluentResponseErrorMessage(string message) : base(message)
-        {
-        }
+        internal FluentResponseErrorMessage(string message) : base(message) { }
 
         internal FluentResponseErrorMessage(Exception exception)
-            : base(exception.WalkRecursive(e => e.InnerException).Select(e => e.Message)
-                .JoinString(Environment.NewLine))
-        {
-        }
+            : base(
+                exception.WalkRecursive(e => e.InnerException).Select(e => e.Message)
+                    .JoinString(Environment.NewLine)) { }
     }
 }

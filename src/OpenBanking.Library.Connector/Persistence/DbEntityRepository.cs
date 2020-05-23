@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     /// <summary>
-    /// Entity- (type-) specific DB methods
+    ///     Entity- (type-) specific DB methods
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity>, IDisposable where TEntity : class, IEntity 
+    public class DbEntityRepository<TEntity> : IDbEntityRepository<TEntity>, IDisposable where TEntity : class, IEntity
     {
         private readonly BaseDbContext _db;
         private readonly DbSet<TEntity> _dbSet;
@@ -35,14 +35,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                 .FindAsync(id);
         }
 
-        public async Task<IQueryable<TEntity>> GetAsync(
-            Expression<Func<TEntity, bool>> predicate)
+        public async Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
             Expression<Func<TEntity, bool>> where = predicate.ArgNotNull(nameof(predicate));
 
             List<TEntity> results = await _dbSet
-                    .Where(where)
-                    .ToListAsync(); // To maintain non-volatile cache queries
+                .Where(where)
+                .ToListAsync(); // To maintain non-volatile cache queries
 
             return results.AsQueryable();
         }
@@ -64,11 +63,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                 await _db.AddAsync(instance);
                 return instance;
             }
-            else
-            {
-                _db.Entry(existingValue).CurrentValues.SetValues(instance);
-                return existingValue;
-            }
+
+            _db.Entry(existingValue).CurrentValues.SetValues(instance);
+            return existingValue;
         }
 
         public Task RemoveAsync(TEntity instance)
@@ -84,22 +81,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             }
 
             _dbSet
-              .Remove(instance);
-            return ((TEntity)null).ToTaskResult();
+                .Remove(instance);
+            return ((TEntity) null).ToTaskResult();
         }
 
         public async Task<IQueryable<TEntity>> GetAllAsync()
         {
             List<TEntity> instances = await _dbSet
-            .ToListAsync();
+                .ToListAsync();
 
             return instances.AsQueryable();
         }
-        
+
         public void Dispose()
         {
-           _db.Dispose();
+            _db.Dispose();
         }
-            
     }
 }

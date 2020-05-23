@@ -8,12 +8,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public static class CertificateFactories
     {
-        public static IEnumerable<X509Certificate2> GetCertificates(IKeySecretProvider secrets)
+        public static IEnumerable<X509Certificate2> GetCertificates(IKeySecretReadOnlyProvider secrets)
         {
             secrets.ArgNotNull(nameof(secrets));
 

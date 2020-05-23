@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FluentAssertions;
@@ -55,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [Property(Verbose = PropertyTests.VerboseTests)]
         public bool SetHeaders(IList<string> values)
         {
-            var headers = values.NullToEmpty().Select(v => new HttpHeader("hdr", v)).ToList();
+            var headers = values.NullToEmpty().Select(v => new HttpHeader(name: "hdr", value: v)).ToList();
 
             var b = new HttpRequestBuilder().SetHeaders(headers) as HttpRequestBuilder;
 

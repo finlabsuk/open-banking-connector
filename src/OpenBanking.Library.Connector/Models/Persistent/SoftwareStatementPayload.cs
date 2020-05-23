@@ -4,11 +4,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-
     /// Struct corresponding to payload of Open Banking Software Statement type. Fields can be added as required
     public class SoftwareStatementPayload
     {

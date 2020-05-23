@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _entityMapper;
-        private readonly IKeySecretProvider _keySecretProvider;
+        private readonly IKeySecretReadOnlyProvider _keySecretReadOnlyProvider;
         private readonly IInstrumentationClient _logger;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementRepo;
         private readonly ITimeProvider _timeProvider;
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
             IInstrumentationClient logger,
-            IKeySecretProvider keySecretProvider,
+            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
             ICertificateReader certificateReader,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
@@ -49,15 +49,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 dbContextService: dbContextService,
                 configurationProvider: configurationProvider,
                 logger: logger,
-                keySecretProvider: keySecretProvider,
+                keySecretReadOnlyProvider: keySecretReadOnlyProvider,
                 apiClient: apiClient,
                 certificateReader: certificateReader,
                 clientProfileRepository: clientProfileRepository,
                 softwareStatementProfileRepo: softwareStatementProfileRepo,
                 domesticConsentRepo: domesticConsentRepo,
-                apiProfileRepository: apiProfileRepository)
-        {
-        }
+                apiProfileRepository: apiProfileRepository) { }
 
         internal RequestBuilder(
             ITimeProvider timeProvider,
@@ -65,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IDbMultiEntityMethods dbContextService,
             IConfigurationProvider configurationProvider,
             IInstrumentationClient logger,
-            IKeySecretProvider keySecretProvider,
+            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
             ICertificateReader certificateReader,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
@@ -79,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             _dbContextService = dbContextService;
             _configurationProvider = configurationProvider.ArgNotNull(nameof(configurationProvider));
             _logger = logger.ArgNotNull(nameof(logger));
-            _keySecretProvider = keySecretProvider.ArgNotNull(nameof(keySecretProvider));
+            _keySecretReadOnlyProvider = keySecretReadOnlyProvider.ArgNotNull(nameof(keySecretReadOnlyProvider));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
             _clientProfileRepository = clientProfileRepository.ArgNotNull(nameof(clientProfileRepository));
             _softwareStatementRepo = softwareStatementProfileRepo.ArgNotNull(nameof(softwareStatementProfileRepo));
@@ -139,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 apiClient: _apiClient,
                 configurationProvider: _configurationProvider,
                 instrumentation: _logger,
-                keySecretProvider: _keySecretProvider,
+                keySecretReadOnlyProvider: _keySecretReadOnlyProvider,
                 clientProfileRepository: _clientProfileRepository,
                 softwareStatementRepository: _softwareStatementRepo,
                 domesticConsentRepository: _domesticConsentRepo,

@@ -10,17 +10,19 @@ using System.Net.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     public class ThumbprintServerCertificateValidator : IServerCertificateValidator
     {
-        private readonly IKeySecretProvider _keySecrets;
+        private readonly IKeySecretReadOnlyProvider _keySecrets;
         private readonly Lazy<HashSet<string>> _thirdPartyThumbprints;
 
-        public ThumbprintServerCertificateValidator(IKeySecretProvider keySecrets)
+        public ThumbprintServerCertificateValidator(IKeySecretReadOnlyProvider keySecrets)
         {
             _keySecrets = keySecrets.ArgNotNull(nameof(keySecrets));
             _thirdPartyThumbprints = new Lazy<HashSet<string>>(GetThumbprints(GetServerCertificatesAsync().Result));

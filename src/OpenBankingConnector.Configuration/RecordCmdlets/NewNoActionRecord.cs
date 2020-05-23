@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using FinnovationLabs.OpenBanking.Library.Connector;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -29,7 +28,7 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
-                var SoftwareStatementProfile = new SoftwareStatementProfile();
+                SoftwareStatementProfile SoftwareStatementProfile = new SoftwareStatementProfile();
                 ICreateSoftwareStatementProfile createSoftwareStatementProfile =
                     services.GetService<ICreateSoftwareStatementProfile>();
                 SoftwareStatementProfileResponse response = createSoftwareStatementProfile

@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 dbContextService: new DbMultiEntityMethods(_dB),
                 configurationProvider: new DefaultConfigurationProvider(),
                 logger: new ConsoleInstrumentationClient(),
-                keySecretProvider: new MemoryKeySecretProvider(),
+                keySecretReadOnlyProvider: new MemoryKeySecretProvider(),
                 apiClient: GetApiClient(TestConfig),
                 certificateReader: new PemParsingCertificateReader(),
                 clientProfileRepository: new DbEntityRepository<BankClientProfile>(_dB),

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using FinnovationLabs.OpenBanking.Library.Connector;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;

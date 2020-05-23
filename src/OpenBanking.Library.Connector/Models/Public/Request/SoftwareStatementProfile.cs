@@ -3,18 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// Class that captures a software statement and associated keys and certificates
     [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]
-    public class SoftwareStatementProfile
+    public class SoftwareStatementProfile : IEntity, IKeySecretItemWithId<SoftwareStatementProfile>
     {
-        /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
-        /// This is your choice; a meaningful name should help debugging throughout OBC.
-        [Required]
-        public string Id { get; set; }
-
         /// Software statement as string, e.g. "A.B.C"
         public string SoftwareStatement { get; set; }
 
@@ -36,7 +33,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public string TransportCertificate { get; set; }
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
-       [Required]
+        [Required]
         public string DefaultFragmentRedirectUrl { get; set; }
+
+        /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
+        /// This is your choice; a meaningful name should help debugging throughout OBC.
+        [Required]
+        public string Id { get; set; }
     }
 }

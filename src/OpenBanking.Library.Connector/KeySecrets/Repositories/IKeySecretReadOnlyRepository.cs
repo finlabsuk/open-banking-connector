@@ -4,12 +4,12 @@
 
 using System.Threading.Tasks;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
 {
-    public interface IKeySecretProvider
+    public interface IKeySecretReadOnlyRepository<TItem> where TItem : class, IKeySecretItem<TItem>
     {
-        Task<KeySecret> GetKeySecretAsync(string vaultName, string key);
+        Task<string> GetAsync(string propertyName);
 
-        Task<KeySecret> GetKeySecretAsync(string key);
+        Task<TItem> GetAsync();
     }
 }

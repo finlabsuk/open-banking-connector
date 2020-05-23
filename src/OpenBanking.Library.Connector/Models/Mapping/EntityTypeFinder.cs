@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Meta;
@@ -18,36 +19,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 
         public IEnumerable<Type> GetPublicReferenceTypes()
         {
-            return RootPublicType.Assembly.GetTypes().Where(t => t.IsClass && IsInNamespace(RootPublicType, t));
+            return RootPublicType.Assembly.GetTypes()
+                .Where(t => t.IsClass && IsInNamespace(rootType: RootPublicType, type: t));
         }
 
 
         public IEnumerable<EquivalentType> GetOpenBankingEquivalentTypes(Type type)
         {
-            var attrs = type.ArgNotNull(nameof(type))
+            IEnumerable<OpenBankingEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
                 .GetCustomAttributes(typeof(OpenBankingEquivalentAttribute))
                 .OfType<OpenBankingEquivalentAttribute>();
 
-            foreach (var attr in attrs)
+            foreach (OpenBankingEquivalentAttribute attr in attrs)
             {
                 yield return attr.EquivalentTypeMapper == null
-                    ? new EquivalentType(type, attr.EquivalentType)
-                    : new MappedEquivalentType(type, attr.EquivalentType, attr.EquivalentTypeMapper);
+                    ? new EquivalentType(entityType: type, equivalentEntityType: attr.EquivalentType)
+                    : new MappedEquivalentType(
+                        entityType: type,
+                        equivalentEntityType: attr.EquivalentType,
+                        mapper: attr.EquivalentTypeMapper);
             }
         }
 
         public IEnumerable<EquivalentType> GetPersistenceEquivalentTypes(Type type)
         {
-            var attrs = type.ArgNotNull(nameof(type))
+            IEnumerable<PersistenceEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
                 .GetCustomAttributes(typeof(PersistenceEquivalentAttribute))
                 .OfType<PersistenceEquivalentAttribute>();
 
 
-            foreach (var attr in attrs)
+            foreach (PersistenceEquivalentAttribute attr in attrs)
             {
                 yield return attr.EquivalentTypeMapper == null
-                    ? new EquivalentType(type, attr.EquivalentType)
-                    : new MappedEquivalentType(type, attr.EquivalentType, attr.EquivalentTypeMapper);
+                    ? new EquivalentType(entityType: type, equivalentEntityType: attr.EquivalentType)
+                    : new MappedEquivalentType(
+                        entityType: type,
+                        equivalentEntityType: attr.EquivalentType,
+                        mapper: attr.EquivalentTypeMapper);
             }
         }
 

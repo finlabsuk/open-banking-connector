@@ -6,10 +6,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
-    public class MemoryKeySecretProvider : IKeySecretProvider
+    public class MemoryKeySecretProvider : IKeySecretReadOnlyProvider, IKeySecretProvider
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, KeySecret>> _cache;
 
@@ -31,6 +33,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
             _cache = new ConcurrentDictionary<string, ConcurrentDictionary<string, KeySecret>>(
                 StringComparer
                     .InvariantCultureIgnoreCase);
+        }
+
+        public Task SetKeySecretAsync(KeySecret keySecret)
+        {
+            ConcurrentDictionary<string, KeySecret> vault = _cache.GetOrAdd(
+                key: keySecret.VaultName,
+                value: new ConcurrentDictionary<string, KeySecret>(StringComparer.InvariantCultureIgnoreCase));
+
+            vault.TryAdd(key: keySecret.Key, value: keySecret);
+
+            return Task.CompletedTask;
         }
 
 

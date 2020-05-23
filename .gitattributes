@@ -1,2 +1,6 @@
 # Default handling of line endings for multi-platform project.
 * text=auto
+
+# Force DotSettings files to use lf
+# See: https://youtrack.jetbrains.com/issue/RSRP-324129
+*.DotSettings text eol=lf

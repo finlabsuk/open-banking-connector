@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
@@ -13,13 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
     {
         private readonly IIoFacade _ioFacade;
 
-        public FileCertificateReader() : this(new IoFacade())
-        {
-        }
+        public FileCertificateReader() : this(new IoFacade()) { }
 
-        public FileCertificateReader(string rootFolder) : this(new IoFacade(() => rootFolder))
-        {
-        }
+        public FileCertificateReader(string rootFolder) : this(new IoFacade(() => rootFolder)) { }
 
         internal FileCertificateReader(IIoFacade ioFacade)
         {
@@ -28,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public Task<X509Certificate2> GetCertificateAsync(string fileName)
         {
-            var result = GetX509Certificate2(fileName, new SecureString());
+            X509Certificate2 result = GetX509Certificate2(fileName: fileName, password: new SecureString());
 
             return result.ToTaskResult();
         }
@@ -36,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public Task<X509Certificate2> GetCertificateAsync(string fileName, SecureString password)
         {
-            var result = GetX509Certificate2(fileName, password);
+            X509Certificate2 result = GetX509Certificate2(fileName: fileName, password: password);
 
             return result.ToTaskResult();
         }
@@ -46,12 +43,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             X509Certificate2 result = null;
             if (!string.IsNullOrEmpty(fileName))
             {
-                var appdata = _ioFacade.GetContentPath();
+                string appdata = _ioFacade.GetContentPath();
 
-                var certFile = _ioFacade.GetDirectoryFiles(appdata, fileName).FirstOrDefault();
+                string certFile = _ioFacade.GetDirectoryFiles(path: appdata, filter: fileName).FirstOrDefault();
                 if (!string.IsNullOrEmpty(certFile))
                 {
-                    result = GetCertificateFromFileAsync(certFile, password);
+                    result = GetCertificateFromFileAsync(certFile: certFile, password: password);
                 }
             }
 
@@ -61,9 +58,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         private X509Certificate2 GetCertificateFromFileAsync(string certFile, SecureString password)
         {
-            return new X509Certificate2(certFile, password, X509KeyStorageFlags.MachineKeySet |
-                                                            X509KeyStorageFlags.PersistKeySet |
-                                                            X509KeyStorageFlags.Exportable);
+            return new X509Certificate2(
+                fileName: certFile,
+                password: password,
+                keyStorageFlags: X509KeyStorageFlags.MachineKeySet |
+                                 X509KeyStorageFlags.PersistKeySet |
+                                 X509KeyStorageFlags.Exportable);
         }
     }
 }

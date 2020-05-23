@@ -4,14 +4,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public abstract class FluentResponse
     {
-        protected FluentResponse() : this(new List<FluentResponseMessage>())
-        {
-        }
+        protected FluentResponse() : this(new List<FluentResponseMessage>()) { }
 
         protected FluentResponse(IList<FluentResponseMessage> messages)
         {

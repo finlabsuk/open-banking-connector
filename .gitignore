@@ -277,3 +277,7 @@ src/OpenBanking.Library.Connector/*.db
 
 # PowerShell scripts
 src/OpenBankingConnector.Configuration/Scripts/
+
+# Dev solutions and projects
+*.Dev.sln*
+*.Dev.proj

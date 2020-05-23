@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
@@ -15,10 +15,12 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
     [ApiController]
     public class BankClientProfilesController : ControllerBase
     {
-        private readonly IKeySecretProvider _keySecrets;
+        private readonly IKeySecretReadOnlyProvider _keySecrets;
         private readonly IOpenBankingRequestBuilder _obRequestBuilder;
 
-        public BankClientProfilesController(IOpenBankingRequestBuilder obRequestBuilder, IKeySecretProvider keySecrets)
+        public BankClientProfilesController(
+            IOpenBankingRequestBuilder obRequestBuilder,
+            IKeySecretReadOnlyProvider keySecrets)
         {
             _obRequestBuilder = obRequestBuilder;
             _keySecrets = keySecrets;

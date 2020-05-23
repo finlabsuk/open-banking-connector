@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 {
@@ -16,9 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
         [ExcludeFromCodeCoverage]
         public ConsoleInstrumentationClient()
-            : this(Console.Out)
-        {
-        }
+            : this(Console.Out) { }
 
         public ConsoleInstrumentationClient(TextWriter outWriter)
         {
@@ -27,51 +27,51 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
         public void StartTrace(TraceInfo info)
         {
-            var msg = GetTraceInfoMessage(info);
+            StringBuilder msg = GetTraceInfoMessage(info);
 
-            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
+            Write(target: _outWriter, message: msg.ToString(), color: ConsoleColor.Gray);
         }
 
 
         public void EndTrace(TraceInfo info)
         {
-            var msg = GetTraceInfoMessage(info);
+            StringBuilder msg = GetTraceInfoMessage(info);
 
-            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
+            Write(target: _outWriter, message: msg.ToString(), color: ConsoleColor.Gray);
         }
 
         public void Info(string message)
         {
-            Write(_outWriter, message, ConsoleColor.White);
+            Write(target: _outWriter, message: message, color: ConsoleColor.White);
         }
 
         public void Warning(string message)
         {
-            Write(_outWriter, message, ConsoleColor.Yellow);
+            Write(target: _outWriter, message: message, color: ConsoleColor.Yellow);
         }
 
         public void Error(string message)
         {
-            Write(_outWriter, message, ConsoleColor.Red);
+            Write(target: _outWriter, message: message, color: ConsoleColor.Red);
         }
 
         public void Exception(Exception exception)
         {
-            Exception(exception, "");
+            Exception(exception: exception, message: "");
         }
 
         public void Exception(Exception exception, string message)
         {
-            var lines = exception.WalkRecursive(e => e.InnerException)
+            IEnumerable<string> lines = exception.WalkRecursive(e => e.InnerException)
                 .Select(e => e.Message);
             if (!string.IsNullOrWhiteSpace(message))
             {
                 lines = new[] { message }.Concat(lines);
             }
 
-            var msg = lines.JoinString(Environment.NewLine);
+            string msg = lines.JoinString(Environment.NewLine);
 
-            Write(_outWriter, msg, ConsoleColor.Red);
+            Write(target: _outWriter, message: msg, color: ConsoleColor.Red);
         }
 
         private void Write(TextWriter target, string message, ConsoleColor? color)
@@ -80,8 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
             {
                 if (color is { } value)
                 {
-                    Console.ForegroundColor = value; 
+                    Console.ForegroundColor = value;
                 }
+
                 target.WriteLine(message);
                 Console.ResetColor();
             }
@@ -90,9 +91,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
         private StringBuilder GetTraceInfoMessage(TraceInfo info)
         {
-            var sb = new StringBuilder().AppendLine(info.Message);
+            StringBuilder sb = new StringBuilder().AppendLine(info.Message);
 
-            foreach (var kvp in info.Values)
+            foreach (KeyValuePair<string, string> kvp in info.Values)
             {
                 sb.AppendLine($"{kvp.Key} - {kvp.Value}");
             }

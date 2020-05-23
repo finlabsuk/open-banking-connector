@@ -6,7 +6,7 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IApiClient apiClient,
             IConfigurationProvider configurationProvider,
             IInstrumentationClient instrumentation,
-            IKeySecretProvider keySecretProvider,
+            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository,
             IDbEntityRepository<DomesticConsent> domesticConsentRepository,
@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             ApiClient = apiClient;
             ConfigurationProvider = configurationProvider;
             Instrumentation = instrumentation;
-            KeySecretProvider = keySecretProvider;
+            KeySecretReadOnlyProvider = keySecretReadOnlyProvider;
             ClientProfileRepository = clientProfileRepository;
             SoftwareStatementRepository = softwareStatementRepository;
             DomesticConsentRepository = domesticConsentRepository;
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IApiClient ApiClient { get; }
         public IConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
-        public IKeySecretProvider KeySecretProvider { get; }
+        public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         public IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         public IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
         public IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }

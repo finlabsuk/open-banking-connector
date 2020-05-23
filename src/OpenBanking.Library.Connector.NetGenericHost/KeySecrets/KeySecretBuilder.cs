@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using Microsoft.Extensions.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecrets
 {
     internal class KeySecretBuilder
     {
-        public IKeySecretProvider GetKeySecretProvider(IConfiguration config, RuntimeConfiguration obcConfig)
+        public IKeySecretReadOnlyProvider GetKeySecretProvider(IConfiguration config, RuntimeConfiguration obcConfig)
         {
             if (config == null)
             {

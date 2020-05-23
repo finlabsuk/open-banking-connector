@@ -220,7 +220,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 dbContextService: new DbMultiEntityMethods(_dB),
                 configurationProvider: new DefaultConfigurationProvider(),
                 logger: new ConsoleInstrumentationClient(),
-                keySecretProvider: new MemoryKeySecretProvider(),
+                keySecretReadOnlyProvider: new MemoryKeySecretProvider(),
                 apiClient: new ApiClient(httpClient),
                 certificateReader: new PemParsingCertificateReader(),
                 clientProfileRepository: new DbEntityRepository<BankClientProfile>(_dB),

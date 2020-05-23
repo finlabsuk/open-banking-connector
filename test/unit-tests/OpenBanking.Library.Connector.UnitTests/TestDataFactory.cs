@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 apiClient: Substitute.For<IApiClient>(),
                 configurationProvider: Substitute.For<IConfigurationProvider>(),
                 instrumentation: Substitute.For<IInstrumentationClient>(),
-                keySecretProvider: Substitute.For<IKeySecretProvider>(),
+                keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
                 clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),
                 softwareStatementRepository: Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>(),
                 domesticConsentRepository: Substitute.For<IDbEntityRepository<DomesticConsent>>(),
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 dbContextService: Substitute.For<IDbMultiEntityMethods>(),
                 configurationProvider: new DefaultConfigurationProvider(),
                 logger: Substitute.For<IInstrumentationClient>(),
-                keySecretProvider: Substitute.For<IKeySecretProvider>(),
+                keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
                 apiClient: Substitute.For<IApiClient>(),
                 certificateReader: Substitute.For<ICertificateReader>(),
                 clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),

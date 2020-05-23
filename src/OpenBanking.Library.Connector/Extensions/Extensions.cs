@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector
+namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
 {
     internal static class Extensions
     {
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
         public static IEnumerable<T> WalkRecursive<T>(this T value, Func<T, T> selector)
             where T : class
         {
-            return WalkRecursiveInner(value, selector.ArgNotNull(nameof(selector)));
+            return WalkRecursiveInner(value: value, selector: selector.ArgNotNull(nameof(selector)));
         }
 
 
@@ -49,11 +49,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
 
         public static int DelimiterCount(this string value, char delimiter)
         {
-            var count = 0;
-            var x = 0;
+            int count = 0;
+            int x = 0;
             do
             {
-                x = value.IndexOf(delimiter, x);
+                x = value.IndexOf(value: delimiter, startIndex: x);
                 if (x < 0)
                 {
                     return count;
@@ -72,19 +72,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
         {
             value.ArgNotNull(nameof(value));
 
-            var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public |
-                                                BindingFlags.FlattenHierarchy);
+            PropertyInfo[] props = typeof(T).GetProperties(
+                BindingFlags.Instance | BindingFlags.Public |
+                BindingFlags.FlattenHierarchy);
 
-            var pairs = props.Select(p => new
-            {
-                Prop = p.GetGetMethod(),
-                Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
-            }).Where(a => a.Attr != null && a.Prop != null);
+            var pairs = props.Select(
+                p => new
+                {
+                    Prop = p.GetGetMethod(),
+                    Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
+                }).Where(a => a.Attr != null && a.Prop != null);
 
-            var result = new Dictionary<string, object>(StringComparer.InvariantCulture);
+            Dictionary<string, object> result = new Dictionary<string, object>(StringComparer.InvariantCulture);
             foreach (var pair in pairs)
             {
-                var propValue = pair.Prop.Invoke(value, null);
+                object propValue = pair.Prop.Invoke(obj: value, parameters: null);
 
                 result[pair.Attr.PropertyName] = propValue;
             }
@@ -103,14 +105,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
 
         public static string JoinString(this IEnumerable<string> lines, string delimiter)
         {
-            return string.Join(delimiter, lines.ArgNotNull(nameof(lines)));
+            return string.Join(separator: delimiter, values: lines.ArgNotNull(nameof(lines)));
         }
 
 
         public static string ToUrlEncoded(this IEnumerable<KeyValuePair<string, string>> values)
         {
-            var result = values.Select(kvp =>
-                    $"{HttpUtility.UrlPathEncode(kvp.Key)}={HttpUtility.UrlPathEncode(kvp.Value)}")
+            string result = values.Select(
+                    kvp =>
+                        $"{HttpUtility.UrlPathEncode(kvp.Key)}={HttpUtility.UrlPathEncode(kvp.Value)}")
                 .JoinString("&");
 
             return result;

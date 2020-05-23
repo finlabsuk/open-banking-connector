@@ -5,6 +5,7 @@
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {

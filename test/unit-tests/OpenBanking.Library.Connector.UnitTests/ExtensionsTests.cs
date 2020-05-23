@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FluentAssertions;
 using Xunit;
@@ -21,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [InlineData(" .ab ", 1)]
         public void DelimiterCount(string value, int expectedCount)
         {
-            var result = value.DelimiterCount('.');
+            int result = value.DelimiterCount('.');
 
             result.Should().Be(expectedCount);
         }
