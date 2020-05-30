@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using TokenEndpointResponsePublic = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
 
@@ -26,22 +27,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
         private readonly IDbEntityRepository<BankClientProfile> _openBankingClientRepo;
-        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
+        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
 
         public CreateDomesticPayment(
             IApiClient apiClient,
             IEntityMapper mapper,
-            IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepo,
             IDbEntityRepository<BankClientProfile> openBankingClientRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
-            IDbEntityRepository<ApiProfile> apiProfileRepo)
+            IDbEntityRepository<ApiProfile> apiProfileRepo,
+            ISoftwareStatementProfileService softwareStatementProfileService)
         {
             _apiClient = apiClient;
             _mapper = mapper;
-            _softwareStatementProfileRepo = softwareStatementRepo;
             _openBankingClientRepo = openBankingClientRepo;
             _domesticConsentRepo = domesticConsentRepo;
             _apiProfileRepo = apiProfileRepo;
+            _softwareStatementProfileService = softwareStatementProfileService;
         }
 
         public async Task<OBWriteDomesticResponse> CreateAsync(string consentId)
@@ -55,8 +56,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                                                   ?? throw new KeyNotFoundException(
                                                       "The Bank Client Profile does not exist.");
             SoftwareStatementProfile softwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(bankClientProfile.SoftwareStatementProfileId)
-                ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
+                _softwareStatementProfileService.GetSoftwareStatementProfile(
+                    bankClientProfile.SoftwareStatementProfileId);
 
             // TODO: update token endpiont response generation
             TokenEndpointResponsePublic tokenEndpointResponse = new TokenEndpointResponsePublic();

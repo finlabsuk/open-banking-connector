@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -15,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using BankClientProfilePublic = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankClientProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
@@ -30,20 +30,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IDbEntityRepository<BankClientProfile> _bankClientProfileRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly IEntityMapper _mapper;
-        private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
+        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
 
         public CreateBankClientProfile(
             IApiClient apiClient,
             IEntityMapper mapper,
             IDbMultiEntityMethods dbMultiEntityMethods,
-            IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
-            IDbEntityRepository<BankClientProfile> bankClientProfileRepo)
+            IDbEntityRepository<BankClientProfile> bankClientProfileRepo,
+            ISoftwareStatementProfileService softwareStatementProfileService)
         {
             _apiClient = apiClient;
             _mapper = mapper;
             _dbMultiEntityMethods = dbMultiEntityMethods;
-            _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _bankClientProfileRepo = bankClientProfileRepo;
+            _softwareStatementProfileService = softwareStatementProfileService;
         }
 
         public async Task<BankClientProfileResponse> CreateAsync(BankClientProfilePublic bankClientProfile)
@@ -52,8 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Load relevant objects
             SoftwareStatementProfile softwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(bankClientProfile.SoftwareStatementProfileId)
-                ?? throw new KeyNotFoundException("The Software Statement Profile does not exist.");
+                _softwareStatementProfileService.GetSoftwareStatementProfile(
+                    bankClientProfile.SoftwareStatementProfileId);
 
             // STEP 1
             // Compute claims associated with Open Banking client

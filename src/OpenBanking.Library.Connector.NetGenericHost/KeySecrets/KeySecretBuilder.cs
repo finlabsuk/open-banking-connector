@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
 {
     internal class KeySecretBuilder
     {
-        public IKeySecretReadOnlyProvider GetKeySecretProvider(IConfiguration config, RuntimeConfiguration obcConfig)
+        public IKeySecretProvider GetKeySecretProvider(IConfiguration config, RuntimeConfiguration obcConfig)
         {
             if (config == null)
             {

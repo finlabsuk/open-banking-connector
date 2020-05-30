@@ -8,13 +8,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using SoftwareStatementProfilePublic =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public interface ICreateSoftwareStatementProfile: IDisposable
+    public interface ICreateSoftwareStatementProfile : IDisposable
     {
         Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile);
     }
@@ -24,20 +25,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly IEntityMapper _mapper;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
+        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
 
         public CreateSoftwareStatementProfile(
             IEntityMapper mapper,
             IDbMultiEntityMethods dbMultiEntityMethods,
-            IDbEntityRepository<SoftwareStatementProfile> repo)
+            IDbEntityRepository<SoftwareStatementProfile> repo,
+            ISoftwareStatementProfileService softwareStatementProfileService)
         {
             _mapper = mapper;
             _dbMultiEntityMethods = dbMultiEntityMethods;
             _softwareStatementProfileRepo = repo;
+            _softwareStatementProfileService = softwareStatementProfileService;
         }
 
         public async Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile)
         {
             profile.ArgNotNull(nameof(profile));
+
+            _softwareStatementProfileService.SetSoftwareStatementProfile(profile);
 
             SoftwareStatementProfile value =
                 _mapper.Map<SoftwareStatementProfile>(profile);

@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -19,15 +20,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         public async Task Create_IdReturned()
         {
             var repo = Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>();
+            var service = Substitute.For<ISoftwareStatementProfileService>();
             var dbMethods = Substitute.For<IDbMultiEntityMethods>();
             var mapper = Substitute.For<IEntityMapper>();
-            
+
             var resultProfile = new SoftwareStatementProfile();
 
             mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.Request.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
-            var interaction = new CreateSoftwareStatementProfile(mapper, dbMethods, repo);
+            var interaction = new CreateSoftwareStatementProfile(
+                mapper: mapper,
+                dbMultiEntityMethods: dbMethods,
+                repo: repo,
+                softwareStatementProfileService: service);
 
             var profile = new Models.Public.Request.SoftwareStatementProfile
             {

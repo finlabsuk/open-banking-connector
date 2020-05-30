@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets
 {
-    public class ActiveSoftwareStatementProfiles: IKeySecretItem<ActiveSoftwareStatementProfiles>
+    public class ActiveSoftwareStatementProfiles : IKeySecretItem
     {
         public ActiveSoftwareStatementProfiles(List<string> profileIds)
         {

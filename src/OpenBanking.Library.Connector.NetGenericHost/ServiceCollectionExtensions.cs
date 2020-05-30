@@ -7,7 +7,9 @@ using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -16,6 +18,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Instrumentati
 using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,6 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                         config: configuration,
                         obcConfig: configProvider.GetRuntimeConfiguration());
                 });
+            services.AddSingleton(x => (IKeySecretReadOnlyProvider) x.GetRequiredService<IKeySecretProvider>());
             services.AddSingleton<IApiClient>(
                 sp =>
                 {
@@ -95,6 +99,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                 DbEntityRepository<ApiProfile>>();
             services.AddScoped<IDbEntityRepository<DomesticConsent>,
                 DbEntityRepository<DomesticConsent>>();
+            services.AddSingleton<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>,
+                KeySecretReadRepository<ActiveSoftwareStatementProfiles>>();
+            services.AddSingleton<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>,
+                KeySecretWriteRepository<ActiveSoftwareStatementProfiles>>();
+            services.AddSingleton<IKeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>,
+                KeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>>();
+            services.AddSingleton<IKeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>,
+                KeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>>();
+            services.AddSingleton<ISoftwareStatementProfileService, SoftwareStatementProfileService>();
             services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
 
             return services;

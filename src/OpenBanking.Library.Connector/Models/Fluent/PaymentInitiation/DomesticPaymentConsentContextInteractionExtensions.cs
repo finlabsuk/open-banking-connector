@@ -292,10 +292,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
                     context.Context.ApiClient,
                     context.Context.EntityMapper,
                     context.Context.DbContextService,
-                    context.Context.SoftwareStatementRepository,
                     context.Context.ClientProfileRepository,
                     context.Context.ApiProfileRepository,
-                    context.Context.DomesticConsentRepository
+                    context.Context.DomesticConsentRepository,
+                    context.Context.SoftwareStatementProfileService
                 );
 
                 PaymentConsentResponse result = await createDomesticConsent.CreateAsync(context.Data);

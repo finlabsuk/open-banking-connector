@@ -6,17 +6,22 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class RequestBuilder : IOpenBankingRequestBuilder
     {
+        private readonly IKeySecretReadRepository<ActiveSoftwareStatementProfiles> _activeSReadOnlyRepo;
+        private readonly IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> _activeSRRepo;
         private readonly IApiClient _apiClient;
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
@@ -27,7 +32,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IEntityMapper _entityMapper;
         private readonly IKeySecretReadOnlyProvider _keySecretReadOnlyProvider;
         private readonly IInstrumentationClient _logger;
+        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
         private readonly IDbEntityRepository<SoftwareStatementProfile> _softwareStatementRepo;
+        private readonly IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> _sReadOnlyRepo;
+        private readonly IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> _sRepo;
         private readonly ITimeProvider _timeProvider;
 
 
@@ -42,7 +50,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
-            IDbEntityRepository<ApiProfile> apiProfileRepository)
+            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
+            IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
+            IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> sReadOnlyRepo,
+            IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> sRepo,
+            ISoftwareStatementProfileService softwareStatementProfileService)
             : this(
                 timeProvider: new TimeProvider(),
                 entityMapper: entityMapper,
@@ -55,7 +68,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 clientProfileRepository: clientProfileRepository,
                 softwareStatementProfileRepo: softwareStatementProfileRepo,
                 domesticConsentRepo: domesticConsentRepo,
-                apiProfileRepository: apiProfileRepository) { }
+                apiProfileRepository: apiProfileRepository,
+                activeSReadOnlyRepo: activeSReadOnlyRepo,
+                activeSrRepo: activeSrRepo,
+                sReadOnlyRepo: sReadOnlyRepo,
+                sRepo: sRepo,
+                softwareStatementProfileService: softwareStatementProfileService) { }
 
         internal RequestBuilder(
             ITimeProvider timeProvider,
@@ -69,12 +87,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
             IDbEntityRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
-            IDbEntityRepository<ApiProfile> apiProfileRepository)
+            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
+            IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
+            IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> sReadOnlyRepo,
+            IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> sRepo,
+            ISoftwareStatementProfileService softwareStatementProfileService)
         {
             _certificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
             _entityMapper = entityMapper.ArgNotNull(nameof(entityMapper));
             _dbContextService = dbContextService;
+            _activeSReadOnlyRepo = activeSReadOnlyRepo;
+            _activeSRRepo = activeSrRepo;
+            _sReadOnlyRepo = sReadOnlyRepo;
+            _sRepo = sRepo;
+            _softwareStatementProfileService = softwareStatementProfileService;
             _configurationProvider = configurationProvider.ArgNotNull(nameof(configurationProvider));
             _logger = logger.ArgNotNull(nameof(logger));
             _keySecretReadOnlyProvider = keySecretReadOnlyProvider.ArgNotNull(nameof(keySecretReadOnlyProvider));
@@ -140,10 +168,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 keySecretReadOnlyProvider: _keySecretReadOnlyProvider,
                 clientProfileRepository: _clientProfileRepository,
                 softwareStatementRepository: _softwareStatementRepo,
+                softwareStatementProfileService: _softwareStatementProfileService,
                 domesticConsentRepository: _domesticConsentRepo,
                 entityMapper: _entityMapper,
                 apiProfileRepository: _apiProfileRepository,
-                dbContextService: _dbContextService)
+                dbContextService: _dbContextService,
+                activeSrRepo: _activeSRRepo,
+                sReadOnlyRepo: _sReadOnlyRepo,
+                sRepo: _sRepo,
+                activeSReadOnlyRepo: _activeSReadOnlyRepo)
             {
                 Created = _timeProvider.GetUtcNow()
             };

@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// Class that captures a software statement and associated keys and certificates
     [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]
-    public class SoftwareStatementProfile : IEntity, IKeySecretItemWithId<SoftwareStatementProfile>
+    public class SoftwareStatementProfile : IEntity, IKeySecretItemWithId
     {
         /// Software statement as string, e.g. "A.B.C"
         public string SoftwareStatement { get; set; }
