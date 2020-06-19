@@ -6,6 +6,7 @@ using System;
 using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
@@ -23,6 +24,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
+using SoftwareStatementProfile =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
 {
@@ -30,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
     {
         public static IServiceCollection AddOpenBankingConnector(
             this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            bool loadSecretsFromConfig)
         {
             const string httpClientName = "OBC";
 
@@ -38,10 +42,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                 .ConfigurePrimaryHttpMessageHandler(
                     sp =>
                     {
-                        IKeySecretReadOnlyProvider secrets = sp.GetService<IKeySecretReadOnlyProvider>();
+                        ISoftwareStatementProfileService profileService =
+                            sp.GetRequiredService<ISoftwareStatementProfileService>();
+
+                        // This can be removed in .NET 5 when SoftwareStatementProfileHostedService
+                        // and SocketsHttpHandler used.
+                        profileService.SetSoftwareStatementProfileFromSecretsSync();
 
                         HttpMessageHandler handler = new HttpRequestBuilder()
-                            .SetClientCertificates(CertificateFactories.GetCertificates(secrets))
+                            .SetClientCertificates(profileService.GetCertificates())
                             .CreateMessageHandler();
 
                         return handler;
@@ -49,16 +58,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
 
             services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(configuration));
             services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient>();
-            services.AddSingleton(
-                sp =>
-                {
-                    KeySecretBuilder builder = new KeySecretBuilder();
-                    IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
+            if (loadSecretsFromConfig)
+            {
+                services.AddSingleton(
+                    sp =>
+                    {
+                        KeySecretBuilder builder = new KeySecretBuilder();
+                        IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
 
-                    return builder.GetKeySecretProvider(
-                        config: configuration,
-                        obcConfig: configProvider.GetRuntimeConfiguration());
-                });
+                        return builder.GetKeySecretProvider(
+                            config: configuration,
+                            obcConfig: configProvider.GetRuntimeConfiguration());
+                    });
+            }
+            else
+            {
+                services.AddSingleton<IKeySecretProvider, MemoryKeySecretProvider>();
+            }
+
             services.AddSingleton(x => (IKeySecretReadOnlyProvider) x.GetRequiredService<IKeySecretProvider>());
             services.AddSingleton<IApiClient>(
                 sp =>
@@ -91,8 +108,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
 
             services.AddScoped<IDbMultiEntityMethods,
                 DbMultiEntityMethods>();
-            services.AddScoped<IDbEntityRepository<SoftwareStatementProfile>,
-                DbEntityRepository<SoftwareStatementProfile>>();
             services.AddScoped<IDbEntityRepository<BankClientProfile>,
                 DbEntityRepository<BankClientProfile>>();
             services.AddScoped<IDbEntityRepository<ApiProfile>,
@@ -103,12 +118,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                 KeySecretReadRepository<ActiveSoftwareStatementProfiles>>();
             services.AddSingleton<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>,
                 KeySecretWriteRepository<ActiveSoftwareStatementProfiles>>();
-            services.AddSingleton<IKeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>,
-                KeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>>();
-            services.AddSingleton<IKeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>,
-                KeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>>();
+            services.AddSingleton<IKeySecretMultiItemWriteRepository<SoftwareStatementProfile>,
+                KeySecretMultiItemWriteRepository<SoftwareStatementProfile>>();
+            services.AddSingleton<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>,
+                KeySecretMultiItemReadRepository<SoftwareStatementProfile>>();
             services.AddSingleton<ISoftwareStatementProfileService, SoftwareStatementProfileService>();
             services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
+
+            // Startup tasks
+
+            // This can be enabled in .NET 5 when SoftwareStatementProfileHostedService
+            // and SocketsHttpHandler used.
+            // services.AddHostedService<SoftwareStatementProfileHostedService>();
 
             return services;
         }

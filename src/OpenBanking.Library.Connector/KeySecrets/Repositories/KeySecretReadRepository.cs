@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
 {
     /// <summary>
-    ///     Default implementation of <see cref="IKeySecretReadRepository"/> service.
+    ///     Default implementation of <see cref="IKeySecretReadRepository" /> service.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     public class KeySecretReadRepository<TItem> : KeySecretReadRepositoryBase<TItem>,
@@ -29,6 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
                 keyFcn: s => Helpers.KeyWithoutId<TItem>(propertyName: s),
                 property: typeof(TItem).GetProperty(propertyName));
 
-        public Task<TItem> GetAsync() => base.GetAsync(keyFcn: s => Helpers.KeyWithoutId<TItem>(propertyName: s));
+        public Task<TItem> GetAsync() => base.GetAsync(
+            keyFcn: s => Helpers.KeyWithoutId<TItem>(propertyName: s),
+            idPropertyValue: null);
     }
 }

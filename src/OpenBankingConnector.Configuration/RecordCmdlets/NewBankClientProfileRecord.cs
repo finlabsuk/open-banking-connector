@@ -14,12 +14,15 @@ using Microsoft.Extensions.DependencyInjection;
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "BankClientProfileRecord")]
-    [OutputType(typeof(BankClientProfileResponse))]
+    [OutputType(typeof(BankClientProfileFluentResponse))]
     public class NewBankClientProfileRecord : RecordBaseCmdlet
     {
-        public NewBankClientProfileRecord() : base(verbName: "New", nounName: "BankClientProfileRecord")
-        {
-        }
+        public NewBankClientProfileRecord() : base(
+            verbName: "New",
+            nounName: "BankClientProfileRecord",
+            deleteAndRecreateDb: false,
+            setUpSoftwareStatementProfileService: true,
+            loadSecretsFromConfig: true) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public BankClientProfile? BankClientProfile { get; set; }
@@ -40,9 +43,12 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             }
             catch (Exception ex)
             {
-                //context.Context.Instrumentation.Exception(ex);
-                OpenBankingSoftwareStatementResponse response =
-                    new OpenBankingSoftwareStatementResponse(message: ex.CreateErrorMessage(), data: null);
+                WriteError(
+                    new ErrorRecord(
+                        exception: ex,
+                        errorId: "Could not create record",
+                        errorCategory: ErrorCategory.InvalidOperation,
+                        targetObject: null));
             }
         }
     }

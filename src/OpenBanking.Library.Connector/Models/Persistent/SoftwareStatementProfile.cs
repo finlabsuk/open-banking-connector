@@ -36,14 +36,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        public string SigningKeySecretName { get; set; }
+        public string SigningKey { get; set; }
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         public string SigningCertificate { get; set; }
 
         /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        public string TransportKeySecretName { get; set; }
+        public string TransportKey { get; set; }
 
         /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         public string TransportCertificate { get; set; }

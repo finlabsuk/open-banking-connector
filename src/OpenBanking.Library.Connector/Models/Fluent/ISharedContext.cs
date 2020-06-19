@@ -28,7 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         IDbMultiEntityMethods DbContextService { get; }
         IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
-        IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
         ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
         IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
         IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> SReadOnlyRepo { get; }

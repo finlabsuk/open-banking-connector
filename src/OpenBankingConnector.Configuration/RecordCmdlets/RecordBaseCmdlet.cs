@@ -4,8 +4,8 @@
 
 using System;
 using System.IO;
-//using System.Diagnostics;
 using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost;
+using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using Microsoft.Extensions.Configuration;
@@ -13,13 +13,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+//using System.Diagnostics;
+
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
     public abstract class RecordBaseCmdlet : BaseCmdlet
     {
         protected readonly IHost _host;
 
-        public RecordBaseCmdlet(string verbName, string nounName) : base(verbName: verbName, nounName: nounName)
+        public RecordBaseCmdlet(
+            string verbName,
+            string nounName,
+            bool deleteAndRecreateDb,
+            bool setUpSoftwareStatementProfileService,
+            bool loadSecretsFromConfig) : base(verbName: verbName, nounName: nounName)
         {
             //Debugger.Launch();
 
@@ -39,7 +46,9 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
                     {
                         //services.AddOptions();
                         //services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
-                        services.AddOpenBankingConnector(hostContext.Configuration);
+                        services.AddOpenBankingConnector(
+                            configuration: hostContext.Configuration,
+                            loadSecretsFromConfig: loadSecretsFromConfig);
                         services.AddScoped<ICreateSoftwareStatementProfile, CreateSoftwareStatementProfile>();
                         services.AddScoped<ICreateBankClientProfile, CreateBankClientProfile>();
                         services.AddScoped<ICreatePaymentInitiationApiProfile, CreatePaymentInitiationApiProfile>();
@@ -52,8 +61,11 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
                         logging.AddConsole();
                     });
 
-            _host = builder.Build();
-            _host.Start();
+            _host = builder
+                .Build();
+            _host.StartupTasks(
+                    deleteAndRecreateDb: deleteAndRecreateDb)
+                .Start();
         }
 
         protected abstract void ProcessRecordInner(IServiceProvider services);

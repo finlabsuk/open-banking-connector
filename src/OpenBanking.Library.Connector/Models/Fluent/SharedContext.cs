@@ -15,6 +15,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using SoftwareStatementProfile =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
@@ -27,15 +29,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IInstrumentationClient instrumentation,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
-            IDbEntityRepository<SoftwareStatementProfile> softwareStatementRepository,
             ISoftwareStatementProfileService softwareStatementProfileService,
             IDbEntityRepository<DomesticConsent> domesticConsentRepository,
             IEntityMapper entityMapper,
             IDbEntityRepository<ApiProfile> apiProfileRepository,
             IDbMultiEntityMethods dbContextService,
             IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
-            IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> sReadOnlyRepo,
-            IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> sRepo,
+            IKeySecretMultiItemReadRepository<SoftwareStatementProfile> sReadOnlyRepo,
+            IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> sRepo,
             IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo)
         {
             CertificateReader = certificateReader;
@@ -44,7 +45,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             Instrumentation = instrumentation;
             KeySecretReadOnlyProvider = keySecretReadOnlyProvider;
             ClientProfileRepository = clientProfileRepository;
-            SoftwareStatementRepository = softwareStatementRepository;
             SoftwareStatementProfileService = softwareStatementProfileService;
             DomesticConsentRepository = domesticConsentRepository;
             EntityMapper = entityMapper;
@@ -63,10 +63,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         public IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
-        public IDbEntityRepository<SoftwareStatementProfile> SoftwareStatementRepository { get; }
         public IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
-        public IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> SReadOnlyRepo { get; }
-        public IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> SRepo { get; }
+        public IKeySecretMultiItemReadRepository<SoftwareStatementProfile> SReadOnlyRepo { get; }
+        public IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> SRepo { get; }
         public IKeySecretReadRepository<ActiveSoftwareStatementProfiles> ActiveSReadOnlyRepo { get; }
         public ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
         public IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }

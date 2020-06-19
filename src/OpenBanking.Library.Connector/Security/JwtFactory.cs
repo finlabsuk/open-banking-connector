@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Jose;
@@ -13,27 +14,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public class JwtFactory
     {
-        public string CreateJwt<TClaims>(SoftwareStatementProfile profile, TClaims claims,
+        public string CreateJwt<TClaims>(
+            SoftwareStatementProfile profile,
+            TClaims claims,
             bool useOpenBankingJwtHeaders) where TClaims : class
         {
             profile.ArgNotNull(nameof(profile));
             claims.ArgNotNull(nameof(claims));
 
             Dictionary<string, object> headers = useOpenBankingJwtHeaders
-                ? CreateOpenBankingJwtHeaders(profile.SigningKeyId, profile.SoftwareStatementPayload.OrgId,
-                    profile.SoftwareStatementPayload.SoftwareId)
+                ? CreateOpenBankingJwtHeaders(
+                    signingId: profile.SigningKeyId,
+                    orgId: profile.SoftwareStatementPayload.OrgId,
+                    softwareId: profile.SoftwareStatementPayload.SoftwareId)
                 : CreateJwtHeaders(profile.SigningKeyId);
 
 
-            string payloadJson = JsonConvert.SerializeObject(claims, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            string payloadJson = JsonConvert.SerializeObject(
+                value: claims,
+                settings: new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
 
-            X509Certificate2 privateKey = CertificateFactories.GetCertificate2FromPem(profile.SigningKeySecretName, profile.SigningCertificate);
-            System.Security.Cryptography.RSA privateKeyRsa = privateKey.GetRSAPrivateKey();
+            X509Certificate2 privateKey = CertificateFactories.GetCertificate2FromPem(
+                privateKey: profile.SigningKey,
+                pem: profile.SigningCertificate);
+            RSA privateKeyRsa = privateKey.GetRSAPrivateKey();
 
-            string result = JWT.Encode(payloadJson, privateKeyRsa, JwsAlgorithm.PS256, headers);
+            string result = JWT.Encode(
+                payload: payloadJson,
+                key: privateKeyRsa,
+                algorithm: JwsAlgorithm.PS256,
+                extraHeaders: headers);
 
             return result;
         }

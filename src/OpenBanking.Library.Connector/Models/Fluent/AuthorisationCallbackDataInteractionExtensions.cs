@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     return new AuthorisationCallbackDataFluentResponse(validationErrors);
                 }
 
-                var handler = new RedirectCallbackHandler(context.Context.SoftwareStatementRepository,
+                var handler = new RedirectCallbackHandler(null,
                     context.Context.ApiClient, context.Context.EntityMapper,
                     context.Context.ClientProfileRepository,
                     context.Context.DomesticConsentRepository);

@@ -3,48 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public static class CertificateFactories
     {
-        public static IEnumerable<X509Certificate2> GetCertificates(IKeySecretReadOnlyProvider secrets)
-        {
-            secrets.ArgNotNull(nameof(secrets));
-
-            List<X509Certificate2> certificates = new List<X509Certificate2>();
-
-            foreach (int x in Enumerable.Range(start: 1, count: Secrets.MaxSoftwareStatements))
-            {
-                string certName = Secrets.GetName(
-                    softwareStatementId: x.ToString(),
-                    name: Secrets.TransportCertificate);
-                KeySecret cert = secrets.GetKeySecretAsync(certName).Result;
-                string keyName = Secrets.GetName(
-                    softwareStatementId: x.ToString(),
-                    name: Secrets.TransportCertificateKey);
-                KeySecret key = secrets.GetKeySecretAsync(keyName).Result;
-
-                if (cert != null && key != null)
-                {
-                    X509Certificate2 certificate = GetCertificate2FromPem(privateKey: key.Value, pem: cert.Value);
-
-                    if (certificate != null)
-                    {
-                        certificates.Add(certificate);
-                    }
-                }
-            }
-
-            return certificates;
-        }
-
         public static X509Certificate2 GetCertificate2FromPem(string privateKey, string pem)
         {
             /*

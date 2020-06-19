@@ -35,9 +35,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             return _thirdPartyThumbprints.Value.Contains(tp);
         }
 
+        public static IEnumerable<string> GetThirdPartyCertificateNames() =>
+            Enumerable.Range(start: 1, count: 100).Select(i => $"thirdPartyCertificate.{i}.pem");
+
         private async Task<IEnumerable<X509Certificate2>> GetServerCertificatesAsync()
         {
-            KeySecret[] pems = await Secrets.GetThirdPartyCertificateNames()
+            KeySecret[] pems = await GetThirdPartyCertificateNames()
                 .Select(_keySecrets.GetKeySecretAsync)
                 .ToArray()
                 .WaitAll();

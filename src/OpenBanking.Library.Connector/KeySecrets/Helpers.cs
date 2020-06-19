@@ -9,11 +9,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
     /// <summary>
     ///     Helper methods for Key Secrets.
     /// </summary>
-    internal static class Helpers
+    public static class Helpers
     {
         /// <summary>
-        /// Key containing ID used for storage of key secrets where the same item (set of secrets) can be stored
-        /// more than once.
+        ///     Key containing ID used for storage of key secrets where the same item (set of secrets) can be stored
+        ///     more than once.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="propertyName"></param>
@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
             $"{typeof(TItem).Name.PascalOrCamelToKebabCase()}:{id}:{propertyName.PascalOrCamelToKebabCase()}";
 
         /// <summary>
-        /// Key without ID used for storage of key secrets where the same item (set of secrets) can only be stored once only.
+        ///     Key without ID used for storage of key secrets where the same item (set of secrets) can only be stored once only.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <typeparam name="TItem"></typeparam>

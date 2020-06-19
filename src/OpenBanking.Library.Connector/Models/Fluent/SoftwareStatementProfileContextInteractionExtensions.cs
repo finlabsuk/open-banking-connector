@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
             data.SigningKeyId = keyId;
-            data.SigningKeySecretName = keySecretName;
+            data.SigningKey = keySecretName;
             data.SigningCertificate = certificate;
 
             return context;
@@ -71,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         {
             SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
-            data.TransportKeySecretName = keySecretName;
+            data.TransportKey = keySecretName;
             data.TransportCertificate = certificate;
 
             return context;
@@ -99,9 +99,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             }
 
             CreateSoftwareStatementProfile creator = new CreateSoftwareStatementProfile(
-                mapper: context.Context.EntityMapper,
-                dbMultiEntityMethods: context.Context.DbContextService,
-                repo: context.Context.SoftwareStatementRepository,
                 softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();

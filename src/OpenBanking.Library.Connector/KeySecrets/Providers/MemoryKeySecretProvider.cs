@@ -7,9 +7,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers
 {
     public class MemoryKeySecretProvider : IKeySecretReadOnlyProvider, IKeySecretProvider
     {

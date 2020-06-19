@@ -25,18 +25,22 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
 
         [Route("pisp/domestic-payment-consents")]
         [HttpPost]
-        [ProducesResponseType(typeof(DomesticPaymentConsentHttpResponse), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(MessagesResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            type: typeof(DomesticPaymentConsentHttpResponse),
+            statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(
+            type: typeof(MessagesResponse),
+            statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DomesticPaymentConsentsPostAsync([FromBody] OBWriteDomesticConsent request)
         {
-            var resp = await _obRequestBuilder.DomesticPaymentConsent(request.ApiProfileId)
+            DomesticPaymentConsentFluentResponse? resp = await _obRequestBuilder
+                .DomesticPaymentConsent(request.ApiProfileId)
                 .Data(request)
                 .SubmitAsync();
 
-            var result = new DomesticPaymentConsentHttpResponse(
-                resp.ToMessagesResponse(),
-                resp.Data
-            );
+            DomesticPaymentConsentHttpResponse? result = new DomesticPaymentConsentHttpResponse(
+                messages: resp.ToMessagesResponse(),
+                data: resp.Data);
 
             return resp.HasErrors
                 ? new BadRequestObjectResult(result.Messages) as IActionResult

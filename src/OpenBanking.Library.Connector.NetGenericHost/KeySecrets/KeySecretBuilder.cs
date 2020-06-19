@@ -4,10 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Microsoft.Extensions.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecrets
@@ -26,60 +30,75 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
                 throw new ArgumentNullException(nameof(obcConfig));
             }
 
-            var secrets = Enumerable.Range(start: 1, count: Secrets.MaxSoftwareStatements)
-                .SelectMany(i => GetSecrets(config: config, softwareStatement: i, obcConfig: obcConfig))
-                .Where(s => s != null);
+            List<KeySecret> secrets = GetItemSecrets<ActiveSoftwareStatementProfiles>(config)
+                .Where(s => s != null)
+                .ToList();
+
+            KeySecret? profileKey = secrets.Find(
+                x => x.Key == Helpers.KeyWithoutId<ActiveSoftwareStatementProfiles>(
+                    nameof(ActiveSoftwareStatementProfiles.ProfileIds)));
+            string? profileId = profileKey.Value;
+
+            secrets.AddRange(GetItemWIthIdSecrets<SoftwareStatementProfile>(configuration: config, id: profileId));
 
             return new MemoryKeySecretProvider(secrets);
         }
 
-        private IEnumerable<KeySecret> GetSecrets(
-            IConfiguration config,
-            int softwareStatement,
-            RuntimeConfiguration obcConfig)
+        private IEnumerable<KeySecret> GetItemSecrets<TItem>(IConfiguration configuration)
+            where TItem : class, IKeySecretItem
         {
-            var secrets = new[]
+            List<KeySecret> secrets = new List<KeySecret>();
+            foreach (PropertyInfo property in typeof(TItem).GetProperties())
             {
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.SoftwareStatement),
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.SigningKeyId),
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.SigningCertificateKey),
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.SigningCertificate),
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.TransportCertificateKey),
-                GetSecret(
-                    config: config,
-                    softwareStatement: softwareStatement,
-                    name: Secrets.TransportCertificate)
-            };
+                if (!(
+                    property.PropertyType == typeof(string) ||
+                    property.PropertyType == typeof(List<string>)
+                ))
+                {
+                    throw new InvalidDataException(
+                        $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
+                }
+
+                string? key = Helpers.KeyWithoutId<TItem>(property.Name);
+                string? s = configuration.GetValue<string>(key);
+                KeySecret? newSecret = s != null
+                    ? new KeySecret(key: key, value: s)
+                    : null;
+                secrets.Add(newSecret);
+            }
 
             return secrets;
         }
 
-        private KeySecret GetSecret(IConfiguration config, int softwareStatement, string name)
+        private IEnumerable<KeySecret> GetItemWIthIdSecrets<TItem>(IConfiguration configuration, string id)
+            where TItem : class, IKeySecretItemWithId
         {
-            var configKey = Secrets.GetName(
-                softwareStatementId: softwareStatement.ToString(),
-                name: name);
+            List<KeySecret> secrets = new List<KeySecret>();
+            foreach (PropertyInfo property in typeof(TItem).GetProperties())
+            {
+                if (!(
+                    property.PropertyType == typeof(string) ||
+                    property.PropertyType == typeof(List<string>)
+                ))
+                {
+                    throw new InvalidDataException(
+                        $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
+                }
 
-            var s = config.GetValue<string>(configKey);
+                string? key = Helpers.KeyWithId<TItem>(id: id, propertyName: property.Name);
 
-            return s != null
-                ? new KeySecret(key: configKey, value: s)
-                : null;
+                string? s = property.Name switch
+                {
+                    "Id" => id,
+                    _ => configuration.GetValue<string>(key)
+                };
+                KeySecret? newSecret = s != null
+                    ? new KeySecret(key: key, value: s)
+                    : null;
+                secrets.Add(newSecret);
+            }
+
+            return secrets;
         }
     }
 }

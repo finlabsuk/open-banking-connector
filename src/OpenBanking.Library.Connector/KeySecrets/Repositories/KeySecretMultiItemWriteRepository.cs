@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
 {
     /// <summary>
-    ///     Default implementation of <see cref="IKeySecretMultiItemWriteRepository"/> service.
+    ///     Default implementation of <see cref="IKeySecretMultiItemWriteRepository" /> service.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     public class KeySecretMultiItemWriteRepository<TItem> : KeySecretWriteRepositoryBase<TItem>,
@@ -19,6 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
 
         public async Task UpsertAsync(TItem instance) => UpsertAsync(
             keyFcn: s => Helpers.KeyWithId<TItem>(id: instance.Id, propertyName: s),
-            instance: instance);
+            instance: instance,
+            writeIdProperty: false);
     }
 }

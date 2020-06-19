@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -22,7 +23,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
         private readonly IDbMultiEntityMethods _dbContextService;
 
-        public CreatePaymentInitiationApiProfile(IDbMultiEntityMethods dbContextService, IDbEntityRepository<ApiProfile> apiProfileRepo)
+        public CreatePaymentInitiationApiProfile(
+            IDbMultiEntityMethods dbContextService,
+            IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _dbContextService = dbContextService;
             _apiProfileRepo = apiProfileRepo;
@@ -30,6 +33,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         public async Task<PaymentInitiationApiProfileResponse> CreateAsync(PaymentInitiationApiProfilePublic apiProfile)
         {
+            // Check for existing API profile.
+            // ApiProfile existingProfile = await _apiProfileRepo
+            //     .GetAsync(apiProfile.Id);
+            // if (!(existingProfile is null))
+            // {
+            //     throw new Exception("There is already a API Profile with specified ID.");
+            // }
+
             // Create and store persistent object
             ApiProfile persistentApiProfile = new ApiProfile(
                 id: apiProfile.Id,

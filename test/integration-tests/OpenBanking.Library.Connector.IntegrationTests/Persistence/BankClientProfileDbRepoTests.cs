@@ -13,9 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 {
     public class BankClientProfileDbRepoTests : DbTest
     {
-        private readonly IDbEntityRepository<BankClientProfile> _repo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITestOutputHelper _output;
+        private readonly IDbEntityRepository<BankClientProfile> _repo;
 
         public BankClientProfileDbRepoTests(ITestOutputHelper output)
         {
@@ -24,35 +24,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             _output = output;
         }
 
+        /// <summary>
+        ///     Confirm operation of generation of non-null strings without null chars
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
+        public bool FsCheckStringNotNullAndContainsNoNulls_WorksCorrectly(StringNotNullAndContainsNoNulls s)
+        {
+            bool? outcome = !s.Item?.Contains("\0");
+            return outcome ?? false;
+        }
+
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property GetAsync_ReturnsEmpty(string id)
         {
-            Func<bool> rule = () =>
-            {
-                return _repo.GetAsync(id).Result == null;
-            };
+            Func<bool> rule = () => { return _repo.GetAsync(id).Result == null; };
 
             return rule.When(id != null);
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
-        public Property GetAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id, BankClientProfile value)
+        public Property GetAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id)
         {
             Func<bool> rule = () =>
             {
-                value.Id = id.Item;
+                BankClientProfile value = new BankClientProfile
+                {
+                    Id = id.Item
+                };
                 BankClientProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id.Item).Result.Id == id.Item;
             };
 
-            // Run test avoiding C null character
-            return rule.When(value != null);
+            return rule.ToProperty();
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
-        public Property SetAsync_KnownId_ElementReplaced(StringNotNullAndContainsNoNulls id, BankClientProfile value,
+        public Property SetAsync_KnownId_ElementReplaced(
+            StringNotNullAndContainsNoNulls id,
+            BankClientProfile value,
             BankClientProfile value2)
         {
             Func<bool> rule = () =>
@@ -70,8 +83,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
             };
 
             // Run test avoiding C null character
-            return rule.When(value != null && value2 != null &&
-                                             value.XFapiFinancialId != value2.XFapiFinancialId);
+            return rule.When(
+                value != null && value2 != null &&
+                value.XFapiFinancialId != value2.XFapiFinancialId);
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]

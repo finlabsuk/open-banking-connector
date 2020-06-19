@@ -16,6 +16,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using NSubstitute;
+using SoftwareStatementProfile =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 {
@@ -30,7 +32,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 instrumentation: Substitute.For<IInstrumentationClient>(),
                 keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
                 clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),
-                softwareStatementRepository: Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>(),
                 softwareStatementProfileService: Substitute.For<ISoftwareStatementProfileService>(),
                 domesticConsentRepository: Substitute.For<IDbEntityRepository<DomesticConsent>>(),
                 entityMapper: Substitute.For<IEntityMapper>(),
@@ -38,8 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 dbContextService: Substitute.For<IDbMultiEntityMethods>(),
                 activeSrRepo: Substitute.For<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>>(),
                 sReadOnlyRepo: Substitute
-                    .For<IKeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>>(),
-                sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>>(),
+                    .For<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>>(),
+                sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<SoftwareStatementProfile>>(),
                 activeSReadOnlyRepo: Substitute.For<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>>());
         }
 
@@ -56,14 +57,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 apiClient: Substitute.For<IApiClient>(),
                 certificateReader: Substitute.For<ICertificateReader>(),
                 clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),
-                softwareStatementProfileRepo: Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>(),
                 domesticConsentRepo: Substitute.For<IDbEntityRepository<DomesticConsent>>(),
                 apiProfileRepository: Substitute.For<IDbEntityRepository<ApiProfile>>(),
                 activeSReadOnlyRepo: Substitute.For<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>>(),
                 activeSrRepo: Substitute.For<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>>(),
                 sReadOnlyRepo: Substitute
-                    .For<IKeySecretMultiItemReadRepository<Models.Public.Request.SoftwareStatementProfile>>(),
-                sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<Models.Public.Request.SoftwareStatementProfile>>(),
+                    .For<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>>(),
+                sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<SoftwareStatementProfile>>(),
                 softwareStatementProfileService: Substitute.For<ISoftwareStatementProfileService>());
         }
     }

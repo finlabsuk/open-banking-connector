@@ -38,17 +38,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
             return keySecret.Value;
         }
 
-        protected async Task<TItem> GetAsync(Func<string, string> keyFcn)
+        protected async Task<TItem> GetAsync(Func<string, string> keyFcn, string idPropertyValue)
         {
             List<object> values = new List<object>();
             foreach (PropertyInfo property in typeof(TItem).GetProperties())
             {
                 if (property.PropertyType == typeof(string))
                 {
-                    values.Add(
-                        await GetAsync(
-                            keyFcn: keyFcn,
-                            property: property));
+                    if (property.Name == "Id" && idPropertyValue != null)
+                    {
+                        values.Add(idPropertyValue);
+                    }
+                    else
+                    {
+                        values.Add(
+                            await GetAsync(
+                                keyFcn: keyFcn,
+                                property: property));
+                    }
                 }
                 else if (property.PropertyType == typeof(List<string>))
                 {

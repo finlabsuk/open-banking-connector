@@ -4,10 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Services
 {
@@ -29,9 +33,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Services
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _activeSoftwareStatementProfilesRepo = activeSoftwareStatementProfilesRepo;
             _mapper = mapper;
-
-            // Get active software statement profile
-            // Task<ActiveSoftwareStatementProfiles> profiles = _activeSoftwareStatementProfilesRepo.GetAsync();
         }
 
         public void SetSoftwareStatementProfile(SoftwareStatementProfile profile)
@@ -66,6 +67,49 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Services
             }
 
             return _defaultSoftwareStatementProfile;
+        }
+
+        public IEnumerable<X509Certificate2> GetCertificates()
+        {
+            List<X509Certificate2> certificates = new List<X509Certificate2>();
+
+            string cert = _defaultSoftwareStatementProfile.TransportCertificate;
+            string key = _defaultSoftwareStatementProfile.TransportKey;
+            if (cert != null && key != null)
+            {
+                X509Certificate2 certificate = CertificateFactories.GetCertificate2FromPem(privateKey: key, pem: cert);
+                if (certificate != null)
+                {
+                    certificates.Add(certificate);
+                }
+            }
+
+            return certificates;
+        }
+
+        public async Task SetSoftwareStatementProfileFromSecrets()
+        {
+            // Get active software statement profile
+            IEnumerable<string> profiles =
+                await _activeSoftwareStatementProfilesRepo.GetListAsync(
+                    nameof(ActiveSoftwareStatementProfiles.ProfileIds));
+
+            if (!profiles.Any())
+            {
+                throw new KeyNotFoundException("No active software statement profiles found.");
+            }
+
+            string defaultProfileId = profiles.ElementAt(0);
+
+            SoftwareStatementProfile softwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(defaultProfileId);
+
+            SetSoftwareStatementProfile(softwareStatementProfile);
+        }
+
+        public void SetSoftwareStatementProfileFromSecretsSync()
+        {
+            SetSoftwareStatementProfileFromSecrets().GetAwaiter().GetResult();
         }
     }
 }

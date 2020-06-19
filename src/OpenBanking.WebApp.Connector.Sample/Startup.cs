@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddOpenBankingConnector(Configuration)
+                .AddOpenBankingConnector(configuration: Configuration, loadSecretsFromConfig: true)
                 .AddControllers()
                 //.AddJsonOptions(options =>
                 // {
@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
 
         private void AddStaticFiles(IApplicationBuilder app)
         {
-            var fileOptions = new DefaultFilesOptions();
+            DefaultFilesOptions? fileOptions = new DefaultFilesOptions();
             fileOptions.DefaultFileNames.Clear();
             app.UseDefaultFiles(fileOptions);
             // var options = new RewriteOptions()

@@ -26,13 +26,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
             _keySecretProvider = keySecretProvider ?? throw new ArgumentNullException(nameof(keySecretProvider));
         }
 
-        protected async Task UpsertAsync(Func<string, string> keyFcn, TItem instance)
+        protected async Task UpsertAsync(Func<string, string> keyFcn, TItem instance, bool writeIdProperty)
         {
             foreach (PropertyInfo property in typeof(TItem).GetProperties())
             {
                 if (property.PropertyType == typeof(string))
                 {
-                    SetAsync(keyFcn: keyFcn, property: property, instance: instance);
+                    if (!(property.Name == "Id" && writeIdProperty == false))
+                    {
+                        SetAsync(keyFcn: keyFcn, property: property, instance: instance);
+                    }
                 }
                 else if (property.PropertyType == typeof(List<string>))
                 {

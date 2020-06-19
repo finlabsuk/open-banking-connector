@@ -12,14 +12,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     // DB provider-independent DB context
     public abstract class BaseDbContext : DbContext
     {
+        protected BaseDbContext(DbContextOptions options) : base(options) { }
+
         // Use no JSON formatting by default.
         protected virtual Formatting JsonFormatting { get; } = Formatting.None;
-
-        protected BaseDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
-        public DbSet<SoftwareStatementProfile> SoftwareStatementProfiles { get; set; }
 
         public DbSet<BankClientProfile> BankClientProfiles { get; set; }
 
@@ -31,105 +27,98 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             // Specify fields to be stored as JSON
             modelBuilder
-                .Entity<SoftwareStatementProfile>(c =>
+                .Entity<BankClientProfile>(
+                    c =>
+                    {
+                        c
+                            .OwnsOne(e => e.OpenIdConfiguration)
+                            .Property(e => e.ResponseTypesSupported)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                    });
+
+            modelBuilder
+                .Entity<BankClientProfile>(
+                    c =>
+                    {
+                        c
+                            .OwnsOne(e => e.OpenIdConfiguration)
+                            .Property(e => e.ScopesSupported)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                    });
+
+            modelBuilder
+                .Entity<BankClientProfile>(
+                    c =>
+                    {
+                        c
+                            .OwnsOne(e => e.OpenIdConfiguration)
+                            .Property(e => e.ResponseModesSupported)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                    });
+
+            modelBuilder
+                .Entity<BankClientProfile>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.BankClientRegistrationClaims)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<BankClientRegistrationClaims>(v));
+                    });
+
+            modelBuilder
+                .Entity<BankClientProfile>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.BankClientRegistrationData)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<BankClientRegistrationData>(v));
+                    });
+
+            modelBuilder.Entity<ApiProfile>(
+                b =>
                 {
-                    c
-                        .Property(e => e.SoftwareStatementPayload)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<SoftwareStatementPayload>(v)
-                        );
+                    b.Property(e => e.Id);
+                    b.Property(e => e.BankClientProfileId);
+                    b.Property(e => e.ApiVersion);
+                    b.Property(e => e.BaseUrl);
                 });
 
             modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.OpenIdConfiguration)
-                        .Property(e => e.ResponseTypesSupported)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.OpenIdConfiguration)
-                        .Property(e => e.ScopesSupported)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .OwnsOne(e => e.OpenIdConfiguration)
-                        .Property(e => e.ResponseModesSupported)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<string[]>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .Property(e => e.BankClientRegistrationClaims)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<BankClientRegistrationClaims>(v)
-                        );
-                });
-
-            modelBuilder
-                .Entity<BankClientProfile>(c =>
-                {
-                    c
-                        .Property(e => e.BankClientRegistrationData)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<BankClientRegistrationData>(v)
-                        );
-                });
-
-            modelBuilder.Entity<ApiProfile>(b =>
-            {
-                b.Property(e => e.Id);
-                b.Property(e => e.BankClientProfileId);
-                b.Property(e => e.ApiVersion);
-                b.Property(e => e.BaseUrl);
-            });
-
-            modelBuilder
-                .Entity<DomesticConsent>(c =>
-                {
-                    c
-                        .Property(e => e.ObWriteDomesticConsent)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<OBWriteDomesticConsent>(v)
-                        );
-                });
+                .Entity<DomesticConsent>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.ObWriteDomesticConsent)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<OBWriteDomesticConsent>(v));
+                    });
 
 
             modelBuilder
-                .Entity<DomesticConsent>(c =>
-                {
-                    c
-                        .Property(e => e.TokenEndpointResponse)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, JsonFormatting),
-                            v => JsonConvert.DeserializeObject<TokenEndpointResponse>(v)
-                        );
-                });
-
+                .Entity<DomesticConsent>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.TokenEndpointResponse)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<TokenEndpointResponse>(v));
+                    });
         }
     }
 }

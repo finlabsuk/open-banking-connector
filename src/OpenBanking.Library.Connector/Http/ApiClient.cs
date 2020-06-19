@@ -17,9 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         private readonly IInstrumentationClient _instrumentation;
 
         public ApiClient(HttpClient httpClient)
-            : this(new ConsoleInstrumentationClient(), httpClient)
-        {
-        }
+            : this(instrumentation: new ConsoleInstrumentationClient(), httpClient: httpClient) { }
 
         public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
         {
@@ -36,24 +34,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             try
             {
                 // Make HTTP call
-                using var response = await _httpClient.SendAsync(request);
-                var json = await GetStringResponseAsync(response);
+                using HttpResponseMessage response = await _httpClient.SendAsync(request);
+                string json = await GetStringResponseAsync(response);
 
                 // Generate HTTP request info trace
-                var requestTraceSb = new StringBuilder()
+                StringBuilder requestTraceSb = new StringBuilder()
                     .AppendLine("#### HTTP REQUEST")
                     .AppendLine("######## REQUEST")
-                    .Append(request.ToString());
+                    .Append(request);
                 if (request.Content != null)
                 {
-                    var body = await request.Content.ReadAsStringAsync();
+                    string body = await request.Content.ReadAsStringAsync();
                     requestTraceSb
                         .AppendLine(",")
                         .AppendLine("Body:");
                     if (requestContentIsJson)
                     {
                         dynamic parsedJson = JsonConvert.DeserializeObject(body);
-                        var jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                        dynamic jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
                         requestTraceSb.AppendLine(jsonFormatted);
                     }
                     else
@@ -66,26 +64,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 {
                     requestTraceSb.AppendLine();
                 }
+
                 requestTraceSb
                     .AppendLine("######## RESPONSE")
-                    .AppendLine($"{response.ToString()},");
+                    .AppendLine($"{response},");
                 if (!string.IsNullOrEmpty(json))
                 {
                     dynamic parsedJson = JsonConvert.DeserializeObject(json);
-                    var jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                    dynamic jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
                     requestTraceSb.AppendLine("Body:");
                     requestTraceSb.AppendLine(jsonFormatted);
                 }
+
                 _instrumentation.Info(requestTraceSb.ToString());
 
                 // Check HTTP status code
-                var _ = response.EnsureSuccessStatusCode();
+                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
 
                 return json != null ? JsonConvert.DeserializeObject<T>(json) : null;
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                _instrumentation.Exception(exception: ex, message: request.RequestUri.ToString());
                 throw;
             }
         }
@@ -94,15 +94,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             try
             {
-                _instrumentation.StartTrace(new HttpTraceInfo("Starting request", request.RequestUri));
-                var response = await _httpClient.SendAsync(request);
-                _instrumentation.EndTrace(new HttpTraceInfo("Ended request", request.RequestUri, response.StatusCode));
+                _instrumentation.StartTrace(new HttpTraceInfo(message: "Starting request", url: request.RequestUri));
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                _instrumentation.EndTrace(
+                    new HttpTraceInfo(
+                        message: "Ended request",
+                        url: request.RequestUri,
+                        statusCode: response.StatusCode));
 
                 return response;
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                _instrumentation.Exception(exception: ex, message: request.RequestUri.ToString());
 
                 throw;
             }

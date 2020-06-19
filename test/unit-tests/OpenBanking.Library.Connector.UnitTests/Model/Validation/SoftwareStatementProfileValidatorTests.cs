@@ -4,7 +4,6 @@
 
 using System;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
@@ -23,10 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = $"{value}.{value}.{value}"
                 };
@@ -47,10 +46,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = value,
+                    SigningKey = value,
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
@@ -72,10 +71,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = value,
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
@@ -96,10 +95,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = value,
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
@@ -120,10 +119,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = value,
+                    TransportKey = value,
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
@@ -144,10 +143,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = value,
                     SoftwareStatement = "a.b.c"
                 };
@@ -168,10 +167,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value.ToString(),
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };
@@ -193,10 +192,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                 var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value,
-                    SigningKeySecretName = "a",
+                    SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKeySecretName = "a",
+                    TransportKey = "a",
                     TransportCertificate = "a",
                     SoftwareStatement = "a.b.c"
                 };

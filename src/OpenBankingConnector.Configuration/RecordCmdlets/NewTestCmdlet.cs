@@ -7,36 +7,40 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
-    [Cmdlet(verbName: VerbsCommon.New, nounName: "PaymentInitiationApiProfileRecord")]
-    [OutputType(typeof(PaymentInitiationApiProfileFluentResponse))]
-    public class NewPaymentInitiationApiProfileRecord : RecordBaseCmdlet
+    [Cmdlet(verbName: VerbsCommon.New, nounName: "TestCmdlet")]
+    [OutputType(typeof(BankClientProfileResponse))]
+    public class NewTestCmdlet : RecordBaseCmdlet
     {
-        public NewPaymentInitiationApiProfileRecord() : base(
+        public NewTestCmdlet() : base(
             verbName: "New",
-            nounName: "PaymentInitiationApiProfileRecord",
-            deleteAndRecreateDb: false,
-            setUpSoftwareStatementProfileService: true,
-            loadSecretsFromConfig: true) { }
-
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public PaymentInitiationApiProfile? PaymentInitiationApiProfile { get; set; }
+            nounName: "NoActionRecord",
+            deleteAndRecreateDb: true,
+            setUpSoftwareStatementProfileService: false,
+            loadSecretsFromConfig: false) { }
 
         protected override void ProcessRecordInner(IServiceProvider services)
         {
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
+            PaymentInitiationApiProfile apiProfile = new PaymentInitiationApiProfile(
+                id: "id",
+                bankClientProfileId: "",
+                apiVersion: ApiVersion.V3P1P1,
+                baseUrl: "https://www.google.com/");
             try
             {
                 ICreatePaymentInitiationApiProfile createApiProfile =
                     services.GetService<ICreatePaymentInitiationApiProfile>();
                 PaymentInitiationApiProfileResponse response = createApiProfile
-                    .CreateAsync(PaymentInitiationApiProfile)
+                    .CreateAsync(apiProfile)
                     .GetAwaiter()
                     .GetResult();
                 PaymentInitiationApiProfileFluentResponse response2 =
