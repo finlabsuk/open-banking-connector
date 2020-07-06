@@ -3,8 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 {
@@ -23,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
             value.ArgNotNull(nameof(value));
             targetType.ArgNotNull(nameof(targetType));
 
-            return _mapper.Value.Map(value, value.GetType(), targetType);
+            return _mapper.Value.Map(source: value, sourceType: value.GetType(), destinationType: targetType);
         }
 
         public TResult Map<TResult>(object value)
@@ -31,7 +33,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
         {
             value.ArgNotNull(nameof(value));
 
-            return _mapper.Value.Map(value, value.GetType(), typeof(TResult)) as TResult;
+            return _mapper.Value.Map(
+                source: value,
+                sourceType: value.GetType(),
+                destinationType: typeof(TResult)) as TResult;
         }
 
         private MapperConfiguration CreateMapperConfiguration()
@@ -41,26 +46,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 
         private void ApplyDirectReferenceTypeMaps(IMapperConfigurationExpression config)
         {
-            var typeFinder = new EntityTypeFinder();
-            var publicTypes = typeFinder.GetPublicReferenceTypes();
+            EntityTypeFinder typeFinder = new EntityTypeFinder();
+            IEnumerable<Type> publicTypes = typeFinder.GetPublicReferenceTypes();
 
-            var obTypePairs = publicTypes.SelectMany(t => typeFinder.GetOpenBankingEquivalentTypes(t));
-            var persistenceTypePairs = publicTypes.SelectMany(t => typeFinder.GetPersistenceEquivalentTypes(t));
-            var typePairs = obTypePairs.Concat(persistenceTypePairs);
+            IEnumerable<EquivalentType> obTypePairs =
+                publicTypes.SelectMany(t => typeFinder.GetOpenBankingEquivalentTypes(t));
+            IEnumerable<EquivalentType> sourceApiEquivalentTypePairs =
+                publicTypes.SelectMany(t => typeFinder.GetSourceApiEquivalentTypes(t));
+            IEnumerable<EquivalentType> persistenceTypePairs =
+                publicTypes.SelectMany(t => typeFinder.GetPersistenceEquivalentTypes(t));
+            IEnumerable<EquivalentType> typePairs =
+                obTypePairs.Concat(sourceApiEquivalentTypePairs).Concat(persistenceTypePairs);
 
-            foreach (var typePair in typePairs)
+            foreach (EquivalentType typePair in typePairs)
             {
                 if (typePair is MappedEquivalentType tp)
                 {
-                    config.CreateMap(tp.EntityType, tp.EquivalentEntityType)
+                    config.CreateMap(sourceType: tp.EntityType, destinationType: tp.EquivalentEntityType)
                         .ConvertUsing(tp.Mapper);
                 }
                 else
                 {
-                    config.CreateMap(typePair.EntityType, typePair.EquivalentEntityType);
+                    config.CreateMap(sourceType: typePair.EntityType, destinationType: typePair.EquivalentEntityType);
                 }
-
-                config.CreateMap(typePair.EquivalentEntityType, typePair.EntityType);
             }
         }
     }

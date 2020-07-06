@@ -6,12 +6,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
     public class KeySecret
     {
-        public const string DefaultVaultName = "OBC.NET";
+        public const string DefaultVaultName = "OpenBankingConnector";
 
         public KeySecret(string key, string value)
-            : this(vaultName: DefaultVaultName, key: key, value: value)
-        {
-        }
+            : this(vaultName: DefaultVaultName, key: key, value: value) { }
 
         public KeySecret(string vaultName, string key, string value)
         {

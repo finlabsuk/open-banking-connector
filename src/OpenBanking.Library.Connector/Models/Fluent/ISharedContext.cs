@@ -15,6 +15,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using SoftwareStatementProfile =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
@@ -23,15 +25,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         DateTimeOffset Created { get; set; }
         ICertificateReader CertificateReader { get; }
         IApiClient ApiClient { get; }
-        IConfigurationProvider ConfigurationProvider { get; }
+        IObcConfigurationProvider ConfigurationProvider { get; }
         IInstrumentationClient Instrumentation { get; }
         IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         IDbMultiEntityMethods DbContextService { get; }
         IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
         ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
         IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
-        IKeySecretMultiItemReadRepository<Public.Request.SoftwareStatementProfile> SReadOnlyRepo { get; }
-        IKeySecretMultiItemWriteRepository<Public.Request.SoftwareStatementProfile> SRepo { get; }
+        IKeySecretMultiItemReadRepository<SoftwareStatementProfile> SReadOnlyRepo { get; }
+        IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> SRepo { get; }
         IKeySecretReadRepository<ActiveSoftwareStatementProfiles> ActiveSReadOnlyRepo { get; }
         IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
         IEntityMapper EntityMapper { get; }

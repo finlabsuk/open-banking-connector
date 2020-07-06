@@ -25,13 +25,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _softwareStatementProfileService = softwareStatementProfileService;
         }
 
-        public async Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile)
+        public Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile)
         {
             profile.ArgNotNull(nameof(profile));
 
             _softwareStatementProfileService.SetSoftwareStatementProfile(profile);
+            
+            var response = new SoftwareStatementProfileResponse(profile.Id);
 
-            return new SoftwareStatementProfileResponse(profile.Id);
+            return Task.FromResult(response);
         }
     }
 }

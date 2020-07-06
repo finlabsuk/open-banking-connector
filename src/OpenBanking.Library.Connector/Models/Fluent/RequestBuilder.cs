@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IDbEntityRepository<ApiProfile> _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
         private readonly IDbEntityRepository<BankClientProfile> _clientProfileRepository;
-        private readonly IConfigurationProvider _configurationProvider;
+        private readonly IObcConfigurationProvider _configurationProvider;
         private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _entityMapper;
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public RequestBuilder(
             IEntityMapper entityMapper,
             IDbMultiEntityMethods dbContextService,
-            IConfigurationProvider configurationProvider,
+            IObcConfigurationProvider configurationProvider,
             IInstrumentationClient logger,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             ITimeProvider timeProvider,
             IEntityMapper entityMapper,
             IDbMultiEntityMethods dbContextService,
-            IConfigurationProvider configurationProvider,
+            IObcConfigurationProvider configurationProvider,
             IInstrumentationClient logger,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,

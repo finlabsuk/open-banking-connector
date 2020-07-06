@@ -14,19 +14,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public static class AuthorisationCallbackDataInteractionExtensions
     {
-        public static AuthorisationCallbackDataContext Data(this AuthorisationCallbackDataContext context, AuthorisationCallbackData value)
+        public static AuthorisationCallbackDataContext Data(
+            this AuthorisationCallbackDataContext context,
+            AuthorisationCallbackData value)
         {
             context.Data = value;
             return context;
         }
 
-        public static AuthorisationCallbackDataContext ResponseMode(this AuthorisationCallbackDataContext context, string value)
+        public static AuthorisationCallbackDataContext ResponseMode(
+            this AuthorisationCallbackDataContext context,
+            string value)
         {
             context.ResponseMode = value;
             return context;
         }
 
-        public static AuthorisationCallbackDataContext Response(this AuthorisationCallbackDataContext context, AuthorisationCallbackPayload value)
+        public static AuthorisationCallbackDataContext Response(
+            this AuthorisationCallbackDataContext context,
+            AuthorisationCallbackPayload value)
         {
             context.Response = value;
             return context;
@@ -39,12 +45,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
             try
             {
-                var authData = context.Data ?? new AuthorisationCallbackData(
-                    context.ResponseMode.ArgNotNullElseInvalidOp("ResponseMode not specified"),
-                    context.Response.ArgNotNullElseInvalidOp("Response not specified")
-                );
+                AuthorisationCallbackData authData = context.Data ?? new AuthorisationCallbackData(
+                    responseMode: context.ResponseMode.ArgNotNullElseInvalidOp("ResponseMode not specified"),
+                    response: context.Response.ArgNotNullElseInvalidOp("Response not specified"));
 
-                var validationErrors = new AuthorisationCallbackDataValidator()
+                IList<FluentResponseMessage> validationErrors = new AuthorisationCallbackDataValidator()
                     .Validate(authData)
                     .GetOpenBankingResponses();
                 if (validationErrors.Count > 0)
@@ -52,10 +57,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     return new AuthorisationCallbackDataFluentResponse(validationErrors);
                 }
 
-                var handler = new RedirectCallbackHandler(null,
-                    context.Context.ApiClient, context.Context.EntityMapper,
-                    context.Context.ClientProfileRepository,
-                    context.Context.DomesticConsentRepository);
+                RedirectCallbackHandler handler = new RedirectCallbackHandler(
+                    apiClient: context.Context.ApiClient,
+                    mapper: context.Context.EntityMapper,
+                    openBankingClientRepo: context.Context.ClientProfileRepository,
+                    domesticConsentRepo: context.Context.DomesticConsentRepository,
+                    softwareStatementProfileService: context.Context.SoftwareStatementProfileService,
+                    dbMultiEntityMethods: context.Context.DbContextService);
 
                 await handler.CreateAsync(authData);
 

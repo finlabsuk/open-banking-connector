@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         private void CreateRules()
         {
-            RuleFor(x => x.AuthorisationCode)
+            RuleFor(x => x.Code)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackPayload.AuthorisationCode)}.");
+                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackPayload.Code)}.");
 
             RuleFor(x => x.State)
                 .Must(ValidationRules.IsNotNullOrEmpty)

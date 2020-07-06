@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             return new SharedContext(
                 certificateReader: Substitute.For<ICertificateReader>(),
                 apiClient: Substitute.For<IApiClient>(),
-                configurationProvider: Substitute.For<IConfigurationProvider>(),
+                configurationProvider: Substitute.For<IObcConfigurationProvider>(),
                 instrumentation: Substitute.For<IInstrumentationClient>(),
                 keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
                 clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),

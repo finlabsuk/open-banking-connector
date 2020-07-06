@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         internal SharedContext(
             ICertificateReader certificateReader,
             IApiClient apiClient,
-            IConfigurationProvider configurationProvider,
+            IObcConfigurationProvider configurationProvider,
             IInstrumentationClient instrumentation,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IDbEntityRepository<BankClientProfile> clientProfileRepository,
@@ -59,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public DateTimeOffset Created { get; set; }
         public ICertificateReader CertificateReader { get; }
         public IApiClient ApiClient { get; }
-        public IConfigurationProvider ConfigurationProvider { get; }
+        public IObcConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         public IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }

@@ -10,13 +10,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using TokenEndpointResponsePublic = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
+using OBWriteDomesticConsent =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBWriteDomesticConsent;
+using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
@@ -59,12 +61,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 _softwareStatementProfileService.GetSoftwareStatementProfile(
                     bankClientProfile.SoftwareStatementProfileId);
 
-            // TODO: update token endpiont response generation
-            TokenEndpointResponsePublic tokenEndpointResponse = new TokenEndpointResponsePublic();
+            TokenEndpointResponse tokenEndpointResponse =
+                _mapper.Map<TokenEndpointResponse>(consent.TokenEndpointResponse);
 
             // Create new Open Banking payment by posting JWT
-            OBWriteDomestic2 payment = _mapper.Map<OBWriteDomestic2>(consent);
-            payment.Data.ConsentId = consentId;
+            OBWriteDomesticConsent consentPublic = _mapper.Map<OBWriteDomesticConsent>(consent.ObWriteDomesticConsent);
+            OBWriteDomestic2
+                payment = _mapper.Map<OBWriteDomestic2>(
+                    consentPublic); // TODO: Create payment without auto-mapper then convert to OB API version with auto-mapper.
+            payment.Data.ConsentId = consent.BankId;
             string payloadJson = JsonConvert.SerializeObject(payment);
             UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payments"));
 
@@ -92,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             SoftwareStatementProfile softwareStatement,
             OBWriteDomestic2 payment,
             BankClientProfile client,
-            TokenEndpointResponsePublic tokenEndpointResponse)
+            TokenEndpointResponse tokenEndpointResponse)
         {
             JwtFactory jwtFactory = new JwtFactory();
             string jwt = jwtFactory.CreateJwt(

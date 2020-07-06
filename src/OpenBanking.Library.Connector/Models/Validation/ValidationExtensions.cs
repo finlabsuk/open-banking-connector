@@ -10,11 +10,12 @@ using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
-    internal static class ValidationExtensions
+    public static class ValidationExtensions
     {
         public static IList<FluentResponseMessage> GetOpenBankingResponses(this ValidationResult validationResult)
         {
-            var result = validationResult.Errors.Select(e => new FluentResponseErrorMessage(e.ErrorMessage))
+            List<FluentResponseMessage> result = validationResult.Errors
+                .Select(e => new FluentResponseErrorMessage(e.ErrorMessage))
                 .Cast<FluentResponseMessage>()
                 .ToList();
 
@@ -25,8 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
         {
             if (!validationResult.IsValid)
             {
-                var msgs = validationResult.Errors.Select(vf => vf.ErrorMessage);
-                var msg = string.Join(Environment.NewLine, msgs);
+                IEnumerable<string> msgs = validationResult.Errors.Select(vf => vf.ErrorMessage);
+                string msg = string.Join(separator: Environment.NewLine, values: msgs);
 
                 throw new Exception(msg);
             }

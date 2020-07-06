@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
@@ -15,22 +16,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             value.ArgNotNull(nameof(value));
 
-            var clientHandler = new HttpClientHandler
+            HttpClientHandler clientHandler = new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
             };
 
-            ApplyAuthentication(value, clientHandler);
+            ApplyAuthentication(value: value, clientHandler: clientHandler);
 
-            ApplyCertificates(value, clientHandler);
+            ApplyCertificates(value: value, clientHandler: clientHandler);
 
-            ApplyServerCertificateValidator(value, clientHandler);
+            ApplyServerCertificateValidator(value: value, clientHandler: clientHandler);
 
-            ApplyProxy(value, clientHandler);
+            ApplyProxy(value: value, clientHandler: clientHandler);
 
-            ApplyRedirects(value, clientHandler);
+            ApplyRedirects(value: value, clientHandler: clientHandler);
 
-            ApplyCookies(value, clientHandler);
+            ApplyCookies(value: value, clientHandler: clientHandler);
 
 
             return clientHandler;
@@ -58,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             if (value.Cookies?.Count > 0)
             {
-                foreach (var cookie in value.Cookies.Where(c => !string.IsNullOrWhiteSpace(c.Domain)))
+                foreach (Cookie cookie in value.Cookies.Where(c => !string.IsNullOrWhiteSpace(c.Domain)))
                 {
                     clientHandler.CookieContainer.Add(cookie);
                 }
@@ -94,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 clientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 clientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11;
 
-                foreach (var certificate in value.Certificates)
+                foreach (X509Certificate certificate in value.Certificates)
                 {
                     clientHandler.ClientCertificates.Add(certificate);
                 }

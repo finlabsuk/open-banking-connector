@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBankingConnector.Config
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.NetGenericHost", "src\OpenBanking.Library.Connector.NetGenericHost\OpenBanking.Library.Connector.NetGenericHost.csproj", "{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.WebHost", "src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj", "{3D8C95DD-481C-48DC-9D04-043092F3D4C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

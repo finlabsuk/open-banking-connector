@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
@@ -32,8 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             try
             {
                 DomesticPaymentRequest domesticPayment = context.Data ?? new DomesticPaymentRequest(
-                    context.ConsentId.ArgNotNullElseInvalidOp(
-                        "ConsentId not specified"));
+                    context.ConsentId.ArgNotNullElseInvalidOp("ConsentId not specified"));
 
                 IList<FluentResponseMessage> validationErrors = new PaymentRequestValidator()
                     .Validate(domesticPayment)

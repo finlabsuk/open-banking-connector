@@ -4,9 +4,9 @@
 
 using System;
 using System.Net.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
@@ -23,7 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using IConfigurationProvider = FinnovationLabs.OpenBanking.Library.Connector.Configuration.IConfigurationProvider;
 using SoftwareStatementProfile =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
@@ -56,19 +55,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
                         return handler;
                     });
 
-            services.AddSingleton<IConfigurationProvider>(sp => new AppsettingsConfigurationProvider(configuration));
+            services.AddSingleton<IObcConfigurationProvider>(
+                sp => new NetGenericHostObcConfigurationProvider(configuration));
             services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient>();
             if (loadSecretsFromConfig)
             {
                 services.AddSingleton(
                     sp =>
                     {
-                        KeySecretBuilder builder = new KeySecretBuilder();
-                        IConfigurationProvider configProvider = sp.GetService<IConfigurationProvider>();
+                        IObcConfigurationProvider configProvider = sp.GetService<IObcConfigurationProvider>();
 
+                        KeySecretBuilder builder = new KeySecretBuilder();
                         return builder.GetKeySecretProvider(
                             config: configuration,
-                            obcConfig: configProvider.GetRuntimeConfiguration());
+                            obcConfig: configProvider.GetObcConfiguration());
                     });
             }
             else
@@ -126,6 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost
             services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
 
             // Startup tasks
+            services.AddHostedService<StartupTasksHostedService>();
 
             // This can be enabled in .NET 5 when SoftwareStatementProfileHostedService
             // and SocketsHttpHandler used.

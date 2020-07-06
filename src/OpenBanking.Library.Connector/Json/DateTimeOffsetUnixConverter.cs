@@ -12,19 +12,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Json
     {
         public override void WriteJson(JsonWriter writer, DateTimeOffset value, JsonSerializer serializer)
         {
-            var seconds = value.ToUnixTimeSeconds();
-            var jt = JToken.FromObject(seconds);
+            long seconds = value.ToUnixTimeSeconds();
+            JToken jt = JToken.FromObject(seconds);
 
             jt.WriteTo(writer);
         }
 
-        public override DateTimeOffset ReadJson(JsonReader reader, Type objectType, DateTimeOffset existingValue,
+        public override DateTimeOffset ReadJson(
+            JsonReader reader,
+            Type objectType,
+            DateTimeOffset existingValue,
             bool hasExistingValue,
             JsonSerializer serializer)
         {
             if (objectType == typeof(DateTimeOffset))
             {
-                var seconds = long.Parse(reader.Value.ToString());
+                long seconds = long.Parse(reader.Value.ToString());
 
                 return DateTimeOffset.FromUnixTimeSeconds(seconds);
             }

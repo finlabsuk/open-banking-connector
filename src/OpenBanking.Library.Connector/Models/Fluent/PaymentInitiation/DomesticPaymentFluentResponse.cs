@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
@@ -14,13 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             Data = data;
         }
 
-        public DomesticPaymentFluentResponse(FluentResponseMessage message) : this(new[] { message })
-        {
-        }
+        public DomesticPaymentFluentResponse(FluentResponseMessage message) : this(new[] { message }) { }
 
-        public DomesticPaymentFluentResponse(IList<FluentResponseMessage> messages) : base(messages)
-        {
-        }
+        public DomesticPaymentFluentResponse(IList<FluentResponseMessage> messages) : base(messages) { }
 
 
         public OBWriteDataDomesticResponse Data { get; set; }

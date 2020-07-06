@@ -20,9 +20,7 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
         public NewBankClientProfileRecord() : base(
             verbName: "New",
             nounName: "BankClientProfileRecord",
-            deleteAndRecreateDb: false,
-            setUpSoftwareStatementProfileService: true,
-            loadSecretsFromConfig: true) { }
+            deleteAndRecreateDb: false) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public BankClientProfile? BankClientProfile { get; set; }

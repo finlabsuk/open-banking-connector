@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request

@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
     {
         public KeySecretMultiItemWriteRepository(IKeySecretProvider keySecretProvider) : base(keySecretProvider) { }
 
-        public async Task UpsertAsync(TItem instance) => UpsertAsync(
+        public async Task UpsertAsync(TItem instance) => await UpsertAsync(
             keyFcn: s => Helpers.KeyWithId<TItem>(id: instance.Id, propertyName: s),
             instance: instance,
             writeIdProperty: false);

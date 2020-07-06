@@ -13,15 +13,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using OBWriteDomesticConsentPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.OBWriteDomesticConsent;
-using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Ob.TokenEndpointResponse;
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBWriteDomesticConsent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
@@ -104,6 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Generate URL for user auth
             string consentId = consentResponse.Data.ConsentId;
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            if (redirectUrl == "")
+            {
+                redirectUrl = bankClientProfile.BankClientRegistrationClaims.RedirectUris[0];
+            }
+
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(
                 openBankingClient: bankClientProfile,
                 redirectUrl: redirectUrl,
@@ -127,14 +131,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string authUrl = bankClientProfile.OpenIdConfiguration.AuthorizationEndpoint + "?" + queryString;
 
             // Create and store persistent object
-            DomesticConsent value = _mapper.Map<DomesticConsent>(consent);
+            string domesticConsentId = Guid.NewGuid().ToString();
+            DomesticConsent value = new DomesticConsent
+            {
+                State = oAuth2RequestObjectClaims.State,
+                SoftwareStatementProfileId = bankClientProfile.SoftwareStatementProfileId,
+                IssuerUrl = bankClientProfile.IssuerUrl,
+                ApiProfileId = apiProfile.Id,
+                ObWriteDomesticConsent = consent,
+                TokenEndpointResponse = null,
+                Id = domesticConsentId,
+                BankId = consentId
+            };
             await _domesticConsentRepo.UpsertAsync(value);
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             return new PaymentConsentResponse
             {
                 AuthUrl = authUrl,
-                ConsentId = consentId
+                ConsentId = domesticConsentId
             };
         }
 

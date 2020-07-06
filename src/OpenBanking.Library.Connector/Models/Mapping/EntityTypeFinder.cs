@@ -9,6 +9,7 @@ using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
 using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Meta;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
@@ -16,11 +17,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
     internal class EntityTypeFinder
     {
         private static readonly Type RootPublicType = typeof(ModelFactory);
+        private static readonly Type PaymentInitiationRootPublicType = typeof(EquivalentType);
 
         public IEnumerable<Type> GetPublicReferenceTypes()
         {
-            return RootPublicType.Assembly.GetTypes()
+            var rootPublicTypes = RootPublicType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(rootType: RootPublicType, type: t));
+            var paymentInitiationTypes = PaymentInitiationRootPublicType.Assembly.GetTypes()
+                .Where(t => t.IsClass && IsInNamespace(rootType: PaymentInitiationRootPublicType, type: t));
+            return rootPublicTypes.Concat(paymentInitiationTypes);
         }
 
 
@@ -37,6 +42,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
                     : new MappedEquivalentType(
                         entityType: type,
                         equivalentEntityType: attr.EquivalentType,
+                        mapper: attr.EquivalentTypeMapper);
+            }
+        }
+
+        public IEnumerable<EquivalentType> GetSourceApiEquivalentTypes(Type type)
+        {
+            IEnumerable<SourceApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
+                .GetCustomAttributes(typeof(SourceApiEquivalentAttribute))
+                .OfType<SourceApiEquivalentAttribute>();
+
+            foreach (SourceApiEquivalentAttribute attr in attrs)
+            {
+                yield return attr.EquivalentTypeMapper == null
+                    ? new EquivalentType(entityType: attr.EquivalentType, equivalentEntityType: type)
+                    : new MappedEquivalentType(
+                        entityType: attr.EquivalentType,
+                        equivalentEntityType: type,
                         mapper: attr.EquivalentTypeMapper);
             }
         }

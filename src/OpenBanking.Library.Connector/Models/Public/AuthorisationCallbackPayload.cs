@@ -10,20 +10,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     {
         public AuthorisationCallbackPayload(string authorisationCode, string state)
         {
-            AuthorisationCode = authorisationCode;
+            Code = authorisationCode;
             State = state;
         }
 
+        public AuthorisationCallbackPayload() { }
+
         [JsonProperty("id_token")]
-        public string IdToken { get; set; } = null;
+        public string Id_Token { get; set; }
 
         [JsonProperty("code")]
-        public string AuthorisationCode { get; }
+        public string Code { get; set; }
 
         [JsonProperty("state")]
-        public string State { get; }
+        public string State { get; set; }
 
         [JsonProperty("nonce", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string Nonce { get; set; } = null;
+        public string Nonce { get; set; }
     }
 }

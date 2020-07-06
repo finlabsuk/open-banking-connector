@@ -7,7 +7,7 @@ using McMaster.Extensions.CommandLineUtils;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Description = "Benchmark OBC.NET")]
+    [Command(Description = "Benchmark OpenBankingConnector")]
     [Subcommand(typeof(BenchmarkLocalApplication))]
     [Subcommand(typeof(BenchmarkPispApplication))]
     [Subcommand(typeof(EntityMappingApplication))]

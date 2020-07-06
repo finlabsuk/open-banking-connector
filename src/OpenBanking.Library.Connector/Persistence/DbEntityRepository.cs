@@ -68,6 +68,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             return existingValue;
         }
 
+        public async Task AddAsync(TEntity instance)
+        {
+            instance.ArgNotNull(nameof(instance));
+
+            // Input should be detached (untracked)
+            if (_db.Entry(instance).State != EntityState.Detached)
+            {
+                throw new InvalidOperationException("Instance is tracked, no need to use add.");
+            }
+            
+            await _dbSet.AddAsync(instance);
+        }
+        
+
         public Task RemoveAsync(TEntity instance)
         {
             instance.ArgNotNull(nameof(instance));

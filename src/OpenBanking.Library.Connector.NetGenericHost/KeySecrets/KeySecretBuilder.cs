@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
 {
     internal class KeySecretBuilder
     {
-        public IKeySecretProvider GetKeySecretProvider(IConfiguration config, RuntimeConfiguration obcConfig)
+        public IKeySecretProvider GetKeySecretProvider(IConfiguration config, ObcConfiguration obcConfig)
         {
             if (config == null)
             {
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
                 .ToList();
 
             KeySecret? profileKey = secrets.Find(
-                x => x.Key == Helpers.KeyWithoutId<ActiveSoftwareStatementProfiles>(
+                x => x.Key == Connector.KeySecrets.Helpers.KeyWithoutId<ActiveSoftwareStatementProfiles>(
                     nameof(ActiveSoftwareStatementProfiles.ProfileIds)));
             string? profileId = profileKey.Value;
 
@@ -59,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
                         $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
                 }
 
-                string? key = Helpers.KeyWithoutId<TItem>(property.Name);
+                string? key = Connector.KeySecrets.Helpers.KeyWithoutId<TItem>(property.Name);
                 string? s = configuration.GetValue<string>(key);
                 KeySecret? newSecret = s != null
                     ? new KeySecret(key: key, value: s)
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.KeySecret
                         $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
                 }
 
-                string? key = Helpers.KeyWithId<TItem>(id: id, propertyName: property.Name);
+                string? key = Connector.KeySecrets.Helpers.KeyWithId<TItem>(id: id, propertyName: property.Name);
 
                 string? s = property.Name switch
                 {

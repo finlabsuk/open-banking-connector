@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
+using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,11 +36,12 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] PaymentInitiationApiProfile request)
         {
-            var clientResp = await _obRequestBuilder.PaymentInitiationApiProfile()
+            PaymentInitiationApiProfileFluentResponse? clientResp = await _obRequestBuilder
+                .PaymentInitiationApiProfile()
                 .Data(request)
                 .SubmitAsync();
 
-            var result = new PaymentInitiationApiProfileHttpResponse(
+            PaymentInitiationApiProfileHttpResponse? result = new PaymentInitiationApiProfileHttpResponse(
                 data: clientResp.Data,
                 messages: clientResp.ToMessagesResponse());
 

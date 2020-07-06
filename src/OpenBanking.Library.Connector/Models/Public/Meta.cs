@@ -3,12 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
     [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p1.Model.Meta))]
     [OpenBankingEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta))]
+    [SourceApiEquivalent(typeof(ObModels.PaymentInitiation.V3p1p1.Model.Meta))]
+    [SourceApiEquivalent(typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta))]
     public class Meta
     {
         /// <summary>

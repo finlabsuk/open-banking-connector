@@ -4,11 +4,13 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
-    [PersistenceEquivalent(typeof(Persistent.BankClientRegistrationClaims))]
+    [PersistenceEquivalent(typeof(BankClientRegistrationClaims))]
     public class OpenBankingClientRegistrationClaims
     {
         [JsonProperty("iss")]

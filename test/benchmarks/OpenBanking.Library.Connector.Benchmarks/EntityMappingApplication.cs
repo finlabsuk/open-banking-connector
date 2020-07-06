@@ -10,12 +10,12 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using McMaster.Extensions.CommandLineUtils;
 using OBAddressTypeCode =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.OBAddressTypeCode;
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBAddressTypeCode;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {

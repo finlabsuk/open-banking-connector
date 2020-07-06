@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FluentAssertions;
 using Xunit;
 using OBAddressTypeCode =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.OBAddressTypeCode;
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBAddressTypeCode;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.PaymentInitiation
 {
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticConsent_To_V111()
         {
-            var value = new OBWriteDomesticConsent
+            OBWriteDomesticConsent value = new OBWriteDomesticConsent
             {
                 Data = new OBWriteDomesticConsentData
                 {
@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                             Reference = "reference",
                             Unstructured = "unstructured"
                         },
-                        SupplementaryData = new object()
+                        SupplementaryData = new OBSupplementaryData()
                     },
                     Authorisation = new OBWriteDomesticConsentDataAuthorisation
                     {
@@ -93,9 +93,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                     {
                         TownName = "Accrington Stanley",
                         Country = "UK",
-                        AddressLine = Enumerable.Range(1, 3).Select(i => i.ToString()).ToList(),
+                        AddressLine = Enumerable.Range(start: 1, count: 3).Select(i => i.ToString()).ToList(),
                         BuildingNumber = "building number",
-                        CountrySubDivision = Enumerable.Range(10, 3).Select(i => i.ToString()).ToList(),
+                        CountrySubDivision = Enumerable.Range(start: 10, count: 3).Select(i => i.ToString()).ToList(),
                         PostCode = "post code",
                         StreetName = "street name"
                     },
@@ -104,7 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                     MerchantCustomerIdentification = "merchant Customer Identification"
                 }
             };
-            var result = _entityMapper.Map<OBWriteDomesticConsent2>(value);
+            OBWriteDomesticConsent2 result = _entityMapper.Map<OBWriteDomesticConsent2>(value);
 
             result.Should().NotBeNull();
         }
@@ -112,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationCreditorAccount_To_V111()
         {
-            var value = new OBWriteDomesticDataInitiationCreditorAccount
+            OBWriteDomesticDataInitiationCreditorAccount value = new OBWriteDomesticDataInitiationCreditorAccount
             {
                 Identification = "id",
                 Name = "test",
@@ -120,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                 SecondaryIdentification = "secondary id"
             };
 
-            var result = _entityMapper.Map<OBCashAccountCreditor3>(value);
+            OBCashAccountCreditor3 result = _entityMapper.Map<OBCashAccountCreditor3>(value);
 
             result.Should().NotBeNull();
             result.Identification.Should().Be(value.Identification);
@@ -132,7 +132,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBPostalAddress_To_V111()
         {
-            var value = new OBPostalAddress
+            OBPostalAddress value = new OBPostalAddress
             {
                 AddressLine = new List<string> { "1 high street", "blexley" },
                 AddressType = OBAddressTypeCode.POBox,
@@ -146,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                 TownName = "Blexley"
             };
 
-            var result = _entityMapper.Map<OBPostalAddress6>(value);
+            OBPostalAddress6 result = _entityMapper.Map<OBPostalAddress6>(value);
 
             result.Should().NotBeNull();
             result.AddressLine.Should().BeEquivalentTo(value.AddressLine);
@@ -164,7 +164,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationDebtorAccount_To_V111()
         {
-            var value = new OBWriteDomesticDataInitiationDebtorAccount
+            OBWriteDomesticDataInitiationDebtorAccount value = new OBWriteDomesticDataInitiationDebtorAccount
             {
                 Identification = "abc",
                 Name = "debtor name",
@@ -172,7 +172,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                 SecondaryIdentification = "debtor secondary id"
             };
 
-            var result = _entityMapper.Map<OBCashAccountDebtor4>(value);
+            OBCashAccountDebtor4 result = _entityMapper.Map<OBCashAccountDebtor4>(value);
 
             result.Should().NotBeNull();
             result.Identification.Should().Be(value.Identification);
@@ -184,13 +184,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationInstructedAmount_To_V111()
         {
-            var value = new OBWriteDomesticDataInitiationInstructedAmount
+            OBWriteDomesticDataInitiationInstructedAmount value = new OBWriteDomesticDataInitiationInstructedAmount
             {
                 Amount = 1234.56.ToString(),
                 Currency = "GBP"
             };
 
-            var result = _entityMapper.Map<OBInternational2InstructedAmount>(value);
+            OBInternational2InstructedAmount result = _entityMapper.Map<OBInternational2InstructedAmount>(value);
 
             result.Should().NotBeNull();
             result.Amount.Should().Be(value.Amount);
@@ -200,13 +200,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationRemittanceInformation_To_V111()
         {
-            var value = new OBWriteDomesticDataInitiationRemittanceInformation
-            {
-                Reference = "reference",
-                Unstructured = "unstructured"
-            };
+            OBWriteDomesticDataInitiationRemittanceInformation value =
+                new OBWriteDomesticDataInitiationRemittanceInformation
+                {
+                    Reference = "reference",
+                    Unstructured = "unstructured"
+                };
 
-            var result = _entityMapper.Map<OBRemittanceInformation1>(value);
+            OBRemittanceInformation1 result = _entityMapper.Map<OBRemittanceInformation1>(value);
 
             result.Should().NotBeNull();
             result.Reference.Should().Be(value.Reference);
@@ -216,13 +217,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticConsentDataAuthorisation_To_V111()
         {
-            var value = new OBWriteDomesticConsentDataAuthorisation
+            OBWriteDomesticConsentDataAuthorisation value = new OBWriteDomesticConsentDataAuthorisation
             {
                 AuthorisationType = AuthorisationType.Single,
                 CompletionDateTime = DateTime.UtcNow
             };
 
-            var result = _entityMapper.Map<OBAuthorisation1>(value);
+            OBAuthorisation1 result = _entityMapper.Map<OBAuthorisation1>(value);
 
             result.Should().NotBeNull();
             result.AuthorisationType.ToString().Should().Be(value.AuthorisationType.ToString());
@@ -232,15 +233,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBRisk_To_V111()
         {
-            var value = new OBRisk
+            OBRisk value = new OBRisk
             {
                 DeliveryAddress = new OBRiskDeliveryAddress
                 {
                     TownName = "Accrington Stanley",
                     Country = "UK",
-                    AddressLine = Enumerable.Range(1, 3).Select(i => i.ToString()).ToList(),
+                    AddressLine = Enumerable.Range(start: 1, count: 3).Select(i => i.ToString()).ToList(),
                     BuildingNumber = "building number",
-                    CountrySubDivision = Enumerable.Range(10, 3).Select(i => i.ToString()).ToList(),
+                    CountrySubDivision = Enumerable.Range(start: 10, count: 3).Select(i => i.ToString()).ToList(),
                     PostCode = "post code",
                     StreetName = "street name"
                 },
@@ -249,7 +250,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                 MerchantCustomerIdentification = "merchant Customer Identification"
             };
 
-            var result = _entityMapper.Map<OBRisk1>(value);
+            OBRisk1 result = _entityMapper.Map<OBRisk1>(value);
 
             result.Should().NotBeNull();
             result.DeliveryAddress.Should().NotBeNull();

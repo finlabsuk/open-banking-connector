@@ -21,9 +21,7 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
         public NewPaymentInitiationApiProfileRecord() : base(
             verbName: "New",
             nounName: "PaymentInitiationApiProfileRecord",
-            deleteAndRecreateDb: false,
-            setUpSoftwareStatementProfileService: true,
-            loadSecretsFromConfig: true) { }
+            deleteAndRecreateDb: false) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public PaymentInitiationApiProfile? PaymentInitiationApiProfile { get; set; }

@@ -3,15 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.IO;
+using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost;
-using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 //using System.Diagnostics;
 
@@ -24,48 +20,31 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
         public RecordBaseCmdlet(
             string verbName,
             string nounName,
-            bool deleteAndRecreateDb,
-            bool setUpSoftwareStatementProfileService,
-            bool loadSecretsFromConfig) : base(verbName: verbName, nounName: nounName)
+            bool deleteAndRecreateDb) : base(verbName: verbName, nounName: nounName)
         {
             //Debugger.Launch();
 
-            IHostBuilder builder = new HostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration(
-                    (hostingContext, config) =>
-                    {
-                        config.AddJsonFile(
-                            path:
-                            "appsettings.json");
-                        config.AddEnvironmentVariables();
-                        config.AddUserSecrets<RecordBaseCmdlet>();
-                    })
-                .ConfigureServices(
-                    (hostContext, services) =>
-                    {
-                        //services.AddOptions();
-                        //services.Configure<AppConfig>(hostContext.Configuration.GetSection("AppConfig"));
-                        services.AddOpenBankingConnector(
-                            configuration: hostContext.Configuration,
-                            loadSecretsFromConfig: loadSecretsFromConfig);
-                        services.AddScoped<ICreateSoftwareStatementProfile, CreateSoftwareStatementProfile>();
-                        services.AddScoped<ICreateBankClientProfile, CreateBankClientProfile>();
-                        services.AddScoped<ICreatePaymentInitiationApiProfile, CreatePaymentInitiationApiProfile>();
-                    })
-                .UseConsoleLifetime()
-                .ConfigureLogging(
-                    (hostingContext, logging) =>
-                    {
-                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                        logging.AddConsole();
-                    });
+            IHostBuilder builder = Helpers.CreateHostBuilder(null);
+
+            string fileName = "OpenBankingConnector.Configuration";
+            builder = builder.ConfigureHostConfiguration(
+                configBuilder =>
+                {
+                    configBuilder.AddInMemoryCollection(
+                        new[]
+                        {
+                            new KeyValuePair<string, string>(
+                                key: HostDefaults.ApplicationKey,
+                                value: fileName ?? throw new ArgumentNullException(nameof(fileName)))
+                        });
+                });
+            
+            // Use console lifetime
+            builder.UseConsoleLifetime();
 
             _host = builder
                 .Build();
-            _host.StartupTasks(
-                    deleteAndRecreateDb: deleteAndRecreateDb)
-                .Start();
+            _host.Start();
         }
 
         protected abstract void ProcessRecordInner(IServiceProvider services);

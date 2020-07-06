@@ -17,13 +17,14 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-preview.2.20159.4" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.4.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector.NetGenericHost\OpenBanking.Library.Connector.NetGenericHost.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
   </ItemGroup>
 
 </Project>

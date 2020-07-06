@@ -34,12 +34,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
                 {
                     if (!(property.Name == "Id" && writeIdProperty == false))
                     {
-                        SetAsync(keyFcn: keyFcn, property: property, instance: instance);
+                        await SetAsync(keyFcn: keyFcn, property: property, instance: instance);
                     }
                 }
                 else if (property.PropertyType == typeof(List<string>))
                 {
-                    SetListAsync(keyFcn: keyFcn, property: property, instance: instance);
+                    await SetListAsync(keyFcn: keyFcn, property: property, instance: instance);
                 }
                 else
                 {
