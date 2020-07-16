@@ -10,17 +10,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
     public class PaymentInitiationApiProfileFluentResponse : FluentResponse
     {
         public PaymentInitiationApiProfileFluentResponse(PaymentInitiationApiProfileResponse data)
-            : this((IList<FluentResponseMessage>) null, data)
-        {
-        }
+            : this(messages: (IList<FluentResponseMessage>) null, data: data) { }
 
-        public PaymentInitiationApiProfileFluentResponse(FluentResponseMessage message,
+        public PaymentInitiationApiProfileFluentResponse(
+            FluentResponseMessage message,
             PaymentInitiationApiProfileResponse data)
-            : this(new[] { message }, data)
-        {
-        }
+            : this(messages: new[] { message }, data: data) { }
 
-        public PaymentInitiationApiProfileFluentResponse(IList<FluentResponseMessage> messages,
+        public PaymentInitiationApiProfileFluentResponse(
+            IList<FluentResponseMessage> messages,
             PaymentInitiationApiProfileResponse data)
             : base(messages)
         {

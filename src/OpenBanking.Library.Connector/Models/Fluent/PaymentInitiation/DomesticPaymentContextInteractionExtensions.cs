@@ -5,17 +5,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
     public static class DomesticPaymentContextInteractionExtensions
     {
-        public static DomesticPaymentContext Data(this DomesticPaymentContext context, DomesticPaymentRequest value)
+        public static DomesticPaymentContext Data(this DomesticPaymentContext context, DomesticPayment value)
         {
             context.Data = value;
             return context;
@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             context.ArgNotNull(nameof(context));
             try
             {
-                DomesticPaymentRequest domesticPayment = context.Data ?? new DomesticPaymentRequest(
+                DomesticPayment domesticPayment = context.Data ?? new DomesticPayment(
                     context.ConsentId.ArgNotNullElseInvalidOp("ConsentId not specified"));
 
                 IList<FluentResponseMessage> validationErrors = new PaymentRequestValidator()
@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
                     apiProfileRepo: context.Context.ApiProfileRepository,
                     softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
-                OBWriteDomesticResponse resp = await i.CreateAsync(domesticPayment.ConsentId);
+                OBWriteDomesticResponse4 resp = await i.CreateAsync(domesticPayment.ConsentId);
 
                 return new DomesticPaymentFluentResponse(resp.Data);
             }

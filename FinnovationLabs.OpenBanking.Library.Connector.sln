@@ -18,8 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{733AE026-6B0C-4B17-8C15-92C590FDCE5E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.ObModels.PaymentInitiation", "src\OpenBanking.Library.Connector.ObModels.PaymentInitiation\OpenBanking.Library.Connector.ObModels.PaymentInitiation.csproj", "{8AC41121-7AFF-48D4-8494-E0DE64A7368A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2", "src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.csproj", "{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1", "src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj", "{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C}"
@@ -30,9 +28,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connect
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBankingConnector.Configuration", "src\OpenBankingConnector.Configuration\OpenBankingConnector.Configuration.csproj", "{07860F22-0828-46F8-988A-9DF51A6F1CDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.NetGenericHost", "src\OpenBanking.Library.Connector.NetGenericHost\OpenBanking.Library.Connector.NetGenericHost.csproj", "{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4", "src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.csproj", "{E9AB3465-C532-4DCE-837F-4B74E647D57A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.WebHost", "src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj", "{3D8C95DD-481C-48DC-9D04-043092F3D4C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.WebHost", "src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj", "{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.GenericHost", "src\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj", "{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,10 +56,6 @@ Global
 		{733AE026-6B0C-4B17-8C15-92C590FDCE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{733AE026-6B0C-4B17-8C15-92C590FDCE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{733AE026-6B0C-4B17-8C15-92C590FDCE5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8AC41121-7AFF-48D4-8494-E0DE64A7368A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8AC41121-7AFF-48D4-8494-E0DE64A7368A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8AC41121-7AFF-48D4-8494-E0DE64A7368A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8AC41121-7AFF-48D4-8494-E0DE64A7368A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -80,14 +76,18 @@ Global
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D8C95DD-481C-48DC-9D04-043092F3D4C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9AB3465-C532-4DCE-837F-4B74E647D57A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9AB3465-C532-4DCE-837F-4B74E647D57A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9AB3465-C532-4DCE-837F-4B74E647D57A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9AB3465-C532-4DCE-837F-4B74E647D57A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,13 +97,14 @@ Global
 		{184AC674-564C-4734-9D1F-0609950CCFBC} = {77ADDE55-61CD-4150-99EC-3348E752B70A}
 		{6B10D427-8527-489F-8C02-55B4B2B566C4} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{733AE026-6B0C-4B17-8C15-92C590FDCE5E} = {61547328-A31D-4347-A5DA-9508ACD30976}
-		{8AC41121-7AFF-48D4-8494-E0DE64A7368A} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{465F6D9F-6D5C-4AA9-B7FD-4410DC7663E1} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{303AE3CD-5D7E-4B30-A3CB-B5998DC36E4C} = {61547328-A31D-4347-A5DA-9508ACD30976}
 		{F21A32B3-83E9-405F-A75B-C3A8B5DFF3F0} = {77ADDE55-61CD-4150-99EC-3348E752B70A}
 		{A28EEF06-C50F-47C9-A951-3CC11F92CE7D} = {77ADDE55-61CD-4150-99EC-3348E752B70A}
 		{07860F22-0828-46F8-988A-9DF51A6F1CDE} = {61547328-A31D-4347-A5DA-9508ACD30976}
-		{ABB4D1A4-4B8D-4666-99A3-69A4D9B56D05} = {61547328-A31D-4347-A5DA-9508ACD30976}
+		{E9AB3465-C532-4DCE-837F-4B74E647D57A} = {61547328-A31D-4347-A5DA-9508ACD30976}
+		{8BBF3AD7-E5E7-4F88-BF7D-97E31C4AAD0E} = {61547328-A31D-4347-A5DA-9508ACD30976}
+		{68EBCE6F-8CDE-4339-A77D-FAD8211BEB92} = {61547328-A31D-4347-A5DA-9508ACD30976}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5300F4B-F7BB-4404-9CD1-6C24FA33F834}

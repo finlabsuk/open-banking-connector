@@ -10,7 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
-using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Meta;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 {
@@ -21,9 +21,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 
         public IEnumerable<Type> GetPublicReferenceTypes()
         {
-            var rootPublicTypes = RootPublicType.Assembly.GetTypes()
+            IEnumerable<Type> rootPublicTypes = RootPublicType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(rootType: RootPublicType, type: t));
-            var paymentInitiationTypes = PaymentInitiationRootPublicType.Assembly.GetTypes()
+            IEnumerable<Type> paymentInitiationTypes = PaymentInitiationRootPublicType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(rootType: PaymentInitiationRootPublicType, type: t));
             return rootPublicTypes.Concat(paymentInitiationTypes);
         }
@@ -31,11 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 
         public IEnumerable<EquivalentType> GetOpenBankingEquivalentTypes(Type type)
         {
-            IEnumerable<OpenBankingEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
-                .GetCustomAttributes(typeof(OpenBankingEquivalentAttribute))
-                .OfType<OpenBankingEquivalentAttribute>();
+            IEnumerable<TargetApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
+                .GetCustomAttributes(typeof(TargetApiEquivalentAttribute))
+                .OfType<TargetApiEquivalentAttribute>();
 
-            foreach (OpenBankingEquivalentAttribute attr in attrs)
+            foreach (TargetApiEquivalentAttribute attr in attrs)
             {
                 yield return attr.EquivalentTypeMapper == null
                     ? new EquivalentType(entityType: type, equivalentEntityType: attr.EquivalentType)

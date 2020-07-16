@@ -1,26 +1,47 @@
 
-## OpenAPI Code generation
+## OpenAPI C# Model Code Generation
 
-This project uses code generated against Open Banking Swagger documentation.
+We use C# model code generated from OpenAPI files describing UK Open Banking APIs.
 
-The latest Open Banking OpenAPI specification are [referenced here](https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1077805743/Payment+Initiation+API+Specification+-+v3.1.2).
+### OpenAPI file sources
 
-Various on-line API stub generators exist, however they have been proved to be unstable. A local copy of the ```openapi-generator CLI``` is available at ```\tools\openapi-gen```. This requires JVM to be locally installed.
+OpenAPI files for UK Open Banking Read/Write Data APIs may be obtained here: https://github.com/OpenBankingUK/read-write-api-specs. Tags are used to denote releases.
 
-### Getting the latest CLI gen
-Installation [notes are matained by OpenAPI](https://openapi-generator.tech/docs/installation)
+OpenAPI files for UK Open Banking Dynamic Client Registration APIs may be obtained here: https://github.com/OpenBankingUK/client-registration-api-specs. Tags are used to denote releases.
 
-### Generating 
-Please refer to the [full usage notes](https://openapi-generator.tech/docs/usage)
+### Code Generation
 
-```java -jar .\openapi-generator-cli.jar generate -g csharp -i https://raw.githubusercontent.com/OpenBankingUK/read-write-api-specs/v3.1.2-RC1/dist/payment-initiation-swagger.json -o <output directory>```
+We use [OpenAPI Generator](https://openapi-generator.tech/) to generate C# model code from OpenAPI files.
 
-```https://raw.githubusercontent.com/OpenBankingUK/read-write-api-specs/v3.1.2-RC1/dist/payment-initiation-swagger.json```: the full URL of the OpenAPI specification
-
-```<output directory>```: the new project's destination folder 
+#### Installing OpenAPI Generator
 
 
-The generated tests are mostly stubs. Those that aren't (e.g. API tests) do not work due to singleton object entanglement.
+It is suggested to install OpenAPI Generator locally as online versions have proved unreliable. See [latest installation instructions](https://openapi-generator.tech/docs/installation).
 
-```OpenBanking.Library.Connector.Model.csproj``` contains the generated Model folder, with namespaces adjusted to suit project & assembly naming.
+Example install command (PowerShell):
+```PowerShell
+Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/4.3.1/openapi-generator-cli-4.3.1.jar
+```
 
+You may need to install Java (e.g. OpenJDK) to enable it to run.
+
+#### Generation of API Model Code
+
+Please refer to the [full usage notes](https://openapi-generator.tech/docs/usage) for OpenAPI Generator.
+
+For a given API, we auto-generate a client then extract the model code.
+
+Here is some example PowerShell code for generating a Payment Initiation API client:
+
+```PowerShell
+$specVersion = "PaymentInitiation.V3p1p1"
+$specFile = "C:\Repos\OBUK.read-write-api-specs\dist\payment-initiation-openapi.yaml"
+mkdir $specVersion
+java.exe -jar openapi-generator-cli.jar generate `
+-g csharp-netcore `
+-i $specFile `
+-p "packageName=OpenBanking.Library.Connector.ObModels.$specVersion,netCoreProjectFile=true,targetFramework=netstandard2.1,useDateTimeOffset=true" `
+-o ./$specVersion
+```
+
+We can then copy the contents of ```.\$specVersion\src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\Model``` into the project.

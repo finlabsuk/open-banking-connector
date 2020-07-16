@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-
     public class BankClientRegistrationData
     {
         [JsonProperty("id")]

@@ -11,9 +11,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ApiVersion
     {
-        [EnumMember(Value = "v3p1p1")] 
-        V3P1P1,
-        [EnumMember(Value = "v3p1p2")] 
-        V3P1P2
+        [EnumMember(Value = "v3p1p1")] V3P1P1,
+        [EnumMember(Value = "v3p1p2")] V3P1P2,
+        [EnumMember(Value = "v3p1p4")] V3P1P4
     }
 }

@@ -2,12 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation
 {
-    public class OBWriteDomesticConsentValidator : AbstractValidator<OBWriteDomesticConsent>
+    public class OBWriteDomesticConsentValidator : AbstractValidator<DomesticPaymentConsent>
     {
         public OBWriteDomesticConsentValidator()
         {
@@ -19,15 +19,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
         {
             RuleFor(x => x.ApiProfileId)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Missing or invalid {nameof(OBWriteDomesticConsent.ApiProfileId)}.");
+                .WithMessage($"Missing or invalid {nameof(DomesticPaymentConsent.ApiProfileId)}.");
 
-            RuleFor(x => x.Data)
+            RuleFor(x => x.DomesticConsent.Data)
                 .Must(ValidationRules.IsNotNull)
-                .WithMessage($"The {nameof(OBWriteDomesticConsent.Data)} data is missing.");
+                .WithMessage($"The {nameof(DomesticPaymentConsent.DomesticConsent.Data)} data is missing.");
 
-            RuleFor(x => x.Risk)
+            RuleFor(x => x.DomesticConsent.Risk)
                 .Must(ValidationRules.IsNotNull)
-                .WithMessage($"The {nameof(OBWriteDomesticConsent.Risk)} data is missing.");
+                .WithMessage($"The {nameof(DomesticPaymentConsent.DomesticConsent.Risk)} data is missing.");
         }
     }
 }

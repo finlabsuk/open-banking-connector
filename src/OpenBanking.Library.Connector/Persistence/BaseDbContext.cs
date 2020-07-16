@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -106,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                             .HasConversion(
                                 convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
                                 convertFromProviderExpression: v =>
-                                    JsonConvert.DeserializeObject<OBWriteDomesticConsent>(v));
+                                    JsonConvert.DeserializeObject<OBWriteDomesticConsent4>(v));
                     });
 
 

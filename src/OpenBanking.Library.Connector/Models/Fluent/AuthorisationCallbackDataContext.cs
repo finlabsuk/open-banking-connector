@@ -17,10 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         internal ISharedContext Context { get; }
 
         internal AuthorisationCallbackData Data { get; set; }
-        
+
         internal string ResponseMode { get; set; }
-        
+
         internal AuthorisationCallbackPayload Response { get; set; }
-        
     }
 }

@@ -10,15 +10,16 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using OBWriteDomesticConsent =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBWriteDomesticConsent;
-using TokenEndpointResponse = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.TokenEndpointResponse;
+using OBWriteDomestic2 =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBWriteDomestic2;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
@@ -47,9 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _softwareStatementProfileService = softwareStatementProfileService;
         }
 
-        public async Task<OBWriteDomesticResponse> CreateAsync(string consentId)
+        public async Task<OBWriteDomesticResponse4> CreateAsync(string consentId)
         {
-            // Load relevant objects
+            // Load relevant data objects
             DomesticConsent consent = await _domesticConsentRepo.GetAsync(consentId)
                                       ?? throw new KeyNotFoundException("The Consent does not exist.");
             ApiProfile apiProfile = await _apiProfileRepo.GetAsync(consent.ApiProfileId)
@@ -65,11 +66,60 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 _mapper.Map<TokenEndpointResponse>(consent.TokenEndpointResponse);
 
             // Create new Open Banking payment by posting JWT
-            OBWriteDomesticConsent consentPublic = _mapper.Map<OBWriteDomesticConsent>(consent.ObWriteDomesticConsent);
-            OBWriteDomestic2
-                payment = _mapper.Map<OBWriteDomestic2>(
-                    consentPublic); // TODO: Create payment without auto-mapper then convert to OB API version with auto-mapper.
-            payment.Data.ConsentId = consent.BankId;
+            OBWriteDomesticConsent4 obConsent = consent.ObWriteDomesticConsent;
+            OBWriteDomestic2 referencePayment = new OBWriteDomestic2
+            {
+                Data = new OBWriteDomestic2Data
+                {
+                    ConsentId = consent.BankId,
+                    Initiation = obConsent.Data.Initiation
+                },
+                Risk = obConsent.Risk
+            };
+
+            // Create new Open Banking payment by posting JWT
+            OBWriteDomesticResponse4 paymentResponse;
+            switch (apiProfile.ApiVersion)
+            {
+                case ApiVersion.V3P1P1:
+                    ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2 newPayment =
+                        _mapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2>(referencePayment);
+                    OBWriteDomesticResponse2 rawPaymentResponse = await
+                        PostDomesticPayment<ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2,
+                            OBWriteDomesticResponse2>(
+                            payment: newPayment,
+                            apiProfile: apiProfile,
+                            softwareStatementProfile: softwareStatementProfile,
+                            bankClientProfile: bankClientProfile,
+                            tokenEndpointResponse: tokenEndpointResponse);
+                    paymentResponse = _mapper.Map<OBWriteDomesticResponse4>(rawPaymentResponse);
+                    break;
+                case ApiVersion.V3P1P2:
+                    throw new ArgumentOutOfRangeException();
+                case ApiVersion.V3P1P4:
+                    paymentResponse = await PostDomesticPayment<OBWriteDomestic2, OBWriteDomesticResponse4>(
+                        payment: referencePayment,
+                        apiProfile: apiProfile,
+                        softwareStatementProfile: softwareStatementProfile,
+                        bankClientProfile: bankClientProfile,
+                        tokenEndpointResponse: tokenEndpointResponse);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return paymentResponse;
+        }
+
+        private async Task<ApiResponseType> PostDomesticPayment<ApiRequestType, ApiResponseType>(
+            ApiRequestType payment,
+            ApiProfile apiProfile,
+            SoftwareStatementProfile softwareStatementProfile,
+            BankClientProfile bankClientProfile,
+            TokenEndpointResponse tokenEndpointResponse)
+            where ApiRequestType : class
+            where ApiResponseType : class
+        {
             string payloadJson = JsonConvert.SerializeObject(payment);
             UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payments"));
 
@@ -79,25 +129,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 client: bankClientProfile,
                 tokenEndpointResponse: tokenEndpointResponse);
 
-            OBWriteDomesticResponse2 paymentResponse = await new HttpRequestBuilder()
+            return await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Post)
                 .SetUri(ub.Uri)
                 .SetHeaders(headers)
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<OBWriteDomesticResponse2>(client: _apiClient, requestContentIsJson: true);
-
-            OBWriteDomesticResponse resp = _mapper.Map<OBWriteDomesticResponse>(paymentResponse);
-
-            return resp;
+                .RequestJsonAsync<ApiResponseType>(client: _apiClient, requestContentIsJson: true);
         }
 
-        private static List<HttpHeader> CreateRequestHeaders(
+        private static List<HttpHeader> CreateRequestHeaders<ApiRequestType>(
             SoftwareStatementProfile softwareStatement,
-            OBWriteDomestic2 payment,
+            ApiRequestType payment,
             BankClientProfile client,
             TokenEndpointResponse tokenEndpointResponse)
+            where ApiRequestType : class
         {
             JwtFactory jwtFactory = new JwtFactory();
             string jwt = jwtFactory.CreateJwt(

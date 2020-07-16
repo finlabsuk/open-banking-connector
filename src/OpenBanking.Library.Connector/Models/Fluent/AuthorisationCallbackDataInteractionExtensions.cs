@@ -63,7 +63,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     openBankingClientRepo: context.Context.ClientProfileRepository,
                     domesticConsentRepo: context.Context.DomesticConsentRepository,
                     softwareStatementProfileService: context.Context.SoftwareStatementProfileService,
-                    dbMultiEntityMethods: context.Context.DbContextService);
+                    dbMultiEntityMethods: context.Context.DbContextService,
+                    apiProfileRepo: context.Context.ApiProfileRepository);
 
                 await handler.CreateAsync(authData);
 

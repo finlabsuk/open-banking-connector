@@ -2,14 +2,14 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation
 {
     public class
         OBWriteDomesticDataInitiationRemittanceInformationValidator : AbstractValidator<
-            OBWriteDomesticDataInitiationRemittanceInformation>
+            OBWriteDomestic2DataInitiationRemittanceInformation>
     {
         public OBWriteDomesticDataInitiationRemittanceInformationValidator()
         {
@@ -21,12 +21,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
         {
             RuleFor(x => x.Unstructured)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must((x, y, z) => ValidationRules.HasLengthAtMost(x, y, z, 140))
+                .Must((x, y, z) => ValidationRules.HasLengthAtMost(arg1: x, arg2: y, arg3: z, maxLength: 140))
                 .WithMessage("Invalid value for Unstructured, length must be less than 140.");
 
             RuleFor(x => x.Reference)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must((x, y, z) => ValidationRules.HasLengthAtMost(x, y, z, 35))
+                .Must((x, y, z) => ValidationRules.HasLengthAtMost(arg1: x, arg2: y, arg3: z, maxLength: 35))
                 .WithMessage("Invalid value for Reference, length must be less than 35.");
         }
     }

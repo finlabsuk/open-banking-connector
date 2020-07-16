@@ -17,15 +17,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Links = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Links;
-using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.Meta;
 using SoftwareStatementProfile =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
@@ -43,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
                 .UseSqlite(_connection)
                 .Options;
-            using SqliteDbContext? context = new SqliteDbContext(_dbContextOptions);
+            using SqliteDbContext context = new SqliteDbContext(_dbContextOptions);
             context.Database.EnsureCreated();
         }
 
@@ -100,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenIdConfigJson()
         {
-            OpenIdConfiguration? openIdConfig = new OpenIdConfiguration
+            OpenIdConfiguration openIdConfig = new OpenIdConfiguration
             {
                 Issuer = MockRoutes.Url,
                 ResponseTypesSupported = new List<string> { "code id_token" }.ToArray(),
@@ -117,7 +115,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenBankingClientRegistrationResponseJson()
         {
-            OpenBankingClientRegistrationResponse? model = new OpenBankingClientRegistrationResponse
+            OpenBankingClientRegistrationResponse model = new OpenBankingClientRegistrationResponse
             {
                 ClientId = GetClientId(),
                 ClientSecret = GetClientSecret(),
@@ -218,14 +216,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public IOpenBankingRequestBuilder CreateMockRequestBuilder()
         {
-            HttpClient? httpClient = new HttpClient
+            HttpClient httpClient = new HttpClient
             {
                 BaseAddress = new Uri(MockRoutes.Url)
             };
-            SqliteDbContext? _dB = new SqliteDbContext(_dbContextOptions);
-            MemoryKeySecretProvider? _secretProvider = new MemoryKeySecretProvider();
-            EntityMapper? _entityMapper = new EntityMapper();
-            RequestBuilder? requestBuilder = new RequestBuilder(
+            SqliteDbContext _dB = new SqliteDbContext(_dbContextOptions);
+            MemoryKeySecretProvider _secretProvider = new MemoryKeySecretProvider();
+            EntityMapper _entityMapper = new EntityMapper();
+            RequestBuilder requestBuilder = new RequestBuilder(
                 entityMapper: _entityMapper,
                 dbContextService: new DbMultiEntityMethods(_dB),
                 configurationProvider: new DefaultConfigurationProvider(),
@@ -252,16 +250,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOBWriteDomesticConsent2()
         {
-            OBInternational2InstructedAmount instructedAmount =
-                new OBInternational2InstructedAmount(amount: "50", currency: "GBP");
-            OBCashAccountCreditor3 creditorAccount = new OBCashAccountCreditor3(
-                schemeName: "IBAN",
-                identification: "BE56456394728288",
-                name: "ACME DIY",
-                secondaryIdentification: "secondary-identif");
-            OBRemittanceInformation1 remittanceInformation =
-                new OBRemittanceInformation1(unstructured: "Tools", reference: "Tools");
-            OBDomestic2 domestic2 = new OBDomestic2(
+            OBWriteDomestic2DataInitiationInstructedAmount instructedAmount =
+                new OBWriteDomestic2DataInitiationInstructedAmount(amount: "50", currency: "GBP");
+            OBWriteDomestic2DataInitiationCreditorAccount creditorAccount =
+                new OBWriteDomestic2DataInitiationCreditorAccount(
+                    schemeName: "IBAN",
+                    identification: "BE56456394728288",
+                    name: "ACME DIY",
+                    secondaryIdentification: "secondary-identif");
+            OBWriteDomestic2DataInitiationRemittanceInformation remittanceInformation =
+                new OBWriteDomestic2DataInitiationRemittanceInformation(unstructured: "Tools", reference: "Tools");
+            OBWriteDomestic2DataInitiation domestic2 = new OBWriteDomestic2DataInitiation(
                 instructionIdentification: "instr-identification",
                 endToEndIdentification: "e2e-identification",
                 localInstrument: null,
@@ -269,75 +268,78 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 debtorAccount: null,
                 creditorAccount: creditorAccount,
                 remittanceInformation: remittanceInformation);
-            OBWriteDataDomesticConsent2 data = new OBWriteDataDomesticConsent2(domestic2);
+            OBWriteDomesticConsent4Data data = new OBWriteDomesticConsent4Data
+            {
+                Initiation = domestic2
+            };
 
-            OBRisk1DeliveryAddress deliveryAddress = new OBRisk1DeliveryAddress(
-                streetName: "Oxford Street",
-                countrySubDivision: new List<string>(),
-                addressLine: new List<string>(),
-                buildingNumber: "42",
-                townName: "London",
-                country: "UK",
-                postCode: "SW1 1AA");
+            OBRisk1DeliveryAddress deliveryAddress = new OBRisk1DeliveryAddress
+            {
+                StreetName = "Oxford Street",
+                BuildingNumber = "42",
+                PostCode = "SW1 1AA",
+                TownName = "London",
+                Country = "UK"
+            };
             OBRisk1 risk = new OBRisk1(
-                paymentContextCode: OBExternalPaymentContext1Code.EcommerceGoods,
+                paymentContextCode: OBRisk1.PaymentContextCodeEnum.EcommerceGoods,
                 merchantCategoryCode: null,
                 merchantCustomerIdentification: null,
                 deliveryAddress: deliveryAddress);
 
-            OBWriteDomesticConsent2 model = new OBWriteDomesticConsent2(data: data, risk: risk);
+            OBWriteDomesticConsent4 model = new OBWriteDomesticConsent4(data: data, risk: risk);
 
             return JsonConvert.SerializeObject(model);
         }
 
         public string GetOBWriteDomesticConsentResponse2()
         {
-            string? consentId = Guid.NewGuid().ToString();
+            string consentId = Guid.NewGuid().ToString();
 
-            OBInternational2InstructedAmount? instructedAmount =
-                new OBInternational2InstructedAmount(amount: "50", currency: "GBP");
-            OBCashAccountCreditor3? creditorAccount = new OBCashAccountCreditor3(
-                schemeName: "IBAN",
-                identification: "BE56456394728288",
-                name: "ACME DIY",
-                secondaryIdentification: "secondary-identif");
-            OBDomestic2? domestic2 = new OBDomestic2(
+            OBWriteDomestic2DataInitiationInstructedAmount instructedAmount =
+                new OBWriteDomestic2DataInitiationInstructedAmount(amount: "50", currency: "GBP");
+            OBWriteDomestic2DataInitiationCreditorAccount creditorAccount =
+                new OBWriteDomestic2DataInitiationCreditorAccount(
+                    schemeName: "IBAN",
+                    identification: "BE56456394728288",
+                    name: "ACME DIY",
+                    secondaryIdentification: "secondary-identif");
+            OBWriteDomestic2DataInitiation domestic2 = new OBWriteDomestic2DataInitiation(
                 instructionIdentification: "instr-identification",
                 endToEndIdentification: "e2e-identification",
                 localInstrument: null,
                 instructedAmount: instructedAmount,
                 debtorAccount: null,
                 creditorAccount: creditorAccount);
-            OBWriteDataDomesticConsentResponse2? data = new OBWriteDataDomesticConsentResponse2(
+            OBWriteDomesticConsentResponse4Data data = new OBWriteDomesticConsentResponse4Data(
                 consentId: consentId,
                 creationDateTime: DateTime.Now,
-                status: OBExternalConsentStatus1Code.AwaitingAuthorisation,
+                status: OBWriteDomesticConsentResponse4Data.StatusEnum.AwaitingAuthorisation,
                 statusUpdateDateTime: DateTime.Now,
-                cutOffDateTime: null,
-                expectedExecutionDateTime: null,
-                expectedSettlementDateTime: null,
+                cutOffDateTime: DateTime.Now.Add(new TimeSpan(days: 1, hours: 0, minutes: 0, seconds: 0)),
+                expectedExecutionDateTime: DateTime.Now,
+                expectedSettlementDateTime: DateTime.Now,
                 charges: null,
                 initiation: domestic2);
-
-            OBRisk1DeliveryAddress? deliveryAddress = new OBRisk1DeliveryAddress(
-                streetName: "Oxford Street",
-                countrySubDivision: new List<string>(),
-                addressLine: new List<string>(),
-                buildingNumber: "42",
-                townName: "London",
-                country: "UK",
-                postCode: "SW1 1AA");
-            OBRisk1? risk = new OBRisk1(
-                paymentContextCode: OBExternalPaymentContext1Code.EcommerceGoods,
+            OBRisk1DeliveryAddress deliveryAddress = new OBRisk1DeliveryAddress
+            {
+                StreetName = "Oxford Street",
+                BuildingNumber = "42",
+                PostCode = "SW1 1AA",
+                TownName = "London",
+                Country = "UK"
+            };
+            OBRisk1 risk = new OBRisk1(
+                paymentContextCode: OBRisk1.PaymentContextCodeEnum.EcommerceGoods,
                 merchantCategoryCode: null,
                 merchantCustomerIdentification: null,
                 deliveryAddress: deliveryAddress);
 
-            Links? links = new Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}/{consentId}");
+            Links links = new Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}/{consentId}");
 
-            Meta? meta = new Meta(1);
+            Meta meta = new Meta(1);
 
-            OBWriteDomesticConsentResponse2? model = new OBWriteDomesticConsentResponse2(
+            OBWriteDomesticConsentResponse4 model = new OBWriteDomesticConsentResponse4(
                 data: data,
                 risk: risk,
                 links: links,

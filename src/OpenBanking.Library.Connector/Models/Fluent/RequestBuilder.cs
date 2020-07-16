@@ -131,9 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             ISharedContext context = CreateContext();
 
             return new DomesticPaymentConsentContext(context)
-            {
-                ApiProfileId = openBankingClientProfileId
-            };
+                .ApiProfileId(openBankingClientProfileId);
         }
 
         public DomesticPaymentContext DomesticPayment()

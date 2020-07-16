@@ -10,17 +10,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
     public class BankClientProfileFluentResponse : FluentResponse
     {
         public BankClientProfileFluentResponse(BankClientProfileResponse data)
-            : this((IList<FluentResponseMessage>) null, data)
-        {
-        }
+            : this(messages: (IList<FluentResponseMessage>) null, data: data) { }
 
-        public BankClientProfileFluentResponse(FluentResponseMessage message,
+        public BankClientProfileFluentResponse(
+            FluentResponseMessage message,
             BankClientProfileResponse data)
-            : this(new[] { message }, data)
-        {
-        }
+            : this(messages: new[] { message }, data: data) { }
 
-        public BankClientProfileFluentResponse(IList<FluentResponseMessage> messages,
+        public BankClientProfileFluentResponse(
+            IList<FluentResponseMessage> messages,
             BankClientProfileResponse data)
             : base(messages)
         {

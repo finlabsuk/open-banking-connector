@@ -9,13 +9,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public class AuthorisationCallbackDataFluentResponse : FluentResponse
     {
-        public AuthorisationCallbackDataFluentResponse(FluentResponseMessage message) : this(new[] { message })
-        {
-        }
+        public AuthorisationCallbackDataFluentResponse(FluentResponseMessage message) : this(new[] { message }) { }
 
-        public AuthorisationCallbackDataFluentResponse(IList<FluentResponseMessage> messages) : base(messages)
-        {
-        }
+        public AuthorisationCallbackDataFluentResponse(IList<FluentResponseMessage> messages) : base(messages) { }
 
         public AuthorisationCallbackDataFluentResponse(AuthorisationCallbackDataResponse data)
         {
@@ -23,6 +19,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         }
 
         public AuthorisationCallbackDataResponse Data { get; }
-
     }
 }

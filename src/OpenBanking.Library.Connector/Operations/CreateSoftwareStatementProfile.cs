@@ -30,8 +30,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             profile.ArgNotNull(nameof(profile));
 
             _softwareStatementProfileService.SetSoftwareStatementProfile(profile);
-            
-            var response = new SoftwareStatementProfileResponse(profile.Id);
+
+            SoftwareStatementProfileResponse response = new SoftwareStatementProfileResponse(profile.Id);
 
             return Task.FromResult(response);
         }

@@ -5,22 +5,23 @@
 using System;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FluentAssertions;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
-using Meta = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Meta;
+using Meta = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.Meta;
 using OBAddressTypeCode =
     FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model.OBAddressTypeCode;
+using OBPostalAddress6 = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.Model.OBPostalAddress6;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Mapping
 {
     public class EntityMapperTests
     {
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property OpenBankingToPublic_SimpleMap_V3_1_2_RC1_ToPublic_2(OBPostalAddress value)
+        public Property OpenBankingToPublic_SimpleMap_V3_1_2_RC1_ToPublic_2(ObModels.PaymentInitiation.V3p1p4.Model.OBPostalAddress6 value)
         {
             var mapper = new EntityMapper();
 
@@ -47,16 +48,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Mapping
 
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property OpenBankingToPublic_ComplexTree_V3_1_2_RC1_ToPublic(
-            WriteInternationalConsentDataInitiationCreditor value)
+        public Property OpenBankingToPublic_ComplexTree_V3_1_2_ToPublic(
+            string name,
+            ObModels.PaymentInitiation.V3p1p4.Model.OBAddressTypeCode obAddressTypeCode)
         {
             var mapper = new EntityMapper();
+
+            var obPostalAddress = new ObModels.PaymentInitiation.V3p1p4.Model.OBPostalAddress6
+            {
+                AddressType = obAddressTypeCode
+            };
+            var value = new OBWriteInternational3DataInitiationCreditor(name, obPostalAddress);
 
             Func<bool> rule = () =>
             {
                 var r1 = mapper.Map(value,
-                        typeof(OBWriteInternationalConsent3DataInitiationCreditor)) as
-                    OBWriteInternationalConsent3DataInitiationCreditor;
+                        typeof(OBWriteInternational2DataInitiationCreditor)) as
+                    OBWriteInternational2DataInitiationCreditor;
 
                 return r1 != null &&
                        r1.Name == value.Name &&
@@ -69,18 +77,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Mapping
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property OpenBankingToPublic_ComplexTree_V3_1_2_RC1_ToPublic_2(OBAddressTypeCode addrType, string name)
+        public Property OpenBankingToPublic_ComplexTree_V3_1_2_ToPublic_2(OBAddressTypeCode addrType, string name)
         {
             var mapper = new EntityMapper();
 
             Func<bool> rule = () =>
             {
                 var value =
-                    new OBWriteInternationalConsent3DataInitiationCreditor(new OBPostalAddress6(addrType), name);
+                    new OBWriteInternational2DataInitiationCreditor(name, new OBPostalAddress6(addrType));
 
                 var r1 = mapper.Map(value,
-                        typeof(WriteInternationalConsentDataInitiationCreditor)) as
-                    WriteInternationalConsentDataInitiationCreditor;
+                        typeof(OBWriteInternational3DataInitiationCreditor)) as
+                    OBWriteInternational3DataInitiationCreditor;
 
                 return r1 != null &&
                        r1.Name == value.Name &&
@@ -116,14 +124,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Mapping
         }
 
         [Fact]
-        public void PublicToOpenBanking_SimpleMap_To_v3_1_2_RC1()
+        public void PublicToOpenBanking_SimpleMap_To_v3_1_2()
         {
             var mapper = new EntityMapper();
 
             var m1 = new Meta
             {
-                FirstAvailableDateTime = DateTime.MaxValue,
-                LastAvailableDateTime = DateTime.UnixEpoch,
+                FirstAvailableDateTime = DateTimeOffset.MaxValue,
+                LastAvailableDateTime = DateTimeOffset.UnixEpoch,
                 TotalPages = 123
             };
 
@@ -160,14 +168,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Mapping
         }
 
         [Fact]
-        public void OpenBankingToPublic_SimpleMap_V3_1_2_RC1_ToPublic()
+        public void OpenBankingToPublic_SimpleMap_V3_1_2_ToPublic()
         {
             var mapper = new EntityMapper();
 
             var m1 = new ObModels.PaymentInitiation.V3p1p2.Model.Meta
             {
-                FirstAvailableDateTime = DateTime.MaxValue,
-                LastAvailableDateTime = DateTime.UnixEpoch,
+                FirstAvailableDateTime = DateTimeOffset.MaxValue,
+                LastAvailableDateTime = DateTimeOffset.UnixEpoch,
                 TotalPages = 123
             };
 

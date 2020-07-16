@@ -13,14 +13,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using OBWriteDomesticConsentPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBWriteDomesticConsent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
@@ -52,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _softwareStatementProfileService = softwareStatementProfileService;
         }
 
-        public async Task<PaymentConsentResponse> CreateAsync(OBWriteDomesticConsentPublic consent)
+        public async Task<PaymentConsentResponse> CreateAsync(DomesticPaymentConsent consent)
         {
             consent.ArgNotNull(nameof(consent));
 
@@ -70,35 +71,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             TokenEndpointResponse tokenEndpointResponse =
                 await PostClientCredentialsGrant(scope: "payments", client: bankClientProfile);
             // TODO: validate the response???
-            OBWriteDomesticConsent2 consent2 = _mapper.Map<OBWriteDomesticConsent2>(consent);
 
             // Create new Open Banking consent by posting JWT
             JwtFactory jwtFactory = new JwtFactory();
-            string jwt = jwtFactory.CreateJwt(
-                profile: softwareStatementProfile,
-                claims: consent2,
-                useOpenBankingJwtHeaders: true);
-            string[] jwsComponents = jwt.Split('.');
-            string jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
-            UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payment-consents"));
-            string payloadJson = JsonConvert.SerializeObject(consent2);
-            List<HttpHeader> headers = new List<HttpHeader>
+            OBWriteDomesticConsentResponse4 consentResponse;
+            switch (apiProfile.ApiVersion)
             {
-                new HttpHeader(name: "x-fapi-financial-id", value: bankClientProfile.XFapiFinancialId),
-                new HttpHeader(name: "Authorization", value: "Bearer " + tokenEndpointResponse.AccessToken),
-                new HttpHeader(name: "x-idempotency-key", value: Guid.NewGuid().ToString()),
-                new HttpHeader(name: "x-jws-signature", value: jwsSignature)
-            };
-
-            OBWriteDomesticConsentResponse2 consentResponse = await new HttpRequestBuilder()
-                .SetMethod(HttpMethod.Post)
-                .SetUri(ub.Uri)
-                .SetHeaders(headers)
-                .SetContentType("application/json")
-                .SetContent(payloadJson)
-                .Create()
-                .RequestJsonAsync<OBWriteDomesticConsentResponse2>(client: _apiClient, requestContentIsJson: true);
-            // TODO: validate response
+                case ApiVersion.V3P1P1:
+                    OBWriteDomesticConsent2 newDomesticConsent =
+                        _mapper.Map<OBWriteDomesticConsent2>(consent.DomesticConsent);
+                    OBWriteDomesticConsentResponse2 rawConsentResponse = await
+                        PostDomesticConsent<OBWriteDomesticConsent2, OBWriteDomesticConsentResponse2>(
+                            jwtFactory: jwtFactory,
+                            softwareStatementProfile: softwareStatementProfile,
+                            consent: newDomesticConsent,
+                            apiProfile: apiProfile,
+                            bankClientProfile: bankClientProfile,
+                            tokenEndpointResponse: tokenEndpointResponse);
+                    consentResponse = _mapper.Map<OBWriteDomesticConsentResponse4>(rawConsentResponse);
+                    break;
+                case ApiVersion.V3P1P2:
+                    throw new ArgumentOutOfRangeException();
+                case ApiVersion.V3P1P4:
+                    consentResponse = await
+                        PostDomesticConsent<OBWriteDomesticConsent4, OBWriteDomesticConsentResponse4>(
+                            jwtFactory: jwtFactory,
+                            softwareStatementProfile: softwareStatementProfile,
+                            consent: consent.DomesticConsent,
+                            apiProfile: apiProfile,
+                            bankClientProfile: bankClientProfile,
+                            tokenEndpointResponse: tokenEndpointResponse);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             // Generate URL for user auth
             string consentId = consentResponse.Data.ConsentId;
@@ -138,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 SoftwareStatementProfileId = bankClientProfile.SoftwareStatementProfileId,
                 IssuerUrl = bankClientProfile.IssuerUrl,
                 ApiProfileId = apiProfile.Id,
-                ObWriteDomesticConsent = consent,
+                ObWriteDomesticConsent = consent.DomesticConsent,
                 TokenEndpointResponse = null,
                 Id = domesticConsentId,
                 BankId = consentId
@@ -205,6 +211,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContent(content)
                 .Create()
                 .RequestJsonAsync<TokenEndpointResponse>(client: _apiClient, requestContentIsJson: false);
+        }
+
+        private async Task<ApiResponseType> PostDomesticConsent<ApiRequestType, ApiResponseType>(
+            JwtFactory jwtFactory,
+            SoftwareStatementProfile softwareStatementProfile,
+            ApiRequestType consent,
+            ApiProfile apiProfile,
+            BankClientProfile bankClientProfile,
+            TokenEndpointResponse tokenEndpointResponse)
+            where ApiRequestType : class
+            where ApiResponseType : class
+        {
+            string jwt = jwtFactory.CreateJwt(
+                profile: softwareStatementProfile,
+                claims: consent,
+                useOpenBankingJwtHeaders: true);
+            string[] jwsComponents = jwt.Split('.');
+            string jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
+            UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payment-consents"));
+            string payloadJson = JsonConvert.SerializeObject(consent);
+            List<HttpHeader> headers = new List<HttpHeader>
+            {
+                new HttpHeader(name: "x-fapi-financial-id", value: bankClientProfile.XFapiFinancialId),
+                new HttpHeader(name: "Authorization", value: "Bearer " + tokenEndpointResponse.AccessToken),
+                new HttpHeader(name: "x-idempotency-key", value: Guid.NewGuid().ToString()),
+                new HttpHeader(name: "x-jws-signature", value: jwsSignature)
+            };
+            return await new HttpRequestBuilder()
+                .SetMethod(HttpMethod.Post)
+                .SetUri(ub.Uri)
+                .SetHeaders(headers)
+                .SetContentType("application/json")
+                .SetContent(payloadJson)
+                .Create()
+                .RequestJsonAsync<ApiResponseType>(client: _apiClient, requestContentIsJson: true);
         }
     }
 }

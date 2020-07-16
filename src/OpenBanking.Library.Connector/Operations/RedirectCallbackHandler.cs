@@ -24,6 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     public class RedirectCallbackHandler
     {
         private readonly IApiClient _apiClient;
+        private readonly IDbEntityRepository<ApiProfile> _apiProfileRepo;
         private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
         private readonly IEntityMapper _mapper;
@@ -36,7 +37,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbEntityRepository<BankClientProfile> openBankingClientRepo,
             IDbEntityRepository<DomesticConsent> domesticConsentRepo,
             ISoftwareStatementProfileService softwareStatementProfileService,
-            IDbMultiEntityMethods dbMultiEntityMethods)
+            IDbMultiEntityMethods dbMultiEntityMethods,
+            IDbEntityRepository<ApiProfile> apiProfileRepo)
         {
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
             _mapper = mapper.ArgNotNull(nameof(mapper));
@@ -44,6 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _domesticConsentRepo = domesticConsentRepo.ArgNotNull(nameof(domesticConsentRepo));
             _softwareStatementProfileService = softwareStatementProfileService;
             _dbContextService = dbMultiEntityMethods;
+            _apiProfileRepo = apiProfileRepo;
         }
 
         public async Task CreateAsync(AuthorisationCallbackDataPublic redirectData)
@@ -53,21 +56,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Load relevant data objects
             DomesticConsent consent =
                 (await _domesticConsentRepo.GetAsync(dc => dc.State == redirectData.Response.State))
-                .FirstOrDefault();
-            if (consent == null)
-            {
-                throw new KeyNotFoundException(
+                .FirstOrDefault() ?? throw new KeyNotFoundException(
                     $"Consent with redirect state '{redirectData.Response.State}' not found.");
-            }
-
-            BankClientProfile clientProfile = await _openBankingClientRepo.GetAsync(consent.ApiProfileId);
-            if (clientProfile == null)
-            {
-                throw new KeyNotFoundException($"Client profile with ID '{consent.ApiProfileId}' not found.");
-            }
-
+            ApiProfile apiProfile = await _apiProfileRepo.GetAsync(consent.ApiProfileId) ??
+                                    throw new KeyNotFoundException("API profile cannot be found.");
+            BankClientProfile bankClientProfile =
+                await _openBankingClientRepo.GetAsync(apiProfile.BankClientProfileId) ??
+                throw new KeyNotFoundException("Bank client profile cannot be found.");
             SoftwareStatementProfile softwareStatementProfile =
-                _softwareStatementProfileService.GetSoftwareStatementProfile(clientProfile.SoftwareStatementProfileId);
+                _softwareStatementProfileService.GetSoftwareStatementProfile(
+                    bankClientProfile.SoftwareStatementProfileId);
 
             // Obtain token for consent
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
@@ -75,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await PostAuthCodeGrant(
                     authCode: redirectData.Response.Code,
                     redirectUrl: redirectUrl,
-                    client: clientProfile);
+                    client: bankClientProfile);
 
             // Update consent with token
             consent.TokenEndpointResponse = tokenEndpointResponse;

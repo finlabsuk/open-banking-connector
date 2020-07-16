@@ -7,12 +7,11 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-
     public class BankClientRegistrationClaims
     {
         [JsonProperty("iss")]
         public string Iss { get; set; }
- 
+
         [JsonProperty("iat")]
         public DateTimeOffset Iat { get; set; } = DateTimeOffset.UtcNow;
 

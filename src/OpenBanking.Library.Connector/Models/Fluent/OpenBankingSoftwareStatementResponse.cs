@@ -12,9 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         //internal
         public OpenBankingSoftwareStatementResponse(
             FluentResponseMessage message,
-            SoftwareStatementProfileResponse data) : this(messages: new[] { message }, data: data)
-        {
-        }
+            SoftwareStatementProfileResponse data) : this(messages: new[] { message }, data: data) { }
 
         //internal
         public OpenBankingSoftwareStatementResponse(

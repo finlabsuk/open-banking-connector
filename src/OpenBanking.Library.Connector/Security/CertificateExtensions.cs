@@ -11,13 +11,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
         public static bool IsPemThumbprint(this string thumbprint)
         {
             return thumbprint != null &&
-                   thumbprint.IndexOf("-----BEGIN CERTIFICATE-----", StringComparison.Ordinal) == 0;
+                   thumbprint.IndexOf(value: "-----BEGIN CERTIFICATE-----", comparisonType: StringComparison.Ordinal) ==
+                   0;
         }
 
 
         public static bool IsPemKey(this string value)
         {
-            return value != null && value.IndexOf("-----BEGIN PRIVATE KEY-----", StringComparison.Ordinal) == 0;
+            return value != null && value.IndexOf(
+                value: "-----BEGIN PRIVATE KEY-----",
+                comparisonType: StringComparison.Ordinal) == 0;
         }
     }
 }

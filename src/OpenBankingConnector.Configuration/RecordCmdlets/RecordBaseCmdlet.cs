@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.NetGenericHost;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

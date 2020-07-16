@@ -2,14 +2,14 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation
 {
     public class
         OBWriteDomesticDataInitiationCreditorAccountValidator : AbstractValidator<
-            OBWriteDomesticDataInitiationCreditorAccount>
+            OBWriteDomestic2DataInitiationCreditorAccount>
     {
         public OBWriteDomesticDataInitiationCreditorAccountValidator()
         {
@@ -25,17 +25,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
 
             RuleFor(x => x.Identification)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must((x, y, z) => ValidationRules.HasLengthAtMost(x, y, z, idLength))
+                .Must((x, y, z) => ValidationRules.HasLengthAtMost(arg1: x, arg2: y, arg3: z, maxLength: idLength))
                 .WithMessage($"Invalid value for Identification, length must be less than {idLength}.");
 
             RuleFor(x => x.Name)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must((x, y, z) => ValidationRules.HasLengthAtMost(x, y, z, nameLength))
+                .Must((x, y, z) => ValidationRules.HasLengthAtMost(arg1: x, arg2: y, arg3: z, maxLength: nameLength))
                 .WithMessage($"Invalid value for Name, length must be less than {nameLength}.");
 
             RuleFor(x => x.SecondaryIdentification)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must((x, y, z) => ValidationRules.HasLengthAtMost(x, y, z, secondaryIdLength))
+                .Must(
+                    (x, y, z) => ValidationRules.HasLengthAtMost(
+                        arg1: x,
+                        arg2: y,
+                        arg3: z,
+                        maxLength: secondaryIdLength))
                 .WithMessage(
                     $"Invalid value for SecondaryIdentification, length must be less than {secondaryIdLength}.");
         }

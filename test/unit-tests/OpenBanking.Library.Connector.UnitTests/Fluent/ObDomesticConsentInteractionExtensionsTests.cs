@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FluentAssertions;
 using Xunit;
 
@@ -25,8 +25,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
             var value = 1234.00;
             ctx.Amount(currency, value);
 
-            ctx.Data.Data.Initiation.InstructedAmount.Currency.Should().Be(currency);
-            ctx.Data.Data.Initiation.InstructedAmount.Amount.Should().Be(value.ToString());
+            ctx.Data.DomesticConsent.Data.Initiation.InstructedAmount.Currency.Should().Be(currency);
+            ctx.Data.DomesticConsent.Data.Initiation.InstructedAmount.Amount.Should().Be(value.ToString());
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
             var value = 1234.00;
             ctx.Amount(currency, value);
 
-            ctx.Data.Data.Initiation.InstructedAmount.Currency.Should().Be(currency);
-            ctx.Data.Data.Initiation.InstructedAmount.Amount.Should().Be(value.ToString());
+            ctx.Data.DomesticConsent.Data.Initiation.InstructedAmount.Currency.Should().Be(currency);
+            ctx.Data.DomesticConsent.Data.Initiation.InstructedAmount.Amount.Should().Be(value.ToString());
         }
 
         [Fact]
@@ -54,10 +54,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
                 Data = null
             };
 
-            var value = new OBRiskDeliveryAddress();
+            var value = new OBRisk1DeliveryAddress();
             ctx.DeliveryAddress(value);
 
-            ctx.Data.Risk.DeliveryAddress.Should().Be(value);
+            ctx.Data.DomesticConsent.Risk.DeliveryAddress.Should().Be(value);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
 
             ctx.InstructionIdentification(value);
 
-            ctx.Data.Data.Initiation.InstructionIdentification.Should().Be(value);
+            ctx.Data.DomesticConsent.Data.Initiation.InstructionIdentification.Should().Be(value);
         }
     }
 }

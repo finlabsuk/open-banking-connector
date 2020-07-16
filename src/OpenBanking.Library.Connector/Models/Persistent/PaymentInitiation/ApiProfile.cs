@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
@@ -11,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public ApiProfile(
             string id,
             string bankClientProfileId,
-            Public.PaymentInitiation.ApiVersion apiVersion,
+            ApiVersion apiVersion,
             string baseUrl)
         {
             Id = id;
@@ -22,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public string BankClientProfileId { get; }
 
-        public Public.PaymentInitiation.ApiVersion ApiVersion { get; }
+        public ApiVersion ApiVersion { get; }
 
         public string BaseUrl { get; }
 

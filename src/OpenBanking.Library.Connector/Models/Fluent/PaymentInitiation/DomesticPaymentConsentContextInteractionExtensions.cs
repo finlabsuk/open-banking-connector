@@ -6,46 +6,50 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
     public static class DomesticPaymentConsentContextInteractionExtensions
     {
-        private static readonly Lens<DomesticPaymentConsentContext, OBWriteDomesticConsent> ConsentLens =
-            Lens.Create((DomesticPaymentConsentContext c) => c.Data, (c, d) => c.Data = d);
+        private static readonly Lens<DomesticPaymentConsentContext, DomesticPaymentConsent> BaseLens =
+            Lens.Create(get: (DomesticPaymentConsentContext c) => c.Data, set: (c, d) => c.Data = d);
 
-        private static readonly Lens<OBWriteDomesticConsent, OBWriteDomesticConsentData> ConsentDataLens =
-            Lens.Create((OBWriteDomesticConsent c) => c.Data, (c, d) => c.Data = d);
+        private static readonly Lens<DomesticPaymentConsent, OBWriteDomesticConsent4> DomesticConsentLens =
+            Lens.Create(get: (DomesticPaymentConsent c) => c.DomesticConsent, set: (c, d) => c.DomesticConsent = d);
 
-        private static readonly Lens<OBWriteDomesticConsent, OBRisk> RiskLens =
-            Lens.Create((OBWriteDomesticConsent c) => c.Risk, (c, d) => c.Risk = d);
+        private static readonly Lens<OBWriteDomesticConsent4, OBWriteDomesticConsent4Data> DataLens =
+            Lens.Create(get: (OBWriteDomesticConsent4 c) => c.Data, set: (c, d) => c.Data = d);
 
-        private static readonly Lens<OBWriteDomesticConsentData, OBWriteDomesticDataInitiation> InitiationLens =
-            Lens.Create((OBWriteDomesticConsentData d) => d.Initiation, (c, d) => c.Initiation = d);
+        private static readonly Lens<OBWriteDomesticConsent4, OBRisk1> RiskLens =
+            Lens.Create(get: (OBWriteDomesticConsent4 c) => c.Risk, set: (c, d) => c.Risk = d);
 
-        private static readonly Lens<OBWriteDomesticDataInitiation, OBWriteDomesticDataInitiationRemittanceInformation>
-            RemittanceLens = Lens.Create((OBWriteDomesticDataInitiation d) => d.RemittanceInformation,
-                (c, d) => c.RemittanceInformation = d);
+        private static readonly Lens<OBWriteDomesticConsent4Data, OBWriteDomestic2DataInitiation> InitiationLens =
+            Lens.Create(get: (OBWriteDomesticConsent4Data d) => d.Initiation, set: (c, d) => c.Initiation = d);
 
-        private static readonly Lens<OBWriteDomesticDataInitiation, OBWriteDomesticDataInitiationCreditorAccount>
-            CreditorAccountLens = Lens.Create((OBWriteDomesticDataInitiation d) => d.CreditorAccount,
-                (c, d) => c.CreditorAccount = d);
+        private static readonly Lens<OBWriteDomestic2DataInitiation, OBWriteDomestic2DataInitiationCreditorAccount>
+            CreditorAccountLens = Lens.Create(
+                get: (OBWriteDomestic2DataInitiation d) => d.CreditorAccount,
+                set: (c, d) => c.CreditorAccount = d);
 
-        private static readonly Lens<OBWriteDomesticDataInitiation, OBWriteDomesticDataInitiationDebtorAccount>
-            DebtorAccountLens = Lens.Create((OBWriteDomesticDataInitiation d) => d.DebtorAccount,
-                (c, d) => c.DebtorAccount = d);
+        private static readonly Lens<OBWriteDomestic2DataInitiation, OBWriteDomestic2DataInitiationDebtorAccount>
+            DebtorAccountLens = Lens.Create(
+                get: (OBWriteDomestic2DataInitiation d) => d.DebtorAccount,
+                set: (c, d) => c.DebtorAccount = d);
 
-        private static readonly Lens<OBWriteDomesticDataInitiation, OBWriteDomesticDataInitiationInstructedAmount>
-            InstructedAmountLens = Lens.Create((OBWriteDomesticDataInitiation d) => d.InstructedAmount,
-                (c, d) => c.InstructedAmount = d);
+        private static readonly Lens<OBWriteDomestic2DataInitiation, OBWriteDomestic2DataInitiationInstructedAmount>
+            InstructedAmountLens = Lens.Create(
+                get: (OBWriteDomestic2DataInitiation d) => d.InstructedAmount,
+                set: (c, d) => c.InstructedAmount = d);
 
-        public static DomesticPaymentConsentContext Data(this DomesticPaymentConsentContext context,
-            OBWriteDomesticConsent value)
+        public static DomesticPaymentConsentContext Data(
+            this DomesticPaymentConsentContext context,
+            DomesticPaymentConsent value)
         {
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
@@ -55,38 +59,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static DomesticPaymentConsentContext ClientProfileId(this DomesticPaymentConsentContext context,
+        public static DomesticPaymentConsentContext ApiProfileId(
+            this DomesticPaymentConsentContext context,
             string value)
         {
             context.ArgNotNull(nameof(context));
             value.ArgNotNull(nameof(value));
 
-            context.ApiProfileId = value;
-
-            return context;
-        }
-
-
-        public static DomesticPaymentConsentContext OpenBankingClientProfileId(
-            this DomesticPaymentConsentContext context, string value)
-        {
-            context.ArgNotNull(nameof(context));
-            value.ArgNotNull(nameof(value));
-
-            context.ApiProfileId = value;
+            context.GetOrCreateDefault(BaseLens)
+                .ApiProfileId = value;
 
             return context;
         }
 
         // HACK: need better abstractions
-        public static DomesticPaymentConsentContext DeliveryAddress(this DomesticPaymentConsentContext context,
-            OBRiskDeliveryAddress value)
+        public static DomesticPaymentConsentContext DeliveryAddress(
+            this DomesticPaymentConsentContext context,
+            OBRisk1DeliveryAddress value)
         {
             context.ArgNotNull(nameof(context));
 
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
                     .GetOrCreateDefault(RiskLens).DeliveryAddress = value;
             }
 
@@ -94,14 +90,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         }
 
 
-        public static DomesticPaymentConsentContext Merchant(this DomesticPaymentConsentContext context,
-            string merchantCategory, string merchantCustomerId, PaymentContextCode? paymentContextCode)
+        public static DomesticPaymentConsentContext Merchant(
+            this DomesticPaymentConsentContext context,
+            string merchantCategory,
+            string merchantCustomerId,
+            OBRisk1.PaymentContextCodeEnum? paymentContextCode)
         {
             context.ArgNotNull(nameof(context));
 
-            if (merchantCategory != null || merchantCustomerId != null || paymentContextCode.HasValue)
+            if (merchantCategory != null || merchantCustomerId != null || paymentContextCode != null)
             {
-                OBRisk risk = context.GetOrCreateDefault(ConsentLens)
+                OBRisk1 risk = context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
                     .GetOrCreateDefault(RiskLens);
 
                 risk.MerchantCategoryCode = merchantCategory;
@@ -114,14 +114,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
 
         public static DomesticPaymentConsentContext InstructionIdentification(
-            this DomesticPaymentConsentContext context, string value)
+            this DomesticPaymentConsentContext context,
+            string value)
         {
             context.ArgNotNull(nameof(context));
 
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).InstructionIdentification = value;
             }
 
@@ -129,73 +131,68 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
         }
 
 
-        public static DomesticPaymentConsentContext EndToEndIdentification(this DomesticPaymentConsentContext context,
+        public static DomesticPaymentConsentContext EndToEndIdentification(
+            this DomesticPaymentConsentContext context,
             string value)
         {
             context.ArgNotNull(nameof(context));
 
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).EndToEndIdentification = value;
             }
 
             return context;
         }
 
-        public static DomesticPaymentConsentContext Remittance(this DomesticPaymentConsentContext context,
-            OBWriteDomesticDataInitiationRemittanceInformation value)
+        public static DomesticPaymentConsentContext Remittance(
+            this DomesticPaymentConsentContext context,
+            OBWriteDomestic2DataInitiationRemittanceInformation value)
         {
             context.ArgNotNull(nameof(context));
 
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).RemittanceInformation = value;
             }
 
             return context;
         }
 
-        public static DomesticPaymentConsentContext Remittance(this DomesticPaymentConsentContext context,
-            string unstructured, string reference)
-        {
-            context.ArgNotNull(nameof(context));
-
-            OBWriteDomesticDataInitiationRemittanceInformation remittance = context.GetOrCreateDefault(ConsentLens)
-                .GetOrCreateDefault(ConsentDataLens)
-                .GetOrCreateDefault(InitiationLens)
-                .GetOrCreateDefault(RemittanceLens);
-
-            remittance.Unstructured = unstructured;
-            remittance.Reference = reference;
-
-            return context;
-        }
-
-        public static DomesticPaymentConsentContext CreditorAccount(this DomesticPaymentConsentContext context,
-            OBWriteDomesticDataInitiationCreditorAccount value)
+        public static DomesticPaymentConsentContext CreditorAccount(
+            this DomesticPaymentConsentContext context,
+            OBWriteDomestic2DataInitiationCreditorAccount value)
         {
             context.ArgNotNull(nameof(context));
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).CreditorAccount = value;
             }
 
             return context;
         }
 
-        public static DomesticPaymentConsentContext CreditorAccount(this DomesticPaymentConsentContext context,
-            string identification, string schema, string name, string secondaryId)
+        public static DomesticPaymentConsentContext CreditorAccount(
+            this DomesticPaymentConsentContext context,
+            string identification,
+            string schema,
+            string name,
+            string secondaryId)
         {
             context.ArgNotNull(nameof(context));
 
-            OBWriteDomesticDataInitiationCreditorAccount acct = context.GetOrCreateDefault(ConsentLens)
-                .GetOrCreateDefault(ConsentDataLens)
+            OBWriteDomestic2DataInitiationCreditorAccount acct = context.GetOrCreateDefault(BaseLens)
+                .GetOrCreateDefault(DomesticConsentLens)
+                .GetOrCreateDefault(DataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(CreditorAccountLens);
 
@@ -208,28 +205,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static DomesticPaymentConsentContext DebtorAccount(this DomesticPaymentConsentContext context,
-            OBWriteDomesticDataInitiationDebtorAccount value)
+        public static DomesticPaymentConsentContext DebtorAccount(
+            this DomesticPaymentConsentContext context,
+            OBWriteDomestic2DataInitiationDebtorAccount value)
         {
             context.ArgNotNull(nameof(context));
 
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).DebtorAccount = value;
             }
 
             return context;
         }
 
-        public static DomesticPaymentConsentContext DebtorAccount(this DomesticPaymentConsentContext context,
-            string identification, string schema, string name, string secondaryId)
+        public static DomesticPaymentConsentContext DebtorAccount(
+            this DomesticPaymentConsentContext context,
+            string identification,
+            string schema,
+            string name,
+            string secondaryId)
         {
             context.ArgNotNull(nameof(context));
 
-            OBWriteDomesticDataInitiationDebtorAccount acct = context.GetOrCreateDefault(ConsentLens)
-                .GetOrCreateDefault(ConsentDataLens)
+            OBWriteDomestic2DataInitiationDebtorAccount acct = context.GetOrCreateDefault(BaseLens)
+                .GetOrCreateDefault(DomesticConsentLens)
+                .GetOrCreateDefault(DataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(DebtorAccountLens);
 
@@ -241,27 +245,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static DomesticPaymentConsentContext Amount(this DomesticPaymentConsentContext context,
-            OBWriteDomesticDataInitiationInstructedAmount value)
+        public static DomesticPaymentConsentContext Amount(
+            this DomesticPaymentConsentContext context,
+            OBWriteDomestic2DataInitiationInstructedAmount value)
         {
             context.ArgNotNull(nameof(context));
             if (value != null)
             {
-                context.GetOrCreateDefault(ConsentLens)
-                    .GetOrCreateDefault(ConsentDataLens)
+                context.GetOrCreateDefault(BaseLens)
+                    .GetOrCreateDefault(DomesticConsentLens)
+                    .GetOrCreateDefault(DataLens)
                     .GetOrCreateDefault(InitiationLens).InstructedAmount = value;
             }
 
             return context;
         }
 
-        public static DomesticPaymentConsentContext Amount(this DomesticPaymentConsentContext context, string currency,
+        public static DomesticPaymentConsentContext Amount(
+            this DomesticPaymentConsentContext context,
+            string currency,
             double value)
         {
             context.ArgNotNull(nameof(context));
 
-            OBWriteDomesticDataInitiationInstructedAmount amt = context.GetOrCreateDefault(ConsentLens)
-                .GetOrCreateDefault(ConsentDataLens)
+            OBWriteDomestic2DataInitiationInstructedAmount amt = context.GetOrCreateDefault(BaseLens)
+                .GetOrCreateDefault(DomesticConsentLens)
+                .GetOrCreateDefault(DataLens)
                 .GetOrCreateDefault(InitiationLens)
                 .GetOrCreateDefault(InstructedAmountLens);
 
@@ -271,14 +280,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static async Task<DomesticPaymentConsentFluentResponse> SubmitAsync(this DomesticPaymentConsentContext context)
+        public static async Task<DomesticPaymentConsentFluentResponse> SubmitAsync(
+            this DomesticPaymentConsentContext context)
         {
             context.ArgNotNull(nameof(context));
-
-            if (context.Data.ApiProfileId == null)
-            {
-                context.Data.ApiProfileId = context.ApiProfileId;
-            }
 
             IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
@@ -289,14 +294,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             try
             {
                 CreateDomesticPaymentConsent createDomesticConsent = new CreateDomesticPaymentConsent(
-                    context.Context.ApiClient,
-                    context.Context.EntityMapper,
-                    context.Context.DbContextService,
-                    context.Context.ClientProfileRepository,
-                    context.Context.ApiProfileRepository,
-                    context.Context.DomesticConsentRepository,
-                    context.Context.SoftwareStatementProfileService
-                );
+                    apiClient: context.Context.ApiClient,
+                    mapper: context.Context.EntityMapper,
+                    dbMultiEntityMethods: context.Context.DbContextService,
+                    bankClientProfileRepo: context.Context.ClientProfileRepository,
+                    apiProfileRepo: context.Context.ApiProfileRepository,
+                    domesticConsentRepo: context.Context.DomesticConsentRepository,
+                    softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
                 PaymentConsentResponse result = await createDomesticConsent.CreateAsync(context.Data);
 
@@ -308,11 +312,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
 
                 return new DomesticPaymentConsentFluentResponse(ex.CreateErrorMessage());
             }
-        }
-
-        private static async Task<BankClientProfile> GetClientProfile(DomesticPaymentConsentContext context)
-        {
-            return await context.Context.ClientProfileRepository.GetAsync(context.ApiProfileId);
         }
 
         private static IList<FluentResponseMessage> Validate(DomesticPaymentConsentContext context)

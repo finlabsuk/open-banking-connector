@@ -2,12 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation
 {
-    public class PaymentRequestValidator : AbstractValidator<DomesticPaymentRequest>
+    public class PaymentRequestValidator : AbstractValidator<DomesticPayment>
     {
         public PaymentRequestValidator()
         {
@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
         {
             RuleFor(x => x.ConsentId)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Missing or invalid {nameof(DomesticPaymentRequest.ConsentId)}.");
+                .WithMessage($"Missing or invalid {nameof(DomesticPayment.ConsentId)}.");
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

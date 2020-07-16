@@ -1,9 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Finnovation Labs Limited licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     /// <summary>
-    /// Non entity- (type-) specific DB methods 
+    ///     Non entity- (type-) specific DB methods
     /// </summary>
     public class DbMultiEntityMethods : IDbMultiEntityMethods
     {
@@ -18,6 +22,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             await _db.SaveChangesAsync();
         }
-
     }
 }

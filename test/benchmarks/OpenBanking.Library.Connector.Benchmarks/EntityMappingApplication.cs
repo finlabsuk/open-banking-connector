@@ -11,11 +11,8 @@ using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using McMaster.Extensions.CommandLineUtils;
-using OBAddressTypeCode =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.OBAddressTypeCode;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
@@ -37,10 +34,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     public class EntityMappingApplication
     {
         private BankClientProfile _client;
-        private OBWriteDomesticDataInitiation _dataInitiation;
-        private OBWriteDomesticConsent _domesticConsent;
+        private OBWriteDomestic2DataInitiation _dataInitiation;
+        private OBWriteDomesticConsent4 _domesticConsent;
         private EntityMapper _entityMapper;
-        private OBRisk _risk;
+        private OBRisk1 _risk;
         private SoftwareStatementProfile _softwareStatement;
 
 
@@ -74,26 +71,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapDomesticConsent()
         {
-            _entityMapper.Map<OBWriteDomesticConsent2>(_domesticConsent);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomesticConsent2>(_domesticConsent);
         }
 
         [Benchmark]
         public void MapRisk()
         {
-            _entityMapper.Map<OBRisk1>(_risk);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBRisk1>(_risk);
         }
 
         [Benchmark]
         public void MapDataInitiation()
         {
-            _entityMapper.Map<OBDomestic2>(_dataInitiation);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBDomestic2>(_dataInitiation);
         }
 
         private void OnExecute() => BenchmarkRunner.Run<EntityMappingApplication>();
 
-        private OBRisk CreateRisk() => new OBRisk
+        private OBRisk1 CreateRisk() => new OBRisk1
         {
-            DeliveryAddress = new OBRiskDeliveryAddress
+            DeliveryAddress = new OBRisk1DeliveryAddress()
             {
                 TownName = "Accrington Stanley",
                 Country = "UK",
@@ -104,20 +101,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 StreetName = "street name"
             },
             MerchantCategoryCode = "a",
-            PaymentContextCode = PaymentContextCode.BillPayment,
+            PaymentContextCode = OBRisk1.PaymentContextCodeEnum.BillPayment,
             MerchantCustomerIdentification = "merchant Customer Identification"
         };
 
-        private OBWriteDomesticDataInitiation CreateDataInitiation() => new OBWriteDomesticDataInitiation
+        private OBWriteDomestic2DataInitiation CreateDataInitiation() => new OBWriteDomestic2DataInitiation
         {
-            CreditorAccount = new OBWriteDomesticDataInitiationCreditorAccount
+            CreditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount
             {
                 Identification = "id",
                 Name = "test",
                 SchemeName = "schema",
                 SecondaryIdentification = "secondary id"
             },
-            CreditorPostalAddress = new OBPostalAddress
+            CreditorPostalAddress = new OBPostalAddress6
             {
                 AddressLine = new List<string> { "1 high street", "blexley" },
                 AddressType = OBAddressTypeCode.POBox,
@@ -130,7 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 SubDepartment = "SubDepartment",
                 TownName = "Blexley"
             },
-            DebtorAccount = new OBWriteDomesticDataInitiationDebtorAccount
+            DebtorAccount = new OBWriteDomestic2DataInitiationDebtorAccount
             {
                 Identification = "abc",
                 Name = "debtor name",
@@ -138,37 +135,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 SecondaryIdentification = "debtor secondary id"
             },
             EndToEndIdentification = "EndToEndIdentification",
-            InstructedAmount = new OBWriteDomesticDataInitiationInstructedAmount
+            InstructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount
             {
                 Amount = 1234.56.ToString(),
                 Currency = "GBP"
             },
             InstructionIdentification = "instruction identification",
             LocalInstrument = "local instrument",
-            RemittanceInformation = new OBWriteDomesticDataInitiationRemittanceInformation
+            RemittanceInformation = new OBWriteDomestic2DataInitiationRemittanceInformation
             {
                 Reference = "reference",
                 Unstructured = "unstructured"
             },
-            SupplementaryData = new object()
+            SupplementaryData = new Dictionary<string, object>()
         };
 
 
-        private OBWriteDomesticConsent CreateDomesticConsent() => new OBWriteDomesticConsent
+        private OBWriteDomesticConsent4 CreateDomesticConsent() => new OBWriteDomesticConsent4
         {
-            Data = new OBWriteDomesticConsentData
+            Data = new OBWriteDomesticConsent4Data
             {
                 Initiation = CreateDataInitiation(),
-                Authorisation = new OBWriteDomesticConsentDataAuthorisation
+                Authorisation = new OBWriteDomesticConsent4DataAuthorisation
                 {
-                    AuthorisationType = AuthorisationType.Single,
+                    AuthorisationType = OBWriteDomesticConsent4DataAuthorisation.AuthorisationTypeEnum.Single,
                     CompletionDateTime = DateTime.UtcNow
                 },
-                SCASupportData = new OBWriteDomesticConsentDataSCASupportData
+                SCASupportData = new OBWriteDomesticConsent4DataSCASupportData
                 {
-                    AppliedAuthenticationApproach = AppliedAuthenticationApproach.SCA,
+                    AppliedAuthenticationApproach = OBWriteDomesticConsent4DataSCASupportData.AppliedAuthenticationApproachEnum.SCA,
                     ReferencePaymentOrderId = "reference Payment Order Id",
-                    RequestedSCAExemptionType = RequestedSCAExemptionType.PartyToParty
+                    RequestedSCAExemptionType = OBWriteDomesticConsent4DataSCASupportData.RequestedSCAExemptionTypeEnum.PartyToParty
                 }
             },
             Risk = CreateRisk()

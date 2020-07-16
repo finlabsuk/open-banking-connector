@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
 
         private void CreateRules()
         {
-            RuleFor(x => x.ApiProfileId)
+            RuleFor(x => x.Data.ApiProfileId)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Invalid {nameof(DomesticPaymentConsentContext.ApiProfileId)}.");
+                .WithMessage($"Invalid {nameof(DomesticPaymentConsentContext.Data.ApiProfileId)}.");
 
             RuleFor(x => x.Data)
                 .SetValidator(new OBWriteDomesticConsentValidator())

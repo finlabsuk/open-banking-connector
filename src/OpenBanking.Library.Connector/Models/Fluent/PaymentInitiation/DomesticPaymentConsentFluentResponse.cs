@@ -3,19 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
 {
     public class DomesticPaymentConsentFluentResponse : FluentResponse
     {
-        public DomesticPaymentConsentFluentResponse(FluentResponseMessage message) : this(new[] { message })
-        {
-        }
+        public DomesticPaymentConsentFluentResponse(FluentResponseMessage message) : this(new[] { message }) { }
 
-        public DomesticPaymentConsentFluentResponse(IList<FluentResponseMessage> messages) : base(messages)
-        {
-        }
+        public DomesticPaymentConsentFluentResponse(IList<FluentResponseMessage> messages) : base(messages) { }
 
         public DomesticPaymentConsentFluentResponse(PaymentConsentResponse data)
         {

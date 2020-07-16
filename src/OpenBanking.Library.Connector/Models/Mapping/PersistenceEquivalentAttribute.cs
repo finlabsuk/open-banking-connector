@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class PersistenceEquivalentAttribute : OpenBankingEquivalentAttribute
+    public class PersistenceEquivalentAttribute : TargetApiEquivalentAttribute
     {
         public PersistenceEquivalentAttribute(Type equivalentType) : base(equivalentType)
         {
