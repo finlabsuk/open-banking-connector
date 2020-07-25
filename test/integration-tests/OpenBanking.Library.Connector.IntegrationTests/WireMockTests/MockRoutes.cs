@@ -7,6 +7,7 @@
         public static string Register = "/register";
         public static string Token = "/token";
         public static string Authorize = "/authorize";
-        public static string DomesticPayments = "/domestic-payment-consents";
+        public static string DomesticPaymentConsents = "/domestic-payment-consents";
+        public static string DomesticPayments = "/domestic-payments";
     }
 }

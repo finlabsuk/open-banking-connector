@@ -24,6 +24,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         string GetOpenIdConfigJson();
         string GetOpenIdTokenEndpointResponseJson();
         string GetPaymentConsentId();
+        string GetOBWriteDomesticResponse2();
+        string GetAuthtoriseResponse();
         string[] GetRedirectUris();
     }
 }

@@ -41,7 +41,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _server
                 .Given(Request.Create()
                     .WithPath(MockRoutes.Register)
-                    .WithBody(b => b.Contains("e"))
                     .UsingPost())
                 .RespondWith(Response.Create()
                     .WithStatusCode(201)
@@ -69,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         {
             _server
                 .Given(Request.Create()
-                    .WithPath(MockRoutes.DomesticPayments)
+                    .WithPath(MockRoutes.DomesticPaymentConsents)
                     .WithHeader("x-fapi-financial-id", "*")
                     .WithHeader("Authorization", "*")
                     .WithHeader("x-idempotency-key", "*")
@@ -80,6 +79,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
                     .WithBody(_mockData.GetOBWriteDomesticConsentResponse2())
+                );
+        }
+
+        public void SetUpAuthEndpoint()
+        {
+            _server
+                .Given(Request.Create()
+                    .WithPath(MockRoutes.Token)
+                    .WithHeader("response_type", "*")
+                    .WithHeader("client_id", "*")
+                    .WithHeader("redirect_uri", "*")
+                    .WithHeader("scope", "*")
+                    .WithHeader("request", "*")
+                    .UsingPost())
+                .RespondWith(Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody(_mockData.GetAuthtoriseResponse())
+                );
+        }
+
+        public void SetUpOBDomesticResponseEndpoint()
+        {
+            _server
+                .Given(Request.Create()
+                    .WithPath(MockRoutes.DomesticPayments)
+                    .WithHeader("x-fapi-financial-id", "*")
+                    .WithHeader("Authorization", "*")
+                    .WithHeader("x-idempotency-key", "*")
+                    .WithHeader("x-jws-signature", "*")
+                    .UsingPost())
+                .RespondWith(Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody(_mockData.GetOBWriteDomesticResponse2())
                 );
         }
     }

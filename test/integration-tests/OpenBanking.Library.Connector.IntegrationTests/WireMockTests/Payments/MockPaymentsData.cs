@@ -150,6 +150,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             return JsonConvert.SerializeObject(model);
         }
 
+        public string GetAuthtoriseResponse()
+        {
+            var model = new AuthorisationCallbackPayload("code123", "1ab89221-ca25-4055-9f96-7064fe953c52")
+            {
+                Nonce = "a71276e3-d7fe-4f0d-9ce5-10a7ac2f3dca"
+            };
+
+            return JsonConvert.SerializeObject(model); 
+        }
+
         public string GetMockPrivateKey()
         {
             string fakePrivateKey = @"-----BEGIN PRIVATE KEY-----
@@ -344,6 +354,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 risk: risk,
                 links: links,
                 meta: meta);
+
+            return JsonConvert.SerializeObject(model);
+        }
+
+        public string GetOBWriteDomesticResponse2()
+        {
+            var consentId = Guid.NewGuid().ToString();
+
+            var instructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount("50", "GBP");
+            var creditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount("IBAN", "BE56456394728288", "ACME DIY", "secondary-identif");
+            var domestic2 = new OBWriteDomestic2DataInitiation("instr-identification", "e2e-identification", null, instructedAmount, null, creditorAccount);
+            var dataDomesticReponse2 = new OBWriteDomesticResponse4Data("PaymentId", consentId, DateTime.Now, OBWriteDomesticResponse4Data.StatusEnum.Pending, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, null, null, domestic2);
+            var links = new Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}");
+            var meta = new Meta(1);
+
+            var model = new OBWriteDomesticResponse4(dataDomesticReponse2, links, meta);
 
             return JsonConvert.SerializeObject(model);
         }

@@ -8,7 +8,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
     {
         void SetUpOpenIdMock();
         void SetupPaymentEndpointMock();
+        void SetUpOBDomesticResponseEndpoint(); 
         void SetupRegistrationMock();
         void SetupTokenEndpointMock();
+        void SetUpAuthEndpoint();
     }
 }
