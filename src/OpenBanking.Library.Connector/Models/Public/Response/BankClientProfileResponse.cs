@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
@@ -12,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         public BankClientProfileResponse(BankClientProfile persistentProfile)
         {
             Id = persistentProfile.Id;
-            BankClientRegistrationClaims = persistentProfile.BankClientRegistrationClaims;
+            BankClientRegistrationClaims = persistentProfile.BankClientRegistrationRequestData;
         }
 
         /// ID used to uniquely identify object
@@ -20,6 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         public string Id { get; set; }
 
         [JsonProperty("bankClientRegistrationClaims")]
-        public BankClientRegistrationClaims BankClientRegistrationClaims { get; set; }
+        public OBClientRegistration1 BankClientRegistrationClaims { get; set; }
     }
 }

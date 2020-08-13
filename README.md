@@ -1,29 +1,19 @@
-# FinnovationLabs.OpenBanking.Library.Connector
+# Open Banking Connector
 
-A port of Swift [OpenBankingConnector](https://github.com/finlabsuk/open-banking-connector-swift).
+Open Banking Connector (OBC) is open-source software that manages your connections to UK Open Banking APIs.
 
-This is a work in progress.
+OBC can be used as a connection layer (library) by backend software to connect to UK banks or standalone as a system for testing "liveness" of bank APIs. We plan to develop it so it can function as the main component of a mobile app backend.
 
-Finnovation Labs wishes to thank NewDay Cards for the support given to this project.
+Specifically the software:
+* Handles creation and management of bank clients
+* Manages user tokens associated with consents
+* Supports API mapping for banks using older Open Banking API versions
+* Supports overrides and specialised behaviour for compatibility with banks
 
-## Local Build
+The main purpose of OBC is to save you the time and expense of building your own Open Banking connectivity stack.
 
-Run the Powershell script ``.\build.ps1`` to build and run tests.
+For more information please contact Finnovation Labs. We would love to hear from you!
 
-To build a release configuration, run ``.\build.ps1 Release``.
+Developer documentation is [here](docs/README.md).
 
-## Resources
-
-* TeamCity - TBD
-* SonarQube - TBD
-* Veracode - TBD
-* Octopus - N/A
-
-
-## Documentation
-
-Detailed library documentation can be found [here](docs/README.md).
-
-### Project maintenance
-
-Certain parts of this project are sourced from OpenBanking's OpenAPI documentation (otherwise known as Swagger). [Code Generation instructions can be found here](CodeGen.md).
+Finnovation Labs wishes to thank NewDay Cards for support given to this project.

@@ -4,12 +4,12 @@
 
 using System;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class TargetApiEquivalentAttribute : Attribute
+    public class SourceApiEquivalentAttribute : Attribute
     {
-        public TargetApiEquivalentAttribute(Type equivalentType)
+        public SourceApiEquivalentAttribute(Type equivalentType)
         {
             EquivalentType = equivalentType;
         }

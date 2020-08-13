@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

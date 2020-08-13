@@ -4,6 +4,7 @@
 
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
@@ -12,13 +13,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         public static Task<T> RequestJsonAsync<T>(
             this HttpRequestMessage request,
             IApiClient client,
-            bool requestContentIsJson)
+            bool requestContentIsJson,
+            JsonSerializerSettings jsonSerializerSettings = null)
             where T : class
         {
             request.ArgNotNull(nameof(request));
             client.ArgNotNull(nameof(client));
 
-            return client.RequestJsonAsync<T>(request: request, requestContentIsJson: requestContentIsJson);
+            return client.RequestJsonAsync<T>(
+                request: request,
+                requestContentIsJson: requestContentIsJson,
+                jsonSerializerSettings: jsonSerializerSettings);
         }
     }
 }

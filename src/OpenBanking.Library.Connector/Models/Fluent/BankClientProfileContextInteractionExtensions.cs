@@ -113,10 +113,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         public static BankClientProfileContext RegistrationResponseOverrides(
             this BankClientProfileContext context,
-            BankClientRegistrationDataOverrides value)
+            RegistrationResponseJsonOptions value)
         {
             context.ArgNotNull(nameof(context))
-                .GetOrCreateDefault(DataLens).BankClientRegistrationDataOverrides = value;
+                .GetOrCreateDefault(DataLens).RegistrationResponseJsonOptions = value;
 
             return context;
         }

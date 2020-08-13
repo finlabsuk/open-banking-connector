@@ -3,20 +3,51 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
     public class OAuth2RequestObjectClaims
     {
-        [JsonProperty("iss")]
+        /// <summary>
+        /// Gets or sets unique identifier for the TPP. Implemented as Base62
+        /// encoded GUID
+        /// </summary>
+        [JsonProperty(PropertyName = "iss")]
         public string Iss { get; set; }
 
-        [JsonProperty("aud")]
+        /// <summary>
+        /// Gets or sets the time at which the request was issued by the TPP
+        /// expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
+        /// </summary>
+        [JsonProperty(PropertyName = "iat")]
+        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        public DateTimeOffset Iat { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the time at which the request expires expressed as
+        /// seconds since 1970-01-01T00:00:00Z as measured in UTC
+        /// </summary>
+        [JsonProperty(PropertyName = "exp")]
+        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        public DateTimeOffset Exp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the audience for the request. This should be the
+        /// unique identifier
+        /// for the ASPSP issued by the issuer of the software statement.
+        /// Implemented as Base62 encoded GUID
+        ///
+        /// </summary>
+        [JsonProperty(PropertyName = "aud")]
         public string Aud { get; set; }
 
-        [JsonProperty("jti")]
-        public string Jti { get; set; } = Guid.NewGuid().ToString();
+        /// <summary>
+        /// Gets or sets unique identifier for the JWT implemented as UUID v4
+        /// </summary>
+        [JsonProperty(PropertyName = "jti")]
+        public string Jti { get; set; }
 
         [JsonProperty("response_type")]
         public string ResponseType { get; set; }

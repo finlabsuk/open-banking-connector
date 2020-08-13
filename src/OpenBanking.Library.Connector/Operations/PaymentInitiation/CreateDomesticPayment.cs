@@ -127,6 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 softwareStatement: softwareStatementProfile,
                 payment: payment,
                 client: bankClientProfile,
+                apiProfile,
                 tokenEndpointResponse: tokenEndpointResponse);
 
             return await new HttpRequestBuilder()
@@ -143,6 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             SoftwareStatementProfile softwareStatement,
             ApiRequestType payment,
             BankClientProfile client,
+            ApiProfile apiProfile,
             TokenEndpointResponse tokenEndpointResponse)
             where ApiRequestType : class
         {
@@ -150,7 +152,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string jwt = jwtFactory.CreateJwt(
                 profile: softwareStatement,
                 claims: payment,
-                useOpenBankingJwtHeaders: true);
+                useOpenBankingJwtHeaders: true,
+                paymentInitiationApiVersion: apiProfile.ApiVersion);
             string[] jwsComponents = jwt.Split('.');
             string jwsSig = $"{jwsComponents[0]}..{jwsComponents[2]}";
             List<HttpHeader> headers = new List<HttpHeader>

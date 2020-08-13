@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         [JsonProperty("bankClientRegistrationClaimsOverrides")]
         public BankClientRegistrationClaimsOverrides BankClientRegistrationClaimsOverrides { get; set; }
 
-        [JsonProperty("registrationResponseOverrides")]
-        public BankClientRegistrationDataOverrides BankClientRegistrationDataOverrides { get; set; }
+        [JsonProperty("registrationResponseOptions")]
+        public RegistrationResponseJsonOptions RegistrationResponseJsonOptions { get; set; }
     }
 }

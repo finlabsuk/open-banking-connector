@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 {
                     RegistrationEndpointUrl = "http://bbb.com"
                 })
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
 
             result.Messages.Should().HaveCount(0);
@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 })
                 .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
 
             result1.Messages.Should().HaveCount(0);
@@ -92,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 })
                 .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
             result2.Messages.Should().HaveCount(0);
 

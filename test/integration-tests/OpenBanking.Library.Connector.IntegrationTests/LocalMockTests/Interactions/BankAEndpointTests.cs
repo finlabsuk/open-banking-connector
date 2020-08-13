@@ -6,7 +6,9 @@ using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FluentAssertions;
 using TestStack.BDDfy.Xunit;
@@ -55,6 +57,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .IssuerUrl(new Uri(TestConfig.GetValue("clientProfileIssuerUrl")))
                 .XFapiFinancialId(TestConfig.GetValue("xFapiFinancialId"))
                 .BankClientRegistrationClaimsOverrides(TestConfig.GetOpenBankingClientRegistrationClaimsOverrides())
+                .RegistrationResponseOverrides(
+                    new RegistrationResponseJsonOptions
+                    {
+                        DelimitedStringConverterOptions = DelimitedStringConverterOptions.JsonStringArrayNotString
+                    })
                 .SubmitAsync();
 
             // These are test assertions to ensure the bank says "request successfully processed". "Messages" enumerates all warnings & errors, and so is empty for this scenario.
@@ -92,7 +99,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                     schema: "IBAN",
                     name: "ACME DIY",
                     secondaryId: "secondary-identif")
-                .DeliveryAddress(new OBRisk1DeliveryAddress
+                .DeliveryAddress(
+                    new OBRisk1DeliveryAddress
                     {
                         BuildingNumber = "42",
                         StreetName = "Oxford Street",
@@ -103,7 +111,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .Amount(currency: "GBP", value: 50)
                 .InstructionIdentification("instr-identification")
                 .EndToEndIdentification("e2e-identification")
-                .Remittance(new OBWriteDomestic2DataInitiationRemittanceInformation
+                .Remittance(
+                    new OBWriteDomestic2DataInitiationRemittanceInformation
                     {
                         Unstructured = "Tools",
                         Reference = "Tools"

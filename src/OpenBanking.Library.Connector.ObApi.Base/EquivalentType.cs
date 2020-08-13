@@ -4,7 +4,7 @@
 
 using System;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base
 {
     public class EquivalentType
     {
@@ -14,14 +14,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiati
             EquivalentEntityType =
                 equivalentEntityType ?? throw new ArgumentNullException(nameof(equivalentEntityType));
         }
+
         public Type EntityType { get; }
         public Type EquivalentEntityType { get; }
     }
 
     public class MappedEquivalentType : EquivalentType
     {
-        public MappedEquivalentType(Type entityType, Type equivalentEntityType, Type mapper) : base(entityType,
-            equivalentEntityType)
+        public MappedEquivalentType(Type entityType, Type equivalentEntityType, Type mapper) : base(
+            entityType: entityType,
+            equivalentEntityType: equivalentEntityType)
         {
             Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }

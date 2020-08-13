@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -69,11 +70,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     c =>
                     {
                         c
-                            .Property(e => e.BankClientRegistrationClaims)
+                            .Property(e => e.BankClientRegistrationRequestData)
                             .HasConversion(
                                 convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
                                 convertFromProviderExpression: v =>
-                                    JsonConvert.DeserializeObject<BankClientRegistrationClaims>(v));
+                                    JsonConvert.DeserializeObject<OBClientRegistration1>(v));
                     });
 
             modelBuilder
@@ -85,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                             .HasConversion(
                                 convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
                                 convertFromProviderExpression: v =>
-                                    JsonConvert.DeserializeObject<BankClientRegistrationData>(v));
+                                    JsonConvert.DeserializeObject<OBClientRegistration1>(v));
                     });
 
             modelBuilder.Entity<ApiProfile>(

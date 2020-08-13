@@ -31,7 +31,24 @@ Please refer to the [full usage notes](https://openapi-generator.tech/docs/usage
 
 For a given API, we auto-generate a client then extract the model code.
 
-Here is some example PowerShell code for generating a Payment Initiation API client:
+##### Examples
+
+Below is example code for generating model C# for a given API. After running this code we can copy the contents of the ```Model``` directory into a project in OpenBankingConnector.
+
+Client Registration API model Generation
+
+```PowerShell
+$specVersion = "ClientRegistration.V3p2"
+$specFile = "C:\Repos\OBUK.client-registration-api-specs\dist\client-registration-openapi.yaml"
+mkdir $specVersion
+java.exe -jar openapi-generator-cli.jar generate `
+-g csharp-netcore `
+-i $specFile `
+-p "packageName=OpenBanking.Library.Connector.ObModels.$specVersion,netCoreProjectFile=true,targetFramework=netstandard2.1,useDateTimeOffset=true" `
+-o ./$specVersion
+```
+
+Payment Initiation API model generation:
 
 ```PowerShell
 $specVersion = "PaymentInitiation.V3p1p1"
@@ -44,4 +61,4 @@ java.exe -jar openapi-generator-cli.jar generate `
 -o ./$specVersion
 ```
 
-We can then copy the contents of ```.\$specVersion\src\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\Model``` into the project.
+

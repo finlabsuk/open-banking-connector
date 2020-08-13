@@ -9,7 +9,7 @@ using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
     internal class EntityTypeFinder
     {
         private static readonly Type RootPublicType = typeof(ModelFactory);
-        private static readonly Type PaymentInitiationRootPublicType = typeof(EquivalentType);
+        private static readonly Type PaymentInitiationRootPublicType = typeof(ObModels.PaymentInitiation.V3p1p4.Model.Meta);
 
         public IEnumerable<Type> GetPublicReferenceTypes()
         {

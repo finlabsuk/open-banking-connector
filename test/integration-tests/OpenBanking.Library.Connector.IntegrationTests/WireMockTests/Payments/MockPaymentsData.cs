@@ -17,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -86,9 +87,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 .ToArray();
         }
 
-        public string[] GetGrantTypes()
+        public GrantTypesItemEnum[] GetGrantTypes()
         {
-            return new List<string> { "client_credentials", "authorization_code", "refresh_token" }.ToArray();
+            return new List<GrantTypesItemEnum> { GrantTypesItemEnum.ClientCredentials, GrantTypesItemEnum.AuthorizationCode, GrantTypesItemEnum.RefreshToken }.ToArray();
         }
 
         public string GetBase64TokenString()
@@ -115,22 +116,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenBankingClientRegistrationResponseJson()
         {
-            OpenBankingClientRegistrationResponse model = new OpenBankingClientRegistrationResponse
+            OBClientRegistration1 model = new OBClientRegistration1
             {
                 ClientId = GetClientId(),
                 ClientSecret = GetClientSecret(),
                 ClientIdIssuedAt = DateTimeOffset.Now,
                 ClientSecretExpiresAt = DateTimeOffset.Now.AddDays(30),
-                TokenEndpointAuthMethod = "tls_client_auth",
-                ResponseTypes = new List<string> { "code id_token" }.ToArray(),
+                TokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth,
+                ResponseTypes = new List<ResponseTypesItemEnum> { ResponseTypesItemEnum.CodeidToken }.ToArray(),
                 SoftwareId = GetClientId(),
-                ApplicationType = "web",
-                IdTokenSignedResponseAlg = "PS256",
-                RequestObjectSigningAlg = "PS256",
-                TokenEndpointAuthSigningAlg = string.Empty,
+                ApplicationType = ApplicationTypeEnum.Web,
+                IdTokenSignedResponseAlg = SupportedAlgorithmsEnum.PS256,
+                RequestObjectSigningAlg = SupportedAlgorithmsEnum.PS256,
+                TokenEndpointAuthSigningAlg = null,
                 GrantTypes = GetGrantTypes(),
                 RedirectUris = GetRedirectUris(),
-                Scope = new List<string> { "openid", "payments", "accounts", "fundsconfirmations" }.ToArray(),
+                Scope = string.Join(" ", new List<string> { "openid", "payments", "accounts", "fundsconfirmations" }),
                 TlsClientAuthSubjectDn = $"CN={GetClientId()},OU=OrgId,O=OpenBanking,C=GB"
             };
 

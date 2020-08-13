@@ -117,7 +117,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             using (var http = mockHttp.ToHttpClient())
             {
                 var api = new ApiClient(Substitute.For<IInstrumentationClient>(), http);
-                var result = await api.RequestJsonAsync<SerialisedEntity>(req, false);
+                var result = await api.RequestJsonAsync<SerialisedEntity>(req, false, null);
 
                 result.Message.Should().Be(entity.Message);
             }
@@ -141,7 +141,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             using (var http = mockHttp.ToHttpClient())
             {
                 var api = new ApiClient(Substitute.For<IInstrumentationClient>(), http);
-                var result = await api.RequestJsonAsync<SerialisedEntity>(req, false);
+                var result = await api.RequestJsonAsync<SerialisedEntity>(req, false, null);
                 result.Should().BeNull();
             }
         }
@@ -170,7 +170,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
                 Action a = () =>
                 {
-                    var _ = api.RequestJsonAsync<SerialisedEntity>(req, false).Result;
+                    var _ = api.RequestJsonAsync<SerialisedEntity>(req, false, null).Result;
                 };
 
                 a.Should().Throw<HttpRequestException>();
@@ -203,7 +203,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
                 Action a = () =>
                 {
-                    var _ = api.RequestJsonAsync<SerialisedEntity>(req, false).Result;
+                    var _ = api.RequestJsonAsync<SerialisedEntity>(req, false, null).Result;
                 };
 
                 a.Should().Throw<HttpRequestException>();

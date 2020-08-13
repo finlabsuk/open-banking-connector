@@ -18,13 +18,14 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="10.0.0" />
-        <PackageReference Include="FluentValidation" Version="9.0.0" />
+        <PackageReference Include="FluentValidation" Version="9.1.1" />
         <PackageReference Include="jose-jwt" Version="2.5.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\OpenBanking.Library.Connector.ObApi.Base\OpenBanking.Library.Connector.ObApi.Base.csproj" />
       <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj" />
       <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.csproj" />
     </ItemGroup>

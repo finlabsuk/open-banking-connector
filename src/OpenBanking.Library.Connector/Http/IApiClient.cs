@@ -4,12 +4,18 @@
 
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     public interface IApiClient
     {
         Task<HttpResponseMessage> SendAsync(HttpRequestMessage request);
-        Task<T> RequestJsonAsync<T>(HttpRequestMessage request, bool requestContentIsJson) where T : class;
+
+        Task<T> RequestJsonAsync<T>(
+            HttpRequestMessage request,
+            bool requestContentIsJson,
+            JsonSerializerSettings jsonSerializerSettings)
+            where T : class;
     }
 }

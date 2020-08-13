@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2</RootNamespace>
+        <Copyright>Finnovation Labs Limited and Contributors</Copyright>
+        <Company>Finnovation Labs Limited</Company>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <NoWarn>1701;1702;CS0472</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <NoWarn>1701;1702;CS0472</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="10.0.0" />
+        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.21" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OpenBanking.Library.Connector.ObApi.Base\OpenBanking.Library.Connector.ObApi.Base.csproj" />
+    </ItemGroup>
+
+</Project>

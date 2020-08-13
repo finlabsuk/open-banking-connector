@@ -26,7 +26,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         }
 
 
-        public async Task<T> RequestJsonAsync<T>(HttpRequestMessage request, bool requestContentIsJson)
+        public async Task<T> RequestJsonAsync<T>(
+            HttpRequestMessage request,
+            bool requestContentIsJson,
+            JsonSerializerSettings jsonSerializerSettings)
             where T : class
         {
             request.ArgNotNull(nameof(request));
@@ -81,7 +84,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 // Check HTTP status code
                 HttpResponseMessage _ = response.EnsureSuccessStatusCode();
 
-                return json != null ? JsonConvert.DeserializeObject<T>(json) : null;
+                return json != null
+                    ? JsonConvert.DeserializeObject<T>(value: json, settings: jsonSerializerSettings)
+                    : null;
             }
             catch (Exception ex)
             {

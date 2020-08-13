@@ -3,18 +3,24 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Newtonsoft.Json;
 using BankClientProfilePublic = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankClientProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
@@ -65,22 +71,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .RaiseErrorOnValidationError();
 
             // Create claims for client reg
-            OpenBankingClientRegistrationClaims registrationClaims = Factories.CreateRegistrationClaims(
-                issuerUrl: bankClientProfile.IssuerUrl,
+            OBClientRegistration1 registrationClaims = Factories.CreateRegistrationClaims(
                 sProfile: softwareStatementProfile,
-                concatScopes: false);
-            BankClientRegistrationClaimsOverrides registrationClaimsOverrides =
-                bankClientProfile.BankClientRegistrationClaimsOverrides;
-            if (!(registrationClaimsOverrides is null))
-            {
-                if (!(registrationClaimsOverrides.RequestAudience is null))
-                {
-                    registrationClaims.Aud = registrationClaimsOverrides.RequestAudience;
-                }
-            }
-
-            BankClientRegistrationClaims persistentRegistrationClaims =
-                _mapper.Map<BankClientRegistrationClaims>(registrationClaims);
+                bProfile: bankClientProfile);
 
             // STEP 2
             // Check for existing Open Banking client for issuer URL
@@ -93,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SingleOrDefault();
             if (existingClient is object)
             {
-                if (existingClient.BankClientRegistrationClaims != persistentRegistrationClaims)
+                if (existingClient.BankClientRegistrationRequestData != registrationClaims)
                 {
                     throw new Exception(
                         "There is already a client for this issuer URL but it cannot be re-used because claims are different.");
@@ -109,25 +102,59 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 string jwt = jwtFactory.CreateJwt(
                     profile: softwareStatementProfile,
                     claims: registrationClaims,
-                    useOpenBankingJwtHeaders: false);
+                    useOpenBankingJwtHeaders: false,
+                    paymentInitiationApiVersion: ApiVersion.V3P1P1); // version doesn't matter here.
+                JsonSerializerSettings jsonSerializerSettings = null;
+                if (!(bankClientProfile.RegistrationResponseJsonOptions is null))
+                {
+                    IEnumerable<string> optionList1 =
+                        Enum.GetValues(typeof(DateTimeOffsetUnixConverterOptions))
+                            .Cast<Enum>()
+                            .Where(
+                                x => !Equals(objA: (int) (object) x, objB: 0)
+                                     && bankClientProfile.RegistrationResponseJsonOptions
+                                         .DateTimeOffsetUnixConverterOptions
+                                         .HasFlag(x))
+                            .Select(x => $"{nameof(DateTimeOffsetUnixConverterOptions)}:{x.ToString()}");
+                    IEnumerable<string> optionList2 =
+                        Enum.GetValues(typeof(DelimitedStringConverterOptions))
+                            .Cast<Enum>()
+                            .Where(
+                                x => !Equals(objA: (int) (object) x, objB: 0)
+                                     && bankClientProfile.RegistrationResponseJsonOptions
+                                         .DelimitedStringConverterOptions
+                                         .HasFlag(x))
+                            .Select(x => $"{nameof(DelimitedStringConverterOptions)}:{x.ToString()}");
+                    List<string> optionList = optionList1
+                        .Concat(optionList2)
+                        .ToList();
+                    jsonSerializerSettings = new JsonSerializerSettings();
+                    jsonSerializerSettings.Context = new StreamingContext(
+                        state: StreamingContextStates.All,
+                        additional: optionList);
+                }
 
-                OpenBankingClientRegistrationResponse registrationResponse = await new HttpRequestBuilder()
+                OBClientRegistration1 registrationResponse = await new HttpRequestBuilder()
                     .SetMethod(HttpMethod.Post)
                     .SetUri(openIdConfiguration.RegistrationEndpoint)
                     .SetContent(jwt)
                     .SetContentType("application/jwt")
                     .Create()
-                    .RequestJsonAsync<OpenBankingClientRegistrationResponse>(
+                    .RequestJsonAsync<OBClientRegistration1>(
                         client: _apiClient,
-                        requestContentIsJson: false);
+                        requestContentIsJson: false,
+                        jsonSerializerSettings: jsonSerializerSettings);
 
-                BankClientRegistrationData openBankingClientResponse = new BankClientRegistrationData
+                // Validate response
+                if (registrationResponse.ClientId is null)
                 {
-                    ClientId = registrationResponse.ClientId,
-                    ClientIdIssuedAt = registrationResponse.ClientIdIssuedAt,
-                    ClientSecret = registrationResponse.ClientSecret,
-                    ClientSecretExpiresAt = registrationResponse.ClientSecretExpiresAt
-                };
+                    throw new NullReferenceException("No client ID provided by bank.");
+                }
+
+                if (registrationResponse.ClientIdIssuedAt is null)
+                {
+                    throw new NullReferenceException("No ClientIdIssuedAt provided by bank.");
+                }
 
                 // Create and store Open Banking client
                 BankClientProfile newClient = _mapper.Map<BankClientProfile>(bankClientProfile);
@@ -135,7 +162,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     value: newClient,
                     openIdConfiguration: openIdConfiguration,
                     registrationClaims: registrationClaims,
-                    openBankingRegistrationData: openBankingClientResponse);
+                    openBankingRegistrationData: registrationResponse);
                 await _dbMultiEntityMethods.SaveChangesAsync();
             }
             else
@@ -150,13 +177,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private async Task<BankClientProfile> PersistOpenBankingClient(
             BankClientProfile value,
             OpenIdConfiguration openIdConfiguration,
-            OpenBankingClientRegistrationClaims registrationClaims,
-            BankClientRegistrationData openBankingRegistrationData)
+            OBClientRegistration1 registrationClaims,
+            OBClientRegistration1 openBankingRegistrationData)
         {
             value.State = "ok";
             value.OpenIdConfiguration = openIdConfiguration;
-            value.BankClientRegistrationClaims =
-                _mapper.Map<BankClientRegistrationClaims>(registrationClaims);
+            value.BankClientRegistrationRequestData =
+                registrationClaims;
             value.BankClientRegistrationData = openBankingRegistrationData;
 
             await _bankClientProfileRepo.UpsertAsync(value);

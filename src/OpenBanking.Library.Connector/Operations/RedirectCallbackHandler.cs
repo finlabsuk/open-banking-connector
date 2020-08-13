@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using AuthorisationCallbackDataPublic =
@@ -95,12 +96,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 { "redirect_uri", redirectUrl },
                 { "code", authCode }
             };
-            if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+            if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod == TokenEndpointAuthMethodEnum.TlsClientAuth)
             {
                 keyValuePairs["client_id"] = client.BankClientRegistrationData.ClientId;
             }
-            else if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod ==
-                     "client_secret_basic")
+            else if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod ==
+                     TokenEndpointAuthMethodEnum.ClientSecretBasic)
             {
                 client.BankClientRegistrationData.ClientSecret.ArgNotNull("No client secret available.");
                 string authString = client.BankClientRegistrationData.ClientId + ":" +
@@ -110,7 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
             else
             {
-                if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+                if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod == TokenEndpointAuthMethodEnum.TlsClientAuth)
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
                 }

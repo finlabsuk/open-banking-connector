@@ -12,11 +12,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Name = "entitymapping", Description = "Run Entity Mapping benchmarks")]
     [InProcess]
     [MemoryDiagnoser]
     [RankColumn]
@@ -180,7 +178,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 TlsCertificateVerification = "aaaa",
                 TlsRenegotiationSupport = "bbb"
             },
-            BankClientRegistrationDataOverrides = new BankClientRegistrationDataOverrides
+            RegistrationResponseJsonOptions = new RegistrationResponseJsonOptions
             {
                 GrantTypes = Enumerable.Range(start: 1, count: 10).Select(i => i.ToString()).ToList()
             },

@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model

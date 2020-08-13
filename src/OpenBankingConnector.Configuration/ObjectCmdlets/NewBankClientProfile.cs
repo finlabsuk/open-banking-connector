@@ -42,7 +42,7 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
                 OpenIdConfigurationOverrides = null,
                 HttpMtlsConfigurationOverrides = null,
                 BankClientRegistrationClaimsOverrides = BankClientRegistrationClaimsOverrides,
-                BankClientRegistrationDataOverrides = null
+                RegistrationResponseJsonOptions = null
             };
             WriteObject(output);
         }

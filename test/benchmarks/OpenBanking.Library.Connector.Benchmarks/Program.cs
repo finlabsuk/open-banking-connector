@@ -3,22 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using McMaster.Extensions.CommandLineUtils;
+using BenchmarkDotNet.Running;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Description = "Benchmark OpenBankingConnector")]
-    [Subcommand(typeof(BenchmarkLocalApplication))]
-    [Subcommand(typeof(BenchmarkPispApplication))]
-    [Subcommand(typeof(EntityMappingApplication))]
-    [HelpOption("--help")]
     public class Program
     {
         public static int Main(string[] args)
         {
             try
             {
-                return CommandLineApplication.Execute<Program>(args);
+                BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
             }
             catch (Exception ex)
             {
@@ -27,6 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 Console.ResetColor();
                 return 1;
             }
+
+            return 0;
         }
     }
 }
+ 

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 {
@@ -60,6 +60,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 
             foreach (EquivalentType typePair in typePairs)
             {
+                // if (typePair.EntityType ==
+                //     typeof(FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.Model.
+                //         OBWriteDomestic))
+                // {
+                //     Console.Write("hi");
+                // }
+
                 if (typePair is MappedEquivalentType tp)
                 {
                     config.CreateMap(sourceType: tp.EntityType, destinationType: tp.EquivalentEntityType)

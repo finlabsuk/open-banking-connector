@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

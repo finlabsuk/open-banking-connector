@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests
 {
@@ -13,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         string GetClientId();
         string GetClientSecret();
         string GetFapiHeader();
-        string[] GetGrantTypes();
+        GrantTypesItemEnum[] GetGrantTypes();
         string GetIdempotencyKey();
         string GetJwsSignature();
         string GetMockCertificate();

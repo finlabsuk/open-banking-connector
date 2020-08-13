@@ -16,6 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -111,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             if (redirectUrl == "")
             {
-                redirectUrl = bankClientProfile.BankClientRegistrationClaims.RedirectUris[0];
+                redirectUrl = bankClientProfile.BankClientRegistrationRequestData.RedirectUris[0];
             }
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = Factories.CreateOAuth2RequestObjectClaims(
@@ -122,7 +123,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string requestObjectJwt = jwtFactory.CreateJwt(
                 profile: softwareStatementProfile,
                 claims: oAuth2RequestObjectClaims,
-                useOpenBankingJwtHeaders: false);
+                useOpenBankingJwtHeaders: false,
+                paymentInitiationApiVersion: apiProfile.ApiVersion);
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
             {
                 { "response_type", oAuth2RequestObjectClaims.ResponseType },
@@ -170,12 +172,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 { "grant_type", "client_credentials" },
                 { "scope", scope }
             };
-            if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+            if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod == TokenEndpointAuthMethodEnum.TlsClientAuth)
             {
                 keyValuePairs["client_id"] = client.BankClientRegistrationData.ClientId;
             }
-            else if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod ==
-                     "client_secret_basic")
+            else if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod ==
+                     TokenEndpointAuthMethodEnum.ClientSecretBasic)
             {
                 client.BankClientRegistrationData.ClientSecret.InvalidOpOnNull("No client secret available.");
                 string authString = client.BankClientRegistrationData.ClientId + ":" +
@@ -185,7 +187,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             }
             else
             {
-                if (client.BankClientRegistrationClaims.TokenEndpointAuthMethod == "tls_client_auth")
+                if (client.BankClientRegistrationRequestData.TokenEndpointAuthMethod == TokenEndpointAuthMethodEnum.TlsClientAuth)
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
                 }
@@ -226,7 +228,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string jwt = jwtFactory.CreateJwt(
                 profile: softwareStatementProfile,
                 claims: consent,
-                useOpenBankingJwtHeaders: true);
+                useOpenBankingJwtHeaders: true,
+                paymentInitiationApiVersion: apiProfile.ApiVersion);
             string[] jwsComponents = jwt.Split('.');
             string jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
             UriBuilder ub = new UriBuilder(new Uri(apiProfile.BaseUrl + "/domestic-payment-consents"));
