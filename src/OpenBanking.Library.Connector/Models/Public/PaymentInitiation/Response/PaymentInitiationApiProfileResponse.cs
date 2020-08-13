@@ -8,7 +8,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public class PaymentInitiationApiProfileResponse
     {
-        public PaymentInitiationApiProfileResponse(string id, string bankClientProfileId, ApiVersion apiVersion, string baseUrl)
+        public PaymentInitiationApiProfileResponse(
+            string id,
+            string bankClientProfileId,
+            ApiVersion apiVersion,
+            string baseUrl)
         {
             Id = id;
             BankClientProfileId = bankClientProfileId;

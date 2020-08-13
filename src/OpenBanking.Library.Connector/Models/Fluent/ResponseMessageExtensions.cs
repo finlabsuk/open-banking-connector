@@ -10,15 +10,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
     public static class ResponseMessageExtensions
     {
-        public static OpenBankingResponseMessage CreateErrorMessage(this Exception exception)
+        public static FluentResponseMessage CreateErrorMessage(this Exception exception)
         {
-            return new OpenBankingResponseErrorMessage(exception);
+            return new FluentResponseErrorMessage(exception);
         }
 
-        public static IList<OpenBankingResponseMessage> CreateErrorMessages(this AggregateException exception)
+        public static IList<FluentResponseMessage> CreateErrorMessages(this AggregateException exception)
         {
-            return exception.InnerExceptions.Select(e => new OpenBankingResponseErrorMessage(e))
-                .OfType<OpenBankingResponseMessage>()
+            return exception.InnerExceptions.Select(e => new FluentResponseErrorMessage(e))
+                .OfType<FluentResponseMessage>()
                 .ToArray();
         }
     }

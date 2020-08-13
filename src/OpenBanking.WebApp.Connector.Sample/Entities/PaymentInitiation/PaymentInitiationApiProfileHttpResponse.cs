@@ -3,13 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation
 {
     public class PaymentInitiationApiProfileHttpResponse
     {
-        public PaymentInitiationApiProfileHttpResponse(PaymentInitiationApiProfileResponse data, MessagesResponse messages)
+        public PaymentInitiationApiProfileHttpResponse(
+            PaymentInitiationApiProfileResponse data,
+            MessagesResponse messages)
         {
             Data = data;
             Messages = messages;

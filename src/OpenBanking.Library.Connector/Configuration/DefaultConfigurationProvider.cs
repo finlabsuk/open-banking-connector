@@ -4,14 +4,15 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 {
-    public class DefaultConfigurationProvider : IConfigurationProvider
+    public class DefaultConfigurationProvider : IObcConfigurationProvider
     {
-        public RuntimeConfiguration GetRuntimeConfiguration()
+        public ObcConfiguration GetObcConfiguration()
         {
-            return new RuntimeConfiguration
+            return new ObcConfiguration
             {
                 DefaultCurrency = "GBP",
-                SoftwareId = null
+                SoftwareId = "",
+                EnsureDbCreated = "false"
             };
         }
     }

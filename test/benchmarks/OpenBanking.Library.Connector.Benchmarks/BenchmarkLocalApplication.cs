@@ -5,11 +5,9 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Name = "local", Description = "Run local benchmarks")]
     [InProcess]
     [MemoryDiagnoser]
     [RankColumn]

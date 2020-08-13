@@ -272,5 +272,14 @@ user.test.settings.json
 # macOS auto-generated files
 *.DS_Store
 
-# Databases
-/src/OpenBanking.WebApp.Connector/*.db
+# Database files
+src/OpenBanking.Library.Connector/*.db
+src/OpenBanking.Library.Connector/*.db-shm
+src/OpenBanking.Library.Connector/*.db-wal
+
+# PowerShell scripts
+src/OpenBankingConnector.Configuration/Scripts/
+
+# Dev solutions and projects
+*.Dev.sln*
+*.Dev.proj

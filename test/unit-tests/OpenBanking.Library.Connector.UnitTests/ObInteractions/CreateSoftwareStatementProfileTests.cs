@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Xunit;
 
@@ -20,29 +20,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
-            var repo = Substitute.For<ISoftwareStatementProfileRepository>();
-            var mapper = Substitute.For<IEntityMapper>();
-            var db = Substitute.For<BaseDbContext>(new DbContextOptions<BaseDbContext>());
-            
-            var resultProfile = new SoftwareStatementProfile();
+            IDbEntityRepository<SoftwareStatementProfile>? repo =
+                Substitute.For<IDbEntityRepository<SoftwareStatementProfile>>();
+            ISoftwareStatementProfileService? service = Substitute.For<ISoftwareStatementProfileService>();
+            IDbMultiEntityMethods? dbMethods = Substitute.For<IDbMultiEntityMethods>();
+            IEntityMapper? mapper = Substitute.For<IEntityMapper>();
 
-            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.SoftwareStatementProfile>())
+            SoftwareStatementProfile? resultProfile = new SoftwareStatementProfile();
+
+            mapper.Map<SoftwareStatementProfile>(Arg.Any<Models.Public.Request.SoftwareStatementProfile>())
                 .Returns(resultProfile);
 
-            var interaction = new CreateSoftwareStatementProfile(mapper, repo, db);
+            CreateSoftwareStatementProfile? interaction =
+                new CreateSoftwareStatementProfile(softwareStatementProfileService: service);
 
-            var profile = new Models.Public.SoftwareStatementProfile
+            Models.Public.Request.SoftwareStatementProfile? profile = new Models.Public.Request.SoftwareStatementProfile
             {
                 DefaultFragmentRedirectUrl = "http://test.com",
-                SigningKeySecretName = "a",
+                SigningKey = "a",
                 SigningKeyId = "b",
                 SigningCertificate = "e30=",
-                TransportKeySecretName = "a",
+                TransportKey = "a",
                 TransportCertificate = "a",
                 SoftwareStatement = "e30=.e30=.e30="
             };
 
-            var result = await interaction.CreateAsync(profile);
+            SoftwareStatementProfileResponse? result = await interaction.CreateAsync(profile);
 
             result.Should().NotBeNull();
         }

@@ -5,11 +5,9 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Name = "pisp", Description = "Run pisp benchmarks")]
     [InProcess]
     [MemoryDiagnoser]
     [RankColumn]
@@ -26,8 +24,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     [GcServer(true)]
     public class BenchmarkPispApplication
     {
-        [Option("--partner", Description = "The PISP partner code")]
-        public string Partner { get; set; }
 
         [Benchmark]
         public void RunPispPayment()

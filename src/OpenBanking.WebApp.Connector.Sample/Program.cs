@@ -2,10 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
+using FinnovationLabs.OpenBanking.Library.Connector.WebHost.HostedServices;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using FinnovationLabs.OpenBanking.Library.Connector.AspNetCore;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
 {
@@ -13,24 +14,27 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args)
-                .Build();
-            host.CheckDbExists()
-                .Run();
-        }
+            // Use common host builder
+            IHostBuilder builder = Helpers.CreateHostBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+            builder.ConfigureServices(
+                (hostContext, services) =>
+                {
+                    // Startup tasks
+                    services.AddHostedService<WebAppInformationHostedService>();
+                });
+
+            builder.ConfigureWebHostDefaults(
+                webBuilder =>
                 {
                     webBuilder
-                        .UseUrls("https://*:5001/", "http://*:5000/")
-                        .ConfigureLogging((whbc, lb) =>
-                        {
-                            lb.AddConfiguration(whbc.Configuration.GetSection("Logging"));
-                            lb.AddConsole();
-                        })
+                        .UseUrls("https://*:5001/", "http://*:5000/") // TODO: check if necessary.
                         .UseStartup<Startup>();
                 });
+
+            IHost host = builder
+                .Build();
+            host.Run();
+        }
     }
 }

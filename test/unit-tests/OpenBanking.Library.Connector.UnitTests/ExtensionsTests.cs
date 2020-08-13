@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FluentAssertions;
 using Xunit;
 
@@ -21,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [InlineData(" .ab ", 1)]
         public void DelimiterCount(string value, int expectedCount)
         {
-            var result = value.DelimiterCount('.');
+            int result = value.DelimiterCount('.');
 
             result.Should().Be(expectedCount);
         }
@@ -29,10 +31,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [Fact]
         public void ToObjectDictionary_ScratchTest()
         {
-            var value = new BankClientRegistrationClaims
+            var value = new OBClientRegistration1
             {
                 Aud = "some aud",
-                ApplicationType = "some application type",
+                ApplicationType = ApplicationTypeEnum.Web,
                 ClientId = "some clientId"
             };
 
@@ -42,7 +44,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             result["aud"].Should().Be(value.Aud);
             result["application_type"].Should().Be(value.ApplicationType);
             result["client_id"].Should().Be(value.ClientId);
-            result["id_token_signed_response_alg"].Should().Be("PS256");
             result["token_endpoint_auth_signing_alg"].Should().BeNull();
         }
     }

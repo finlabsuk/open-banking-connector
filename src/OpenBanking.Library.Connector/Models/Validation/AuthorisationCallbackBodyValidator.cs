@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
-    public class AuthorisationCallbackBodyValidator : AbstractValidator<AuthorisationCallbackInfo>
+    public class AuthorisationCallbackBodyValidator : AbstractValidator<AuthorisationCallbackPayload>
     {
         public AuthorisationCallbackBodyValidator()
         {
@@ -17,17 +17,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         private void CreateRules()
         {
-            RuleFor(x => x.AuthorisationCode)
+            RuleFor(x => x.Code)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackInfo.AuthorisationCode)}.");
-
-            RuleFor(x => x.IdToken)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackInfo.IdToken)}.");
+                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackPayload.Code)}.");
 
             RuleFor(x => x.State)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackInfo.State)}.");
+                .WithMessage($"Missing or invalid {nameof(AuthorisationCallbackPayload.State)}.");
         }
     }
 }

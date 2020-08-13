@@ -19,12 +19,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                var config = new EnvironmentVariablesConfigurationProvider(evs).GetRuntimeConfiguration();
+                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
                 return config.SoftwareId != value;
             };
 
-            return rule.When(value != null);
+            return rule.When(!String.IsNullOrEmpty(value));
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                var config = new EnvironmentVariablesConfigurationProvider(evs).GetRuntimeConfiguration();
+                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
                 return config.SoftwareId == value;
             };
@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                var config = new EnvironmentVariablesConfigurationProvider(evs).GetRuntimeConfiguration();
+                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
                 return config.DefaultCurrency != value;
             };
@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                var config = new EnvironmentVariablesConfigurationProvider(evs).GetRuntimeConfiguration();
+                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
                 return config.DefaultCurrency == value;
             };

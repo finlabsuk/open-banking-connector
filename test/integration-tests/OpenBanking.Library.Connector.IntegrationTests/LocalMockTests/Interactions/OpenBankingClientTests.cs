@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -16,15 +17,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact]
         public async Task Repository_ClientInserted()
         {
-            var builder = CreateOpenBankingRequestBuilder();
+            IOpenBankingRequestBuilder builder = CreateOpenBankingRequestBuilder();
 
-            var issuerUrl = "http://aaa.com/";
-            var xfapi = "xfapi";
-            var softwareStatementId = "softwareStatement";
+            string issuerUrl = "http://aaa.com/";
+            string xfapi = "xfapi";
+            string softwareStatementId = "softwareStatement";
 
-            var ctx = builder.BankClientProfile();
+            BankClientProfileContext ctx = builder.BankClientProfile();
 
-            var result = await ctx
+            BankClientProfileFluentResponse result = await ctx
+                .Id("BankClientProfileId")
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId(xfapi)
                 .SoftwareStatementProfileId(softwareStatementId)
@@ -38,15 +40,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 {
                     RegistrationEndpointUrl = "http://bbb.com"
                 })
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
 
             result.Messages.Should().HaveCount(0);
 
-            var repo = ctx.Context.ClientProfileRepository;
-            var ids = await repo.GetIdsAsync();
-
-            var persistedResult = await repo.GetAsync(ids[0]);
+            Connector.Persistence.IDbEntityRepository<Models.Persistent.BankClientProfile> repo = ctx.Context.ClientProfileRepository;
+            IQueryable<Models.Persistent.BankClientProfile> instances = await repo.GetAllAsync();
+            Models.Persistent.BankClientProfile persistedResult = instances.FirstOrDefault();
 
             persistedResult.IssuerUrl.Should().Be(issuerUrl);
             persistedResult.XFapiFinancialId.Should().Be(xfapi);
@@ -56,14 +57,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact]
         public async Task Repository_ClientUpserted()
         {
-            var ctx = CreateOpenBankingRequestBuilder().BankClientProfile();
+            BankClientProfileContext ctx = CreateOpenBankingRequestBuilder().BankClientProfile();
 
-            var issuerUrl = "http://aaa.com/";
-            var xfapi2 = "xfapi2";
-            var softwareStatementId2 = "softwareStatementId2";
+            string issuerUrl = "http://aaa.com/";
+            string xfapi2 = "xfapi2";
+            string softwareStatementId2 = "softwareStatementId2";
 
 
-            var result1 = await ctx
+            BankClientProfileFluentResponse result1 = await ctx
+                .Id("BankClientProfileId")
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId("xfapi")
                 .SoftwareStatementProfileId("softwareStatement")
@@ -74,12 +76,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 })
                 .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
 
             result1.Messages.Should().HaveCount(0);
 
-            var result2 = await ctx
+            BankClientProfileFluentResponse result2 = await ctx
                 .IssuerUrl(new Uri(issuerUrl))
                 .XFapiFinancialId(xfapi2)
                 .SoftwareStatementProfileId(softwareStatementId2)
@@ -90,15 +92,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 })
                 .RegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
                 .OpenIdRegistrationEndpointUrl(new Uri("http://bbb.com"))
-                .RegistrationResponseOverrides(new BankClientRegistrationDataOverrides())
+                .RegistrationResponseOverrides(new RegistrationResponseJsonOptions())
                 .UpsertAsync();
             result2.Messages.Should().HaveCount(0);
 
 
-            var repo = ctx.Context.ClientProfileRepository;
-            var ids = await repo.GetIdsAsync();
+            Connector.Persistence.IDbEntityRepository<Models.Persistent.BankClientProfile> repo = ctx.Context.ClientProfileRepository;
 
-            var persistedResult = await repo.GetAsync(ids[0]);
+            IQueryable<Models.Persistent.BankClientProfile> instances = await repo.GetAllAsync();
+            Models.Persistent.BankClientProfile persistedResult = instances.FirstOrDefault();
+
 
             persistedResult.IssuerUrl.Should().Be(issuerUrl);
             persistedResult.XFapiFinancialId.Should().Be(xfapi2);

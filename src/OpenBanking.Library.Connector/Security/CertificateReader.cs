@@ -43,11 +43,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             X509Certificate2 result;
             if (value.IsPemThumbprint())
             {
-                result = await _pemReader.GetCertificateAsync(value, password);
+                result = await _pemReader.GetCertificateAsync(value: value, password: password);
             }
             else
             {
-                result = await _fileCertReader.GetCertificateAsync(value, password);
+                result = await _fileCertReader.GetCertificateAsync(value: value, password: password);
             }
 
             return result;

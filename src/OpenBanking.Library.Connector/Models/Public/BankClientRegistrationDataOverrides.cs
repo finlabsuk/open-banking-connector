@@ -3,13 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
-    public class BankClientRegistrationDataOverrides
+    public class RegistrationResponseJsonOptions
     {
         [JsonProperty("grant_types")]
         public IList<string> GrantTypes { get; set; }
+
+        public DateTimeOffsetUnixConverterOptions DateTimeOffsetUnixConverterOptions { get; set; }
+
+        public DelimitedStringConverterOptions DelimitedStringConverterOptions { get; set; }
     }
 }

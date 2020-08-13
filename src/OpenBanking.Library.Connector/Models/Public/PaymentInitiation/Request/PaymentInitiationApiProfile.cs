@@ -15,10 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             ApiVersion = apiVersion;
             BaseUrl = baseUrl;
         }
-        
+
         [JsonProperty("id")]
         public string Id { get; }
-        
+
         [JsonProperty("bankClientProfileId")]
         public string BankClientProfileId { get; }
 

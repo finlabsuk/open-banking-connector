@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.csproj",
+                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.Sample.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.csproj",
+                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.Sample.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.csproj",
+                "${workspaceFolder}/src/OpenBanking.WebApp.Connector.Sample/OpenBanking.WebApp.Connector.Sample.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

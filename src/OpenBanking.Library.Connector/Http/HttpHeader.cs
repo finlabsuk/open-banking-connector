@@ -6,9 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     public class HttpHeader
     {
-        public HttpHeader()
-        {
-        }
+        public HttpHeader() { }
 
         public HttpHeader(string name, string value)
         {

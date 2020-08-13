@@ -10,16 +10,11 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
-using McMaster.Extensions.CommandLineUtils;
-using OBAddressTypeCode =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.OBAddressTypeCode;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
-    [Command(Name = "entitymapping", Description = "Run Entity Mapping benchmarks")]
     [InProcess]
     [MemoryDiagnoser]
     [RankColumn]
@@ -37,10 +32,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     public class EntityMappingApplication
     {
         private BankClientProfile _client;
-        private OBWriteDomesticDataInitiation _dataInitiation;
-        private OBWriteDomesticConsent _domesticConsent;
+        private OBWriteDomestic2DataInitiation _dataInitiation;
+        private OBWriteDomesticConsent4 _domesticConsent;
         private EntityMapper _entityMapper;
-        private OBRisk _risk;
+        private OBRisk1 _risk;
         private SoftwareStatementProfile _softwareStatement;
 
 
@@ -74,50 +69,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapDomesticConsent()
         {
-            _entityMapper.Map<OBWriteDomesticConsent2>(_domesticConsent);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomesticConsent2>(_domesticConsent);
         }
 
         [Benchmark]
         public void MapRisk()
         {
-            _entityMapper.Map<OBRisk1>(_risk);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBRisk1>(_risk);
         }
 
         [Benchmark]
         public void MapDataInitiation()
         {
-            _entityMapper.Map<OBDomestic2>(_dataInitiation);
+            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBDomestic2>(_dataInitiation);
         }
 
         private void OnExecute() => BenchmarkRunner.Run<EntityMappingApplication>();
 
-        private OBRisk CreateRisk() => new OBRisk
+        private OBRisk1 CreateRisk() => new OBRisk1
         {
-            DeliveryAddress = new OBRiskDeliveryAddress
+            DeliveryAddress = new OBRisk1DeliveryAddress()
             {
                 TownName = "Accrington Stanley",
                 Country = "UK",
-                AddressLine = Enumerable.Range(1, 3).Select(i => i.ToString()).ToList(),
+                AddressLine = Enumerable.Range(start: 1, count: 3).Select(i => i.ToString()).ToList(),
                 BuildingNumber = "building number",
-                CountrySubDivision = Enumerable.Range(10, 3).Select(i => i.ToString()).ToList(),
+                CountrySubDivision = Enumerable.Range(start: 10, count: 3).Select(i => i.ToString()).ToList(),
                 PostCode = "post code",
                 StreetName = "street name"
             },
             MerchantCategoryCode = "a",
-            PaymentContextCode = PaymentContextCode.BillPayment,
+            PaymentContextCode = OBRisk1.PaymentContextCodeEnum.BillPayment,
             MerchantCustomerIdentification = "merchant Customer Identification"
         };
 
-        private OBWriteDomesticDataInitiation CreateDataInitiation() => new OBWriteDomesticDataInitiation
+        private OBWriteDomestic2DataInitiation CreateDataInitiation() => new OBWriteDomestic2DataInitiation
         {
-            CreditorAccount = new OBWriteDomesticDataInitiationCreditorAccount
+            CreditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount
             {
                 Identification = "id",
                 Name = "test",
                 SchemeName = "schema",
                 SecondaryIdentification = "secondary id"
             },
-            CreditorPostalAddress = new OBPostalAddress
+            CreditorPostalAddress = new OBPostalAddress6
             {
                 AddressLine = new List<string> { "1 high street", "blexley" },
                 AddressType = OBAddressTypeCode.POBox,
@@ -130,7 +125,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 SubDepartment = "SubDepartment",
                 TownName = "Blexley"
             },
-            DebtorAccount = new OBWriteDomesticDataInitiationDebtorAccount
+            DebtorAccount = new OBWriteDomestic2DataInitiationDebtorAccount
             {
                 Identification = "abc",
                 Name = "debtor name",
@@ -138,37 +133,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 SecondaryIdentification = "debtor secondary id"
             },
             EndToEndIdentification = "EndToEndIdentification",
-            InstructedAmount = new OBWriteDomesticDataInitiationInstructedAmount
+            InstructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount
             {
                 Amount = 1234.56.ToString(),
                 Currency = "GBP"
             },
             InstructionIdentification = "instruction identification",
             LocalInstrument = "local instrument",
-            RemittanceInformation = new OBWriteDomesticDataInitiationRemittanceInformation
+            RemittanceInformation = new OBWriteDomestic2DataInitiationRemittanceInformation
             {
                 Reference = "reference",
                 Unstructured = "unstructured"
             },
-            SupplementaryData = new object()
+            SupplementaryData = new Dictionary<string, object>()
         };
 
 
-        private OBWriteDomesticConsent CreateDomesticConsent() => new OBWriteDomesticConsent
+        private OBWriteDomesticConsent4 CreateDomesticConsent() => new OBWriteDomesticConsent4
         {
-            Data = new OBWriteDomesticConsentData
+            Data = new OBWriteDomesticConsent4Data
             {
                 Initiation = CreateDataInitiation(),
-                Authorisation = new OBWriteDomesticConsentDataAuthorisation
+                Authorisation = new OBWriteDomesticConsent4DataAuthorisation
                 {
-                    AuthorisationType = AuthorisationType.Single,
+                    AuthorisationType = OBWriteDomesticConsent4DataAuthorisation.AuthorisationTypeEnum.Single,
                     CompletionDateTime = DateTime.UtcNow
                 },
-                SCASupportData = new OBWriteDomesticConsentDataSCASupportData
+                SCASupportData = new OBWriteDomesticConsent4DataSCASupportData
                 {
-                    AppliedAuthenticationApproach = AppliedAuthenticationApproach.SCA,
+                    AppliedAuthenticationApproach = OBWriteDomesticConsent4DataSCASupportData.AppliedAuthenticationApproachEnum.SCA,
                     ReferencePaymentOrderId = "reference Payment Order Id",
-                    RequestedSCAExemptionType = RequestedSCAExemptionType.PartyToParty
+                    RequestedSCAExemptionType = OBWriteDomesticConsent4DataSCASupportData.RequestedSCAExemptionTypeEnum.PartyToParty
                 }
             },
             Risk = CreateRisk()
@@ -183,13 +178,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 TlsCertificateVerification = "aaaa",
                 TlsRenegotiationSupport = "bbb"
             },
-            BankClientRegistrationDataOverrides = new BankClientRegistrationDataOverrides
+            RegistrationResponseJsonOptions = new RegistrationResponseJsonOptions
             {
-                GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList()
+                GrantTypes = Enumerable.Range(start: 1, count: 10).Select(i => i.ToString()).ToList()
             },
             BankClientRegistrationClaimsOverrides = new BankClientRegistrationClaimsOverrides
             {
-                GrantTypes = Enumerable.Range(1, 10).Select(i => i.ToString()).ToList(),
+                GrantTypes = Enumerable.Range(start: 1, count: 10).Select(i => i.ToString()).ToList(),
                 RequestAudience = "audience",
                 ScopeUseStringArray = false,
                 SsaIssuer = "issuer",
@@ -207,10 +202,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private SoftwareStatementProfile CreateSoftwareStatement() => new SoftwareStatementProfile
         {
             DefaultFragmentRedirectUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
-            SigningKeySecretName = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
+            SigningKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             SigningKeyId = "b",
             SigningCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
-            TransportKeySecretName = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
+            TransportKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             TransportCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
             SoftwareStatement =
                 "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="

@@ -5,7 +5,5 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.PaymentInitiation
 {
     // Root type for all OB Payments types
-    internal static class PaymentsExtensions
-    {
-    }
+    internal static class PaymentsExtensions { }
 }

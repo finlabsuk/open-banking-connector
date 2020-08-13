@@ -10,16 +10,19 @@ using System.Net.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     public class ThumbprintServerCertificateValidator : IServerCertificateValidator
     {
-        private readonly IKeySecretProvider _keySecrets;
+        private readonly IKeySecretReadOnlyProvider _keySecrets;
         private readonly Lazy<HashSet<string>> _thirdPartyThumbprints;
 
-        public ThumbprintServerCertificateValidator(IKeySecretProvider keySecrets)
+        public ThumbprintServerCertificateValidator(IKeySecretReadOnlyProvider keySecrets)
         {
             _keySecrets = keySecrets.ArgNotNull(nameof(keySecrets));
             _thirdPartyThumbprints = new Lazy<HashSet<string>>(GetThumbprints(GetServerCertificatesAsync().Result));
@@ -27,24 +30,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         public bool IsOk(HttpRequestMessage msg, X509Certificate2 cert, X509Chain chain, SslPolicyErrors errors)
         {
-            var tp = cert.Thumbprint;
+            string tp = cert.Thumbprint;
 
             return _thirdPartyThumbprints.Value.Contains(tp);
         }
 
+        public static IEnumerable<string> GetThirdPartyCertificateNames() =>
+            Enumerable.Range(start: 1, count: 100).Select(i => $"thirdPartyCertificate.{i}.pem");
+
         private async Task<IEnumerable<X509Certificate2>> GetServerCertificatesAsync()
         {
-            var pems = await KeySecrets.GetThirdPartyCertificateNames()
+            KeySecret[] pems = await GetThirdPartyCertificateNames()
                 .Select(_keySecrets.GetKeySecretAsync)
                 .ToArray()
                 .WaitAll();
 
-            var result = new List<X509Certificate2>();
-            var rdr = new PemParsingCertificateReader();
+            List<X509Certificate2> result = new List<X509Certificate2>();
+            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-            foreach (var secret in pems.Where(ks => ks != null))
+            foreach (KeySecret secret in pems.Where(ks => ks != null))
             {
-                var cert = await rdr.GetCertificateAsync(secret.Value, new SecureString());
+                X509Certificate2 cert = await rdr.GetCertificateAsync(
+                    value: secret.Value,
+                    password: new SecureString());
                 if (cert != null)
                 {
                     result.Add(cert);

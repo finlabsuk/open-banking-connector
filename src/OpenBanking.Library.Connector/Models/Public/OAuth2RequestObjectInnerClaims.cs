@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         {
             public UserInfoClaims(string intentId)
             {
-                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
+                OpenbankingIntentId = new IndividualClaim(essential: true, value: intentId, values: null);
             }
 
             [JsonProperty("openbanking_intent_id")]
@@ -54,8 +54,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         {
             public IdTokenClaims(string intentId)
             {
-                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
-                Acr = new IndividualClaim(true, "urn:openbanking:psd2:ca", null);
+                OpenbankingIntentId = new IndividualClaim(essential: true, value: intentId, values: null);
+                Acr = new IndividualClaim(essential: true, value: "urn:openbanking:psd2:ca", values: null);
             }
 
             [JsonProperty("openbanking_intent_id")]

@@ -5,7 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -14,9 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
     public static class SoftwareStatementProfileContextInteractionExtensions
     {
         private static readonly Lens<SoftwareStatementProfileContext, SoftwareStatementProfile> DataLens =
-            Lens.Create((SoftwareStatementProfileContext c) => c.Data, (c, d) => c.Data = d);
+            Lens.Create(get: (SoftwareStatementProfileContext c) => c.Data, set: (c, d) => c.Data = d);
 
-        public static SoftwareStatementProfileContext Data(this SoftwareStatementProfileContext context,
+        public static SoftwareStatementProfileContext Data(
+            this SoftwareStatementProfileContext context,
             SoftwareStatementProfile value)
         {
             context.ArgNotNull(nameof(context));
@@ -37,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static SoftwareStatementProfileContext SoftwareStatement(this SoftwareStatementProfileContext context,
+        public static SoftwareStatementProfileContext SoftwareStatement(
+            this SoftwareStatementProfileContext context,
             string statement)
         {
             context.ArgNotNull(nameof(context))
@@ -46,36 +49,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static SoftwareStatementProfileContext SigningKeyInfo(this SoftwareStatementProfileContext context,
+        public static SoftwareStatementProfileContext SigningKeyInfo(
+            this SoftwareStatementProfileContext context,
             string keyId,
             string keySecretName,
-            string certificate
-            )
+            string certificate)
         {
-            var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
+            SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
             data.SigningKeyId = keyId;
-            data.SigningKeySecretName = keySecretName;
+            data.SigningKey = keySecretName;
             data.SigningCertificate = certificate;
 
             return context;
         }
-        
-        public static SoftwareStatementProfileContext TransportKeyInfo(this SoftwareStatementProfileContext context,
-            string keySecretName,
-            string certificate
-        )
-        {
-            var data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
 
-            data.TransportKeySecretName = keySecretName;
+        public static SoftwareStatementProfileContext TransportKeyInfo(
+            this SoftwareStatementProfileContext context,
+            string keySecretName,
+            string certificate)
+        {
+            SoftwareStatementProfile data = context.ArgNotNull(nameof(context)).GetOrCreateDefault(DataLens);
+
+            data.TransportKey = keySecretName;
             data.TransportCertificate = certificate;
 
             return context;
         }
 
         public static SoftwareStatementProfileContext DefaultFragmentRedirectUrl(
-            this SoftwareStatementProfileContext context, string url)
+            this SoftwareStatementProfileContext context,
+            string url)
         {
             context.ArgNotNull(nameof(context))
                 .GetOrCreateDefault(DataLens).DefaultFragmentRedirectUrl = url;
@@ -88,35 +92,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         {
             context.ArgNotNull(nameof(context));
 
-            var validationErrors = Validate(context);
+            IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new OpenBankingSoftwareStatementResponse(validationErrors, null);
+                return new OpenBankingSoftwareStatementResponse(messages: validationErrors, data: null);
             }
 
-            var creator = new CreateSoftwareStatementProfile(
-                context.Context.EntityMapper,
-                context.Context.SoftwareStatementRepository,
-                context.Context.DbContext
-                );
+            CreateSoftwareStatementProfile creator = new CreateSoftwareStatementProfile(
+                softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
-            var messages = new List<OpenBankingResponseMessage>();
+            List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
 
             try
             {
-                var response = await creator.CreateAsync(context.Data);
+                SoftwareStatementProfileResponse response = await creator.CreateAsync(context.Data);
 
-                return new OpenBankingSoftwareStatementResponse(messages, response);
+                return new OpenBankingSoftwareStatementResponse(messages: messages, data: response);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new OpenBankingSoftwareStatementResponse(ex.CreateErrorMessage(), null);
+                return new OpenBankingSoftwareStatementResponse(message: ex.CreateErrorMessage(), data: null);
             }
         }
 
-        private static IList<OpenBankingResponseMessage> Validate(SoftwareStatementProfileContext context)
+        private static IList<FluentResponseMessage> Validate(SoftwareStatementProfileContext context)
         {
             return new SoftwareStatementProfileValidator()
                 .Validate(context.Data)

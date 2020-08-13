@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
 
             return value;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [DebuggerStepThrough]
         public static T ArgNotNullElseInvalidOp<T>(this T value, string message) where T : class
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
         {
             return value ?? throw new InvalidOperationException(message);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [DebuggerStepThrough]
         public static T InvalidOpOnNull<T>(this T value, string message)

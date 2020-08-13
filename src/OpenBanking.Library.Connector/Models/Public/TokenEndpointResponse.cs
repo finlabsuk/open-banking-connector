@@ -6,8 +6,6 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
-    [OpenBankingEquivalent(typeof(Ob.TokenEndpointResponse))]
-    [OpenBankingEquivalent(typeof(Persistent.TokenEndpointResponse))]
     public class TokenEndpointResponse
     {
         [JsonProperty("access_token")]

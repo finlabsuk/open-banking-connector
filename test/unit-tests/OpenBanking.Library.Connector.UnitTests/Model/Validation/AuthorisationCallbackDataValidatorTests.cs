@@ -2,9 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FluentAssertions;
+using FluentValidation.Results;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation
@@ -14,33 +17,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_ModeIsNull()
         {
-            var validator = new AuthorisationCallbackDataValidator();
+            AuthorisationCallbackDataValidator? validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = null,
-                Body = null
-            };
+            AuthorisationCallbackData? data = new AuthorisationCallbackData(responseMode: null, response: null);
 
-            var results = validator.Validate(data).Errors;
-
-            results.Should().HaveCount(2);
-        }
-
-        [Fact]
-        public void Validate_MethodIsNull()
-        {
-            var validator = new AuthorisationCallbackDataValidator();
-
-            var data = new AuthorisationCallbackData
-            {
-                Method = null,
-                Mode = "a",
-                Body = null
-            };
-
-            var results = validator.Validate(data).Errors;
+            IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
             results.Should().HaveCount(2);
         }
@@ -48,16 +29,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsNull()
         {
-            var validator = new AuthorisationCallbackDataValidator();
+            AuthorisationCallbackDataValidator? validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = null
-            };
+            AuthorisationCallbackData? data = new AuthorisationCallbackData(responseMode: "a", response: null);
 
-            var results = validator.Validate(data).Errors;
+            IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
             results.Should().HaveCount(1);
         }
@@ -66,16 +42,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsDefault()
         {
-            var validator = new AuthorisationCallbackDataValidator();
+            AuthorisationCallbackDataValidator? validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = new AuthorisationCallbackInfo()
-            };
+            AuthorisationCallbackData? data = new AuthorisationCallbackData(
+                responseMode: "a",
+                response: new AuthorisationCallbackPayload(authorisationCode: null, state: null));
 
-            var results = validator.Validate(data).Errors;
+            IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
             results.Should().HaveCountGreaterThan(1);
         }
@@ -84,22 +57,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsValid()
         {
-            var validator = new AuthorisationCallbackDataValidator();
+            AuthorisationCallbackDataValidator? validator = new AuthorisationCallbackDataValidator();
 
-            var data = new AuthorisationCallbackData
-            {
-                Method = "a",
-                Mode = "a",
-                Body = new AuthorisationCallbackInfo
+            AuthorisationCallbackData? data = new AuthorisationCallbackData(
+                responseMode: "a",
+                response: new AuthorisationCallbackPayload(authorisationCode: "a", state: "a")
                 {
-                    AuthorisationCode = "a",
-                    IdToken = "a",
+                    Id_Token = "a",
                     Nonce = null,
-                    State = "a"
-                }
-            };
+                });
 
-            var results = validator.Validate(data).Errors;
+            IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
             results.Should().HaveCount(0);
         }

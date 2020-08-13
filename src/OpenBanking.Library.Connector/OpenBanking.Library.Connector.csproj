@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector</AssemblyName>
     <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector</RootNamespace>
     <Copyright>Finnovation Labs Limited and Contributors</Copyright>
@@ -23,16 +23,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="FluentValidation" Version="9.1.1" />
     <PackageReference Include="jose-jwt" Version="2.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-preview.2.20159.4" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation\OpenBanking.Library.Connector.ObModels.PaymentInitiation.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2\OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.csproj" />
   </ItemGroup>

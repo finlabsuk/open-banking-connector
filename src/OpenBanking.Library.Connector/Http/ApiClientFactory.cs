@@ -34,15 +34,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private static Lazy<HttpClient> CreateHttpClient()
         {
-            return new Lazy<HttpClient>(() =>
-            {
-                lock (Lock)
+            return new Lazy<HttpClient>(
+                () =>
                 {
-                    return _handler != null
-                        ? new HttpClient(_handler)
-                        : new HttpClient();
-                }
-            });
+                    lock (Lock)
+                    {
+                        return _handler != null
+                            ? new HttpClient(_handler)
+                            : new HttpClient();
+                    }
+                });
         }
     }
 }

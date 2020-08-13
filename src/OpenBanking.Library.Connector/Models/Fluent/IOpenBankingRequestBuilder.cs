@@ -14,9 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 
         DomesticPaymentConsentContext DomesticPaymentConsent(string openBankingClientProfileId);
 
-        AuthorisationCallbackContext AuthorisationCallback();
+        AuthorisationCallbackDataContext AuthorisationCallbackData();
 
-        DomesticPaymentContext DomesticPayment(string domesticConsentId);
+        DomesticPaymentContext DomesticPayment();
 
         PaymentInitiationApiProfileContext PaymentInitiationApiProfile();
     }

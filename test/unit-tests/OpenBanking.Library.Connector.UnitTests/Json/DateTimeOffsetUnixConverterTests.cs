@@ -4,7 +4,7 @@
 
 using System;
 using System.IO;
-using FinnovationLabs.OpenBanking.Library.Connector.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
 using FsCheck;
 using FsCheck.Xunit;
 using Newtonsoft.Json;
@@ -16,8 +16,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property DateTimeOffset_SerialisationIsSymmetric(DateTime dateTime)
         {
-            var dateTimeOffset = new DateTimeOffset(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour,
-                dateTime.Minute, dateTime.Second, TimeSpan.Zero);
+            DateTimeOffset dateTimeOffset = new DateTimeOffset(
+                year: dateTime.Year,
+                month: dateTime.Month,
+                day: dateTime.Day,
+                hour: dateTime.Hour,
+                minute: dateTime.Minute,
+                second: dateTime.Second,
+                offset: TimeSpan.Zero);
 
             var value = new SerialisedEntity
             {
@@ -38,9 +44,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property DateTimeOffset_MillisecondsIgnored(DateTime dateTime, int milliseconds)
         {
-            var dt = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute,
-                dateTime.Second, DateTimeKind.Utc).AddMilliseconds(milliseconds);
-            var dto = new DateTimeOffset(dt, TimeSpan.Zero);
+            DateTime dt = new DateTime(
+                year: dateTime.Year,
+                month: dateTime.Month,
+                day: dateTime.Day,
+                hour: dateTime.Hour,
+                minute: dateTime.Minute,
+                second: dateTime.Second,
+                kind: DateTimeKind.Utc).AddMilliseconds(milliseconds);
+            DateTimeOffset dto = new DateTimeOffset(dateTime: dt, offset: TimeSpan.Zero);
 
             var value = new SerialisedEntity
             {
@@ -52,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 var json = JsonConvert.SerializeObject(value);
                 var newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json);
 
-                var delta = Math.Abs((value.DateAndTime - newValue.DateAndTime).TotalMilliseconds);
+                double delta = Math.Abs((value.DateAndTime - newValue.DateAndTime).TotalMilliseconds);
                 return delta == milliseconds;
             };
 
@@ -70,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 var jsonWriter = new JsonTextWriter(stringWriter);
                 jsonWriter.WriteStartObject();
                 jsonWriter.WritePropertyName("iat");
-                converter.WriteJson(jsonWriter, value, new JsonSerializer());
+                converter.WriteJson(writer: jsonWriter, value: value, serializer: new JsonSerializer());
 
                 jsonWriter.WriteEndObject();
 

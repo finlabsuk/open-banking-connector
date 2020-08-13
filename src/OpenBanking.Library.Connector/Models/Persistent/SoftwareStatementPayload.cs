@@ -4,12 +4,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    [Owned]
     /// Struct corresponding to payload of Open Banking Software Statement type. Fields can be added as required
     public class SoftwareStatementPayload
     {
@@ -59,8 +58,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             get
             {
                 // insert "openid" if not present
-                var mutatingSoftwareRoles = SoftwareRoles.Select(role => SoftwareRoleToScope[role])
-                    .Concat(new[] { "openid" })
+                IEnumerable<string> mutatingSoftwareRoles = SoftwareRoles.Select(role => SoftwareRoleToScope[role])
+                    .Prepend("openid")
                     .Distinct();
 
                 return mutatingSoftwareRoles.JoinString(" ");

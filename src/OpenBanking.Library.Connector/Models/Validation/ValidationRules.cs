@@ -4,6 +4,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FluentValidation.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
@@ -38,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         internal static bool IsUrl<T>(T arg1, string arg2, PropertyValidatorContext arg3)
         {
-            return arg2 != null && Uri.TryCreate(arg2, UriKind.Absolute, out _);
+            return arg2 != null && Uri.TryCreate(uriString: arg2, uriKind: UriKind.Absolute, result: out _);
         }
 
         internal static bool IsAbsoluteUrl<T>(T arg1, Uri arg2, PropertyValidatorContext arg3)
@@ -51,7 +52,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
             return arg2 != null && regex.Match(arg2).Success;
         }
 
-        internal static bool HasDelimiters<T>(T arg1, string arg2, PropertyValidatorContext arg3, char delimiter,
+        internal static bool HasDelimiters<T>(
+            T arg1,
+            string arg2,
+            PropertyValidatorContext arg3,
+            char delimiter,
             int maxLength)
         {
             return arg2 != null && arg2.DelimiterCount(delimiter) == maxLength;
