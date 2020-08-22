@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation;
 using Microsoft.AspNetCore.Http;
@@ -33,12 +34,12 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DomesticPaymentConsentsPostAsync([FromBody] DomesticPaymentConsent request)
         {
-            DomesticPaymentConsentFluentResponse? resp = await _obRequestBuilder
-                .DomesticPaymentConsent(request.ApiProfileId)
+            FluentResponse<DomesticPaymentConsentResponse> resp = await _obRequestBuilder
+                .DomesticPaymentConsent()
                 .Data(request)
                 .SubmitAsync();
 
-            DomesticPaymentConsentHttpResponse? result = new DomesticPaymentConsentHttpResponse(
+            DomesticPaymentConsentHttpResponse result = new DomesticPaymentConsentHttpResponse(
                 messages: resp.ToMessagesResponse(),
                 data: resp.Data);
 

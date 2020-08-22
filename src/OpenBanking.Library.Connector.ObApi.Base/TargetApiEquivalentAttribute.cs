@@ -16,6 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base
 
         public Type EquivalentType { get; set; }
 
-        public Type EquivalentTypeMapper { get; set; }
+        public Type? EquivalentTypeMapper { get; set; }
     }
 }

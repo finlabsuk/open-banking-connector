@@ -11,24 +11,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     public class OpenIdConfiguration
     {
         [JsonProperty("issuer")]
-        public string Issuer { get; set; }
+        public string Issuer { get; set; } = null!;
 
         [JsonProperty("response_types_supported")]
-        public string[] ResponseTypesSupported { get; set; }
+        public string[] ResponseTypesSupported { get; set; } = null!;
 
         [JsonProperty("scopes_supported")]
-        public string[] ScopesSupported { get; set; }
+        public string[] ScopesSupported { get; set; } = null!;
 
         [JsonProperty("response_modes_supported")]
-        public string[] ResponseModesSupported { get; set; }
+        public string[] ResponseModesSupported { get; set; } = null!;
 
         [JsonProperty("token_endpoint")]
-        public string TokenEndpoint { get; set; }
+        public string TokenEndpoint { get; set; } = null!;
 
         [JsonProperty("authorization_endpoint")]
-        public string AuthorizationEndpoint { get; set; }
+        public string AuthorizationEndpoint { get; set; } = null!;
 
         [JsonProperty("registration_endpoint")]
-        public string RegistrationEndpoint { get; set; }
+        public string RegistrationEndpoint { get; set; } = null!;
     }
 }

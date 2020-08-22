@@ -109,12 +109,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
 
             services.AddScoped<IDbMultiEntityMethods,
                 DbMultiEntityMethods>();
-            services.AddScoped<IDbEntityRepository<BankClientProfile>,
-                DbEntityRepository<BankClientProfile>>();
-            services.AddScoped<IDbEntityRepository<ApiProfile>,
-                DbEntityRepository<ApiProfile>>();
-            services.AddScoped<IDbEntityRepository<DomesticConsent>,
-                DbEntityRepository<DomesticConsent>>();
+            services.AddScoped<IDbEntityRepository<Bank>,
+                DbEntityRepository<Bank>>();
+            services.AddScoped<IDbEntityRepository<BankRegistration>,
+                DbEntityRepository<BankRegistration>>();
+            services.AddScoped<IDbEntityRepository<BankProfile>,
+                DbEntityRepository<BankProfile>>();
+            services.AddScoped<IDbEntityRepository<DomesticPaymentConsent>,
+                DbEntityRepository<DomesticPaymentConsent>>();
             services.AddSingleton<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>,
                 KeySecretReadRepository<ActiveSoftwareStatementProfiles>>();
             services.AddSingleton<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>,

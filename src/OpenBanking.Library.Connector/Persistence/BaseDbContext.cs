@@ -2,9 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using Microsoft.EntityFrameworkCore;
@@ -20,17 +21,68 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         // Use no JSON formatting by default.
         protected virtual Formatting JsonFormatting { get; } = Formatting.None;
 
-        public DbSet<BankClientProfile> BankClientProfiles { get; set; }
+        public DbSet<Bank> Banks => Set<Bank>();
 
-        public DbSet<ApiProfile> ApiProfiles { get; set; }
+        public DbSet<BankRegistration> BankRegistrations => Set<BankRegistration>();
 
-        public DbSet<DomesticConsent> DomesticConsents { get; set; }
+        public DbSet<BankProfile> BankProfiles => Set<BankProfile>();
+
+        public DbSet<DomesticPaymentConsent> DomesticConsents => Set<DomesticPaymentConsent>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Navigation properties
+            modelBuilder
+                .Entity<Bank>()
+                .HasOne<BankRegistration>()
+                .WithOne()
+                .HasForeignKey<Bank>(b => b.DefaultBankRegistrationId);
+
+            modelBuilder
+                .Entity<Bank>()
+                .HasOne<BankRegistration>()
+                .WithOne()
+                .HasForeignKey<Bank>(b => b.StagingBankRegistrationId);
+
+            modelBuilder
+                .Entity<Bank>()
+                .HasOne<BankProfile>()
+                .WithOne()
+                .HasForeignKey<Bank>(b => b.DefaultBankProfileId);
+
+            modelBuilder
+                .Entity<Bank>()
+                .HasOne<BankProfile>()
+                .WithOne()
+                .HasForeignKey<Bank>(b => b.StagingBankProfileId);
+
+            modelBuilder
+                .Entity<BankRegistration>()
+                .HasOne<Bank>()
+                .WithMany()
+                .HasForeignKey(r => r.BankId);
+            
+            modelBuilder
+                .Entity<BankProfile>()
+                .HasOne<Bank>()
+                .WithMany()
+                .HasForeignKey(p => p.BankId);
+            
+            modelBuilder
+                .Entity<BankProfile>()
+                .HasOne<BankRegistration>()
+                .WithMany()
+                .HasForeignKey(p => p.BankRegistrationId);
+
+            // modelBuilder
+            //     .Entity<DomesticPaymentConsent>()
+            //     .HasOne<BankProfile>()
+            //     .WithMany()
+            //     .HasForeignKey(p => p.BankProfileId);
+            
             // Specify fields to be stored as JSON
             modelBuilder
-                .Entity<BankClientProfile>(
+                .Entity<BankRegistration>(
                     c =>
                     {
                         c
@@ -42,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     });
 
             modelBuilder
-                .Entity<BankClientProfile>(
+                .Entity<BankRegistration>(
                     c =>
                     {
                         c
@@ -54,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     });
 
             modelBuilder
-                .Entity<BankClientProfile>(
+                .Entity<BankRegistration>(
                     c =>
                     {
                         c
@@ -66,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     });
 
             modelBuilder
-                .Entity<BankClientProfile>(
+                .Entity<BankRegistration>(
                     c =>
                     {
                         c
@@ -78,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                     });
 
             modelBuilder
-                .Entity<BankClientProfile>(
+                .Entity<BankRegistration>(
                     c =>
                     {
                         c
@@ -89,17 +141,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                                     JsonConvert.DeserializeObject<OBClientRegistration1>(v));
                     });
 
-            modelBuilder.Entity<ApiProfile>(
-                b =>
-                {
-                    b.Property(e => e.Id);
-                    b.Property(e => e.BankClientProfileId);
-                    b.Property(e => e.ApiVersion);
-                    b.Property(e => e.BaseUrl);
-                });
+            modelBuilder
+                .Entity<BankProfile>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.PaymentInitiationApi)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<PaymentInitiationApi>(v));
+                    });
 
             modelBuilder
-                .Entity<DomesticConsent>(
+                .Entity<DomesticPaymentConsent>(
                     c =>
                     {
                         c
@@ -109,10 +164,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                                 convertFromProviderExpression: v =>
                                     JsonConvert.DeserializeObject<OBWriteDomesticConsent4>(v));
                     });
-
+            
+            modelBuilder
+                .Entity<DomesticPaymentConsent>(
+                    c =>
+                    {
+                        c
+                            .Property(e => e.ObWriteDomesticResponse)
+                            .HasConversion(
+                                convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
+                                convertFromProviderExpression: v =>
+                                    JsonConvert.DeserializeObject<OBWriteDomesticConsentResponse4>(v));
+                    });
 
             modelBuilder
-                .Entity<DomesticConsent>(
+                .Entity<DomesticPaymentConsent>(
                     c =>
                     {
                         c
@@ -120,7 +186,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
                             .HasConversion(
                                 convertToProviderExpression: v => JsonConvert.SerializeObject(v, JsonFormatting),
                                 convertFromProviderExpression: v =>
-                                    JsonConvert.DeserializeObject<TokenEndpointResponse>(v));
+                                    JsonConvert.DeserializeObject<TokenEndpointResponse?>(v));
                     });
         }
     }

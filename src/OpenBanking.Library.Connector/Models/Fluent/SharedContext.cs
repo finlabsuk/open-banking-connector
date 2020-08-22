@@ -28,32 +28,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IObcConfigurationProvider configurationProvider,
             IInstrumentationClient instrumentation,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
-            IDbEntityRepository<BankClientProfile> clientProfileRepository,
+            IDbEntityRepository<BankRegistration> clientProfileRepository,
             ISoftwareStatementProfileService softwareStatementProfileService,
-            IDbEntityRepository<DomesticConsent> domesticConsentRepository,
+            IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepository,
             IEntityMapper entityMapper,
-            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IDbEntityRepository<BankProfile> apiProfileRepository,
             IDbMultiEntityMethods dbContextService,
             IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
             IKeySecretMultiItemReadRepository<SoftwareStatementProfile> sReadOnlyRepo,
             IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> sRepo,
-            IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo)
+            IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
+            IDbEntityRepository<Bank> bankRepository)
         {
             CertificateReader = certificateReader;
             ApiClient = apiClient;
             ConfigurationProvider = configurationProvider;
             Instrumentation = instrumentation;
             KeySecretReadOnlyProvider = keySecretReadOnlyProvider;
-            ClientProfileRepository = clientProfileRepository;
+            BankRegistrationRepository = clientProfileRepository;
             SoftwareStatementProfileService = softwareStatementProfileService;
             DomesticConsentRepository = domesticConsentRepository;
             EntityMapper = entityMapper;
-            ApiProfileRepository = apiProfileRepository;
+            BankProfileRepository = apiProfileRepository;
             DbContextService = dbContextService;
             ActiveSRRepo = activeSrRepo;
             SReadOnlyRepo = sReadOnlyRepo;
             SRepo = sRepo;
             ActiveSReadOnlyRepo = activeSReadOnlyRepo;
+            BankRepository = bankRepository;
         }
 
         public DateTimeOffset Created { get; set; }
@@ -62,15 +64,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         public IObcConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
-        public IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
+        public IDbEntityRepository<Bank> BankRepository { get; }
+        public IDbEntityRepository<BankRegistration> BankRegistrationRepository { get; }
         public IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
         public IKeySecretMultiItemReadRepository<SoftwareStatementProfile> SReadOnlyRepo { get; }
         public IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> SRepo { get; }
         public IKeySecretReadRepository<ActiveSoftwareStatementProfiles> ActiveSReadOnlyRepo { get; }
         public ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
-        public IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
+        public IDbEntityRepository<DomesticPaymentConsent> DomesticConsentRepository { get; }
         public IEntityMapper EntityMapper { get; }
-        public IDbEntityRepository<ApiProfile> ApiProfileRepository { get; }
+        public IDbEntityRepository<BankProfile> BankProfileRepository { get; }
         public IDbMultiEntityMethods DbContextService { get; }
     }
 }

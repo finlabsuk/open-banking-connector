@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiati
         /// Initializes a new instance of the <see cref="OBWriteDomesticConsentResponse4" /> class.
         /// </summary>
         [JsonConstructor]
-        protected OBWriteDomesticConsentResponse4() { }
+        public OBWriteDomesticConsentResponse4() { }
         /// <summary>
         /// Initializes a new instance of the <see cref="OBWriteDomesticConsentResponse4" /> class.
         /// </summary>

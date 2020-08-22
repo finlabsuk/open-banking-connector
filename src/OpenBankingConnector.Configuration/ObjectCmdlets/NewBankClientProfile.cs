@@ -33,12 +33,12 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
 
         protected override void ProcessRecord()
         {
-            BankClientProfile output = new BankClientProfile
+            BankRegistration output = new BankRegistration
             {
-                Id = Id,
+                //Id = Id,
                 SoftwareStatementProfileId = SoftwareStatementProfileId,
-                IssuerUrl = IssuerUrl,
-                XFapiFinancialId = XFapiFinancialId,
+                //IssuerUrl = IssuerUrl,
+                //XFapiFinancialId = XFapiFinancialId,
                 OpenIdConfigurationOverrides = null,
                 HttpMtlsConfigurationOverrides = null,
                 BankClientRegistrationClaimsOverrides = BankClientRegistrationClaimsOverrides,

@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentIn
 {
     public class DomesticPaymentConsentHttpResponse
     {
-        public DomesticPaymentConsentHttpResponse(MessagesResponse messages, PaymentConsentResponse data)
+        public DomesticPaymentConsentHttpResponse(MessagesResponse messages, DomesticPaymentConsentResponse data)
         {
             Messages = messages;
             Data = data;
@@ -20,6 +20,6 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentIn
         public MessagesResponse Messages { get; set; }
 
         [JsonProperty("data")]
-        public PaymentConsentResponse Data { get; set; }
+        public DomesticPaymentConsentResponse Data { get; set; }
     }
 }

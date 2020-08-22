@@ -31,17 +31,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 configurationProvider: Substitute.For<IObcConfigurationProvider>(),
                 instrumentation: Substitute.For<IInstrumentationClient>(),
                 keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
-                clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),
+                clientProfileRepository: Substitute.For<IDbEntityRepository<BankRegistration>>(),
                 softwareStatementProfileService: Substitute.For<ISoftwareStatementProfileService>(),
-                domesticConsentRepository: Substitute.For<IDbEntityRepository<DomesticConsent>>(),
+                domesticConsentRepository: Substitute.For<IDbEntityRepository<DomesticPaymentConsent>>(),
                 entityMapper: Substitute.For<IEntityMapper>(),
-                apiProfileRepository: Substitute.For<IDbEntityRepository<ApiProfile>>(),
+                apiProfileRepository: Substitute.For<IDbEntityRepository<BankProfile>>(),
                 dbContextService: Substitute.For<IDbMultiEntityMethods>(),
                 activeSrRepo: Substitute.For<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>>(),
                 sReadOnlyRepo: Substitute
                     .For<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>>(),
                 sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<SoftwareStatementProfile>>(),
-                activeSReadOnlyRepo: Substitute.For<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>>());
+                activeSReadOnlyRepo: Substitute.For<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>>(),
+                Substitute.For<IDbEntityRepository<Bank>>()
+                );
         }
 
 
@@ -56,15 +58,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
                 apiClient: Substitute.For<IApiClient>(),
                 certificateReader: Substitute.For<ICertificateReader>(),
-                clientProfileRepository: Substitute.For<IDbEntityRepository<BankClientProfile>>(),
-                domesticConsentRepo: Substitute.For<IDbEntityRepository<DomesticConsent>>(),
-                apiProfileRepository: Substitute.For<IDbEntityRepository<ApiProfile>>(),
+                clientProfileRepository: Substitute.For<IDbEntityRepository<BankRegistration>>(),
+                domesticConsentRepo: Substitute.For<IDbEntityRepository<DomesticPaymentConsent>>(),
+                apiProfileRepository: Substitute.For<IDbEntityRepository<BankProfile>>(),
                 activeSReadOnlyRepo: Substitute.For<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>>(),
                 activeSrRepo: Substitute.For<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>>(),
                 sReadOnlyRepo: Substitute
                     .For<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>>(),
                 sRepo: Substitute.For<IKeySecretMultiItemWriteRepository<SoftwareStatementProfile>>(),
-                softwareStatementProfileService: Substitute.For<ISoftwareStatementProfileService>());
+                softwareStatementProfileService: Substitute.For<ISoftwareStatementProfileService>(),
+                Substitute.For<IDbEntityRepository<Bank>>());
         }
     }
 }

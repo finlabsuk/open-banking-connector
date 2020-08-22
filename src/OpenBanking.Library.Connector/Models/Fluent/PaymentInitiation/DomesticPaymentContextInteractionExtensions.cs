@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation
@@ -27,45 +27,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static async Task<DomesticPaymentFluentResponse> SubmitAsync(this DomesticPaymentContext context)
+        public static async Task<FluentResponse<DomesticPaymentResponse>> SubmitAsync(
+            this DomesticPaymentContext context)
         {
             context.ArgNotNull(nameof(context));
             try
             {
-                DomesticPayment domesticPayment = context.Data ?? new DomesticPayment(
-                    context.ConsentId.ArgNotNullElseInvalidOp("ConsentId not specified"));
-
+                DomesticPayment domesticPayment = context.Data ?? new DomesticPayment
+                {
+                    ConsentId = context.ConsentId.ArgNotNullElseInvalidOp("ConsentId not specified")
+                };
                 IList<FluentResponseMessage> validationErrors = new PaymentRequestValidator()
                     .Validate(domesticPayment)
                     .GetOpenBankingResponses();
                 if (validationErrors.Count > 0)
                 {
-                    return new DomesticPaymentFluentResponse(validationErrors);
+                    return new FluentResponse<DomesticPaymentResponse>(validationErrors);
                 }
 
                 CreateDomesticPayment i = new CreateDomesticPayment(
                     apiClient: context.Context.ApiClient,
-                    mapper: context.Context.EntityMapper,
-                    openBankingClientRepo: context.Context.ClientProfileRepository,
+                    bankRepo: context.Context.BankRepository,
+                    bankProfileRepo: context.Context.BankProfileRepository,
                     domesticConsentRepo: context.Context.DomesticConsentRepository,
-                    apiProfileRepo: context.Context.ApiProfileRepository,
+                    mapper: context.Context.EntityMapper,
+                    bankRegistrationRepo: context.Context.BankRegistrationRepository,
                     softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
-                OBWriteDomesticResponse4 resp = await i.CreateAsync(domesticPayment.ConsentId);
+                DomesticPaymentResponse resp = await i.CreateAsync(domesticPayment);
 
-                return new DomesticPaymentFluentResponse(resp.Data);
+                return new FluentResponse<DomesticPaymentResponse>(resp);
             }
             catch (AggregateException ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new DomesticPaymentFluentResponse(ex.CreateErrorMessages());
+                return new FluentResponse<DomesticPaymentResponse>(ex.CreateErrorMessages());
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new DomesticPaymentFluentResponse(ex.CreateErrorMessage());
+                return new FluentResponse<DomesticPaymentResponse>(ex.CreateErrorMessage());
             }
         }
     }

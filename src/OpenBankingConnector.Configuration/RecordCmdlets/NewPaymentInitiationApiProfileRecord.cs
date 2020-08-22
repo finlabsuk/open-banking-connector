@@ -6,16 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "PaymentInitiationApiProfileRecord")]
-    [OutputType(typeof(PaymentInitiationApiProfileFluentResponse))]
+    [OutputType(typeof(FluentResponse<BankProfileResponse>))]
     public class NewPaymentInitiationApiProfileRecord : RecordBaseCmdlet
     {
         public NewPaymentInitiationApiProfileRecord() : base(
@@ -24,21 +23,21 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             deleteAndRecreateDb: false) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public PaymentInitiationApiProfile? PaymentInitiationApiProfile { get; set; }
+        public BankProfile? PaymentInitiationApiProfile { get; set; }
 
         protected override void ProcessRecordInner(IServiceProvider services)
         {
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
-                ICreatePaymentInitiationApiProfile createApiProfile =
-                    services.GetService<ICreatePaymentInitiationApiProfile>();
-                PaymentInitiationApiProfileResponse response = createApiProfile
+                ICreateBankProfile createApiProfile =
+                    services.GetService<ICreateBankProfile>();
+                BankProfileResponse response = createApiProfile
                     .CreateAsync(PaymentInitiationApiProfile)
                     .GetAwaiter()
                     .GetResult();
-                PaymentInitiationApiProfileFluentResponse response2 =
-                    new PaymentInitiationApiProfileFluentResponse(messages: messages, data: response);
+                FluentResponse<BankProfileResponse> response2 =
+                    new FluentResponse<BankProfileResponse>(messages: messages, data: response);
                 WriteObject(response2);
             }
             catch (Exception ex)

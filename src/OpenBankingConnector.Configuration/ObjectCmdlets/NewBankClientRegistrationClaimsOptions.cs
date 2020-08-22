@@ -4,6 +4,7 @@
 
 using System.Management.Automation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace OpenBankingConnector.Configuration.ObjectCmdlets
 {

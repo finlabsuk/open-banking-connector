@@ -5,8 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -38,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static async Task<AuthorisationCallbackDataFluentResponse> SubmitAsync(
+        public static async Task<FluentResponse<AuthorisationCallbackDataResponse>> SubmitAsync(
             this AuthorisationCallbackDataContext context)
         {
             context.ArgNotNull(nameof(context));
@@ -54,33 +55,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                     .GetOpenBankingResponses();
                 if (validationErrors.Count > 0)
                 {
-                    return new AuthorisationCallbackDataFluentResponse(validationErrors);
+                    return new FluentResponse<AuthorisationCallbackDataResponse>(validationErrors);
                 }
 
                 RedirectCallbackHandler handler = new RedirectCallbackHandler(
                     apiClient: context.Context.ApiClient,
-                    mapper: context.Context.EntityMapper,
-                    openBankingClientRepo: context.Context.ClientProfileRepository,
+                    bankRepo: context.Context.BankRepository,
+                    bankProfileRepo: context.Context.BankProfileRepository,
+                    dbContextService: context.Context.DbContextService,
                     domesticConsentRepo: context.Context.DomesticConsentRepository,
-                    softwareStatementProfileService: context.Context.SoftwareStatementProfileService,
-                    dbMultiEntityMethods: context.Context.DbContextService,
-                    apiProfileRepo: context.Context.ApiProfileRepository);
+                    bankRegistrationRepo: context.Context.BankRegistrationRepository,
+                    softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
                 await handler.CreateAsync(authData);
 
-                return new AuthorisationCallbackDataFluentResponse(new List<FluentResponseMessage>());
+                return new FluentResponse<AuthorisationCallbackDataResponse>(new List<FluentResponseMessage>());
             }
             catch (AggregateException ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new AuthorisationCallbackDataFluentResponse(ex.CreateErrorMessages());
+                return new FluentResponse<AuthorisationCallbackDataResponse>(ex.CreateErrorMessages());
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new AuthorisationCallbackDataFluentResponse(new[] { ex.CreateErrorMessage() });
+                return new FluentResponse<AuthorisationCallbackDataResponse>(new[] { ex.CreateErrorMessage() });
             }
         }
     }

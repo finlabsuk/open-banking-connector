@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             this HttpRequestMessage request,
             IApiClient client,
             bool requestContentIsJson,
-            JsonSerializerSettings jsonSerializerSettings = null)
+            JsonSerializerSettings? jsonSerializerSettings = null)
             where T : class
         {
             request.ArgNotNull(nameof(request));

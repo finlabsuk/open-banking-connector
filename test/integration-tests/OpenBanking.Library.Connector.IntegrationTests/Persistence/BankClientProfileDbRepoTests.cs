@@ -4,6 +4,7 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
 using FsCheck.Xunit;
@@ -15,11 +16,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
     {
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITestOutputHelper _output;
-        private readonly IDbEntityRepository<BankClientProfile> _repo;
+        private readonly IDbEntityRepository<BankRegistration> _repo;
 
         public BankClientProfileDbRepoTests(ITestOutputHelper output)
         {
-            _repo = new DbEntityRepository<BankClientProfile>(_dB);
+            _repo = new DbEntityRepository<BankRegistration>(_dB);
             _dbMultiEntityMethods = new DbMultiEntityMethods(_dB);
             _output = output;
         }
@@ -49,11 +50,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         {
             Func<bool> rule = () =>
             {
-                BankClientProfile value = new BankClientProfile
+                BankRegistration value = new BankRegistration
                 {
+                    SoftwareStatementProfileId = "sdf",
+                    OpenIdConfiguration = new OpenIdConfiguration(),
+                    BankClientRegistrationRequestData = new OBClientRegistration1(),
+                    BankClientRegistrationData = new OBClientRegistration1(),
                     Id = id.Item
                 };
-                BankClientProfile _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
+                BankRegistration _ = _repo.UpsertAsync(value).GetAwaiter().GetResult();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 return _repo.GetAsync(id.Item).Result.Id == id.Item;
@@ -65,36 +70,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
         public Property SetAsync_KnownId_ElementReplaced(
             StringNotNullAndContainsNoNulls id,
-            BankClientProfile value,
-            BankClientProfile value2)
+            BankRegistration value,
+            BankRegistration value2)
         {
             Func<bool> rule = () =>
             {
                 value.Id = id.Item;
                 value2.Id = id.Item;
 
-                BankClientProfile _ = _repo.UpsertAsync(value).Result;
-                BankClientProfile __ = _repo.UpsertAsync(value2).Result;
+                BankRegistration _ = _repo.UpsertAsync(value).Result;
+                BankRegistration __ = _repo.UpsertAsync(value2).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                BankClientProfile item = _repo.GetAsync(id.Item).Result;
+                BankRegistration item = _repo.GetAsync(id.Item).Result;
 
-                return item.Id == id.Item && item.XFapiFinancialId == value2.XFapiFinancialId;
+                return item.Id == id.Item && item.BankId == value2.BankId;
             };
 
             // Run test avoiding C null character
             return rule.When(
                 value != null && value2 != null &&
-                value.XFapiFinancialId != value2.XFapiFinancialId);
+                value.BankId != value2.BankId);
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
-        public Property DeleteAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id, BankClientProfile value)
+        public Property DeleteAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id, BankRegistration value)
         {
             Func<bool> rule = () =>
             {
                 value.Id = id.Item;
-                BankClientProfile _ = _repo.UpsertAsync(value).Result;
+                BankRegistration _ = _repo.UpsertAsync(value).Result;
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
                 _repo.RemoveAsync(value).Wait();

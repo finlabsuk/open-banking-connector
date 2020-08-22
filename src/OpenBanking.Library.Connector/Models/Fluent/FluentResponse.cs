@@ -3,24 +3,30 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
-    public abstract class FluentResponse
+    public class FluentResponse<TData> : FluentResponseBase
+    where TData: class
     {
-        protected FluentResponse() : this(new List<FluentResponseMessage>()) { }
-
-        protected FluentResponse(IList<FluentResponseMessage> messages)
+        public FluentResponse(TData data)
         {
-            Messages = messages ?? new List<FluentResponseMessage>();
+            Data = data;
         }
 
-        public IList<FluentResponseMessage> Messages { get; }
+        public FluentResponse(
+            FluentResponseMessage message,
+            TData? data = null)
+            : this(messages: new[] { message }, data: data) { }
 
-        public bool HasInfos => Messages.NullToEmpty().OfType<FluentResponseInfoMessage>().Any();
-        public bool HasWarnings => Messages.NullToEmpty().OfType<FluentResponseWarningMessage>().Any();
-        public bool HasErrors => Messages.NullToEmpty().OfType<FluentResponseErrorMessage>().Any();
+        public FluentResponse(
+            IList<FluentResponseMessage> messages,
+            TData? data = null)
+            : base(messages)
+        {
+            Data = data;
+        }
+
+        public TData? Data { get; }
     }
 }

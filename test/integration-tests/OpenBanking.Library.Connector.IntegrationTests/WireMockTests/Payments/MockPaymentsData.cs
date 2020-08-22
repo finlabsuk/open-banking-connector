@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
@@ -153,8 +154,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetAuthtoriseResponse()
         {
-            var model = new AuthorisationCallbackPayload("code123", "1ab89221-ca25-4055-9f96-7064fe953c52")
+            var model = new AuthorisationCallbackPayload()
             {
+                Code = "code123",
+                State = "1ab89221-ca25-4055-9f96-7064fe953c52",
                 Nonce = "a71276e3-d7fe-4f0d-9ce5-10a7ac2f3dca"
             };
 
@@ -242,9 +245,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: new ApiClient(httpClient),
                 certificateReader: new PemParsingCertificateReader(),
-                clientProfileRepository: new DbEntityRepository<BankClientProfile>(_dB),
-                domesticConsentRepo: new DbEntityRepository<DomesticConsent>(_dB),
-                apiProfileRepository: new DbEntityRepository<ApiProfile>(_dB),
+                clientProfileRepository: new DbEntityRepository<BankRegistration>(_dB),
+                domesticConsentRepo: new DbEntityRepository<DomesticPaymentConsent>(_dB),
+                apiProfileRepository: new DbEntityRepository<BankProfile>(_dB),
                 activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
@@ -254,7 +257,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
                     activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
                         _secretProvider),
-                    mapper: _entityMapper));
+                    mapper: _entityMapper),
+                new DbEntityRepository<Bank>(_dB));
 
             return requestBuilder;
         }

@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities
 {
     public static class MessagesResponseExtensions
     {
-        public static MessagesResponse ToMessagesResponse(this FluentResponse value)
+        public static MessagesResponse ToMessagesResponse(this FluentResponseBase value)
         {
             if (value.Messages != null)
             {

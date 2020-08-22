@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Services
         private readonly IEntityMapper _mapper;
 
         private readonly IKeySecretMultiItemReadRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
-        private Models.Persistent.SoftwareStatementProfile _defaultSoftwareStatementProfile;
+        private Models.Persistent.SoftwareStatementProfile _defaultSoftwareStatementProfile = null!;
 
         public SoftwareStatementProfileService(
             IKeySecretMultiItemReadRepository<SoftwareStatementProfile> softwareStatementProfileRepo,

@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
-    public class OpenBankingClientValidator : AbstractValidator<BankClientProfile>
+    public class OpenBankingClientValidator : AbstractValidator<BankRegistration>
     {
         public OpenBankingClientValidator()
         {
@@ -19,23 +19,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
         {
             RuleFor(x => x.SoftwareStatementProfileId)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(BankClientProfile.SoftwareStatementProfileId)}.");
+                .WithMessage($"Missing or invalid {nameof(BankRegistration.SoftwareStatementProfileId)}.");
 
-            RuleFor(x => x.IssuerUrl)
-                .Must(ValidationRules.IsUrl)
-                .WithMessage($"Missing or invalid {nameof(BankClientProfile.IssuerUrl)}.");
-
-            RuleFor(x => x.XFapiFinancialId)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(BankClientProfile.XFapiFinancialId)}.");
+            // RuleFor(x => x.IssuerUrl)
+            //     .Must(ValidationRules.IsUrl)
+            //     .WithMessage($"Missing or invalid {nameof(BankRegistration.IssuerUrl)}.");
+            //
+            // RuleFor(x => x.XFapiFinancialId)
+            //     .Must(ValidationRules.IsNotNullOrEmpty)
+            //     .WithMessage($"Missing or invalid {nameof(BankRegistration.XFapiFinancialId)}.");
 
             RuleFor(x => x.HttpMtlsConfigurationOverrides)
                 .SetValidator(new HttpClientMtlsConfigurationOverridesValidator())
-                .WithMessage($"Missing or invalid {nameof(BankClientProfile.HttpMtlsConfigurationOverrides)}.");
+                .WithMessage($"Missing or invalid {nameof(BankRegistration.HttpMtlsConfigurationOverrides)}.");
 
             RuleFor(x => x.OpenIdConfigurationOverrides)
                 .SetValidator(new OpenIdConfigurationOverridesValidator())
-                .WithMessage($"Missing or invalid {nameof(BankClientProfile.OpenIdConfigurationOverrides)}.");
+                .WithMessage($"Missing or invalid {nameof(BankRegistration.OpenIdConfigurationOverrides)}.");
         }
     }
 }

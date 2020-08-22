@@ -8,12 +8,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public class DomesticPayment
     {
-        public DomesticPayment(string consentId)
-        {
-            ConsentId = consentId;
-        }
-
-        [JsonProperty("consentId", Required = Required.Always)]
-        public string ConsentId { get; }
+        public string ConsentId { get; set; } = null!;
     }
 }

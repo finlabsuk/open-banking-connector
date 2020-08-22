@@ -20,37 +20,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         };
 
         [JsonProperty("software_on_behalf_of_org")]
-        public string SoftwareOnBehalfOfOrg;
+        public string SoftwareOnBehalfOfOrg = null!;
 
         [JsonProperty("software_id")]
-        public string SoftwareId { get; set; }
+        public string SoftwareId { get; set; } = null!;
 
         [JsonProperty("software_client_id")]
-        public string SoftwareClientId { get; set; }
+        public string SoftwareClientId { get; set; } = null!;
 
         [JsonProperty("software_client_name")]
-        public string SoftwareClientName { get; set; }
+        public string SoftwareClientName { get; set; } = null!;
 
         [JsonProperty("software_client_description")]
-        public string SoftwareClientDescription { get; set; }
+        public string SoftwareClientDescription { get; set; } = null!;
 
         [JsonProperty("software_version")]
         public float SoftwareVersion { get; set; }
 
         [JsonProperty("software_client_uri")]
-        public string SoftwareClientUri { get; set; }
+        public string SoftwareClientUri { get; set; } = null!;
 
         [JsonProperty("software_redirect_uris")]
-        public string[] SoftwareRedirectUris { get; set; }
+        public string[] SoftwareRedirectUris { get; set; } = null!;
 
         [JsonProperty("software_roles")]
-        public string[] SoftwareRoles { get; set; }
+        public string[] SoftwareRoles { get; set; } = null!;
 
         [JsonProperty("org_id")]
-        public string OrgId { get; set; }
+        public string OrgId { get; set; } = null!;
 
         [JsonProperty("org_name")]
-        public string OrgName { get; set; }
+        public string OrgName { get; set; } = null!;
 
         /// Scope list computed from software_roles
         public string Scope

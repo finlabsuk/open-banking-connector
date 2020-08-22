@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
                 .WithMessage("Please provide a TransportCertificate.");
 
             RuleFor(p => p.DefaultFragmentRedirectUrl)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.")
                 .Must(ValidationRules.IsUrl)

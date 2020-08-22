@@ -39,30 +39,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public SoftwareStatementProfile() { }
 
         /// Software statement as string, e.g. "A.B.C"
-        public string SoftwareStatement { get; set; }
+        public string SoftwareStatement { get; set; } = null!;
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
-        public string SigningKeyId { get; set; }
+        public string SigningKeyId { get; set; } = null!;
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-        public string SigningKey { get; set; }
+        public string SigningKey { get; set; } = null!;
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string SigningCertificate { get; set; }
+        public string SigningCertificate { get; set; } = null!;
 
         /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-        public string TransportKey { get; set; }
+        public string TransportKey { get; set; } = null!;
 
         /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string TransportCertificate { get; set; }
+        public string TransportCertificate { get; set; } = null!;
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         [Required]
-        public string DefaultFragmentRedirectUrl { get; set; }
+        public string DefaultFragmentRedirectUrl { get; set; } = null!;
 
         /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
         /// This is your choice; a meaningful name should help debugging throughout OBC.
         [Required]
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
     }
 }

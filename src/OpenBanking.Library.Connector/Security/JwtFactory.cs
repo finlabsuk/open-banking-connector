@@ -99,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             var dict = new Dictionary<string, object>
             {
                 { "typ", "JOSE" },
-                { "cty", "application/json" },
+                { "cty", "json" },
                 { "kid", signingId },
                 { "crit", crit },
                 { "http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds() },

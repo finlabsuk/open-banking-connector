@@ -5,7 +5,7 @@
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfilePublic =
+using RequestSoftwareStatementProfile =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 
@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     public interface ICreateSoftwareStatementProfile
     {
-        Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile);
+        Task<SoftwareStatementProfileResponse> CreateAsync(RequestSoftwareStatementProfile profile);
     }
 
     public class CreateSoftwareStatementProfile : ICreateSoftwareStatementProfile
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _softwareStatementProfileService = softwareStatementProfileService;
         }
 
-        public Task<SoftwareStatementProfileResponse> CreateAsync(SoftwareStatementProfilePublic profile)
+        public Task<SoftwareStatementProfileResponse> CreateAsync(RequestSoftwareStatementProfile profile)
         {
             profile.ArgNotNull(nameof(profile));
 
