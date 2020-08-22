@@ -10,14 +10,14 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities
 {
     public class BankClientProfileHttpResponse
     {
-        public BankClientProfileHttpResponse(BankClientProfileResponse data, MessagesResponse messages)
+        public BankClientProfileHttpResponse(BankRegistrationResponse data, MessagesResponse messages)
         {
             Data = data;
             Messages = messages;
         }
 
         [JsonProperty("data")]
-        public BankClientProfileResponse Data { get; set; }
+        public BankRegistrationResponse Data { get; set; }
 
         [JsonProperty("messages")]
         public MessagesResponse Messages { get; set; }

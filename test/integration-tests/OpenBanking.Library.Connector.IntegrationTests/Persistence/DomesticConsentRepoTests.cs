@@ -2,9 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FluentAssertions;
 using Xunit;
@@ -12,15 +14,15 @@ using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence
 {
-    public class DomesticConsentRepoTests: DbTest
+    public class DomesticConsentRepoTests : DbTest
     {
-        private readonly IDbEntityRepository<DomesticConsent> _repo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITestOutputHelper _output;
+        private readonly IDbEntityRepository<DomesticPaymentConsent> _repo;
 
         public DomesticConsentRepoTests(ITestOutputHelper output)
         {
-            _repo = new DbEntityRepository<DomesticConsent>(_dB);
+            _repo = new DbEntityRepository<DomesticPaymentConsent>(_dB);
             _dbMultiEntityMethods = new DbMultiEntityMethods(_dB);
             _output = output;
         }
@@ -33,20 +35,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByUniqueProperty(int count)
         {
-            var items = Enumerable.Range(1, count)
-                .Select(i => new DomesticConsent
-                {
-                    Id = i.ToString()
-                }).ToList();
+            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+                .Select(
+                    i => new DomesticPaymentConsent
+                    {
+                        State = "sdf",
+                        BankProfileId = "sdf",
+                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        Id = i.ToString()
+                    }).ToList();
             foreach (var dc in items)
             {
                 await _repo.UpsertAsync(dc);
             }
+
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await _repo.GetAsync(x => x.Id == count.ToString());
+            IQueryable<DomesticPaymentConsent>? q = await _repo.GetAsync(x => x.Id == count.ToString());
 
-            var results = q.ToList();
+            List<DomesticPaymentConsent>? results = q.ToList();
 
             results.Should().HaveCount(1);
             results[0].Should().Be(items.Last());
@@ -60,20 +68,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByAll(int count)
         {
-            var items = Enumerable.Range(1, count)
-                .Select(i => new DomesticConsent
-                {
-                    Id = i.ToString()
-                }).ToList();
+            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+                .Select(
+                    i => new DomesticPaymentConsent
+                    {
+                        State = "sdf",
+                        BankProfileId = "sdf",
+                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        Id = i.ToString()
+                    }).ToList();
             foreach (var dc in items)
             {
                 await _repo.UpsertAsync(dc);
             }
+
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await _repo.GetAsync(x => true);
+            IQueryable<DomesticPaymentConsent>? q = await _repo.GetAsync(x => true);
 
-            var results = q.ToList();
+            List<DomesticPaymentConsent>? results = q.ToList();
 
             results.Should().BeEquivalentTo(items);
         }
@@ -86,20 +100,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetEmptySetByUniqueProperty(int count)
         {
-            var items = Enumerable.Range(1, count)
-                .Select(i => new DomesticConsent
-                {
-                    Id = (-i).ToString()
-                }).ToList();
+            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+                .Select(
+                    i => new DomesticPaymentConsent
+                    {
+                        State = "sdf",
+                        BankProfileId = "sdf",
+                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        Id = (-i).ToString()
+                    }).ToList();
             foreach (var dc in items)
             {
                 await _repo.UpsertAsync(dc);
             }
+
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            var q = await _repo.GetAsync(x => x.Id == count.ToString());
+            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == count.ToString());
 
-            var results = q.ToList();
+            List<DomesticPaymentConsent> results = q.ToList();
 
             results.Should().HaveCount(0);
         }

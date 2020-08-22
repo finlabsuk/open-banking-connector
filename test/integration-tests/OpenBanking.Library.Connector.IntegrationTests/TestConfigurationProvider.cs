@@ -5,6 +5,7 @@
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {

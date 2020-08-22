@@ -10,14 +10,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
 {
     internal class EntityTypeFinder
     {
-        private static readonly Type RootPublicType = typeof(ModelFactory);
-        private static readonly Type PaymentInitiationRootPublicType = typeof(ObModels.PaymentInitiation.V3p1p4.Model.Meta);
+        private static readonly Type RootPublicType = typeof(PublicExtensions);
+        private static readonly Type PaymentInitiationRootPublicType = typeof(Meta);
 
         public IEnumerable<Type> GetPublicReferenceTypes()
         {
@@ -91,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
             switch (version)
             {
                 case ApiVersion.V3P1P1:
-                    return typeof(Meta);
+                    return typeof(ObModels.PaymentInitiation.V3p1p1.Model.Meta);
 
                 case ApiVersion.V3P1P2:
                     return typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta);

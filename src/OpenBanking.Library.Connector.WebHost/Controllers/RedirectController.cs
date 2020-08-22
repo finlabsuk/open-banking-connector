@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,11 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<IActionResult> PostAuthorisationCallbackAsync([FromForm] AuthorisationCallbackPayload payload)
         {
-            AuthorisationCallbackData? value = new AuthorisationCallbackData(
+            AuthorisationCallbackData value = new AuthorisationCallbackData(
                 responseMode: "fragment",
                 response: payload);
 
-            AuthorisationCallbackDataFluentResponse? resp = await _obRequestBuilder.AuthorisationCallbackData()
+            FluentResponse<AuthorisationCallbackDataResponse> resp = await _obRequestBuilder.AuthorisationCallbackData()
                 .Data(value)
                 .SubmitAsync();
 

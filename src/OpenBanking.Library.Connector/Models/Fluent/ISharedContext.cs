@@ -29,14 +29,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         IInstrumentationClient Instrumentation { get; }
         IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         IDbMultiEntityMethods DbContextService { get; }
-        IDbEntityRepository<BankClientProfile> ClientProfileRepository { get; }
+        IDbEntityRepository<Bank> BankRepository { get; }
+        IDbEntityRepository<BankRegistration> BankRegistrationRepository { get; }
         ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
         IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
         IKeySecretMultiItemReadRepository<SoftwareStatementProfile> SReadOnlyRepo { get; }
         IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> SRepo { get; }
         IKeySecretReadRepository<ActiveSoftwareStatementProfiles> ActiveSReadOnlyRepo { get; }
-        IDbEntityRepository<DomesticConsent> DomesticConsentRepository { get; }
+        IDbEntityRepository<DomesticPaymentConsent> DomesticConsentRepository { get; }
         IEntityMapper EntityMapper { get; }
-        IDbEntityRepository<ApiProfile> ApiProfileRepository { get; }
+        IDbEntityRepository<BankProfile> BankProfileRepository { get; }
     }
 }

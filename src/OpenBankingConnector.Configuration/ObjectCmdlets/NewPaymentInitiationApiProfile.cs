@@ -6,6 +6,7 @@ using System.Management.Automation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace OpenBankingConnector.Configuration.ObjectCmdlets
 {
@@ -32,11 +33,16 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
 
         protected override void ProcessRecord()
         {
-            PaymentInitiationApiProfile output = new PaymentInitiationApiProfile(
-                id: Id,
-                bankClientProfileId: BankClientProfileId,
-                apiVersion: ApiVersion,
-                baseUrl: BaseUrl);
+            BankProfile output = new BankProfile
+            {
+                BankRegistrationId = BankClientProfileId,
+                PaymentInitiationApi = new PaymentInitiationApi
+                {
+                    ApiVersion = ApiVersion,
+                    BaseUrl =  BaseUrl
+                }
+                //Id = Id
+            };
             WriteObject(output);
         }
     }

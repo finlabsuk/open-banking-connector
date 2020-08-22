@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
             _dbSet
                 .Remove(instance);
-            return ((TEntity) null).ToTaskResult();
+            return ((TEntity?) null).ToTaskResult();
         }
 
         public async Task<IQueryable<TEntity>> GetAllAsync()

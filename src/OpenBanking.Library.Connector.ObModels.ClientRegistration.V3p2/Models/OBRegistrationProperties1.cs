@@ -152,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistrat
         /// </summary>
         [JsonProperty(PropertyName = "scope")]
         [JsonConverter(
-            converterType: typeof(DelimitedStringConverter),
+            converterType: typeof(DelimitedStringNullableConverter),
             DelimitedStringConverterOptions.JsonStringArrayNotString)]
         public string Scope { get; set; }
 

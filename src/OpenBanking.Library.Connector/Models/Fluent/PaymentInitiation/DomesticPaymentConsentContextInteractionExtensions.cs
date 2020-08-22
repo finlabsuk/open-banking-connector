@@ -59,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static DomesticPaymentConsentContext ApiProfileId(
+        public static DomesticPaymentConsentContext BankProfileId(
             this DomesticPaymentConsentContext context,
             string value)
         {
@@ -67,11 +67,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             value.ArgNotNull(nameof(value));
 
             context.GetOrCreateDefault(BaseLens)
-                .ApiProfileId = value;
+                .BankProfileId = value;
 
             return context;
         }
 
+        public static DomesticPaymentConsentContext BankName(
+            this DomesticPaymentConsentContext context,
+            string value)
+        {
+            context.ArgNotNull(nameof(context));
+            value.ArgNotNull(nameof(value));
+
+            context.GetOrCreateDefault(BaseLens)
+                .BankName = value;
+
+            return context;
+        }
+
+        public static DomesticPaymentConsentContext UseStagingBankProfile(
+            this DomesticPaymentConsentContext context,
+            bool value)
+        {
+            context.ArgNotNull(nameof(context));
+
+            context.GetOrCreateDefault(BaseLens)
+                .UseStagingBankProfile = value;
+
+            return context;
+        }
+        
         // HACK: need better abstractions
         public static DomesticPaymentConsentContext DeliveryAddress(
             this DomesticPaymentConsentContext context,
@@ -280,7 +305,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             return context;
         }
 
-        public static async Task<DomesticPaymentConsentFluentResponse> SubmitAsync(
+        public static async Task<FluentResponse<DomesticPaymentConsentResponse>> SubmitAsync(
             this DomesticPaymentConsentContext context)
         {
             context.ArgNotNull(nameof(context));
@@ -288,29 +313,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentIni
             IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new DomesticPaymentConsentFluentResponse(validationErrors);
+                return new FluentResponse<DomesticPaymentConsentResponse>(validationErrors);
             }
 
             try
             {
                 CreateDomesticPaymentConsent createDomesticConsent = new CreateDomesticPaymentConsent(
                     apiClient: context.Context.ApiClient,
-                    mapper: context.Context.EntityMapper,
+                    bankProfileRepo: context.Context.BankProfileRepository,
+                    bankClientProfileRepo: context.Context.BankRegistrationRepository,
+                    bankRepo: context.Context.BankRepository,
                     dbMultiEntityMethods: context.Context.DbContextService,
-                    bankClientProfileRepo: context.Context.ClientProfileRepository,
-                    apiProfileRepo: context.Context.ApiProfileRepository,
                     domesticConsentRepo: context.Context.DomesticConsentRepository,
+                    mapper: context.Context.EntityMapper,
                     softwareStatementProfileService: context.Context.SoftwareStatementProfileService);
 
-                PaymentConsentResponse result = await createDomesticConsent.CreateAsync(context.Data);
+                DomesticPaymentConsentResponse result = await createDomesticConsent.CreateAsync(context.Data);
 
-                return new DomesticPaymentConsentFluentResponse(result);
+                return new FluentResponse<DomesticPaymentConsentResponse>(result);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new DomesticPaymentConsentFluentResponse(ex.CreateErrorMessage());
+                return new FluentResponse<DomesticPaymentConsentResponse>(ex.CreateErrorMessage());
             }
         }
 

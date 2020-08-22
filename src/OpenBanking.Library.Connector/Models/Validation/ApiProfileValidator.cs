@@ -3,11 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
-    public class ApiProfileValidator : AbstractValidator<PaymentInitiationApiProfile>
+    public class ApiProfileValidator : AbstractValidator<BankProfile>
     {
         public ApiProfileValidator()
         {
@@ -17,13 +18,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         private void CreateRules()
         {
-            RuleFor(x => x.BaseUrl)
-                .Must(ValidationRules.IsUrl)
-                .WithMessage($"Invalid {nameof(PaymentInitiationApiProfile.BaseUrl)}: must be a URL.");
+            // RuleFor(x => x.BaseUrl)
+            //     .Must(ValidationRules.IsUrl)
+            //     .WithMessage($"Invalid {nameof(PaymentInitiationApiProfile.BaseUrl)}: must be a URL.");
 
-            // RuleFor(x => x.BankClient)
-            //     .Must(ValidationRules.IsNotNull)
-            //     .WithMessage($"Missing {nameof(BankClientProfile.BankClient)}.");
+            RuleFor(x => x.PaymentInitiationApi)
+                .Must(ValidationRules.IsNotNull)
+                .WithMessage($"Missing {nameof(BankProfile.PaymentInitiationApi)}.");
             //
             // RuleFor(x => x.BankClient)
             //     .SetValidator(new OpenBankingClientValidator());

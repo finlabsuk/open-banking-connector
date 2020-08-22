@@ -10,14 +10,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
     {
         SoftwareStatementProfileContext SoftwareStatementProfile();
 
-        BankClientProfileContext BankClientProfile();
+        BankContext Bank();
 
-        DomesticPaymentConsentContext DomesticPaymentConsent(string openBankingClientProfileId);
+        BankRegistrationContext BankClientProfile();
+
+        DomesticPaymentConsentContext DomesticPaymentConsent();
 
         AuthorisationCallbackDataContext AuthorisationCallbackData();
 
         DomesticPaymentContext DomesticPayment();
 
-        PaymentInitiationApiProfileContext PaymentInitiationApiProfile();
+        BankProfileContext PaymentInitiationApiProfile();
     }
 }

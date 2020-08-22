@@ -27,5 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         Task RemoveAsync(TEntity instance);
 
         Task<IQueryable<TEntity>> GetAllAsync();
+        
+        Task AddAsync(TEntity instance);
     }
 }

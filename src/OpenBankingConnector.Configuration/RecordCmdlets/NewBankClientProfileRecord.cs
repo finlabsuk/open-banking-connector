@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "BankClientProfileRecord")]
-    [OutputType(typeof(BankClientProfileFluentResponse))]
+    [OutputType(typeof(FluentResponse<BankRegistrationResponse>))]
     public class NewBankClientProfileRecord : RecordBaseCmdlet
     {
         public NewBankClientProfileRecord() : base(
@@ -23,7 +23,7 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             deleteAndRecreateDb: false) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public BankClientProfile? BankClientProfile { get; set; }
+        public BankRegistration? BankClientProfile { get; set; }
 
         protected override void ProcessRecordInner(IServiceProvider services)
         {
@@ -31,12 +31,12 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             try
             {
                 ICreateBankClientProfile createBankClientProfile = services.GetService<ICreateBankClientProfile>();
-                BankClientProfileResponse response = createBankClientProfile
+                BankRegistrationResponse response = createBankClientProfile
                     .CreateAsync(BankClientProfile)
                     .GetAwaiter()
                     .GetResult();
-                BankClientProfileFluentResponse response2 =
-                    new BankClientProfileFluentResponse(messages: messages, data: response);
+                FluentResponse<BankRegistrationResponse> response2 =
+                    new FluentResponse<BankRegistrationResponse>(messages: messages, data: response);
                 WriteObject(response2);
             }
             catch (Exception ex)

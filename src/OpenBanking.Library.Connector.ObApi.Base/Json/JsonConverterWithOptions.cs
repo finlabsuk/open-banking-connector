@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
 
         protected TOptionsEnum getOptions(JsonSerializer serializer)
         {
-            List<string> contextOptions = serializer.Context.Context as List<string>;
+            List<string>? contextOptions = serializer.Context.Context as List<string>;
             if (contextOptions is null || ActiveOptions.Equals(default(TOptionsEnum)))
             {
                 return default;

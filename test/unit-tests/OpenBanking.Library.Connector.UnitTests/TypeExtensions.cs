@@ -9,6 +9,7 @@ using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
@@ -17,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
     {
         public static IEnumerable<Type> GetPublicModelTypes()
         {
-            Type asmType = typeof(ModelFactory);
+            Type asmType = typeof(Error);
             Assembly asm = asmType.Assembly;
 
             IEnumerable<Type> asmTypes = asm.GetTypes().Where(t => t.IsInNamespace(asmType));

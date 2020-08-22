@@ -68,9 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: GetApiClient(TestConfig),
                 certificateReader: new PemParsingCertificateReader(),
-                clientProfileRepository: new DbEntityRepository<BankClientProfile>(_dB),
-                domesticConsentRepo: new DbEntityRepository<DomesticConsent>(_dB),
-                apiProfileRepository: new DbEntityRepository<ApiProfile>(_dB),
+                clientProfileRepository: new DbEntityRepository<BankRegistration>(_dB),
+                domesticConsentRepo: new DbEntityRepository<DomesticPaymentConsent>(_dB),
+                apiProfileRepository: new DbEntityRepository<BankProfile>(_dB),
                 activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
@@ -80,7 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                     new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
                     activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
                         _secretProvider),
-                    mapper: _entityMapper));
+                    mapper: _entityMapper),
+                new DbEntityRepository<Bank>(_dB)
+                );
 
             return requestBuilder;
         }

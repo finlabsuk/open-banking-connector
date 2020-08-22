@@ -25,12 +25,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
         private readonly IKeySecretReadRepository<ActiveSoftwareStatementProfiles> _activeSReadOnlyRepo;
         private readonly IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> _activeSRRepo;
         private readonly IApiClient _apiClient;
-        private readonly IDbEntityRepository<ApiProfile> _apiProfileRepository;
+        private readonly IDbEntityRepository<BankProfile> _apiProfileRepository;
         private readonly ICertificateReader _certificateReader;
-        private readonly IDbEntityRepository<BankClientProfile> _clientProfileRepository;
+        private readonly IDbEntityRepository<Bank> _bankRepository;
+        private readonly IDbEntityRepository<BankRegistration> _clientProfileRepository;
         private readonly IObcConfigurationProvider _configurationProvider;
         private readonly IDbMultiEntityMethods _dbContextService;
-        private readonly IDbEntityRepository<DomesticConsent> _domesticConsentRepo;
+        private readonly IDbEntityRepository<DomesticPaymentConsent> _domesticConsentRepo;
         private readonly IEntityMapper _entityMapper;
         private readonly IKeySecretReadOnlyProvider _keySecretReadOnlyProvider;
         private readonly IInstrumentationClient _logger;
@@ -48,14 +49,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
             ICertificateReader certificateReader,
-            IDbEntityRepository<BankClientProfile> clientProfileRepository,
-            IDbEntityRepository<DomesticConsent> domesticConsentRepo,
-            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IDbEntityRepository<BankRegistration> clientProfileRepository,
+            IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
+            IDbEntityRepository<BankProfile> apiProfileRepository,
             IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
             IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
             IKeySecretMultiItemReadRepository<SoftwareStatementProfile> sReadOnlyRepo,
             IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> sRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService)
+            ISoftwareStatementProfileService softwareStatementProfileService,
+            IDbEntityRepository<Bank> bankRepository)
             : this(
                 timeProvider: new TimeProvider(),
                 entityMapper: entityMapper,
@@ -72,7 +74,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 activeSrRepo: activeSrRepo,
                 sReadOnlyRepo: sReadOnlyRepo,
                 sRepo: sRepo,
-                softwareStatementProfileService: softwareStatementProfileService) { }
+                softwareStatementProfileService: softwareStatementProfileService,
+                bankRepository: bankRepository) { }
 
         internal RequestBuilder(
             ITimeProvider timeProvider,
@@ -83,14 +86,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
             ICertificateReader certificateReader,
-            IDbEntityRepository<BankClientProfile> clientProfileRepository,
-            IDbEntityRepository<DomesticConsent> domesticConsentRepo,
-            IDbEntityRepository<ApiProfile> apiProfileRepository,
+            IDbEntityRepository<BankRegistration> clientProfileRepository,
+            IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
+            IDbEntityRepository<BankProfile> apiProfileRepository,
             IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
             IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
             IKeySecretMultiItemReadRepository<SoftwareStatementProfile> sReadOnlyRepo,
             IKeySecretMultiItemWriteRepository<SoftwareStatementProfile> sRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService)
+            ISoftwareStatementProfileService softwareStatementProfileService,
+            IDbEntityRepository<Bank> bankRepository)
         {
             _certificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
@@ -101,6 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             _sReadOnlyRepo = sReadOnlyRepo;
             _sRepo = sRepo;
             _softwareStatementProfileService = softwareStatementProfileService;
+            _bankRepository = bankRepository;
             _configurationProvider = configurationProvider.ArgNotNull(nameof(configurationProvider));
             _logger = logger.ArgNotNull(nameof(logger));
             _keySecretReadOnlyProvider = keySecretReadOnlyProvider.ArgNotNull(nameof(keySecretReadOnlyProvider));
@@ -117,21 +122,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return new SoftwareStatementProfileContext(context);
         }
 
-        public BankClientProfileContext BankClientProfile()
+        public BankContext Bank()
         {
             ISharedContext context = CreateContext();
 
-            return new BankClientProfileContext(context);
+            return new BankContext(context);
         }
 
-        public DomesticPaymentConsentContext DomesticPaymentConsent(string openBankingClientProfileId)
+        public BankRegistrationContext BankClientProfile()
         {
-            openBankingClientProfileId.ArgNotNull(nameof(openBankingClientProfileId));
-
             ISharedContext context = CreateContext();
 
-            return new DomesticPaymentConsentContext(context)
-                .ApiProfileId(openBankingClientProfileId);
+            return new BankRegistrationContext(context);
+        }
+
+        public DomesticPaymentConsentContext  DomesticPaymentConsent()
+        {
+            ISharedContext context = CreateContext();
+            return new DomesticPaymentConsentContext(context);
         }
 
         public DomesticPaymentContext DomesticPayment()
@@ -147,10 +155,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return new AuthorisationCallbackDataContext(context);
         }
 
-        public PaymentInitiationApiProfileContext PaymentInitiationApiProfile()
+        public BankProfileContext PaymentInitiationApiProfile()
         {
             ISharedContext context = CreateContext();
-            return new PaymentInitiationApiProfileContext(context);
+            return new BankProfileContext(context);
         }
 
         private ISharedContext CreateContext()
@@ -170,7 +178,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
                 activeSrRepo: _activeSRRepo,
                 sReadOnlyRepo: _sReadOnlyRepo,
                 sRepo: _sRepo,
-                activeSReadOnlyRepo: _activeSReadOnlyRepo)
+                activeSReadOnlyRepo: _activeSReadOnlyRepo, _bankRepository)
             {
                 Created = _timeProvider.GetUtcNow()
             };

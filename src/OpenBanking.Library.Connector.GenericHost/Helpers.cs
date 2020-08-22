@@ -40,8 +40,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
                     services.AddOpenBankingConnector(
                         configuration: hostContext.Configuration,
                         loadSecretsFromConfig: useLocalSecrets);
-                    services.AddScoped<ICreateBankClientProfile, CreateBankClientProfile>();
-                    services.AddScoped<ICreatePaymentInitiationApiProfile, CreatePaymentInitiationApiProfile>();
+                    services.AddScoped<ICreateBankClientProfile, CreateBankRegistration>();
+                    services.AddScoped<ICreateBankProfile, CreateBankProfile>();
                 });
 
             // Ensure "Development" is default environment unless otherwise specified.

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
@@ -46,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             AuthorisationCallbackData? data = new AuthorisationCallbackData(
                 responseMode: "a",
-                response: new AuthorisationCallbackPayload(authorisationCode: null, state: null));
+                response: new AuthorisationCallbackPayload());
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -61,8 +62,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             AuthorisationCallbackData? data = new AuthorisationCallbackData(
                 responseMode: "a",
-                response: new AuthorisationCallbackPayload(authorisationCode: "a", state: "a")
+                response: new AuthorisationCallbackPayload()
                 {
+                    Code = "a",
+                    State = "a",
                     Id_Token = "a",
                     Nonce = null,
                 });

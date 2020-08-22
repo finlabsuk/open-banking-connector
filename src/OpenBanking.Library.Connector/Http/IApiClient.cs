@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         Task<T> RequestJsonAsync<T>(
             HttpRequestMessage request,
             bool requestContentIsJson,
-            JsonSerializerSettings jsonSerializerSettings)
+            JsonSerializerSettings? jsonSerializerSettings)
             where T : class;
     }
 }

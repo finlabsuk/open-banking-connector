@@ -15,13 +15,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
         JsonStringArrayNotString = 1
     }
 
-    public class DelimitedStringConverter : JsonConverterWithOptions<string, DelimitedStringConverterOptions>
+    public abstract class
+        DelimitedStringGenericConverter<StringType> : JsonConverterWithOptions<StringType,
+            DelimitedStringConverterOptions>
     {
-        public DelimitedStringConverter() { }
+        public DelimitedStringGenericConverter() { }
 
-        public DelimitedStringConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
+        public DelimitedStringGenericConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
+       
+    }
 
-        public override void WriteJson(JsonWriter writer, string value, JsonSerializer serializer)
+    public class DelimitedStringNullableConverter: DelimitedStringGenericConverter<string?>
+    {
+        
+        public DelimitedStringNullableConverter() { }
+
+        public DelimitedStringNullableConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
+
+        public override void WriteJson(JsonWriter writer, string? value, JsonSerializer serializer)
         {
             DelimitedStringConverterOptions options = getOptions(serializer);
             if (value is null)
@@ -45,22 +56,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
             }
         }
 
-        public override string ReadJson(
+        public override string? ReadJson(
             JsonReader reader,
             Type objectType,
-            string existingValue,
+            string? existingValue,
             bool hasExistingValue,
             JsonSerializer serializer)
         {
             if (objectType == typeof(string))
             {
                 DelimitedStringConverterOptions options = getOptions(serializer);
-                string output = null;
+                string? output = null;
                 if (options.HasFlag(DelimitedStringConverterOptions.JsonStringArrayNotString) &&
                     reader.TokenType == JsonToken.StartArray)
                 {
                     StringBuilder builder = new StringBuilder();
-                    while (reader.Read() && reader.TokenType == JsonToken.String)
+                    while (reader.Read() && reader.TokenType == JsonToken.String && !(reader.Value is null) )
                     {
                         if (builder.Length > 0)
                         {
@@ -73,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
                     output = builder.ToString();
                 }
                 else if (!options.HasFlag(DelimitedStringConverterOptions.JsonStringArrayNotString) &&
-                         reader.TokenType == JsonToken.String)
+                         reader.TokenType == JsonToken.String && !(reader.Value is null))
                 {
                     output = (string) reader.Value;
                 }

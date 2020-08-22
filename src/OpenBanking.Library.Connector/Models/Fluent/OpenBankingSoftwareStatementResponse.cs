@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
 {
-    public class OpenBankingSoftwareStatementResponse : FluentResponse
+    public class OpenBankingSoftwareStatementResponse : FluentResponseBase
     {
         //internal
         public OpenBankingSoftwareStatementResponse(

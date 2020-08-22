@@ -11,16 +11,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public class SoftwareStatementProfile : IEntity
     {
-        public string State { get; set; }
+        public string State { get; set; } = null!;
 
-        public string SoftwareStatementHeaderBase64 { get; set; }
+        public string SoftwareStatementHeaderBase64 { get; set; } = null!;
 
         // TODO: Remove this once SoftwareStatementPayload stores all fields, this duplicates info in SoftwareStatementPayload
-        public string SoftwareStatementPayloadBase64 { get; set; }
+        public string SoftwareStatementPayloadBase64 { get; set; } = null!;
 
-        public SoftwareStatementPayload SoftwareStatementPayload { get; set; }
+        public SoftwareStatementPayload SoftwareStatementPayload { get; set; } = null!;
 
-        public string SoftwwareStatementSignatureBase64 { get; set; }
+        public string SoftwwareStatementSignatureBase64 { get; set; } = null!;
 
         /// Software statement as string, e.g. "A.B.C"
         public string SoftwareStatement =>
@@ -32,26 +32,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             }.JoinString(".");
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
-        public string SigningKeyId { get; set; }
+        public string SigningKeyId { get; set; } = null!;
 
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        public string SigningKey { get; set; }
+        public string SigningKey { get; set; } = null!;
 
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string SigningCertificate { get; set; }
+        public string SigningCertificate { get; set; } = null!;
 
         /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// TODO: This will be replaced by a secret name
-        public string TransportKey { get; set; }
+        public string TransportKey { get; set; } = null!;
 
         /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string TransportCertificate { get; set; }
+        public string TransportCertificate { get; set; } = null!;
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
-        public string DefaultFragmentRedirectUrl { get; set; }
+        public string DefaultFragmentRedirectUrl { get; set; } = null!;
 
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
 
         public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
         {

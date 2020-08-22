@@ -44,11 +44,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
 
     public class DateTimeOffsetUnixConverter : DateTimeOffsetGenericUnixConverter<DateTimeOffset>
     {
-        
         public DateTimeOffsetUnixConverter() { }
 
-        public DateTimeOffsetUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(
-            activeOptions) { }
+        public DateTimeOffsetUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(activeOptions) { }
 
         public override void WriteJson(JsonWriter writer, DateTimeOffset value, JsonSerializer serializer)
         {
@@ -70,6 +68,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
                 throw new NotSupportedException($"The type {objectType} is not supported.");
             }
 
+            if (reader.Value is null)
+            {
+                throw new NullReferenceException("Null received when type is non-nullable DateTime.");
+            }
+
             DateTimeOffsetUnixConverterOptions options = getOptions(serializer);
             long timeValue = long.Parse(reader.Value.ToString());
             return getTime(unixTime: timeValue, options: options);
@@ -78,12 +81,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
 
     public class DateTimeOffsetNullableUnixConverter : DateTimeOffsetGenericUnixConverter<DateTimeOffset?>
     {
-        
         public DateTimeOffsetNullableUnixConverter() { }
 
         public DateTimeOffsetNullableUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(
             activeOptions) { }
-        
+
         public override void WriteJson(JsonWriter writer, DateTimeOffset? value, JsonSerializer serializer)
         {
             DateTimeOffsetUnixConverterOptions options = getOptions(serializer);

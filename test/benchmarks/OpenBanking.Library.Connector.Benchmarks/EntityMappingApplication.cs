@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     [GcServer(true)]
     public class EntityMappingApplication
     {
-        private BankClientProfile _client;
+        private BankRegistration _client;
         private OBWriteDomestic2DataInitiation _dataInitiation;
         private OBWriteDomesticConsent4 _domesticConsent;
         private EntityMapper _entityMapper;
@@ -62,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapClientProfile()
         {
-            _entityMapper.Map<Models.Persistent.BankClientProfile>(_client);
+            _entityMapper.Map<Models.Persistent.BankRegistration>(_client);
         }
 
 
@@ -170,9 +170,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         };
 
 
-        private BankClientProfile CreateClient() => new BankClientProfile
+        private BankRegistration CreateClient() => new BankRegistration
         {
-            IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
+            //IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
             HttpMtlsConfigurationOverrides = new HttpMtlsConfigurationOverrides
             {
                 TlsCertificateVerification = "aaaa",
@@ -196,7 +196,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 RegistrationEndpointUrl = "https://ccccccccccccccccccccccccccccccccccccc.com"
             },
             SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            XFapiFinancialId = "xfapi"
+            //XFapiFinancialId = "xfapi"
         };
 
         private SoftwareStatementProfile CreateSoftwareStatement() => new SoftwareStatementProfile
