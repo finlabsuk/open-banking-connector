@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.HostedServices
                     _logger.LogInformation(
                         string.Join(separator: Environment.NewLine, values: endpointNames.Prepend("Endpoints found:")));
                 });
-    
+
             return Task.CompletedTask;
         }
 

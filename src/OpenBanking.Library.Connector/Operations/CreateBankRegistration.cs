@@ -24,34 +24,34 @@ using RequestBankRegistration = FinnovationLabs.OpenBanking.Library.Connector.Mo
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public interface ICreateBankClientProfile
-    {
-        Task<BankRegistrationResponse> CreateAsync(RequestBankRegistration bankClientProfile);
-    }
-
-    public class CreateBankRegistration : ICreateBankClientProfile
+    internal class CreateBankRegistration
     {
         private readonly IApiClient _apiClient;
         private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
+        private readonly ITimeProvider _timeProvider;
 
         public CreateBankRegistration(
             IApiClient apiClient,
             IDbEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbEntityRepository<Bank> bankRepo,
             IDbMultiEntityMethods dbMultiEntityMethods,
-            ISoftwareStatementProfileService softwareStatementProfileService)
+            ISoftwareStatementProfileService softwareStatementProfileService,
+            ITimeProvider timeProvider)
         {
             _apiClient = apiClient;
             _bankRegistrationRepo = bankRegistrationRepo;
             _bankRepo = bankRepo;
             _dbMultiEntityMethods = dbMultiEntityMethods;
             _softwareStatementProfileService = softwareStatementProfileService;
+            _timeProvider = timeProvider;
         }
 
-        public async Task<BankRegistrationResponse> CreateAsync(RequestBankRegistration requestBankRegistration)
+        public async Task<BankRegistrationResponse> CreateAsync(
+            RequestBankRegistration requestBankRegistration,
+            string? createdBy)
         {
             requestBankRegistration.ArgNotNull(nameof(requestBankRegistration));
 
@@ -79,22 +79,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .RaiseErrorOnValidationError();
 
             // Create claims for client reg
-            var aud = requestBankRegistration.BankClientRegistrationClaimsOverrides?.RequestAudience ??
-                      bank.XFapiFinancialId;
+            string aud = requestBankRegistration.BankClientRegistrationClaimsOverrides?.RequestAudience ??
+                         bank.XFapiFinancialId;
             OBClientRegistration1 registrationClaims = RegistrationClaimsFactory.CreateRegistrationClaims(
                 sProfile: softwareStatementProfile,
-                aud);
+                audValue: aud);
 
             // STEP 2
             // Check for existing registration with bank.
             IQueryable<BankRegistration> clientList = await _bankRegistrationRepo
                 .GetAsync(c => c.BankId == bank.Id);
             BankRegistration? existingClient = clientList
-                .SingleOrDefault();
+                .FirstOrDefault();
             if (existingClient is object && !requestBankRegistration.AllowMultipleRegistrations)
             {
                 throw new InvalidOperationException(
-                    "There is already a registration for this bank. Set AllowMultipleRegistrations to force creation of an additional registration.");
+                    "There is already at least one registration for this bank. Set AllowMultipleRegistrations to force creation of an additional registration.");
             }
 
             // STEP 3
@@ -159,38 +159,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Create and store Open Banking client
             BankRegistration bankRegistration = new BankRegistration(
+                timeProvider: _timeProvider,
                 softwareStatementProfileId: requestBankRegistration.SoftwareStatementProfileId,
                 openIdConfiguration: openIdConfiguration,
-                bankClientRegistrationRequestData: registrationClaims,
-                bankClientRegistrationData: registrationResponse,
-                bankId: bank.Id);
+                bankClientRegistration: registrationResponse,
+                bankId: bank.Id,
+                bankClientRegistrationRequest: registrationClaims,
+                createdBy: createdBy);
             await _bankRegistrationRepo.AddAsync(bankRegistration);
 
             // Update registration references
-            if (requestBankRegistration.ReplaceDefaultBankRegistration)
+            if (requestBankRegistration.ReplaceDefaultBankRegistration ||
+                requestBankRegistration.ReplaceStagingBankRegistration)
             {
-                bank.DefaultBankRegistrationId = bankRegistration.Id;
-            }
+                ReadWriteProperty<string?> regId = new ReadWriteProperty<string?>(
+                    data: bankRegistration.Id,
+                    timeProvider: _timeProvider,
+                    modifiedBy: null);
+                if (requestBankRegistration.ReplaceDefaultBankRegistration)
+                {
+                    bank.DefaultBankRegistrationId = regId;
+                }
 
-            if (requestBankRegistration.ReplaceStagingBankRegistration)
-            {
-                bank.StagingBankRegistrationId = bankRegistration.Id;
+                if (requestBankRegistration.ReplaceStagingBankRegistration)
+                {
+                    bank.StagingBankRegistrationId = regId;
+                }
             }
 
             // Persist updates
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             // Return
-            return new BankRegistrationResponse(bankRegistration);
+            return bankRegistration.PublicResponse;
         }
 
         private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
         {
-            UriBuilder ub = new UriBuilder(new Uri(issuerUrl)) { Path = ".well-known/openid-configuration" };
+            Uri uri = new Uri(string.Join(separator: "/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
 
             return await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
-                .SetUri(ub.Uri)
+                .SetUri(uri)
                 .Create()
                 .RequestJsonAsync<OpenIdConfiguration>(client: _apiClient, requestContentIsJson: false);
         }

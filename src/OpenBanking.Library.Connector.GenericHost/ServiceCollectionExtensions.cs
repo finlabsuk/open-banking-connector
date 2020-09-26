@@ -5,6 +5,7 @@
 using System;
 using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
@@ -13,19 +14,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SoftwareStatementProfile =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
 {
@@ -109,14 +106,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
 
             services.AddScoped<IDbMultiEntityMethods,
                 DbMultiEntityMethods>();
-            services.AddScoped<IDbEntityRepository<Bank>,
-                DbEntityRepository<Bank>>();
-            services.AddScoped<IDbEntityRepository<BankRegistration>,
-                DbEntityRepository<BankRegistration>>();
-            services.AddScoped<IDbEntityRepository<BankProfile>,
-                DbEntityRepository<BankProfile>>();
-            services.AddScoped<IDbEntityRepository<DomesticPaymentConsent>,
-                DbEntityRepository<DomesticPaymentConsent>>();
+            services.AddScoped<IDbEntityRepositoryFactory, DbEntityRepositoryFactory>();
+            services.AddScoped(
+                serviceType: typeof(IDbEntityRepository<>),
+                implementationType: typeof(DbEntityRepository<>));
             services.AddSingleton<IKeySecretReadRepository<ActiveSoftwareStatementProfiles>,
                 KeySecretReadRepository<ActiveSoftwareStatementProfiles>>();
             services.AddSingleton<IKeySecretWriteRepository<ActiveSoftwareStatementProfiles>,
@@ -126,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
             services.AddSingleton<IKeySecretMultiItemReadRepository<SoftwareStatementProfile>,
                 KeySecretMultiItemReadRepository<SoftwareStatementProfile>>();
             services.AddSingleton<ISoftwareStatementProfileService, SoftwareStatementProfileService>();
-            services.AddScoped<IOpenBankingRequestBuilder, RequestBuilder>();
+            services.AddScoped<IRequestBuilder, RequestBuilder>();
 
             // Startup tasks
             services.AddHostedService<StartupTasksHostedService>();

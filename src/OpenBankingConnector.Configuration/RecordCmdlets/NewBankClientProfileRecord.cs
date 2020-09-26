@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -30,14 +31,14 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             List<FluentResponseMessage> messages = new List<FluentResponseMessage>();
             try
             {
-                ICreateBankClientProfile createBankClientProfile = services.GetService<ICreateBankClientProfile>();
-                BankRegistrationResponse response = createBankClientProfile
-                    .CreateAsync(BankClientProfile)
-                    .GetAwaiter()
-                    .GetResult();
-                FluentResponse<BankRegistrationResponse> response2 =
-                    new FluentResponse<BankRegistrationResponse>(messages: messages, data: response);
-                WriteObject(response2);
+                // ICreateBankClientProfile createBankClientProfile = services.GetService<ICreateBankClientProfile>();
+                // BankRegistrationResponse response = createBankClientProfile
+                //     .CreateAsync(BankClientProfile)
+                //     .GetAwaiter()
+                //     .GetResult();
+                // FluentResponse<BankRegistrationResponse> response2 =
+                //     new FluentResponse<BankRegistrationResponse>(messages: messages, data: response);
+                // WriteObject(response2);
             }
             catch (Exception ex)
             {

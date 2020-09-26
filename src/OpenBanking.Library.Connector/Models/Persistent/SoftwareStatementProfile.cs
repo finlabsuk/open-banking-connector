@@ -3,13 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    public class SoftwareStatementProfile : IEntity
+    public class SoftwareStatementProfile
     {
         public string State { get; set; } = null!;
 

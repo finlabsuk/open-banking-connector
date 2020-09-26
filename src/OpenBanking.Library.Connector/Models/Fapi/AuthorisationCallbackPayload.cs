@@ -18,6 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public string State { get; set; } = null!;
 
         [JsonProperty("nonce", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string? Nonce { get; set; } = null;
+        public string? Nonce { get; set; }
     }
 }

@@ -3,10 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
@@ -40,8 +37,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
                     services.AddOpenBankingConnector(
                         configuration: hostContext.Configuration,
                         loadSecretsFromConfig: useLocalSecrets);
-                    services.AddScoped<ICreateBankClientProfile, CreateBankRegistration>();
-                    services.AddScoped<ICreateBankProfile, CreateBankProfile>();
                 });
 
             // Ensure "Development" is default environment unless otherwise specified.

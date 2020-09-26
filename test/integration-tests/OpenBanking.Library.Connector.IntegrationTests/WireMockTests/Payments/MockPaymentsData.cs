@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
@@ -16,8 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -90,7 +89,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public GrantTypesItemEnum[] GetGrantTypes()
         {
-            return new List<GrantTypesItemEnum> { GrantTypesItemEnum.ClientCredentials, GrantTypesItemEnum.AuthorizationCode, GrantTypesItemEnum.RefreshToken }.ToArray();
+            return new List<GrantTypesItemEnum>
+            {
+                GrantTypesItemEnum.ClientCredentials, GrantTypesItemEnum.AuthorizationCode,
+                GrantTypesItemEnum.RefreshToken
+            }.ToArray();
         }
 
         public string GetBase64TokenString()
@@ -132,7 +135,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 TokenEndpointAuthSigningAlg = null,
                 GrantTypes = GetGrantTypes(),
                 RedirectUris = GetRedirectUris(),
-                Scope = string.Join(" ", new List<string> { "openid", "payments", "accounts", "fundsconfirmations" }),
+                Scope = string.Join(
+                    separator: " ",
+                    values: new List<string> { "openid", "payments", "accounts", "fundsconfirmations" }),
                 TlsClientAuthSubjectDn = $"CN={GetClientId()},OU=OrgId,O=OpenBanking,C=GB"
             };
 
@@ -154,14 +159,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetAuthtoriseResponse()
         {
-            var model = new AuthorisationCallbackPayload()
+            AuthorisationCallbackPayload model = new AuthorisationCallbackPayload
             {
                 Code = "code123",
                 State = "1ab89221-ca25-4055-9f96-7064fe953c52",
                 Nonce = "a71276e3-d7fe-4f0d-9ce5-10a7ac2f3dca"
             };
 
-            return JsonConvert.SerializeObject(model); 
+            return JsonConvert.SerializeObject(model);
         }
 
         public string GetMockPrivateKey()
@@ -228,7 +233,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             return fakeCertificate;
         }
 
-        public IOpenBankingRequestBuilder CreateMockRequestBuilder()
+        public IRequestBuilder CreateMockRequestBuilder()
         {
             HttpClient httpClient = new HttpClient
             {
@@ -245,9 +250,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: new ApiClient(httpClient),
                 certificateReader: new PemParsingCertificateReader(),
-                clientProfileRepository: new DbEntityRepository<BankRegistration>(_dB),
-                domesticConsentRepo: new DbEntityRepository<DomesticPaymentConsent>(_dB),
-                apiProfileRepository: new DbEntityRepository<BankProfile>(_dB),
                 activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
@@ -258,7 +260,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
                         _secretProvider),
                     mapper: _entityMapper),
-                new DbEntityRepository<Bank>(_dB));
+                dbEntityRepositoryFactory: new DbEntityRepositoryFactory(_dB));
 
             return requestBuilder;
         }
@@ -365,16 +367,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOBWriteDomesticResponse2()
         {
-            var consentId = Guid.NewGuid().ToString();
+            string consentId = Guid.NewGuid().ToString();
 
-            var instructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount("50", "GBP");
-            var creditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount("IBAN", "BE56456394728288", "ACME DIY", "secondary-identif");
-            var domestic2 = new OBWriteDomestic2DataInitiation("instr-identification", "e2e-identification", null, instructedAmount, null, creditorAccount);
-            var dataDomesticReponse2 = new OBWriteDomesticResponse4Data("PaymentId", consentId, DateTime.Now, OBWriteDomesticResponse4Data.StatusEnum.Pending, DateTimeOffset.Now, DateTimeOffset.Now, DateTimeOffset.Now, null, null, domestic2);
-            var links = new Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}");
-            var meta = new Meta(1);
+            OBWriteDomestic2DataInitiationInstructedAmount instructedAmount =
+                new OBWriteDomestic2DataInitiationInstructedAmount(amount: "50", currency: "GBP");
+            OBWriteDomestic2DataInitiationCreditorAccount creditorAccount =
+                new OBWriteDomestic2DataInitiationCreditorAccount(
+                    schemeName: "IBAN",
+                    identification: "BE56456394728288",
+                    name: "ACME DIY",
+                    secondaryIdentification: "secondary-identif");
+            OBWriteDomestic2DataInitiation domestic2 = new OBWriteDomestic2DataInitiation(
+                instructionIdentification: "instr-identification",
+                endToEndIdentification: "e2e-identification",
+                localInstrument: null,
+                instructedAmount: instructedAmount,
+                debtorAccount: null,
+                creditorAccount: creditorAccount);
+            OBWriteDomesticResponse4Data dataDomesticReponse2 = new OBWriteDomesticResponse4Data(
+                domesticPaymentId: "PaymentId",
+                consentId: consentId,
+                creationDateTime: DateTime.Now,
+                status: OBWriteDomesticResponse4Data.StatusEnum.Pending,
+                statusUpdateDateTime: DateTimeOffset.Now,
+                expectedExecutionDateTime: DateTimeOffset.Now,
+                expectedSettlementDateTime: DateTimeOffset.Now,
+                refund: null,
+                charges: null,
+                initiation: domestic2);
+            Links links = new Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}");
+            Meta meta = new Meta(1);
 
-            var model = new OBWriteDomesticResponse4(dataDomesticReponse2, links, meta);
+            OBWriteDomesticResponse4 model = new OBWriteDomesticResponse4(
+                data: dataDomesticReponse2,
+                links: links,
+                meta: meta);
 
             return JsonConvert.SerializeObject(model);
         }

@@ -3,9 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
@@ -17,9 +16,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
     [ApiController]
     public class RedirectController : ControllerBase
     {
-        private readonly IOpenBankingRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obRequestBuilder;
 
-        public RedirectController(IOpenBankingRequestBuilder obRequestBuilder)
+        public RedirectController(IRequestBuilder obRequestBuilder)
         {
             _obRequestBuilder = obRequestBuilder;
         }
@@ -31,13 +30,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<IActionResult> PostAuthorisationCallbackAsync([FromForm] AuthorisationCallbackPayload payload)
         {
-            AuthorisationCallbackData value = new AuthorisationCallbackData(
+            AuthorisationRedirectObject value = new AuthorisationRedirectObject(
                 responseMode: "fragment",
                 response: payload);
 
-            FluentResponse<AuthorisationCallbackDataResponse> resp = await _obRequestBuilder.AuthorisationCallbackData()
-                .Data(value)
-                .SubmitAsync();
+            FluentResponse<AuthorisationRedirectObjectResponse> resp = await _obRequestBuilder
+                .AuthorisationRedirectObjects
+                .PostAsync(value);
 
             return resp.HasErrors
                 ? new BadRequestObjectResult(resp.ToMessagesResponse()) as IActionResult
