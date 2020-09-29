@@ -3,13 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation;
+using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,10 +18,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     public class PaymentInitiationApiProfilesController : ControllerBase
     {
         private readonly IKeySecretReadOnlyProvider _keySecrets;
-        private readonly IOpenBankingRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obRequestBuilder;
 
         public PaymentInitiationApiProfilesController(
-            IOpenBankingRequestBuilder obRequestBuilder,
+            IRequestBuilder obRequestBuilder,
             IKeySecretReadOnlyProvider keySecrets)
         {
             _obRequestBuilder = obRequestBuilder;
@@ -32,17 +31,16 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [Route("pisp/api-profiles")]
         [HttpPost]
         [ProducesResponseType(
-            type: typeof(PaymentInitiationApiProfileHttpResponse),
+            type: typeof(HttpResponse<BankProfileResponse>),
             statusCode: StatusCodes.Status201Created)]
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankProfile request)
         {
             FluentResponse<BankProfileResponse> clientResp = await _obRequestBuilder
-                .PaymentInitiationApiProfile()
-                .Data(request)
-                .SubmitAsync();
+                .BankProfiles
+                .PostAsync(request);
 
-            PaymentInitiationApiProfileHttpResponse result = new PaymentInitiationApiProfileHttpResponse(
+            HttpResponse<BankProfileResponse> result = new HttpResponse<BankProfileResponse>(
                 data: clientResp.Data,
                 messages: clientResp.ToMessagesResponse());
 

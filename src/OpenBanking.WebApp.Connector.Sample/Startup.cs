@@ -3,9 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.IO;
-using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

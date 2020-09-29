@@ -11,23 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     public interface IDbEntityRepository<TEntity> : IDisposable where TEntity : class, IEntity
     {
-        ValueTask<TEntity> GetAsync(string id);
+        ValueTask<TEntity?> GetAsync(string id);
 
         Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
-        /// <summary>
-        ///     Emulates UPSERT until such time as EF Core supports UPSERT. Return value
-        ///     is that tracked by EF Core change tracker (input parameter in
-        ///     async method cannot be ref).
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <returns></returns>
-        Task<TEntity> UpsertAsync(TEntity instance);
-
         Task RemoveAsync(TEntity instance);
 
-        Task<IQueryable<TEntity>> GetAllAsync();
-        
         Task AddAsync(TEntity instance);
     }
 }

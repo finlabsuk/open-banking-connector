@@ -95,8 +95,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 };
                 b64 = null;
             }
-                
-            var dict = new Dictionary<string, object>
+
+            Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 { "typ", "JOSE" },
                 { "cty", "json" },
@@ -109,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
             if (!(b64 is null))
             {
-                dict.Add("b64", b64.Value);
+                dict.Add(key: "b64", value: b64.Value);
             }
 
             return dict;

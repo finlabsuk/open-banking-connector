@@ -5,7 +5,6 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
-using BankRegistration = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistration
 {

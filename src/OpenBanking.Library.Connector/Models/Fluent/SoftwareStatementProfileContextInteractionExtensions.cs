@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
@@ -87,7 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             return context;
         }
 
-        public static async Task<OpenBankingSoftwareStatementResponse> SubmitAsync(
+        public static async Task<FluentResponse<SoftwareStatementProfileResponse>> SubmitAsync(
             this SoftwareStatementProfileContext context)
         {
             context.ArgNotNull(nameof(context));
@@ -95,7 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             IList<FluentResponseMessage> validationErrors = Validate(context);
             if (validationErrors.Count > 0)
             {
-                return new OpenBankingSoftwareStatementResponse(messages: validationErrors, data: null);
+                return new FluentResponse<SoftwareStatementProfileResponse>(messages: validationErrors, data: null);
             }
 
             CreateSoftwareStatementProfile creator = new CreateSoftwareStatementProfile(
@@ -107,13 +108,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent
             {
                 SoftwareStatementProfileResponse response = await creator.CreateAsync(context.Data);
 
-                return new OpenBankingSoftwareStatementResponse(messages: messages, data: response);
+                return new FluentResponse<SoftwareStatementProfileResponse>(messages: messages, data: response);
             }
             catch (Exception ex)
             {
                 context.Context.Instrumentation.Exception(ex);
 
-                return new OpenBankingSoftwareStatementResponse(message: ex.CreateErrorMessage(), data: null);
+                return new FluentResponse<SoftwareStatementProfileResponse>(
+                    message: ex.CreateErrorMessage(),
+                    data: null);
             }
         }
 

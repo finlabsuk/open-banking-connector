@@ -12,20 +12,23 @@ using RequestBank = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public class CreateBank
+    internal class CreateBank
     {
         private readonly IDbEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
+        private readonly ITimeProvider _timeProvider;
 
         public CreateBank(
             IDbEntityRepository<Bank> bankRepo,
-            IDbMultiEntityMethods dbMultiEntityMethods)
+            IDbMultiEntityMethods dbMultiEntityMethods,
+            ITimeProvider timeProvider)
         {
             _bankRepo = bankRepo;
             _dbMultiEntityMethods = dbMultiEntityMethods;
+            _timeProvider = timeProvider;
         }
 
-        public async Task<BankResponse> CreateAsync(RequestBank requestBank)
+        public async Task<BankResponse> CreateAsync(RequestBank requestBank, string? createdBy)
         {
             requestBank.ArgNotNull(nameof(requestBank));
 
@@ -37,12 +40,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Persist bank object
-            Bank persistedBank = new Bank(requestBank);
+            Bank persistedBank = new Bank(
+                timeProvider: _timeProvider,
+                issuerUrl: requestBank.IssuerUrl,
+                xFapiFinancialId: requestBank.XFapiFinancialId,
+                name: requestBank.Name,
+                createdBy: createdBy);
             await _bankRepo.AddAsync(persistedBank);
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             // Return response
-            return new BankResponse(persistedBank);
+            return persistedBank.PublicResponse;
         }
     }
 }

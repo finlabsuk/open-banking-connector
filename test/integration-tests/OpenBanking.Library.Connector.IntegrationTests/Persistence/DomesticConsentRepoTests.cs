@@ -39,22 +39,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                 .Select(
                     i => new DomesticPaymentConsent
                     {
-                        State = "sdf",
+                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
                         BankProfileId = "sdf",
-                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
                         Id = i.ToString()
                     }).ToList();
             foreach (var dc in items)
             {
-                await _repo.UpsertAsync(dc);
+                await _repo.AddAsync(dc);
             }
 
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            IQueryable<DomesticPaymentConsent>? q = await _repo.GetAsync(x => x.Id == count.ToString());
+            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == count.ToString());
 
-            List<DomesticPaymentConsent>? results = q.ToList();
+            List<DomesticPaymentConsent> results = q.ToList();
 
             results.Should().HaveCount(1);
             results[0].Should().Be(items.Last());
@@ -68,26 +68,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByAll(int count)
         {
-            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+            List<DomesticPaymentConsent> items = Enumerable.Range(start: 1, count: count)
                 .Select(
                     i => new DomesticPaymentConsent
                     {
-                        State = "sdf",
+                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
                         BankProfileId = "sdf",
-                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
                         Id = i.ToString()
                     }).ToList();
             foreach (var dc in items)
             {
-                await _repo.UpsertAsync(dc);
+                await _repo.AddAsync(dc);
             }
 
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            IQueryable<DomesticPaymentConsent>? q = await _repo.GetAsync(x => true);
+            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => true);
 
-            List<DomesticPaymentConsent>? results = q.ToList();
+            List<DomesticPaymentConsent> results = q.ToList();
 
             results.Should().BeEquivalentTo(items);
         }
@@ -100,19 +100,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetEmptySetByUniqueProperty(int count)
         {
-            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+            List<DomesticPaymentConsent> items = Enumerable.Range(start: 1, count: count)
                 .Select(
                     i => new DomesticPaymentConsent
                     {
-                        State = "sdf",
+                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
                         BankProfileId = "sdf",
-                        ObWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        ObWriteDomesticResponse = new OBWriteDomesticConsentResponse4(),
+                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
                         Id = (-i).ToString()
                     }).ToList();
             foreach (var dc in items)
             {
-                await _repo.UpsertAsync(dc);
+                await _repo.AddAsync(dc);
             }
 
             _dbMultiEntityMethods.SaveChangesAsync().Wait();

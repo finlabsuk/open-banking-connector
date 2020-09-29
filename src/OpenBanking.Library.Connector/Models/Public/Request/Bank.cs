@@ -6,11 +6,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     public class Bank
     {
+        //Uri?
         public string IssuerUrl { get; set; } = null!;
 
         public string XFapiFinancialId { get; set; } = null!;
 
         public string Name { get; set; } = null!;
-
     }
 }

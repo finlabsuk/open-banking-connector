@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 {
     public class BankValidator : AbstractValidator<Bank>
     {
-        public  BankValidator()
+        public BankValidator()
         {
             CascadeMode = CascadeMode.Continue;
             CreateRules();

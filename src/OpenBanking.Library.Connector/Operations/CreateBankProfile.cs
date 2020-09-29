@@ -13,31 +13,29 @@ using RequestBankProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    public interface ICreateBankProfile
-    {
-        Task<BankProfileResponse> CreateAsync(RequestBankProfile bankProfile);
-    }
-
-    public class CreateBankProfile : ICreateBankProfile
+    internal class CreateBankProfile
     {
         private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
         private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
+        private readonly ITimeProvider _timeProvider;
 
         public CreateBankProfile(
             IDbEntityRepository<BankProfile> bankProfileRepo,
             IDbEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbEntityRepository<Bank> bankRepo,
-            IDbMultiEntityMethods dbMultiEntityMethods)
+            IDbMultiEntityMethods dbMultiEntityMethods,
+            ITimeProvider timeProvider)
         {
             _bankProfileRepo = bankProfileRepo;
             _bankRegistrationRepo = bankRegistrationRepo;
             _bankRepo = bankRepo;
             _dbMultiEntityMethods = dbMultiEntityMethods;
+            _timeProvider = timeProvider;
         }
 
-        public async Task<BankProfileResponse> CreateAsync(RequestBankProfile requestBankProfile)
+        public async Task<BankProfileResponse> CreateAsync(RequestBankProfile requestBankProfile, string? createdBy)
         {
             requestBankProfile.ArgNotNull(nameof(requestBankProfile));
 
@@ -66,12 +64,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                     if (requestBankProfile.UseStagingBankRegistration)
                     {
-                        bankRegistrationId = bank.StagingBankRegistrationId ?? throw new ArgumentException(
+                        bankRegistrationId = bank.StagingBankRegistrationId.Data ?? throw new ArgumentException(
                             "Bank specified by BankName doesn't have StagingBankRegistrationId.");
                     }
                     else
                     {
-                        bankRegistrationId = bank.DefaultBankRegistrationId ?? throw new ArgumentException(
+                        bankRegistrationId = bank.DefaultBankRegistrationId.Data ?? throw new ArgumentException(
                             "Bank specified by BankName doesn't have DefaultBankRegistrationId.");
                     }
 
@@ -87,8 +85,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                     bankRegistrationId = requestBankProfile.BankRegistrationId;
                     BankRegistration bankRegistration = await _bankRegistrationRepo.GetAsync(bankRegistrationId) ??
-                                                         throw new KeyNotFoundException(
-                                                             "No record found for BankRegistrationId.");
+                                                        throw new KeyNotFoundException(
+                                                            "No record found for BankRegistrationId.");
                     bankId = bankRegistration.BankId;
                     break;
                 }
@@ -96,24 +94,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Create and store persistent object
             BankProfile persistentBankProfile = new BankProfile(
+                timeProvider: _timeProvider,
                 bankRegistrationId: bankRegistrationId,
                 paymentInitiationApi: requestBankProfile.PaymentInitiationApi,
-                bankId: bankId);
+                bankId: bankId,
+                createdBy: createdBy);
             await _bankProfileRepo.AddAsync(persistentBankProfile);
 
             // Update registration references
             if (requestBankProfile.ReplaceDefaultBankProfile || requestBankProfile.ReplaceStagingBankProfile)
             {
                 Bank bank = await _bankRepo.GetAsync(bankId) ??
-                             throw new KeyNotFoundException("No record found for BankId.");
+                            throw new KeyNotFoundException("No record found for BankId.");
+                ReadWriteProperty<string?> profileId = new ReadWriteProperty<string?>(
+                    data: persistentBankProfile.Id,
+                    timeProvider: _timeProvider,
+                    modifiedBy: null);
                 if (requestBankProfile.ReplaceDefaultBankProfile)
                 {
-                    bank.DefaultBankProfileId = persistentBankProfile.Id;
+                    bank.DefaultBankProfileId = profileId;
                 }
 
                 if (requestBankProfile.ReplaceStagingBankProfile)
                 {
-                    bank.StagingBankProfileId = persistentBankProfile.Id;
+                    bank.StagingBankProfileId = profileId;
                 }
             }
 
@@ -121,7 +125,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             // Return response
-            return new BankProfileResponse(persistentBankProfile);
+            return persistentBankProfile.PublicResponse;
         }
     }
 }

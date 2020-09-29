@@ -28,15 +28,18 @@ using RequestDomesticPayment =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
-    public class CreateDomesticPayment
+    internal class CreateDomesticPayment
     {
         private readonly IApiClient _apiClient;
         private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
         private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbEntityRepository<Bank> _bankRepo;
+        private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly IDbEntityRepository<DomesticPaymentConsent> _domesticConsentRepo;
+        private readonly IDbEntityRepository<DomesticPayment> _domesticPaymentRepo;
         private readonly IEntityMapper _mapper;
         private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
+        private readonly ITimeProvider _timeProvider;
 
         public CreateDomesticPayment(
             IApiClient apiClient,
@@ -45,7 +48,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
             IEntityMapper mapper,
             IDbEntityRepository<BankRegistration> bankRegistrationRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService)
+            ISoftwareStatementProfileService softwareStatementProfileService,
+            IDbEntityRepository<DomesticPayment> domesticPaymentRepo,
+            ITimeProvider timeProvider,
+            IDbMultiEntityMethods dbMultiEntityMethods)
         {
             _apiClient = apiClient;
             _bankRepo = bankRepo;
@@ -54,15 +60,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _mapper = mapper;
             _bankRegistrationRepo = bankRegistrationRepo;
             _softwareStatementProfileService = softwareStatementProfileService;
+            _domesticPaymentRepo = domesticPaymentRepo;
+            _timeProvider = timeProvider;
+            _dbMultiEntityMethods = dbMultiEntityMethods;
         }
 
-        public async Task<DomesticPaymentResponse> CreateAsync(RequestDomesticPayment requestDomesticPayment)
+        public async Task<DomesticPaymentResponse> CreateAsync(
+            RequestDomesticPayment request,
+            string? createdBy)
         {
-            requestDomesticPayment.ArgNotNull(nameof(requestDomesticPayment));
+            request.ArgNotNull(nameof(request));
 
             // Load relevant data objects
+            string domesticPaymentConsentId = request.ConsentId;
             DomesticPaymentConsent paymentConsent =
-                await _domesticConsentRepo.GetAsync(requestDomesticPayment.ConsentId)
+                await _domesticConsentRepo.GetAsync(domesticPaymentConsentId)
                 ?? throw new KeyNotFoundException("The Consent does not exist.");
             BankProfile bankProfile = await _bankProfileRepo.GetAsync(paymentConsent.BankProfileId)
                                       ?? throw new KeyNotFoundException("The API Profile does not exist.");
@@ -84,10 +96,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 
             TokenEndpointResponse tokenEndpointResponse =
-                _mapper.Map<TokenEndpointResponse>(paymentConsent.TokenEndpointResponse);
+                _mapper.Map<TokenEndpointResponse>(paymentConsent.TokenEndpointResponse.Data);
 
             // Create new Open Banking payment by posting JWT
-            OBWriteDomesticConsent4 obConsent = paymentConsent.ObWriteDomesticConsent;
+            OBWriteDomesticConsent4 obConsent = paymentConsent.OBWriteDomesticConsent;
             OBWriteDomestic referencePayment = new OBWriteDomestic
             {
                 Data = new OBWriteDomestic2Data
@@ -131,7 +143,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     throw new ArgumentOutOfRangeException();
             }
 
-            return new DomesticPaymentResponse(paymentResponse);
+            // Create and store persistent object
+            DomesticPayment persistedDomesticPayment = new DomesticPayment(
+                timeProvider: _timeProvider,
+                domesticPaymentConsentId: domesticPaymentConsentId,
+                obWriteDomesticResponse: paymentResponse,
+                createdBy: createdBy);
+            await _domesticPaymentRepo.AddAsync(persistedDomesticPayment);
+            await _dbMultiEntityMethods.SaveChangesAsync();
+
+            DomesticPaymentResponse response = persistedDomesticPayment.PublicResponse;
+
+            return response;
         }
 
         private async Task<ApiResponseType> PostDomesticPayment<ApiRequestType, ApiResponseType>(
