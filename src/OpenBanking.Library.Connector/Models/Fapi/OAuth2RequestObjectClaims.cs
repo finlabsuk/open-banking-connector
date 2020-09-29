@@ -11,40 +11,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
     public class OAuth2RequestObjectClaims
     {
         /// <summary>
-        /// Gets or sets unique identifier for the TPP. Implemented as Base62
-        /// encoded GUID
+        ///     Gets or sets unique identifier for the TPP. Implemented as Base62
+        ///     encoded GUID
         /// </summary>
         [JsonProperty(PropertyName = "iss")]
         public string Iss { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets the time at which the request was issued by the TPP
-        /// expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
+        ///     Gets or sets the time at which the request was issued by the TPP
+        ///     expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "iat")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
         public DateTimeOffset Iat { get; set; }
-        
+
         /// <summary>
-        /// Gets or sets the time at which the request expires expressed as
-        /// seconds since 1970-01-01T00:00:00Z as measured in UTC
+        ///     Gets or sets the time at which the request expires expressed as
+        ///     seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "exp")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
         public DateTimeOffset Exp { get; set; }
 
         /// <summary>
-        /// Gets or sets the audience for the request. This should be the
-        /// unique identifier
-        /// for the ASPSP issued by the issuer of the software statement.
-        /// Implemented as Base62 encoded GUID
-        ///
+        ///     Gets or sets the audience for the request. This should be the
+        ///     unique identifier
+        ///     for the ASPSP issued by the issuer of the software statement.
+        ///     Implemented as Base62 encoded GUID
         /// </summary>
         [JsonProperty(PropertyName = "aud")]
         public string Aud { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets unique identifier for the JWT implemented as UUID v4
+        ///     Gets or sets unique identifier for the JWT implemented as UUID v4
         /// </summary>
         [JsonProperty(PropertyName = "jti")]
         public string Jti { get; set; } = null!;

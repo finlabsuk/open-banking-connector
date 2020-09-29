@@ -2,18 +2,24 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public class BankProfileResponse
+    public interface IBankProfilePublicQuery
     {
-        internal BankProfileResponse(BankProfile bankProfile)
+        string BankRegistrationId { get; }
+        PaymentInitiationApi? PaymentInitiationApi { get; }
+        string Id { get; }
+    }
+
+    public class BankProfileResponse : IBankProfilePublicQuery
+    {
+        internal BankProfileResponse(string bankRegistrationId, PaymentInitiationApi? paymentInitiationApi, string id)
         {
-            BankRegistrationId = bankProfile.BankRegistrationId;
-            PaymentInitiationApi = bankProfile.PaymentInitiationApi;
-            Id = bankProfile.Id;
+            BankRegistrationId = bankRegistrationId;
+            PaymentInitiationApi = paymentInitiationApi;
+            Id = id;
         }
 
         public string BankRegistrationId { get; }

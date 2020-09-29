@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     public class BankClientRegistrationClaimsOverrides
     {
-            [JsonProperty("iss")]
+        [JsonProperty("iss")]
         public string SsaIssuer { get; set; } = null!;
 
         [JsonProperty("aud")]

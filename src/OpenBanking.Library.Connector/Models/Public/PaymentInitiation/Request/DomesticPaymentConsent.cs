@@ -8,7 +8,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public class DomesticPaymentConsent
     {
-        public OBWriteDomesticConsent4 DomesticConsent { get; set; } = null!;
+        public OBRisk1 Merchant { get; set; } = null!;
+
+        public OBWriteDomestic2DataInitiationCreditorAccount CreditorAccount { get; set; } = null!;
+
+        public OBWriteDomestic2DataInitiationInstructedAmount InstructedAmount { get; set; } = null!;
+
+        public string InstructionIdentification { get; set; } = null!;
+
+        public string EndToEndIdentification { get; set; } = null!;
+
+        public OBWriteDomestic2DataInitiationRemittanceInformation RemittanceInformation { get; set; } = null!;
 
         /// <summary>
         ///     Specifies bank profile to be used for consent.

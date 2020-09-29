@@ -3,51 +3,138 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using BankRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.Bank;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     /// <summary>
     ///     Persisted type for Bank.
-    ///     Can't make internal due to use in OpenBanking.Library.Connector.GenericHost but at least
-    ///     constructors can be internal.
+    ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    public class Bank : IEntity
+    internal class Bank : IEntityWithPublicInterface<Bank, BankRequest, BankResponse, IBankPublicQuery>,
+        IBankPublicQuery
     {
-        internal Bank() { }
+        /// <summary>
+        ///     Constructor intended for use by EF Core and to access static methods in generic context only.
+        ///     Should not be used to create entity instances to add to DB.
+        /// </summary>
+        public Bank() { }
 
-        internal Bank(Public.Request.Bank bank)
+        /// <summary>
+        ///     Constructor for creating entity instances to add to DB.
+        /// </summary>
+        /// <param name="timeProvider"></param>
+        /// <param name="requestBank"></param>
+        /// <param name="createdBy"></param>
+        public Bank(
+            ITimeProvider timeProvider,
+            string issuerUrl,
+            string xFapiFinancialId,
+            string name,
+            string? createdBy)
         {
-            IssuerUrl = bank.IssuerUrl;
-            XFapiFinancialId = bank.XFapiFinancialId;
-            Name = bank.Name;
+            Created = timeProvider.GetUtcNow();
+            CreatedBy = createdBy;
+            IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
+            IssuerUrl = issuerUrl;
+            XFapiFinancialId = xFapiFinancialId;
+            Name = name;
             Id = Guid.NewGuid().ToString();
+            DefaultBankRegistrationId = new ReadWriteProperty<string?>(
+                data: null,
+                timeProvider: timeProvider,
+                modifiedBy: CreatedBy);
+            DefaultBankProfileId = new ReadWriteProperty<string?>(
+                data: null,
+                timeProvider: timeProvider,
+                modifiedBy: CreatedBy);
+            StagingBankRegistrationId = new ReadWriteProperty<string?>(
+                data: null,
+                timeProvider: timeProvider,
+                modifiedBy: CreatedBy);
+            StagingBankProfileId = new ReadWriteProperty<string?>(
+                data: null,
+                timeProvider: timeProvider,
+                modifiedBy: CreatedBy);
         }
 
-        public string IssuerUrl { get; set; } = null!;
-
-        public string XFapiFinancialId { get; set; } = null!;
-
-        public string Name { get; set; } = null!;
-        
         /// <summary>
-        /// Specifies default Bank Registration associated with Bank.
-        /// This may be used when creating a BankProfile.
+        ///     Specifies default Bank Registration associated with Bank.
+        ///     This may be used when creating a BankProfile.
         /// </summary>
-        public string? DefaultBankRegistrationId { get; set; }
+        public ReadWriteProperty<string?> DefaultBankRegistrationId { get; set; } = null!;
+
+        public ReadWriteProperty<string?> DefaultBankProfileId { get; set; } = null!;
 
         /// <summary>
-        /// Specifies staging Bank Registration associated with Bank.
-        /// This may be used when creating a staging BankProfile.
+        ///     Specifies staging Bank Registration associated with Bank.
+        ///     This may be used when creating a staging BankProfile.
         /// </summary>
-        public string? StagingBankRegistrationId { get; set; }
-        
-        public string? DefaultBankProfileId { get; set; }
+        public ReadWriteProperty<string?> StagingBankRegistrationId { get; set; } = null!;
 
-        public string? StagingBankProfileId { get; set; }
-        
-        public string Id { get; set; } = null!;
+        public ReadWriteProperty<string?> StagingBankProfileId { get; set; } = null!;
+
+        public string IssuerUrl { get; } = null!;
+
+        public string XFapiFinancialId { get; } = null!;
+
+        public string Name { get; } = null!;
+
+        public DateTimeOffset Created { get; }
+
+        public string? CreatedBy { get; }
+
+        public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
+
+        public string Id { get; } = null!;
+
+        public BankResponse PublicResponse => new BankResponse(
+            issuerUrl: IssuerUrl,
+            xFapiFinancialId: XFapiFinancialId,
+            name: Name,
+            id: Id);
+
+        public Func<BankRequest, ValidationResult> ValidatePublicRequestWrapper => ValidatePublicRequest;
+
+        public Func<ISharedContext, BankRequest, string?, Task<BankResponse>> PostEntityAsyncWrapper => PostEntityAsync;
+
+        public Task BankApiDeleteAsync()
+        {
+            throw new InvalidOperationException("This class is local to OBC and cannot be deleted at bank API.");
+        }
+
+        public Task<BankResponse> BankApiGetAsync(ITimeProvider timeProvider, string? modifiedBy)
+        {
+            throw new InvalidOperationException("This class is local to OBC and cannot be gotten from bank API.");
+        }
+
+        public static ValidationResult ValidatePublicRequest(BankRequest requestBank)
+        {
+            return new BankValidator()
+                .Validate(requestBank);
+        }
+
+        public static async Task<BankResponse> PostEntityAsync(
+            ISharedContext context,
+            BankRequest requestBank,
+            string? createdBy)
+        {
+            CreateBank i = new CreateBank(
+                bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
+                dbMultiEntityMethods: context.DbContextService,
+                timeProvider: context.TimeProvider);
+
+            BankResponse resp = await i.CreateAsync(requestBank: requestBank, createdBy: createdBy);
+            return resp;
+        }
     }
 }

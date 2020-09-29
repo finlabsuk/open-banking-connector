@@ -3,8 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
@@ -17,26 +16,27 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentsController : ControllerBase
     {
-        private readonly IOpenBankingRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obRequestBuilder;
 
-        public DomesticPaymentsController(IOpenBankingRequestBuilder obRequestBuilder)
+        public DomesticPaymentsController(IRequestBuilder obRequestBuilder)
         {
             _obRequestBuilder = obRequestBuilder;
         }
 
         [Route("pisp/domestic-payments")]
         [HttpPost]
-        [ProducesResponseType(type: typeof(PaymentResponse), statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(
+            type: typeof(HttpResponse<DomesticPaymentResponse>),
+            statusCode: StatusCodes.Status201Created)]
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DomesticPaymentsPostAsync([FromBody] DomesticPayment request)
         {
-            FluentResponse<DomesticPaymentResponse> resp = await _obRequestBuilder.DomesticPayment()
-                .Data(request)
-                .SubmitAsync();
+            FluentResponse<DomesticPaymentResponse> resp = await _obRequestBuilder.DomesticPayments
+                .PostAsync(request);
 
-            PaymentResponse result = new PaymentResponse(
+            HttpResponse<DomesticPaymentResponse> result = new HttpResponse<DomesticPaymentResponse>(
                 messages: resp.ToMessagesResponse(),
-                data: resp.Data.OBWriteDomesticResponse.Data);
+                data: resp.Data);
 
             return resp.HasErrors
                 ? new BadRequestObjectResult(result.Messages) as IActionResult

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Microsoft.Extensions.Logging;
@@ -18,9 +19,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
             _logger = logger;
         }
 
-        public void StartTrace(TraceInfo info) => LogTrace("Start", info);
+        public void StartTrace(TraceInfo info) => LogTrace(prefix: "Start", info: info);
 
-        public void EndTrace(TraceInfo info) => LogTrace("End", info);
+        public void EndTrace(TraceInfo info) => LogTrace(prefix: "End", info: info);
 
         public void Info(string message) => _logger.LogInformation(message);
 
@@ -28,13 +29,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
 
         public void Error(string message) => _logger.LogError(message);
 
-        public void Exception(Exception exception) => _logger.LogError(exception, exception.Message);
+        public void Exception(Exception exception) =>
+            _logger.LogError(exception: exception, message: exception.Message);
 
-        public void Exception(Exception exception, string message) => _logger.LogError(exception, message);
+        public void Exception(Exception exception, string message) =>
+            _logger.LogError(exception: exception, message: message);
 
         private void LogTrace(string prefix, TraceInfo info)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             if (!string.IsNullOrWhiteSpace(prefix))
             {
                 sb.Append($"{prefix}: ");
@@ -55,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
                 }
             }
 
-            foreach (var keyValuePair in info.Values)
+            foreach (KeyValuePair<string, string> keyValuePair in info.Values)
             {
                 sb.AppendLine($"{keyValuePair.Key}: {keyValuePair.Value}");
             }

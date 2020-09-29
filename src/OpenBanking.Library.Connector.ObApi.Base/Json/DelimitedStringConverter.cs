@@ -22,12 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
         public DelimitedStringGenericConverter() { }
 
         public DelimitedStringGenericConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
-       
     }
 
-    public class DelimitedStringNullableConverter: DelimitedStringGenericConverter<string?>
+    public class DelimitedStringNullableConverter : DelimitedStringGenericConverter<string?>
     {
-        
         public DelimitedStringNullableConverter() { }
 
         public DelimitedStringNullableConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
@@ -71,7 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json
                     reader.TokenType == JsonToken.StartArray)
                 {
                     StringBuilder builder = new StringBuilder();
-                    while (reader.Read() && reader.TokenType == JsonToken.String && !(reader.Value is null) )
+                    while (reader.Read() && reader.TokenType == JsonToken.String && !(reader.Value is null))
                     {
                         if (builder.Length > 0)
                         {

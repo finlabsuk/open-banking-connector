@@ -9,9 +9,16 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
+using OBAddressTypeCode =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBAddressTypeCode;
+using OBPostalAddress6 =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBPostalAddress6;
+using OBRisk1 = FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBRisk1;
+using OBRisk1DeliveryAddress =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBRisk1DeliveryAddress;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 {
@@ -62,14 +69,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapClientProfile()
         {
-            _entityMapper.Map<Models.Persistent.BankRegistration>(_client);
+            //_entityMapper.Map<Models.Persistent.BankRegistration>(_client);
         }
 
 
         [Benchmark]
         public void MapDomesticConsent()
         {
-            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomesticConsent2>(_domesticConsent);
+            _entityMapper.Map<OBWriteDomesticConsent2>(_domesticConsent);
         }
 
         [Benchmark]
@@ -81,14 +88,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapDataInitiation()
         {
-            _entityMapper.Map<ObModels.PaymentInitiation.V3p1p1.Model.OBDomestic2>(_dataInitiation);
+            _entityMapper.Map<OBDomestic2>(_dataInitiation);
         }
 
         private void OnExecute() => BenchmarkRunner.Run<EntityMappingApplication>();
 
         private OBRisk1 CreateRisk() => new OBRisk1
         {
-            DeliveryAddress = new OBRisk1DeliveryAddress()
+            DeliveryAddress = new OBRisk1DeliveryAddress
             {
                 TownName = "Accrington Stanley",
                 Country = "UK",
@@ -161,9 +168,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 },
                 SCASupportData = new OBWriteDomesticConsent4DataSCASupportData
                 {
-                    AppliedAuthenticationApproach = OBWriteDomesticConsent4DataSCASupportData.AppliedAuthenticationApproachEnum.SCA,
+                    AppliedAuthenticationApproach =
+                        OBWriteDomesticConsent4DataSCASupportData.AppliedAuthenticationApproachEnum.SCA,
                     ReferencePaymentOrderId = "reference Payment Order Id",
-                    RequestedSCAExemptionType = OBWriteDomesticConsent4DataSCASupportData.RequestedSCAExemptionTypeEnum.PartyToParty
+                    RequestedSCAExemptionType = OBWriteDomesticConsent4DataSCASupportData.RequestedSCAExemptionTypeEnum
+                        .PartyToParty
                 }
             },
             Risk = CreateRisk()

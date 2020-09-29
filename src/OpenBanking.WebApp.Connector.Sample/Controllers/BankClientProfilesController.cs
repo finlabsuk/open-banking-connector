@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
@@ -18,10 +18,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
     public class BankClientProfilesController : ControllerBase
     {
         private readonly IKeySecretReadOnlyProvider _keySecrets;
-        private readonly IOpenBankingRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obRequestBuilder;
 
         public BankClientProfilesController(
-            IOpenBankingRequestBuilder obRequestBuilder,
+            IRequestBuilder obRequestBuilder,
             IKeySecretReadOnlyProvider keySecrets)
         {
             _obRequestBuilder = obRequestBuilder;
@@ -30,15 +30,16 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
 
         [Route("bank-client-profiles")]
         [HttpPost]
-        [ProducesResponseType(type: typeof(BankClientProfileHttpResponse), statusCode: StatusCodes.Status201Created)]
+        [ProducesResponseType(
+            type: typeof(HttpResponse<BankRegistrationResponse>),
+            statusCode: StatusCodes.Status201Created)]
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankRegistration request)
         {
-            FluentResponse<BankRegistrationResponse> clientResp = await _obRequestBuilder.BankClientProfile()
-                .Data(request)
-                .SubmitAsync();
+            FluentResponse<BankRegistrationResponse> clientResp = await _obRequestBuilder.BankRegistrations
+                .PostAsync(request);
 
-            BankClientProfileHttpResponse result = new BankClientProfileHttpResponse(
+            HttpResponse<BankRegistrationResponse> result = new HttpResponse<BankRegistrationResponse>(
                 data: clientResp.Data,
                 messages: clientResp.ToMessagesResponse());
 

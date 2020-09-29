@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests
 {
     public interface IMockPaymentData
     {
-        IOpenBankingRequestBuilder CreateMockRequestBuilder();
+        IRequestBuilder CreateMockRequestBuilder();
         string GetAccessToken();
         string GetBase64TokenString();
         string GetClientId();

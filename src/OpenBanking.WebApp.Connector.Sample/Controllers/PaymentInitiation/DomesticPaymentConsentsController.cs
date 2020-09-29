@@ -3,12 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities.PaymentInitiation;
+using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +16,9 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentConsentsController : ControllerBase
     {
-        private readonly IOpenBankingRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obRequestBuilder;
 
-        public DomesticPaymentConsentsController(IOpenBankingRequestBuilder obRequestBuilder)
+        public DomesticPaymentConsentsController(IRequestBuilder obRequestBuilder)
         {
             _obRequestBuilder = obRequestBuilder;
         }
@@ -27,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [Route("pisp/domestic-payment-consents")]
         [HttpPost]
         [ProducesResponseType(
-            type: typeof(DomesticPaymentConsentHttpResponse),
+            type: typeof(HttpResponse<DomesticPaymentConsentResponse>),
             statusCode: StatusCodes.Status201Created)]
         [ProducesResponseType(
             type: typeof(MessagesResponse),
@@ -35,11 +34,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         public async Task<IActionResult> DomesticPaymentConsentsPostAsync([FromBody] DomesticPaymentConsent request)
         {
             FluentResponse<DomesticPaymentConsentResponse> resp = await _obRequestBuilder
-                .DomesticPaymentConsent()
-                .Data(request)
-                .SubmitAsync();
+                .DomesticPaymentConsents
+                .PostAsync(request);
 
-            DomesticPaymentConsentHttpResponse result = new DomesticPaymentConsentHttpResponse(
+            HttpResponse<DomesticPaymentConsentResponse> result = new HttpResponse<DomesticPaymentConsentResponse>(
                 messages: resp.ToMessagesResponse(),
                 data: resp.Data);
 

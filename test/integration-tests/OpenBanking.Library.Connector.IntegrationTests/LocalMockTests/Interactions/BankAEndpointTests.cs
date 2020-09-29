@@ -3,9 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -21,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact]
         public async Task Submit_DomesticPayment_Accepted()
         {
-            IOpenBankingRequestBuilder? builder = CreateOpenBankingRequestBuilder();
+            IRequestBuilder builder = CreateOpenBankingRequestBuilder();
 
             // Where you see TestConfig.GetValue( .. )
             // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
@@ -29,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // Set up a Software Statement and associated configuration/preferences (a "software statement profile") within our Servicing service. Configuration
             // includes the transport and signing keys associated with the software statement.
             // This is performed once in the lifetime of Servicing or in the case of using multiple identities to connect to banks, once per identity.
-            OpenBankingSoftwareStatementResponse softwareStatementProfileResp = await builder
+            FluentResponse<SoftwareStatementProfileResponse> softwareStatementProfileResp = await builder
                 .SoftwareStatementProfile()
                 .Id("0")
                 .SoftwareStatement(TestConfig.GetValue("softwarestatement"))
@@ -50,15 +51,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
             // Create bank
             string bankName = "MyBank";
-            FluentResponse<BankResponse> bankResp = await builder.Bank()
-                .Data(
-                    new Bank
-                    {
-                        IssuerUrl = TestConfig.GetValue("clientProfileIssuerUrl"),
-                        XFapiFinancialId = TestConfig.GetValue("xFapiFinancialId"),
-                        Name = bankName
-                    })
-                .SubmitAsync();
+            Bank bank = new Bank
+            {
+                IssuerUrl = TestConfig.GetValue("clientProfileIssuerUrl"),
+                XFapiFinancialId = TestConfig.GetValue("xFapiFinancialId"),
+                Name = bankName
+            };
+            FluentResponse<BankResponse> bankResp = await builder.Banks
+                .PostAsync(bank);
 
             bankResp.Should().NotBeNull();
             bankResp.Messages.Should().BeEmpty();
@@ -68,8 +68,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // be created if bank registration is successful.
             // Bank registration uses a software statement to establish our identity in the eyes of the bank. This and other data are transmitted to the bank.
             // This is performed once per Bank.
-            FluentResponse<BankRegistrationResponse> bankClientProfileResp = await builder.BankClientProfile()
-                .Data(
+            FluentResponse<BankRegistrationResponse> bankClientProfileResp = await builder.BankRegistrations
+                .PostAsync(
                     new BankRegistration
                     {
                         SoftwareStatementProfileId = softwareStatementProfileResp.Data.Id,
@@ -81,8 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                         },
                         BankName = bankName,
                         ReplaceStagingBankRegistration = true
-                    })
-                .SubmitAsync();
+                    });
 
             // These are test assertions to ensure the bank says "request successfully processed". "Messages" enumerates all warnings & errors, and so is empty for this scenario.
             bankClientProfileResp.Should().NotBeNull();
@@ -94,8 +93,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // any preferences related to that API including the bank client to be used.
             // This is performed once per Bank per Read/Write API type (e.g. Payment Initiation, Account Transaction, etc).
             FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = await builder
-                .PaymentInitiationApiProfile()
-                .Data(
+                .BankProfiles
+                .PostAsync(
                     new BankProfile
                     {
                         BankName = bankName,
@@ -106,8 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                             ApiVersion = TestConfig.GetEnumValue<ApiVersion>("paymentApiVersion").Value,
                             BaseUrl = TestConfig.GetValue("paymentApiUrl")
                         }
-                    })
-                .SubmitAsync();
+                    });
 
             paymentInitiationApiProfileResp.Should().NotBeNull();
             paymentInitiationApiProfileResp.Messages.Should().BeEmpty();
@@ -116,36 +114,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // Create a consent object and transmit to the bank to support user authorisation of an intended domestic payment.
             // This is performed once per payment.
             FluentResponse<DomesticPaymentConsentResponse> consentResp = await builder
-                .DomesticPaymentConsent()
-                .BankProfileId(paymentInitiationApiProfileResp.Data.Id)
-                .Merchant(
-                    merchantCategory: null,
-                    merchantCustomerId: null,
-                    paymentContextCode: OBRisk1.PaymentContextCodeEnum.EcommerceGoods)
-                .CreditorAccount(
-                    identification: "BE56456394728288",
-                    schema: "IBAN",
-                    name: "ACME DIY",
-                    secondaryId: "secondary-identif")
-                .DeliveryAddress(
-                    new OBRisk1DeliveryAddress
+                .DomesticPaymentConsents
+                .PostAsync(
+                    new DomesticPaymentConsent
                     {
-                        BuildingNumber = "42",
-                        StreetName = "Oxford Street",
-                        TownName = "London",
-                        Country = "UK",
-                        PostCode = "SW1 1AA"
-                    })
-                .Amount(currency: "GBP", value: 50)
-                .InstructionIdentification("instr-identification")
-                .EndToEndIdentification("e2e-identification")
-                .Remittance(
-                    new OBWriteDomestic2DataInitiationRemittanceInformation
-                    {
-                        Unstructured = "Tools",
-                        Reference = "Tools"
-                    })
-                .SubmitAsync();
+                        Merchant = new OBRisk1
+                        {
+                            PaymentContextCode = OBRisk1.PaymentContextCodeEnum.EcommerceGoods,
+                            DeliveryAddress = new OBRisk1DeliveryAddress
+                            {
+                                BuildingNumber = "42",
+                                StreetName = "Oxford Street",
+                                TownName = "London",
+                                Country = "UK",
+                                PostCode = "SW1 1AA"
+                            }
+                        },
+                        CreditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount
+                        {
+                            SchemeName = "ACME DIY",
+                            Identification = "BE56456394728288",
+                            Name = "IBAN",
+                            SecondaryIdentification = "secondary-identif"
+                        },
+                        InstructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount
+                        {
+                            Amount = "50.00",
+                            Currency = "GBP"
+                        },
+                        InstructionIdentification = "instr-identification",
+                        EndToEndIdentification = "e2e-identification",
+                        RemittanceInformation = new OBWriteDomestic2DataInitiationRemittanceInformation
+                        {
+                            Unstructured = "Tools",
+                            Reference = "Tools"
+                        },
+                        BankProfileId = paymentInitiationApiProfileResp.Data.Id,
+                        //BankName = ,
+                        //UseStagingBankProfile = 
+                    });
 
             consentResp.Should().NotBeNull();
             consentResp.Messages.Should().BeEmpty();

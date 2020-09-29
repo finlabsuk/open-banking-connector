@@ -4,11 +4,10 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation
 {
-        public class PaymentInitiationApi
-        {
-            public ApiVersion ApiVersion { get; set; }
+    public class PaymentInitiationApi
+    {
+        public ApiVersion ApiVersion { get; set; }
 
-            public string BaseUrl { get; set; } = null!;
-       
-        }
+        public string BaseUrl { get; set; } = null!;
+    }
 }

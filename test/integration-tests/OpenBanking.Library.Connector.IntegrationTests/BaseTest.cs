@@ -6,16 +6,15 @@ using System;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -53,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
             _connection.Close(); // Deletes DB
         }
 
-        public IOpenBankingRequestBuilder CreateOpenBankingRequestBuilder() => CreateMockRequestBuilder();
+        public IRequestBuilder CreateOpenBankingRequestBuilder() => CreateMockRequestBuilder();
 
         private RequestBuilder CreateMockRequestBuilder()
         {
@@ -68,9 +67,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: GetApiClient(TestConfig),
                 certificateReader: new PemParsingCertificateReader(),
-                clientProfileRepository: new DbEntityRepository<BankRegistration>(_dB),
-                domesticConsentRepo: new DbEntityRepository<DomesticPaymentConsent>(_dB),
-                apiProfileRepository: new DbEntityRepository<BankProfile>(_dB),
                 activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
                 sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
@@ -81,8 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                     activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
                         _secretProvider),
                     mapper: _entityMapper),
-                new DbEntityRepository<Bank>(_dB)
-                );
+                dbEntityRepositoryFactory: new DbEntityRepositoryFactory(_dB));
 
             return requestBuilder;
         }
@@ -91,9 +86,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
         {
             if (TestConfig.GetBooleanValue("mockHttp").GetValueOrDefault(false))
             {
-                MockHttpMessageHandler? mockHttp = new MockHttpMessageHandler();
+                MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
 
-                OpenIdConfiguration? openIdConfigData = TestConfig.GetOpenBankingOpenIdConfiguration();
+                OpenIdConfiguration openIdConfigData = TestConfig.GetOpenBankingOpenIdConfiguration();
                 string? openIdConfig = JsonConvert.SerializeObject(openIdConfigData);
 
 
@@ -108,11 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 return new ApiClient(instrumentation: Substitute.For<IInstrumentationClient>(), httpClient: client);
             }
 
-            X509Certificate2? certificate = CertificateFactories.GetCertificate2FromPem(
+            X509Certificate2 certificate = CertificateFactories.GetCertificate2FromPem(
                 privateKey: TestConfig.GetValue("transportcertificatekey"),
                 pem: TestConfig.GetValue("transportCertificate"));
 
-            HttpMessageHandler? handler = new HttpRequestBuilder()
+            HttpMessageHandler handler = new HttpRequestBuilder()
                 .SetClientCertificate(certificate)
                 .CreateMessageHandler();
 

@@ -6,13 +6,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// Class that captures a software statement and associated keys and certificates
     [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]
-    public class SoftwareStatementProfile : IEntity, IKeySecretItemWithId
+    public class SoftwareStatementProfile : IKeySecretItemWithId
     {
         public SoftwareStatementProfile(
             string softwareStatement,

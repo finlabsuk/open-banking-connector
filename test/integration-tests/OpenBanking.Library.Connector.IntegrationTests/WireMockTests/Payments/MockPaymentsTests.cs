@@ -2,11 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -28,9 +28,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public void RunMockPaymentTest()
         {
-            IOpenBankingRequestBuilder requestBuilder = _mockData.CreateMockRequestBuilder();
+            IRequestBuilder requestBuilder = _mockData.CreateMockRequestBuilder();
 
-            OpenBankingSoftwareStatementResponse softwareStatementProfileResp = requestBuilder
+            FluentResponse<SoftwareStatementProfileResponse> softwareStatementProfileResp = requestBuilder
                 .SoftwareStatementProfile()
                 .Id("0")
                 .SoftwareStatement(
@@ -52,24 +52,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _mockPaymentsServer.SetUpOpenIdMock();
             _mockPaymentsServer.SetupRegistrationMock();
 
-            FluentResponse<BankRegistrationResponse> bankClientProfileResp = requestBuilder.BankClientProfile()
+            FluentResponse<BankRegistrationResponse> bankClientProfileResp = requestBuilder.BankRegistrations
+                .PostAsync(
+                    new BankRegistration
+                    {
+                        SoftwareStatementProfileId = softwareStatementProfileResp.Data.Id,
+                        //BankName = ,
+                    })
                 //.Id("MyBankClientProfileId")
-                .SoftwareStatementProfileId(softwareStatementProfileResp.Data.Id)
                 //.IssuerUrl(new Uri(MockRoutes.Url))
                 //.XFapiFinancialId(_mockData.GetFapiHeader())
-                .BankClientRegistrationClaimsOverrides(new BankClientRegistrationClaimsOverrides())
-                .SubmitAsync().Result;
+                .Result;
 
             bankClientProfileResp.Should().NotBeNull();
             bankClientProfileResp.Messages.Should().BeEmpty();
             bankClientProfileResp.Data.Should().NotBeNull();
 
+            BankProfile bankProfile = new BankProfile
+            {
+                BankRegistrationId = bankClientProfileResp.Data.Id,
+                //BankName = ,
+                //UseStagingBankRegistration = ,
+                //ReplaceDefaultBankProfile = ,
+                //ReplaceStagingBankProfile = ,
+                PaymentInitiationApi = new PaymentInitiationApi
+                {
+                    ApiVersion = ApiVersion.V3P1P4,
+                    BaseUrl = MockRoutes.Url
+                }
+            };
+
             FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = requestBuilder
-                .PaymentInitiationApiProfile()
+                .BankProfiles
+                .PostAsync(bankProfile)
                 //.Id("NewPaymentInitiationProfile")
-                .BankRegistrationId(bankClientProfileResp.Data.Id)
-                .PaymentInitiationApiInfo(apiVersion: ApiVersion.V3P1P4, baseUrl: MockRoutes.Url)
-                .SubmitAsync().Result;
+                .Result;
 
             paymentInitiationApiProfileResp.Should().NotBeNull();
             paymentInitiationApiProfileResp.Messages.Should().BeEmpty();
@@ -79,34 +96,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _mockPaymentsServer.SetupPaymentEndpointMock();
 
             FluentResponse<DomesticPaymentConsentResponse> consentResp = requestBuilder
-                .DomesticPaymentConsent()
-                .BankProfileId(paymentInitiationApiProfileResp.Data.Id)
-                .Merchant(
-                    merchantCategory: null,
-                    merchantCustomerId: null,
-                    paymentContextCode: OBRisk1.PaymentContextCodeEnum.EcommerceGoods)
-                .CreditorAccount(
-                    identification: "BE56456394728288",
-                    schema: "IBAN",
-                    name: "ACME DIY",
-                    secondaryId: "secondary-identif")
-                .DeliveryAddress(new OBRisk1DeliveryAddress
+                .DomesticPaymentConsents
+                .PostAsync(
+                    new DomesticPaymentConsent
                     {
-                        BuildingNumber = "42",
-                        StreetName = "Oxford Street",
-                        TownName = "London",
-                        Country = "UK",
-                        PostCode = "SW1 1AA"
+                        Merchant = new OBRisk1
+                        {
+                            PaymentContextCode = OBRisk1.PaymentContextCodeEnum.EcommerceGoods,
+                            DeliveryAddress = new OBRisk1DeliveryAddress
+                            {
+                                BuildingNumber = "42",
+                                StreetName = "Oxford Street",
+                                TownName = "London",
+                                Country = "UK",
+                                PostCode = "SW1 1AA"
+                            }
+                        },
+                        CreditorAccount = new OBWriteDomestic2DataInitiationCreditorAccount
+                        {
+                            SchemeName = "ACME DIY",
+                            Identification = "BE56456394728288",
+                            Name = "IBAN",
+                            SecondaryIdentification = "secondary-identif"
+                        },
+                        InstructedAmount = new OBWriteDomestic2DataInitiationInstructedAmount
+                        {
+                            Amount = "50.00",
+                            Currency = "GBP"
+                        },
+                        InstructionIdentification = "instr-identification",
+                        EndToEndIdentification = "e2e-identification",
+                        RemittanceInformation = new OBWriteDomestic2DataInitiationRemittanceInformation
+                        {
+                            Unstructured = "Tools",
+                            Reference = "Tools"
+                        },
+                        BankProfileId = paymentInitiationApiProfileResp.Data.Id,
+                        //BankName = ,
+                        //UseStagingBankProfile = 
                     })
-                .Amount(currency: "GBP", value: 50)
-                .InstructionIdentification("instr-identification")
-                .EndToEndIdentification("e2e-identification")
-                .Remittance(new OBWriteDomestic2DataInitiationRemittanceInformation
-                    {
-                        Unstructured = "Tools",
-                        Reference = "Tools"
-                    })
-                .SubmitAsync().Result;
+                .Result;
 
             consentResp.Should().NotBeNull();
             consentResp.Messages.Should().BeEmpty();
@@ -120,25 +149,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             // Call mock bank with auth URL and check.... then return at least auth code and state....
 
             // Call Fluent method to pass auth code and state (set up mock bank token endpoint)
-            FluentResponse<AuthorisationCallbackDataResponse> authCallbackDataResp = requestBuilder.AuthorisationCallbackData()
-                .ResponseMode("fragment")
-                .Response(
-                    new AuthorisationCallbackPayload()
-                    {
-                        Code = "TODO: place code from mock bank here",
-                        State = "TODO: extract state from consentResp.Data.AuthUrl and place here",
-                        Nonce = "TODO: extract nonce from consentResp.Data.AuthUrl and place here"
-                    })
-                .SubmitAsync().Result;
+            FluentResponse<AuthorisationRedirectObjectResponse> authCallbackDataResp = requestBuilder
+                .AuthorisationRedirectObjects
+                .PostAsync(
+                    new AuthorisationRedirectObject(
+                        responseMode: "fragment",
+                        response: new AuthorisationCallbackPayload
+                        {
+                            Code = "TODO: place code from mock bank here",
+                            State = "TODO: extract state from consentResp.Data.AuthUrl and place here",
+                            Nonce = "TODO: extract nonce from consentResp.Data.AuthUrl and place here"
+                        }))
+                .Result;
 
             //authCallbackDataResp.Should().NotBeNull();
             //authCallbackDataResp.Messages.Should().BeEmpty();
             //authCallbackDataResp.Data.Should().NotBeNull();
 
             // Call Fluent method to make payment (set up mock bank payment endpoint)
-            FluentResponse<DomesticPaymentResponse> paymentResp = requestBuilder.DomesticPayment()
-                .ConsentId(consentResp.Data.ConsentId)
-                .SubmitAsync().Result;
+            FluentResponse<DomesticPaymentResponse> paymentResp = requestBuilder.DomesticPayments
+                .PostAsync(
+                    new DomesticPayment
+                    {
+                        ConsentId = consentResp.Data.Id
+                    })
+                .Result;
 
             //paymentResp.Should().NotBeNull();
             //paymentResp.Messages.Should().BeEmpty();
