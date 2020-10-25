@@ -6,14 +6,14 @@ using FsCheck;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
-
     public class StringNotNullAndContainsNoNulls
     {
-        public string Item { get; }
         public StringNotNullAndContainsNoNulls(string s)
         {
             Item = s;
         }
+
+        public string Item { get; }
     }
 
     public class FsCheckCustomArbs
@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
         {
             return Arb.Default.String()
                 .Filter(s => !(s is null) && !s.Contains("\0"))
-                .Convert(s => new StringNotNullAndContainsNoNulls(s), ans => ans.Item);
+                .Convert(convertTo: s => new StringNotNullAndContainsNoNulls(s), convertFrom: ans => ans.Item);
         }
     }
 }

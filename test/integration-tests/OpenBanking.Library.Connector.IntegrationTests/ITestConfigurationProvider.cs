@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
@@ -16,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         T? GetEnumValue<T>(string key) where T : struct;
 
-        BankClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides();
+        BankRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides();
 
         OpenIdConfiguration GetOpenBankingOpenIdConfiguration();
     }

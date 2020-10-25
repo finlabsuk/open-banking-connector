@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
                 responseMode: "fragment",
                 response: payload);
 
-            FluentResponse<AuthorisationRedirectObjectResponse> resp = await _obRequestBuilder
+            FluentResponse<AuthorisationRedirectObjectResponse> resp = await _obRequestBuilder.PaymentInitiation
                 .AuthorisationRedirectObjects
                 .PostAsync(value);
 

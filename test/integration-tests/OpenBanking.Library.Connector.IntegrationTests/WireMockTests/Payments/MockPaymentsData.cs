@@ -6,27 +6,23 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SoftwareStatementProfile =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {
@@ -233,7 +229,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             return fakeCertificate;
         }
 
-        public IRequestBuilder CreateMockRequestBuilder()
+        public IRequestBuilder CreateMockRequestBuilder(
+            IDictionary<string, SoftwareStatementProfileCached> softwareStatementProfileDictionary)
         {
             HttpClient httpClient = new HttpClient
             {
@@ -245,21 +242,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             RequestBuilder requestBuilder = new RequestBuilder(
                 entityMapper: _entityMapper,
                 dbContextService: new DbMultiEntityMethods(_dB),
-                configurationProvider: new DefaultConfigurationProvider(),
                 logger: new ConsoleInstrumentationClient(),
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: new ApiClient(httpClient),
                 certificateReader: new PemParsingCertificateReader(),
-                activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
-                activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
-                sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
-                sRepo: new KeySecretMultiItemWriteRepository<SoftwareStatementProfile>(_secretProvider),
-                softwareStatementProfileService: new SoftwareStatementProfileService(
-                    softwareStatementProfileRepo:
-                    new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
-                    activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
-                        _secretProvider),
-                    mapper: _entityMapper),
+                softwareStatementProfileCachedRepo: new ReadOnlyKeySecretItemCache<SoftwareStatementProfileCached>(
+                    softwareStatementProfileDictionary),
                 dbEntityRepositoryFactory: new DbEntityRepositoryFactory(_dB));
 
             return requestBuilder;

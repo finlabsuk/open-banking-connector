@@ -2,9 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         public bool? GetBooleanValue(string key)
         {
-            var results = _providers.Select(p => p.GetBooleanValue(key))
+            IEnumerable<bool?> results = _providers.Select(p => p.GetBooleanValue(key))
                 .Where(v => v.HasValue);
 
             return results.FirstOrDefault();
@@ -32,30 +32,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         public string GetValue(string key)
         {
-            var results = _providers.Select(p => p.GetValue(key)).Where(v => v != null);
+            IEnumerable<string> results = _providers.Select(p => p.GetValue(key)).Where(v => v != null);
 
             return results.FirstOrDefault();
         }
 
         public T? GetEnumValue<T>(string key) where T : struct
         {
-            var results = _providers.Select(p => p.GetEnumValue<T>(key)).Where(v => v.HasValue);
+            IEnumerable<T?> results = _providers.Select(p => p.GetEnumValue<T>(key)).Where(v => v.HasValue);
 
             return results.FirstOrDefault();
         }
 
-        public BankClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
+        public BankRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
         {
-            var results = _providers.Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
+            IEnumerable<BankRegistrationClaimsOverrides> results = _providers
+                .Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
                 .Where(v => v != null);
 
             // Populate default instance
-            return results.FirstOrDefault() ?? new BankClientRegistrationClaimsOverrides();
+            return results.FirstOrDefault() ?? new BankRegistrationClaimsOverrides();
         }
 
         public OpenIdConfiguration GetOpenBankingOpenIdConfiguration()
         {
-            var results = _providers.Select(p => p.GetOpenBankingOpenIdConfiguration())
+            IEnumerable<OpenIdConfiguration> results = _providers.Select(p => p.GetOpenBankingOpenIdConfiguration())
                 .Where(v => v != null);
 
             return results.FirstOrDefault() ?? new OpenIdConfiguration

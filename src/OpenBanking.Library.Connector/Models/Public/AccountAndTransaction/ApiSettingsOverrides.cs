@@ -3,13 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction
 {
     public class ApiSettingsOverrides
     {
-        [JsonProperty("accountAccessConsentPermissions")]
-        public IList<string> AccountAccessConsentPermissions { get; set; }
+        public IList<string>? AccountAccessConsentPermissions { get; set; }
     }
 }

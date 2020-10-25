@@ -26,8 +26,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankRegistrationId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.PaymentInitiationApi)
                 .HasConversion(
                     convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
@@ -40,10 +38,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .HasOne<Persistent.Bank>()
                 .WithMany()
                 .HasForeignKey(p => p.BankId);
-            builder
-                .HasOne<Persistent.BankRegistration>()
-                .WithMany()
-                .HasForeignKey(p => p.BankRegistrationId);
         }
     }
 }

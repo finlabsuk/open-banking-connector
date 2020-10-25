@@ -4,17 +4,18 @@
 
 using System.Threading.Tasks;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access
 {
     /// <summary>
     ///     Interface of repo service for key secret items. A key secret item is a class whose properties are
     ///     stored as key secrets.
-    ///     This repo is a write repo for items which are placed in the key secret store just once.
+    ///     This repo is a read repo for items which are placed in the key secret store multiple times;
+    ///     item ID is included in each key to distinguish items.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
-    public interface IKeySecretWriteRepository<TItem>
+    public interface IReadOnlyKeySecretItemRepository<TItem>
         where TItem : class, IKeySecretItem
     {
-        Task UpsertAsync(TItem instance);
+        Task<TItem> GetAsync(string id);
     }
 }

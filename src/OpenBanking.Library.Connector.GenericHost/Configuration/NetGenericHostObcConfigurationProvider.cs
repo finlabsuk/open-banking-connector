@@ -19,10 +19,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuratio
         public ObcConfiguration GetObcConfiguration()
         {
             // Load Open Banking Connector configuration options
-            ObcConfiguration? obcConfig = _config
+            ObcConfiguration obcConfig = _config
                 .GetSection(ObcConfiguration.OpenBankingConnector)
-                .Get<ObcConfiguration>();
-
+                ?.Get<ObcConfiguration>() ?? new ObcConfiguration();
             return obcConfig;
         }
     }

@@ -47,7 +47,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.PostOnly
             string? createdBy)
         {
             PostAuthorisationRedirectObject handler = new PostAuthorisationRedirectObject(
-                apiClient: context.ApiClient,
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
                 bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
                 dbContextService: context.DbContextService,
@@ -55,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.PostOnly
                     .CreateDbEntityRepository<DomesticPaymentConsent>(),
                 bankRegistrationRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<BankRegistration>(),
-                softwareStatementProfileService: context.SoftwareStatementProfileService);
+                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo);
 
             AuthorisationRedirectObjectResponse? resp = await handler.PostAsync(request);
 

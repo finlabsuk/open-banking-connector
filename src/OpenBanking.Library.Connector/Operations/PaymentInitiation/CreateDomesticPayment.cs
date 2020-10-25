@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -17,7 +18,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using OBWriteDomestic =
     FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBWriteDomestic2;
@@ -25,44 +25,43 @@ using OBWriteDomestic2 =
     FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model.OBWriteDomestic2;
 using RequestDomesticPayment =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class CreateDomesticPayment
     {
-        private readonly IApiClient _apiClient;
-        private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
-        private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
-        private readonly IDbEntityRepository<Bank> _bankRepo;
+        private readonly IDbReadOnlyEntityRepository<BankProfile> _bankProfileRepo;
+        private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
+        private readonly IDbReadOnlyEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
-        private readonly IDbEntityRepository<DomesticPaymentConsent> _domesticConsentRepo;
+        private readonly IDbReadOnlyEntityRepository<DomesticPaymentConsent> _domesticConsentRepo;
         private readonly IDbEntityRepository<DomesticPayment> _domesticPaymentRepo;
         private readonly IEntityMapper _mapper;
-        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
+        private readonly IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
         public CreateDomesticPayment(
-            IApiClient apiClient,
-            IDbEntityRepository<Bank> bankRepo,
-            IDbEntityRepository<BankProfile> bankProfileRepo,
-            IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
+            IDbReadOnlyEntityRepository<Bank> bankRepo,
+            IDbReadOnlyEntityRepository<BankProfile> bankProfileRepo,
+            IDbReadOnlyEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
             IEntityMapper mapper,
-            IDbEntityRepository<BankRegistration> bankRegistrationRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService,
+            IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbEntityRepository<DomesticPayment> domesticPaymentRepo,
             ITimeProvider timeProvider,
-            IDbMultiEntityMethods dbMultiEntityMethods)
+            IDbMultiEntityMethods dbMultiEntityMethods,
+            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo)
         {
-            _apiClient = apiClient;
             _bankRepo = bankRepo;
             _bankProfileRepo = bankProfileRepo;
             _domesticConsentRepo = domesticConsentRepo;
             _mapper = mapper;
             _bankRegistrationRepo = bankRegistrationRepo;
-            _softwareStatementProfileService = softwareStatementProfileService;
             _domesticPaymentRepo = domesticPaymentRepo;
             _timeProvider = timeProvider;
             _dbMultiEntityMethods = dbMultiEntityMethods;
+            _softwareStatementProfileRepo = softwareStatementProfileRepo;
         }
 
         public async Task<DomesticPaymentResponse> CreateAsync(
@@ -72,9 +71,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             request.ArgNotNull(nameof(request));
 
             // Load relevant data objects
-            string domesticPaymentConsentId = request.ConsentId;
+            Guid domesticPaymentConsentId = request.ConsentId;
             DomesticPaymentConsent paymentConsent =
-                await _domesticConsentRepo.GetAsync(domesticPaymentConsentId)
+                await _domesticConsentRepo.GetAsync(
+                    id: domesticPaymentConsentId,
+                    detachFirst: true) // ensure detached to clear cache as may have been updated in another DB context
                 ?? throw new KeyNotFoundException("The Consent does not exist.");
             BankProfile bankProfile = await _bankProfileRepo.GetAsync(paymentConsent.BankProfileId)
                                       ?? throw new KeyNotFoundException("The API Profile does not exist.");
@@ -85,15 +86,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                                                             "Bank profile does not support PaymentInitiation API");
 
             // Load relevant data objects
-            BankRegistration bankRegistration = await _bankRegistrationRepo.GetAsync(bankProfile.BankRegistrationId)
+            BankRegistration bankRegistration = await _bankRegistrationRepo.GetAsync(paymentConsent.BankRegistrationId)
                                                 ?? throw new KeyNotFoundException(
                                                     "The Bank Client Profile does not exist.");
             Bank bank = await _bankRepo.GetAsync(bankProfile.BankId)
                         ?? throw new KeyNotFoundException("No record found for BankId in BankProfile.");
-            SoftwareStatementProfile softwareStatementProfile =
-                _softwareStatementProfileService.GetSoftwareStatementProfile(
-                    bankRegistration.SoftwareStatementProfileId);
-
+            SoftwareStatementProfileCached softwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(bankRegistration.SoftwareStatementProfileId);
 
             TokenEndpointResponse tokenEndpointResponse =
                 _mapper.Map<TokenEndpointResponse>(paymentConsent.TokenEndpointResponse.Data);
@@ -114,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             OBWriteDomesticResponse4 paymentResponse;
             switch (paymentInitiationApi.ApiVersion)
             {
-                case ApiVersion.V3P1P1:
+                case ApiVersion.V3p1p1:
                     OBWriteDomestic2 newPayment =
                         _mapper.Map<OBWriteDomestic2>(referencePayment);
                     OBWriteDomesticResponse2 rawPaymentResponse = await
@@ -125,19 +124,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                             softwareStatementProfile: softwareStatementProfile,
                             bankClientProfile: bankRegistration,
                             tokenEndpointResponse: tokenEndpointResponse,
-                            orgId: bank.XFapiFinancialId);
+                            orgId: bank.FinancialId);
                     paymentResponse = _mapper.Map<OBWriteDomesticResponse4>(rawPaymentResponse);
                     break;
-                case ApiVersion.V3P1P2:
+                case ApiVersion.V3p1p2:
                     throw new ArgumentOutOfRangeException();
-                case ApiVersion.V3P1P4:
+                case ApiVersion.V3p1p4:
                     paymentResponse = await PostDomesticPayment<OBWriteDomestic, OBWriteDomesticResponse4>(
                         payment: referencePayment,
                         paymentInitiationApi: paymentInitiationApi,
                         softwareStatementProfile: softwareStatementProfile,
                         bankClientProfile: bankRegistration,
                         tokenEndpointResponse: tokenEndpointResponse,
-                        orgId: bank.XFapiFinancialId);
+                        orgId: bank.FinancialId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -160,7 +159,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private async Task<ApiResponseType> PostDomesticPayment<ApiRequestType, ApiResponseType>(
             ApiRequestType payment,
             PaymentInitiationApi paymentInitiationApi,
-            SoftwareStatementProfile softwareStatementProfile,
+            SoftwareStatementProfileCached softwareStatementProfile,
             BankRegistration bankClientProfile,
             TokenEndpointResponse tokenEndpointResponse,
             string orgId)
@@ -185,11 +184,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 .SetContentType("application/json")
                 .SetContent(payloadJson)
                 .Create()
-                .RequestJsonAsync<ApiResponseType>(client: _apiClient, requestContentIsJson: true);
+                .RequestJsonAsync<ApiResponseType>(
+                    client: softwareStatementProfile.ApiClient,
+                    requestContentIsJson: true);
         }
 
         private static List<HttpHeader> CreateRequestHeaders<ApiRequestType>(
-            SoftwareStatementProfile softwareStatement,
+            SoftwareStatementProfileCached softwareStatement,
             ApiRequestType payment,
             BankRegistration client,
             PaymentInitiationApi paymentInitiationApi,

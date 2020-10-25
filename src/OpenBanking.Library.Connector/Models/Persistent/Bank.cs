@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -37,31 +38,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         /// <param name="createdBy"></param>
         public Bank(
             ITimeProvider timeProvider,
+            RegistrationScopeApiSet registrationScopeApiSet,
             string issuerUrl,
-            string xFapiFinancialId,
+            string financialId,
             string name,
             string? createdBy)
         {
             Created = timeProvider.GetUtcNow();
             CreatedBy = createdBy;
             IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
+            RegistrationScopeApiSet = registrationScopeApiSet;
             IssuerUrl = issuerUrl;
-            XFapiFinancialId = xFapiFinancialId;
+            FinancialId = financialId;
             Name = name;
-            Id = Guid.NewGuid().ToString();
-            DefaultBankRegistrationId = new ReadWriteProperty<string?>(
+            Id = Guid.NewGuid();
+            DefaultBankRegistrationId = new ReadWriteProperty<Guid?>(
                 data: null,
                 timeProvider: timeProvider,
                 modifiedBy: CreatedBy);
-            DefaultBankProfileId = new ReadWriteProperty<string?>(
+            DefaultBankProfileId = new ReadWriteProperty<Guid?>(
                 data: null,
                 timeProvider: timeProvider,
                 modifiedBy: CreatedBy);
-            StagingBankRegistrationId = new ReadWriteProperty<string?>(
+            StagingBankRegistrationId = new ReadWriteProperty<Guid?>(
                 data: null,
                 timeProvider: timeProvider,
                 modifiedBy: CreatedBy);
-            StagingBankProfileId = new ReadWriteProperty<string?>(
+            StagingBankProfileId = new ReadWriteProperty<Guid?>(
                 data: null,
                 timeProvider: timeProvider,
                 modifiedBy: CreatedBy);
@@ -71,21 +74,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Specifies default Bank Registration associated with Bank.
         ///     This may be used when creating a BankProfile.
         /// </summary>
-        public ReadWriteProperty<string?> DefaultBankRegistrationId { get; set; } = null!;
+        public ReadWriteProperty<Guid?> DefaultBankRegistrationId { get; set; } = null!;
 
-        public ReadWriteProperty<string?> DefaultBankProfileId { get; set; } = null!;
+        public ReadWriteProperty<Guid?> DefaultBankProfileId { get; set; } = null!;
 
         /// <summary>
         ///     Specifies staging Bank Registration associated with Bank.
         ///     This may be used when creating a staging BankProfile.
         /// </summary>
-        public ReadWriteProperty<string?> StagingBankRegistrationId { get; set; } = null!;
+        public ReadWriteProperty<Guid?> StagingBankRegistrationId { get; set; } = null!;
 
-        public ReadWriteProperty<string?> StagingBankProfileId { get; set; } = null!;
+        public ReadWriteProperty<Guid?> StagingBankProfileId { get; set; } = null!;
+
+        /// <summary>
+        ///     Api types to use when creating Bank Registration
+        /// </summary>
+        public RegistrationScopeApiSet RegistrationScopeApiSet { get; }
 
         public string IssuerUrl { get; } = null!;
 
-        public string XFapiFinancialId { get; } = null!;
+        public string FinancialId { get; } = null!;
 
         public string Name { get; } = null!;
 
@@ -95,11 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
 
-        public string Id { get; } = null!;
+        public Guid Id { get; }
 
         public BankResponse PublicResponse => new BankResponse(
             issuerUrl: IssuerUrl,
-            xFapiFinancialId: XFapiFinancialId,
+            xFapiFinancialId: FinancialId,
             name: Name,
             id: Id);
 

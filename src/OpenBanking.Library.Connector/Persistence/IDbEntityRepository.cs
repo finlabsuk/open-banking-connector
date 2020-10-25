@@ -9,12 +9,8 @@ using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
-    public interface IDbEntityRepository<TEntity> : IDisposable where TEntity : class, IEntity
+    public interface IDbEntityRepository<TEntity> : IDbReadOnlyEntityRepository<TEntity> where TEntity : class, IEntity
     {
-        ValueTask<TEntity?> GetAsync(string id);
-
-        Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
-
         Task RemoveAsync(TEntity instance);
 
         Task AddAsync(TEntity instance);

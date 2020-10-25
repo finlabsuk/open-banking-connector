@@ -6,11 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {

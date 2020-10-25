@@ -42,8 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Persist bank object
             Bank persistedBank = new Bank(
                 timeProvider: _timeProvider,
+                registrationScopeApiSet: requestBank.RegistrationScopeApiSet,
                 issuerUrl: requestBank.IssuerUrl,
-                xFapiFinancialId: requestBank.XFapiFinancialId,
+                financialId: requestBank.FinancialId,
                 name: requestBank.Name,
                 createdBy: createdBy);
             await _bankRepo.AddAsync(persistedBank);

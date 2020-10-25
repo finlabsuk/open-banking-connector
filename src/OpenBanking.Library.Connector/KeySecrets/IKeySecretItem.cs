@@ -5,9 +5,13 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
     /// <summary>
-    ///     Item that can only be stored once in key secret vault. Implementing type
+    ///     Item that can only stored more than once in key secret vault as ID of item is included in key string. Implementing
+    ///     type
     ///     should be a class
     ///     with only string or IEnumerable<string> properties.
     /// </summary>
-    public interface IKeySecretItem { }
+    public interface IKeySecretItem
+    {
+        string Id { get; }
+    }
 }

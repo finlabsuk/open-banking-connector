@@ -2,23 +2,34 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
     internal class Bank : Base<Persistent.Bank>
     {
+        private readonly Formatting _formatting;
+
+        public Bank(Formatting formatting)
+        {
+            _formatting = formatting;
+        }
+
         public override void Configure(EntityTypeBuilder<Persistent.Bank> builder)
         {
             base.Configure(builder);
 
             // Top-level read-only properties and foreign keys
+            builder.Property(e => e.RegistrationScopeApiSet)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.IssuerUrl)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.XFapiFinancialId)
+            builder.Property(e => e.FinancialId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -37,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.HasOne<Persistent.BankRegistration>()
                         .WithOne()
-                        .HasForeignKey<ReadWriteProperty<string?>>(b => b.Data);
+                        .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
             builder.Navigation(p => p.DefaultBankRegistrationId).IsRequired();
             builder.OwnsOne(
@@ -53,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.HasOne<Persistent.BankRegistration>()
                         .WithOne()
-                        .HasForeignKey<ReadWriteProperty<string?>>(b => b.Data);
+                        .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
             builder.Navigation(p => p.StagingBankRegistrationId).IsRequired();
             builder.OwnsOne(
@@ -69,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.HasOne<Persistent.BankProfile>()
                         .WithOne()
-                        .HasForeignKey<ReadWriteProperty<string?>>(b => b.Data);
+                        .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
             builder.Navigation(p => p.DefaultBankProfileId).IsRequired();
             builder.OwnsOne(
@@ -85,7 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.HasOne<Persistent.BankProfile>()
                         .WithOne()
-                        .HasForeignKey<ReadWriteProperty<string?>>(b => b.Data);
+                        .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
             builder.Navigation(p => p.StagingBankProfileId).IsRequired();
         }

@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     public interface IEntity
     {
-        string Id { get; }
+        Guid Id { get; }
         ReadWriteProperty<bool> IsDeleted { get; set; }
         DateTimeOffset Created { get; }
         string? CreatedBy { get; }

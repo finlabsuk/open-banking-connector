@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         where TPublicResponse : class, TPublicQuery // required by IEntityWithPublicInterface
         where TPublicQuery : class // required by IEntityWithPublicInterface
     {
-        private readonly IDbEntityRepository<TEntity> _entityRepo;
+        private readonly IDbReadOnlyEntityRepository<TEntity> _entityRepo;
 
-        public GetEntityByPredicate(IDbEntityRepository<TEntity> entityRepo)
+        public GetEntityByPredicate(IDbReadOnlyEntityRepository<TEntity> entityRepo)
         {
             _entityRepo = entityRepo;
         }

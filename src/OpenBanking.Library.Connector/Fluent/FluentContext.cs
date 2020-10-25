@@ -50,14 +50,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         }
 
         // Local Entity simplified method.
-        public async Task<FluentResponse<TPublicResponse>> GetAsync(string id) => await GetAsync(
+        public async Task<FluentResponse<TPublicResponse>> GetAsync(Guid id) => await GetAsync(
             id: id,
             includeBankApiGet: false,
             modifiedBy: null);
 
         // Local Entity simplified method.
         public async Task<FluentResponse<EmptyClass>> DeleteAsync(
-            string id,
+            Guid id,
             string? modifiedBy,
             bool hardNotSoftDelete) => await DeleteAsync(
             id: id,
@@ -66,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             hardNotSoftDelete: hardNotSoftDelete);
 
         public async Task<FluentResponse<TPublicResponse>> GetAsync(
-            string id,
+            Guid id,
             bool includeBankApiGet,
             string? modifiedBy)
         {
@@ -98,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         }
 
         public async Task<FluentResponse<EmptyClass>> DeleteAsync(
-            string id,
+            Guid id,
             bool includeBankApiDelete,
             string? modifiedBy,
             bool hardNotSoftDelete)

@@ -33,16 +33,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
                 .Must((x, y, z) => ValidationRules.HasLengthAtMost(arg1: x, arg2: y, arg3: z, maxLength: nameLength))
                 .WithMessage($"Invalid value for Name, length must be less than {nameLength}.");
 
-            RuleFor(x => x.SecondaryIdentification)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .Must(
-                    (x, y, z) => ValidationRules.HasLengthAtMost(
-                        arg1: x,
-                        arg2: y,
-                        arg3: z,
-                        maxLength: secondaryIdLength))
-                .WithMessage(
-                    $"Invalid value for SecondaryIdentification, length must be less than {secondaryIdLength}.");
+            // RuleFor(x => x.SecondaryIdentification)
+            //     .Must(ValidationRules.IsNotNullOrEmpty)
+            //     .Must(
+            //         (x, y, z) => ValidationRules.HasLengthAtMost(
+            //             arg1: x,
+            //             arg2: y,
+            //             arg3: z,
+            //             maxLength: secondaryIdLength))
+            //     .WithMessage(
+            //         $"Invalid value for SecondaryIdentification, length must be less than {secondaryIdLength}.");
         }
     }
 }

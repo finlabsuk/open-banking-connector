@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -15,17 +16,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         where TPublicResponse : class, TPublicQuery // required by IEntityWithPublicInterface
         where TPublicQuery : class // required by IEntityWithPublicInterface
     {
-        private readonly IDbEntityRepository<TEntity> _entityRepo;
+        private readonly IDbReadOnlyEntityRepository<TEntity> _entityRepo;
         private readonly ITimeProvider _timeProvider;
 
-        public GetEntityById(ITimeProvider timeProvider, IDbEntityRepository<TEntity> entityRepo)
+        public GetEntityById(ITimeProvider timeProvider, IDbReadOnlyEntityRepository<TEntity> entityRepo)
         {
             _timeProvider = timeProvider;
             _entityRepo = entityRepo;
         }
 
         public async Task<TPublicResponse> GetAsync(
-            string id,
+            Guid id,
             bool includeBankApiGet,
             string? modifiedBy)
         {

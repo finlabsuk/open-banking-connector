@@ -27,9 +27,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
                 .SetValidator(new OBWriteDomesticDataInitiationCreditorAccountValidator())
                 .WithMessage($"Invalid {nameof(DomesticPaymentConsent.CreditorAccount)}.");
 
-            RuleFor(x => x.Merchant)
-                .Must(ValidationRules.IsNotNull)
-                .WithMessage($"The {nameof(DomesticPaymentConsent.Merchant)} data is missing.");
+            // RuleFor(x => x.Merchant)
+            //     .Must(ValidationRules.IsNotNull)
+            //     .WithMessage($"The {nameof(DomesticPaymentConsent.Merchant)} data is missing.");
 
             RuleFor(d => d.InstructionIdentification)
                 .Must(ValidationRules.IsNotNullOrEmpty)

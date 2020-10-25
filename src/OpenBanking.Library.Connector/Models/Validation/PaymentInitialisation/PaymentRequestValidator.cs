@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.Paymen
 
         private void CreateRules()
         {
-            RuleFor(x => x.ConsentId)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Missing or invalid {nameof(DomesticPayment.ConsentId)}.");
+            // RuleFor(x => x.ConsentId)
+            //     .Must(ValidationRules.IsNonWhitespace)
+            //     .WithMessage($"Missing or invalid {nameof(DomesticPayment.ConsentId)}.");
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

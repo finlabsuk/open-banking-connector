@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -16,14 +15,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal class CreateBankProfile
     {
         private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
-        private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
+        private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITimeProvider _timeProvider;
 
         public CreateBankProfile(
             IDbEntityRepository<BankProfile> bankProfileRepo,
-            IDbEntityRepository<BankRegistration> bankRegistrationRepo,
+            IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbEntityRepository<Bank> bankRepo,
             IDbMultiEntityMethods dbMultiEntityMethods,
             ITimeProvider timeProvider)
@@ -35,87 +34,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _timeProvider = timeProvider;
         }
 
-        public async Task<BankProfileResponse> CreateAsync(RequestBankProfile requestBankProfile, string? createdBy)
+        public async Task<BankProfileResponse> CreateAsync(RequestBankProfile request, string? createdBy)
         {
-            requestBankProfile.ArgNotNull(nameof(requestBankProfile));
+            request.ArgNotNull(nameof(request));
 
-            string bankRegistrationId;
-            string bankId;
-            switch (requestBankProfile.BankRegistrationId)
-            {
-                // No bank registration specified directly or indirectly
-                case null when requestBankProfile.BankName is null:
-                    throw new ArgumentException("One of BankRegistrationId and BankName must be non-null.");
+            // Load relevant objects
+            Guid bankId = request.BankId;
+            Bank bank = await _bankRepo.GetAsync(bankId) ??
+                        throw new KeyNotFoundException($"No record found for BankId {bankId} specified by request.");
 
-                // Look up bank registration
-                case null:
-                {
-                    Bank bank;
-                    try
-                    {
-                        bank = (await _bankRepo.GetAsync(b => b.Name == requestBankProfile.BankName)).Single();
-                    }
-                    catch (Exception)
-                    {
-                        throw new ArgumentException("No record found for BankName.");
-                    }
-
-                    bankId = bank.Id;
-
-                    if (requestBankProfile.UseStagingBankRegistration)
-                    {
-                        bankRegistrationId = bank.StagingBankRegistrationId.Data ?? throw new ArgumentException(
-                            "Bank specified by BankName doesn't have StagingBankRegistrationId.");
-                    }
-                    else
-                    {
-                        bankRegistrationId = bank.DefaultBankRegistrationId.Data ?? throw new ArgumentException(
-                            "Bank specified by BankName doesn't have DefaultBankRegistrationId.");
-                    }
-
-                    break;
-                }
-
-                default:
-                {
-                    if (!(requestBankProfile.BankName is null))
-                    {
-                        throw new ArgumentException("Both BankRegistrationId and BankName are non-null.");
-                    }
-
-                    bankRegistrationId = requestBankProfile.BankRegistrationId;
-                    BankRegistration bankRegistration = await _bankRegistrationRepo.GetAsync(bankRegistrationId) ??
-                                                        throw new KeyNotFoundException(
-                                                            "No record found for BankRegistrationId.");
-                    bankId = bankRegistration.BankId;
-                    break;
-                }
-            }
+            // TODO: check bank profile only specifies APIs consistent with Bank.
 
             // Create and store persistent object
             BankProfile persistentBankProfile = new BankProfile(
                 timeProvider: _timeProvider,
-                bankRegistrationId: bankRegistrationId,
-                paymentInitiationApi: requestBankProfile.PaymentInitiationApi,
+                paymentInitiationApi: request.PaymentInitiationApi,
                 bankId: bankId,
                 createdBy: createdBy);
             await _bankProfileRepo.AddAsync(persistentBankProfile);
 
             // Update registration references
-            if (requestBankProfile.ReplaceDefaultBankProfile || requestBankProfile.ReplaceStagingBankProfile)
+            if (request.ReplaceDefaultBankProfile || request.ReplaceStagingBankProfile)
             {
-                Bank bank = await _bankRepo.GetAsync(bankId) ??
-                            throw new KeyNotFoundException("No record found for BankId.");
-                ReadWriteProperty<string?> profileId = new ReadWriteProperty<string?>(
+                ReadWriteProperty<Guid?> profileId = new ReadWriteProperty<Guid?>(
                     data: persistentBankProfile.Id,
                     timeProvider: _timeProvider,
                     modifiedBy: null);
-                if (requestBankProfile.ReplaceDefaultBankProfile)
+                if (request.ReplaceDefaultBankProfile)
                 {
                     bank.DefaultBankProfileId = profileId;
                 }
 
-                if (requestBankProfile.ReplaceStagingBankProfile)
+                if (request.ReplaceStagingBankProfile)
                 {
                     bank.StagingBankProfileId = profileId;
                 }

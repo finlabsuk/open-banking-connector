@@ -2,32 +2,23 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public interface IRequestBuilder
     {
-        IFluentContextLocalEntity<Bank, BankResponse, IBankPublicQuery> Banks { get; }
+        /// <summary>
+        ///     API for setting up banks in OBC including OAuth2 clients and functional APIs
+        /// </summary>
+        IClientRegistration ClientRegistration { get; }
 
-        IFluentContextLocalEntity<BankProfile, BankProfileResponse, IBankProfilePublicQuery> BankProfiles { get; }
+        /// <summary>
+        ///     API corresponding to UK Open Banking Payment Initiation functional API
+        /// </summary>
+        IPaymentInitiation PaymentInitiation { get; }
 
-        IFluentContextLocalEntity<BankRegistration, BankRegistrationResponse, IBankRegistrationPublicQuery>
-            BankRegistrations { get; }
-
-        IFluentContextPostOnlyEntity<AuthorisationRedirectObject, AuthorisationRedirectObjectResponse>
-            AuthorisationRedirectObjects { get; }
-
-        IFluentContextLocalEntity<DomesticPaymentConsent, DomesticPaymentConsentResponse,
-            IDomesticPaymentConsentPublicQuery> DomesticPaymentConsents { get; }
-
-        IFluentContextLocalEntity<DomesticPayment, DomesticPaymentResponse, IDomesticPaymentPublicQuery>
-            DomesticPayments { get; }
-
-        SoftwareStatementProfileContext SoftwareStatementProfile();
+        /// <summary>
+        ///     API corresponding to UK Open Banking Account and Transaction functional API
+        /// </summary>
+        IAccountAndTransaction AccountAndTransaction { get; }
     }
 }

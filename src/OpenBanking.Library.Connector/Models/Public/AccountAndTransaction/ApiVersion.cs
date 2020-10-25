@@ -6,12 +6,12 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AccountApiVersion
+    public enum ApiVersion
     {
-        [EnumMember(Value = "v3p1p1")] V3P1P1,
-        [EnumMember(Value = "v3p1p2")] V3P1P2
+        [EnumMember(Value = "v3p1p1")] V3p1p1,
+        [EnumMember(Value = "v3p1p2")] V3p1p2
     }
 }

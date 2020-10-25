@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
@@ -47,9 +48,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             _dbSet = _db.Set<TEntity>();
         }
 
-        public async ValueTask<TEntity?> GetAsync(string id)
+        public async ValueTask<TEntity?> GetAsync(Guid id, bool detachFirst = false)
         {
-            id.ArgNotNull(nameof(id));
+            if (detachFirst)
+            {
+                IEnumerable<EntityEntry<TEntity>> changeTrackerEntity = _db.ChangeTracker
+                    .Entries<TEntity>()
+                    .Where(x => x.Entity.Id == id);
+
+                EntityEntry<TEntity>? value = changeTrackerEntity.SingleOrDefault();
+                if (!(value is null))
+                {
+                    value.State = EntityState.Detached;
+                }
+            }
 
             TEntity? result = await _dbSet
                 .FindAsync(id);
@@ -57,11 +69,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             return result;
         }
 
-        public async Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IQueryable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            bool asNoTracking = false)
         {
             Expression<Func<TEntity, bool>> where = predicate.ArgNotNull(nameof(predicate));
 
-            List<TEntity> results = await _dbSet
+            IQueryable<TEntity> baseQuery = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+
+            List<TEntity> results = await baseQuery
                 .Where(where)
                 .ToListAsync(); // To maintain non-volatile cache queries
 
@@ -85,11 +101,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             return ((TEntity?) null).ToTaskResult();
         }
 
-        public void Dispose()
-        {
-            _db.Dispose();
-        }
-
         public async Task AddAsync(TEntity instance)
         {
             instance.ArgNotNull(nameof(instance));
@@ -101,6 +112,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             }
 
             await _dbSet.AddAsync(instance);
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

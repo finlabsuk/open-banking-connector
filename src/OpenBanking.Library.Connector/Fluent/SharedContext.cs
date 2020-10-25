@@ -3,18 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfileRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -24,30 +21,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ITimeProvider timeProvider,
             ICertificateReader certificateReader,
             IApiClient apiClient,
-            IObcConfigurationProvider configurationProvider,
             IInstrumentationClient instrumentation,
             IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IDbEntityRepositoryFactory dbEntityRepositoryFactory,
-            IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> activeSrRepo,
-            IKeySecretMultiItemReadRepository<SoftwareStatementProfileRequest> sReadOnlyRepo,
-            IKeySecretMultiItemWriteRepository<SoftwareStatementProfileRequest> sRepo,
-            IKeySecretReadRepository<ActiveSoftwareStatementProfiles> activeSReadOnlyRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService,
+            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
             IEntityMapper entityMapper,
             IDbMultiEntityMethods dbContextService)
         {
             TimeProvider = timeProvider;
             CertificateReader = certificateReader;
             ApiClient = apiClient;
-            ConfigurationProvider = configurationProvider;
             Instrumentation = instrumentation;
             KeySecretReadOnlyProvider = keySecretReadOnlyProvider;
             DbEntityRepositoryFactory = dbEntityRepositoryFactory;
-            ActiveSRRepo = activeSrRepo;
-            SReadOnlyRepo = sReadOnlyRepo;
-            SRepo = sRepo;
-            ActiveSReadOnlyRepo = activeSReadOnlyRepo;
-            SoftwareStatementProfileService = softwareStatementProfileService;
+            SoftwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
             EntityMapper = entityMapper;
             DbContextService = dbContextService;
         }
@@ -56,15 +43,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public DateTimeOffset Created { get; set; }
         public ICertificateReader CertificateReader { get; }
         public IApiClient ApiClient { get; }
-        public IObcConfigurationProvider ConfigurationProvider { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
         public IDbEntityRepositoryFactory DbEntityRepositoryFactory { get; }
-        public IKeySecretWriteRepository<ActiveSoftwareStatementProfiles> ActiveSRRepo { get; }
-        public IKeySecretMultiItemReadRepository<SoftwareStatementProfileRequest> SReadOnlyRepo { get; }
-        public IKeySecretMultiItemWriteRepository<SoftwareStatementProfileRequest> SRepo { get; }
-        public IKeySecretReadRepository<ActiveSoftwareStatementProfiles> ActiveSReadOnlyRepo { get; }
-        public ISoftwareStatementProfileService SoftwareStatementProfileService { get; }
+
+        public IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo
+        {
+            get;
+        }
+
         public IEntityMapper EntityMapper { get; }
         public IDbMultiEntityMethods DbContextService { get; }
     }

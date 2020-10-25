@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<FluentResponse<TPublicResponse>> GetAsync(string id);
+        Task<FluentResponse<TPublicResponse>> GetAsync(Guid id);
 
         /// <summary>
         ///     GET entity by query from Open Banking Connector.
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         /// <param name="hardNotSoftDelete">Remove record from DB instead of setting IsDeleted flag.</param>
         /// <returns></returns>
         Task<FluentResponse<EmptyClass>> DeleteAsync(
-            string id,
+            Guid id,
             string? modifiedBy = null,
             bool hardNotSoftDelete = false);
     }
