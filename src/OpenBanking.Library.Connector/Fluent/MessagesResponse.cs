@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public class MessagesResponse
     {

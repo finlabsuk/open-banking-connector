@@ -90,10 +90,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping
         {
             switch (version)
             {
-                case ApiVersion.V3P1P1:
+                case ApiVersion.V3p1p1:
                     return typeof(ObModels.PaymentInitiation.V3p1p1.Model.Meta);
 
-                case ApiVersion.V3P1P2:
+                case ApiVersion.V3p1p2:
                     return typeof(ObModels.PaymentInitiation.V3p1p2.Model.Meta);
 
                 default:

@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new BankConfig());
+            modelBuilder.ApplyConfiguration(new BankConfig(JsonFormatting));
 
             modelBuilder.ApplyConfiguration(new BankProfileConfig(JsonFormatting));
 

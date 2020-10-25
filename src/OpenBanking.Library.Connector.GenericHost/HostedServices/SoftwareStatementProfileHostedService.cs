@@ -5,16 +5,18 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached;
 using Microsoft.Extensions.Hosting;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices
 {
     public class SoftwareStatementProfileHostedService : IHostedService
     {
-        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
+        private readonly IReadOnlyKeySecretItemRepository<SoftwareStatementProfile> _softwareStatementProfileService;
 
-        public SoftwareStatementProfileHostedService(ISoftwareStatementProfileService softwareStatementProfileService)
+        public SoftwareStatementProfileHostedService(
+            IReadOnlyKeySecretItemRepository<SoftwareStatementProfile> softwareStatementProfileService)
         {
             _softwareStatementProfileService = softwareStatementProfileService ??
                                                throw new ArgumentNullException(nameof(softwareStatementProfileService));
@@ -22,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await _softwareStatementProfileService.SetSoftwareStatementProfileFromSecrets();
+            //await _softwareStatementProfileService.SetSoftwareStatementProfileFromSecrets();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

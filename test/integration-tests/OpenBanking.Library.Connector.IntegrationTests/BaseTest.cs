@@ -3,28 +3,25 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NSubstitute;
 using RichardSzalay.MockHttp;
-using SoftwareStatementProfile =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.SoftwareStatementProfile;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
@@ -52,31 +49,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
             _connection.Close(); // Deletes DB
         }
 
-        public IRequestBuilder CreateOpenBankingRequestBuilder() => CreateMockRequestBuilder();
+        public IRequestBuilder CreateOpenBankingRequestBuilder(
+            IDictionary<string, SoftwareStatementProfileCached> softwareStatementProfileDictionary) =>
+            CreateMockRequestBuilder(softwareStatementProfileDictionary);
 
-        private RequestBuilder CreateMockRequestBuilder()
+        private RequestBuilder CreateMockRequestBuilder(
+            IDictionary<string, SoftwareStatementProfileCached> softwareStatementProfileDictionary)
         {
-            SqliteDbContext? _dB = new SqliteDbContext(_dbContextOptions);
-            MemoryKeySecretProvider? _secretProvider = new MemoryKeySecretProvider();
-            EntityMapper? _entityMapper = new EntityMapper();
-            RequestBuilder? requestBuilder = new RequestBuilder(
+            SqliteDbContext _dB = new SqliteDbContext(_dbContextOptions);
+            MemoryKeySecretProvider _secretProvider = new MemoryKeySecretProvider();
+            EntityMapper _entityMapper = new EntityMapper();
+            RequestBuilder requestBuilder = new RequestBuilder(
                 entityMapper: _entityMapper,
                 dbContextService: new DbMultiEntityMethods(_dB),
-                configurationProvider: new DefaultConfigurationProvider(),
                 logger: new ConsoleInstrumentationClient(),
                 keySecretReadOnlyProvider: _secretProvider,
                 apiClient: GetApiClient(TestConfig),
                 certificateReader: new PemParsingCertificateReader(),
-                activeSReadOnlyRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
-                activeSrRepo: new KeySecretWriteRepository<ActiveSoftwareStatementProfiles>(_secretProvider),
-                sReadOnlyRepo: new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
-                sRepo: new KeySecretMultiItemWriteRepository<SoftwareStatementProfile>(_secretProvider),
-                softwareStatementProfileService: new SoftwareStatementProfileService(
-                    softwareStatementProfileRepo:
-                    new KeySecretMultiItemReadRepository<SoftwareStatementProfile>(_secretProvider),
-                    activeSoftwareStatementProfilesRepo: new KeySecretReadRepository<ActiveSoftwareStatementProfiles>(
-                        _secretProvider),
-                    mapper: _entityMapper),
+                softwareStatementProfileCachedRepo: new ReadOnlyKeySecretItemCache<SoftwareStatementProfileCached>(
+                    softwareStatementProfileDictionary),
                 dbEntityRepositoryFactory: new DbEntityRepositoryFactory(_dB));
 
             return requestBuilder;
@@ -89,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
                 MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
 
                 OpenIdConfiguration openIdConfigData = TestConfig.GetOpenBankingOpenIdConfiguration();
-                string? openIdConfig = JsonConvert.SerializeObject(openIdConfigData);
+                string openIdConfig = JsonConvert.SerializeObject(openIdConfigData);
 
 
                 mockHttp.When(method: HttpMethod.Get, url: "https://issuer.com/.well-known/openid-configuration")

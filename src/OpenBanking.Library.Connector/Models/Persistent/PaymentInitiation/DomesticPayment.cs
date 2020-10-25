@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         /// </summary>
         public DomesticPayment(
             ITimeProvider timeProvider,
-            string domesticPaymentConsentId,
+            Guid domesticPaymentConsentId,
             OBWriteDomesticResponse obWriteDomesticResponse,
             string? createdBy)
         {
@@ -45,14 +45,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
             DomesticPaymentConsentId = domesticPaymentConsentId;
             OBWriteDomesticResponse = obWriteDomesticResponse;
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid();
         }
 
-        public string DomesticPaymentConsentId { get; set; } = null!;
+        public Guid DomesticPaymentConsentId { get; set; }
 
         public OBWriteDomesticResponse OBWriteDomesticResponse { get; set; } = null!;
 
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
 
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
         public DateTimeOffset Created { get; }
@@ -93,7 +93,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? createdBy)
         {
             CreateDomesticPayment i = new CreateDomesticPayment(
-                apiClient: context.ApiClient,
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
                 bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
                 domesticConsentRepo: context.DbEntityRepositoryFactory
@@ -101,11 +100,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 mapper: context.EntityMapper,
                 bankRegistrationRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<BankRegistration>(),
-                softwareStatementProfileService: context.SoftwareStatementProfileService,
                 domesticPaymentRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<DomesticPayment>(),
                 timeProvider: context.TimeProvider,
-                dbMultiEntityMethods: context.DbContextService);
+                dbMultiEntityMethods: context.DbContextService,
+                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo);
 
             DomesticPaymentResponse? resp = await i.CreateAsync(
                 request: request,

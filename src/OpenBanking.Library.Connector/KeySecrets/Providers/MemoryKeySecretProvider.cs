@@ -10,7 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers
 {
-    public class MemoryKeySecretProvider : IKeySecretReadOnlyProvider, IKeySecretProvider
+    public class MemoryKeySecretProvider : IKeySecretProvider
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, KeySecret>> _cache;
 

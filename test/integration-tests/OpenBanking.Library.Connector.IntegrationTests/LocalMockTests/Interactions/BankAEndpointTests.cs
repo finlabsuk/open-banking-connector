@@ -2,9 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Concurrent;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -22,64 +26,75 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact]
         public async Task Submit_DomesticPayment_Accepted()
         {
-            IRequestBuilder builder = CreateOpenBankingRequestBuilder();
-
-            // Where you see TestConfig.GetValue( .. )
-            // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
-
             // Set up a Software Statement and associated configuration/preferences (a "software statement profile") within our Servicing service. Configuration
             // includes the transport and signing keys associated with the software statement.
             // This is performed once in the lifetime of Servicing or in the case of using multiple identities to connect to banks, once per identity.
-            FluentResponse<SoftwareStatementProfileResponse> softwareStatementProfileResp = await builder
-                .SoftwareStatementProfile()
-                .Id("0")
-                .SoftwareStatement(TestConfig.GetValue("softwarestatement"))
-                .SigningKeyInfo(
-                    keyId: TestConfig.GetValue("signingkeyid"),
-                    keySecretName: TestConfig.GetValue("signingcertificatekey"),
-                    certificate: TestConfig.GetValue("signingcertificate"))
-                .TransportKeyInfo(
-                    keySecretName: TestConfig.GetValue("transportcertificatekey"),
-                    certificate: TestConfig.GetValue("transportcertificate"))
-                .DefaultFragmentRedirectUrl(TestConfig.GetValue("defaultfragmentredirecturl"))
-                .SubmitAsync();
+            string softwareStatementProfileId = "0";
+            SoftwareStatementProfile softwareStatementProfile = new SoftwareStatementProfile
+            {
+                SoftwareStatement = TestConfig.GetValue("softwarestatement"),
+                SigningKeyId = TestConfig.GetValue("signingkeyid"),
+                SigningKey = TestConfig.GetValue("signingcertificatekey"),
+                SigningCertificate = TestConfig.GetValue("signingcertificate"),
+                TransportKey = TestConfig.GetValue("transportcertificatekey"),
+                TransportCertificate = TestConfig.GetValue("transportcertificate"),
+                DefaultFragmentRedirectUrl = TestConfig.GetValue("defaultfragmentredirecturl"),
+                Id = softwareStatementProfileId
+            };
+            Models.KeySecrets.Cached.SoftwareStatementProfile softwareStatementProfileCached =
+                new Models.KeySecrets.Cached.SoftwareStatementProfile(
+                    profileKeySecrets: softwareStatementProfile,
+                    apiClient: new ApiClient(new HttpClient()));
+            ConcurrentDictionary<string, Models.KeySecrets.Cached.SoftwareStatementProfile>
+                softwareStatementProfileDictionary =
+                    new ConcurrentDictionary<string, Models.KeySecrets.Cached.SoftwareStatementProfile>
+                        { [softwareStatementProfileCached.Id] = softwareStatementProfileCached };
+            IRequestBuilder builder = CreateOpenBankingRequestBuilder(softwareStatementProfileDictionary);
 
-            softwareStatementProfileResp.Should().NotBeNull();
-            softwareStatementProfileResp.Messages.Should().BeEmpty();
-            softwareStatementProfileResp.Data.Should().NotBeNull();
-            softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
+            // softwareStatementProfileResp.Should().NotBeNull();
+            // softwareStatementProfileResp.Messages.Should().BeEmpty();
+            // softwareStatementProfileResp.Data.Should().NotBeNull();
+            // softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
+
+
+            // Where you see TestConfig.GetValue( .. )
+            // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
 
             // Create bank
             string bankName = "MyBank";
             Bank bank = new Bank
             {
                 IssuerUrl = TestConfig.GetValue("clientProfileIssuerUrl"),
-                XFapiFinancialId = TestConfig.GetValue("xFapiFinancialId"),
-                Name = bankName
+                FinancialId = TestConfig.GetValue("xFapiFinancialId"),
+                Name = bankName,
+                RegistrationScopeApiSet = RegistrationScopeApiSet.All
             };
-            FluentResponse<BankResponse> bankResp = await builder.Banks
+            FluentResponse<BankResponse> bankResp = await builder.ClientRegistration
+                .Banks
                 .PostAsync(bank);
 
             bankResp.Should().NotBeNull();
             bankResp.Messages.Should().BeEmpty();
             bankResp.Data.Should().NotBeNull();
+            Guid bankId = bankResp.Data!.Id;
 
             // Set up a bank registration (client) and associated configuration/preferences (a "bank client profile"). The bank client profile will only
             // be created if bank registration is successful.
             // Bank registration uses a software statement to establish our identity in the eyes of the bank. This and other data are transmitted to the bank.
             // This is performed once per Bank.
-            FluentResponse<BankRegistrationResponse> bankClientProfileResp = await builder.BankRegistrations
+            FluentResponse<BankRegistrationResponse> bankClientProfileResp = await builder.ClientRegistration
+                .BankRegistrations
                 .PostAsync(
                     new BankRegistration
                     {
-                        SoftwareStatementProfileId = softwareStatementProfileResp.Data.Id,
-                        BankClientRegistrationClaimsOverrides =
+                        SoftwareStatementProfileId = softwareStatementProfileId,
+                        BankRegistrationClaimsOverrides =
                             TestConfig.GetOpenBankingClientRegistrationClaimsOverrides(),
-                        RegistrationResponseJsonOptions = new RegistrationResponseJsonOptions
+                        BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
                         {
                             DelimitedStringConverterOptions = DelimitedStringConverterOptions.JsonStringArrayNotString
                         },
-                        BankName = bankName,
+                        BankId = bankId,
                         ReplaceStagingBankRegistration = true
                     });
 
@@ -92,13 +107,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             // APIs and specifies the functional endpoints, spec version and
             // any preferences related to that API including the bank client to be used.
             // This is performed once per Bank per Read/Write API type (e.g. Payment Initiation, Account Transaction, etc).
-            FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = await builder
+            FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = await builder.ClientRegistration
                 .BankProfiles
                 .PostAsync(
                     new BankProfile
                     {
-                        BankName = bankName,
-                        UseStagingBankRegistration = true,
+                        BankId = bankId,
                         ReplaceStagingBankProfile = true,
                         PaymentInitiationApi = new PaymentInitiationApi
                         {
@@ -113,7 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
             // Create a consent object and transmit to the bank to support user authorisation of an intended domestic payment.
             // This is performed once per payment.
-            FluentResponse<DomesticPaymentConsentResponse> consentResp = await builder
+            FluentResponse<DomesticPaymentConsentResponse> consentResp = await builder.PaymentInitiation
                 .DomesticPaymentConsents
                 .PostAsync(
                     new DomesticPaymentConsent

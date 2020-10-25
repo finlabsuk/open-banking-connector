@@ -4,15 +4,14 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public static class MessagesResponseExtensions
     {
-        public static MessagesResponse ToMessagesResponse(this FluentResponseBase value)
+        public static MessagesResponse? ToMessagesResponse<TData>(this FluentResponse<TData> value) where TData : class
         {
-            if (value.Messages != null)
+            if (value.Messages.Any())
             {
                 MessagesResponse result = new MessagesResponse();
 

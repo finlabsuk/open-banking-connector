@@ -2,27 +2,24 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Management.Automation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace OpenBankingConnector.Configuration.ObjectCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "PaymentInitiationApiProfile")]
-    [OutputType(typeof(BankClientRegistrationClaimsOverrides))]
+    [OutputType(typeof(BankRegistrationClaimsOverrides))]
     public class NewPaymentInitiationApiProfile : BaseCmdlet
     {
-        public NewPaymentInitiationApiProfile() : base(verbName: "New", nounName: "PaymentInitiationApiProfile")
-        {
-        }
+        public NewPaymentInitiationApiProfile() : base(verbName: "New", nounName: "PaymentInitiationApiProfile") { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Id { get; set; }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public string BankClientProfileId { get; set; }
+        public Guid BankClientProfileId { get; set; }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public ApiVersion ApiVersion { get; set; }
@@ -35,11 +32,11 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
         {
             BankProfile output = new BankProfile
             {
-                BankRegistrationId = BankClientProfileId,
+                //BankRegistrationId = BankClientProfileId,
                 PaymentInitiationApi = new PaymentInitiationApi
                 {
                     ApiVersion = ApiVersion,
-                    BaseUrl =  BaseUrl
+                    BaseUrl = BaseUrl
                 }
                 //Id = Id
             };

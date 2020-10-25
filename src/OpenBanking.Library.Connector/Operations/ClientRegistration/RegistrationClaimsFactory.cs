@@ -3,25 +3,61 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using System.Collections.Generic;
+using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistration
 {
     internal static class RegistrationClaimsFactory
     {
+        /// <summary>
+        ///     Convert API types to scope string
+        /// </summary>
+        /// <param name="registrationScopeApiSet"></param>
+        /// <returns></returns>
+        private static string ApiTypesToScope(RegistrationScopeApiSet registrationScopeApiSet)
+        {
+            // Combine scope words for individual API types prepending "openid"
+            IEnumerable<string> scopeWordsIEnumerable = ApiTypeHelper.AllApiTypes
+                .Where(x => registrationScopeApiSet.HasFlag(ApiTypeHelper.ApiTypeSetWithSingleApiType(x)))
+                .Select(ApiTypeHelper.ScopeWord)
+                .Prepend("openid")
+                .Distinct(); // for safety
+
+            return scopeWordsIEnumerable.JoinString(" ");
+        }
+
         public static OBClientRegistration1 CreateRegistrationClaims(
             SoftwareStatementProfile sProfile,
-            string audValue)
+            RegistrationScopeApiSet registrationScopeApiSet,
+            BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
+            string bankXFapiFinancialId)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
+            // Check API types
+            bool apiTypesIsSubset = (registrationScopeApiSet & sProfile.SoftwareStatementPayload.RegistrationScopeApiSet) == registrationScopeApiSet;
+            if (!apiTypesIsSubset)
+            {
+                throw new InvalidOperationException(
+                    "Software statement does not support API types specified in Bank object.");
+            }
+
+            string scope = ApiTypesToScope(registrationScopeApiSet);
+
             OBClientRegistration1 registrationClaims = new OBClientRegistration1
             {
-                Iss = sProfile.SoftwareStatementPayload.SoftwareId,
+                Iss = bankClientRegistrationClaimsOverrides?.IssuerIsSoftwareStatementXFapiFinancialId ?? false
+                    ? sProfile.SoftwareStatementPayload.OrgId
+                    : sProfile.SoftwareStatementPayload.SoftwareId,
                 Iat = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
-                Aud = audValue,
+                Aud = bankClientRegistrationClaimsOverrides?.Audience ??
+                      bankXFapiFinancialId,
                 Jti = Guid.NewGuid().ToString(),
                 TokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth,
                 GrantTypes = new[]
@@ -39,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                 RequestObjectSigningAlg = SupportedAlgorithmsEnum.PS256,
                 RedirectUris = sProfile.SoftwareStatementPayload.SoftwareRedirectUris,
                 SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
-                Scope = sProfile.SoftwareStatementPayload.Scope,
+                Scope = scope,
                 SoftwareStatement = sProfile.SoftwareStatement,
                 TlsClientAuthSubjectDn =
                     $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB"

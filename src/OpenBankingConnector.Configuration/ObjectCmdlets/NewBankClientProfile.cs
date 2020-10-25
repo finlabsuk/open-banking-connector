@@ -3,18 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Management.Automation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace OpenBankingConnector.Configuration.ObjectCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "BankClientProfile")]
-    [OutputType(typeof(BankClientRegistrationClaimsOverrides))]
+    [OutputType(typeof(BankRegistrationClaimsOverrides))]
     public class NewBankClientProfile : BaseCmdlet
     {
-        public NewBankClientProfile() : base("New", "BankClientProfile")
-        {
-        }
+        public NewBankClientProfile() : base(verbName: "New", nounName: "BankClientProfile") { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Id { get; set; } = "";
@@ -29,7 +26,7 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
         public string XFapiFinancialId { get; set; } = "";
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public BankClientRegistrationClaimsOverrides? BankClientRegistrationClaimsOverrides { get; set; }
+        public BankRegistrationClaimsOverrides? BankClientRegistrationClaimsOverrides { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -41,8 +38,8 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
                 //XFapiFinancialId = XFapiFinancialId,
                 OpenIdConfigurationOverrides = null,
                 HttpMtlsConfigurationOverrides = null,
-                BankClientRegistrationClaimsOverrides = BankClientRegistrationClaimsOverrides,
-                RegistrationResponseJsonOptions = null
+                BankRegistrationClaimsOverrides = BankClientRegistrationClaimsOverrides,
+                BankRegistrationResponseJsonOptions = null
             };
             WriteObject(output);
         }

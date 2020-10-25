@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -29,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _timeProvider = timeProvider;
         }
 
-        public async Task DeleteAsync(string id, bool includeBankApiDelete, string? modifiedBy, bool hardNotSoftDelete)
+        public async Task DeleteAsync(Guid id, bool includeBankApiDelete, string? modifiedBy, bool hardNotSoftDelete)
         {
             // Fetch entity
             TEntity entity = await _entityRepo.GetAsync(id) ??

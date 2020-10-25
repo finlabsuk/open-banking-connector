@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
 using TestStack.BDDfy.Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMockTests.Interactions
@@ -14,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [BddfyFact(Skip = "Upset not appropriate for BankClientProfile")]
         public async Task Repository_ClientInserted()
         {
-            IRequestBuilder builder = CreateOpenBankingRequestBuilder();
+            //IRequestBuilder builder = CreateOpenBankingRequestBuilder();
 
             string issuerUrl = "http://aaa.com/";
             string xfapi = "xfapi";

@@ -2,32 +2,34 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
     public interface IBankPublicQuery
     {
         string IssuerUrl { get; }
-        string XFapiFinancialId { get; }
+        string FinancialId { get; }
         string Name { get; }
-        string Id { get; }
+        Guid Id { get; }
     }
 
     public class BankResponse : IBankPublicQuery
     {
-        internal BankResponse(string issuerUrl, string xFapiFinancialId, string name, string id)
+        internal BankResponse(string issuerUrl, string xFapiFinancialId, string name, Guid id)
         {
             IssuerUrl = issuerUrl;
-            XFapiFinancialId = xFapiFinancialId;
+            FinancialId = xFapiFinancialId;
             Name = name;
             Id = id;
         }
 
         public string IssuerUrl { get; }
 
-        public string XFapiFinancialId { get; }
+        public string FinancialId { get; }
 
         public string Name { get; }
 
-        public string Id { get; }
+        public Guid Id { get; }
     }
 }

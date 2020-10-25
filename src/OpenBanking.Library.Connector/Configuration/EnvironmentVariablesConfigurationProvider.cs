@@ -25,19 +25,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
         {
             Dictionary<string, string> evs = GetEnvironmentVariables(Root);
 
-            ObcConfiguration result = new DefaultConfigurationProvider().GetObcConfiguration();
-
-            result.DefaultCurrency = GetEnvVarValue(variables: evs, name: $"{Root}:DefaultCurrency") ??
-                                     result.DefaultCurrency;
-            result.SoftwareId = GetEnvVarValue(variables: evs, name: $"{Root}:SoftwareId") ?? result.SoftwareId;
+            ObcConfiguration result = new ObcConfiguration();
+            result.SoftwareStatementProfileIds =
+                GetEnvVarValue(variables: evs, name: $"{Root}:SoftwareStatementProfileIds") ??
+                result.SoftwareStatementProfileIds;
             result.EnsureDbCreated = GetEnvVarValue(variables: evs, name: $"{Root}:EnsureDbCreated") ??
                                      result.EnsureDbCreated;
-
-
             return result;
         }
 
-        private string GetEnvVarValue(Dictionary<string, string> variables, string name)
+        private string? GetEnvVarValue(Dictionary<string, string> variables, string name)
         {
             if (variables.TryGetValue(key: name, value: out string value))
             {

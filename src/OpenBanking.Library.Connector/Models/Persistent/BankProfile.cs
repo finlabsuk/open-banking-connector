@@ -35,34 +35,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         /// </summary>
         public BankProfile(
             ITimeProvider timeProvider,
-            string bankRegistrationId,
             PaymentInitiationApi? paymentInitiationApi,
-            string bankId,
+            Guid bankId,
             string? createdBy)
         {
             Created = timeProvider.GetUtcNow();
             CreatedBy = createdBy;
             IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
-            BankRegistrationId = bankRegistrationId;
             PaymentInitiationApi = paymentInitiationApi;
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid();
             BankId = bankId;
         }
 
-        public string BankId { get; set; } = null!;
+        public Guid BankId { get; set; }
 
-        public string BankRegistrationId { get; set; } = null!;
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
         public DateTimeOffset Created { get; }
         public string? CreatedBy { get; }
         public Func<BankProfileRequest, ValidationResult> ValidatePublicRequestWrapper => ValidatePublicRequest;
 
         public BankProfileResponse PublicResponse => new BankProfileResponse(
-            bankRegistrationId: Id,
             paymentInitiationApi: PaymentInitiationApi,
-            id: Id);
+            id: Id,
+            bankId: BankId);
 
         public Func<ISharedContext, BankProfileRequest, string?, Task<BankProfileResponse>> PostEntityAsyncWrapper =>
             PostEntityAsync;
@@ -95,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                 dbMultiEntityMethods: context.DbContextService,
                 timeProvider: context.TimeProvider);
 
-            BankProfileResponse resp = await i.CreateAsync(requestBankProfile: request, createdBy: createdBy);
+            BankProfileResponse resp = await i.CreateAsync(request: request, createdBy: createdBy);
             return resp;
         }
     }

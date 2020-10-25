@@ -40,7 +40,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public DomesticPaymentConsent(
             ITimeProvider timeProvider,
             string state,
-            string bankProfileId,
+            Guid bankRegistrationId,
+            Guid bankProfileId,
             OBWriteDomesticConsent4 obWriteDomesticConsent,
             OBWriteDomesticConsentResponse4 obWriteDomesticConsentResponse,
             string? createdBy)
@@ -53,15 +54,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 data: new TokenEndpointResponse(),
                 timeProvider: timeProvider,
                 modifiedBy: createdBy);
+            BankRegistrationId = bankRegistrationId;
             BankProfileId = bankProfileId;
             OBWriteDomesticConsent = obWriteDomesticConsent;
             OBWriteDomesticConsentResponse = obWriteDomesticConsentResponse;
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid();
         }
 
         public ReadWriteProperty<string> State { get; set; } = null!;
-
-        public string BankProfileId { get; set; } = null!;
 
         public OBWriteDomesticConsent4 OBWriteDomesticConsent { get; set; } = null!;
 
@@ -69,9 +69,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public string OBId => OBWriteDomesticConsentResponse.Data.ConsentId;
 
+        public Guid BankRegistrationId { get; set; }
+
+        public Guid BankProfileId { get; set; }
+
         public OBWriteDomesticConsentResponse4 OBWriteDomesticConsentResponse { get; set; } = null!;
 
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
 
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
         public DateTimeOffset Created { get; }
@@ -88,7 +92,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             new DomesticPaymentConsentResponse(
                 authUrl: null,
                 id: Id,
-                obWriteDomesticConsentResponse: OBWriteDomesticConsentResponse);
+                obWriteDomesticConsentResponse: OBWriteDomesticConsentResponse,
+                bankRegistrationId: BankRegistrationId,
+                bankProfileId: BankProfileId);
 
         public Task BankApiDeleteAsync()
         {
@@ -112,15 +118,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     {
                         InstructionIdentification = request.InstructionIdentification,
                         EndToEndIdentification = request.EndToEndIdentification,
-                        LocalInstrument = null,
+                        LocalInstrument = request.LocalInstrument,
                         InstructedAmount = request.InstructedAmount,
-                        DebtorAccount = null,
+                        DebtorAccount = request.DebtorAccount,
                         CreditorAccount = request.CreditorAccount,
                         CreditorPostalAddress = null,
                         RemittanceInformation = request.RemittanceInformation,
                         SupplementaryData = null
                     },
-                    Authorisation = null,
+                    Authorisation = request.Authorisation,
                     SCASupportData = null
                 },
                 Risk = request.Merchant
@@ -138,16 +144,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? createdBy)
         {
             CreateDomesticPaymentConsent i = new CreateDomesticPaymentConsent(
-                apiClient: context.ApiClient,
                 bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
-                bankClientProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
+                bankRegistrationRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
                 dbMultiEntityMethods: context.DbContextService,
                 domesticConsentRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<DomesticPaymentConsent>(),
                 mapper: context.EntityMapper,
-                softwareStatementProfileService: context.SoftwareStatementProfileService,
-                timeProvider: context.TimeProvider);
+                timeProvider: context.TimeProvider,
+                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo,
+                instrumentationClient: context.Instrumentation);
 
             DomesticPaymentConsentResponse resp = await i.CreateAsync(
                 request: request,

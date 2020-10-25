@@ -25,6 +25,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             base.Configure(builder);
 
             // Top-level property info: read-only, JSON conversion, etc
+            builder.Property(e => e.BankRegistrationId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankProfileId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBWriteDomesticConsent)
@@ -41,6 +43,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             // Top-level foreign keys
+            builder
+                .HasOne<Persistent.BankRegistration>()
+                .WithMany()
+                .HasForeignKey(r => r.BankRegistrationId);
             builder
                 .HasOne<Persistent.BankProfile>()
                 .WithMany()

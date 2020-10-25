@@ -8,6 +8,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.Model;
@@ -62,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         [Benchmark]
         public void MapSoftwareStatement()
         {
-            _entityMapper.Map<Models.Persistent.SoftwareStatementProfile>(_softwareStatement);
+            //_entityMapper.Map<Models.KeySecrets.Cached.SoftwareStatementProfile>(_softwareStatement);
         }
 
 
@@ -187,22 +188,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 TlsCertificateVerification = "aaaa",
                 TlsRenegotiationSupport = "bbb"
             },
-            RegistrationResponseJsonOptions = new RegistrationResponseJsonOptions
+            BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
             {
                 GrantTypes = Enumerable.Range(start: 1, count: 10).Select(i => i.ToString()).ToList()
             },
-            BankClientRegistrationClaimsOverrides = new BankClientRegistrationClaimsOverrides
+            BankRegistrationClaimsOverrides = new BankRegistrationClaimsOverrides
             {
                 GrantTypes = Enumerable.Range(start: 1, count: 10).Select(i => i.ToString()).ToList(),
-                RequestAudience = "audience",
-                ScopeUseStringArray = false,
-                SsaIssuer = "issuer",
+                Audience = "audience",
                 TokenEndpointAuthMethod = "method",
                 TokenEndpointAuthSigningAlgorithm = "alg"
             },
             OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
             {
-                RegistrationEndpointUrl = "https://ccccccccccccccccccccccccccccccccccccc.com"
+                RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com"
             },
             SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             //XFapiFinancialId = "xfapi"

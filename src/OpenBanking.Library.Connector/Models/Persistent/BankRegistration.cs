@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FluentValidation.Results;
 using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankRegistration;
+using OBClientRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models.OBClientRegistration1;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
@@ -38,9 +39,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             ITimeProvider timeProvider,
             string softwareStatementProfileId,
             OpenIdConfiguration openIdConfiguration,
-            OBClientRegistration1 bankClientRegistration,
-            string bankId,
-            OBClientRegistration1 bankClientRegistrationRequest,
+            OBClientRegistration bankClientRegistration,
+            Guid bankId,
+            OBClientRegistration bankClientRegistrationRequest,
             string? createdBy)
         {
             Created = timeProvider.GetUtcNow();
@@ -50,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             OpenIdConfiguration = openIdConfiguration;
             BankClientRegistrationRequest = bankClientRegistrationRequest;
             BankClientRegistration = bankClientRegistration;
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid();
             BankId = bankId;
         }
 
@@ -58,18 +59,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;
 
-        public OBClientRegistration1 BankClientRegistration { get; set; } = null!;
+        public OBClientRegistration BankClientRegistration { get; set; } = null!;
 
         /// <summary>
         ///     Bank this registration is with.
         /// </summary>
-        public string BankId { get; set; } = null!;
+        public Guid BankId { get; set; }
 
         // TODO: Add MTLS configuration
 
-        public OBClientRegistration1 BankClientRegistrationRequest { get; set; } = null!;
+        public OBClientRegistration BankClientRegistrationRequest { get; set; } = null!;
 
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
 
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
         public DateTimeOffset Created { get; }
@@ -77,7 +78,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public Func<BankRegistrationRequest, ValidationResult> ValidatePublicRequestWrapper => ValidatePublicRequest;
 
         public BankRegistrationResponse PublicResponse =>
-            new BankRegistrationResponse(id: Id, bankClientRegistrationRequest: BankClientRegistrationRequest);
+            new BankRegistrationResponse(
+                id: Id,
+                bankClientRegistrationRequest: BankClientRegistrationRequest,
+                bankId: BankId);
 
         public Func<ISharedContext, BankRegistrationRequest, string?, Task<BankRegistrationResponse>>
             PostEntityAsyncWrapper =>
@@ -109,11 +113,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                 bankRegistrationRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
                 dbMultiEntityMethods: context.DbContextService,
-                softwareStatementProfileService: context.SoftwareStatementProfileService,
-                timeProvider: context.TimeProvider);
+                timeProvider: context.TimeProvider,
+                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo);
 
             BankRegistrationResponse resp = await i.CreateAsync(
-                requestBankRegistration: request,
+                request: request,
                 createdBy: createdBy);
             return resp;
         }

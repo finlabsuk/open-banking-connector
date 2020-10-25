@@ -3,18 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Management.Automation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace OpenBankingConnector.Configuration.ObjectCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "BankClientRegistrationClaimsOptions")]
-    [OutputType(typeof(BankClientRegistrationClaimsOverrides))]
+    [OutputType(typeof(BankRegistrationClaimsOverrides))]
     public class NewBankClientRegistrationClaimsOptions : BaseCmdlet
     {
-        public NewBankClientRegistrationClaimsOptions() : base("New", "BankClientRegistrationClaimsOptions")
-        {
-        }
+        public NewBankClientRegistrationClaimsOptions() : base(
+            verbName: "New",
+            nounName: "BankClientRegistrationClaimsOptions") { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Aud { get; set; } = "";
@@ -24,13 +23,11 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
 
         protected override void ProcessRecord()
         {
-            BankClientRegistrationClaimsOverrides output = new BankClientRegistrationClaimsOverrides
+            BankRegistrationClaimsOverrides output = new BankRegistrationClaimsOverrides
             {
-                SsaIssuer = null,
-                RequestAudience = Aud,
+                Audience = Aud,
                 TokenEndpointAuthMethod = null,
                 GrantTypes = null,
-                ScopeUseStringArray = ScopeUseStringArray,
                 TokenEndpointAuthSigningAlgorithm = null
             };
             WriteObject(output);

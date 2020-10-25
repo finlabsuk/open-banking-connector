@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
+using FluentValidation.Results;
 using FsCheck;
 using FsCheck.Xunit;
 
@@ -19,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = "a",
@@ -30,7 +32,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = $"{value}.{value}.{value}"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -43,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = value,
@@ -54,7 +57,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -68,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = "a",
@@ -79,7 +83,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -92,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = "a",
@@ -103,7 +108,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -116,7 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = "a",
@@ -127,7 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -140,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SigningKey = "a",
@@ -151,7 +158,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -164,7 +172,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value.ToString(),
                     SigningKey = "a",
@@ -175,7 +183,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -189,7 +198,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new SoftwareStatementProfile
+                SoftwareStatementProfile profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value,
                     SigningKey = "a",
@@ -200,7 +209,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
                     SoftwareStatement = "a.b.c"
                 };
 
-                var results = new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+                List<ValidationFailure> results =
+                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 1;
             };

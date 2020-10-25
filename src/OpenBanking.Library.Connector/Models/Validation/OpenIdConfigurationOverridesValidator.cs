@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
 
         private void CreateRules()
         {
-            RuleFor(x => x.RegistrationEndpointUrl)
-                .Must(ValidationRules.IsUrl)
-                .WithMessage($"Missing or invalid {nameof(OpenIdConfigurationOverrides.RegistrationEndpointUrl)}.");
+            // RuleFor(x => x.RegistrationEndpoint)
+            //     .Must(ValidationRules.IsUrl)
+            //     .WithMessage($"Missing or invalid {nameof(OpenIdConfigurationOverrides.RegistrationEndpoint)}.");
         }
     }
 }

@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             Models.Public.Request.Bank newBank = new Models.Public.Request.Bank
             {
                 IssuerUrl = "a",
-                XFapiFinancialId = "b",
+                FinancialId = "b",
                 Name = "c"
             };
 

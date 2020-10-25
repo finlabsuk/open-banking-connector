@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public MockPaymentsServer(IMockPaymentData mockData)
         {
-            _server = WireMockServer.Start(new FluentMockServerSettings
+            _server = WireMockServer.Start(new WireMockServerSettings
             {
                 Urls = new[] { "http://+:8080" }
             });

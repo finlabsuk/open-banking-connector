@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetAsync_ReturnsEmpty(string id)
+        public Property GetAsync_ReturnsEmpty(Guid id)
         {
             Func<bool> rule = () => { return _repo.GetAsync(id).Result == null; };
 
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]
-        public Property GetAsync_KnownId_ReturnsItem(StringNotNullAndContainsNoNulls id)
+        public Property GetAsync_KnownId_ReturnsItem(Guid id)
         {
             Func<bool> rule = () =>
             {
@@ -56,12 +56,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
                     OpenIdConfiguration = new OpenIdConfiguration(),
                     BankClientRegistrationRequest = new OBClientRegistration1(),
                     BankClientRegistration = new OBClientRegistration1(),
-                    Id = id.Item
+                    Id = id
                 };
                 _repo.AddAsync(value).GetAwaiter();
                 _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-                return _repo.GetAsync(id.Item).Result.Id == id.Item;
+                return _repo.GetAsync(id).Result?.Id == id;
             };
 
             return rule.ToProperty();

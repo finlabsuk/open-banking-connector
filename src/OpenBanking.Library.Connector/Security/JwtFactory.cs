@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using Jose;
 using Newtonsoft.Json;
@@ -77,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
             string[] crit;
             bool? b64;
-            if (paymentInitiationApiVersion >= ApiVersion.V3P1P4)
+            if (paymentInitiationApiVersion >= ApiVersion.V3p1p4)
             {
                 crit = new[]
                 {
@@ -99,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 { "typ", "JOSE" },
-                { "cty", "json" },
+                { "cty", "application/json" },
                 { "kid", signingId },
                 { "crit", crit },
                 { "http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds() },

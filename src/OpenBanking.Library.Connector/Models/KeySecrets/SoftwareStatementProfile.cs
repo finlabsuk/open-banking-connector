@@ -3,15 +3,16 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets
 {
-    /// Class that captures a software statement and associated keys and certificates
-    [PersistenceEquivalent(typeof(Persistent.SoftwareStatementProfile))]
-    public class SoftwareStatementProfile : IKeySecretItemWithId
+    /// <summary>
+    ///     Class that captures a software statement and associated keys and certificates.
+    ///     This class is a KeySecret item - i.e. properties are stored as key secrets in advance
+    ///     of running OBC.
+    /// </summary>
+    public class SoftwareStatementProfile : IKeySecretItem
     {
         public SoftwareStatementProfile(
             string softwareStatement,
@@ -56,12 +57,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public string TransportCertificate { get; set; } = null!;
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
-        [Required]
         public string DefaultFragmentRedirectUrl { get; set; } = null!;
 
         /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
         /// This is your choice; a meaningful name should help debugging throughout OBC.
-        [Required]
         public string Id { get; set; } = null!;
+
+        public string HttpClientName() => $"software-statement-profile:{Id}";
     }
 }

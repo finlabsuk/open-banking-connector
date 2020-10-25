@@ -10,47 +10,44 @@ using System.Text;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
 using BankProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankProfile;
 using BankRegistration = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
-using SoftwareStatementProfile =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.SoftwareStatementProfile;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class PostAuthorisationRedirectObject
     {
-        private readonly IApiClient _apiClient;
-        private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
-        private readonly IDbEntityRepository<BankRegistration> _bankRegistrationRepo;
-        private readonly IDbEntityRepository<Bank> _bankRepo;
+        private readonly IDbReadOnlyEntityRepository<BankProfile> _bankProfileRepo;
+        private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
+        private readonly IDbReadOnlyEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbContextService;
         private readonly IDbEntityRepository<DomesticPaymentConsent> _domesticConsentRepo;
-        private readonly ISoftwareStatementProfileService _softwareStatementProfileService;
+        private readonly IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> _softwareStatementProfileRepo;
 
         public PostAuthorisationRedirectObject(
-            IApiClient apiClient,
-            IDbEntityRepository<Bank> bankRepo,
-            IDbEntityRepository<BankProfile> bankProfileRepo,
+            IDbReadOnlyEntityRepository<Bank> bankRepo,
+            IDbReadOnlyEntityRepository<BankProfile> bankProfileRepo,
             IDbMultiEntityMethods dbContextService,
             IDbEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
-            IDbEntityRepository<BankRegistration> bankRegistrationRepo,
-            ISoftwareStatementProfileService softwareStatementProfileService)
+            IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
+            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo)
         {
-            _apiClient = apiClient;
             _bankRepo = bankRepo;
             _bankProfileRepo = bankProfileRepo;
             _dbContextService = dbContextService;
             _domesticConsentRepo = domesticConsentRepo;
             _bankRegistrationRepo = bankRegistrationRepo;
-            _softwareStatementProfileService = softwareStatementProfileService;
+            _softwareStatementProfileRepo = softwareStatementProfileRepo;
         }
 
         public async Task<AuthorisationRedirectObjectResponse> PostAsync(AuthorisationRedirectObject request)
@@ -65,13 +62,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             BankProfile apiProfile = await _bankProfileRepo.GetAsync(paymentConsent.BankProfileId) ??
                                      throw new KeyNotFoundException("API profile cannot be found.");
             BankRegistration bankClientProfile =
-                await _bankRegistrationRepo.GetAsync(apiProfile.BankRegistrationId) ??
+                await _bankRegistrationRepo.GetAsync(paymentConsent.BankRegistrationId) ??
                 throw new KeyNotFoundException("Bank client profile cannot be found.");
             Bank bank = await _bankRepo.GetAsync(apiProfile.BankId)
                         ?? throw new KeyNotFoundException("No record found for BankId in BankProfile.");
-            SoftwareStatementProfile softwareStatementProfile =
-                _softwareStatementProfileService.GetSoftwareStatementProfile(
-                    bankClientProfile.SoftwareStatementProfileId);
+            SoftwareStatementProfileCached softwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(bankClientProfile.SoftwareStatementProfileId);
 
             // Obtain token for consent
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
@@ -80,7 +76,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     authCode: request.Response.Code,
                     redirectUrl: redirectUrl,
                     client: bankClientProfile,
-                    orgId: bank.XFapiFinancialId);
+                    apiClient: softwareStatementProfile.ApiClient,
+                    orgId: bank.FinancialId);
 
             // Update consent with token
             paymentConsent.TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
@@ -96,6 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string authCode,
             string redirectUrl,
             BankRegistration client,
+            ApiClient apiClient,
             string orgId)
         {
             UriBuilder ub = new UriBuilder(new Uri(client.OpenIdConfiguration.TokenEndpoint));
@@ -150,7 +148,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .SetContentType("application/x-www-form-urlencoded")
                 .SetContent(content)
                 .Create()
-                .RequestJsonAsync<TokenEndpointResponse>(client: _apiClient, requestContentIsJson: false);
+                .RequestJsonAsync<TokenEndpointResponse>(client: apiClient, requestContentIsJson: false);
 
             return resp;
         }

@@ -4,20 +4,21 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached
 {
     /// Struct corresponding to payload of Open Banking Software Statement type. Fields can be added as required
     public class SoftwareStatementPayload
     {
-        private static readonly Dictionary<string, string> SoftwareRoleToScope = new Dictionary<string, string>
-        {
-            ["AISP"] = "accounts",
-            ["PISP"] = "payments",
-            ["CBPII"] = "fundsconfirmations"
-        };
+        private static readonly Dictionary<string, RegistrationScopeApiSet> SoftwareRoleToApiType =
+            new Dictionary<string, RegistrationScopeApiSet>
+            {
+                ["AISP"] = RegistrationScopeApiSet.AccountAndTransaction,
+                ["PISP"] = RegistrationScopeApiSet.PaymentInitiation,
+                ["CBPII"] = RegistrationScopeApiSet.FundsConfirmation
+            };
 
         [JsonProperty("software_on_behalf_of_org")]
         public string SoftwareOnBehalfOfOrg = null!;
@@ -52,18 +53,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         [JsonProperty("org_name")]
         public string OrgName { get; set; } = null!;
 
-        /// Scope list computed from software_roles
-        public string Scope
-        {
-            get
-            {
-                // insert "openid" if not present
-                IEnumerable<string> mutatingSoftwareRoles = SoftwareRoles.Select(role => SoftwareRoleToScope[role])
-                    .Prepend("openid")
-                    .Distinct();
-
-                return mutatingSoftwareRoles.JoinString(" ");
-            }
-        }
+        public RegistrationScopeApiSet RegistrationScopeApiSet =>
+            SoftwareRoles.Select(role => SoftwareRoleToApiType[role]).Aggregate(
+                seed: RegistrationScopeApiSet.None,
+                func: (current, next) => current | next);
     }
 }

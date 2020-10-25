@@ -2,9 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
+using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -28,35 +31,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public void RunMockPaymentTest()
         {
-            IRequestBuilder requestBuilder = _mockData.CreateMockRequestBuilder();
+            string softwareStatementProfileId = "0";
+            SoftwareStatementProfile softwareStatementProfile = new SoftwareStatementProfile
+            {
+                SoftwareStatement =
+                    "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature",
+                SigningKeyId = "signingkeyid",
+                SigningKey = _mockData.GetMockPrivateKey(),
+                SigningCertificate = _mockData.GetMockCertificate(),
+                TransportKey = _mockData.GetMockPrivateKey(),
+                TransportCertificate = _mockData.GetMockCertificate(),
+                DefaultFragmentRedirectUrl = "http://redirecturl.com",
+                Id = softwareStatementProfileId
+            };
+            Models.KeySecrets.Cached.SoftwareStatementProfile softwareStatementProfileCached =
+                new Models.KeySecrets.Cached.SoftwareStatementProfile(
+                    profileKeySecrets: softwareStatementProfile,
+                    apiClient: new ApiClient(new HttpClient()));
+            ConcurrentDictionary<string, Models.KeySecrets.Cached.SoftwareStatementProfile>
+                softwareStatementProfileDictionary =
+                    new ConcurrentDictionary<string, Models.KeySecrets.Cached.SoftwareStatementProfile>
+                        { [softwareStatementProfileCached.Id] = softwareStatementProfileCached };
+            IRequestBuilder requestBuilder = _mockData.CreateMockRequestBuilder(softwareStatementProfileDictionary);
 
-            FluentResponse<SoftwareStatementProfileResponse> softwareStatementProfileResp = requestBuilder
-                .SoftwareStatementProfile()
-                .Id("0")
-                .SoftwareStatement(
-                    "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature")
-                .SigningKeyInfo(
-                    keyId: "signingkeyid",
-                    keySecretName: _mockData.GetMockPrivateKey(),
-                    certificate: _mockData.GetMockCertificate())
-                .TransportKeyInfo(
-                    keySecretName: _mockData.GetMockPrivateKey(),
-                    certificate: _mockData.GetMockCertificate())
-                .DefaultFragmentRedirectUrl("http://redirecturl.com")
-                .SubmitAsync().Result;
 
-            softwareStatementProfileResp.Messages.Should().BeEmpty();
-            softwareStatementProfileResp.Data.Should().NotBeNull();
-            softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
+            // softwareStatementProfileResp.Messages.Should().BeEmpty();
+            // softwareStatementProfileResp.Data.Should().NotBeNull();
+            // softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
 
             _mockPaymentsServer.SetUpOpenIdMock();
             _mockPaymentsServer.SetupRegistrationMock();
 
-            FluentResponse<BankRegistrationResponse> bankClientProfileResp = requestBuilder.BankRegistrations
+            FluentResponse<BankRegistrationResponse> bankClientProfileResp = requestBuilder.ClientRegistration
+                .BankRegistrations
                 .PostAsync(
                     new BankRegistration
                     {
-                        SoftwareStatementProfileId = softwareStatementProfileResp.Data.Id,
+                        SoftwareStatementProfileId = softwareStatementProfileId,
                         //BankName = ,
                     })
                 //.Id("MyBankClientProfileId")
@@ -70,19 +81,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
             BankProfile bankProfile = new BankProfile
             {
-                BankRegistrationId = bankClientProfileResp.Data.Id,
+                //BankRegistrationId = bankClientProfileResp.Data.Id,
                 //BankName = ,
                 //UseStagingBankRegistration = ,
                 //ReplaceDefaultBankProfile = ,
                 //ReplaceStagingBankProfile = ,
                 PaymentInitiationApi = new PaymentInitiationApi
                 {
-                    ApiVersion = ApiVersion.V3P1P4,
+                    ApiVersion = ApiVersion.V3p1p4,
                     BaseUrl = MockRoutes.Url
                 }
             };
 
-            FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = requestBuilder
+            FluentResponse<BankProfileResponse> paymentInitiationApiProfileResp = requestBuilder.ClientRegistration
                 .BankProfiles
                 .PostAsync(bankProfile)
                 //.Id("NewPaymentInitiationProfile")
@@ -95,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _mockPaymentsServer.SetupTokenEndpointMock();
             _mockPaymentsServer.SetupPaymentEndpointMock();
 
-            FluentResponse<DomesticPaymentConsentResponse> consentResp = requestBuilder
+            FluentResponse<DomesticPaymentConsentResponse> consentResp = requestBuilder.PaymentInitiation
                 .DomesticPaymentConsents
                 .PostAsync(
                     new DomesticPaymentConsent
@@ -149,7 +160,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             // Call mock bank with auth URL and check.... then return at least auth code and state....
 
             // Call Fluent method to pass auth code and state (set up mock bank token endpoint)
-            FluentResponse<AuthorisationRedirectObjectResponse> authCallbackDataResp = requestBuilder
+            FluentResponse<AuthorisationRedirectObjectResponse> authCallbackDataResp = requestBuilder.PaymentInitiation
                 .AuthorisationRedirectObjects
                 .PostAsync(
                     new AuthorisationRedirectObject(
@@ -167,7 +178,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             //authCallbackDataResp.Data.Should().NotBeNull();
 
             // Call Fluent method to make payment (set up mock bank payment endpoint)
-            FluentResponse<DomesticPaymentResponse> paymentResp = requestBuilder.DomesticPayments
+            FluentResponse<DomesticPaymentResponse> paymentResp = requestBuilder.PaymentInitiation
+                .DomesticPayments
                 .PostAsync(
                     new DomesticPayment
                     {

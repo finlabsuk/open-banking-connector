@@ -7,7 +7,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
 
@@ -100,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
             }
         }
 
-        public BankClientRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
+        public BankRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
         {
             if (_configuration == null)
             {
@@ -122,14 +121,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         private TestConfiguration ReadConfigurationFile(string filePrefix)
         {
-            var path = GetConfigurationFilePath(filePrefix);
+            string path = GetConfigurationFilePath(filePrefix);
             if (File.Exists(path))
             {
                 string json = null;
 
-                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (FileStream? stream = new FileStream(
+                    path: path,
+                    mode: FileMode.Open,
+                    access: FileAccess.Read,
+                    share: FileShare.Read))
                 {
-                    using (var rdr = new StreamReader(stream))
+                    using (StreamReader? rdr = new StreamReader(stream))
                     {
                         json = rdr.ReadToEnd();
                     }
@@ -143,30 +146,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 
         private string GetConfigurationFilePath(string filePrefix)
         {
-            var path = Assembly.GetExecutingAssembly().Location;
+            string? path = Assembly.GetExecutingAssembly().Location;
             path = Path.GetDirectoryName(path);
 
-            var fileName = "test.settings.json";
+            string fileName = "test.settings.json";
 
             if (!string.IsNullOrEmpty(filePrefix))
             {
                 fileName = filePrefix + "." + fileName;
             }
 
-            return Path.Combine(path, fileName);
+            return Path.Combine(path1: path, path2: fileName);
         }
 
         private T GetValueFromEnumMember<T>(string value)
         {
-            var type = typeof(T);
+            Type type = typeof(T);
             if (type.GetTypeInfo().IsEnum)
             {
                 foreach (var name in Enum.GetNames(type))
                 {
-                    var attr = type.GetRuntimeField(name).GetCustomAttribute<EnumMemberAttribute>(true);
+                    EnumMemberAttribute? attr = type.GetRuntimeField(name)
+                        .GetCustomAttribute<EnumMemberAttribute>(true);
                     if (attr != null && attr.Value == value)
                     {
-                        return (T) Enum.Parse(type, name);
+                        return (T) Enum.Parse(enumType: type, value: name);
                     }
                 }
 

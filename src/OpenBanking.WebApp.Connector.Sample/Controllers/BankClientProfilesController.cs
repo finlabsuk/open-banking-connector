@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Entities;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +35,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankRegistration request)
         {
-            FluentResponse<BankRegistrationResponse> clientResp = await _obRequestBuilder.BankRegistrations
+            FluentResponse<BankRegistrationResponse> clientResp = await _obRequestBuilder.ClientRegistration
+                .BankRegistrations
                 .PostAsync(request);
 
             HttpResponse<BankRegistrationResponse> result = new HttpResponse<BankRegistrationResponse>(

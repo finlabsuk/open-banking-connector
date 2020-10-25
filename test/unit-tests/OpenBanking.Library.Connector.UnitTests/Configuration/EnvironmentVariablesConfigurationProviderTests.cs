@@ -21,58 +21,58 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
             {
                 ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
-                return config.SoftwareId != value;
+                return config.SoftwareStatementProfileIds != value;
             };
 
-            return rule.When(!String.IsNullOrEmpty(value));
+            return rule.When(!string.IsNullOrEmpty(value));
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property GetRuntimeConfiguration_SoftwareIdApplied(string value)
         {
             IDictionary evs = new Hashtable();
-            evs["OpenBankingConnector:SoftwareId"] = value;
+            evs["OpenBankingConnector:SoftwareStatementProfileIds"] = value;
 
             Func<bool> rule = () =>
             {
                 ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
 
-                return config.SoftwareId == value;
+                return config.SoftwareStatementProfileIds == value;
             };
 
             return rule.When(value != null);
         }
 
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetRuntimeConfiguration_DefaultCurrencyInherited(string value)
-        {
-            IDictionary evs = new Hashtable();
-
-            Func<bool> rule = () =>
-            {
-                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
-
-                return config.DefaultCurrency != value;
-            };
-
-            return rule.When(value != null);
-        }
-
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetRuntimeConfiguration_DefaultCurrencyApplied(string value)
-        {
-            IDictionary evs = new Hashtable();
-            evs["OpenBankingConnector:DefaultCurrency"] = value;
-
-            Func<bool> rule = () =>
-            {
-                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
-
-                return config.DefaultCurrency == value;
-            };
-
-            return rule.When(value != null);
-        }
+        // [Property(Verbose = PropertyTests.VerboseTests)]
+        // public Property GetRuntimeConfiguration_DefaultCurrencyInherited(string value)
+        // {
+        //     IDictionary evs = new Hashtable();
+        //
+        //     Func<bool> rule = () =>
+        //     {
+        //         ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
+        //
+        //         return config.DefaultCurrency != value;
+        //     };
+        //
+        //     return rule.When(value != null);
+        // }
+        //
+        // [Property(Verbose = PropertyTests.VerboseTests)]
+        // public Property GetRuntimeConfiguration_DefaultCurrencyApplied(string value)
+        // {
+        //     IDictionary evs = new Hashtable();
+        //     evs["OpenBankingConnector:DefaultCurrency"] = value;
+        //
+        //     Func<bool> rule = () =>
+        //     {
+        //         ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
+        //
+        //         return config.DefaultCurrency == value;
+        //     };
+        //
+        //     return rule.When(value != null);
+        // }
     }
 }

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,15 +36,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByUniqueProperty(int count)
         {
-            List<DomesticPaymentConsent>? items = Enumerable.Range(start: 1, count: count)
+            Guid latestGuid = Guid.NewGuid();
+            List<DomesticPaymentConsent> items = Enumerable.Range(start: 1, count: count)
                 .Select(
-                    i => new DomesticPaymentConsent
+                    i =>
                     {
-                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
-                        BankProfileId = "sdf",
-                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
-                        Id = i.ToString()
+                        latestGuid = Guid.NewGuid();
+                        return new DomesticPaymentConsent
+                        {
+                            State = new ReadWriteProperty<string>(
+                                data: "sdf",
+                                timeProvider: new TimeProvider(),
+                                modifiedBy: null),
+                            BankProfileId = Guid.NewGuid(),
+                            OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                            OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
+                            //Id = i.ToString()
+                            Id = latestGuid
+                        };
                     }).ToList();
             foreach (var dc in items)
             {
@@ -52,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == count.ToString());
+            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == latestGuid);
 
             List<DomesticPaymentConsent> results = q.ToList();
 
@@ -68,15 +78,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetByAll(int count)
         {
+            Guid latestGuid = Guid.NewGuid();
             List<DomesticPaymentConsent> items = Enumerable.Range(start: 1, count: count)
                 .Select(
-                    i => new DomesticPaymentConsent
+                    i =>
                     {
-                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
-                        BankProfileId = "sdf",
-                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
-                        Id = i.ToString()
+                        latestGuid = Guid.NewGuid();
+                        return new DomesticPaymentConsent
+                        {
+                            State = new ReadWriteProperty<string>(
+                                data: "sdf",
+                                timeProvider: new TimeProvider(),
+                                modifiedBy: null),
+                            BankProfileId = Guid.NewGuid(),
+                            OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                            OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
+                            //Id = i.ToString()
+                            Id = latestGuid
+                        };
                     }).ToList();
             foreach (var dc in items)
             {
@@ -100,15 +119,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         [InlineData(15)]
         public async Task GetAsync_ByExpression_GetEmptySetByUniqueProperty(int count)
         {
+            Guid latestGuid = Guid.NewGuid();
             List<DomesticPaymentConsent> items = Enumerable.Range(start: 1, count: count)
                 .Select(
-                    i => new DomesticPaymentConsent
+                    i =>
                     {
-                        State = new ReadWriteProperty<string>("sdf", new TimeProvider(),null),
-                        BankProfileId = "sdf",
-                        OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
-                        OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
-                        Id = (-i).ToString()
+                        latestGuid = Guid.NewGuid();
+                        return new DomesticPaymentConsent
+                        {
+                            State = new ReadWriteProperty<string>(
+                                data: "sdf",
+                                timeProvider: new TimeProvider(),
+                                modifiedBy: null),
+                            BankProfileId = Guid.NewGuid(),
+                            OBWriteDomesticConsent = new OBWriteDomesticConsent4(),
+                            OBWriteDomesticConsentResponse = new OBWriteDomesticConsentResponse4(),
+                            //Id = (-i).ToString()
+                            Id = latestGuid
+                        };
                     }).ToList();
             foreach (var dc in items)
             {
@@ -117,7 +145,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
 
             _dbMultiEntityMethods.SaveChangesAsync().Wait();
 
-            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == count.ToString());
+            IQueryable<DomesticPaymentConsent> q = await _repo.GetAsync(x => x.Id == latestGuid);
 
             List<DomesticPaymentConsent> results = q.ToList();
 
