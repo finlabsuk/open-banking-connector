@@ -30,7 +30,7 @@ namespace OpenBankingConnector.Configuration.ObjectCmdlets
 
         protected override void ProcessRecord()
         {
-            BankProfile output = new BankProfile
+            BankApiInformation output = new BankApiInformation
             {
                 //BankRegistrationId = BankClientProfileId,
                 PaymentInitiationApi = new PaymentInitiationApi

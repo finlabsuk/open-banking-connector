@@ -8,20 +8,19 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using RequestBankProfile = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class CreateBankProfile
     {
-        private readonly IDbEntityRepository<BankProfile> _bankProfileRepo;
+        private readonly IDbEntityRepository<BankApiInformation> _bankProfileRepo;
         private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
         private readonly ITimeProvider _timeProvider;
 
         public CreateBankProfile(
-            IDbEntityRepository<BankProfile> bankProfileRepo,
+            IDbEntityRepository<BankApiInformation> bankProfileRepo,
             IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbEntityRepository<Bank> bankRepo,
             IDbMultiEntityMethods dbMultiEntityMethods,
@@ -34,7 +33,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _timeProvider = timeProvider;
         }
 
-        public async Task<BankProfileResponse> CreateAsync(RequestBankProfile request, string? createdBy)
+        public async Task<BankApiInformationResponse> CreateAsync(
+            Models.Public.Request.BankApiInformation request,
+            string? createdBy)
         {
             request.ArgNotNull(nameof(request));
 
@@ -46,18 +47,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // TODO: check bank profile only specifies APIs consistent with Bank.
 
             // Create and store persistent object
-            BankProfile persistentBankProfile = new BankProfile(
+            BankApiInformation bankApiInformation = new BankApiInformation(
                 timeProvider: _timeProvider,
                 paymentInitiationApi: request.PaymentInitiationApi,
                 bankId: bankId,
                 createdBy: createdBy);
-            await _bankProfileRepo.AddAsync(persistentBankProfile);
+            await _bankProfileRepo.AddAsync(bankApiInformation);
 
             // Update registration references
             if (request.ReplaceDefaultBankProfile || request.ReplaceStagingBankProfile)
             {
                 ReadWriteProperty<Guid?> profileId = new ReadWriteProperty<Guid?>(
-                    data: persistentBankProfile.Id,
+                    data: bankApiInformation.Id,
                     timeProvider: _timeProvider,
                     modifiedBy: null);
                 if (request.ReplaceDefaultBankProfile)
@@ -75,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             await _dbMultiEntityMethods.SaveChangesAsync();
 
             // Return response
-            return persistentBankProfile.PublicResponse;
+            return bankApiInformation.PublicResponse;
         }
     }
 }

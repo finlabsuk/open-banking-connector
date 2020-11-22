@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
     internal static class OAuth2RequestObjectClaimsFactory
     {
         public static OAuth2RequestObjectClaims CreateOAuth2RequestObjectClaims(
-            BankRegistration openBankingClient,
+            BankRegistration bankRegistration,
             string redirectUrl,
             string[] scope,
             string intentId,
@@ -20,14 +20,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
         {
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = openBankingClient.BankClientRegistration.ClientId,
+                Iss = bankRegistration.OBClientRegistration.ClientId,
                 Iat = DateTimeOffset.Now,
                 // TODO: Nbf is upcoming requirement.
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
-                Aud = issuerUrl,
+                Aud = bankRegistration.OAuth2RequestObjectClaimsOverrides?.Audience ??
+                      issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
-                ClientId = openBankingClient.BankClientRegistration.ClientId,
+                ClientId = bankRegistration.OBClientRegistration.ClientId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,

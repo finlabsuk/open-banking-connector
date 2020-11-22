@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     {
         Guid Id { get; }
 
-        OBClientRegistration BankClientRegistrationRequest { get; }
+        OBClientRegistration OBClientRegistrationRequest { get; }
 
         Guid BankId { get; }
     }
@@ -22,13 +22,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         internal BankRegistrationResponse(Guid id, OBClientRegistration bankClientRegistrationRequest, Guid bankId)
         {
             Id = id;
-            BankClientRegistrationRequest = bankClientRegistrationRequest;
+            OBClientRegistrationRequest = bankClientRegistrationRequest;
             BankId = bankId;
         }
 
         public Guid Id { get; }
 
-        public OBClientRegistration BankClientRegistrationRequest { get; }
+        public OBClientRegistration OBClientRegistrationRequest { get; }
         public Guid BankId { get; }
     }
 }

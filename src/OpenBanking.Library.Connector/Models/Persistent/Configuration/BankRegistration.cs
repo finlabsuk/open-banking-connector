@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -26,7 +27,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.SoftwareStatementProfileId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankClientRegistrationRequest)
+            builder.Property(e => e.OAuth2RequestObjectClaimsOverrides)
+                .HasConversion(
+                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
+                    convertFromProviderExpression: v =>
+                        JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.OBClientRegistrationRequest)
                 .HasConversion(
                     convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
                     convertFromProviderExpression: v =>
@@ -34,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankClientRegistration)
+            builder.Property(e => e.OBClientRegistration)
                 .HasConversion(
                     convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
                     convertFromProviderExpression: v =>

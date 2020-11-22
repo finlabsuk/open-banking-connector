@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers
 {
-    public interface IKeySecretProvider: IKeySecretReadOnlyProvider
+    public interface IKeySecretProvider : IKeySecretReadOnlyProvider
     {
         Task SetKeySecretAsync(KeySecret keySecret);
     }

@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
+    <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.BankTests</AssemblyName>
+    <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.BankTests</RootNamespace>
+    <Copyright>Finnovation Labs Limited</Copyright>
+    <Company>Finnovation Labs Limited</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Jering.Javascript.NodeJS" Version="5.4.3" />
+    <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.BankProfiles\OpenBanking.Library.Connector.BankProfiles.csproj" />
+    <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
+    <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
+    <ProjectReference Include="..\..\src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+  </ItemGroup>
+
+</Project>
+             

@@ -1,0 +1,9 @@
+{
+  "BankId": "00000000-0000-0000-0000-000000000000",
+  "ReplaceDefaultBankProfile": false,
+  "ReplaceStagingBankProfile": true,
+  "PaymentInitiationApi": {
+    "ApiVersion": "v3p1p4",
+    "BaseUrl": "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp"
+  }
+}

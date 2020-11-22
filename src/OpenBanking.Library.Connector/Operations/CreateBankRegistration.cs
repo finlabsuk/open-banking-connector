@@ -62,7 +62,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             SoftwareStatementProfileCached softwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(request.SoftwareStatementProfileId);
             Bank bank = await _bankRepo.GetAsync(request.BankId) ??
-                        throw new KeyNotFoundException($"No record found for BankId {request.BankId} specified by request.");
+                        throw new KeyNotFoundException(
+                            $"No record found for BankId {request.BankId} specified by request.");
 
             // STEP 1
             // Compute claims associated with Open Banking client
@@ -178,9 +179,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 timeProvider: _timeProvider,
                 softwareStatementProfileId: request.SoftwareStatementProfileId,
                 openIdConfiguration: openIdConfiguration,
-                bankClientRegistration: registrationResponse,
+                obClientRegistration: registrationResponse,
                 bankId: bank.Id,
-                bankClientRegistrationRequest: registrationClaims,
+                obClientRegistrationRequest: registrationClaims,
+                claimsOverrides: request.OAuth2RequestObjectClaimsOverrides,
                 createdBy: createdBy);
             await _bankRegistrationRepo.AddAsync(bankRegistration);
 

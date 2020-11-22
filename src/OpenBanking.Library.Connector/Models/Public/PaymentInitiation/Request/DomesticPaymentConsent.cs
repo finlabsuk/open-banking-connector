@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     <see cref="Persistent.Bank.StagingBankProfileId" /> (depending on
         ///     <see cref="UseStagingNotDefaultBankProfile" />).
         /// </summary>
-        public Guid? BankProfileId { get; set; }
+        public Guid? BankApiInformationId { get; set; }
 
         /// <summary>
         ///     Specifies BankRegistration to be used for consent.
@@ -50,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     <see cref="Persistent.Bank.DefaultBankProfileId" />
         ///     and
         ///     <see cref="Persistent.Bank.StagingBankProfileId" />.
-        ///     See <see cref="BankProfileId" /> for info on how BankProfile is specified.
+        ///     See <see cref="BankApiInformationId" /> for info on how BankProfile is specified.
         /// </summary>
         public bool UseStagingNotDefaultBankProfile { get; set; }
 
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 
         /// <summary>
         ///     Used to specify BankRegistration for consent when <see cref="BankRegistrationId" /> is null.
-        ///     Used to specify BankProfile for consent when <see cref="BankProfileId" /> is null.
+        ///     Used to specify BankProfile for consent when <see cref="BankApiInformationId" /> is null.
         ///     Otherwise ignored.
         /// </summary>
         public Guid? BankId { get; set; }

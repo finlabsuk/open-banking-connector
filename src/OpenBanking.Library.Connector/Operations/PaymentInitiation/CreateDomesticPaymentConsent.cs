@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 {
     internal class CreateDomesticPaymentConsent
     {
-        private readonly IDbReadOnlyEntityRepository<BankProfile> _bankProfileRepo;
+        private readonly IDbReadOnlyEntityRepository<BankApiInformation> _bankProfileRepo;
         private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbReadOnlyEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         private readonly ITimeProvider _timeProvider;
 
         public CreateDomesticPaymentConsent(
-            IDbReadOnlyEntityRepository<BankProfile> bankProfileRepo,
+            IDbReadOnlyEntityRepository<BankApiInformation> bankProfileRepo,
             IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
             IDbReadOnlyEntityRepository<Bank> bankRepo,
             IDbMultiEntityMethods dbMultiEntityMethods,
@@ -79,8 +79,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Determine Bank, BankRegistration, BankProfile based on request properties
             Bank bank;
             BankRegistration bankRegistration;
-            BankProfile bankProfile;
-            if (request.BankRegistrationId is null || request.BankProfileId is null)
+            BankApiInformation bankApiInformation;
+            if (request.BankRegistrationId is null || request.BankApiInformationId is null)
             {
                 if (request.BankId is null)
                 {
@@ -117,7 +117,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 
                 Guid bankProfileId;
-                if (request.BankProfileId is null)
+                if (request.BankApiInformationId is null)
                 {
                     if (request.UseStagingNotDefaultBankProfile)
                     {
@@ -133,12 +133,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 }
                 else
                 {
-                    bankProfileId = request.BankProfileId.Value;
+                    bankProfileId = request.BankApiInformationId.Value;
                 }
 
-                bankProfile = await _bankProfileRepo.GetAsync(bankProfileId) ??
-                              throw new KeyNotFoundException(
-                                  $"No record found for BankProfileId {bankProfileId} specified by request properties.");
+                bankApiInformation = await _bankProfileRepo.GetAsync(bankProfileId) ??
+                                     throw new KeyNotFoundException(
+                                         $"No record found for BankProfileId {bankProfileId} specified by request properties.");
             }
             else
             {
@@ -146,24 +146,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 bankRegistration = await _bankRegistrationRepo.GetAsync(bankRegistrationId) ??
                                    throw new KeyNotFoundException(
                                        $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-                Guid bankProfileId = request.BankProfileId.Value;
-                bankProfile = await _bankProfileRepo.GetAsync(bankProfileId) ??
-                              throw new KeyNotFoundException(
-                                  $"No record found for BankProfileId {bankProfileId} specified by request.");
-                if (bankProfile.BankId != bankRegistration.BankId)
+                Guid bankProfileId = request.BankApiInformationId.Value;
+                bankApiInformation = await _bankProfileRepo.GetAsync(bankProfileId) ??
+                                     throw new KeyNotFoundException(
+                                         $"No record found for BankProfileId {bankProfileId} specified by request.");
+                if (bankApiInformation.BankId != bankRegistration.BankId)
                 {
                     throw new ArgumentException(
                         "BankRegistrationId and BankProfileId objects do not share same BankId.");
                 }
 
-                Guid bankId = bankProfile.BankId;
+                Guid bankId = bankApiInformation.BankId;
                 bank = await _bankRepo.GetAsync(bankId)
                        ?? throw new KeyNotFoundException(
                            $"No record found for BankId {bankId} specified by BankRegistrationId and BankProfileId objects.");
             }
 
             // Checks
-            PaymentInitiationApi paymentInitiationApi = bankProfile.PaymentInitiationApi ??
+            PaymentInitiationApi paymentInitiationApi = bankApiInformation.PaymentInitiationApi ??
                                                         throw new NullReferenceException(
                                                             "Bank profile does not support PaymentInitiation API");
 
@@ -222,12 +222,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             if (redirectUrl == "")
             {
-                redirectUrl = bankRegistration.BankClientRegistrationRequest.RedirectUris[0];
+                redirectUrl = bankRegistration.OBClientRegistrationRequest.RedirectUris[0];
             }
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
-                    openBankingClient: bankRegistration,
+                    bankRegistration: bankRegistration,
                     redirectUrl: redirectUrl,
                     scope: new[] { "openid", "payments" },
                     intentId: consentId,
@@ -255,13 +255,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             };
             string queryString = keyValuePairs.ToUrlEncoded();
             string authUrl = bankRegistration.OpenIdConfiguration.AuthorizationEndpoint + "?" + queryString;
+            StringBuilder authUrlTraceSb = new StringBuilder()
+                .AppendLine("#### Auth URL (Domestic Consent)")
+                .Append(authUrl);
+            _instrumentationClient.Info(authUrlTraceSb.ToString());
 
             // Create and store persistent object
             DomesticPaymentConsent persistedDomesticPaymentConsent = new DomesticPaymentConsent(
                 timeProvider: _timeProvider,
                 state: oAuth2RequestObjectClaims.State,
                 bankRegistrationId: bankRegistration.Id,
-                bankProfileId: bankProfile.Id,
+                bankApiInformationId: bankApiInformation.Id,
                 obWriteDomesticConsent: requestDomesticConsent,
                 obWriteDomesticConsentResponse: consentResponse,
                 createdBy: createdBy);
@@ -289,23 +293,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 { "grant_type", "client_credentials" },
                 { "scope", scope }
             };
-            if (client.BankClientRegistrationRequest.TokenEndpointAuthMethod ==
+            if (client.OBClientRegistrationRequest.TokenEndpointAuthMethod ==
                 TokenEndpointAuthMethodEnum.TlsClientAuth)
             {
-                keyValuePairs["client_id"] = client.BankClientRegistration.ClientId;
+                keyValuePairs["client_id"] = client.OBClientRegistration.ClientId;
             }
-            else if (client.BankClientRegistrationRequest.TokenEndpointAuthMethod ==
+            else if (client.OBClientRegistrationRequest.TokenEndpointAuthMethod ==
                      TokenEndpointAuthMethodEnum.ClientSecretBasic)
             {
-                client.BankClientRegistration.ClientSecret.InvalidOpOnNull("No client secret available.");
-                string authString = client.BankClientRegistration.ClientId + ":" +
-                                    client.BankClientRegistration.ClientSecret;
+                client.OBClientRegistration.ClientSecret.InvalidOpOnNull("No client secret available.");
+                string authString = client.OBClientRegistration.ClientId + ":" +
+                                    client.OBClientRegistration.ClientSecret;
                 byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
                 authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
             }
             else
             {
-                if (client.BankClientRegistrationRequest.TokenEndpointAuthMethod ==
+                if (client.OBClientRegistrationRequest.TokenEndpointAuthMethod ==
                     TokenEndpointAuthMethodEnum.TlsClientAuth)
                 {
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");

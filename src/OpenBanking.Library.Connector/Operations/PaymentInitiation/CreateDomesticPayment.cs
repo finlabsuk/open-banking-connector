@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 {
     internal class CreateDomesticPayment
     {
-        private readonly IDbReadOnlyEntityRepository<BankProfile> _bankProfileRepo;
+        private readonly IDbReadOnlyEntityRepository<BankApiInformation> _bankProfileRepo;
         private readonly IDbReadOnlyEntityRepository<BankRegistration> _bankRegistrationRepo;
         private readonly IDbReadOnlyEntityRepository<Bank> _bankRepo;
         private readonly IDbMultiEntityMethods _dbMultiEntityMethods;
@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         public CreateDomesticPayment(
             IDbReadOnlyEntityRepository<Bank> bankRepo,
-            IDbReadOnlyEntityRepository<BankProfile> bankProfileRepo,
+            IDbReadOnlyEntityRepository<BankApiInformation> bankProfileRepo,
             IDbReadOnlyEntityRepository<DomesticPaymentConsent> domesticConsentRepo,
             IEntityMapper mapper,
             IDbReadOnlyEntityRepository<BankRegistration> bankRegistrationRepo,
@@ -77,11 +77,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     id: domesticPaymentConsentId,
                     detachFirst: true) // ensure detached to clear cache as may have been updated in another DB context
                 ?? throw new KeyNotFoundException("The Consent does not exist.");
-            BankProfile bankProfile = await _bankProfileRepo.GetAsync(paymentConsent.BankProfileId)
-                                      ?? throw new KeyNotFoundException("The API Profile does not exist.");
+            BankApiInformation bankApiInformation = await _bankProfileRepo.GetAsync(paymentConsent.BankApiInformationId)
+                                                    ?? throw new KeyNotFoundException(
+                                                        "The API Profile does not exist.");
 
             // Checks
-            PaymentInitiationApi paymentInitiationApi = bankProfile.PaymentInitiationApi ??
+            PaymentInitiationApi paymentInitiationApi = bankApiInformation.PaymentInitiationApi ??
                                                         throw new NullReferenceException(
                                                             "Bank profile does not support PaymentInitiation API");
 
@@ -89,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             BankRegistration bankRegistration = await _bankRegistrationRepo.GetAsync(paymentConsent.BankRegistrationId)
                                                 ?? throw new KeyNotFoundException(
                                                     "The Bank Client Profile does not exist.");
-            Bank bank = await _bankRepo.GetAsync(bankProfile.BankId)
+            Bank bank = await _bankRepo.GetAsync(bankApiInformation.BankId)
                         ?? throw new KeyNotFoundException("No record found for BankId in BankProfile.");
             SoftwareStatementProfileCached softwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(bankRegistration.SoftwareStatementProfileId);

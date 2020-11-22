@@ -22,6 +22,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access
             _keySecretReadOnlyProvider = keySecretReadOnlyProvider;
         }
 
+        public Task<TItem> GetAsync(string id) =>
+            Helpers.GetAsync<TItem>(
+                keyFcn: s => Helpers.KeyWithId<TItem>(id: id, propertyName: s),
+                idPropertyValue: id,
+                keySecretReadOnlyProvider: _keySecretReadOnlyProvider);
+
         public Task<string> GetAsync(string id, string propertyName) =>
             Helpers.GetAsync(
                 keyFcn: s => Helpers.KeyWithId<TItem>(id: id, propertyName: s),
@@ -32,12 +38,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access
             Helpers.GetListAsync(
                 keyFcn: s => Helpers.KeyWithId<TItem>(id: id, propertyName: s),
                 property: typeof(TItem).GetProperty(propertyName),
-                keySecretReadOnlyProvider: _keySecretReadOnlyProvider);
-
-        public Task<TItem> GetAsync(string id) =>
-            Helpers.GetAsync<TItem>(
-                keyFcn: s => Helpers.KeyWithId<TItem>(id: id, propertyName: s),
-                idPropertyValue: id,
                 keySecretReadOnlyProvider: _keySecretReadOnlyProvider);
     }
 }

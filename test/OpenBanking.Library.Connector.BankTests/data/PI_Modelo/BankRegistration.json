@@ -1,0 +1,11 @@
+{
+  "SoftwareStatementProfileId": "payment-initiation",
+  "BankRegistrationResponseJsonOptions": {
+    "DateTimeOffsetUnixConverterOptions": 1,
+    "DelimitedStringConverterOptions": 0
+  },
+  "BankId": "00000000-0000-0000-0000-000000000000",
+  "ReplaceDefaultBankRegistration": false,
+  "ReplaceStagingBankRegistration": true,
+  "AllowMultipleRegistrations": true
+}

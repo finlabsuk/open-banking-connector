@@ -22,9 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
         private static string ApiTypesToScope(RegistrationScopeApiSet registrationScopeApiSet)
         {
             // Combine scope words for individual API types prepending "openid"
-            IEnumerable<string> scopeWordsIEnumerable = ApiTypeHelper.AllApiTypes
-                .Where(x => registrationScopeApiSet.HasFlag(ApiTypeHelper.ApiTypeSetWithSingleApiType(x)))
-                .Select(ApiTypeHelper.ScopeWord)
+            IEnumerable<string> scopeWordsIEnumerable = RegistrationScopeApiHelper.AllApiTypes
+                .Where(x => registrationScopeApiSet.HasFlag(RegistrationScopeApiHelper.ApiTypeSetWithSingleApiType(x)))
+                .Select(RegistrationScopeApiHelper.ScopeWord)
                 .Prepend("openid")
                 .Distinct(); // for safety
 
@@ -40,7 +40,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
             sProfile.ArgNotNull(nameof(sProfile));
 
             // Check API types
-            bool apiTypesIsSubset = (registrationScopeApiSet & sProfile.SoftwareStatementPayload.RegistrationScopeApiSet) == registrationScopeApiSet;
+            bool apiTypesIsSubset =
+                (registrationScopeApiSet & sProfile.SoftwareStatementPayload.RegistrationScopeApiSet) ==
+                registrationScopeApiSet;
             if (!apiTypesIsSubset)
             {
                 throw new InvalidOperationException(

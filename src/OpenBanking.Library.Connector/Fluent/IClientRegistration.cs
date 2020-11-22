@@ -17,7 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         /// <summary>
         ///     API for BankProfile object which adds configures functional API endpoints for a BankRegistration
         /// </summary>
-        IFluentContextLocalEntity<BankProfile, BankProfileResponse, IBankProfilePublicQuery> BankProfiles { get; }
+        IFluentContextLocalEntity<BankApiInformation, BankApiInformationResponse, IBankApiInformationPublicQuery>
+            BankApiInformationObjects { get; }
 
         /// <summary>
         ///     API for BankRegistration object which corresponds to an OAuth2 client registration with a bank (represented by a

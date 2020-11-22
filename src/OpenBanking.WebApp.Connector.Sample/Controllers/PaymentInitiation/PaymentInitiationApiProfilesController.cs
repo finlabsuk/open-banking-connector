@@ -30,16 +30,16 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [Route("pisp/api-profiles")]
         [HttpPost]
         [ProducesResponseType(
-            type: typeof(HttpResponse<BankProfileResponse>),
+            type: typeof(HttpResponse<BankApiInformationResponse>),
             statusCode: StatusCodes.Status201Created)]
         [ProducesResponseType(type: typeof(MessagesResponse), statusCode: StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankProfile request)
+        public async Task<IActionResult> ClientProfilesPostAsync([FromBody] BankApiInformation request)
         {
-            FluentResponse<BankProfileResponse> clientResp = await _obRequestBuilder.ClientRegistration
-                .BankProfiles
+            FluentResponse<BankApiInformationResponse> clientResp = await _obRequestBuilder.ClientRegistration
+                .BankApiInformationObjects
                 .PostAsync(request);
 
-            HttpResponse<BankProfileResponse> result = new HttpResponse<BankProfileResponse>(
+            HttpResponse<BankApiInformationResponse> result = new HttpResponse<BankApiInformationResponse>(
                 data: clientResp.Data,
                 messages: clientResp.ToMessagesResponse());
 

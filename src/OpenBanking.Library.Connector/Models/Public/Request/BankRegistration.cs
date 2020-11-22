@@ -39,6 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 
         public BankRegistrationResponseOverrides? BankRegistrationResponseOverrides { get; set; }
 
+        public OAuth2RequestObjectClaimsOverrides? OAuth2RequestObjectClaimsOverrides { get; set; }
+
         /// <summary>
         ///     Bank for which this registration is to be created.
         /// </summary>

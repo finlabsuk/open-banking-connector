@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             ITimeProvider timeProvider,
             string state,
             Guid bankRegistrationId,
-            Guid bankProfileId,
+            Guid bankApiInformationId,
             OBWriteDomesticConsent4 obWriteDomesticConsent,
             OBWriteDomesticConsentResponse4 obWriteDomesticConsentResponse,
             string? createdBy)
@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 timeProvider: timeProvider,
                 modifiedBy: createdBy);
             BankRegistrationId = bankRegistrationId;
-            BankProfileId = bankProfileId;
+            BankApiInformationId = bankApiInformationId;
             OBWriteDomesticConsent = obWriteDomesticConsent;
             OBWriteDomesticConsentResponse = obWriteDomesticConsentResponse;
             Id = Guid.NewGuid();
@@ -71,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public Guid BankRegistrationId { get; set; }
 
-        public Guid BankProfileId { get; set; }
+        public Guid BankApiInformationId { get; set; }
 
         public OBWriteDomesticConsentResponse4 OBWriteDomesticConsentResponse { get; set; } = null!;
 
@@ -94,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 id: Id,
                 obWriteDomesticConsentResponse: OBWriteDomesticConsentResponse,
                 bankRegistrationId: BankRegistrationId,
-                bankProfileId: BankProfileId);
+                BankApiInformationId: BankApiInformationId);
 
         public Task BankApiDeleteAsync()
         {
@@ -144,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? createdBy)
         {
             CreateDomesticPaymentConsent i = new CreateDomesticPaymentConsent(
-                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
+                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankApiInformation>(),
                 bankRegistrationRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
                 dbMultiEntityMethods: context.DbContextService,
