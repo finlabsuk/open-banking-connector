@@ -13,7 +13,8 @@ using FluentValidation.Results;
 using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankRegistration;
 using OBClientRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models.OBClientRegistration1;
-
+using OAuth2RequestObjectClaimsOverridesRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.OAuth2RequestObjectClaimsOverrides;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -39,9 +40,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             ITimeProvider timeProvider,
             string softwareStatementProfileId,
             OpenIdConfiguration openIdConfiguration,
-            OBClientRegistration bankClientRegistration,
+            OBClientRegistration obClientRegistration,
             Guid bankId,
-            OBClientRegistration bankClientRegistrationRequest,
+            OBClientRegistration obClientRegistrationRequest,
+            OAuth2RequestObjectClaimsOverridesRequest? claimsOverrides,
             string? createdBy)
         {
             Created = timeProvider.GetUtcNow();
@@ -49,8 +51,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
             SoftwareStatementProfileId = softwareStatementProfileId;
             OpenIdConfiguration = openIdConfiguration;
-            BankClientRegistrationRequest = bankClientRegistrationRequest;
-            BankClientRegistration = bankClientRegistration;
+            OBClientRegistrationRequest = obClientRegistrationRequest;
+            OBClientRegistration = obClientRegistration;
+            OAuth2RequestObjectClaimsOverrides = claimsOverrides;
             Id = Guid.NewGuid();
             BankId = bankId;
         }
@@ -59,7 +62,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;
 
-        public OBClientRegistration BankClientRegistration { get; set; } = null!;
+        public OBClientRegistration OBClientRegistration { get; set; } = null!;
+
+        public OAuth2RequestObjectClaimsOverridesRequest? OAuth2RequestObjectClaimsOverrides { get; set; }
 
         /// <summary>
         ///     Bank this registration is with.
@@ -68,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         // TODO: Add MTLS configuration
 
-        public OBClientRegistration BankClientRegistrationRequest { get; set; } = null!;
+        public OBClientRegistration OBClientRegistrationRequest { get; set; } = null!;
 
         public Guid Id { get; set; }
 
@@ -80,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public BankRegistrationResponse PublicResponse =>
             new BankRegistrationResponse(
                 id: Id,
-                bankClientRegistrationRequest: BankClientRegistrationRequest,
+                bankClientRegistrationRequest: OBClientRegistrationRequest,
                 bankId: BankId);
 
         public Func<ISharedContext, BankRegistrationRequest, string?, Task<BankRegistrationResponse>>

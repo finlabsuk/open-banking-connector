@@ -280,6 +280,9 @@ src/OpenBanking.Library.Connector/*.db-wal
 # PowerShell scripts
 src/OpenBankingConnector.Configuration/Scripts/
 
-# Dev solutions and projects
-*.Dev.sln*
-*.Dev.proj
+# Environment variables file
+.env
+
+# TypeScript build results
+tsconfig.tsbuildinfo
+test/BankTestsConsentAuthoriser/.build/

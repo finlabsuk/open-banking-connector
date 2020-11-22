@@ -94,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         {
             CreateDomesticPayment i = new CreateDomesticPayment(
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
-                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
+                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankApiInformation>(),
                 domesticConsentRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<DomesticPaymentConsent>(),
                 mapper: context.EntityMapper,

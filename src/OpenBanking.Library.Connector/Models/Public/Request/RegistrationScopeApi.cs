@@ -9,6 +9,9 @@ using System.Runtime.Serialization;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
+    /// <summary>
+    ///     UK Open Banking API configured in bank registration scope
+    /// </summary>
     public enum RegistrationScopeApi
     {
         [EnumMember(Value = "accountAndTransaction")]
@@ -21,9 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         FundsConfirmation,
     }
 
-    public static class ApiTypeHelper
+    public static class RegistrationScopeApiHelper
     {
-        static ApiTypeHelper()
+        static RegistrationScopeApiHelper()
         {
             AllApiTypes = Enum.GetValues(typeof(RegistrationScopeApi))
                 .Cast<RegistrationScopeApi>();

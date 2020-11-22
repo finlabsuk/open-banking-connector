@@ -1,0 +1,6 @@
+{
+  "RegistrationScopeApiSet": "paymentInitiation",
+  "IssuerUrl": "https://ob19-auth1-ui.o3bank.co.uk",
+  "FinancialId": "0015800001041RHAAY",
+  "Name": "placeholder: dynamically generated based on unused names"
+}

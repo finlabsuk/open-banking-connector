@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 
         Guid BankRegistrationId { get; }
 
-        Guid BankProfileId { get; }
+        Guid BankApiInformationId { get; }
     }
 
     public class DomesticPaymentConsentResponse : IDomesticPaymentConsentPublicQuery
@@ -26,19 +26,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid id,
             OBWriteDomesticConsentResponse obWriteDomesticConsentResponse,
             Guid bankRegistrationId,
-            Guid bankProfileId)
+            Guid BankApiInformationId)
         {
             AuthUrl = authUrl;
             Id = id;
             OBWriteDomesticConsentResponse = obWriteDomesticConsentResponse;
             BankRegistrationId = bankRegistrationId;
-            BankProfileId = bankProfileId;
+            this.BankApiInformationId = BankApiInformationId;
         }
 
         public string? AuthUrl { get; set; } // may be set after default initialisation code which doesn't set it
         public Guid Id { get; }
         public OBWriteDomesticConsentResponse OBWriteDomesticConsentResponse { get; }
         public Guid BankRegistrationId { get; }
-        public Guid BankProfileId { get; }
+        public Guid BankApiInformationId { get; }
     }
 }

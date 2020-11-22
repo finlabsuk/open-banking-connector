@@ -24,8 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             new FluentContext<Models.Persistent.BankRegistration, BankRegistration, BankRegistrationResponse,
                 IBankRegistrationPublicQuery>(_sharedContext);
 
-        public IFluentContextLocalEntity<BankProfile, BankProfileResponse, IBankProfilePublicQuery> BankProfiles =>
-            new FluentContext<Models.Persistent.BankProfile, BankProfile, BankProfileResponse, IBankProfilePublicQuery>(
-                _sharedContext);
+        public IFluentContextLocalEntity<BankApiInformation, BankApiInformationResponse, IBankApiInformationPublicQuery>
+            BankApiInformationObjects =>
+            new FluentContext<Models.Persistent.BankApiInformation, BankApiInformation, BankApiInformationResponse,
+                IBankApiInformationPublicQuery>(_sharedContext);
     }
 }

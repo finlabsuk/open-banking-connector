@@ -1,0 +1,31 @@
+{
+  "Merchant": {
+    "PaymentContextCode": "EcommerceGoods",
+    "DeliveryAddress": {
+      "StreetName": "Oxford Street",
+      "BuildingNumber": "42",
+      "PostCode": "SW1 1AA",
+      "TownName": "London",
+      "Country": "UK"
+    }
+  },
+  "CreditorAccount": {
+    "SchemeName": "UK.OBIE.SortCodeAccountNumber",
+    "Identification": "08080021325698",
+    "Name": "ACME DIY",
+    "SecondaryIdentification": "secondary-identif"
+  },
+  "InstructedAmount": {
+    "Amount": "50.00",
+    "Currency": "GBP"
+  },
+  "InstructionIdentification": "instr-identification",
+  "EndToEndIdentification": "e2e-identification",
+  "RemittanceInformation": {
+    "Unstructured": "Tools",
+    "Reference": "Tools"
+  },
+  "UseStagingNotDefaultBankProfile": true,
+  "UseStagingNotDefaultBankRegistration": true,
+  "BankId": "00000000-0000-0000-0000-000000000000"
+}

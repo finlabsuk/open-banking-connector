@@ -75,6 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
         public IClientRegistration ClientRegistration => new ClientRegistration(CreateContext());
         public IPaymentInitiation PaymentInitiation => new PaymentInitiation(CreateContext());
+
         public IAccountAndTransaction AccountAndTransaction =>
             new AccountAndTransaction(CreateContext());
 

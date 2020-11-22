@@ -18,9 +18,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validation
         private void CreateRules()
         {
             RuleFor(x => x.RegistrationScopeApiSet)
-                .Must(x=> (x & RegistrationScopeApiSet.All) != RegistrationScopeApiSet.None)
+                .Must(x => (x & RegistrationScopeApiSet.All) != RegistrationScopeApiSet.None)
                 .WithMessage($"{nameof(Bank.RegistrationScopeApiSet)} did not include one or more valid API types.");
-            
+
             RuleFor(x => x.Name)
                 .Must(ValidationRules.IsNotNullOrEmpty)
                 .WithMessage($"Missing or invalid {nameof(Bank.Name)}.");

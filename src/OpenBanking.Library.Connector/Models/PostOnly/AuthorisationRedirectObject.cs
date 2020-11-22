@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.PostOnly
         {
             PostAuthorisationRedirectObject handler = new PostAuthorisationRedirectObject(
                 bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
-                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankProfile>(),
+                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankApiInformation>(),
                 dbContextService: context.DbContextService,
                 domesticConsentRepo: context.DbEntityRepositoryFactory
                     .CreateDbEntityRepository<DomesticPaymentConsent>(),

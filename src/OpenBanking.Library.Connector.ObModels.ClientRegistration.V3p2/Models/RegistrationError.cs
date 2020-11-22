@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistrat
         /// 'invalid_redirect_uri', 'invalid_client_metadata',
         /// 'invalid_software_statement',
         /// 'unapproved_software_statement'</param>
-        public RegistrationError(RegistrationErrorEnum error, string errorDescription = default(string))
+        public RegistrationError(ErrorEnum error, string errorDescription = default(string))
         {
             Error = error;
             ErrorDescription = errorDescription;
@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistrat
         /// 'unapproved_software_statement'
         /// </summary>
         [JsonProperty(PropertyName = "error")]
-        public RegistrationErrorEnum Error { get; set; }
+        public ErrorEnum Error { get; set; }
 
         /// <summary>
         /// </summary>

@@ -12,7 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 namespace OpenBankingConnector.Configuration.RecordCmdlets
 {
     [Cmdlet(verbName: VerbsCommon.New, nounName: "PaymentInitiationApiProfileRecord")]
-    [OutputType(typeof(FluentResponse<BankProfileResponse>))]
+    [OutputType(typeof(FluentResponse<BankApiInformationResponse>))]
     public class NewPaymentInitiationApiProfileRecord : RecordBaseCmdlet
     {
         public NewPaymentInitiationApiProfileRecord() : base(
@@ -21,7 +21,7 @@ namespace OpenBankingConnector.Configuration.RecordCmdlets
             deleteAndRecreateDb: false) { }
 
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public BankProfile? PaymentInitiationApiProfile { get; set; }
+        public BankApiInformation PaymentInitiationApiProfile { get; set; }
 
         protected override void ProcessRecordInner(IServiceProvider services)
         {

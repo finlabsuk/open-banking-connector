@@ -9,6 +9,9 @@ using Newtonsoft.Json.Converters;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
+    /// <summary>
+    ///     Set of <see cref="RegistrationScopeApi" />.
+    /// </summary>
     [Flags]
     [JsonConverter(typeof(StringEnumConverter))]
     public enum RegistrationScopeApiSet
@@ -25,5 +28,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         FundsConfirmation = 4,
 
         [EnumMember(Value = "all")] All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
+    }
+
+    public static class RegistrationScopeApiSetHelper
+    {
+        /// <summary>
+        ///     Mapping from API set to abbreviated name
+        /// </summary>
+        public static string AbbreviatedName(RegistrationScopeApiSet registrationScopeApiSet) =>
+            registrationScopeApiSet switch
+            {
+                RegistrationScopeApiSet.AccountAndTransaction => "AT",
+                RegistrationScopeApiSet.PaymentInitiation => "PI",
+                RegistrationScopeApiSet.FundsConfirmation => "FC",
+                RegistrationScopeApiSet.All => "All",
+                _ => throw new ArgumentException(
+                    $"{nameof(registrationScopeApiSet)} is not valid ${nameof(RegistrationScopeApiSet)} or needs to be added to this switch statement.")
+            };
     }
 }

@@ -25,9 +25,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="FluentValidation" Version="9.2.2" />
-    <PackageReference Include="jose-jwt" Version="2.6.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0-rc.2.20475.6" />
+    <PackageReference Include="FluentValidation" Version="9.3.0" />
+    <PackageReference Include="jose-jwt" Version="2.6.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
@@ -37,6 +37,9 @@
     <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj" />
     <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p2.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p2.PaymentInitiation.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p4.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p4.PaymentInitiation.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p6.PaymentInitiation.csproj" />
   </ItemGroup>
 
 </Project>

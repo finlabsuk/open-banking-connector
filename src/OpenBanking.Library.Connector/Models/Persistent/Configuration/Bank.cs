@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.Property(e => e.ModifiedBy)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.HasOne<Persistent.BankProfile>()
+                    od.HasOne<Persistent.BankApiInformation>()
                         .WithOne()
                         .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
@@ -94,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.Property(e => e.ModifiedBy)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.HasOne<Persistent.BankProfile>()
+                    od.HasOne<Persistent.BankApiInformation>()
                         .WithOne()
                         .HasForeignKey<ReadWriteProperty<Guid?>>(b => b.Data);
                 });
