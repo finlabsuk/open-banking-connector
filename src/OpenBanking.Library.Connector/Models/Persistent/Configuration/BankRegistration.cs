@@ -2,12 +2,18 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
@@ -27,25 +33,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.SoftwareStatementProfileId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.RegistrationScope)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            // TODO: check how this conversion handles invalid data
+            builder.Property(e => e.ClientRegistrationApi)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => Enum.Parse<ClientRegistrationApiVersion>(v));
             builder.Property(e => e.OAuth2RequestObjectClaimsOverrides)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
                         JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBClientRegistrationRequest)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
-                        JsonConvert.DeserializeObject<OBClientRegistration1>(v))
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBClientRegistration)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
-                        JsonConvert.DeserializeObject<OBClientRegistration1>(v))
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             // Top-level foreign keys
@@ -56,21 +71,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 
             // Second-level property info and foreign keys
             builder.OwnsOne(
-                navigationExpression: e => e.OpenIdConfiguration,
-                buildAction: od =>
+                e => e.OpenIdConfiguration,
+                od =>
                 {
                     od.Property(p => p.ResponseTypesSupported)
                         .HasConversion(
-                            convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                            convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.DeserializeObject<IList<string>>(v)!,
+                            new ValueComparer<IList<string>>(
+                                (c1, c2) => c1.SequenceEqual(c2),
+                                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                                c => c));
                     od.Property(p => p.ScopesSupported)
                         .HasConversion(
-                            convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                            convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.DeserializeObject<IList<string>>(v)!,
+                            new ValueComparer<IList<string>>(
+                                (c1, c2) => c1.SequenceEqual(c2),
+                                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                                c => c));
                     od.Property(p => p.ResponseModesSupported)
                         .HasConversion(
-                            convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                            convertFromProviderExpression: v => JsonConvert.DeserializeObject<string[]>(v));
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.DeserializeObject<IList<string>>(v)!,
+                            new ValueComparer<IList<string>>(
+                                (c1, c2) => c1.SequenceEqual(c2),
+                                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                                c => c));
                 });
             builder.Navigation(p => p.OpenIdConfiguration).IsRequired();
         }

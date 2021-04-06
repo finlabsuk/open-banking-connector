@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [InlineData(null, null, null)]
         public void Ctor_NullParameters_ExceptionThrown(string vault, string key, string value)
         {
-            Action a = () => new KeySecret(vaultName: vault, key: key, value: value);
+            Func<KeySecret> a = () => new KeySecret(vault, key, value);
 
             a.Should().Throw<ArgumentNullException>();
         }
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             Func<bool> rule = () =>
             {
-                var ks = new KeySecret(vaultName: vault, key: key, value: value);
+                KeySecret ks = new KeySecret(vault, key, value);
 
                 return ks.VaultName == vault && ks.Key == key && ks.Value == value;
             };

@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using OBWriteDomesticResponse =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBWriteDomesticResponse4;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
 {
@@ -29,9 +29,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBWriteDomesticResponse)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
-                        JsonConvert.DeserializeObject<OBWriteDomesticResponse>(v))
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }
     }

@@ -4,8 +4,8 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
 using Xunit;
@@ -30,11 +30,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Securit
         [Fact]
         public void GetCertificateAsync_FileNotFound_CertificateNotReturned()
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
-            var fileName = Guid.NewGuid() + ".pfx";
+            string fileName = Guid.NewGuid() + ".pfx";
 
-            var certificate = new FileCertificateReader(path).GetCertificateAsync(fileName).Result;
+            X509Certificate2? certificate = new FileCertificateReader(path).GetCertificateAsync(fileName).Result;
 
             certificate.Should().BeNull();
         }

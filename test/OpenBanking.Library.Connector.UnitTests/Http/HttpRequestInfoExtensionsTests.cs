@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FluentAssertions;
@@ -18,16 +20,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("application/pdf")]
         public void Create_ContentTypesPreserved(string contentType)
         {
-            var info = new HttpRequestInfo
+            HttpRequestInfo info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests"),
                 Content = "abcdef"
             };
             info.ContentTypes.Add(contentType);
 
-            var result = info.CreateRequestMessage();
+            HttpRequestMessage result = info.CreateRequestMessage();
 
-            var resultContentTypes = result.Content.Headers.ContentType as MediaTypeWithQualityHeaderValue;
+            MediaTypeWithQualityHeaderValue resultContentTypes =
+                (MediaTypeWithQualityHeaderValue) result.Content.Headers.ContentType;
 
             resultContentTypes.MediaType.Should().Be(contentType);
         }
@@ -37,15 +40,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("Mozilla")]
         public void Create_UserAgentPreserved(string userAgent)
         {
-            var info = new HttpRequestInfo
+            HttpRequestInfo info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests"),
                 UserAgent = userAgent
             };
 
-            var result = info.CreateRequestMessage();
+            HttpRequestMessage result = info.CreateRequestMessage();
 
-            var resultAgents = result.Headers.UserAgent.OfType<ProductInfoHeaderValue>().Select(v => v.Product.Name);
+            IEnumerable<string> resultAgents =
+                result.Headers.UserAgent.OfType<ProductInfoHeaderValue>().Select(v => v.Product.Name);
 
             resultAgents.Should().BeEquivalentTo(userAgent);
         }
@@ -53,13 +57,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [Fact]
         public void Create_EmptyContentTypesProduceDefaults()
         {
-            var info = new HttpRequestInfo
+            HttpRequestInfo info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests")
             };
             info.ContentTypes.Clear();
 
-            var result = info.CreateRequestMessage();
+            HttpRequestMessage result = info.CreateRequestMessage();
 
             result.Headers.Accept.Should().HaveCount(2);
         }

@@ -8,14 +8,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
     public class AuthorisationCallbackPayload
     {
+        public AuthorisationCallbackPayload(string idToken, string code, string state, string? nonce)
+        {
+            IdToken = idToken;
+            Code = code;
+            State = state;
+            Nonce = nonce;
+        }
+
+
         [JsonProperty("id_token")]
-        public string Id_Token { get; set; } = null!;
+        public string IdToken { get; set; }
 
         [JsonProperty("code")]
-        public string Code { get; set; } = null!;
+        public string Code { get; set; }
 
         [JsonProperty("state")]
-        public string State { get; set; } = null!;
+        public string State { get; set; }
 
         [JsonProperty("nonce", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string? Nonce { get; set; }

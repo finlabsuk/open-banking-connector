@@ -3,14 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FluentValidation.Results;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
+using BankApiInformationRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankApiInformation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -18,9 +21,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type for BankProfile.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal class BankApiInformation : IEntityWithPublicInterface<BankApiInformation, Public.Request.BankApiInformation
-            , BankApiInformationResponse,
-            IBankApiInformationPublicQuery>,
+    [Index(nameof(Name), IsUnique = true)]
+    internal class BankApiInformation :
+        EntityBase,
+        ISupportsFluentPost<BankApiInformationRequest, BankApiInformationPostResponse>,
+        ISupportsFluentGetLocal<BankApiInformation, IBankApiInformationPublicQuery, BankApiInformationGetLocalResponse>,
+        ISupportsFluentDeleteLocal<BankApiInformation>,
         IBankApiInformationPublicQuery
     {
         /// <summary>
@@ -34,69 +40,51 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Constructor for creating entity instances to add to DB.
         /// </summary>
         public BankApiInformation(
-            ITimeProvider timeProvider,
             PaymentInitiationApi? paymentInitiationApi,
             Guid bankId,
-            string? createdBy)
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
         {
-            Created = timeProvider.GetUtcNow();
-            CreatedBy = createdBy;
-            IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
             PaymentInitiationApi = paymentInitiationApi;
-            Id = Guid.NewGuid();
             BankId = bankId;
         }
+
+        public BankApiInformationPostResponse PublicPostResponse => new BankApiInformationPostResponse(
+            PaymentInitiationApi,
+            Id,
+            BankId);
 
         public Guid BankId { get; set; }
 
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
-        public Guid Id { get; set; }
-        public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
-        public DateTimeOffset Created { get; }
-        public string? CreatedBy { get; }
 
-        public Func<Public.Request.BankApiInformation, ValidationResult> ValidatePublicRequestWrapper =>
-            ValidatePublicRequest;
+        public BankApiInformationGetLocalResponse PublicGetLocalResponse => new BankApiInformationGetLocalResponse(
+            PaymentInitiationApi,
+            Id,
+            BankId);
 
-        public BankApiInformationResponse PublicResponse => new BankApiInformationResponse(
-            paymentInitiationApi: PaymentInitiationApi,
-            id: Id,
-            bankId: BankId);
-
-        public Func<ISharedContext, Public.Request.BankApiInformation, string?, Task<BankApiInformationResponse>>
+        public PostEntityAsyncWrapperDelegate<BankApiInformationRequest, BankApiInformationPostResponse>
             PostEntityAsyncWrapper =>
             PostEntityAsync;
 
-        public Task BankApiDeleteAsync()
+        public static async Task<(BankApiInformationPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
+                nonErrorMessages)>
+            PostEntityAsync(
+                ISharedContext context,
+                BankApiInformationRequest request,
+                string? createdBy)
         {
-            throw new InvalidOperationException("This class is local to OBC and cannot be deleted at bank API.");
-        }
+            PostBankApiInformation i = new PostBankApiInformation(
+                context.DbService.GetDbEntityMethodsClass<BankApiInformation>(),
+                context.DbService.GetDbEntityMethodsClass<Bank>(),
+                context.DbService.GetDbSaveChangesMethodClass(),
+                context.TimeProvider);
 
-        public Task<BankApiInformationResponse> BankApiGetAsync(ITimeProvider timeProvider, string? modifiedBy)
-        {
-            throw new InvalidOperationException("This class is local to OBC and cannot be gotten from bank API.");
-        }
-
-        public static ValidationResult ValidatePublicRequest(Public.Request.BankApiInformation request)
-        {
-            return new BankApiInformationValidator()
-                .Validate(request);
-        }
-
-        public static async Task<BankApiInformationResponse> PostEntityAsync(
-            ISharedContext context,
-            Public.Request.BankApiInformation request,
-            string? createdBy)
-        {
-            CreateBankProfile i = new CreateBankProfile(
-                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankApiInformation>(),
-                bankRegistrationRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
-                bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
-                dbMultiEntityMethods: context.DbContextService,
-                timeProvider: context.TimeProvider);
-
-            BankApiInformationResponse resp = await i.CreateAsync(request: request, createdBy: createdBy);
-            return resp;
+            (BankApiInformationPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
+                await i.PostAsync(request, createdBy);
+            return result;
         }
     }
 }

@@ -3,15 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation.PaymentInitialisation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FluentValidation.Results;
-using OBWriteDomesticResponse =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.OBWriteDomesticResponse4;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+using DomesticPaymentRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
@@ -19,10 +21,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal class DomesticPayment : IEntityWithPublicInterface<DomesticPayment,
-            Public.PaymentInitiation.Request.DomesticPayment,
-            DomesticPaymentResponse,
-            IDomesticPaymentPublicQuery>,
+    internal class DomesticPayment :
+        EntityBase,
+        ISupportsFluentPost<DomesticPaymentRequest, DomesticPaymentPostResponse>,
+        ISupportsFluentGetLocal<DomesticPayment, IDomesticPaymentPublicQuery, DomesticPaymentGetLocalResponse>,
+        //ISupportsFluentGet<DomesticPaymentResponse>,
+        ISupportsFluentDeleteLocal<DomesticPayment>,
         IDomesticPaymentPublicQuery
     {
         /// <summary>
@@ -35,81 +39,74 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         ///     Constructor for creating entity instances to add to DB.
         /// </summary>
         public DomesticPayment(
-            ITimeProvider timeProvider,
             Guid domesticPaymentConsentId,
-            OBWriteDomesticResponse obWriteDomesticResponse,
-            string? createdBy)
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 obWriteDomesticResponse,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
         {
-            Created = timeProvider.GetUtcNow();
-            CreatedBy = createdBy;
-            IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
             DomesticPaymentConsentId = domesticPaymentConsentId;
             OBWriteDomesticResponse = obWriteDomesticResponse;
-            Id = Guid.NewGuid();
         }
 
         public Guid DomesticPaymentConsentId { get; set; }
 
-        public OBWriteDomesticResponse OBWriteDomesticResponse { get; set; } = null!;
+        public string GetPath => "/domestic-payments";
 
-        public Guid Id { get; set; }
+        public DomesticPaymentPostResponse PublicPostResponse =>
+            new DomesticPaymentPostResponse(OBWriteDomesticResponse);
 
-        public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
-        public DateTimeOffset Created { get; }
-        public string? CreatedBy { get; }
+        public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 OBWriteDomesticResponse { get; set; } = null!;
+        //public GetAsyncWrapperDelegate<DomesticPaymentResponse> GetAsyncWrapper => GetAsync;
 
-        public Func<Public.PaymentInitiation.Request.DomesticPayment, ValidationResult> ValidatePublicRequestWrapper =>
-            ValidatePublicRequest;
+        public DomesticPaymentGetLocalResponse PublicGetLocalResponse =>
+            new DomesticPaymentGetLocalResponse(OBWriteDomesticResponse);
 
-        public Func<ISharedContext, Public.PaymentInitiation.Request.DomesticPayment, string?,
-                Task<DomesticPaymentResponse>>
+        public PostEntityAsyncWrapperDelegate<DomesticPaymentRequest, DomesticPaymentPostResponse>
             PostEntityAsyncWrapper =>
             PostEntityAsync;
 
-        public DomesticPaymentResponse PublicResponse =>
-            new DomesticPaymentResponse(OBWriteDomesticResponse);
+        // public static async Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage>
+        //         nonErrorMessages)>
+        //     GetAsync(
+        //         Guid id,
+        //         ISharedContext context)
+        // {
+        //     GetEntity<DomesticPayment, DomesticPaymentResponse> i =
+        //         new GetEntity<DomesticPayment, DomesticPaymentResponse>(
+        //             context.DbService.GetDbEntityMethodsClass<DomesticPayment>());
+        //
+        //     (DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
+        //         await i.GetAsync(id);
+        //     return result;
+        // }
 
-        public Task BankApiDeleteAsync()
+        public static async Task<(DomesticPaymentPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
+                nonErrorMessages)>
+            PostEntityAsync(
+                ISharedContext context,
+                DomesticPaymentRequest request,
+                string? createdBy)
         {
-            throw new NotImplementedException();
-        }
+            PostDomesticPayment i = new PostDomesticPayment(
+                context.DbService.GetDbEntityMethodsClass<Bank>(),
+                context.DbService.GetDbEntityMethodsClass<BankApiInformation>(),
+                context.DbService
+                    .GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                context.ApiVariantMapper,
+                context.DbService
+                    .GetDbEntityMethodsClass<BankRegistration>(),
+                context.DbService
+                    .GetDbEntityMethodsClass<DomesticPayment>(),
+                context.TimeProvider,
+                context.DbService.GetDbSaveChangesMethodClass(),
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation);
 
-        public Task<DomesticPaymentResponse> BankApiGetAsync(
-            ITimeProvider timeProvider,
-            string? modifiedBy)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ValidationResult ValidatePublicRequest(Public.PaymentInitiation.Request.DomesticPayment request)
-        {
-            return new PaymentRequestValidator()
-                .Validate(request);
-        }
-
-        public static async Task<DomesticPaymentResponse> PostEntityAsync(
-            ISharedContext context,
-            Public.PaymentInitiation.Request.DomesticPayment request,
-            string? createdBy)
-        {
-            CreateDomesticPayment i = new CreateDomesticPayment(
-                bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
-                bankProfileRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankApiInformation>(),
-                domesticConsentRepo: context.DbEntityRepositoryFactory
-                    .CreateDbEntityRepository<DomesticPaymentConsent>(),
-                mapper: context.EntityMapper,
-                bankRegistrationRepo: context.DbEntityRepositoryFactory
-                    .CreateDbEntityRepository<BankRegistration>(),
-                domesticPaymentRepo: context.DbEntityRepositoryFactory
-                    .CreateDbEntityRepository<DomesticPayment>(),
-                timeProvider: context.TimeProvider,
-                dbMultiEntityMethods: context.DbContextService,
-                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo);
-
-            DomesticPaymentResponse? resp = await i.CreateAsync(
-                request: request,
-                createdBy: createdBy);
-            return resp;
+            (DomesticPaymentPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
+                await i.PostAsync(request, createdBy);
+            return result;
         }
     }
 }

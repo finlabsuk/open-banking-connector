@@ -18,11 +18,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
             }
 
             MatchCollection matches = Regex.Matches(
-                input: value,
-                pattern: @"\G(.[^A-Z]*)", // one possibly capital followed by optional non-capitals for each group
-                options: RegexOptions.Compiled);
+                value,
+                @"\G(.[^A-Z]*)", // one possibly capital followed by optional non-capitals for each group
+                RegexOptions.Compiled);
             IEnumerable<string> stringMatches = from Match match in matches select match.Value;
-            string returnString = string.Join(separator: "-", values: stringMatches).ToLower();
+            string returnString = string.Join("-", stringMatches).ToLower();
             return returnString;
         }
     }

@@ -5,27 +5,23 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public interface ISharedContext
     {
         DateTimeOffset Created { get; set; }
-        ICertificateReader CertificateReader { get; }
         IApiClient ApiClient { get; }
         IInstrumentationClient Instrumentation { get; }
-        IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
-        IDbMultiEntityMethods DbContextService { get; }
-        IDbEntityRepositoryFactory DbEntityRepositoryFactory { get; }
-        IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo { get; }
-        IEntityMapper EntityMapper { get; }
+        IDbService DbService { get; }
+        IReadOnlyRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo { get; }
+        IApiVariantMapper ApiVariantMapper { get; }
         ITimeProvider TimeProvider { get; }
     }
 }

@@ -2,11 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Entities;
+using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,34 +17,42 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentConsentsController : ControllerBase
     {
-        private readonly IRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _obcRequestBuilder;
 
-        public DomesticPaymentConsentsController(IRequestBuilder obRequestBuilder)
+        public DomesticPaymentConsentsController(IRequestBuilder obcRequestBuilder)
         {
-            _obRequestBuilder = obRequestBuilder;
+            _obcRequestBuilder = obcRequestBuilder;
         }
 
         [Route("pisp/domestic-payment-consents")]
         [HttpPost]
         [ProducesResponseType(
-            type: typeof(HttpResponse<DomesticPaymentConsentResponse>),
-            statusCode: StatusCodes.Status201Created)]
+            typeof(HttpResponse<DomesticPaymentConsentPostResponse>),
+            StatusCodes.Status201Created)]
         [ProducesResponseType(
-            type: typeof(MessagesResponse),
-            statusCode: StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DomesticPaymentConsentsPostAsync([FromBody] DomesticPaymentConsent request)
+            typeof(HttpResponse<DomesticPaymentConsentPostResponse>),
+            StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            typeof(HttpResponse<DomesticPaymentConsentPostResponse>),
+            StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
         {
-            FluentResponse<DomesticPaymentConsentResponse> resp = await _obRequestBuilder.PaymentInitiation
+            IFluentResponse<DomesticPaymentConsentPostResponse> fluentResponse = await _obcRequestBuilder
+                .PaymentInitiation
                 .DomesticPaymentConsents
                 .PostAsync(request);
 
-            HttpResponse<DomesticPaymentConsentResponse> result = new HttpResponse<DomesticPaymentConsentResponse>(
-                messages: resp.ToMessagesResponse(),
-                data: resp.Data);
-
-            return resp.HasErrors
-                ? new BadRequestObjectResult(result.Messages) as IActionResult
-                : new ObjectResult(result) { StatusCode = StatusCodes.Status201Created };
+            // HTTP response
+            HttpResponse<DomesticPaymentConsentPostResponse> httpResponse = fluentResponse.ToHttpResponse();
+            int statusCode = fluentResponse switch
+            {
+                FluentSuccessResponse<DomesticPaymentConsentPostResponse> _ => StatusCodes.Status201Created,
+                FluentBadRequestErrorResponse<DomesticPaymentConsentPostResponse> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<DomesticPaymentConsentPostResponse> _ => StatusCodes.Status500InternalServerError,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            return new ObjectResult(httpResponse)
+                { StatusCode = statusCode };
         }
     }
 }

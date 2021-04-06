@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
     {
         public static Arbitrary<Uri> GetArbitrary()
         {
-            var urls = new[] { "http://test.com", "https://test.com" };
+            string[] urls = { "http://test.com", "https://test.com" };
 
             return Gen.Elements(urls).Select(s => new Uri(s)).ToArbitrary();
         }

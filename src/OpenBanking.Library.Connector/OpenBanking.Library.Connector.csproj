@@ -18,28 +18,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ApiClient\**" />
-    <EmbeddedResource Remove="ApiClient\**" />
-    <None Remove="ApiClient\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="FluentValidation" Version="9.3.0" />
-    <PackageReference Include="jose-jwt" Version="2.6.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="FluentValidation" Version="9.5.3" />
+    <PackageReference Include="jose-jwt" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.5" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2\OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p1.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2\OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p2.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p2.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p2.PaymentInitiation.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p4.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p4.PaymentInitiation.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.OBUK.ReadWriteApi.V3p1p6.PaymentInitiation.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.ApiModels.Base\OpenBanking.Library.Connector.ApiModels.Base.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3\OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.csproj" />
+    <ProjectReference Include="..\OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.csproj" />
   </ItemGroup>
 
 </Project>

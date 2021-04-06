@@ -35,15 +35,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.HostedServices
         {
             // Log application parts found
             IEnumerable<string> partNames = _applicationPartManager.ApplicationParts.Select(x => x.Name);
-            _logger.LogInformation(
-                string.Join(separator: Environment.NewLine, values: partNames.Prepend("Application parts found:")));
+            _logger.LogInformation(string.Join(Environment.NewLine, partNames.Prepend("Application parts found:")));
 
             // Log controllers found
             ControllerFeature feature = new ControllerFeature();
             _applicationPartManager.PopulateFeature(feature);
             IEnumerable<string> controllerNames = feature.Controllers.Select(x => x.Name);
-            _logger.LogInformation(
-                string.Join(separator: Environment.NewLine, values: controllerNames.Prepend("Controllers found:")));
+            _logger.LogInformation(string.Join(Environment.NewLine, controllerNames.Prepend("Controllers found:")));
 
             // Log endpoints found
             Task.Run(
@@ -51,8 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.HostedServices
                 {
                     await Task.Delay(3000); // wait 3 seconds for middleware to be built
                     IEnumerable<string> endpointNames = _endpointDataSource.Endpoints.Select(x => x.DisplayName);
-                    _logger.LogInformation(
-                        string.Join(separator: Environment.NewLine, values: endpointNames.Prepend("Endpoints found:")));
+                    _logger.LogInformation(string.Join(Environment.NewLine, endpointNames.Prepend("Endpoints found:")));
                 });
 
             return Task.CompletedTask;

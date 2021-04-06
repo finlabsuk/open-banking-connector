@@ -19,7 +19,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
+                OpenBankingConnectorSettings config =
+                    new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
 
                 return config.SoftwareStatementProfileIds != value;
             };
@@ -35,7 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 
             Func<bool> rule = () =>
             {
-                ObcConfiguration? config = new EnvironmentVariablesConfigurationProvider(evs).GetObcConfiguration();
+                OpenBankingConnectorSettings config =
+                    new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
 
                 return config.SoftwareStatementProfileIds == value;
             };

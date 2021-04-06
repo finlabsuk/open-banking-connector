@@ -9,11 +9,16 @@ using Newtonsoft.Json;
 using BankConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Bank;
 using BankRegistrationConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankRegistration;
+using BankApiInformationConfig =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankApiInformation;
 using DomesticPaymentConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsent;
 using DomesticPaymentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.DomesticPayment;
+using DomesticPaymentConsentAuthContextConfig =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
+    DomesticPaymentConsentAuthContext;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
@@ -36,11 +41,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         internal DbSet<DomesticPayment> DomesticPayments => Set<DomesticPayment>();
 
+        internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContexts =>
+            Set<DomesticPaymentConsentAuthContext>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BankConfig(JsonFormatting));
 
-            modelBuilder.ApplyConfiguration(new Models.Persistent.Configuration.BankApiInformation(JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankApiInformationConfig(JsonFormatting));
 
             modelBuilder.ApplyConfiguration(new BankRegistrationConfig(JsonFormatting));
 
@@ -48,11 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
             modelBuilder.ApplyConfiguration(new DomesticPaymentConfig(JsonFormatting));
 
-            // modelBuilder
-            //     .Entity<DomesticPaymentConsent>()
-            //     .HasOne<BankProfile>()
-            //     .WithMany()
-            //     .HasForeignKey(p => p.BankProfileId);
+            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(JsonFormatting));
         }
     }
 }

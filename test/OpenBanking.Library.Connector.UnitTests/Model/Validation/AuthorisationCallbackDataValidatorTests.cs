@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentAssertions;
 using FluentValidation.Results;
 using Xunit;
@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_ModeIsNull()
         {
-            AuthorisationRedirectObjectValidator? validator = new AuthorisationRedirectObjectValidator();
+            var validator = new AuthorisationRedirectObjectValidator();
 
-            AuthorisationRedirectObject? data = new AuthorisationRedirectObject(responseMode: null, response: null);
+            var data = new AuthorisationRedirectObject(null!, null!);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -29,9 +29,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsNull()
         {
-            AuthorisationRedirectObjectValidator? validator = new AuthorisationRedirectObjectValidator();
+            var validator = new AuthorisationRedirectObjectValidator();
 
-            AuthorisationRedirectObject? data = new AuthorisationRedirectObject(responseMode: "a", response: null);
+            var data = new AuthorisationRedirectObject("a", null!);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -42,11 +42,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsDefault()
         {
-            AuthorisationRedirectObjectValidator? validator = new AuthorisationRedirectObjectValidator();
+            var validator = new AuthorisationRedirectObjectValidator();
 
-            AuthorisationRedirectObject? data = new AuthorisationRedirectObject(
-                responseMode: "a",
-                response: new AuthorisationCallbackPayload());
+            var data = new AuthorisationRedirectObject(
+                "a",
+                new AuthorisationCallbackPayload("", "", "", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -57,17 +57,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         [Fact]
         public void Validate_BodyIsValid()
         {
-            AuthorisationRedirectObjectValidator? validator = new AuthorisationRedirectObjectValidator();
+            var validator = new AuthorisationRedirectObjectValidator();
 
-            AuthorisationRedirectObject? data = new AuthorisationRedirectObject(
-                responseMode: "a",
-                response: new AuthorisationCallbackPayload
-                {
-                    Code = "a",
-                    State = "a",
-                    Id_Token = "a",
-                    Nonce = null,
-                });
+            var data = new AuthorisationRedirectObject(
+                "a",
+                new AuthorisationCallbackPayload("a", "a", "a", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 

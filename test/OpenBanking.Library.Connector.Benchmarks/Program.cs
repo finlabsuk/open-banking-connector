@@ -27,4 +27,3 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         }
     }
 }
- 

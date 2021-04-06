@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.WebHost</AssemblyName>
     <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.WebHost</RootNamespace>
     <Copyright>Finnovation Labs Limited and Contributors</Copyright>
@@ -11,7 +12,8 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
@@ -19,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**" />
   </ItemGroup>
 
 </Project>

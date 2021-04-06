@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetUri(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.RequestUri == value;
+            return b!.RequestInfo.RequestUri == value;
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetUseDefaultCredentials(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.UseDefaultCredentials == value;
+            return b!.RequestInfo.UseDefaultCredentials == value;
         }
 
 
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetPreAuthenticate(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.PreAuthenticate == value;
+            return b!.RequestInfo.PreAuthenticate == value;
         }
 
         [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(HttpMethodArbitrary) })]
@@ -49,18 +49,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetMethod(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.Method == value.ToString();
+            return b!.RequestInfo.Method == value.ToString();
         }
 
 
         [Property(Verbose = PropertyTests.VerboseTests)]
         public bool SetHeaders(IList<string> values)
         {
-            var headers = values.NullToEmpty().Select(v => new HttpHeader(name: "hdr", value: v)).ToList();
+            List<HttpHeader> headers =
+                values.NullToEmpty().Select(v => new HttpHeader("hdr", v)).ToList();
 
             var b = new HttpRequestBuilder().SetHeaders(headers) as HttpRequestBuilder;
 
-            return b.RequestInfo.Headers.SequenceEqual(headers);
+            return b!.RequestInfo.Headers.SequenceEqual(headers);
         }
 
         [Property(Verbose = PropertyTests.VerboseTests)]
@@ -68,7 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetTimeout(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.Timeout == value;
+            return b!.RequestInfo.Timeout == value;
         }
 
 
@@ -77,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetReadWriteTimeout(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.ReadWriteTimeout == value;
+            return b!.RequestInfo.ReadWriteTimeout == value;
         }
 
 
@@ -86,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var b = new HttpRequestBuilder().SetMaxRedirects(value) as HttpRequestBuilder;
 
-            return b.RequestInfo.MaxRedirects == value;
+            return b!.RequestInfo.MaxRedirects == value;
         }
 
         [Fact]
@@ -95,7 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             var value = Substitute.For<ICredentials>();
             var b = new HttpRequestBuilder().SetCredentials(value) as HttpRequestBuilder;
 
-            b.RequestInfo.Credentials.Should().Be(value);
+            b!.RequestInfo.Credentials.Should().Be(value);
         }
     }
 }

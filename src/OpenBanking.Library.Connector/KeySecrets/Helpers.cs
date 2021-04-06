@@ -8,8 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
@@ -19,155 +18,54 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
     public static class Helpers
     {
         /// <summary>
-        ///     Key containing ID used for storage of key secrets where the same item (set of secrets) can be stored
-        ///     more than once.
+        ///     Key name based on settings class, dictionary key (ID) and value property name.
+        ///     (This is really designed for use with <see cref="SoftwareStatementProfilesSettings" />.)
         /// </summary>
         /// <param name="id"></param>
         /// <param name="propertyName"></param>
-        /// <typeparam name="TItem"></typeparam>
         /// <returns></returns>
-        public static string KeyWithId<TItem>(string id, string propertyName)
-            where TItem : class, IKeySecretItem =>
-            $"obc:{typeof(TItem).Name.PascalOrCamelToKebabCase()}:{id}:{propertyName.PascalOrCamelToKebabCase()}";
+        public static string KeyWithId<TSettings>(string id, string propertyName)
+            where TSettings : class, ISettings<TSettings>, new() =>
+            $"{new TSettings().SettingsSectionName}:{id}:{propertyName}";
 
-        public static async Task UpsertAsync<TItem>(
+        /// <summary>
+        ///     Assemble object from individual key secrets where object properties
+        ///     are either string or <see cref="List{T}" />
+        /// </summary>
+        /// <param name="keyFcn"></param>
+        /// <param name="keySecretReadOnlyProvider"></param>
+        /// <typeparam name="TSettingsElement"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="InvalidDataException"></exception>
+        public static async Task<TSettingsElement> GetAsync<TSettingsElement>(
             Func<string, string> keyFcn,
-            TItem instance,
-            bool writeIdProperty,
-            IKeySecretProvider keySecretProvider)
-        {
-            foreach (PropertyInfo property in typeof(TItem).GetProperties())
-            {
-                if (property.PropertyType == typeof(string))
-                {
-                    if (!(property.Name == "Id" && writeIdProperty == false))
-                    {
-                        await SetAsync(
-                            keyFcn: keyFcn,
-                            property: property,
-                            instance: instance,
-                            keySecretProvider: keySecretProvider);
-                    }
-                }
-                else if (property.PropertyType == typeof(List<string>))
-                {
-                    await SetListAsync(
-                        keyFcn: keyFcn,
-                        property: property,
-                        instance: instance,
-                        keySecretProvider: keySecretProvider);
-                }
-                else
-                {
-                    throw new InvalidDataException(
-                        $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
-                }
-            }
-        }
-
-        private static async Task SetAsync<TItem>(
-            Func<string, string> keyFcn,
-            PropertyInfo property,
-            TItem instance,
-            IKeySecretProvider keySecretProvider)
-        {
-            string key = keyFcn(property.Name);
-            if (property.PropertyType != typeof(string))
-            {
-                throw new InvalidOperationException("Invalid parameter type.");
-            }
-
-            KeySecret keySecret = new KeySecret(key: key, value: (string) property.GetValue(instance));
-            await keySecretProvider.SetKeySecretAsync(keySecret);
-        }
-
-        private static async Task SetListAsync<TItem>(
-            Func<string, string> keyFcn,
-            PropertyInfo property,
-            TItem instance,
-            IKeySecretProvider keySecretProvider)
-        {
-            string key = keyFcn(property.Name);
-            if (property.PropertyType != typeof(List<string>))
-            {
-                throw new InvalidOperationException("Invalid parameter type.");
-            }
-
-            List<string> value = (List<string>) property.GetValue(instance);
-            KeySecret keySecret = new KeySecret(key: key, value: string.Join(separator: " ", values: value));
-            await keySecretProvider.SetKeySecretAsync(keySecret);
-        }
-
-        public static async Task<string> GetAsync(
-            Func<string, string> keyFcn,
-            PropertyInfo property,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider)
-        {
-            string key = keyFcn(property.Name);
-            if (property.PropertyType != typeof(string))
-            {
-                throw new InvalidOperationException("Invalid parameter type.");
-            }
-
-            KeySecret keySecret = await keySecretReadOnlyProvider.GetKeySecretAsync(key);
-            return keySecret.Value;
-        }
-
-        public static async Task<TItem> GetAsync<TItem>(
-            Func<string, string> keyFcn,
-            string idPropertyValue,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider)
+            IKeySecretProvider keySecretReadOnlyProvider)
         {
             List<object> values = new List<object>();
-            foreach (PropertyInfo property in typeof(TItem).GetProperties())
+            foreach (PropertyInfo property in typeof(TSettingsElement).GetProperties())
             {
+                string key = keyFcn(property.Name);
+                KeySecret keySecret = await keySecretReadOnlyProvider.GetKeySecretAsync(key) ??
+                                      throw new KeyNotFoundException($"No key secret found for key {key}.");
+
                 if (property.PropertyType == typeof(string))
                 {
-                    if (property.Name == "Id" && idPropertyValue != null)
-                    {
-                        values.Add(idPropertyValue);
-                    }
-                    else
-                    {
-                        values.Add(
-                            await GetAsync(
-                                keyFcn: keyFcn,
-                                property: property,
-                                keySecretReadOnlyProvider: keySecretReadOnlyProvider));
-                    }
+                    values.Add(keySecret.Value);
                 }
                 else if (property.PropertyType == typeof(List<string>))
                 {
-                    values.Add(
-                        await GetListAsync(
-                            keyFcn: keyFcn,
-                            property: property,
-                            keySecretReadOnlyProvider: keySecretReadOnlyProvider));
+                    List<string> processedValue = keySecret.Value.Split(" ").ToList();
+                    values.Add(processedValue);
                 }
                 else
                 {
                     throw new InvalidDataException(
-                        $"Properties of type {typeof(TItem)} are stored as key secrets and should be of either string or List<string> type.");
+                        $"Properties of type {typeof(TSettingsElement)} are stored as key secrets and should be of either string or List<string> type.");
                 }
             }
 
-            return (TItem) Activator.CreateInstance(type: typeof(TItem), args: values.ToArray<object>());
-        }
-
-        public static async Task<IEnumerable<string>> GetListAsync(
-            Func<string, string> keyFcn,
-            PropertyInfo property,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider)
-        {
-            string key = keyFcn(property.Name);
-            if (property.PropertyType != typeof(List<string>))
-            {
-                throw new InvalidOperationException("Invalid parameter type.");
-            }
-
-            KeySecret keySecret = await keySecretReadOnlyProvider.GetKeySecretAsync(key);
-            List<string> valueAsList = keySecret.Value.Split(" ").ToList();
-            return valueAsList;
+            return (TSettingsElement) Activator.CreateInstance(typeof(TSettingsElement), values.ToArray<object>());
         }
     }
 }

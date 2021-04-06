@@ -3,11 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
-    public class BankApiInformation
+    public class BankApiInformation : ISupportsValidation
     {
         /// <summary>
         ///     Bank for which this profile is to be created.
@@ -15,21 +19,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public Guid BankId { get; set; }
 
         /// <summary>
-        ///     If profile is successfully created, replace <see cref="Persistent.Bank.DefaultBankProfileId" />
-        ///     with reference to this profile.
-        /// </summary>
-        public bool ReplaceDefaultBankProfile { get; set; } = false;
-
-        /// <summary>
-        ///     If profile is successfully created, replace <see cref="Persistent.Bank.StagingBankProfileId" />
-        ///     with reference to this profile.
-        /// </summary>
-        public bool ReplaceStagingBankProfile { get; set; } = false;
-
-        /// <summary>
         ///     Specifies UK Open Banking Payment Initiation API associated with profile.
         ///     Null means profile is not used with such an API.
         /// </summary>
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
+
+        /// <summary>
+        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
+        ///     This is optional.
+        /// </summary>
+        public string? Name { get; set; }
+
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new BankApiInformationValidator()
+                .ValidateAsync(this)!;
     }
 }

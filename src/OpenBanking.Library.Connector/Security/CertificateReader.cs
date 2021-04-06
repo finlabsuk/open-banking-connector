@@ -19,11 +19,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             _pemReader = pemReader.ArgNotNull(nameof(pemReader));
         }
 
-        public async Task<X509Certificate2> GetCertificateAsync(string value)
+        public async Task<X509Certificate2?> GetCertificateAsync(string value)
         {
             value.ArgNotNull(nameof(value));
 
-            X509Certificate2 result;
+            X509Certificate2? result;
             if (value.IsPemThumbprint())
             {
                 result = await _pemReader.GetCertificateAsync(value);
@@ -36,18 +36,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             return result;
         }
 
-        public async Task<X509Certificate2> GetCertificateAsync(string value, SecureString password)
+        public async Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password)
         {
             value.ArgNotNull(nameof(value));
 
-            X509Certificate2 result;
+            X509Certificate2? result;
             if (value.IsPemThumbprint())
             {
-                result = await _pemReader.GetCertificateAsync(value: value, password: password);
+                result = await _pemReader.GetCertificateAsync(value, password);
             }
             else
             {
-                result = await _fileCertReader.GetCertificateAsync(value: value, password: password);
+                result = await _fileCertReader.GetCertificateAsync(value, password);
             }
 
             return result;

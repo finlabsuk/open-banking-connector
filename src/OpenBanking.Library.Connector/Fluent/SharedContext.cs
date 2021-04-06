@@ -5,13 +5,12 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -19,40 +18,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public SharedContext(
             ITimeProvider timeProvider,
-            ICertificateReader certificateReader,
             IApiClient apiClient,
             IInstrumentationClient instrumentation,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
-            IDbEntityRepositoryFactory dbEntityRepositoryFactory,
-            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
-            IEntityMapper entityMapper,
-            IDbMultiEntityMethods dbContextService)
+            IDbService dbService,
+            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
+            IApiVariantMapper apiVariantMapper)
         {
             TimeProvider = timeProvider;
-            CertificateReader = certificateReader;
             ApiClient = apiClient;
             Instrumentation = instrumentation;
-            KeySecretReadOnlyProvider = keySecretReadOnlyProvider;
-            DbEntityRepositoryFactory = dbEntityRepositoryFactory;
+            DbService = dbService;
             SoftwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
-            EntityMapper = entityMapper;
-            DbContextService = dbContextService;
+            ApiVariantMapper = apiVariantMapper;
         }
 
         public ITimeProvider TimeProvider { get; }
         public DateTimeOffset Created { get; set; }
-        public ICertificateReader CertificateReader { get; }
         public IApiClient ApiClient { get; }
         public IInstrumentationClient Instrumentation { get; }
-        public IKeySecretReadOnlyProvider KeySecretReadOnlyProvider { get; }
-        public IDbEntityRepositoryFactory DbEntityRepositoryFactory { get; }
-
-        public IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo
-        {
-            get;
-        }
-
-        public IEntityMapper EntityMapper { get; }
-        public IDbMultiEntityMethods DbContextService { get; }
+        public IDbService DbService { get; }
+        public IReadOnlyRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo { get; }
+        public IApiVariantMapper ApiVariantMapper { get; }
     }
 }

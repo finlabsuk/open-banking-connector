@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
         {
             return Arb.Default.String()
                 .Filter(s => !(s is null) && !s.Contains("\0"))
-                .Convert(convertTo: s => new StringNotNullAndContainsNoNulls(s), convertFrom: ans => ans.Item);
+                .Convert(s => new StringNotNullAndContainsNoNulls(s), ans => ans.Item);
         }
     }
 }

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FsCheck.Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
@@ -12,9 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [Property(Verbose = PropertyTests.VerboseTests)]
         public bool GetUtcNow_ResultIsWithinBounds()
         {
-            var now = DateTimeOffset.UtcNow;
+            DateTimeOffset now = DateTimeOffset.UtcNow;
 
-            var result = new TimeProvider().GetUtcNow();
+            DateTimeOffset result = new TimeProvider().GetUtcNow();
 
             return (result >= now) & (result <= now.AddSeconds(1));
         }

@@ -3,42 +3,83 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using OBWriteDomesticConsentResponse =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model.
-    OBWriteDomesticConsentResponse4;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
     public interface IDomesticPaymentConsentPublicQuery
     {
         Guid Id { get; }
-        OBWriteDomesticConsentResponse OBWriteDomesticConsentResponse { get; }
+        PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 OBWriteDomesticConsentResponse { get; }
 
         Guid BankRegistrationId { get; }
 
         Guid BankApiInformationId { get; }
     }
 
-    public class DomesticPaymentConsentResponse : IDomesticPaymentConsentPublicQuery
+    /// <summary>
+    ///     Respnose to GetLocal
+    /// </summary>
+    public class DomesticPaymentConsentGetLocalResponse : IDomesticPaymentConsentPublicQuery
     {
-        public DomesticPaymentConsentResponse(
-            string? authUrl,
+        internal DomesticPaymentConsentGetLocalResponse(
             Guid id,
-            OBWriteDomesticConsentResponse obWriteDomesticConsentResponse,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
             Guid bankRegistrationId,
-            Guid BankApiInformationId)
+            Guid bankApiInformationId)
         {
-            AuthUrl = authUrl;
             Id = id;
             OBWriteDomesticConsentResponse = obWriteDomesticConsentResponse;
             BankRegistrationId = bankRegistrationId;
-            this.BankApiInformationId = BankApiInformationId;
+            BankApiInformationId = bankApiInformationId;
         }
 
-        public string? AuthUrl { get; set; } // may be set after default initialisation code which doesn't set it
         public Guid Id { get; }
-        public OBWriteDomesticConsentResponse OBWriteDomesticConsentResponse { get; }
+
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 OBWriteDomesticConsentResponse
+        {
+            get;
+            set;
+        }
+
         public Guid BankRegistrationId { get; }
         public Guid BankApiInformationId { get; }
+    }
+
+    public class DomesticPaymentConsentGetResponse : DomesticPaymentConsentGetLocalResponse
+    {
+        internal DomesticPaymentConsentGetResponse(
+            Guid id,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
+            Guid bankRegistrationId,
+            Guid bankApiInformationId) : base(
+            id,
+            obWriteDomesticConsentResponse,
+            bankRegistrationId,
+            bankApiInformationId) { }
+    }
+
+    /// <summary>
+    ///     Response to Post
+    /// </summary>
+    public class DomesticPaymentConsentPostResponse : DomesticPaymentConsentGetResponse
+    {
+        internal DomesticPaymentConsentPostResponse(
+            string authUrl,
+            Guid id,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
+            Guid bankRegistrationId,
+            Guid bankApiInformationId) : base(
+            id,
+            obWriteDomesticConsentResponse,
+            bankRegistrationId,
+            bankApiInformationId)
+        {
+            AuthUrl = authUrl;
+        }
+
+        public string AuthUrl { get; }
     }
 }

@@ -4,12 +4,15 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {
+    /// <summary>
+    ///     Key secret object used by <see cref="IKeySecretProvider" />
+    /// </summary>
     public class KeySecret
     {
         public const string DefaultVaultName = "OpenBankingConnector";
 
         public KeySecret(string key, string value)
-            : this(vaultName: DefaultVaultName, key: key, value: value) { }
+            : this(DefaultVaultName, key, value) { }
 
         public KeySecret(string vaultName, string key, string value)
         {

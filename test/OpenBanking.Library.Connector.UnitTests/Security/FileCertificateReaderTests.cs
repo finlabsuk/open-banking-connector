@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
 using NSubstitute;
@@ -15,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void Ctor_NullFacade_ExceptionThrown()
         {
-            Func<FileCertificateReader> f = () => new FileCertificateReader((IIoFacade) null);
+            Func<FileCertificateReader> f = () => new FileCertificateReader((IIoFacade) null!);
 
             f.Should().Throw<ArgumentNullException>();
         }
@@ -32,12 +33,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_EmptyThumbprint_NullReturned()
         {
-            var thumbprint = "";
+            string thumbprint = "";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
-            var rdr = new FileCertificateReader(ioFacade);
-            var result = rdr.GetCertificateAsync(thumbprint).Result;
+            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
+            X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
 
             result.Should().BeNull();
             ioFacade.DidNotReceive().GetContentPath();
@@ -47,9 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_NoFiles_NullReturned()
         {
-            var files = new string[0];
-            var contentPath = "";
-            var thumbprint = "abc";
+            string[] files = new string[0];
+            string contentPath = "";
+            string thumbprint = "abc";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
@@ -57,8 +58,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
             ioFacade.GetDirectoryFiles(Arg.Any<string>(), Arg.Any<string>()).Returns(files);
 
 
-            var rdr = new FileCertificateReader(ioFacade);
-            var result = rdr.GetCertificateAsync(thumbprint).Result;
+            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
+            X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
 
             result.Should().BeNull();
             ioFacade.Received().GetContentPath();
@@ -69,9 +70,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_DirectoryNamespaceQueried()
         {
-            var files = new[] { "file.cert" };
-            var contentPath = "";
-            var thumbprint = "abc";
+            string[] files = { "file.cert" };
+            string contentPath = "";
+            string thumbprint = "abc";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
@@ -79,11 +80,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
             ioFacade.GetDirectoryFiles(contentPath, Arg.Any<string>()).Returns(files);
 
 
-            var rdr = new FileCertificateReader(ioFacade);
+            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
 
             try
             {
-                var _ = rdr.GetCertificateAsync(thumbprint).Result;
+                X509Certificate2? _ = rdr.GetCertificateAsync(thumbprint).Result;
 
                 throw new InvalidOperationException("Test failed");
             }

@@ -3,12 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FluentAssertions;
-using NSubstitute;
-using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.KeySecrets
 {

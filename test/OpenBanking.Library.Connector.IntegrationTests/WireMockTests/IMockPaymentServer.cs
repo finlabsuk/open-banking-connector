@@ -1,6 +1,9 @@
-﻿using System;
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
+// Finnovation Labs Limited licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Collections.Generic;
-using System.Text;
+using WireMock.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests
 {
@@ -8,9 +11,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
     {
         void SetUpOpenIdMock();
         void SetupPaymentEndpointMock();
-        void SetUpOBDomesticResponseEndpoint(); 
+        void SetUpOBDomesticResponseEndpoint();
         void SetupRegistrationMock();
         void SetupTokenEndpointMock();
         void SetUpAuthEndpoint();
+        IEnumerable<ILogEntry> GetLogEntries();
     }
 }

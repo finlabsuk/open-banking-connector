@@ -3,18 +3,21 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FluentValidation.Results;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
 using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankRegistration;
-using OBClientRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models.OBClientRegistration1;
 using OAuth2RequestObjectClaimsOverridesRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.OAuth2RequestObjectClaimsOverrides;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -22,9 +25,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal class BankRegistration : IEntityWithPublicInterface<BankRegistration, BankRegistrationRequest,
-            BankRegistrationResponse,
-            IBankRegistrationPublicQuery>,
+    [Index(nameof(Name), IsUnique = true)]
+    internal class BankRegistration :
+        EntityBase,
+        ISupportsFluentPost<BankRegistrationRequest, BankRegistrationPostResponse>,
+        ISupportsFluentGetLocal<BankRegistration, IBankRegistrationPublicQuery, BankRegistrationGetLocalResponse>,
+        ISupportsFluentDeleteLocal<BankRegistration>,
         IBankRegistrationPublicQuery
     {
         /// <summary>
@@ -37,94 +43,87 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Constructor for creating entity instances to add to DB.
         /// </summary>
         public BankRegistration(
-            ITimeProvider timeProvider,
             string softwareStatementProfileId,
             OpenIdConfiguration openIdConfiguration,
-            OBClientRegistration obClientRegistration,
+            ClientRegistrationModelsPublic.OBClientRegistration1 obClientRegistration,
             Guid bankId,
-            OBClientRegistration obClientRegistrationRequest,
+            ClientRegistrationModelsPublic.OBClientRegistration1 obClientRegistrationRequest,
             OAuth2RequestObjectClaimsOverridesRequest? claimsOverrides,
-            string? createdBy)
+            ClientRegistrationApiVersion clientRegistrationApi,
+            RegistrationScope registrationScope,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
         {
-            Created = timeProvider.GetUtcNow();
-            CreatedBy = createdBy;
-            IsDeleted = new ReadWriteProperty<bool>(data: false, timeProvider: timeProvider, modifiedBy: CreatedBy);
+            ClientRegistrationApi = clientRegistrationApi;
+            RegistrationScope = registrationScope;
             SoftwareStatementProfileId = softwareStatementProfileId;
             OpenIdConfiguration = openIdConfiguration;
             OBClientRegistrationRequest = obClientRegistrationRequest;
             OBClientRegistration = obClientRegistration;
             OAuth2RequestObjectClaimsOverrides = claimsOverrides;
-            Id = Guid.NewGuid();
             BankId = bankId;
         }
 
         public string SoftwareStatementProfileId { get; set; } = null!;
 
+        /// <summary>
+        ///     Functional APIs used for bank registration.
+        /// </summary>
+        public RegistrationScope RegistrationScope { get; set; }
+
+        public ClientRegistrationApiVersion ClientRegistrationApi { get; set; }
+
         public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;
 
-        public OBClientRegistration OBClientRegistration { get; set; } = null!;
+        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistration { get; set; } = null!;
 
         public OAuth2RequestObjectClaimsOverridesRequest? OAuth2RequestObjectClaimsOverrides { get; set; }
+
+        public BankRegistrationPostResponse PublicPostResponse =>
+            new BankRegistrationPostResponse(
+                Id,
+                OBClientRegistrationRequest,
+                BankId);
 
         /// <summary>
         ///     Bank this registration is with.
         /// </summary>
         public Guid BankId { get; set; }
 
-        // TODO: Add MTLS configuration
+        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; set; } = null!;
 
-        public OBClientRegistration OBClientRegistrationRequest { get; set; } = null!;
+        public BankRegistrationGetLocalResponse PublicGetLocalResponse =>
+            new BankRegistrationGetLocalResponse(
+                Id,
+                OBClientRegistrationRequest,
+                BankId);
 
-        public Guid Id { get; set; }
-
-        public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
-        public DateTimeOffset Created { get; }
-        public string? CreatedBy { get; }
-        public Func<BankRegistrationRequest, ValidationResult> ValidatePublicRequestWrapper => ValidatePublicRequest;
-
-        public BankRegistrationResponse PublicResponse =>
-            new BankRegistrationResponse(
-                id: Id,
-                bankClientRegistrationRequest: OBClientRegistrationRequest,
-                bankId: BankId);
-
-        public Func<ISharedContext, BankRegistrationRequest, string?, Task<BankRegistrationResponse>>
+        public PostEntityAsyncWrapperDelegate<BankRegistrationRequest, BankRegistrationPostResponse>
             PostEntityAsyncWrapper =>
             PostEntityAsync;
 
-        public Task BankApiDeleteAsync()
+        public static async Task<(BankRegistrationPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
+                nonErrorMessages)>
+            PostEntityAsync(
+                ISharedContext context,
+                BankRegistrationRequest request,
+                string? createdBy)
         {
-            throw new NotImplementedException();
-        }
+            PostBankRegistration i = new PostBankRegistration(
+                context.ApiClient,
+                context.DbService.GetDbEntityMethodsClass<BankRegistration>(),
+                context.DbService.GetDbEntityMethodsClass<Bank>(),
+                context.DbService.GetDbSaveChangesMethodClass(),
+                context.TimeProvider,
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation,
+                context.ApiVariantMapper);
 
-        public Task<BankRegistrationResponse> BankApiGetAsync(ITimeProvider timeProvider, string? modifiedBy)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ValidationResult ValidatePublicRequest(BankRegistrationRequest request)
-        {
-            return new BankRegistrationValidator()
-                .Validate(request);
-        }
-
-        public static async Task<BankRegistrationResponse> PostEntityAsync(
-            ISharedContext context,
-            BankRegistrationRequest request,
-            string? createdBy)
-        {
-            CreateBankRegistration i = new CreateBankRegistration(
-                apiClient: context.ApiClient,
-                bankRegistrationRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<BankRegistration>(),
-                bankRepo: context.DbEntityRepositoryFactory.CreateDbEntityRepository<Bank>(),
-                dbMultiEntityMethods: context.DbContextService,
-                timeProvider: context.TimeProvider,
-                softwareStatementProfileRepo: context.SoftwareStatementProfileCachedRepo);
-
-            BankRegistrationResponse resp = await i.CreateAsync(
-                request: request,
-                createdBy: createdBy);
-            return resp;
+            (BankRegistrationPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
+                await i.PostAsync(request, createdBy);
+            return result;
         }
     }
 }

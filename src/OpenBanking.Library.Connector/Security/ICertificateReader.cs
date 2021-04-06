@@ -10,8 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public interface ICertificateReader
     {
-        Task<X509Certificate2> GetCertificateAsync(string value);
+        Task<X509Certificate2?> GetCertificateAsync(string value);
 
-        Task<X509Certificate2> GetCertificateAsync(string value, SecureString password);
+        Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password);
     }
 }

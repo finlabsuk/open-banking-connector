@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
         {
             StringBuilder msg = GetTraceInfoMessage(info);
 
-            Write(target: _outWriter, message: msg.ToString(), color: ConsoleColor.Gray);
+            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
         }
 
 
@@ -37,27 +37,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
         {
             StringBuilder msg = GetTraceInfoMessage(info);
 
-            Write(target: _outWriter, message: msg.ToString(), color: ConsoleColor.Gray);
+            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
         }
 
         public void Info(string message)
         {
-            Write(target: _outWriter, message: message, color: ConsoleColor.White);
+            Write(_outWriter, message, ConsoleColor.White);
         }
 
         public void Warning(string message)
         {
-            Write(target: _outWriter, message: message, color: ConsoleColor.Yellow);
+            Write(_outWriter, message, ConsoleColor.Yellow);
         }
 
         public void Error(string message)
         {
-            Write(target: _outWriter, message: message, color: ConsoleColor.Red);
+            Write(_outWriter, message, ConsoleColor.Red);
         }
 
         public void Exception(Exception exception)
         {
-            Exception(exception: exception, message: "");
+            Exception(exception, "");
         }
 
         public void Exception(Exception exception, string message)
@@ -71,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 
             string msg = lines.JoinString(Environment.NewLine);
 
-            Write(target: _outWriter, message: msg, color: ConsoleColor.Red);
+            Write(_outWriter, msg, ConsoleColor.Red);
         }
 
         private void Write(TextWriter target, string message, ConsoleColor? color)
