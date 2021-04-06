@@ -10,13 +10,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     {
         string IssuerUrl { get; }
         string FinancialId { get; }
-        string Name { get; }
+        string? Name { get; }
         Guid Id { get; }
     }
 
-    public class BankResponse : IBankPublicQuery
+    /// <summary>
+    ///     Response to GetLocal
+    /// </summary>
+    public class BankGetLocalResponse : IBankPublicQuery
     {
-        internal BankResponse(string issuerUrl, string xFapiFinancialId, string name, Guid id)
+        internal BankGetLocalResponse(string issuerUrl, string xFapiFinancialId, string? name, Guid id)
         {
             IssuerUrl = issuerUrl;
             FinancialId = xFapiFinancialId;
@@ -28,8 +31,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 
         public string FinancialId { get; }
 
-        public string Name { get; }
+        public string? Name { get; }
 
         public Guid Id { get; }
+    }
+
+    /// <summary>
+    ///     Response to Post
+    /// </summary>
+    public class BankPostResponse : BankGetLocalResponse
+    {
+        internal BankPostResponse(string issuerUrl, string xFapiFinancialId, string? name, Guid id) : base(
+            issuerUrl,
+            xFapiFinancialId,
+            name,
+            id) { }
     }
 }

@@ -24,11 +24,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
     [GcServer(true)]
     public class BenchmarkPispApplication
     {
-
         [Benchmark]
-        public void RunPispPayment()
-        {
-        }
+        public void RunPispPayment() { }
 
 
         public void OnExecute()

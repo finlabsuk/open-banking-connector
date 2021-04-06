@@ -15,9 +15,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         Guid BankId { get; }
     }
 
-    public class BankApiInformationResponse : IBankApiInformationPublicQuery
+    /// <summary>
+    ///     Response to GetLocal
+    /// </summary>
+    public class BankApiInformationGetLocalResponse : IBankApiInformationPublicQuery
     {
-        internal BankApiInformationResponse(PaymentInitiationApi? paymentInitiationApi, Guid id, Guid bankId)
+        internal BankApiInformationGetLocalResponse(PaymentInitiationApi? paymentInitiationApi, Guid id, Guid bankId)
         {
             PaymentInitiationApi = paymentInitiationApi;
             Id = id;
@@ -27,5 +30,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         public PaymentInitiationApi? PaymentInitiationApi { get; }
         public Guid Id { get; }
         public Guid BankId { get; }
+    }
+
+    /// <summary>
+    ///     Response to Post
+    /// </summary>
+    public class BankApiInformationPostResponse : BankApiInformationGetLocalResponse
+    {
+        internal BankApiInformationPostResponse(PaymentInitiationApi? paymentInitiationApi, Guid id, Guid bankId) : base(
+            paymentInitiationApi,
+            id,
+            bankId) { }
     }
 }

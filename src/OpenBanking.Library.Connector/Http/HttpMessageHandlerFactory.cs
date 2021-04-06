@@ -21,17 +21,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
             };
 
-            ApplyAuthentication(value: value, clientHandler: clientHandler);
+            ApplyAuthentication(value, clientHandler);
 
-            ApplyCertificates(value: value, clientHandler: clientHandler);
+            ApplyCertificates(value, clientHandler);
 
-            ApplyServerCertificateValidator(value: value, clientHandler: clientHandler);
+            ApplyServerCertificateValidator(value, clientHandler);
 
-            ApplyProxy(value: value, clientHandler: clientHandler);
+            ApplyProxy(value, clientHandler);
 
-            ApplyRedirects(value: value, clientHandler: clientHandler);
+            ApplyRedirects(value, clientHandler);
 
-            ApplyCookies(value: value, clientHandler: clientHandler);
+            ApplyCookies(value, clientHandler);
 
 
             return clientHandler;
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private void ApplyCookies(HttpRequestInfo value, HttpClientHandler clientHandler)
         {
-            if (value.Cookies?.Count > 0)
+            if (value.Cookies.Count > 0)
             {
                 foreach (Cookie cookie in value.Cookies.Where(c => !string.IsNullOrWhiteSpace(c.Domain)))
                 {
@@ -90,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private void ApplyCertificates(HttpRequestInfo value, HttpClientHandler clientHandler)
         {
-            if (value.Certificates?.Count > 0)
+            if (value.Certificates.Count > 0)
             {
                 clientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 clientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11;

@@ -8,6 +8,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     public class Error
     {
         /// Error description
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
     }
 }

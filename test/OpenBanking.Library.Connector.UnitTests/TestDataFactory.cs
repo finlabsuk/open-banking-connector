@@ -5,14 +5,13 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using NSubstitute;
 using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
@@ -22,32 +21,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         public static SharedContext CreateMockOpenBankingContext()
         {
             return new SharedContext(
-                timeProvider: Substitute.For<ITimeProvider>(),
-                certificateReader: Substitute.For<ICertificateReader>(),
-                apiClient: Substitute.For<IApiClient>(),
-                instrumentation: Substitute.For<IInstrumentationClient>(),
-                keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
-                dbEntityRepositoryFactory: Substitute.For<IDbEntityRepositoryFactory>(),
-                softwareStatementProfileCachedRepo: Substitute
-                    .For<IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached>>(),
-                entityMapper: Substitute.For<IEntityMapper>(),
-                dbContextService: Substitute.For<IDbMultiEntityMethods>());
+                Substitute.For<ITimeProvider>(),
+                Substitute.For<IApiClient>(),
+                Substitute.For<IInstrumentationClient>(),
+                Substitute.For<IDbService>(),
+                Substitute
+                    .For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                Substitute.For<IApiVariantMapper>());
         }
 
 
         public static RequestBuilder CreateMockRequestBuilder()
         {
             return new RequestBuilder(
-                timeProvider: Substitute.For<ITimeProvider>(),
-                entityMapper: new EntityMapper(),
-                dbContextService: Substitute.For<IDbMultiEntityMethods>(),
-                logger: Substitute.For<IInstrumentationClient>(),
-                keySecretReadOnlyProvider: Substitute.For<IKeySecretReadOnlyProvider>(),
-                apiClient: Substitute.For<IApiClient>(),
-                certificateReader: Substitute.For<ICertificateReader>(),
-                softwareStatementProfileCachedRepo: Substitute
-                    .For<IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached>>(),
-                dbEntityRepositoryFactory: Substitute.For<IDbEntityRepositoryFactory>());
+                Substitute.For<ITimeProvider>(),
+                new ApiVariantMapper(),
+                Substitute.For<IInstrumentationClient>(),
+                Substitute.For<IApiClient>(),
+                Substitute.For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                Substitute.For<IDbService>());
         }
     }
 }

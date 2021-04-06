@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public static class CertificateFactories
     {
-        public static X509Certificate2 GetCertificate2FromPem(string privateKey, string pem)
+        public static X509Certificate2? GetCertificate2FromPem(string privateKey, string pem)
         {
             /*
             string cleanedPem = Regex
@@ -20,33 +20,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 .Replace(privateKey, @"\r\n|\n\r|\n|\r", Environment.NewLine);
                 */
 
-            using X509Certificate2 publicKey = GetCertificate2FromPem(pem);
             string[] privateKeyBlocks = privateKey.Split(
-                separator: "-",
-                options: StringSplitOptions.RemoveEmptyEntries);
+                "-",
+                StringSplitOptions.RemoveEmptyEntries);
             byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
             using RSA rsa = RSA.Create();
 
             if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
             {
-                rsa.ImportPkcs8PrivateKey(source: privateKeyBytes, bytesRead: out _);
+                rsa.ImportPkcs8PrivateKey(privateKeyBytes, out _);
             }
             else if (privateKeyBlocks[0] == "BEGIN RSA PRIVATE KEY")
             {
-                rsa.ImportRSAPrivateKey(source: privateKeyBytes, bytesRead: out _);
+                rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
             }
 
-            using (X509Certificate2 certWithKey = publicKey.CopyWithPrivateKey(rsa))
-            {
-                return new X509Certificate2(certWithKey.Export(X509ContentType.Pkcs12));
-            }
+            using X509Certificate2? publicKey = GetCertificate2FromPem(pem);
+            using X509Certificate2? certWithKey = publicKey?.CopyWithPrivateKey(rsa);
+
+            return certWithKey is null
+                ? null
+                : new X509Certificate2(certWithKey.Export(X509ContentType.Pkcs12));
         }
 
-        public static X509Certificate2 GetCertificate2FromPem(string pem)
+        public static X509Certificate2? GetCertificate2FromPem(string pem)
         {
             if (pem.ArgNotNull(nameof(pem)).IsPemThumbprint())
             {
-                string[] publicKeyBlocks = pem.Split(separator: "-", options: StringSplitOptions.RemoveEmptyEntries);
+                string[] publicKeyBlocks = pem.Split("-", StringSplitOptions.RemoveEmptyEntries);
                 if (publicKeyBlocks.Length == 4)
                 {
                     byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBlocks[1]);

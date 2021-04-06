@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
     {
         public static Arbitrary<X509Certificate> GetArbitrary()
         {
-            var elements = new[] { new X509Certificate() };
+            X509Certificate[] elements = { new X509Certificate() };
 
             return Gen.Elements(elements).ToArbitrary();
         }

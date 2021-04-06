@@ -12,17 +12,16 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
     public class ThumbprintServerCertificateValidator : IServerCertificateValidator
     {
-        private readonly IKeySecretReadOnlyProvider _keySecrets;
+        private readonly IKeySecretProvider _keySecrets;
         private readonly Lazy<HashSet<string>> _thirdPartyThumbprints;
 
-        public ThumbprintServerCertificateValidator(IKeySecretReadOnlyProvider keySecrets)
+        public ThumbprintServerCertificateValidator(IKeySecretProvider keySecrets)
         {
             _keySecrets = keySecrets.ArgNotNull(nameof(keySecrets));
             _thirdPartyThumbprints = new Lazy<HashSet<string>>(GetThumbprints(GetServerCertificatesAsync().Result));
@@ -36,23 +35,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         }
 
         public static IEnumerable<string> GetThirdPartyCertificateNames() =>
-            Enumerable.Range(start: 1, count: 100).Select(i => $"thirdPartyCertificate.{i}.pem");
+            Enumerable.Range(1, 100).Select(i => $"thirdPartyCertificate.{i}.pem");
 
         private async Task<IEnumerable<X509Certificate2>> GetServerCertificatesAsync()
         {
-            KeySecret[] pems = await GetThirdPartyCertificateNames()
+            KeySecret[] pems = (await GetThirdPartyCertificateNames()
                 .Select(_keySecrets.GetKeySecretAsync)
                 .ToArray()
-                .WaitAll();
+                .WaitAll())!;
 
             List<X509Certificate2> result = new List<X509Certificate2>();
             PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
             foreach (KeySecret secret in pems.Where(ks => ks != null))
             {
-                X509Certificate2 cert = await rdr.GetCertificateAsync(
-                    value: secret.Value,
-                    password: new SecureString());
+                X509Certificate2? cert = await rdr.GetCertificateAsync(
+                    secret.Value,
+                    new SecureString());
                 if (cert != null)
                 {
                     result.Add(cert);

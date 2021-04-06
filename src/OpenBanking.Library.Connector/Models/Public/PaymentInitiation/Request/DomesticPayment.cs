@@ -3,11 +3,19 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
+using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
 {
-    public class DomesticPayment
+    public class DomesticPayment : ISupportsValidation
     {
-        public Guid ConsentId { get; set; }
+        public Guid DomesticPaymentConsentId { get; set; }
+
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new DomesticPaymentValidator()
+                .ValidateAsync(this)!;
     }
 }

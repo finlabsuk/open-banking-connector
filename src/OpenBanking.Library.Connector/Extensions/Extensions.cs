@@ -16,8 +16,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
     internal static class Extensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TResult Maybe<T, TResult>(this T value, Func<T, TResult> selector)
+        public static TResult Maybe<T, TResult>(this T? value, Func<T, TResult> selector)
             where T : class
+            where TResult : struct
         {
             return value != null
                 ? selector(value)
@@ -25,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IEnumerable<T> NullToEmpty<T>(this IEnumerable<T> values)
+        public static IEnumerable<T> NullToEmpty<T>(this IEnumerable<T>? values)
         {
             return values ?? Enumerable.Empty<T>();
         }
@@ -33,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
         public static IEnumerable<T> WalkRecursive<T>(this T value, Func<T, T> selector)
             where T : class
         {
-            return WalkRecursiveInner(value: value, selector: selector.ArgNotNull(nameof(selector)));
+            return WalkRecursiveInner(value, selector.ArgNotNull(nameof(selector)));
         }
 
 
@@ -49,11 +50,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
 
         public static int DelimiterCount(this string value, char delimiter)
         {
-            int count = 0;
-            int x = 0;
+            var count = 0;
+            var x = 0;
             do
             {
-                x = value.IndexOf(value: delimiter, startIndex: x);
+                x = value.IndexOf(delimiter, x);
                 if (x < 0)
                 {
                     return count;
@@ -81,14 +82,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
                 {
                     Prop = p.GetGetMethod(),
                     Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
-                }).Where(a => a.Attr != null && a.Prop != null);
+                }).Where(a => a.Attr?.PropertyName != null && a.Prop != null);
 
             Dictionary<string, object> result = new Dictionary<string, object>(StringComparer.InvariantCulture);
             foreach (var pair in pairs)
             {
-                object propValue = pair.Prop.Invoke(obj: value, parameters: null);
+                object propValue = pair.Prop.Invoke(value, null);
 
-                result[pair.Attr.PropertyName] = propValue;
+                result[pair.Attr.PropertyName!] = propValue;
             }
 
             return result;
@@ -105,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
 
         public static string JoinString(this IEnumerable<string> lines, string delimiter)
         {
-            return string.Join(separator: delimiter, values: lines.ArgNotNull(nameof(lines)));
+            return string.Join(delimiter, lines.ArgNotNull(nameof(lines)));
         }
 
 

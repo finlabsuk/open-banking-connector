@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -14,13 +15,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string Issuer { get; set; } = null!;
 
         [JsonProperty("response_types_supported")]
-        public string[] ResponseTypesSupported { get; set; } = null!;
+        public IList<string> ResponseTypesSupported { get; set; } = null!;
 
         [JsonProperty("scopes_supported")]
-        public string[] ScopesSupported { get; set; } = null!;
+        public IList<string> ScopesSupported { get; set; } = null!;
 
         [JsonProperty("response_modes_supported")]
-        public string[] ResponseModesSupported { get; set; } = null!;
+        public IList<string> ResponseModesSupported { get; set; } = null!;
 
         [JsonProperty("token_endpoint")]
         public string TokenEndpoint { get; set; } = null!;

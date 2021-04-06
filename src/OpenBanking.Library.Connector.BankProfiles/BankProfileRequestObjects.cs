@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
@@ -11,50 +12,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     public partial class BankProfile
     {
         public BankRegistration BankRegistration(
+            string name,
             Guid bankId,
             string softwareStatementProfileId,
-            RegistrationScopeApiSet registrationScopeApiSet)
+            RegistrationScope registrationScope)
         {
-            string? BankRegistrationResponsePath(RegistrationScopeApiSet apiSet)
+            string? BankRegistrationResponsePath(RegistrationScope apiSet)
             {
                 string bankRegistrationResponsesPath = AppContext.BaseDirectory; // default value
                 CustomBankRegistrationResponsesPath(ref bankRegistrationResponsesPath);
                 string filePath = Path.Combine(
-                    path1: bankRegistrationResponsesPath,
-                    path2:
+                    bankRegistrationResponsesPath,
                     $"{RegistrationScopeApiSetHelper.AbbreviatedName(apiSet)}_{BankProfileEnum.ToString()}.json");
                 return File.Exists(filePath) ? filePath : null;
             }
 
             return BankRegistrationAdjustments.Invoke(
-                bankRegistration: new BankRegistration
+                new BankRegistration
                 {
                     BankId = bankId,
                     AllowMultipleRegistrations = true,
-                    ReplaceStagingBankRegistration = true,
                     SoftwareStatementProfileId = softwareStatementProfileId,
-                    BankRegistrationResponseFileName = BankRegistrationResponsePath(registrationScopeApiSet)
+                    RegistrationScope = registrationScope,
+                    BankRegistrationResponseFileName = BankRegistrationResponsePath(registrationScope),
+                    Name = name
                 },
-                registrationScopeApiSet: registrationScopeApiSet);
+                registrationScope);
         }
 
-        public Bank BankObject(
-            string name,
-            RegistrationScopeApiSet registrationScopeApiSet) =>
+        public Bank BankObject(string name) =>
             new Bank
             {
-                RegistrationScopeApiSet = registrationScopeApiSet,
                 IssuerUrl = IssuerUrl,
                 FinancialId = FinancialId,
                 Name = name
             };
 
-        public BankApiInformation BankApiInformation(Guid bankId) =>
+        public BankApiInformation BankApiInformation(string name, Guid bankId) =>
             new BankApiInformation
             {
                 BankId = bankId,
-                ReplaceStagingBankProfile = true,
-                PaymentInitiationApi = DefaultPaymentInitiationApi
+                PaymentInitiationApi = DefaultPaymentInitiationApi,
+                Name = name
             };
     }
 }

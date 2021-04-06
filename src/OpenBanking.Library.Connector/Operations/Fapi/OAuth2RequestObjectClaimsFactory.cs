@@ -16,7 +16,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
             string redirectUrl,
             string[] scope,
             string intentId,
-            string issuerUrl)
+            string issuerUrl,
+            string state)
         {
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
@@ -32,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,
-                Claims = new OAuth2RequestObjectInnerClaims(intentId)
+                Claims = new OAuth2RequestObjectInnerClaims(intentId),
+                State = state
             };
 
             return oAuth2RequestObjectClaims;

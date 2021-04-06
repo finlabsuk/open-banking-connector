@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         public class IndividualClaim
         {
-            public IndividualClaim(bool? essential, string value, string[] values)
+            public IndividualClaim(bool? essential, string? value, string[]? values)
             {
                 Essential = essential;
                 Value = value;
@@ -33,17 +33,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
             public bool? Essential { get; set; }
 
             [JsonProperty("value")]
-            public string Value { get; set; }
+            public string? Value { get; set; }
 
             [JsonProperty("values")]
-            public string[] Values { get; set; }
+            public string[]? Values { get; set; }
         }
 
         public class UserInfoClaims
         {
             public UserInfoClaims(string intentId)
             {
-                OpenbankingIntentId = new IndividualClaim(essential: true, value: intentId, values: null);
+                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
             }
 
             [JsonProperty("openbanking_intent_id")]
@@ -54,8 +54,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         {
             public IdTokenClaims(string intentId)
             {
-                OpenbankingIntentId = new IndividualClaim(essential: true, value: intentId, values: null);
-                Acr = new IndividualClaim(essential: true, value: "urn:openbanking:psd2:ca", values: null);
+                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
+                Acr = new IndividualClaim(true, "urn:openbanking:psd2:ca", null);
             }
 
             [JsonProperty("openbanking_intent_id")]

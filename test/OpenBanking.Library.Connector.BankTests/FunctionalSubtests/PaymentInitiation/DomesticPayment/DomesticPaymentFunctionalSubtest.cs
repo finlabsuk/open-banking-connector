@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -32,51 +33,91 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task RunTest(
             DomesticPaymentFunctionalSubtestEnum subtestEnum,
             BankProfile bankProfile,
-            Guid bankId,
+            Guid bankRegistrationId,
+            Guid bankApiInformationId,
             IRequestBuilder requestBuilder,
             TestDataProcessor testDataProcessor,
-            INodeJSService nodeJsService)
+            bool includeConsentAuth,
+            INodeJSService? nodeJsService,
+            PuppeteerLaunchOptions? puppeteerLaunchOptions)
         {
             DomesticPaymentFunctionalSubtest subtest = DomesticPaymentFunctionalSubtestHelper.Test(subtestEnum);
 
             // POST domestic payment consent
-            DomesticPaymentConsent domesticConsentPaymentRequest =
-                subtest.DomesticPaymentConsent(bankProfile: bankProfile, bankId: default);
-            testDataProcessor.ProcessData(domesticConsentPaymentRequest);
-            domesticConsentPaymentRequest.BankId = bankId;
-            FluentResponse<DomesticPaymentConsentResponse> consentResp =
+            DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
+            {
+                WriteDomesticConsent = DomesticPaymentConsent(
+                    subtest.DomesticPaymentFunctionalSubtestEnum,
+                    "placeholder: OBC consent ID",
+                    "placeholder: random GUID"),
+                BankApiInformationId = Guid.Empty,
+                BankRegistrationId = Guid.Empty
+            };
+            domesticConsentPaymentRequest =
+                bankProfile.DomesticPaymentConsentAdjustments(domesticConsentPaymentRequest);
+            await testDataProcessor.ProcessData(domesticConsentPaymentRequest);
+            domesticConsentPaymentRequest.BankRegistrationId = bankRegistrationId;
+            domesticConsentPaymentRequest.BankApiInformationId = bankApiInformationId;
+            domesticConsentPaymentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
+                Guid.NewGuid().ToString("N");
+            domesticConsentPaymentRequest.WriteDomesticConsent.Data.Initiation.EndToEndIdentification =
+                Guid.NewGuid().ToString("N");
+
+            IFluentResponse<DomesticPaymentConsentPostResponse> postConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .PostAsync(domesticConsentPaymentRequest);
 
-            // Checks
-            consentResp.Should().NotBeNull();
-            consentResp.Messages.Should().BeEmpty();
-            consentResp.Data.Should().NotBeNull();
-            Guid consentId = consentResp.Data!.Id;
+            postConsentResp.Should().NotBeNull();
+            postConsentResp.Messages.Should().BeEmpty();
+            postConsentResp.Data.Should().NotBeNull();
+            postConsentResp.Data!.AuthUrl.Should().NotBeNull();
 
-            // Automated consent authorisation
-            await nodeJsService.InvokeFromFileAsync(
-                modulePath: "authoriseConsent.js",
-                exportName: "authoriseConsent",
-                args: new[]
+            // GET domestic payment consent
+            IFluentResponse<DomesticPaymentConsentGetResponse> getConsentResponse =
+                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
+                    .GetAsync(postConsentResp.Data!.Id);
+            getConsentResponse.Should().NotBeNull();
+            getConsentResponse.Messages.Should().BeEmpty();
+            getConsentResponse.Data.Should().NotBeNull();
+
+            if (includeConsentAuth)
+            {
+                if (puppeteerLaunchOptions is null ||
+                    nodeJsService is null)
                 {
-                    consentResp.Data!.AuthUrl, bankProfile.BankProfileEnum.ToString(), "DomesticPaymentConsent"
-                });
+                    throw new ArgumentNullException($"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
+                }
 
-            // POST domestic payment
-            Models.Public.PaymentInitiation.Request.DomesticPayment domesticPaymentRequest =
-                new Models.Public.PaymentInitiation.Request.DomesticPayment
-                    { ConsentId = default };
-            testDataProcessor.ProcessData(domesticPaymentRequest);
-            domesticPaymentRequest.ConsentId = consentId;
-            FluentResponse<DomesticPaymentResponse> paymentResp =
-                await requestBuilder.PaymentInitiation.DomesticPayments
-                    .PostAsync(domesticPaymentRequest);
+                // Automated consent authorisation
+                Guid consentId = postConsentResp.Data!.Id;
+                object[] args =
+                {
+                    postConsentResp.Data!.AuthUrl!,
+                    bankProfile.BankProfileEnum.ToString(),
+                    "DomesticPaymentConsent",
+                    bankProfile.BankUser,
+                    puppeteerLaunchOptions
+                };
+                await nodeJsService.InvokeFromFileAsync(
+                    "authoriseConsent.js",
+                    "authoriseConsent",
+                    args);
 
-            // Checks
-            paymentResp.Should().NotBeNull();
-            paymentResp.Messages.Should().BeEmpty();
-            paymentResp.Data.Should().NotBeNull();
+                // POST domestic payment
+                Models.Public.PaymentInitiation.Request.DomesticPayment domesticPaymentRequest =
+                    new Models.Public.PaymentInitiation.Request.DomesticPayment
+                        { DomesticPaymentConsentId = default };
+                await testDataProcessor.ProcessData(domesticPaymentRequest);
+                domesticPaymentRequest.DomesticPaymentConsentId = consentId;
+                IFluentResponse<DomesticPaymentPostResponse> paymentResp =
+                    await requestBuilder.PaymentInitiation.DomesticPayments
+                        .PostAsync(domesticPaymentRequest);
+
+                // Checks
+                paymentResp.Should().NotBeNull();
+                paymentResp.Messages.Should().BeEmpty();
+                paymentResp.Data.Should().NotBeNull();
+            }
         }
     }
 }

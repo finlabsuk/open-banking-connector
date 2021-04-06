@@ -17,17 +17,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Info_Recorded(string message)
         {
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
                 logger.Info(message);
 
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
                 result.Should().Contain(message);
             }
@@ -38,17 +38,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Warning_Recorded(string message)
         {
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
                 logger.Warning(message);
 
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
                 result.Should().Contain(message);
             }
@@ -60,17 +60,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Error_Recorded(string message)
         {
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
                 logger.Error(message);
 
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
                 result.Should().Contain(message);
             }
@@ -83,18 +83,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ", " ex msg ")]
         public void Logging_Exception_Recorded(string message, string exceptionMessage)
         {
-            var ex = new Exception(exceptionMessage);
-            using (var ms = new MemoryStream())
+            Exception ex = new Exception(exceptionMessage);
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
                 logger.Exception(ex, message);
 
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
 
                 result.Should().Contain(exceptionMessage);
@@ -108,10 +108,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ", " end of test ")]
         public void Logging_StartTrace_EndTrace_Recorded(string startMsg, string endMsg)
         {
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
 
                 logger.StartTrace(new TraceInfo(startMsg));
@@ -120,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
                 result = result.Trim(Environment.NewLine.ToCharArray());
 
@@ -134,17 +134,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" msg2 ", " just a test ", " end of test ")]
         public void Logging_StartTrace_TraceRecorded(string msg, params string[] msgs)
         {
-            var trace = new TraceInfo(msg);
+            TraceInfo trace = new TraceInfo(msg);
             for (var x = 0; x < msgs.Length; x++)
             {
                 trace.Add($"stuff{x}", msgs[x]);
             }
 
 
-            using (var ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                var w = new StreamWriter(ms);
-                var logger = new ConsoleInstrumentationClient(w);
+                StreamWriter w = new StreamWriter(ms);
+                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
 
                 logger.StartTrace(trace);
 
@@ -152,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
                 w.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var result = new StreamReader(ms).ReadToEnd();
+                string result = new StreamReader(ms).ReadToEnd();
 
                 result = result.Trim(Environment.NewLine.ToCharArray());
 

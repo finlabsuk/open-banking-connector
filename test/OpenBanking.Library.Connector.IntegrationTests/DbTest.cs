@@ -10,15 +10,16 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
 {
     // Makes available in-memory SQLite database
-    public abstract class DbTest: IDisposable
+    public abstract class DbTest : IDisposable
     {
-        private readonly SqliteConnection _dBConnection;
         protected readonly SqliteDbContext _dB;
+        private readonly SqliteConnection _dBConnection;
+
         protected DbTest()
         {
             _dBConnection = new SqliteConnection("DataSource=:memory:");
             _dBConnection.Open(); // Creates DB
-            var dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
+            DbContextOptions<SqliteDbContext> dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
                 .UseSqlite(_dBConnection)
                 .Options;
             _dB = new SqliteDbContext(dbContextOptions);

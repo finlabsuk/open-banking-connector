@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
         [DebuggerStepThrough]
         public static Lens<T, TValue> Create<T, TValue>(Func<T, TValue> get, Action<T, TValue> set)
         {
-            return new Lens<T, TValue>(get: get, set: set);
+            return new Lens<T, TValue>(get, set);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
             if (v == null)
             {
                 v = Activator.CreateInstance<TValue>();
-                lens.Set(arg1: value, arg2: v);
+                lens.Set(value, v);
             }
 
             return v;

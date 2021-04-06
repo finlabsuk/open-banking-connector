@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using OBClientRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models.OBClientRegistration1;
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
@@ -12,14 +12,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     {
         Guid Id { get; }
 
-        OBClientRegistration OBClientRegistrationRequest { get; }
+        ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; }
 
         Guid BankId { get; }
     }
 
-    public class BankRegistrationResponse : IBankRegistrationPublicQuery
+    /// <summary>
+    ///     Respnose to GetLocal
+    /// </summary>
+    public class BankRegistrationGetLocalResponse : IBankRegistrationPublicQuery
     {
-        internal BankRegistrationResponse(Guid id, OBClientRegistration bankClientRegistrationRequest, Guid bankId)
+        internal BankRegistrationGetLocalResponse(
+            Guid id,
+            ClientRegistrationModelsPublic.OBClientRegistration1 bankClientRegistrationRequest,
+            Guid bankId)
         {
             Id = id;
             OBClientRegistrationRequest = bankClientRegistrationRequest;
@@ -28,7 +34,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 
         public Guid Id { get; }
 
-        public OBClientRegistration OBClientRegistrationRequest { get; }
+        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; }
         public Guid BankId { get; }
+    }
+
+    /// <summary>
+    ///     Response to Post
+    /// </summary>
+    public class BankRegistrationPostResponse : BankRegistrationGetLocalResponse
+    {
+        internal BankRegistrationPostResponse(
+            Guid id,
+            ClientRegistrationModelsPublic.OBClientRegistration1 bankClientRegistrationRequest,
+            Guid bankId) : base(id, bankClientRegistrationRequest, bankId) { }
     }
 }

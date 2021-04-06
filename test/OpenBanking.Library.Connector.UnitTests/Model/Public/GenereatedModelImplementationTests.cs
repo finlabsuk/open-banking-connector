@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
@@ -15,14 +17,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
         [Fact]
         public void AllObjectsAreEqualToThemselves()
         {
-            var modelTypes = TypeExtensions.GetPublicModelTypes().Select(t => t.GetConstructor()).Where(t => t != null);
+            IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetPublicModelTypes()
+                .Select(t => t.GetConstructor())
+                .Where(t => t != null)
+                .Select(t => t!);
 
             foreach (var (type, ctor) in modelTypes)
             {
-                var instance = ctor.CreateInstanceSafe();
+                object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
                 {
-                    var r = instance.Equals(instance);
+                    bool r = instance.Equals(instance);
                 }
             }
         }
@@ -30,11 +35,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
         [Fact]
         public void AllObjectsHaveToString()
         {
-            var modelTypes = TypeExtensions.GetPublicModelTypes().Select(t => t.GetConstructor()).Where(t => t != null);
+            IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetPublicModelTypes()
+                .Select(t => t.GetConstructor())
+                .Where(t => t != null)
+                .Select(t => t!);
 
             foreach (var (type, ctor) in modelTypes)
             {
-                var instance = ctor.CreateInstanceSafe();
+                object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
                 {
                     var r = instance.ToString();
@@ -48,14 +56,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
         [Fact]
         public void AllObjectsHaveGetHashCode()
         {
-            var modelTypes = TypeExtensions.GetPublicModelTypes().Select(t => t.GetConstructor()).Where(t => t != null);
+            IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetPublicModelTypes()
+                .Select(t => t.GetConstructor())
+                .Where(t => t != null)
+                .Select(t => t!);
 
             foreach (var (type, ctor) in modelTypes)
             {
-                var instance = ctor.CreateInstanceSafe();
+                object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
                 {
-                    var r = instance.GetHashCode();
+                    int r = instance.GetHashCode();
                 }
             }
         }
@@ -64,18 +75,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
         [Fact]
         public void AllObjectsAreSerialisable()
         {
-            var modelTypes = TypeExtensions.GetPublicModelTypes().Select(t => t.GetConstructor()).Where(t => t != null);
+            IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetPublicModelTypes()
+                .Select(t => t.GetConstructor())
+                .Where(t => t != null)
+                .Select(t => t!);
 
             foreach (var (type, ctor) in modelTypes)
             {
-                var instance = ctor.CreateInstanceSafe();
+                object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
                 {
                     instance = instance.PopulateRequiredFields();
 
-                    var r = JsonConvert.SerializeObject(instance);
+                    string r = JsonConvert.SerializeObject(instance);
 
-                    var r2 = JsonConvert.DeserializeObject(r, type);
+                    object? r2 = JsonConvert.DeserializeObject(r, type);
                 }
             }
         }

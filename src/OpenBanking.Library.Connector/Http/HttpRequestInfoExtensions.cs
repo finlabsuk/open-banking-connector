@@ -15,8 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         public static HttpRequestMessage CreateRequestMessage(this HttpRequestInfo info)
         {
             HttpRequestMessage result = new HttpRequestMessage(
-                    method: new HttpMethod(info.Method),
-                    requestUri: info.RequestUri.ToString())
+                    new HttpMethod(info.Method),
+                    info.RequestUri.ToString())
                 .ApplyAcceptEncoding()
                 .ApplyAcceptContentTypes(info)
                 .AddHeaders(info)
@@ -60,8 +60,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             if (!string.IsNullOrWhiteSpace(info.Content))
             {
-                HttpContent content = new StringContent(content: info.Content, encoding: Encoding.UTF8);
-                string contentType = info.ContentTypes.FirstOrDefault();
+                HttpContent content = new StringContent(info.Content, Encoding.UTF8);
+                string? contentType = info.ContentTypes.FirstOrDefault();
                 if (contentType != null)
                 {
                     content.Headers.ContentType = new MediaTypeWithQualityHeaderValue(contentType);
@@ -75,13 +75,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private static HttpRequestMessage AddHeaders(this HttpRequestMessage request, HttpRequestInfo info)
         {
-            if (info.Headers?.Count > 0)
+            if (info.Headers.Count > 0)
             {
                 IEnumerable<IGrouping<string, HttpHeader>> headers = info.Headers.GroupBy(h => h.Name);
                 foreach (IGrouping<string, HttpHeader> headerGroup in headers)
                 {
                     IEnumerable<string> values = headerGroup.Select(h => h.Value);
-                    request.Headers.Add(name: headerGroup.Key, values: values);
+                    request.Headers.Add(headerGroup.Key, values);
                 }
             }
 

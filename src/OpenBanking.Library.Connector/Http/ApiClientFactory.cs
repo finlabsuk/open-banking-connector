@@ -14,18 +14,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
     {
         private static readonly object Lock = new object();
         private static readonly Lazy<HttpClient> HttpClient = CreateHttpClient();
-        private static HttpMessageHandler _handler;
+        private static HttpMessageHandler? _handler;
 
-        public static IApiClient CreateApiClient(HttpMessageHandler handler)
+        public static IApiClient CreateApiClient(HttpMessageHandler? handler)
         {
             if (handler != null)
             {
                 lock (Lock)
                 {
-                    if (_handler == null)
-                    {
-                        _handler = handler;
-                    }
+                    _handler ??= handler;
                 }
             }
 
@@ -39,9 +36,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 {
                     lock (Lock)
                     {
-                        return _handler != null
-                            ? new HttpClient(_handler)
-                            : new HttpClient();
+                        return _handler is null
+                            ? new HttpClient()
+                            : new HttpClient(_handler);
                     }
                 });
         }

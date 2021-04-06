@@ -3,11 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.PaymentInitiation.V3p1p4.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
 {
@@ -31,15 +32,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBWriteDomesticConsent)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
-                        JsonConvert.DeserializeObject<OBWriteDomesticConsent4>(v))
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OBWriteDomesticConsentResponse)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
-                        JsonConvert.DeserializeObject<OBWriteDomesticConsentResponse4>(v))
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert
+                            .DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             // Top-level foreign keys
@@ -54,8 +56,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 
             // Second-level property info and foreign keys
             builder.OwnsOne(
-                navigationExpression: p => p.State,
-                buildAction: od =>
+                p => p.State,
+                od =>
                 {
                     od.Property(e => e.Data)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -66,14 +68,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 });
             builder.Navigation(p => p.State).IsRequired();
             builder.OwnsOne(
-                navigationExpression: p => p.TokenEndpointResponse,
-                buildAction: od =>
+                p => p.TokenEndpointResponse,
+                od =>
                 {
                     od.Property(e => e.Data)
                         .IsRequired(false)
                         .HasConversion(
-                            convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                            convertFromProviderExpression: v =>
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v =>
                                 JsonConvert.DeserializeObject<TokenEndpointResponse>(v))
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.Property(e => e.Modified)

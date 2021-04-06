@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base.Json;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
@@ -70,6 +70,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public string Nonce { get; set; } = Guid.NewGuid().ToString();
 
         [JsonProperty("state")]
-        public string State { get; set; } = Guid.NewGuid().ToString();
+        public string State { get; set; } = null!;
     }
 }

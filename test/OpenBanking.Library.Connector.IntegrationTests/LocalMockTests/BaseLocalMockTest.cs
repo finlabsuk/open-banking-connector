@@ -7,7 +7,5 @@ using Xunit;
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMockTests
 {
     [Trait(TraitTypes.TestTarget, TestTypes.LocalMocks)]
-    public abstract class BaseLocalMockTest : BaseTest
-    {
-    }
+    public abstract class BaseLocalMockTest { }
 }

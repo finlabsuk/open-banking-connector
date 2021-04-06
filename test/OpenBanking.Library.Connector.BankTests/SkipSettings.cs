@@ -8,16 +8,16 @@ using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
-    public delegate bool UnskippedFilter(BankProfile bankProfile, RegistrationScopeApiSet registrationScopeApiSet);
+    public delegate bool UnskippedFilter(BankProfile bankProfile, RegistrationScope registrationScope);
 
     public delegate bool DomesticPaymentSubtestUnskippedFilter(
         DomesticPaymentFunctionalSubtestEnum domesticPaymentFunctionalSubtestEnum,
         BankProfile bankProfile,
-        RegistrationScopeApiSet registrationScopeApiSet);
+        RegistrationScope registrationScope);
 
     public static class SkipSettings
     {
@@ -34,9 +34,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 };
             };
 
-        public static UnskippedFilter UnskippedFilter(BankTestEnum bankTest)
+        public static UnskippedFilter UnskippedFilter(TestRegistrationScopeEnum testRegistrationScope)
         {
-            bool skipAll = false;
+            var skipAll = false;
             if (skipAll)
             {
                 return (bank, set) => false;
@@ -44,9 +44,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 
             ISet<BankProfileEnum> bankBlacklist = new HashSet<BankProfileEnum>
             {
+                
             };
             ISet<BankProfileEnum> bankWhitelist = new HashSet<BankProfileEnum>(); // default empty whitelist
-            //ISet<BankEnum> bankWhitelist = new HashSet<BankEnum> { BankEnum.NatWest };
+            //ISet<BankProfileEnum> bankWhitelist = new HashSet<BankProfileEnum> { BankProfileEnum.BankOfIreland };
             Func<BankProfile, bool> bankUnskipped = b =>
             {
                 bool result = !bankBlacklist.Contains(b.BankProfileEnum); // default to using blacklist
@@ -58,12 +59,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 return result;
             };
 
-            UnskippedFilter filter = bankTest switch
+            UnskippedFilter filter = testRegistrationScope switch
             {
-                BankTestEnum.PaymentInitiationTest => (b, a) => bankUnskipped(b),
-                BankTestEnum.MultipleApiTypesTest => (b, a) => bankUnskipped(b),
+                TestRegistrationScopeEnum.PaymentInitiation => (b, a) => bankUnskipped(b),
+                TestRegistrationScopeEnum.MultipleElementScope => (b, a) => bankUnskipped(b),
                 _ => throw new ArgumentException(
-                    $"{nameof(bankTest)} is not valid BankTestEnum or needs to be added to this switch statement.")
+                    $"{nameof(testRegistrationScope)} is not valid BankTestEnum or needs to be added to this switch statement.")
             };
 
 

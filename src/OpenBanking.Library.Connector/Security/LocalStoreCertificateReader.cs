@@ -14,29 +14,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
     [ExcludeFromCodeCoverage]
     public class LocalStoreCertificateReader : ICertificateReader
     {
-        public Task<X509Certificate2> GetCertificateAsync(string thumbprint)
+        public Task<X509Certificate2?> GetCertificateAsync(string thumbprint)
         {
-            return GetCertificateInner(value: thumbprint, password: null).ToTaskResult();
+            return GetCertificateInner(thumbprint, null).ToTaskResult();
         }
 
-        public Task<X509Certificate2> GetCertificateAsync(string thumbprint, SecureString password)
+        public Task<X509Certificate2?> GetCertificateAsync(string thumbprint, SecureString password)
         {
-            return GetCertificateInner(value: thumbprint, password: password).ToTaskResult();
+            return GetCertificateInner(thumbprint, password).ToTaskResult();
         }
 
-        private X509Certificate2 GetCertificateInner(string value, SecureString password)
+        private X509Certificate2? GetCertificateInner(string value, SecureString? password)
         {
-            using (X509Store store = new X509Store(storeName: StoreName.My, storeLocation: StoreLocation.LocalMachine))
-            {
-                store.Open(OpenFlags.ReadOnly);
+            using X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+            store.Open(OpenFlags.ReadOnly);
 
-                return store.Certificates.Find(
-                        findType: X509FindType.FindByThumbprint,
-                        findValue: value,
-                        validOnly: false)
-                    .OfType<X509Certificate2>()
-                    .FirstOrDefault();
-            }
+            return store.Certificates.Find(
+                    X509FindType.FindByThumbprint,
+                    value,
+                    false)
+                .OfType<X509Certificate2>()
+                .FirstOrDefault();
         }
     }
 }

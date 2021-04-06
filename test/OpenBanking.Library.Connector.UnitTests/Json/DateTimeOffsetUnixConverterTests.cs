@@ -4,7 +4,7 @@
 
 using System;
 using System.IO;
-using FinnovationLabs.OpenBanking.Library.Connector.ObApi.Base.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base.Json;
 using FsCheck;
 using FsCheck.Xunit;
 using Newtonsoft.Json;
@@ -16,24 +16,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         [Property(Verbose = PropertyTests.VerboseTests)]
         public Property DateTimeOffset_SerialisationIsSymmetric(DateTime dateTime)
         {
-            DateTimeOffset dateTimeOffset = new DateTimeOffset(
-                year: dateTime.Year,
-                month: dateTime.Month,
-                day: dateTime.Day,
-                hour: dateTime.Hour,
-                minute: dateTime.Minute,
-                second: dateTime.Second,
-                offset: TimeSpan.Zero);
+            var dateTimeOffset = new DateTimeOffset(
+                dateTime.Year,
+                dateTime.Month,
+                dateTime.Day,
+                dateTime.Hour,
+                dateTime.Minute,
+                dateTime.Second,
+                TimeSpan.Zero);
 
-            var value = new SerialisedEntity
+            SerialisedEntity value = new SerialisedEntity
             {
                 DateAndTime = dateTimeOffset
             };
 
             Func<bool> rule = () =>
             {
-                var json = JsonConvert.SerializeObject(value);
-                var newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json);
+                string json = JsonConvert.SerializeObject(value);
+                SerialisedEntity newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
 
                 return dateTimeOffset == newValue.DateAndTime;
             };
@@ -45,24 +45,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         public Property DateTimeOffset_MillisecondsIgnored(DateTime dateTime, int milliseconds)
         {
             DateTime dt = new DateTime(
-                year: dateTime.Year,
-                month: dateTime.Month,
-                day: dateTime.Day,
-                hour: dateTime.Hour,
-                minute: dateTime.Minute,
-                second: dateTime.Second,
-                kind: DateTimeKind.Utc).AddMilliseconds(milliseconds);
-            DateTimeOffset dto = new DateTimeOffset(dateTime: dt, offset: TimeSpan.Zero);
+                dateTime.Year,
+                dateTime.Month,
+                dateTime.Day,
+                dateTime.Hour,
+                dateTime.Minute,
+                dateTime.Second,
+                DateTimeKind.Utc).AddMilliseconds(milliseconds);
+            var dto = new DateTimeOffset(dt, TimeSpan.Zero);
 
-            var value = new SerialisedEntity
+            SerialisedEntity value = new SerialisedEntity
             {
                 DateAndTime = dto
             };
 
             Func<bool> rule = () =>
             {
-                var json = JsonConvert.SerializeObject(value);
-                var newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json);
+                string json = JsonConvert.SerializeObject(value);
+                SerialisedEntity newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
 
                 double delta = Math.Abs((value.DateAndTime - newValue.DateAndTime).TotalMilliseconds);
                 return delta == milliseconds;
@@ -76,20 +76,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         {
             Func<bool> rule = () =>
             {
-                var converter = new DateTimeOffsetUnixConverter();
+                DateTimeOffsetUnixConverter converter = new DateTimeOffsetUnixConverter();
 
-                var stringWriter = new StringWriter();
-                var jsonWriter = new JsonTextWriter(stringWriter);
+                StringWriter stringWriter = new StringWriter();
+                JsonTextWriter jsonWriter = new JsonTextWriter(stringWriter);
                 jsonWriter.WriteStartObject();
                 jsonWriter.WritePropertyName("iat");
-                converter.WriteJson(writer: jsonWriter, value: value, serializer: new JsonSerializer());
+                converter.WriteJson(jsonWriter, value, new JsonSerializer());
 
                 jsonWriter.WriteEndObject();
 
                 jsonWriter.Flush();
-                var json = stringWriter.ToString();
+                string json = stringWriter.ToString();
 
-                var x = JsonConvert.DeserializeObject<DeserialisedEntity>(json);
+                DeserialisedEntity x = JsonConvert.DeserializeObject<DeserialisedEntity>(json)!;
 
                 return x.UnixDateAndTime != 0;
             };

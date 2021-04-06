@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Newtonsoft.Json;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 {
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 
         public static IEnumerable<Type> GetOpenBankingModelTypes()
         {
-            Type asmType = typeof(PaymentsExtensions);
+            Type asmType = typeof(PaymentInitiationModelsPublic.Meta);
             Assembly asm = asmType.Assembly;
 
             IEnumerable<Type> asmTypes = asm.GetTypes().Where(t => t.IsInNamespace(asmType));
@@ -38,22 +38,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             return asmTypes;
         }
 
-        public static Tuple<Type, ConstructorInfo> GetConstructor(this Type type)
+        public static Tuple<Type, ConstructorInfo>? GetConstructor(this Type type)
         {
             BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
-            ConstructorInfo ctor = type.GetConstructors(flags)
+            ConstructorInfo? ctor = type.GetConstructors(flags)
                 .FirstOrDefault(c => c.GetParameters().IsEmptyOrDefaults());
             if (ctor != null)
             {
-                return Tuple.Create(item1: type, item2: ctor);
+                return Tuple.Create(type, ctor);
             }
 
             return null;
         }
 
 
-        public static object CreateInstanceSafe(this ConstructorInfo ctor)
+        public static object? CreateInstanceSafe(this ConstructorInfo ctor)
         {
             try
             {
@@ -72,9 +72,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 
             if (ctorParameters.Length > 0)
             {
-                object[] parameters = new object[ctorParameters.Length];
+                object?[] parameters = new object[ctorParameters.Length];
 
-                for (int x = 0; x < ctorParameters.Length; x++)
+                for (var x = 0; x < ctorParameters.Length; x++)
                 {
                     if (!ctorParameters[x].HasDefaultValue &&
                         ctorParameters[x].ParameterType.GetConstructor() != null)
@@ -110,21 +110,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 
             foreach (var pair in pairs)
             {
-                if (pair.Attr.Required == Required.Always || pair.Attr.Required == Required.DisallowNull)
+                if (pair.Attr.Required == Required.Always ||
+                    pair.Attr.Required == Required.DisallowNull)
                 {
                     MethodInfo? prop = pair.Prop.GetSetMethod();
                     if (pair.Prop.PropertyType == typeof(string))
                     {
-                        prop.Invoke(obj: value, parameters: new[] { "" });
+                        prop!.Invoke(value, new object?[] { "" });
                     }
                     else if (pair.Prop.PropertyType == typeof(Uri))
                     {
-                        prop.Invoke(obj: value, parameters: new[] { new Uri("http://aaa.com") });
+                        prop!.Invoke(value, new object?[] { new Uri("https://aaa.com") });
                     }
                     else if (pair.Prop.PropertyType.IsClass)
                     {
                         object? v = Activator.CreateInstance(pair.Prop.PropertyType);
-                        prop.Invoke(obj: value, parameters: new[] { v });
+                        prop!.Invoke(value, new[] { v });
                     }
                 }
             }

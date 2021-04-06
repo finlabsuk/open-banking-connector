@@ -4,93 +4,73 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Access;
-using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets.Providers;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.KeySecrets.Cached.SoftwareStatementProfile;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
+    public interface IRequestBuilder
+    {
+        /// <summary>
+        ///     API for setting up banks in OBC including OAuth2 clients and functional APIs
+        /// </summary>
+        IClientRegistrationContext ClientRegistration { get; }
+
+        /// <summary>
+        ///     API corresponding to UK Open Banking Payment Initiation functional API
+        /// </summary>
+        IPaymentInitiationContext PaymentInitiation { get; }
+
+        /// <summary>
+        ///     API corresponding to UK Open Banking Account and Transaction functional API
+        /// </summary>
+        IAccountAndTransactionContext AccountAndTransaction { get; }
+    }
+
     public class RequestBuilder : IRequestBuilder
     {
         private readonly IApiClient _apiClient;
-        private readonly ICertificateReader _certificateReader;
-        private readonly IDbMultiEntityMethods _dbContextService;
-        private readonly IDbEntityRepositoryFactory _dbEntityRepositoryFactory;
-        private readonly IEntityMapper _entityMapper;
-        private readonly IKeySecretReadOnlyProvider _keySecretReadOnlyProvider;
+        private readonly IApiVariantMapper _apiVariantMapper;
+        private readonly IDbService _dbService;
         private readonly IInstrumentationClient _logger;
-
-        private readonly IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached>
-            _softwareStatementProfileCachedRepo;
-
+        private readonly IReadOnlyRepository<SoftwareStatementProfileCached> _softwareStatementProfileCachedRepo;
         private readonly ITimeProvider _timeProvider;
 
-
         public RequestBuilder(
-            IEntityMapper entityMapper,
-            IDbMultiEntityMethods dbContextService,
-            IInstrumentationClient logger,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
-            IApiClient apiClient,
-            ICertificateReader certificateReader,
-            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
-            IDbEntityRepositoryFactory dbEntityRepositoryFactory)
-            : this(
-                timeProvider: new TimeProvider(),
-                entityMapper: entityMapper,
-                dbContextService: dbContextService,
-                logger: logger,
-                keySecretReadOnlyProvider: keySecretReadOnlyProvider,
-                apiClient: apiClient,
-                certificateReader: certificateReader,
-                softwareStatementProfileCachedRepo: softwareStatementProfileCachedRepo,
-                dbEntityRepositoryFactory: dbEntityRepositoryFactory) { }
-
-        internal RequestBuilder(
             ITimeProvider timeProvider,
-            IEntityMapper entityMapper,
-            IDbMultiEntityMethods dbContextService,
+            IApiVariantMapper apiVariantMapper,
             IInstrumentationClient logger,
-            IKeySecretReadOnlyProvider keySecretReadOnlyProvider,
             IApiClient apiClient,
-            ICertificateReader certificateReader,
-            IReadOnlyKeySecretItemRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
-            IDbEntityRepositoryFactory dbEntityRepositoryFactory)
+            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
+            IDbService dbService)
         {
-            _certificateReader = certificateReader.ArgNotNull(nameof(certificateReader));
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
-            _entityMapper = entityMapper.ArgNotNull(nameof(entityMapper));
-            _dbContextService = dbContextService;
+            _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
             _softwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
-            _dbEntityRepositoryFactory = dbEntityRepositoryFactory;
+            _dbService = dbService;
             _logger = logger.ArgNotNull(nameof(logger));
-            _keySecretReadOnlyProvider = keySecretReadOnlyProvider.ArgNotNull(nameof(keySecretReadOnlyProvider));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
 
+        public IClientRegistrationContext ClientRegistration => new ClientRegistrationContext(CreateContext());
+        public IPaymentInitiationContext PaymentInitiation => new PaymentInitiationContext(CreateContext());
 
-        public IClientRegistration ClientRegistration => new ClientRegistration(CreateContext());
-        public IPaymentInitiation PaymentInitiation => new PaymentInitiation(CreateContext());
-
-        public IAccountAndTransaction AccountAndTransaction =>
-            new AccountAndTransaction(CreateContext());
+        public IAccountAndTransactionContext AccountAndTransaction =>
+            new AccountAndTransactionContext(CreateContext());
 
         private ISharedContext CreateContext()
         {
             SharedContext context = new SharedContext(
-                timeProvider: _timeProvider,
-                certificateReader: _certificateReader,
-                apiClient: _apiClient,
-                instrumentation: _logger,
-                keySecretReadOnlyProvider: _keySecretReadOnlyProvider,
-                dbEntityRepositoryFactory: _dbEntityRepositoryFactory,
-                softwareStatementProfileCachedRepo: _softwareStatementProfileCachedRepo,
-                entityMapper: _entityMapper,
-                dbContextService: _dbContextService)
+                _timeProvider,
+                _apiClient,
+                _logger,
+                _dbService,
+                _softwareStatementProfileCachedRepo,
+                _apiVariantMapper)
             {
                 Created = _timeProvider.GetUtcNow()
             };

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p2.PaymentInitiation</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p2.PaymentInitiation</RootNamespace>
+        <Copyright>Finnovation Labs Limited and Contributors</Copyright>
+        <Company>Finnovation Labs Limited</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="FluentValidation" Version="9.5.3" />
+        <PackageReference Include="jose-jwt" Version="3.1.0" />
+        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.22" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    </ItemGroup>
+
+</Project>

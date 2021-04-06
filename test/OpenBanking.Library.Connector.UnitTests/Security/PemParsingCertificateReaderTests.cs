@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
+using Org.BouncyCastle.Crypto;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
@@ -15,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_NullThumbprint_ExceptionThrown()
         {
-            var rdr = new PemParsingCertificateReader();
+            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-            Action a = () => rdr.GetCertificateAsync(null);
+            Action a = () => rdr.GetCertificateAsync(null!);
 
             a.Should().Throw<ArgumentNullException>();
         }
@@ -25,9 +27,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public async Task GetCertificateAsync_EmptyThumbprint_NullReturned()
         {
-            var rdr = new PemParsingCertificateReader();
+            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-            var result = await rdr.GetCertificateAsync("");
+            X509Certificate2? result = await rdr.GetCertificateAsync("");
 
             result.Should().BeNull();
         }
@@ -35,14 +37,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public async Task GetCertificateAsync__KeyPair_NullReturned()
         {
-            var keyPair = TestCertificateGenerator.GenerateKeyPair();
-            using (var originCert = TestCertificateGenerator.GenerateCertificate(keyPair, "test", null))
+            AsymmetricCipherKeyPair keyPair = TestCertificateGenerator.GenerateKeyPair();
+            using (X509Certificate originCert = TestCertificateGenerator.GenerateCertificate(
+                keyPair,
+                "test",
+                null))
             {
-                var pem = TestCertificateGenerator.GetPemTextFromPublicKey(keyPair);
+                string pem = TestCertificateGenerator.GetPemTextFromPublicKey(keyPair);
 
-                var rdr = new PemParsingCertificateReader();
+                PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-                var result = await rdr.GetCertificateAsync(pem);
+                X509Certificate2? result = await rdr.GetCertificateAsync(pem);
 
                 result.Should().BeNull();
             }
@@ -51,16 +56,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public async Task GetCertificateAsync_CertInPemThumbprint_NonNullReturned()
         {
-            var keyPair = TestCertificateGenerator.GenerateKeyPair();
-            using (var originCert = TestCertificateGenerator.GenerateCertificate(keyPair, "test", null))
+            AsymmetricCipherKeyPair keyPair = TestCertificateGenerator.GenerateKeyPair();
+            using (X509Certificate originCert = TestCertificateGenerator.GenerateCertificate(
+                keyPair,
+                "test",
+                null))
             {
-                var cert = TestCertificateGenerator.ToX509V2Cert(originCert);
+                X509Certificate cert = TestCertificateGenerator.ToX509V2Cert(originCert);
 
-                var pem = TestCertificateGenerator.GetPemTextFromCertificate(cert);
+                string pem = TestCertificateGenerator.GetPemTextFromCertificate(cert);
 
-                var rdr = new PemParsingCertificateReader();
+                PemParsingCertificateReader rdr = new PemParsingCertificateReader();
 
-                var result = await rdr.GetCertificateAsync(pem);
+                X509Certificate2? result = await rdr.GetCertificateAsync(pem);
 
                 result.Should().NotBeNull();
             }

@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
     {
         public static Arbitrary<T> GetArbitrary()
         {
-            var elements = new[] { Substitute.For<T>() };
+            T[] elements = { Substitute.For<T>() };
 
             return Gen.Elements(elements).ToArbitrary();
         }

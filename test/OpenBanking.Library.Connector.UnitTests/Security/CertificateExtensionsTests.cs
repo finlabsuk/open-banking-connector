@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [InlineData(" BEGIN CERTIFICATE")]
         public void IsPemThumbprint_False(string tp)
         {
-            var result = tp.IsPemThumbprint();
+            bool result = tp.IsPemThumbprint();
 
             result.Should().BeFalse();
         }
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [InlineData("-----BEGIN CERTIFICATE------")]
         public void IsPemThumbprint_True(string tp)
         {
-            var result = tp.IsPemThumbprint();
+            bool result = tp.IsPemThumbprint();
 
             result.Should().BeTrue();
         }

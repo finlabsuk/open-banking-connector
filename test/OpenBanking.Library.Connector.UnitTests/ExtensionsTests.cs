@@ -2,11 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.ObModels.ClientRegistration.V3p2.Models;
 using FluentAssertions;
 using Xunit;
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 {
@@ -31,14 +33,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [Fact]
         public void ToObjectDictionary_ScratchTest()
         {
-            var value = new OBClientRegistration1
-            {
-                Aud = "some aud",
-                ApplicationType = ApplicationTypeEnum.Web,
-                ClientId = "some clientId"
-            };
+            ClientRegistrationModelsPublic.OBClientRegistration1 value =
+                new ClientRegistrationModelsPublic.OBClientRegistration1
+                {
+                    Aud = "some aud",
+                    ApplicationType = ClientRegistrationModelsPublic.OBRegistrationProperties1applicationTypeEnum.Web,
+                    ClientId = "some clientId"
+                };
 
-            var result = value.ToObjectDictionary();
+            Dictionary<string, object> result = value.ToObjectDictionary();
 
             result.Should().NotBeNull();
             result["aud"].Should().Be(value.Aud);

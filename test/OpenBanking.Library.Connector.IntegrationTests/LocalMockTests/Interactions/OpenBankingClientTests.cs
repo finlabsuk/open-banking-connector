@@ -9,14 +9,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 {
     public class OpenBankingClientTests : BaseLocalMockTest
     {
-        [BddfyFact(Skip = "Upset not appropriate for BankClientProfile")]
-        public async Task Repository_ClientInserted()
+        [BddfyFact(Skip = "Upsert not appropriate for BankClientProfile")]
+        public Task Repository_ClientInserted()
         {
             //IRequestBuilder builder = CreateOpenBankingRequestBuilder();
 
-            string issuerUrl = "http://aaa.com/";
-            string xfapi = "xfapi";
-            string softwareStatementId = "softwareStatement";
+            // string issuerUrl = "http://aaa.com/";
+            // string xfapi = "xfapi";
+            // string softwareStatementId = "softwareStatement";
 
             // BankRegistrationContext ctx = builder.BankRegistrations();
             //
@@ -49,10 +49,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             //persistedResult.IssuerUrl.Should().Be(issuerUrl);
             //persistedResult.XFapiFinancialId.Should().Be(xfapi);
             //persistedResult.SoftwareStatementProfileId.Should().Be(softwareStatementId);
+
+            return Task.CompletedTask;
         }
 
-        [BddfyFact(Skip = "Upset not appropriate for BankClientProfile")]
-        public async Task Repository_ClientUpserted()
+        [BddfyFact(Skip = "Upsert not appropriate for BankClientProfile")]
+        public Task Repository_ClientUpserted()
         {
             // BankRegistrationContext ctx = CreateOpenBankingRequestBuilder().BankRegistrations();
             //
@@ -105,6 +107,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
             //persistedResult.IssuerUrl.Should().Be(issuerUrl);
             //persistedResult.XFapiFinancialId.Should().Be(xfapi2);
             //persistedResult.SoftwareStatementProfileId.Should().Be(softwareStatementId2);
+
+            return Task.CompletedTask;
         }
     }
 }

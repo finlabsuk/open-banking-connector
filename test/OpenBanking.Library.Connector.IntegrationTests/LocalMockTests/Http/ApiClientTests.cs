@@ -20,17 +20,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [InlineData("https://www.google.com/")]
         public async Task ApiClient_SendAsync_Success(string url)
         {
-            var b = new HttpRequestBuilder()
+            IHttpRequestBuilder b = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
                 .SetUri(url);
 
-            var req = b.Create();
+            HttpRequestMessage req = b.Create();
 
-            using (var http = new HttpClient())
+            using (HttpClient http = new HttpClient())
             {
-                var api = new ApiClient(Substitute.For<IInstrumentationClient>(), http);
+                ApiClient api = new ApiClient(
+                    Substitute.For<IInstrumentationClient>(),
+                    http);
 
-                var r = await api.SendAsync(req);
+                HttpResponseMessage r = await api.SendAsync(req);
 
                 r.StatusCode.Should().Be(HttpStatusCode.OK);
             }
@@ -40,17 +42,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [InlineData("https://github.com/a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69")]
         public async Task ApiClient_SendAsync_NotFound(string url)
         {
-            var b = new HttpRequestBuilder()
+            IHttpRequestBuilder b = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
                 .SetUri(url);
 
-            var req = b.Create();
+            HttpRequestMessage req = b.Create();
 
-            using (var http = new HttpClient())
+            using (HttpClient http = new HttpClient())
             {
-                var api = new ApiClient(Substitute.For<IInstrumentationClient>(), http);
+                ApiClient api = new ApiClient(
+                    Substitute.For<IInstrumentationClient>(),
+                    http);
 
-                var r = await api.SendAsync(req);
+                HttpResponseMessage r = await api.SendAsync(req);
 
                 r.StatusCode.Should().Be(HttpStatusCode.NotFound);
             }
@@ -60,21 +64,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
         [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
         public void ApiClient_SendAsync_Failure(string url)
         {
-            var req = new HttpRequestBuilder()
+            HttpRequestMessage req = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
                 .SetUri(url)
                 .Create();
 
-            using (var http = new HttpClient())
+            using HttpClient http = new HttpClient();
+            Func<Task> a = async () =>
             {
-                Func<Task> a = async () =>
-                {
-                    var api = new ApiClient(Substitute.For<IInstrumentationClient>(), http);
-                    var r = await api.SendAsync(req);
-                };
+                ApiClient api = new ApiClient(
+                    Substitute.For<IInstrumentationClient>(),
+                    http);
+                HttpResponseMessage r = await api.SendAsync(req);
+            };
 
-                a.Should().Throw<HttpRequestException>();
-            }
+            a.Should().Throw<HttpRequestException>();
         }
     }
 }

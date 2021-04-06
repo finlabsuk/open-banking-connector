@@ -8,7 +8,44 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
-    public abstract class FluentResponseMessage
+    /// <summary>
+    ///     Fluent Response message
+    /// </summary>
+    public interface IFluentResponseMessage
+    {
+        public string Message { get; }
+    }
+
+    /// <summary>
+    ///     Fluent response message valid for inclusion in <see cref="FluentSuccessResponse{TData}" />
+    /// </summary>
+    public interface IFluentSuccessResponseMessage : IFluentResponseMessage { }
+
+    /// <summary>
+    ///     Fluent response message valid for inclusion in <see cref="FluentBadRequestErrorResponse{TData}" />
+    /// </summary>
+    public interface IFluentBadRequestErrorResponseMessage : IFluentResponseMessage { }
+
+    /// <summary>
+    ///     Fluent response message valid for inclusion in <see cref="FluentOtherErrorResponse{TData}" />
+    /// </summary>
+    public interface IFluentOtherErrorResponseMessage : IFluentResponseMessage { }
+
+    /// <summary>
+    ///     Fluent response info or warning message
+    /// </summary>
+    public interface IFluentResponseInfoOrWarningMessage : IFluentSuccessResponseMessage,
+        IFluentBadRequestErrorResponseMessage, IFluentOtherErrorResponseMessage { }
+
+    /// <summary>
+    ///     Fluent response error message
+    /// </summary>
+    public interface IFluentResponseErrorMessage : IFluentResponseMessage { }
+
+    /// <summary>
+    ///     Shared implementation for Fluent response messages
+    /// </summary>
+    public abstract class FluentResponseMessage : IFluentResponseMessage
     {
         protected FluentResponseMessage(string message)
         {
@@ -27,27 +64,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             return new FluentResponseWarningMessage(message);
         }
 
-        public static FluentResponseErrorMessage Error(string message)
+        public static FluentResponseBadRequestErrorMessage BadRequestError(string message)
         {
-            return new FluentResponseErrorMessage(message);
+            return new FluentResponseBadRequestErrorMessage(message);
+        }
+
+        public static FluentResponseOtherErrorMessage OtherError(string message)
+        {
+            return new FluentResponseOtherErrorMessage(message);
         }
     }
 
-    public sealed class FluentResponseInfoMessage : FluentResponseMessage
+    /// <summary>
+    ///     Fluent response info message. This message does not terminate execution of request.
+    /// </summary>
+    public class FluentResponseInfoMessage : FluentResponseMessage, IFluentResponseInfoOrWarningMessage
     {
         internal FluentResponseInfoMessage(string message) : base(message) { }
     }
 
-    public sealed class FluentResponseWarningMessage : FluentResponseMessage
+    /// <summary>
+    ///     Fluent response warning message. This message does not terminate execution of request.
+    /// </summary>
+    public class FluentResponseWarningMessage : FluentResponseMessage, IFluentResponseInfoOrWarningMessage
     {
         internal FluentResponseWarningMessage(string message) : base(message) { }
     }
 
-    public sealed class FluentResponseErrorMessage : FluentResponseMessage
+    /// <summary>
+    ///     Fluent response bad request error message. Indicates issue with user request data passed to
+    ///     Open Banking Connector. This message does terminate execution of request.
+    /// </summary>
+    public class FluentResponseBadRequestErrorMessage : FluentResponseMessage, IFluentResponseErrorMessage,
+        IFluentBadRequestErrorResponseMessage
     {
-        internal FluentResponseErrorMessage(string message) : base(message) { }
+        internal FluentResponseBadRequestErrorMessage(string message) : base(message) { }
+    }
 
-        internal FluentResponseErrorMessage(Exception exception)
+    /// <summary>
+    ///     Fluent response other error message. Indicates internal issue unrelated to user request data passed to
+    ///     Open Banking Connector. This message does terminate execution of request.
+    /// </summary>
+    public class FluentResponseOtherErrorMessage : FluentResponseMessage, IFluentResponseErrorMessage,
+        IFluentOtherErrorResponseMessage
+    {
+        internal FluentResponseOtherErrorMessage(string message) : base(message) { }
+
+        internal FluentResponseOtherErrorMessage(Exception exception)
             : base(
                 exception.WalkRecursive(e => e.InnerException).Select(e => e.Message)
                     .JoinString(Environment.NewLine)) { }

@@ -16,27 +16,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 {
     public class StartupTasksHostedService : IHostedService
     {
-        private readonly IObcConfigurationProvider _obcConfigurationProvider;
+        private readonly ISettingsProvider<OpenBankingConnectorSettings> _obcSettingsProvider;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public StartupTasksHostedService(
-            IObcConfigurationProvider obcConfigurationProvider,
+            ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             IServiceScopeFactory serviceScopeFactory)
         {
-            _obcConfigurationProvider = obcConfigurationProvider ??
-                                        throw new ArgumentNullException(nameof(obcConfigurationProvider));
+            _obcSettingsProvider = obcSettingsProvider ??
+                                   throw new ArgumentNullException(nameof(obcSettingsProvider));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Load Open Banking Connector configuration options
-            ObcConfiguration obcConfig = _obcConfigurationProvider.GetObcConfiguration();
+            OpenBankingConnectorSettings obcSettings = _obcSettingsProvider.GetSettings();
 
             // Ensure DB exists
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
             using BaseDbContext context = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
-            if (obcConfig.ProcessedEnsureDbCreated)
+            if (obcSettings.Database.ProcessedEnsureDbCreated)
             {
                 // Create DB if configured to do so and DB doesn't exist
                 context.Database.EnsureCreated();

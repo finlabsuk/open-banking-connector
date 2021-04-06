@@ -18,21 +18,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         {
             var handler = new HttpMessageHandlerFactory().Create(value) as HttpClientHandler;
 
-            return ((handler.AutomaticDecompression & DecompressionMethods.Deflate) == DecompressionMethods.Deflate) |
-                   ((handler.AutomaticDecompression & DecompressionMethods.GZip) == DecompressionMethods.GZip);
+            return ((handler!.AutomaticDecompression & DecompressionMethods.Deflate) == DecompressionMethods.Deflate) |
+                   ((handler!.AutomaticDecompression & DecompressionMethods.GZip) == DecompressionMethods.GZip);
         }
 
 
         [HttpRequestInfoProperty]
-        public bool Create_Proxy_PassedThrough(HttpRequestInfo info, IWebProxy value)
+        public bool Create_Proxy_PassedThrough(HttpRequestInfo info, IWebProxy? value)
         {
             info.Proxy = value;
 
             var handler = new HttpMessageHandlerFactory().Create(info) as HttpClientHandler;
 
             return value != null
-                ? handler.UseProxy && ReferenceEquals(handler.Proxy, value)
-                : !handler.UseProxy && ReferenceEquals(handler.Proxy, null);
+                ? handler!.UseProxy && ReferenceEquals(handler.Proxy, value)
+                : !handler!.UseProxy && ReferenceEquals(handler.Proxy, null);
         }
 
 
@@ -44,21 +44,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             var handler = new HttpMessageHandlerFactory().Create(info) as HttpClientHandler;
 
             return value > 0
-                ? handler.AllowAutoRedirect && handler.MaxAutomaticRedirections == value
-                : !handler.AllowAutoRedirect;
+                ? handler!.AllowAutoRedirect && handler.MaxAutomaticRedirections == value
+                : !handler!.AllowAutoRedirect;
         }
 
         [HttpRequestInfoProperty]
         public bool Create_Certificates_PassedThrough(HttpRequestInfo info, List<X509Certificate> values)
         {
-            values = values ?? new List<X509Certificate>();
             info.Certificates = values;
 
             var handler = new HttpMessageHandlerFactory().Create(info) as HttpClientHandler;
 
 
-            var certs = new X509Certificate[values.Count];
-            handler.ClientCertificates.CopyTo(certs, 0);
+            X509Certificate[] certs = new X509Certificate[values.Count];
+            handler!.ClientCertificates.CopyTo(certs, 0);
 
             return values.SequenceEqual(certs);
         }

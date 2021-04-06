@@ -6,4 +6,5 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("FinnovationLabs.OpenBanking.Library.Connector.UnitTests")]
 [assembly: InternalsVisibleTo("FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests")]
+[assembly: InternalsVisibleTo("FinnovationLabs.OpenBanking.Library.Connector.BankTests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

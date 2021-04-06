@@ -19,9 +19,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
             _logger = logger;
         }
 
-        public void StartTrace(TraceInfo info) => LogTrace(prefix: "Start", info: info);
+        public void StartTrace(TraceInfo info) => LogTrace("Start", info);
 
-        public void EndTrace(TraceInfo info) => LogTrace(prefix: "End", info: info);
+        public void EndTrace(TraceInfo info) => LogTrace("End", info);
 
         public void Info(string message) => _logger.LogInformation(message);
 
@@ -30,10 +30,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
         public void Error(string message) => _logger.LogError(message);
 
         public void Exception(Exception exception) =>
-            _logger.LogError(exception: exception, message: exception.Message);
+            _logger.LogError(exception, exception.Message);
 
         public void Exception(Exception exception, string message) =>
-            _logger.LogError(exception: exception, message: message);
+            _logger.LogError(exception, message);
 
         private void LogTrace(string prefix, TraceInfo info)
         {

@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
@@ -14,11 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
         [Fact]
         public void ConsentId_NullData_ValueSet()
         {
-            FluentContext<DomesticPayment, Models.Public.PaymentInitiation.Request.DomesticPayment,
-                DomesticPaymentResponse, IDomesticPaymentPublicQuery>? ctx =
-                new FluentContext<DomesticPayment, Models.Public.PaymentInitiation.Request.DomesticPayment,
-                    DomesticPaymentResponse, IDomesticPaymentPublicQuery>(
-                    TestDataFactory.CreateMockOpenBankingContext());
+            var ctx =
+                new DeleteLocalContext<DomesticPayment>(TestDataFactory.CreateMockOpenBankingContext());
 
             // var consentIdValue = "abc";
             //

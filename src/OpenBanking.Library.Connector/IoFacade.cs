@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
 
         public IEnumerable<string> GetDirectoryFiles(string path, string filter)
         {
-            return Directory.GetFiles(path: path, searchPattern: filter, searchOption: SearchOption.AllDirectories);
+            return Directory.GetFiles(path, filter, SearchOption.AllDirectories);
         }
 
         public bool FileExists(string path)
@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector
 
         public void WriteFile(string path, byte[] bytes)
         {
-            File.WriteAllBytes(path: path, bytes: bytes);
+            File.WriteAllBytes(path, bytes);
         }
     }
 }

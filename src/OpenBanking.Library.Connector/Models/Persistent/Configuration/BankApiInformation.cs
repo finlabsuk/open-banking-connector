@@ -28,9 +28,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.PaymentInitiationApi)
                 .HasConversion(
-                    convertToProviderExpression: v => JsonConvert.SerializeObject(v, _formatting),
-                    convertFromProviderExpression: v =>
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
                         JsonConvert.DeserializeObject<PaymentInitiationApi>(v))
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             // Top-level foreign keys

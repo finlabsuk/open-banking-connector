@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -21,7 +23,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
     public delegate BankRegistration BankRegistrationAdjustments(
         BankRegistration bankRegistration,
-        RegistrationScopeApiSet registrationScopeApiSet);
+        RegistrationScope registrationScope);
+
+    public delegate bool RegistrationScopeSupported(RegistrationScope registrationScope);
 
     public delegate DomesticPaymentConsent DomesticPaymentConsentAdjustments(
         DomesticPaymentConsent domesticPaymentConsent);
@@ -32,16 +36,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             BankProfileEnum bankProfileEnum,
             string issuerUrl,
             string financialId,
+            ClientRegistrationApiVersion defaultClientRegistrationApiVersion,
             ClientRegistrationBehaviour clientRegistrationBehaviour,
             PaymentInitiationApi? defaultPaymentInitiationApi,
-            ISet<RegistrationScopeApi> supportedApisInRegistrationScope)
+            ISet<RegistrationScopeElement> registrationScopeElementsSupported)
         {
             BankProfileEnum = bankProfileEnum;
             IssuerUrl = issuerUrl ?? throw new ArgumentNullException(nameof(issuerUrl));
             FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
             ClientRegistrationBehaviour = clientRegistrationBehaviour;
             DefaultPaymentInitiationApi = defaultPaymentInitiationApi;
-            SupportedApisInRegistrationScope = supportedApisInRegistrationScope;
+            RegistrationScopeElementsSupported = registrationScopeElementsSupported;
+            DefaultClientRegistrationApiVersion =
+                defaultClientRegistrationApiVersion;
+            BankUser bankUser = new BankUser("", "");
+            CustomBankUser(ref bankUser);
+            BankUser = bankUser;
         }
 
         public BankProfileEnum BankProfileEnum { get; }
@@ -52,14 +62,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public ClientRegistrationBehaviour ClientRegistrationBehaviour { get; }
 
+        public ClientRegistrationApiVersion DefaultClientRegistrationApiVersion { get; }
+
         public PaymentInitiationApi? DefaultPaymentInitiationApi { get; }
 
-        public ISet<RegistrationScopeApi> SupportedApisInRegistrationScope { get; }
+        public ISet<RegistrationScopeElement> RegistrationScopeElementsSupported { get; }
 
         /// <summary>
         ///     Does bank allow a registration with multiple API scopes (e.g. AISP and PISP)
         /// </summary>
-        public bool MultipleApiTypesRegistrationSupported { get; set; } = true;
+        public bool RegistrationScopeWithMultipleElementsSupported { get; set; } = true;
+
+        /// <summary>
+        ///     Allows supported registration scopes to be specified. This allows for scope support to be
+        ///     limited and checked. For example banks may not allow both AISP and PISP in the same scope.
+        /// </summary>
+        public RegistrationScopeSupported RegistrationScopeSupported { get; set; } = registrationScope => true;
 
         /// <summary>
         ///     Adjustments to default BankRegistration request object.
@@ -67,14 +85,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public BankRegistrationAdjustments BankRegistrationAdjustments { get; set; } =
             (x, _) => x;
 
-        public ISet<RegistrationScopeApiSet> ApiTypeSetsSupported
+        public ISet<RegistrationScope> ApiTypeSetsSupported
         {
             get
             {
-                HashSet<RegistrationScopeApiSet> x = SupportedApisInRegistrationScope
+                HashSet<RegistrationScope> x = RegistrationScopeElementsSupported
                     .Select(RegistrationScopeApiHelper.ApiTypeSetWithSingleApiType)
                     .ToHashSet();
-                if (MultipleApiTypesRegistrationSupported && ApiTypeSetForMultipleApiTypesRegistration.HasValue)
+                if (RegistrationScopeWithMultipleElementsSupported &&
+                    ApiTypeSetForMultipleApiTypesRegistration.HasValue)
                 {
                     x.Add(ApiTypeSetForMultipleApiTypesRegistration.Value);
                 }
@@ -86,14 +105,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public DomesticPaymentConsentAdjustments
             DomesticPaymentConsentAdjustments { get; set; } = x => x;
 
-        private RegistrationScopeApiSet? ApiTypeSetForMultipleApiTypesRegistration
+        private RegistrationScope? ApiTypeSetForMultipleApiTypesRegistration
         {
             get
             {
-                if (SupportedApisInRegistrationScope.Count > 1)
+                if (RegistrationScopeElementsSupported.Count > 1)
                 {
-                    RegistrationScopeApiSet registrationScopeApiSet = RegistrationScopeApiSet.None;
-                    foreach (RegistrationScopeApi apiType in SupportedApisInRegistrationScope)
+                    var registrationScopeApiSet = RegistrationScope.None;
+                    foreach (RegistrationScopeElement apiType in RegistrationScopeElementsSupported)
                     {
                         registrationScopeApiSet =
                             registrationScopeApiSet | RegistrationScopeApiHelper.ApiTypeSetWithSingleApiType(apiType);
@@ -106,6 +125,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             }
         }
 
+        public BankUser BankUser { get; }
+
         partial void CustomBankRegistrationResponsesPath(ref string path);
+
+        partial void CustomBankUser(ref BankUser bankUserInfo);
+
     }
 }

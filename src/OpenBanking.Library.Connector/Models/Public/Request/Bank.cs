@@ -2,6 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FluentValidation.Results;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// <summary>
@@ -15,13 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
     ///     the Bank name to be used as a shorthand instead of the child object ID in
     ///     various API calls.
     /// </summary>
-    public class Bank
+    public class Bank : ISupportsValidation
     {
-        /// <summary>
-        ///     Functional APIs used for bank registration
-        /// </summary>
-        public RegistrationScopeApiSet RegistrationScopeApiSet { get; set; }
-
         /// <summary>
         ///     Issuer URL to use when creating Bank Registration
         /// </summary>
@@ -33,8 +33,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public string FinancialId { get; set; } = null!;
 
         /// <summary>
-        ///     Name to use for bank (must be unique i.e. not already in use).
+        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
+        ///     This is optional.
         /// </summary>
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
+
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new BankValidator()
+                .ValidateAsync(this)!;
     }
 }

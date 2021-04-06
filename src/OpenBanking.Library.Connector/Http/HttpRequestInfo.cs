@@ -19,27 +19,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             UserAgent = "OpenBankingConnector";
         }
 
-        public Uri RequestUri { get; set; }
+        public Uri RequestUri { get; set; } = null!;
         public bool? UseDefaultCredentials { get; set; }
-        public ICredentials Credentials { get; set; }
+        public ICredentials? Credentials { get; set; }
         public bool? PreAuthenticate { get; set; }
 
         public string Method { get; set; }
-        public List<HttpHeader> Headers { get; set; }
-        public List<Cookie> Cookies { get; set; }
+        public List<HttpHeader> Headers { get; set; } = new List<HttpHeader>();
+        public List<Cookie> Cookies { get; set; } = new List<Cookie>();
         public string UserAgent { get; set; }
         public TimeSpan Timeout { get; set; }
         public TimeSpan ReadWriteTimeout { get; set; }
         public int MaxRedirects { get; set; }
-        public List<X509Certificate> Certificates { get; set; }
-        public IWebProxy Proxy { get; set; }
+        public List<X509Certificate> Certificates { get; set; } = new List<X509Certificate>();
+        public IWebProxy? Proxy { get; set; }
 
-        public string Authorisation { get; set; }
-        public string BearerToken { get; set; }
+        public string? Authorisation { get; set; }
+        public string? BearerToken { get; set; }
 
         public List<string> ContentTypes { get; } = new List<string>();
 
-        public string Content { get; set; }
-        public IServerCertificateValidator ServerCertificateValidator { get; set; }
+        public string Content { get; set; } = null!;
+        public IServerCertificateValidator? ServerCertificateValidator { get; set; }
     }
 }

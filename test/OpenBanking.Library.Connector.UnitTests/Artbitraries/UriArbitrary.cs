@@ -12,8 +12,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
     {
         public static Arbitrary<Uri> GetArbitrary()
         {
-            var hosts = new[] { "localhost", "127.0.0.1", "mytest.com" };
-            var uris = hosts.Select(h => new Uri("http://" + h)).ToArray();
+            string[] hosts = { "localhost", "127.0.0.1", "mytest.com" };
+            Uri[] uris = hosts.Select(h => new Uri("http://" + h)).ToArray();
 
             return Gen.Elements(uris).ToArbitrary();
         }
