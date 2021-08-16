@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            HttpResponseMessage response = await apiClient.SendAsync(req);
+            HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             string? responseContent = await response.Content.ReadAsStringAsync();
@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            HttpResponseMessage response = await apiClient.SendAsync(req);
+            HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
 
             instrumentationClient.Received(1).StartTrace(Arg.Any<TraceInfo>());
             instrumentationClient.Received(1).EndTrace(Arg.Any<TraceInfo>());
@@ -91,9 +91,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            Func<Task> a = async () => await apiClient.SendAsync(req);
+            Func<Task> a = async () => await apiClient.LowLevelSendAsync(req);
 
-            a.Should().Throw<HttpRequestException>();
+            a.Should().ThrowAsync<HttpRequestException>();
 
             instrumentationClient.Received(1).StartTrace(Arg.Any<TraceInfo>());
             instrumentationClient.Received(0).EndTrace(Arg.Any<TraceInfo>());
@@ -123,7 +123,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                     http);
                 SerialisedEntity result = await api.RequestJsonAsync<SerialisedEntity>(
                     req,
-                    false,
                     null);
 
                 result.Message.Should().Be(entity.Message);
@@ -132,7 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
         [Theory]
         [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
-        public async Task ApiClient_RequestJsonAsync_Success_NoContent(string url)
+        public void ApiClient_RequestJsonAsync_Failure_NoContent(string url)
         {
             HttpRequestMessage req = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
@@ -150,12 +149,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 ApiClient api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
-                SerialisedEntity result = await api.RequestJsonAsync<SerialisedEntity>(
-                    req,
-                    false,
-                    null,
-                    true);
-                result.Should().BeNull();
+
+                Action a = () =>
+                {
+                    SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
+                            req,
+                            null)
+                        .Result;
+                };
+
+                a.Should().Throw<HttpRequestException>();
             }
         }
 
@@ -191,7 +194,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 {
                     SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
                         req,
-                        false,
                         null).Result;
                 };
 
@@ -231,7 +233,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 {
                     SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
                         req,
-                        false,
                         null).Result;
                 };
 

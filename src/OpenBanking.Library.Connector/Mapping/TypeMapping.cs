@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 {

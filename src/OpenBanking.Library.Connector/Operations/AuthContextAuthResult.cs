@@ -1,0 +1,118 @@
+// Licensed to Finnovation Labs Limited under one or more agreements.
+// Finnovation Labs Limited licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
+
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+{
+    internal class AuthContextAuthResult :
+        IObjectPost<AuthResult, DomesticPaymentConsentAuthContextResponse>
+    {
+        private readonly
+            IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContext>
+            _authContextMethods;
+
+        private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+        private readonly IInstrumentationClient _instrumentationClient;
+        private readonly IReadOnlyRepository<SoftwareStatementProfileCached> _softwareStatementProfileRepo;
+        private readonly ITimeProvider _timeProvider;
+
+
+        public AuthContextAuthResult(
+            IDbSaveChangesMethod dbSaveChangesMethod,
+            ITimeProvider timeProvider,
+            IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContext>
+                authContextMethods,
+            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo,
+            IInstrumentationClient instrumentationClient)
+        {
+            _dbSaveChangesMethod = dbSaveChangesMethod;
+            _timeProvider = timeProvider;
+            _authContextMethods = authContextMethods;
+            _softwareStatementProfileRepo = softwareStatementProfileRepo;
+            _instrumentationClient = instrumentationClient;
+        }
+
+        public async
+            Task<(DomesticPaymentConsentAuthContextResponse response, IList<IFluentResponseInfoOrWarningMessage>
+                nonErrorMessages)> PostAsync(
+                AuthResult request,
+                string? createdBy = null,
+                string? apiRequestWriteFile = null,
+                string? apiResponseWriteFile = null,
+                string? apiResponseOverrideFile = null)
+        {
+            request.ArgNotNull(nameof(request));
+
+            // Create non-error list
+            var nonErrorMessages =
+                new List<IFluentResponseInfoOrWarningMessage>();
+
+            // Load relevant data
+            var authContextId = new Guid(request.State);
+            DomesticPaymentConsentAuthContext authContext =
+                _authContextMethods
+                    .DbSet
+                    .Include(o => o.DomesticPaymentConsentNavigation)
+                    .Include(o => o.DomesticPaymentConsentNavigation.BankRegistrationNavigation)
+                    .SingleOrDefault(x => x.Id == authContextId) ??
+                throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
+
+            // Checks
+            if (!(authContext.TokenEndpointResponse.Data is null))
+            {
+                throw new InvalidOperationException("Auth context already has token so aborting.");
+            }
+
+            string softwareStatementProfileId = authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation
+                .SoftwareStatementProfileId;
+            SoftwareStatementProfileCached softwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
+                throw new KeyNotFoundException(
+                    $"No record found for SoftwareStatementProfile with ID {softwareStatementProfileId}.");
+
+            // Obtain token for consent
+            string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            JsonSerializerSettings? jsonSerializerSettings = null;
+            TokenEndpointResponse tokenEndpointResponse =
+                await PostTokenRequest.PostAuthCodeGrantAsync(
+                    request.Code,
+                    redirectUrl,
+                    authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
+                    jsonSerializerSettings,
+                    softwareStatementProfile.ApiClient);
+
+            // Update auth context with token
+            authContext.TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                tokenEndpointResponse,
+                _timeProvider,
+                createdBy);
+
+            // Create response (may involve additional processing based on entity)
+            DomesticPaymentConsentAuthContextResponse response = authContext.PublicGetResponse;
+
+            // Persist updates (this happens last so as not to happen if there are any previous errors)
+            await _dbSaveChangesMethod.SaveChangesAsync();
+
+            return (response, nonErrorMessages);
+        }
+    }
+}

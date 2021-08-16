@@ -15,17 +15,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     ///     Entity- (type-) specific DB methods
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class DbEntityMethods<TEntity> : IDbEntityMethods<TEntity> where TEntity : class, IEntity
+    public class DbEntityMethods<TEntity> : IDbEntityMethods<TEntity>
+        where TEntity : class, IEntity
     {
         private readonly BaseDbContext _db;
-        private readonly DbSet<TEntity> _dbSet;
 
         public DbEntityMethods(BaseDbContext db)
         {
             _db = db;
-            _dbSet = _db.Set<TEntity>();
+            DbSet = _db.Set<TEntity>();
         }
 
+        public DbSet<TEntity> DbSet { get; }
+
+        public IQueryable<TEntity> DbSetNoTracking => DbSet.AsNoTracking();
         public ValueTask<TEntity?> GetAsync(Guid id) => GetInnerAsync(id);
 
         public Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
@@ -54,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             }
 
 
-            await _dbSet.AddAsync(entity);
+            await DbSet.AddAsync(entity);
         }
 
         private async ValueTask<TEntity?> GetInnerAsync(Guid id, bool asNoTracking = false)
@@ -63,13 +66,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
             if (asNoTracking)
             {
-                result = await _dbSet
+                result = await DbSet
                     .AsNoTracking()
                     .SingleOrDefaultAsync(s => s.Id == id);
             }
             else
             {
-                result = await _dbSet
+                result = await DbSet
                     .FindAsync(id);
             }
 
@@ -82,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             Expression<Func<TEntity, bool>> where = predicate.ArgNotNull(nameof(predicate));
 
-            IQueryable<TEntity> baseQuery = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+            IQueryable<TEntity> baseQuery = asNoTracking ? DbSet.AsNoTracking() : DbSet;
 
             List<TEntity> results = await baseQuery
                 .Where(where)

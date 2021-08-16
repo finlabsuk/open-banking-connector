@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
 using FinnovationLabs.OpenBanking.Library.Connector.Converters;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 {

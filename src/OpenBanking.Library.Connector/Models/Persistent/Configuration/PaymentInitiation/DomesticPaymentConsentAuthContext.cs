@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
 {
@@ -30,12 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.DomesticPaymentConsentId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-            // Top-level foreign keys
-            builder
-                .HasOne<Persistent.PaymentInitiation.DomesticPaymentConsent>()
-                .WithMany()
-                .HasForeignKey(r => r.DomesticPaymentConsentId);
 
             // Second-level property info and foreign keys
             builder.OwnsOne(

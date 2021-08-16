@@ -3,15 +3,20 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
+using PaymentInitiationModelsV3p1p4 =
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation.Models;
 using DomesticPaymentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
 
@@ -21,92 +26,138 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal class DomesticPayment :
+    internal partial class DomesticPayment :
         EntityBase,
-        ISupportsFluentPost<DomesticPaymentRequest, DomesticPaymentPostResponse>,
-        ISupportsFluentGetLocal<DomesticPayment, IDomesticPaymentPublicQuery, DomesticPaymentGetLocalResponse>,
-        //ISupportsFluentGet<DomesticPaymentResponse>,
         ISupportsFluentDeleteLocal<DomesticPayment>,
         IDomesticPaymentPublicQuery
     {
-        /// <summary>
-        ///     Constructor intended for use by EF Core and to access static methods in generic context only.
-        ///     Should not be used to create entity instances to add to DB.
-        /// </summary>
-        public DomesticPayment() { }
-
-        /// <summary>
-        ///     Constructor for creating entity instances to add to DB.
-        /// </summary>
-        public DomesticPayment(
-            Guid domesticPaymentConsentId,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 obWriteDomesticResponse,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
-        {
-            DomesticPaymentConsentId = domesticPaymentConsentId;
-            OBWriteDomesticResponse = obWriteDomesticResponse;
-        }
-
         public Guid DomesticPaymentConsentId { get; set; }
 
-        public string GetPath => "/domestic-payments";
+        [ForeignKey("DomesticPaymentConsentId")]
+        public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
 
-        public DomesticPaymentPostResponse PublicPostResponse =>
-            new DomesticPaymentPostResponse(OBWriteDomesticResponse);
+        public PaymentInitiationModelsPublic.OBWriteDomestic2 BankApiRequest { get; set; } = null!;
 
-        public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 OBWriteDomesticResponse { get; set; } = null!;
-        //public GetAsyncWrapperDelegate<DomesticPaymentResponse> GetAsyncWrapper => GetAsync;
+        public string BankApiId => BankApiResponse.Data.Data.DomesticPaymentId;
 
-        public DomesticPaymentGetLocalResponse PublicGetLocalResponse =>
-            new DomesticPaymentGetLocalResponse(OBWriteDomesticResponse);
+        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; set; } =
+            null!;
+    }
 
-        public PostEntityAsyncWrapperDelegate<DomesticPaymentRequest, DomesticPaymentPostResponse>
-            PostEntityAsyncWrapper =>
-            PostEntityAsync;
+    internal partial class DomesticPayment :
+        ISupportsFluentReadWritePost<DomesticPaymentRequest, DomesticPaymentResponse,
+            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+    {
+        public DomesticPaymentResponse PublicGetResponse => new DomesticPaymentResponse(
+            Id,
+            Name,
+            Created,
+            CreatedBy,
+            BankApiResponse);
 
-        // public static async Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage>
-        //         nonErrorMessages)>
-        //     GetAsync(
-        //         Guid id,
-        //         ISharedContext context)
-        // {
-        //     GetEntity<DomesticPayment, DomesticPaymentResponse> i =
-        //         new GetEntity<DomesticPayment, DomesticPaymentResponse>(
-        //             context.DbService.GetDbEntityMethodsClass<DomesticPayment>());
-        //
-        //     (DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
-        //         await i.GetAsync(id);
-        //     return result;
-        // }
-
-        public static async Task<(DomesticPaymentPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)>
-            PostEntityAsync(
-                ISharedContext context,
-                DomesticPaymentRequest request,
-                string? createdBy)
+        public void Initialise(
+            DomesticPaymentRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
         {
-            PostDomesticPayment i = new PostDomesticPayment(
-                context.DbService.GetDbEntityMethodsClass<Bank>(),
-                context.DbService.GetDbEntityMethodsClass<BankApiInformation>(),
-                context.DbService
-                    .GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                context.ApiVariantMapper,
-                context.DbService
-                    .GetDbEntityMethodsClass<BankRegistration>(),
-                context.DbService
-                    .GetDbEntityMethodsClass<DomesticPayment>(),
-                context.TimeProvider,
-                context.DbService.GetDbSaveChangesMethodClass(),
-                context.SoftwareStatementProfileCachedRepo,
-                context.Instrumentation);
-
-            (DomesticPaymentPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
-                await i.PostAsync(request, createdBy);
-            return result;
+            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
         }
+
+        public DomesticPaymentResponse PublicPostResponse => PublicGetResponse;
+
+        public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
+        {
+            BankApiRequest = apiRequest;
+        }
+
+        public void UpdateAfterApiPost(
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            string? modifiedBy,
+            ITimeProvider timeProvider)
+        {
+            BankApiResponse =
+                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    apiResponse,
+                    timeProvider,
+                    modifiedBy);
+        }
+
+        public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiPostRequests(
+            PaymentInitiationApi paymentInitiationApi,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            SoftwareStatementProfile softwareStatementProfile,
+            IInstrumentationClient instrumentationClient) =>
+            ApiRequests(
+                paymentInitiationApi,
+                bankFinancialId,
+                tokenEndpointResponse,
+                softwareStatementProfile,
+                instrumentationClient);
+
+
+        public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
+            PaymentInitiationApi paymentInitiationApi,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            SoftwareStatementProfile softwareStatementProfile,
+            IInstrumentationClient instrumentationClient) =>
+            paymentInitiationApi.PaymentInitiationApiVersion switch
+            {
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                    PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
+                    PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationPostRequestProcessor<
+                        PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
+                        bankFinancialId,
+                        tokenEndpointResponse,
+                        instrumentationClient,
+                        paymentInitiationApi,
+                        softwareStatementProfile)),
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationPostRequestProcessor<
+                        PaymentInitiationModelsPublic.OBWriteDomestic2>(
+                        bankFinancialId,
+                        tokenEndpointResponse,
+                        instrumentationClient,
+                        paymentInitiationApi,
+                        softwareStatementProfile)),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+    }
+
+    internal partial class DomesticPayment :
+        ISupportsFluentReadWriteGet<DomesticPaymentResponse,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+    {
+        public void UpdateAfterApiGet(
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            string? modifiedBy,
+            ITimeProvider timeProvider)
+            => UpdateAfterApiPost(apiResponse, modifiedBy, timeProvider);
+
+        public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
+            PaymentInitiationApi paymentInitiationApi,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            SoftwareStatementProfile softwareStatementProfile,
+            IInstrumentationClient instrumentationClient) =>
+            ApiRequests(
+                paymentInitiationApi,
+                bankFinancialId,
+                tokenEndpointResponse,
+                softwareStatementProfile,
+                instrumentationClient);
     }
 }

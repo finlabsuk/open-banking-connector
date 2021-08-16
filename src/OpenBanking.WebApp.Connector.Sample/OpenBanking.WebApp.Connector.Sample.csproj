@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
-    <AssemblyName>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</AssemblyName>
-    <RootNamespace>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</RootNamespace>
-    <Copyright>Finnovation Labs Limited and Contributors</Copyright>
-    <Company>Finnovation Labs Limited</Company>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
+        <AssemblyName>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</RootNamespace>
+        <Copyright>Finnovation Labs Limited and Contributors</Copyright>
+        <Company>Finnovation Labs Limited</Company>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.1.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.18" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.1.5" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.Azure\OpenBanking.Library.Connector.Azure.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.Azure\OpenBanking.Library.Connector.Azure.csproj" />
+    </ItemGroup>
 
 </Project>

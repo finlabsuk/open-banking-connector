@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             var data = new AuthorisationRedirectObject(
                 "a",
-                new AuthorisationCallbackPayload("", "", "", null));
+                new AuthResult("", "", "", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             var data = new AuthorisationRedirectObject(
                 "a",
-                new AuthorisationCallbackPayload("a", "a", "a", null));
+                new AuthResult("a", "a", "a", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 

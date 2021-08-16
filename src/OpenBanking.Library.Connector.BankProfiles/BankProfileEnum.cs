@@ -15,6 +15,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     public enum BankProfileEnum
     {
         Modelo,
+        NatWest,
+        Monzo,
+        BankOfIreland,
+        Nationwide,
+        Lloyds
     }
 
     public static class BankProfileEnumHelper
@@ -38,11 +43,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         ///     Convert BankEnum to Bank
         /// </summary>
         /// <param name="bankProfileEnum"></param>
+        /// <param name="bankProfileDefinitions"></param>
         /// <returns></returns>
-        public static BankProfile GetBank(BankProfileEnum bankProfileEnum) =>
+        public static BankProfile GetBank(
+            BankProfileEnum bankProfileEnum,
+            BankProfileDefinitions bankProfileDefinitions) =>
             bankProfileEnum switch
             {
-                BankProfileEnum.Modelo => BankProfileDefinitions.Modelo,
+                BankProfileEnum.Modelo => bankProfileDefinitions.Modelo,
+                BankProfileEnum.NatWest => bankProfileDefinitions.NatWest,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };

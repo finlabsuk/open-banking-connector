@@ -4,16 +4,17 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
 {
-    public class DomesticPaymentConsent : ISupportsValidation
+    public class DomesticPaymentConsent : Base, ISupportsValidation
     {
         public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 WriteDomesticConsent { get; set; } = null!;
 
@@ -34,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     <see cref="UseStagingNotDefaultBankRegistration" />).
         /// </summary>
         public Guid BankRegistrationId { get; set; }
+
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new DomesticPaymentConsentValidator()

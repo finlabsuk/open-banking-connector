@@ -4,13 +4,14 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
 {
-    public class DomesticPayment : ISupportsValidation
+    public class DomesticPayment : Base, ISupportsValidation
     {
         public Guid DomesticPaymentConsentId { get; set; }
 

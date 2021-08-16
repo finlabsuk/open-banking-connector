@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
 using PaymentInitiationValidatorsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Validators;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation
 {

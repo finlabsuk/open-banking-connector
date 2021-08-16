@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="cache-control" content="max-age=0"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="max-age=0" http-equiv="cache-control"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Operation Complete</title>
     <style>
         body,
@@ -29,7 +29,9 @@
             vertical-align: middle;
         }
 
-        .wrapper { max-width: 800px; }
+        .wrapper {
+            max-width: 800px;
+        }
 
         h1 {
             font-size: 3rem;
@@ -41,7 +43,9 @@
             padding: 0.5em 0.5em;
         }
 
-        h6 { padding: 1em 1em 0.5em; }
+        h6 {
+            padding: 1em 1em 0.5em;
+        }
     </style>
 </head>
 
@@ -53,29 +57,7 @@
     <h1>Operation Complete</h1>
     <h4>Tool or app using Open Banking Connector should close this window automatically.</h4>
 </div>
-<script>
-    (async () => {
-        //debugger
-        const fragmentParams = window.location.hash.substr(1);
-        if (fragmentParams) {
-            console.log('Fragment supplied.');
-            const params = new URLSearchParams(fragmentParams);
-            params.append('relayedFromFragment', 'true');
-            const newURL = 'fragment-redirect-delegate'; // relative to current URL
-            const response = await fetch(newURL,
-                {
-                    method: 'POST',
-                    body: params,
-                    mode: 'same-origin'
-                });
-            window.pageStatus = 'Fragment post complete.';
-            console.log(response);
-        } else {
-            window.pageStatus = 'No fragment supplied.';
-        }
-        console.log(window.pageStatus);
-    })();
-</script>
+<script src="js/main.js" type="module"></script>
 <div id="auth-fragment-redirect" style="display: none;"></div>
 </body>
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
 {
@@ -27,12 +27,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.DomesticPaymentConsentId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.OBWriteDomesticResponse)
+            builder.Property(e => e.BankApiRequest)
                 .HasConversion(
                     v => JsonConvert.SerializeObject(v, _formatting),
                     v =>
-                        JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(v)!)
+                        JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomestic2>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+
+            // Second-level property info
+            builder.OwnsOne(
+                p => p.BankApiResponse,
+                od =>
+                {
+                    od.Property(e => e.Data)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v =>
+                                JsonConvert
+                                    .DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(v)!)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                    od.Property(e => e.Modified)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                    od.Property(e => e.ModifiedBy)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                });
+            builder.Navigation(p => p.BankApiResponse).IsRequired();
         }
     }
 }

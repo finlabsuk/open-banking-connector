@@ -13,19 +13,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         public static Task<T> RequestJsonAsync<T>(
             this HttpRequestMessage request,
             IApiClient client,
-            bool requestContentIsJson,
-            JsonSerializerSettings? jsonSerializerSettings = null,
-            bool typeTIsNullable = false)
-            where T : class?
+            JsonSerializerSettings? jsonSerializerSettings = null)
+            where T : class
         {
             request.ArgNotNull(nameof(request));
             client.ArgNotNull(nameof(client));
 
             return client.RequestJsonAsync<T>(
                 request,
-                requestContentIsJson,
-                jsonSerializerSettings,
-                typeTIsNullable);
+                jsonSerializerSettings);
+        }
+
+        public static Task SendAsync(
+            this HttpRequestMessage request,
+            IApiClient client)
+        {
+            request.ArgNotNull(nameof(request));
+            return client.SendAsync(request);
         }
     }
 }

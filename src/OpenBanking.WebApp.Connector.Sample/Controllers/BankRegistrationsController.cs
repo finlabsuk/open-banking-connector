@@ -27,29 +27,29 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [Route("bank-registrations")]
         [HttpPost]
         [ProducesResponseType(
-            typeof(HttpResponse<BankRegistrationPostResponse>),
+            typeof(HttpResponse<BankRegistrationResponse>),
             StatusCodes.Status201Created)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankRegistrationPostResponse>),
+            typeof(HttpResponse<BankRegistrationResponse>),
             StatusCodes.Status400BadRequest)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankRegistrationPostResponse>),
+            typeof(HttpResponse<BankRegistrationResponse>),
             StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync([FromBody] BankRegistration request)
         {
             // Operation
-            IFluentResponse<BankRegistrationPostResponse> fluentResponse = await _obcRequestBuilder
+            IFluentResponse<BankRegistrationResponse> fluentResponse = await _obcRequestBuilder
                 .ClientRegistration
                 .BankRegistrations
                 .PostAsync(request);
 
             // HTTP response
-            HttpResponse<BankRegistrationPostResponse> httpResponse = fluentResponse.ToHttpResponse();
+            HttpResponse<BankRegistrationResponse> httpResponse = fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<BankRegistrationPostResponse> _ => StatusCodes.Status201Created,
-                FluentBadRequestErrorResponse<BankRegistrationPostResponse> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<BankRegistrationPostResponse> _ => StatusCodes.Status500InternalServerError,
+                FluentSuccessResponse<BankRegistrationResponse> _ => StatusCodes.Status201Created,
+                FluentBadRequestErrorResponse<BankRegistrationResponse> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<BankRegistrationResponse> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

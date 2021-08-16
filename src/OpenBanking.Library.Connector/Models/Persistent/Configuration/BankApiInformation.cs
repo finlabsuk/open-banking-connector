@@ -34,12 +34,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-            // Top-level foreign keys
-            builder
-                .HasOne<Persistent.Bank>()
-                .WithMany()
-                .HasForeignKey(p => p.BankId);
         }
     }
 }

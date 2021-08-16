@@ -10,7 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     public enum DbProvider
     {
-        Sqlite
+        Sqlite,
+        SqliteInMemory
     }
 
     public static class DbProviderHelper

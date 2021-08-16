@@ -4,11 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -22,69 +21,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    internal class BankApiInformation :
+    internal partial class BankApiInformation :
         EntityBase,
-        ISupportsFluentPost<BankApiInformationRequest, BankApiInformationPostResponse>,
-        ISupportsFluentGetLocal<BankApiInformation, IBankApiInformationPublicQuery, BankApiInformationGetLocalResponse>,
         ISupportsFluentDeleteLocal<BankApiInformation>,
         IBankApiInformationPublicQuery
     {
-        /// <summary>
-        ///     Constructor intended for use by EF Core and to access customisation points defined by IEntityWithPublicInterface in
-        ///     generic context only.
-        ///     Should not be used to create entity instances to add to DB.
-        /// </summary>
-        public BankApiInformation() { }
+        [ForeignKey("BankId")]
+        public Bank BankNavigation { get; set; } = null!;
 
-        /// <summary>
-        ///     Constructor for creating entity instances to add to DB.
-        /// </summary>
-        public BankApiInformation(
-            PaymentInitiationApi? paymentInitiationApi,
-            Guid bankId,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
-        {
-            PaymentInitiationApi = paymentInitiationApi;
-            BankId = bankId;
-        }
-
-        public BankApiInformationPostResponse PublicPostResponse => new BankApiInformationPostResponse(
-            PaymentInitiationApi,
-            Id,
-            BankId);
-
-        public Guid BankId { get; set; }
+        public List<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
 
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
 
-        public BankApiInformationGetLocalResponse PublicGetLocalResponse => new BankApiInformationGetLocalResponse(
-            PaymentInitiationApi,
+        public Guid BankId { get; set; }
+    }
+
+    internal partial class BankApiInformation :
+        ISupportsFluentLocalEntityPost<BankApiInformationRequest, BankApiInformationResponse>
+    {
+        public BankApiInformationResponse PublicGetResponse => new BankApiInformationResponse(
             Id,
+            Name,
+            Created,
+            CreatedBy,
+            PaymentInitiationApi,
             BankId);
 
-        public PostEntityAsyncWrapperDelegate<BankApiInformationRequest, BankApiInformationPostResponse>
-            PostEntityAsyncWrapper =>
-            PostEntityAsync;
-
-        public static async Task<(BankApiInformationPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)>
-            PostEntityAsync(
-                ISharedContext context,
-                BankApiInformationRequest request,
-                string? createdBy)
+        public void Initialise(
+            BankApiInformationRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
         {
-            PostBankApiInformation i = new PostBankApiInformation(
-                context.DbService.GetDbEntityMethodsClass<BankApiInformation>(),
-                context.DbService.GetDbEntityMethodsClass<Bank>(),
-                context.DbService.GetDbSaveChangesMethodClass(),
-                context.TimeProvider);
-
-            (BankApiInformationPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
-                await i.PostAsync(request, createdBy);
-            return result;
+            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            PaymentInitiationApi = request.PaymentInitiationApi;
+            BankId = request.BankId;
         }
+
+        public BankApiInformationResponse PublicPostResponse => PublicGetResponse;
     }
+
+    internal partial class BankApiInformation :
+        ISupportsFluentLocalEntityGet<BankApiInformationResponse> { }
 }

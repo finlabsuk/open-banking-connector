@@ -2,8 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Utility;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using Jering.Javascript.NodeJS;
@@ -12,18 +15,15 @@ using Xunit.Abstractions;
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 {
     /// <summary>
-    ///     Selection of parameters of "puppeteer.launch()" exposed for customisation, can add to this list as
-    ///     desired.
+    ///     Options to be fed to "puppeteer.launch()"
     /// </summary>
     public class PuppeteerLaunchOptions
     {
-        public bool? Headless { get; set; } = true;
-
-        public string[]? Args { get; set; } = new string[0];
-
-        public string? ExecutablePath { get; set; }
+        public bool Headless { get; set; } = true;
 
         public double? SlowMo { get; set; } = null;
+
+        public bool DevTools { get; set; } = false;
 
         /// <summary>
         ///     Extra parameter allowing to toggle user-specified executable path and args without constant addition/removal.
@@ -31,7 +31,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     the Puppeteer version of Chromium.
         /// </summary>
         public bool IgnoreExecutablePathAndArgs { get; set; } = false;
+
+        public string? ExecutablePath { get; set; }
+
+        public string[] Args { get; set; } = new string[0];
+
+        public PuppeteerLaunchOptionsJavaScript ToJavaScript()
+        {
+            var js = new PuppeteerLaunchOptionsJavaScript { Headless = Headless, SlowMo = SlowMo, Devtools = DevTools };
+
+            if (!IgnoreExecutablePathAndArgs)
+            {
+                js.ExecutablePath = ExecutablePath;
+                js.Args = Args;
+            }
+
+            return js;
+        }
     }
+
+    /// <summary>
+    ///     Processed version of <see cref="PuppeteerLaunchOptions" /> which is sent to JavaScript.
+    /// </summary>
+    public class PuppeteerLaunchOptionsJavaScript
+    {
+        public bool? Headless { get; set; }
+
+        public double? SlowMo { get; set; }
+
+        public bool? Devtools { get; set; }
+
+        public string? ExecutablePath { get; set; }
+
+        public string[]? Args { get; set; }
+    }
+
 
     /// <summary>
     /// </summary>
@@ -45,10 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public bool NodeJSProcessOptionsAddInspectBrk { get; set; } = false;
 
         public OutOfProcessNodeJSServiceOptions OutOfProcessNodeJSServiceOptions { get; set; } =
-            new OutOfProcessNodeJSServiceOptions
-            {
-                NumRetries = 0,
-            };
+            new OutOfProcessNodeJSServiceOptions();
 
         /// <summary>
         ///     Get processed version of <see cref="NodeJSProcessOptions" />
@@ -79,43 +110,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     User-supplied settings which are processed in <see cref="GetProcessedPuppeteerLaunch" />.
         /// </summary>
         public PuppeteerLaunchOptions PuppeteerLaunch { get; set; } = new PuppeteerLaunchOptions();
-
-        /// <summary>
-        ///     Get processed version of <see cref="PuppeteerLaunch" />
-        /// </summary>
-        /// <returns></returns>
-        public PuppeteerLaunchOptions GetProcessedPuppeteerLaunch()
-        {
-            PuppeteerLaunchOptions options = PuppeteerLaunch;
-            if (options.IgnoreExecutablePathAndArgs)
-            {
-                options.ExecutablePath = null;
-                options.Args = null;
-            }
-
-            return options;
-        }
-    }
-
-    public class BankWhitelistSettings
-    {
-        /// <summary>
-        ///     Whitelist of banks to test in .NET Generic Host app tests for each software statement profile.
-        ///     Dictionary whose key is the ID of a software statement profile and whose value is a whitelist
-        ///     of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
-        ///     All banks will be tested for any software statement profile that doesn't have a whitelist.
-        /// </summary>
-        public Dictionary<string, List<BankProfileEnum>> GenericHostAppTests { get; set; } =
-            new Dictionary<string, List<BankProfileEnum>>();
-
-        /// <summary>
-        ///     Whitelist of banks to test in "plain" app tests for each software statement profile.
-        ///     Dictionary whose key is the ID of a software statement profile and whose value is a whitelist
-        ///     of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
-        ///     All banks will be tested for any software statement profile that doesn't have a whitelist.
-        /// </summary>
-        public Dictionary<string, List<BankProfileEnum>> PlainAppTests { get; set; } =
-            new Dictionary<string, List<BankProfileEnum>>();
     }
 
     /// <summary>
@@ -127,6 +121,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
         public RegistrationScope RegistrationScope { get; set; }
 
+        /// <summary>
+        ///     Banks to exclude from testing with this registration type.
+        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        /// </summary>
+        public List<BankProfileEnum> ExcludedBanks { get; set; } =
+            new List<BankProfileEnum>();
+
         public void Deserialize(IXunitSerializationInfo info)
         {
             SoftwareStatementProfileId = info.GetValue<string>(nameof(SoftwareStatementProfileId));
@@ -136,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public void Serialize(IXunitSerializationInfo info)
         {
             info.AddValue(nameof(SoftwareStatementProfileId), SoftwareStatementProfileId);
-            info.AddValue(nameof(RegistrationScope), SoftwareStatementProfileId);
+            info.AddValue(nameof(RegistrationScope), RegistrationScope);
         }
 
         public override string ToString()
@@ -145,27 +146,90 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         }
     }
 
+    /// <summary>
+    ///     Path to data folder used for logging, "API overrides", and bank user information.
+    ///     This must be set to a valid
+    ///     file path for the current OS platform.
+    ///     This path should not be in the public repo to ensure this data is not committed there.
+    /// </summary>
+    public class DataDirectory
+    {
+        // Path to data folder when current OS is macOS
+        public string MacOs { get; set; } = "";
+
+        // Path to data folder when current OS is Windows
+        public string Windows { get; set; } = "";
+
+        // Path to data folder when current OS is Linux
+        public string Linux { get; set; } = "";
+    }
+
+    public class TestedBanks
+    {
+        /// <summary>
+        ///     Banks to test in Generic Host App Tests.
+        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        /// </summary>
+        public List<BankProfileEnum> GenericHostAppTests { get; set; } = new List<BankProfileEnum>();
+
+        /// <summary>
+        ///     Banks to test in Plain App Tests.
+        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        /// </summary>
+        public List<BankProfileEnum> PlainAppTests { get; set; } = new List<BankProfileEnum>();
+    }
+
     public class BankTestSettings : ISettings<BankTestSettings>
     {
         /// <summary>
-        ///     Bank registrations (clients) to test
+        ///     Banks to test.
+        /// </summary>
+        public TestedBanks TestedBanks { get; set; } = new TestedBanks();
+
+        /// <summary>
+        ///     Bank registration types (clients) to test
         /// </summary>
         public List<BankRegistrationType> TestedBankRegistrationTypes { get; set; } = new List<BankRegistrationType>();
 
         /// <summary>
-        ///     Whitelists of banks to be tested for each app type and software statement
+        ///     Do not allow use of "API overrides" instead of bank API call for creating bank registrations (POST /register)
         /// </summary>
-        public BankWhitelistSettings BankWhitelists { get; set; } = new BankWhitelistSettings();
+        public bool ForceNewBankRegistration { get; set; } = false;
 
         public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new ConsentAuthoriserOptions();
 
-        public bool UseInMemoryDatabase { get; set; } = true;
+        /// <summary>
+        ///     Path to data folder used for logging, "API overrides", and bank user information.
+        /// </summary>
+        public DataDirectory DataDirectory { get; set; } = new DataDirectory();
+
+        /// <summary>
+        ///     Log external API requests/responses. Off by default.
+        /// </summary>
+        public bool LogExternalApiData { get; set; } = false;
 
         public string SettingsSectionName => "BankTests";
 
         public BankTestSettings Validate()
         {
+            if (!Directory.Exists(GetDataDirectoryForCurrentOs()))
+            {
+                throw new DirectoryNotFoundException(
+                    "Can't locate data path specified in bank test setting DataDirectory:" +
+                    $"{GetDataDirectoryForCurrentOs()}. Please update app settings.");
+            }
+
             return this;
         }
+
+        // Gets data directory for current OS platform
+        public string GetDataDirectoryForCurrentOs() =>
+            OsPlatformEnumHelper.GetCurrentOsPlatform() switch
+            {
+                OsPlatformEnum.MacOs => DataDirectory.MacOs,
+                OsPlatformEnum.Linux => DataDirectory.Linux,
+                OsPlatformEnum.Windows => DataDirectory.Windows,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

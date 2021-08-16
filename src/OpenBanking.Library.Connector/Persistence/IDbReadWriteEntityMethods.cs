@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
@@ -14,8 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     ///     (soft-delete).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public interface IDbReadWriteEntityMethods<TEntity> where TEntity : class, IEntity
+    public interface IDbReadWriteEntityMethods<TEntity> : IDbReadOnlyEntityMethods<TEntity>
+        where TEntity : class, IEntity
     {
+        DbSet<TEntity> DbSet { get; }
         ValueTask<TEntity?> GetAsync(Guid id);
         Task<IQueryable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
         Task AddAsync(TEntity entity);

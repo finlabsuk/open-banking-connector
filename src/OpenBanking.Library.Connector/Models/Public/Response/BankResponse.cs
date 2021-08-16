@@ -6,45 +6,31 @@ using System;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public interface IBankPublicQuery
+    public interface IBankPublicQuery : IBaseQuery
     {
         string IssuerUrl { get; }
         string FinancialId { get; }
-        string? Name { get; }
-        Guid Id { get; }
     }
 
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class BankGetLocalResponse : IBankPublicQuery
+    public class BankResponse : BaseResponse, IBankPublicQuery
     {
-        internal BankGetLocalResponse(string issuerUrl, string xFapiFinancialId, string? name, Guid id)
+        internal BankResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            string issuerUrl,
+            string financialId) : base(id, name, created, createdBy)
         {
             IssuerUrl = issuerUrl;
-            FinancialId = xFapiFinancialId;
-            Name = name;
-            Id = id;
+            FinancialId = financialId;
         }
 
         public string IssuerUrl { get; }
 
         public string FinancialId { get; }
-
-        public string? Name { get; }
-
-        public Guid Id { get; }
-    }
-
-    /// <summary>
-    ///     Response to Post
-    /// </summary>
-    public class BankPostResponse : BankGetLocalResponse
-    {
-        internal BankPostResponse(string issuerUrl, string xFapiFinancialId, string? name, Guid id) : base(
-            issuerUrl,
-            xFapiFinancialId,
-            name,
-            id) { }
     }
 }

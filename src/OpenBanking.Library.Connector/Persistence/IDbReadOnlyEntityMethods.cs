@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
-    public interface IDbReadOnlyEntityMethods<TEntity> where TEntity : class, IEntity
+    public interface IDbReadOnlyEntityMethods<TEntity>
+        where TEntity : class, IEntity
     {
+        IQueryable<TEntity> DbSetNoTracking { get; }
+
         ValueTask<TEntity?> GetNoTrackingAsync(Guid id);
         Task<IQueryable<TEntity>> GetNoTrackingAsync(Expression<Func<TEntity, bool>> predicate);
     }

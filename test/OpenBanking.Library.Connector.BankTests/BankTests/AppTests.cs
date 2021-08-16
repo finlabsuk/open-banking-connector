@@ -4,8 +4,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
+using Jering.Javascript.NodeJS;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,44 +51,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         {
             // Get bank test settings
             BankTestSettings bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
+            bankTestSettings.Validate();
             //var env = AppConfiguration.EnvironmentName;
+
+            // Get bank profile definitions
+            BankProfileSettings bankProfileSettings = AppConfiguration.GetSettings<BankProfileSettings>();
+            bankProfileSettings.Validate();
+            Dictionary<string, Dictionary<string, BankProfileHiddenProperties>> bankProfileHiddenProperties =
+                DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
+                    bankProfileSettings.HiddenPropertiesFile,
+                    new JsonSerializerSettings()).GetAwaiter().GetResult();
+            var bankProfileDefinitions =
+                new BankProfileDefinitions(bankProfileHiddenProperties);
 
             TheoryData<BankProfileEnum, BankRegistrationType> data =
                 new TheoryData<BankProfileEnum, BankRegistrationType>();
 
-            foreach (var bankRegistrationType in bankTestSettings.TestedBankRegistrationTypes)
+            // Loop through tested banks
+            List<BankProfileEnum> testedBanks = genericAppNotPlainAppTest
+                ? bankTestSettings.TestedBanks.GenericHostAppTests
+                : bankTestSettings.TestedBanks.PlainAppTests;
+            foreach (BankProfileEnum bankEnum in testedBanks)
             {
-                // Get bank whitelist if available
-                bool bankWhitelistAvailable;
-                List<BankProfileEnum>? bankWhitelist;
-                if (genericAppNotPlainAppTest)
+                BankProfile bankProfile = BankProfileEnumHelper.GetBank(
+                    bankEnum,
+                    bankProfileDefinitions);
+                foreach (BankRegistrationType bankRegistrationType in bankTestSettings.TestedBankRegistrationTypes)
                 {
-                    bankWhitelistAvailable =
-                        bankTestSettings.BankWhitelists.GenericHostAppTests.TryGetValue(
-                            bankRegistrationType.SoftwareStatementProfileId,
-                            out bankWhitelist);
-                }
-                else
-                {
-                    bankWhitelistAvailable =
-                        bankTestSettings.BankWhitelists.PlainAppTests.TryGetValue(
-                            bankRegistrationType.SoftwareStatementProfileId,
-                            out bankWhitelist);
-                }
-
-                foreach (BankProfileEnum bankEnum in BankProfileEnumHelper.AllBanks)
-                {
-                    BankProfile bankProfile = BankProfileEnumHelper.GetBank(bankEnum);
-
-                    // If whitelist available, only test banks on whitelist
-                    if (bankWhitelistAvailable && !bankWhitelist!.Contains(bankProfile.BankProfileEnum))
+                    // Ignore excluded banks
+                    List<BankProfileEnum> excludedBanks = bankRegistrationType.ExcludedBanks;
+                    if (excludedBanks.Contains(bankProfile.BankProfileEnum))
                     {
                         continue;
                     }
 
-                    // Determine skip status based on bank support and add to Theory if matches skippedNotUnskipped
+                    // Determine skip status based on registration scope and add to Theory if matches skippedNotUnskipped
                     bool testCaseSkipped =
-                        !bankProfile.RegistrationScopeSupported(bankRegistrationType.RegistrationScope);
+                        !bankProfile.ClientRegistrationApiSettings.UseRegistrationScope(
+                            bankRegistrationType.RegistrationScope);
                     if (testCaseSkipped == skippedNotUnskipped)
                     {
                         data.Add(
@@ -86,6 +99,107 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             }
 
             return data;
+        }
+
+        protected async Task TestAllInner(
+            BankProfileEnum bank,
+            BankRegistrationType bankRegistrationType,
+            IRequestBuilder requestBuilder,
+            Func<IScopedRequestBuilder>? requestBuilderGenerator,
+            bool genericNotPlainAppTest)
+        {
+            // Test name
+            var testName =
+                $"{bank}_{bankRegistrationType.SoftwareStatementProfileId}_{bankRegistrationType.RegistrationScope.AbbreviatedName()}";
+            var testNameUnique = $"{testName}_{Guid.NewGuid()}";
+
+            // Get bank test settings
+            BankTestSettings bankTestSettings =
+                _serviceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
+
+            // Get bank profile definitions
+            BankProfileDefinitions bankProfileDefinitions =
+                _serviceProvider.GetRequiredService<BankProfileDefinitions>();
+
+            // Get bank users
+            List<BankUser> bankUserList =
+                _serviceProvider.GetRequiredService<BankUsers>()
+                    .GetRequiredBankUserList(bank);
+
+            // Get consent authoriser inputs
+            INodeJSService nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
+            // OutOfProcessNodeJSServiceOptions outOfProcessNodeJSServiceOptions =
+            //     services.GetRequiredService<IOptions<OutOfProcessNodeJSServiceOptions>>().Value;
+            // NodeJSProcessOptions nodeJSProcessOptions =
+            //     services.GetRequiredService<IOptions<NodeJSProcessOptions>>().Value;
+            PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
+                bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
+
+            // Create test data writers
+            string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
+            TestDataWriter testDataProcessorFluentRequestLogging = new TestDataWriter(
+                Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/fluent"),
+                testName);
+
+            TestDataWriter? testDataProcessorApiLogging = null;
+            if (bankTestSettings.LogExternalApiData)
+            {
+                testDataProcessorApiLogging = new TestDataWriter(
+                    Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/api"),
+                    testName);
+            }
+
+            TestDataWriter testDataProcessorApiOverrides = new TestDataWriter(
+                Path.Combine(
+                    bankTestSettings.GetDataDirectoryForCurrentOs(),
+                    $"{topLevelFolderName}/apiOverrides"),
+                testName);
+
+            // Dereference bank
+            BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
+
+            (Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId) =
+                await ClientRegistrationSubtests.PostAndGetObjects(
+                    bankRegistrationType.SoftwareStatementProfileId,
+                    bankRegistrationType.RegistrationScope,
+                    requestBuilder,
+                    bankProfile,
+                    testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("clientReg"),
+                    testDataProcessorApiLogging?
+                        .AppendToPath("clientReg"),
+                    testDataProcessorApiOverrides
+                        .AppendToPath("clientReg"));
+
+            // Run domestic payment subtests
+            foreach (DomesticPaymentFunctionalSubtestEnum subTest in
+                DomesticPaymentFunctionalSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+            {
+                await DomesticPaymentFunctionalSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    bankApiInformationId,
+                    bankProfile.PaymentInitiationApiSettings,
+                    requestBuilder,
+                    requestBuilderGenerator,
+                    testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("pisp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    genericNotPlainAppTest,
+                    nodeJsService,
+                    puppeteerLaunchOptions,
+                    bankUserList);
+            }
+
+            await ClientRegistrationSubtests.DeleteObjects(
+                requestBuilder,
+                bankApiInformationId,
+                bankRegistrationId,
+                bankId,
+                bankProfile.ClientRegistrationApiSettings);
         }
     }
 }

@@ -10,7 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
     ///     section in appSettings.json or user secrets.
     /// </summary>
     /// <typeparam name="TSelf"></typeparam>
-    public interface ISettings<out TSelf> where TSelf : ISettings<TSelf>
+    public interface ISettings<out TSelf>
+        where TSelf : ISettings<TSelf>
     {
         string SettingsSectionName { get; }
 

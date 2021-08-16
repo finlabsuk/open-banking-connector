@@ -40,7 +40,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             return results.FirstOrDefault();
         }
 
-        public T? GetEnumValue<T>(string key) where T : struct
+        public T? GetEnumValue<T>(string key)
+            where T : struct
         {
             IEnumerable<T?> results = _providers
                 .Select(p => p.GetEnumValue<T>(key))

@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 using SoftwareStatementProfileCached =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 

@@ -3,24 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
-using WireMock.Logging;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {
@@ -85,9 +79,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 FinancialId = _mockData.GetFapiHeader(),
                 Name = "MyBank"
             };
-            IFluentResponse<BankPostResponse> bankResp = requestBuilder.ClientRegistration
+            IFluentResponse<BankResponse> bankResp = requestBuilder.ClientRegistration
                 .Banks
-                .PostAsync(bankRequest)
+                .PostLocalAsync(bankRequest)
                 .Result;
             bankResp.Should().NotBeNull();
             bankResp.Messages.Should().BeEmpty();
@@ -103,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 RegistrationScope = RegistrationScope.PaymentInitiation,
                 AllowMultipleRegistrations = false
             };
-            IFluentResponse<BankRegistrationPostResponse> bankRegistrationResp = requestBuilder.ClientRegistration
+            IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.ClientRegistration
                 .BankRegistrations
                 .PostAsync(registrationRequest)
                 .Result;
@@ -123,10 +117,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     BaseUrl = MockRoutes.Url
                 }
             };
-            IFluentResponse<BankApiInformationPostResponse> bankApiInformationResponse = requestBuilder
+            IFluentResponse<BankApiInformationResponse> bankApiInformationResponse = requestBuilder
                 .ClientRegistration
                 .BankApiInformationObjects
-                .PostAsync(apiInformationRequest)
+                .PostLocalAsync(apiInformationRequest)
                 .Result;
 
             bankApiInformationResponse.Should().NotBeNull();
@@ -137,33 +131,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _mockPaymentsServer.SetupTokenEndpointMock();
             _mockPaymentsServer.SetupPaymentEndpointMock();
 
-            DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
-            {
-                WriteDomesticConsent = DomesticPaymentFunctionalSubtest.DomesticPaymentConsent(
-                    DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest,
-                    "placeholder: OBC consent ID",
-                    "placeholder: random GUID"),
-                BankRegistrationId = Guid.Empty,
-                BankApiInformationId = Guid.Empty
-            };
-            domesticConsentPaymentRequest.BankRegistrationId = bankRegistrationId;
-            domesticConsentPaymentRequest.BankApiInformationId = bankApiInformationId;
-            IFluentResponse<DomesticPaymentConsentPostResponse> consentResp;
-            try
-            {
-                consentResp = requestBuilder.PaymentInitiation
-                    .DomesticPaymentConsents
-                    .PostAsync(domesticConsentPaymentRequest)
-                    .Result;
-                consentResp.Should().NotBeNull();
-                consentResp.Messages.Should().BeEmpty();
-                consentResp.Data.Should().NotBeNull();
-            }
-            catch
-            {
-                IEnumerable<ILogEntry> x = _mockPaymentsServer.GetLogEntries();
-                throw;
-            }
+            // DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
+            // {
+            //     WriteDomesticConsent = DomesticPaymentFunctionalSubtest.DomesticPaymentConsent(
+            //         DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest,
+            //         "placeholder: OBC consent ID",
+            //         "placeholder: random GUID"),
+            //     BankRegistrationId = Guid.Empty,
+            //     BankApiInformationId = Guid.Empty
+            // };
+            // domesticConsentPaymentRequest.BankRegistrationId = bankRegistrationId;
+            // domesticConsentPaymentRequest.BankApiInformationId = bankApiInformationId;
+            // IFluentResponse<DomesticPaymentConsentResponse> consentResp;
+            // try
+            // {
+            //     consentResp = requestBuilder.PaymentInitiation
+            //         .DomesticPaymentConsents
+            //         .PostAsync(domesticConsentPaymentRequest)
+            //         .Result;
+            //     consentResp.Should().NotBeNull();
+            //     consentResp.Messages.Should().BeEmpty();
+            //     consentResp.Data.Should().NotBeNull();
+            // }
+            // catch
+            // {
+            //     IEnumerable<ILogEntry> x = _mockPaymentsServer.GetLogEntries();
+            //     throw;
+            // }
 
             // Check redirect matches above.
             // Check scope = "openid payments"
@@ -173,32 +167,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             // Call mock bank with auth URL and check.... then return at least auth code and state....
 
             // Call Fluent method to pass auth code and state (set up mock bank token endpoint)
-            IFluentResponse<AuthorisationRedirectObjectResponse> authCallbackDataResp = requestBuilder
-                .PaymentInitiation
-                .AuthorisationRedirectObjects
-                .PostAsync(
-                    new AuthorisationRedirectObject(
-                        "fragment",
-                        new AuthorisationCallbackPayload(
-                            "TODO: place idToken from mock bank here",
-                            "TODO: place code from mock bank here",
-                            "TODO: extract state from consentResp.Data.AuthUrl and place here",
-                            "TODO: extract nonce from consentResp.Data.AuthUrl and place here")))
-                .Result;
+            // IFluentResponse<AuthorisationRedirectObjectResponse> authCallbackDataResp = requestBuilder
+            //     .PaymentInitiation
+            //     .AuthorisationRedirectObjects
+            //     .PostAsync(
+            //         new AuthorisationRedirectObject(
+            //             "fragment",
+            //             new AuthResult(
+            //                 "TODO: place idToken from mock bank here",
+            //                 "TODO: place code from mock bank here",
+            //                 "TODO: extract state from consentResp.Data.AuthUrl and place here",
+            //                 "TODO: extract nonce from consentResp.Data.AuthUrl and place here")))
+            //     .Result;
 
             //authCallbackDataResp.Should().NotBeNull();
             //authCallbackDataResp.Messages.Should().BeEmpty();
             //authCallbackDataResp.Data.Should().NotBeNull();
 
             // Call Fluent method to make payment (set up mock bank payment endpoint)
-            IFluentResponse<DomesticPaymentPostResponse> paymentResp = requestBuilder.PaymentInitiation
-                .DomesticPayments
-                .PostAsync(
-                    new DomesticPayment
-                    {
-                        DomesticPaymentConsentId = consentResp.Data!.Id
-                    })
-                .Result;
+            // IFluentResponse<DomesticPaymentResponse> paymentResp = requestBuilder.PaymentInitiation
+            //     .DomesticPayments
+            //     .PostAsync(
+            //         new DomesticPayment
+            //         {
+            //             DomesticPaymentConsentId = consentResp.Data!.Id
+            //         })
+            //     .Result;
 
             //paymentResp.Should().NotBeNull();
             //paymentResp.Messages.Should().BeEmpty();

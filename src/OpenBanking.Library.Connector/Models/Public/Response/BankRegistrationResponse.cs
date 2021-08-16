@@ -3,16 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public interface IBankRegistrationPublicQuery
+    public interface IBankRegistrationPublicQuery : IBaseQuery
     {
-        Guid Id { get; }
-
-        ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; }
+        ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response> BankApiResponse { get; }
 
         Guid BankId { get; }
     }
@@ -20,32 +19,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// <summary>
     ///     Respnose to GetLocal
     /// </summary>
-    public class BankRegistrationGetLocalResponse : IBankRegistrationPublicQuery
+    public class BankRegistrationResponse : BaseResponse, IBankRegistrationPublicQuery
     {
-        internal BankRegistrationGetLocalResponse(
+        public BankRegistrationResponse(
             Guid id,
-            ClientRegistrationModelsPublic.OBClientRegistration1 bankClientRegistrationRequest,
-            Guid bankId)
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response> bankApiResponse,
+            Guid bankId) : base(id, name, created, createdBy)
         {
-            Id = id;
-            OBClientRegistrationRequest = bankClientRegistrationRequest;
+            BankApiResponse = bankApiResponse;
             BankId = bankId;
         }
 
-        public Guid Id { get; }
-
-        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; }
+        public ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response> BankApiResponse { get; }
         public Guid BankId { get; }
-    }
-
-    /// <summary>
-    ///     Response to Post
-    /// </summary>
-    public class BankRegistrationPostResponse : BankRegistrationGetLocalResponse
-    {
-        internal BankRegistrationPostResponse(
-            Guid id,
-            ClientRegistrationModelsPublic.OBClientRegistration1 bankClientRegistrationRequest,
-            Guid bankId) : base(id, bankClientRegistrationRequest, bankId) { }
     }
 }

@@ -24,13 +24,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             BankRegistration bankRegistration,
             string issuerUrl,
             string state,
-            JwtFactory jwtFactory,
             IInstrumentationClient instrumentationClient)
         {
             string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             if (redirectUrl == "")
             {
-                redirectUrl = bankRegistration.OBClientRegistrationRequest.RedirectUris[0];
+                redirectUrl = bankRegistration.BankApiResponse.Data.RedirectUris[0];
             }
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
@@ -41,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     consentId,
                     issuerUrl,
                     state);
-            string requestObjectJwt = jwtFactory.CreateJwt(
+            string requestObjectJwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersExcludingTyp(softwareStatementProfile.SigningKeyId),
                 oAuth2RequestObjectClaims,
                 softwareStatementProfile.SigningKey,

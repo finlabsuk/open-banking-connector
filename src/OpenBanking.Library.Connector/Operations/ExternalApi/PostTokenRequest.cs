@@ -15,16 +15,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
     internal static class PostTokenRequest
     {
         public static async Task<TokenEndpointResponse> PostClientCredentialsGrantAsync(
-            string scope,
+            string? scope,
             BankRegistration bankRegistration,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient)
         {
             Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
             {
-                { "grant_type", "client_credentials" },
-                { "scope", scope }
+                { "grant_type", "client_credentials" }
             };
+
+            if (!(scope is null))
+            {
+                keyValuePairs["scope"] = scope;
+            }
 
             return await PostGrantAsync(
                 keyValuePairs,
@@ -62,13 +66,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         {
             // POST request
             Uri uri = new Uri(bankRegistration.OpenIdConfiguration.TokenEndpoint);
-            var postRequestProcessor = new AuthGrantRequestProcessor<Dictionary<string, string>>(bankRegistration);
+            IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
+                new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
             var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
                 uri,
                 keyValuePairs,
                 jsonSerializerSettings,
                 apiClient);
-            
+
             // TODO: validate response?
 
             return response;

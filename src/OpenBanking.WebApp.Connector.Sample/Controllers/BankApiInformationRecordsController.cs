@@ -27,29 +27,29 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [Route("bank-api-information-records")]
         [HttpPost]
         [ProducesResponseType(
-            typeof(HttpResponse<BankApiInformationPostResponse>),
+            typeof(HttpResponse<BankApiInformationResponse>),
             StatusCodes.Status201Created)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankApiInformationPostResponse>),
+            typeof(HttpResponse<BankApiInformationResponse>),
             StatusCodes.Status400BadRequest)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankApiInformationPostResponse>),
+            typeof(HttpResponse<BankApiInformationResponse>),
             StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(HttpResponseMessages), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync([FromBody] BankApiInformation request)
         {
-            IFluentResponse<BankApiInformationPostResponse> fluentResponse = await _obcRequestBuilder
+            IFluentResponse<BankApiInformationResponse> fluentResponse = await _obcRequestBuilder
                 .ClientRegistration
                 .BankApiInformationObjects
-                .PostAsync(request);
+                .PostLocalAsync(request);
 
             // HTTP response
-            HttpResponse<BankApiInformationPostResponse> httpResponse = fluentResponse.ToHttpResponse();
+            HttpResponse<BankApiInformationResponse> httpResponse = fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<BankApiInformationPostResponse> _ => StatusCodes.Status201Created,
-                FluentBadRequestErrorResponse<BankApiInformationPostResponse> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<BankApiInformationPostResponse> _ => StatusCodes.Status500InternalServerError,
+                FluentSuccessResponse<BankApiInformationResponse> _ => StatusCodes.Status201Created,
+                FluentBadRequestErrorResponse<BankApiInformationResponse> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<BankApiInformationResponse> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

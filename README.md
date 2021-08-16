@@ -1,25 +1,36 @@
 # Open Banking Connector
 
-Open Banking Connector (OBC) is open-source software that manages your connections to UK Open Banking APIs.
+Open Banking Connector (OBC) is open-source software that manages connections to UK Open Banking APIs. It is currently
+focussed on support for domestic payments in UK Open Banking but has been designed for future extension to all UK Open
+Banking APIs.
 
-OBC can be used as a connection layer (library) by backend software to connect to UK banks or standalone as a system for testing "liveness" of bank APIs.
+OBC can be used:
 
-Specifically the software:
-* Handles creation and management of bank clients
-* Manages user tokens associated with consents
-* Supports API mapping for banks using older Open Banking API versions
-* Supports overrides and specialised behaviour for compatibility with banks
+* as a connection layer (library) allowing backend software to connect to UK banks
+* as a standalone test suite. Its built-in bank tests test a bank's Open Banking APIs by POSTing a client, POSTing and
+  authorising a domestic payment consent (via automated UI), GETing that domestic consent including funds confirmation,
+  and then finally POSTing/GETing a domestic payment.
 
-The main purpose of OBC is to save you the time and expense of building your own Open Banking connectivity stack.
+OBC takes care of the following:
 
-A key part of OBC are bank profiles which allow creation of OBC request objects for OBC suited to particular UK banks.
+* Appropriate handling of software statements and signing/transport keys (these are provided via key secret vault)
+* Creation and management of bank OAuth2 clients ("bank registrations")
+* Acquisition and management of access tokens for bank API access
+* Mapping to/from and older UK Open Banking standard versions when making API calls to a bank using a previous standard
+  version
 
-OBC also includes bank tests which test real bank API endpoints using OBC. 
+OBC provides an intuitive, Fluent REST-inspired API based on UK Open Banking DCR and PISP standards. The idea is to have
+a single, standardised interface that works with multiple banks.
 
-Please note that this software is currently in development and our initial focus is the UK Open Banking Payment Initiation API.
+To this end, OBC also provides public Bank Profiles showing the configuration required to connect to a given bank.
+Anyone is invited to contribute and update these profiles to extend the bank coverage of OBC and make Open Banking API
+compatibility and implementation status more transparent.
+
+The main purpose of OBC is to save you the time and expense of building your own Open Banking connectivity stack and
+learning the hard way all the tweaks necessary to connect to each bank.
 
 For more information please contact Finnovation Labs. We would love to hear from you!
 
-Developer documentation is [here](docs/README.md).
+Developer documentation is [here](https://docs.openbankingconnector.io/).
 
 Finnovation Labs wishes to thank NewDay Cards for support given to this project.

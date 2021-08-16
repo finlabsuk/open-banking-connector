@@ -466,3 +466,5 @@ user.test.settings.json
 *.key
 !localtest.pfx
 
+# Documentation website
+/site/

@@ -17,7 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             _db = db;
         }
 
-        public IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>() where TEntity : class, IEntity =>
+        public IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
+            where TEntity : class, IEntity =>
             new DbEntityMethods<TEntity>(_db);
 
         public IDbSaveChangesMethod GetDbSaveChangesMethodClass() => new DbSaveChangesMethod(_db);

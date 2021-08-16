@@ -10,7 +10,8 @@ using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class NullableValidator<TValidator> : IValidator<TValidator?> where TValidator : class
+    public class NullableValidator<TValidator> : IValidator<TValidator?>
+        where TValidator : class
     {
         private readonly IValidator<TValidator> _baseValidator;
 
@@ -40,11 +41,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
             instance is null
                 ? throw new InvalidOperationException("FluentValidation should not try to validate null")
                 : await _baseValidator.ValidateAsync(instance, cancellation);
-
-        public CascadeMode CascadeMode
-        {
-            get => _baseValidator.CascadeMode;
-            set => _baseValidator.CascadeMode = value;
-        }
     }
 }

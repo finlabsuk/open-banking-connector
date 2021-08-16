@@ -3,13 +3,19 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
+using SoftwareStatementProfileCached =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
 {
@@ -18,16 +24,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
-            IDbEntityMethods<Bank> repo =
-                Substitute.For<IDbEntityMethods<Bank>>();
-            IDbSaveChangesMethod dbMethods = Substitute.For<IDbSaveChangesMethod>();
-            ITimeProvider timeProvider = Substitute.For<ITimeProvider>();
-
             // Bank resultProfile = new Bank();
             // (new Bank(Arg.Any<Models.Public.Request.Bank>())).Returns(resultProfile);
 
-            PostBank interaction =
-                new PostBank(repo, dbMethods, timeProvider);
+            LocalEntityPost<Bank, Models.Public.Request.Bank, BankResponse> interaction =
+                new LocalEntityPost<Bank, Models.Public.Request.Bank, BankResponse>(
+                    Substitute.For<IDbEntityMethods<Bank>>(),
+                    Substitute.For<IDbSaveChangesMethod>(),
+                    Substitute.For<ITimeProvider>(),
+                    Substitute.For<IDbEntityMethods<DomesticPaymentConsent>>(),
+                    Substitute.For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                    Substitute.For<IInstrumentationClient>());
 
             Models.Public.Request.Bank newBank = new Models.Public.Request.Bank
             {
@@ -37,9 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             };
 
             var (response, nonErrorMessages) =
-                await interaction.PostAsync(
-                    newBank,
-                    null);
+                await interaction.PostAsync(newBank);
 
             response.Should().NotBeNull();
         }

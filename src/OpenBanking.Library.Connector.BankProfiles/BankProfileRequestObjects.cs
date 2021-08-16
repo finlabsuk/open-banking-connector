@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
@@ -17,26 +16,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             string softwareStatementProfileId,
             RegistrationScope registrationScope)
         {
-            string? BankRegistrationResponsePath(RegistrationScope apiSet)
+            var bankRegistration = new BankRegistration
             {
-                string bankRegistrationResponsesPath = AppContext.BaseDirectory; // default value
-                CustomBankRegistrationResponsesPath(ref bankRegistrationResponsesPath);
-                string filePath = Path.Combine(
-                    bankRegistrationResponsesPath,
-                    $"{RegistrationScopeApiSetHelper.AbbreviatedName(apiSet)}_{BankProfileEnum.ToString()}.json");
-                return File.Exists(filePath) ? filePath : null;
-            }
-
-            return BankRegistrationAdjustments.Invoke(
-                new BankRegistration
-                {
-                    BankId = bankId,
-                    AllowMultipleRegistrations = true,
-                    SoftwareStatementProfileId = softwareStatementProfileId,
-                    RegistrationScope = registrationScope,
-                    BankRegistrationResponseFileName = BankRegistrationResponsePath(registrationScope),
-                    Name = name
-                },
+                Name = name,
+                BankId = bankId,
+                SoftwareStatementProfileId = softwareStatementProfileId,
+                RegistrationScope = registrationScope,
+                ClientRegistrationApi = ClientRegistrationApiVersion,
+                AllowMultipleRegistrations = true
+            };
+            return ClientRegistrationApiSettings.BankRegistrationAdjustments.Invoke(
+                bankRegistration,
                 registrationScope);
         }
 
@@ -52,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             new BankApiInformation
             {
                 BankId = bankId,
-                PaymentInitiationApi = DefaultPaymentInitiationApi,
+                PaymentInitiationApi = PaymentInitiationApi,
                 Name = name
             };
     }

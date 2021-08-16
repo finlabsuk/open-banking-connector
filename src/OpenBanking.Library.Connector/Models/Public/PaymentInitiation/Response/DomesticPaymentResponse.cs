@@ -2,38 +2,36 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
-    public interface IDomesticPaymentPublicQuery
+    public interface IDomesticPaymentPublicQuery : IBaseQuery
     {
-        PaymentInitiationModelsPublic.OBWriteDomesticResponse5 OBWriteDomesticResponse { get; }
+        ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
     }
 
-    /// <summary>
-    ///     Respnose to GetLocal
-    /// </summary>
-    public class DomesticPaymentGetLocalResponse : IDomesticPaymentPublicQuery
+    public class DomesticPaymentResponse : BaseResponse, IDomesticPaymentPublicQuery
     {
-        internal DomesticPaymentGetLocalResponse(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 obWriteDomesticResponse)
+        public DomesticPaymentResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> bankApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy)
         {
-            OBWriteDomesticResponse = obWriteDomesticResponse;
+            BankApiResponse = bankApiResponse;
         }
 
-        public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 OBWriteDomesticResponse { get; }
-    }
-
-    /// <summary>
-    ///     Response to Post
-    /// </summary>
-    public class DomesticPaymentPostResponse : DomesticPaymentGetLocalResponse
-    {
-        internal DomesticPaymentPostResponse(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 obWriteDomesticResponse) : base(
-            obWriteDomesticResponse) { }
+        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
     }
 }

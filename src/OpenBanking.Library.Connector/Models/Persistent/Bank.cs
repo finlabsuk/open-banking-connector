@@ -4,10 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,68 +17,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    internal class Bank :
+    internal partial class Bank :
         EntityBase,
-        ISupportsFluentPost<BankRequest, BankPostResponse>,
-        ISupportsFluentGetLocal<Bank, IBankPublicQuery, BankGetLocalResponse>,
         ISupportsFluentDeleteLocal<Bank>,
         IBankPublicQuery
     {
-        /// <summary>
-        ///     Constructor intended for use by EF Core and to access static methods in generic context only.
-        ///     Should not be used to create entity instances to add to DB.
-        /// </summary>
-        public Bank() { }
+        public List<BankRegistration> BankRegistrationsNavigation { get; set; } = null!;
 
-        /// <summary>
-        ///     Constructor for creating entity instances to add to DB.
-        /// </summary>
-        public Bank(
-            string issuerUrl,
-            string financialId,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
-        {
-            IssuerUrl = issuerUrl;
-            FinancialId = financialId;
-        }
+        public List<BankApiInformation> BankApiInformationRecordsNavigation { get; set; } = null!;
 
-        public BankPostResponse PublicPostResponse => new BankPostResponse(
-            IssuerUrl,
-            FinancialId,
+        public string IssuerUrl { get; set; } = null!;
+
+        public string FinancialId { get; set; } = null!;
+
+        public BankResponse PublicGetResponse => new BankResponse(
+            Id,
             Name,
-            Id);
-
-        public string IssuerUrl { get; } = null!;
-
-        public string FinancialId { get; } = null!;
-
-        public BankGetLocalResponse PublicGetLocalResponse => new BankGetLocalResponse(
+            Created,
+            CreatedBy,
             IssuerUrl,
-            FinancialId,
-            Name,
-            Id);
-
-        public PostEntityAsyncWrapperDelegate<BankRequest, BankPostResponse> PostEntityAsyncWrapper =>
-            PostEntityAsync;
-
-        public static async Task<(BankPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
-            nonErrorMessages)> PostEntityAsync(
-            ISharedContext context,
-            BankRequest requestBank,
-            string? createdBy)
-        {
-            PostBank i = new PostBank(
-                context.DbService.GetDbEntityMethodsClass<Bank>(),
-                context.DbService.GetDbSaveChangesMethodClass(),
-                context.TimeProvider);
-
-            (BankPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
-                await i.PostAsync(requestBank, createdBy);
-
-            return result;
-        }
+            FinancialId);
     }
+
+    internal partial class Bank :
+        ISupportsFluentLocalEntityPost<BankRequest, BankResponse>
+    {
+        public void Initialise(
+            BankRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            IssuerUrl = request.IssuerUrl;
+            FinancialId = request.FinancialId;
+        }
+
+        public BankResponse PublicPostResponse => PublicGetResponse;
+    }
+
+    internal partial class Bank :
+        ISupportsFluentLocalEntityGet<BankResponse> { }
 }

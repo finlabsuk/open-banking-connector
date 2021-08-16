@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
         {
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = bankRegistration.OBClientRegistration.ClientId,
+                Iss = bankRegistration.BankApiResponse.Data.ClientId,
                 Iat = DateTimeOffset.Now,
                 // TODO: Nbf is upcoming requirement.
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
-                ClientId = bankRegistration.OBClientRegistration.ClientId,
+                ClientId = bankRegistration.BankApiResponse.Data.ClientId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,

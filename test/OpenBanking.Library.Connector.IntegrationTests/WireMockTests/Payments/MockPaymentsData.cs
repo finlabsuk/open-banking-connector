@@ -22,9 +22,9 @@ using Newtonsoft.Json;
 using SoftwareStatementProfileCached =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests.Payments
 {
@@ -166,7 +166,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetAuthtoriseResponse()
         {
-            AuthorisationCallbackPayload model = new AuthorisationCallbackPayload(
+            AuthResult model = new AuthResult(
                 "idToken123",
                 "code123",
                 "1ab89221-ca25-4055-9f96-7064fe953c52",

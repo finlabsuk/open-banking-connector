@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;
 
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
     ///     the Bank name to be used as a shorthand instead of the child object ID in
     ///     various API calls.
     /// </summary>
-    public class Bank : ISupportsValidation
+    public class Bank : Base, ISupportsValidation
     {
         /// <summary>
         ///     Issuer URL to use when creating Bank Registration
@@ -31,12 +31,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         ///     FAPI financial ID to use when creating Bank Registration
         /// </summary>
         public string FinancialId { get; set; } = null!;
-
-        /// <summary>
-        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
-        ///     This is optional.
-        /// </summary>
-        public string? Name { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new BankValidator()

@@ -27,27 +27,27 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         [Route("pisp/domestic-payments")]
         [HttpPost]
         [ProducesResponseType(
-            typeof(HttpResponse<DomesticPaymentPostResponse>),
+            typeof(HttpResponse<DomesticPaymentResponse>),
             StatusCodes.Status201Created)]
         [ProducesResponseType(
-            typeof(HttpResponse<DomesticPaymentPostResponse>),
+            typeof(HttpResponse<DomesticPaymentResponse>),
             StatusCodes.Status400BadRequest)]
         [ProducesResponseType(
-            typeof(HttpResponse<DomesticPaymentPostResponse>),
+            typeof(HttpResponse<DomesticPaymentResponse>),
             StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync([FromBody] DomesticPayment request)
         {
-            IFluentResponse<DomesticPaymentPostResponse> fluentResponse = await _obcRequestBuilder.PaymentInitiation
+            IFluentResponse<DomesticPaymentResponse> fluentResponse = await _obcRequestBuilder.PaymentInitiation
                 .DomesticPayments
                 .PostAsync(request);
 
             // HTTP response
-            HttpResponse<DomesticPaymentPostResponse> httpResponse = fluentResponse.ToHttpResponse();
+            HttpResponse<DomesticPaymentResponse> httpResponse = fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<DomesticPaymentPostResponse> _ => StatusCodes.Status201Created,
-                FluentBadRequestErrorResponse<DomesticPaymentPostResponse> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<DomesticPaymentPostResponse> _ => StatusCodes.Status500InternalServerError,
+                FluentSuccessResponse<DomesticPaymentResponse> _ => StatusCodes.Status201Created,
+                FluentBadRequestErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

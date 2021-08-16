@@ -7,10 +7,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public interface IBankApiInformationPublicQuery
+    public interface IBankApiInformationPublicQuery : IBaseQuery
     {
         PaymentInitiationApi? PaymentInitiationApi { get; }
-        Guid Id { get; }
 
         Guid BankId { get; }
     }
@@ -18,28 +17,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class BankApiInformationGetLocalResponse : IBankApiInformationPublicQuery
+    public class BankApiInformationResponse : BaseResponse, IBankApiInformationPublicQuery
     {
-        internal BankApiInformationGetLocalResponse(PaymentInitiationApi? paymentInitiationApi, Guid id, Guid bankId)
+        internal BankApiInformationResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            PaymentInitiationApi? paymentInitiationApi,
+            Guid bankId) : base(id, name, created, createdBy)
         {
             PaymentInitiationApi = paymentInitiationApi;
-            Id = id;
             BankId = bankId;
         }
 
         public PaymentInitiationApi? PaymentInitiationApi { get; }
-        public Guid Id { get; }
         public Guid BankId { get; }
-    }
-
-    /// <summary>
-    ///     Response to Post
-    /// </summary>
-    public class BankApiInformationPostResponse : BankApiInformationGetLocalResponse
-    {
-        internal BankApiInformationPostResponse(PaymentInitiationApi? paymentInitiationApi, Guid id, Guid bankId) : base(
-            paymentInitiationApi,
-            id,
-            bankId) { }
     }
 }

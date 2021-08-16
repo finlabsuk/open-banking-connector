@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -11,29 +12,34 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
-    internal class JwtRequestProcessor<TVariantApiRequest> : RequestProcessor<TVariantApiRequest>
+    internal class JwtRequestProcessor<TVariantApiRequest> :
+        IPostRequestProcessor<TVariantApiRequest>,
+        IGetRequestProcessor
         where TVariantApiRequest : class
     {
         private readonly IInstrumentationClient _instrumentationClient;
-        private readonly JwtFactory _jwtFactory;
         private readonly SoftwareStatementProfile _softwareStatementProfile;
 
         public JwtRequestProcessor(
             SoftwareStatementProfile softwareStatementProfile,
-            JwtFactory jwtFactory,
             IInstrumentationClient instrumentationClient)
         {
             _softwareStatementProfile = softwareStatementProfile;
-            _jwtFactory = jwtFactory;
             _instrumentationClient = instrumentationClient;
         }
 
-        protected override (List<HttpHeader> headers, string body, string contentType) HttpPostRequestData(
-            TVariantApiRequest variantRequest,
-            string requestDescription)
+        (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
+            HttpPostRequestData(
+                TVariantApiRequest variantRequest,
+                string requestDescription)
         {
             // Create JWT and log
-            string jwt = _jwtFactory.CreateJwt(
+            string jwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersIncludingTyp(_softwareStatementProfile.SigningKeyId),
                 variantRequest,
                 _softwareStatementProfile.SigningKey,

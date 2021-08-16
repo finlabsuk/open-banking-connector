@@ -27,28 +27,28 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         [Route("banks")]
         [HttpPost]
         [ProducesResponseType(
-            typeof(HttpResponse<BankPostResponse>),
+            typeof(HttpResponse<BankResponse>),
             StatusCodes.Status201Created)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankPostResponse>),
+            typeof(HttpResponse<BankResponse>),
             StatusCodes.Status400BadRequest)]
         [ProducesResponseType(
-            typeof(HttpResponse<BankPostResponse>),
+            typeof(HttpResponse<BankResponse>),
             StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync([FromBody] Bank request)
         {
             // Operation
-            IFluentResponse<BankPostResponse> fluentResponse = await _obcRequestBuilder.ClientRegistration
+            IFluentResponse<BankResponse> fluentResponse = await _obcRequestBuilder.ClientRegistration
                 .Banks
-                .PostAsync(request);
+                .PostLocalAsync(request);
 
             // HTTP response
-            HttpResponse<BankPostResponse> httpResponse = fluentResponse.ToHttpResponse();
+            HttpResponse<BankResponse> httpResponse = fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<BankPostResponse> _ => StatusCodes.Status201Created,
-                FluentBadRequestErrorResponse<BankPostResponse> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<BankPostResponse> _ => StatusCodes.Status500InternalServerError,
+                FluentSuccessResponse<BankResponse> _ => StatusCodes.Status201Created,
+                FluentBadRequestErrorResponse<BankResponse> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<BankResponse> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

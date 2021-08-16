@@ -5,7 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Fapi;
@@ -18,11 +19,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
     [ApiController]
     public class RedirectController : ControllerBase
     {
-        private readonly IRequestBuilder _obRequestBuilder;
+        private readonly IRequestBuilder _requestBuilder;
 
-        public RedirectController(IRequestBuilder obRequestBuilder)
+        public RedirectController(IRequestBuilder requestBuilder)
         {
-            _obRequestBuilder = obRequestBuilder;
+            _requestBuilder = requestBuilder;
         }
 
         [HttpPost]
@@ -40,21 +41,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
         public async Task<IActionResult> PostAuthorisationCallbackAsync([FromForm] AuthorisationCallbackPayload payload)
         {
             // Operation
-            AuthorisationRedirectObject value = new AuthorisationRedirectObject(
-                "fragment",
-                payload.ToLibraryVersion());
-            IFluentResponse<AuthorisationRedirectObjectResponse> fluentResponse = await _obRequestBuilder
+            AuthResult authResult = payload.ToLibraryVersion();
+            IFluentResponse<DomesticPaymentConsentAuthContextResponse> fluentResponse = await _requestBuilder
                 .PaymentInitiation
-                .AuthorisationRedirectObjects
-                .PostAsync(value);
+                .AuthContexts
+                .AuthResults
+                .PostLocalAsync(authResult);
 
             // HTTP response
-            HttpResponse<AuthorisationRedirectObjectResponse> httpResponse = fluentResponse.ToHttpResponse();
+            HttpResponse<DomesticPaymentConsentAuthContextResponse> httpResponse =
+                fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<AuthorisationRedirectObjectResponse> _ => StatusCodes.Status201Created,
-                FluentBadRequestErrorResponse<AuthorisationRedirectObjectResponse> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<AuthorisationRedirectObjectResponse> _ => StatusCodes
+                FluentSuccessResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
+                    .Status201Created,
+                FluentBadRequestErrorResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
+                    .Status400BadRequest,
+                FluentOtherErrorResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
                     .Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };

@@ -1,0 +1,8 @@
+site_name: Open Banking Connector Docs
+repo_url: https://github.com/finlabsuk/open-banking-connector-csharp
+repo_name: Open Banking Connector
+theme:
+  name: material
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences

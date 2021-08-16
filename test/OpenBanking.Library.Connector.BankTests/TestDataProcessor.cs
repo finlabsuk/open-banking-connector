@@ -27,7 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             return new TestDataProcessor(_dataFolderPath, testFolder);
         }
 
-        public async Task ProcessData<TData>(TData data) where TData : class
+        public async Task ProcessData<TData>(TData data)
+            where TData : class
         {
             string dirPath = Path.Join(
                 _dataFolderPath,

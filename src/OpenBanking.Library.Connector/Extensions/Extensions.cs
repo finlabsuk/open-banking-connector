@@ -120,7 +120,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
             return result;
         }
 
-        private static IEnumerable<T> WalkRecursiveInner<T>(T value, Func<T, T> selector) where T : class
+        private static IEnumerable<T> WalkRecursiveInner<T>(T value, Func<T, T> selector)
+            where T : class
         {
             while (value != null)
             {

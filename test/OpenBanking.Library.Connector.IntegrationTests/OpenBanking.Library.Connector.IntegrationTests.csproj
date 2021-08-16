@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</AssemblyName>
-    <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</RootNamespace>
-    <Copyright>Finnovation Labs Limited and Contributors</Copyright>
-    <Company>Finnovation Labs Limited</Company>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</RootNamespace>
+        <Copyright>Finnovation Labs Limited and Contributors</Copyright>
+        <Company>Finnovation Labs Limited</Company>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FsCheck.Xunit" Version="2.15.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="NSubstitute" Version="4.2.2" />
-    <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
-    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="TestStack.BDDfy.Xunit" Version="1.2.0" />
-    <PackageReference Include="WireMock.Net.StandAlone" Version="1.4.9" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="6.0.0" />
+        <PackageReference Include="FsCheck.Xunit" Version="2.16.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+        <PackageReference Include="NSubstitute" Version="4.2.2" />
+        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.14" />
+        <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
+        <PackageReference Include="TestStack.BDDfy.Xunit" Version="1.2.0" />
+        <PackageReference Include="WireMock.Net.StandAlone" Version="1.4.20" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
-    <ProjectReference Include="..\OpenBanking.Library.Connector.BankTests\OpenBanking.Library.Connector.BankTests.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.BankTests\OpenBanking.Library.Connector.BankTests.csproj" />
+    </ItemGroup>
 
 </Project>

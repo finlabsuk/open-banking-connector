@@ -4,17 +4,17 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
-    public class BankRegistration : ISupportsValidation
+    public class BankRegistration : Base, ISupportsValidation
     {
         /// <summary>
         ///     Bank this registration is with.
@@ -41,17 +41,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         public ClientRegistrationApiVersion ClientRegistrationApi { get; set; }
 
-        /// <summary>
-        ///     Allows to use existing bank registration instead of creating new one. Response
-        ///     should be of type <see cref="ClientRegistrationModelsPublic.OBClientRegistration1" /> but is supplied as JSON text
-        ///     file
-        ///     so can be de-serialised and validated in same way as response from bank.
-        ///     Settings in <see cref="BankRegistrationResponseJsonOptions" /> will be used.
-        ///     This argument is intended for use in testing scenarios where you want to test
-        ///     creation of a new registration but cannot re-POST one to bank for whatever reason.
-        /// </summary>
-        public string? BankRegistrationResponseFileName { get; set; }
-
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
         public HttpMtlsConfigurationOverrides? HttpMtlsConfigurationOverrides { get; set; }
@@ -63,12 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public BankRegistrationResponseOverrides? BankRegistrationResponseOverrides { get; set; }
 
         public OAuth2RequestObjectClaimsOverrides? OAuth2RequestObjectClaimsOverrides { get; set; }
-
-        /// <summary>
-        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
-        ///     This is optional.
-        /// </summary>
-        public string? Name { get; set; }
 
         /// <summary>
         ///     If registration already exists for bank, allow creation of additional one. NB this may

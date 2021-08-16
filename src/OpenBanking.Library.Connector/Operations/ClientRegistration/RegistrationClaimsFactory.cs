@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistration
 {
@@ -103,6 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                     TlsClientAuthSubjectDn =
                         $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB"
                 };
+
+            if (!(bankClientRegistrationClaimsOverrides?.SubjectType is null))
+            {
+                registrationClaims.SubjectType = bankClientRegistrationClaimsOverrides.SubjectType;
+            }
 
             return registrationClaims;
         }

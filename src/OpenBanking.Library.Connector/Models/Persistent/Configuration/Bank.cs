@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
         {
             base.Configure(builder);
 
-            // Top-level read-only properties and foreign keys
+            // Top-level read-only properties
             builder.Property(e => e.IssuerUrl)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.FinancialId)

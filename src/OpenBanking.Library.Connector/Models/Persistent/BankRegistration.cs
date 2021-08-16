@@ -4,12 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +19,10 @@ using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Mo
 using OAuth2RequestObjectClaimsOverridesRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+using ClientRegistrationModelsV3p2 =
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p2.Models;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -26,46 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    internal class BankRegistration :
+    internal partial class BankRegistration :
         EntityBase,
-        ISupportsFluentPost<BankRegistrationRequest, BankRegistrationPostResponse>,
-        ISupportsFluentGetLocal<BankRegistration, IBankRegistrationPublicQuery, BankRegistrationGetLocalResponse>,
         ISupportsFluentDeleteLocal<BankRegistration>,
         IBankRegistrationPublicQuery
     {
-        /// <summary>
-        ///     Constructor intended for use by EF Core and to access static methods in generic context only.
-        ///     Should not be used to create entity instances to add to DB.
-        /// </summary>
-        public BankRegistration() { }
-
-        /// <summary>
-        ///     Constructor for creating entity instances to add to DB.
-        /// </summary>
-        public BankRegistration(
-            string softwareStatementProfileId,
-            OpenIdConfiguration openIdConfiguration,
-            ClientRegistrationModelsPublic.OBClientRegistration1 obClientRegistration,
-            Guid bankId,
-            ClientRegistrationModelsPublic.OBClientRegistration1 obClientRegistrationRequest,
-            OAuth2RequestObjectClaimsOverridesRequest? claimsOverrides,
-            ClientRegistrationApiVersion clientRegistrationApi,
-            RegistrationScope registrationScope,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
-        {
-            ClientRegistrationApi = clientRegistrationApi;
-            RegistrationScope = registrationScope;
-            SoftwareStatementProfileId = softwareStatementProfileId;
-            OpenIdConfiguration = openIdConfiguration;
-            OBClientRegistrationRequest = obClientRegistrationRequest;
-            OBClientRegistration = obClientRegistration;
-            OAuth2RequestObjectClaimsOverrides = claimsOverrides;
-            BankId = bankId;
-        }
-
         public string SoftwareStatementProfileId { get; set; } = null!;
 
         /// <summary>
@@ -77,53 +47,125 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistration { get; set; } = null!;
+        public ClientRegistrationModelsPublic.OBClientRegistration1 BankApiRequest { get; set; } = null!;
 
         public OAuth2RequestObjectClaimsOverridesRequest? OAuth2RequestObjectClaimsOverrides { get; set; }
 
-        public BankRegistrationPostResponse PublicPostResponse =>
-            new BankRegistrationPostResponse(
-                Id,
-                OBClientRegistrationRequest,
-                BankId);
+        [ForeignKey("BankId")]
+        public Bank BankNavigation { get; set; } = null!;
+
+        public List<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
+
+        public string BankApiId => BankApiResponse.Data.ClientId;
+
+        public ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response> BankApiResponse
+        {
+            get;
+            set;
+        } = null!;
 
         /// <summary>
         ///     Bank this registration is with.
         /// </summary>
         public Guid BankId { get; set; }
+    }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1 OBClientRegistrationRequest { get; set; } = null!;
+    internal partial class BankRegistration :
+        ISupportsFluentEntityPost<BankRegistrationRequest, BankRegistrationResponse,
+            ClientRegistrationModelsPublic.OBClientRegistration1,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response>
+    {
+        public BankRegistrationResponse PublicGetResponse => new BankRegistrationResponse(
+            Id,
+            Name,
+            Created,
+            CreatedBy,
+            BankApiResponse,
+            BankId);
 
-        public BankRegistrationGetLocalResponse PublicGetLocalResponse =>
-            new BankRegistrationGetLocalResponse(
-                Id,
-                OBClientRegistrationRequest,
-                BankId);
-
-        public PostEntityAsyncWrapperDelegate<BankRegistrationRequest, BankRegistrationPostResponse>
-            PostEntityAsyncWrapper =>
-            PostEntityAsync;
-
-        public static async Task<(BankRegistrationPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)>
-            PostEntityAsync(
-                ISharedContext context,
-                BankRegistrationRequest request,
-                string? createdBy)
+        public void Initialise(
+            BankRegistrationRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
         {
-            PostBankRegistration i = new PostBankRegistration(
-                context.ApiClient,
-                context.DbService.GetDbEntityMethodsClass<BankRegistration>(),
-                context.DbService.GetDbEntityMethodsClass<Bank>(),
-                context.DbService.GetDbSaveChangesMethodClass(),
-                context.TimeProvider,
-                context.SoftwareStatementProfileCachedRepo,
-                context.Instrumentation,
-                context.ApiVariantMapper);
-
-            (BankRegistrationPostResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) result =
-                await i.PostAsync(request, createdBy);
-            return result;
+            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            ClientRegistrationApi = request.ClientRegistrationApi;
+            SoftwareStatementProfileId = request.SoftwareStatementProfileId;
+            OAuth2RequestObjectClaimsOverrides = request.OAuth2RequestObjectClaimsOverrides;
+            BankId = request.BankId;
         }
+
+        public BankRegistrationResponse PublicPostResponse => PublicGetResponse;
+
+        public void UpdateBeforeApiPost(ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest)
+        {
+            BankApiRequest = apiRequest;
+        }
+
+        public void UpdateAfterApiPost(
+            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
+            string? modifiedBy,
+            ITimeProvider timeProvider)
+        {
+            BankApiResponse =
+                new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                    apiResponse,
+                    timeProvider,
+                    modifiedBy);
+        }
+
+        public void UpdateOpenIdGet(
+            RegistrationScope registrationScope,
+            OpenIdConfiguration openIdConfiguration)
+        {
+            RegistrationScope = registrationScope;
+            OpenIdConfiguration = openIdConfiguration;
+        }
+
+        public IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response> ApiPostRequests(
+            ClientRegistrationApiVersion clientRegistrationApiVersion,
+            SoftwareStatementProfile softwareStatementProfile,
+            IInstrumentationClient instrumentationClient) =>
+            clientRegistrationApiVersion switch
+            {
+                ClientRegistrationApiVersion.Version3p2 =>
+                    new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                        ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                        ClientRegistrationModelsV3p2.OBClientRegistration1,
+                        ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                        new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient),
+                        new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient)),
+                ClientRegistrationApiVersion.Version3p3 =>
+                    new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                        ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                        ClientRegistrationModelsPublic.OBClientRegistration1,
+                        ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                        new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient),
+                        new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient)),
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(clientRegistrationApiVersion),
+                    clientRegistrationApiVersion,
+                    null)
+            };
+    }
+
+    internal partial class BankRegistration :
+        ISupportsFluentEntityGet<BankRegistrationResponse,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response>
+    {
+        public void UpdateAfterApiGet(
+            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
+            string? modifiedBy,
+            ITimeProvider timeProvider) =>
+            UpdateAfterApiPost(apiResponse, modifiedBy, timeProvider);
     }
 }

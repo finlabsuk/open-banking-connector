@@ -28,104 +28,81 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         public async Task<T> RequestJsonAsync<T>(
             HttpRequestMessage request,
-            bool requestContentIsJson,
-            JsonSerializerSettings? jsonSerializerSettings,
-            bool typeTIsNullable = false)
-            where T : class?
+            JsonSerializerSettings? jsonSerializerSettings)
+            where T : class
         {
             request.ArgNotNull(nameof(request));
 
+            HttpResponseMessage? response = null;
+            string? responseBody = null;
             try
             {
                 // Make HTTP call
-                using HttpResponseMessage response = await _httpClient.SendAsync(request);
-                string? json = await GetStringResponseAsync(response);
-
-                // Generate HTTP request info trace
-                StringBuilder requestTraceSb = new StringBuilder()
-                    .AppendLine("#### HTTP REQUEST")
-                    .AppendLine("######## REQUEST")
-                    .AppendLine($"{request}")
-                    .AppendLine("######## REQUEST BODY");
-                if (request.Content is null)
-                {
-                    requestTraceSb.AppendLine("<No Body>");
-                }
-                else
-                {
-                    string body = await request.Content.ReadAsStringAsync();
-                    if (requestContentIsJson)
-                    {
-                        dynamic? parsedJson = JsonConvert.DeserializeObject(body);
-                        dynamic jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-                        requestTraceSb.AppendLine(jsonFormatted);
-                    }
-                    else
-                    {
-                        requestTraceSb
-                            .AppendLine(body);
-                    }
-                }
-
-                requestTraceSb
-                    .AppendLine("######## RESPONSE")
-                    .AppendLine($"{response}")
-                    .AppendLine("######## RESPONSE BODY");
-                if (json is null)
-                {
-                    requestTraceSb.AppendLine("<No Body>");
-                }
-                else
-                {
-                    string jsonFormatted;
-                    try
-                    {
-                        dynamic? parsedJson = JsonConvert.DeserializeObject(json);
-                        jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-                    }
-                    catch
-                    {
-                        jsonFormatted = json;
-                    }
-
-                    requestTraceSb.AppendLine(jsonFormatted);
-                }
-
-                requestTraceSb.AppendLine("####");
-                _instrumentation.Info(requestTraceSb.ToString());
+                response = await _httpClient.SendAsync(request);
+                responseBody = await GetStringResponseAsync(response);
 
                 // Check HTTP status code
                 HttpResponseMessage _ = response.EnsureSuccessStatusCode();
 
                 // Check body not null
-                T output;
-                if (json is null)
+                if (responseBody is null)
                 {
-                    if (!typeTIsNullable)
-                    {
-                        throw new HttpRequestException(
-                            "Received null HTTP body when configured to receive non-null type.");
-                    }
-
-                    output = null;
-                }
-                else
-                {
-                    // De-serialise body
-                    output = JsonConvert.DeserializeObject<T>(json, jsonSerializerSettings) ??
-                             throw new HttpRequestException("Could not de-serialise HTTP body");
+                    throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
                 }
 
-                return output!; // Can only be null when typeTIsNullable above is true
+                // De-serialise body
+                T responseBodyTyped =
+                    JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings) ??
+                    throw new HttpRequestException("Could not de-serialise HTTP body");
+
+                return responseBodyTyped;
             }
             catch (Exception ex)
             {
                 _instrumentation.Exception(ex, request.RequestUri.ToString());
                 throw;
             }
+            finally
+            {
+                await LogRequest(request, response, responseBody);
+                response?.Dispose();
+            }
         }
 
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        public async Task SendAsync(HttpRequestMessage request)
+        {
+            request.ArgNotNull(nameof(request));
+
+            HttpResponseMessage? response = null;
+            string? responseBody = null;
+            try
+            {
+                // Make HTTP call
+                response = await _httpClient.SendAsync(request);
+                responseBody = await GetStringResponseAsync(response);
+
+                // Check HTTP status code
+                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
+
+                // Check body not null
+                if (!string.IsNullOrEmpty(responseBody))
+                {
+                    throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                throw;
+            }
+            finally
+            {
+                await LogRequest(request, response, responseBody);
+                response?.Dispose();
+            }
+        }
+
+        public async Task<HttpResponseMessage> LowLevelSendAsync(HttpRequestMessage request)
         {
             try
             {
@@ -147,18 +124,102 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
         }
 
-        private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
+        private async Task LogRequest(
+            HttpRequestMessage request,
+            HttpResponseMessage? response,
+            string? responseBody)
         {
-            string? json = null;
-            if (response.Content != null)
+            string jsonFormatted;
+
+            // Generate HTTP request info trace
+            StringBuilder requestTraceSb = new StringBuilder()
+                .AppendLine("#### HTTP REQUEST")
+                .AppendLine("######## REQUEST")
+                .AppendLine($"{request}")
+                .AppendLine("######## REQUEST BODY");
+
+            string? requestBody = await GetStringRequestAsync(request);
+            if (string.IsNullOrEmpty(requestBody))
             {
-                using (response.Content)
+                requestTraceSb.AppendLine("<No Body>");
+            }
+            else
+            {
+                try
                 {
-                    json = await response.Content.ReadAsStringAsync();
+                    dynamic parsedJson =
+                        JsonConvert.DeserializeObject(requestBody) ??
+                        throw new NullReferenceException();
+                    jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                }
+                catch
+                {
+                    jsonFormatted = requestBody;
+                }
+
+                requestTraceSb.AppendLine(jsonFormatted);
+            }
+
+            requestTraceSb.AppendLine("######## RESPONSE");
+            if (response is null)
+            {
+                requestTraceSb.AppendLine("<No Response>");
+            }
+            else
+            {
+                requestTraceSb
+                    .AppendLine($"{response}")
+                    .AppendLine("######## RESPONSE BODY");
+                if (string.IsNullOrEmpty(responseBody))
+                {
+                    requestTraceSb.AppendLine("<No Body>");
+                }
+                else
+                {
+                    try
+                    {
+                        dynamic parsedJson =
+                            JsonConvert.DeserializeObject(responseBody) ??
+                            throw new NullReferenceException();
+                        jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
+                    }
+                    catch
+                    {
+                        jsonFormatted = responseBody;
+                    }
+
+                    requestTraceSb.AppendLine(jsonFormatted);
                 }
             }
 
-            return json;
+            requestTraceSb.AppendLine("####");
+            _instrumentation.Info(requestTraceSb.ToString());
+        }
+
+        private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
+        {
+            if (response.Content is null)
+            {
+                return null;
+            }
+
+            using (response.Content)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        private static async Task<string?> GetStringRequestAsync(HttpRequestMessage request)
+        {
+            if (request.Content is null)
+            {
+                return null;
+            }
+
+            using (request.Content)
+            {
+                return await request.Content.ReadAsStringAsync();
+            }
         }
     }
 }

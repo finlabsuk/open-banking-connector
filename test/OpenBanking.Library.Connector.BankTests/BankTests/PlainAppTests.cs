@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -15,7 +16,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -60,26 +60,99 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             _connection.Close(); // Deletes DB
         }
 
-        public IRequestBuilder CreateOpenBankingRequestBuilder(
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository,
-            ITimeProvider timeProvider,
-            IInstrumentationClient instrumentationClient) =>
-            CreateMockRequestBuilder(softwareStatementProfilesRepository, timeProvider, instrumentationClient);
+        private BaseDbContext GetDbContext() => new SqliteDbContext(_dbContextOptions);
 
-        private RequestBuilder CreateMockRequestBuilder(
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository,
-            ITimeProvider timeProvider,
-            IInstrumentationClient instrumentationClient)
+        [Theory]
+        [MemberData(
+            nameof(TestedSkippedBanksById),
+            false,
+            Skip = "Bank skipped due to setting of" +
+                   nameof(BankProfile.ClientRegistrationApiSettings.UseRegistrationScope) + "in bank profile")]
+        [MemberData(
+            nameof(TestedUnskippedBanksById),
+            false)]
+        public async Task TestAllNoConsentAuth(
+            BankProfileEnum bank,
+            BankRegistrationType bankRegistrationType)
         {
-            SqliteDbContext dB = new SqliteDbContext(_dbContextOptions);
-            ApiVariantMapper apiVariantMapper = new ApiVariantMapper();
+            // Set up logging
+            var timeProvider = new TimeProvider();
+            var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
+
+            // Get request builder   
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", false, true)
+                .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
+                .AddEnvironmentVariables()
+                .Build();
+            OpenBankingConnectorSettings obcSettings = configuration
+                .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
+                .Get<OpenBankingConnectorSettings>();
+            SoftwareStatementProfilesSettings softwareStatementProfilesSettings = configuration
+                .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
+                .Get<SoftwareStatementProfilesSettings>();
+            var obcSettingsProvider =
+                new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
+            var softwareStatementProfilesSettingsProvider =
+                new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
+            var softwareStatementProfilesRepository = new SoftwareStatementProfileCache(
+                obcSettingsProvider,
+                softwareStatementProfilesSettingsProvider,
+                instrumentationClient);
+            var apiClient = new ApiClient(instrumentationClient, new HttpClient());
+            var apiVariantMapper = new ApiVariantMapper();
+            IRequestBuilder requestBuilder = CreateRequestBuilder(
+                timeProvider,
+                apiVariantMapper,
+                instrumentationClient,
+                apiClient,
+                softwareStatementProfilesRepository);
+
+            var requestBuilderGenerator = new ScopedRequestBuilder2(
+                timeProvider,
+                apiVariantMapper,
+                instrumentationClient,
+                apiClient,
+                softwareStatementProfilesRepository,
+                GetDbContext());
+            requestBuilder = requestBuilderGenerator.RequestBuilder;
+
+            // softwareStatementProfileResp.Should().NotBeNull();
+            // softwareStatementProfileResp.Messages.Should().BeEmpty();
+            // softwareStatementProfileResp.Data.Should().NotBeNull();
+            // softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
+
+            // Where you see TestConfig.GetValue( .. )
+            // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
+
+            await TestAllInner(
+                bank,
+                bankRegistrationType,
+                requestBuilder,
+                () => new ScopedRequestBuilder2(
+                    timeProvider,
+                    apiVariantMapper,
+                    instrumentationClient,
+                    apiClient,
+                    softwareStatementProfilesRepository,
+                    GetDbContext()),
+                false);
+        }
+
+        public IRequestBuilder CreateRequestBuilder(
+            ITimeProvider timeProvider,
+            IApiVariantMapper apiVariantMapper,
+            IInstrumentationClient instrumentationClient,
+            IApiClient apiClient,
+            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository)
+        {
             RequestBuilder requestBuilder = new RequestBuilder(
                 timeProvider,
                 apiVariantMapper,
                 instrumentationClient,
-                new ApiClient(instrumentationClient, new HttpClient()),
+                apiClient,
                 softwareStatementProfilesRepository,
-                new DbService(dB));
+                new DbService(GetDbContext()));
 
             return requestBuilder;
         }
@@ -114,59 +187,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .CreateMessageHandler();
 
             return ApiClientFactory.CreateApiClient(handler);
-        }
-
-        public async Task TestAll(
-            string bankEnumString,
-            RegistrationScope registrationScope)
-        {
-            // Create test data processor
-            TestDataProcessor testDataProcessor = new TestDataProcessor(
-                _dataFolder,
-                $"{RegistrationScopeApiSetHelper.AbbreviatedName(registrationScope)}_{bankEnumString}");
-
-            // Dereference bank
-            BankProfileEnum bankProfileEnum = BankProfileEnumHelper.GetBankEnum(bankEnumString);
-            BankProfile bankProfile = BankProfileEnumHelper.GetBank(bankProfileEnum);
-
-            // Set up logging
-            var timeProvider = new TimeProvider();
-            var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
-
-            // Get OBC settings and software statement profiles   
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", false, true)
-                .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
-                .AddEnvironmentVariables()
-                .Build();
-            OpenBankingConnectorSettings obcSettings = configuration
-                .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
-                .Get<OpenBankingConnectorSettings>();
-            SoftwareStatementProfilesSettings softwareStatementProfilesSettings = configuration
-                .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
-                .Get<SoftwareStatementProfilesSettings>();
-            var obcSettingsProvider =
-                new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
-            var softwareStatementProfilesSettingsProvider =
-                new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
-
-            // Set up request builder
-            var softwareStatementProfilesRepository = new SoftwareStatementProfileCache(
-                obcSettingsProvider,
-                softwareStatementProfilesSettingsProvider,
-                instrumentationClient);
-            IRequestBuilder requestBuilder = CreateOpenBankingRequestBuilder(
-                softwareStatementProfilesRepository,
-                timeProvider,
-                instrumentationClient);
-
-            // softwareStatementProfileResp.Should().NotBeNull();
-            // softwareStatementProfileResp.Messages.Should().BeEmpty();
-            // softwareStatementProfileResp.Data.Should().NotBeNull();
-            // softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
-
-            // Where you see TestConfig.GetValue( .. )
-            // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
         }
     }
 }

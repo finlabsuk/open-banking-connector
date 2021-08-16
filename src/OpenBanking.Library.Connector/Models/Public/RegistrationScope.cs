@@ -31,20 +31,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         [EnumMember(Value = "all")] All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
     }
 
-    public static class RegistrationScopeApiSetHelper
+    public static class RegistrationScopeExtensions
     {
         /// <summary>
-        ///     Mapping from API set to abbreviated name
+        ///     Abbreviated name for registration scope
         /// </summary>
-        public static string AbbreviatedName(RegistrationScope registrationScope) =>
-            registrationScope switch
+        /// <param name="registrationScope"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static string AbbreviatedName(this RegistrationScope registrationScope)
+        {
+            return registrationScope switch
             {
+                // RegistrationScope.None: invalid
                 RegistrationScope.AccountAndTransaction => "AT",
                 RegistrationScope.PaymentInitiation => "PI",
                 RegistrationScope.FundsConfirmation => "FC",
                 RegistrationScope.All => "All",
-                _ => throw new ArgumentException(
-                    $"{nameof(registrationScope)} is not valid ${nameof(RegistrationScope)} or needs to be added to this switch statement.")
+                _ => throw new ArgumentOutOfRangeException(nameof(registrationScope), registrationScope, null)
             };
+        }
     }
 }

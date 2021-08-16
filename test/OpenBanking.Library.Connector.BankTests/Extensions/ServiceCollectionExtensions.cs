@@ -2,12 +2,16 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
+using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
 {
@@ -46,6 +50,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
                     return Options.Create(bankTestSettings.ConsentAuthoriser.NodeJS.OutOfProcessNodeJSServiceOptions);
                 });
             services.AddNodeJS();
+
+            // Set up bank users
+            services.AddSingleton(
+                sp =>
+                {
+                    BankTestSettings bankTestSettings =
+                        sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
+                    string bankUsersFile = Path.Combine(
+                        bankTestSettings.GetDataDirectoryForCurrentOs(),
+                        "bankUsers.json");
+                    var bankUsers = new BankUsers(
+                        DataFile.ReadFile<Dictionary<string, Dictionary<string, List<BankUser>>>>(
+                            bankUsersFile,
+                            new JsonSerializerSettings()).GetAwaiter().GetResult());
+                    return bankUsers;
+                });
 
             return services;
         }

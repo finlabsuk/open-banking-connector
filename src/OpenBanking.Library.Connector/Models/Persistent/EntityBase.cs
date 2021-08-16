@@ -24,6 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             CreatedBy = createdBy;
         }
 
+        /// <summary>
+        ///     Unique OBC ID
+        /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
@@ -32,10 +35,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         /// </summary>
         public string? Name { get; set; }
 
+        /// <summary>
+        ///     Mutable "is deleted" status to support soft delete of record
+        /// </summary>
         public ReadWriteProperty<bool> IsDeleted { get; set; } = null!;
 
+        /// <summary>
+        ///     Created timestamp
+        /// </summary>
         public DateTimeOffset Created { get; set; }
 
+        /// <summary>
+        ///     "Created by" string. Similarly to "modified by" for mutable fields, this field
+        ///     cna be used to denote authorship.
+        /// </summary>
         public string? CreatedBy { get; set; }
+
+        public void Initialise(
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            Id = id;
+            Name = name;
+            IsDeleted = new ReadWriteProperty<bool>(false, timeProvider, CreatedBy);
+            Created = timeProvider.GetUtcNow();
+            CreatedBy = createdBy;
+        }
     }
 }

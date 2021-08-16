@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.DynamicClientRegistration.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
@@ -46,15 +46,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v =>
                         JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.OBClientRegistrationRequest)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
-                    v =>
-                        JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.OBClientRegistration)
+            builder.Property(e => e.BankApiRequest)
                 .HasConversion(
                     v => JsonConvert.SerializeObject(v, _formatting),
                     v =>
@@ -63,13 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
-            // Top-level foreign keys
-            builder
-                .HasOne<Persistent.Bank>()
-                .WithMany()
-                .HasForeignKey(r => r.BankId);
-
-            // Second-level property info and foreign keys
+            // Second-level property info
             builder.OwnsOne(
                 e => e.OpenIdConfiguration,
                 od =>
@@ -100,6 +88,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                                 c => c));
                 });
             builder.Navigation(p => p.OpenIdConfiguration).IsRequired();
+            builder.OwnsOne(
+                p => p.BankApiResponse,
+                od =>
+                {
+                    od.Property(e => e.Data)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v =>
+                                JsonConvert
+                                    .DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                                        v)!)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                    od.Property(e => e.Modified)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                    od.Property(e => e.ModifiedBy)
+                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                });
+            builder.Navigation(p => p.BankApiResponse).IsRequired();
         }
     }
 }

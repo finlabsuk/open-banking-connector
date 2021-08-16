@@ -1,9 +1,11 @@
 To create a new migration, ensure .NET EF tools are installed via
+
 ```zsh
 dotnet tool install --global dotnet-ef
 ```
 
 Then create a new migration for a DB provider via
+
 ```zsh
 cd src/OpenBanking.Library.Connector
 dotnet ef migrations add InitialCreate --startup-project ../OpenBanking.WebApp.Connector.Sample --context SqliteDbContext --output-dir Migrations/SqliteMigrations

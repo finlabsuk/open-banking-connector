@@ -3,14 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using DomesticPaymentConsentAuthContextRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
+    DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
@@ -18,75 +18,58 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal class DomesticPaymentConsentAuthContext :
+    internal partial class DomesticPaymentConsentAuthContext :
         EntityBase,
-        ISupportsFluentPost<Public.PaymentInitiation.Request.DomesticPaymentConsentAuthContext,
-            DomesticPaymentConsentAuthContextPostResponse>,
-        ISupportsFluentGetLocal<DomesticPaymentConsentAuthContext, IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextGetLocalResponse>,
-        ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>,
-        IDomesticPaymentConsentAuthContextPublicQuery
+        ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>
     {
-        /// <summary>
-        ///     Constructor intended for use by EF Core and to access static methods in generic context only.
-        ///     Should not be used to create entity instances to add to DB.
-        /// </summary>
-        public DomesticPaymentConsentAuthContext() { }
-
-        /// <summary>
-        ///     Constructor for creating entity instances to add to DB.
-        /// </summary>
-        public DomesticPaymentConsentAuthContext(
-            Guid domesticPaymentConsentId,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
-        {
-            DomesticPaymentConsentId = domesticPaymentConsentId;
-        }
-
         public Guid DomesticPaymentConsentId { get; set; }
+
+        [ForeignKey("DomesticPaymentConsentId")]
+        public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
 
         /// <summary>
         ///     Token endpoint response. If null, indicates auth not successfully completed.
         /// </summary>
         public ReadWriteProperty<TokenEndpointResponse?> TokenEndpointResponse { get; set; } = null!;
+    }
 
-        public DomesticPaymentConsentAuthContextGetLocalResponse PublicGetLocalResponse =>
-            new DomesticPaymentConsentAuthContextGetLocalResponse();
-
-        public PostEntityAsyncWrapperDelegate<Public.PaymentInitiation.Request.DomesticPaymentConsentAuthContext,
-                DomesticPaymentConsentAuthContextPostResponse>
-            PostEntityAsyncWrapper =>
-            PostEntityAsync;
-
-        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponse(string authUrl) =>
-            new DomesticPaymentConsentAuthContextPostResponse(authUrl);
-
-
-        public static async Task<(DomesticPaymentConsentAuthContextPostResponse response,
-                IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)>
-            PostEntityAsync(
-                ISharedContext context,
-                Public.PaymentInitiation.Request.DomesticPaymentConsentAuthContext request,
-                string? createdBy)
+    internal partial class DomesticPaymentConsentAuthContext :
+        ISupportsFluentLocalEntityPost<DomesticPaymentConsentAuthContextRequest,
+            DomesticPaymentConsentAuthContextPostResponse>
+    {
+        public void Initialise(
+            DomesticPaymentConsentAuthContextRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
         {
-            PostDomesticPaymentConsentAuthContext i = new PostDomesticPaymentConsentAuthContext(
-                context.SoftwareStatementProfileCachedRepo,
-                context.DbService.GetDbEntityMethodsClass<Bank>(),
-                context.DbService.GetDbEntityMethodsClass<BankRegistration>(),
-                context.DbService.GetDbEntityMethodsClass<BankApiInformation>(),
-                context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContext>(),
-                context.DbService.GetDbSaveChangesMethodClass(),
-                context.Instrumentation,
-                context.TimeProvider);
-            (DomesticPaymentConsentAuthContextPostResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages) result =
-                    await i.PostAsync(request, createdBy);
-            return result;
+            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
+            TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                null,
+                timeProvider,
+                createdBy);
         }
+
+        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponse =>
+            throw new NotImplementedException("Do not use; use customised version instead.");
+
+        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
+            new DomesticPaymentConsentAuthContextPostResponse(
+                Id,
+                Name,
+                Created,
+                CreatedBy,
+                authUrl);
+    }
+
+    internal partial class DomesticPaymentConsentAuthContext :
+        ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextResponse>
+    {
+        public DomesticPaymentConsentAuthContextResponse PublicGetResponse =>
+            new DomesticPaymentConsentAuthContextResponse(
+                Id,
+                Name,
+                Created,
+                CreatedBy);
     }
 }

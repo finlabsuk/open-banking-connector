@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     /// <summary>
     ///     Get app configuration outside of .NET Generic Host dependency injection.
@@ -32,7 +32,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 
         private static IConfiguration Configuration { get; set; } = null!;
 
-        public static TSettings GetSettings<TSettings>() where TSettings : ISettings<TSettings>, new()
+        public static TSettings GetSettings<TSettings>()
+            where TSettings : ISettings<TSettings>, new()
         {
             var settings = Configuration
                 .GetSection(new TSettings().SettingsSectionName)

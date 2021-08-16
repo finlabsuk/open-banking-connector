@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
-                HttpResponseMessage r = await api.SendAsync(req);
+                HttpResponseMessage r = await api.LowLevelSendAsync(req);
 
                 r.StatusCode.Should().Be(HttpStatusCode.OK);
             }
@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
-                HttpResponseMessage r = await api.SendAsync(req);
+                HttpResponseMessage r = await api.LowLevelSendAsync(req);
 
                 r.StatusCode.Should().Be(HttpStatusCode.NotFound);
             }
@@ -75,10 +75,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 ApiClient api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
-                HttpResponseMessage r = await api.SendAsync(req);
+                HttpResponseMessage r = await api.LowLevelSendAsync(req);
             };
 
-            a.Should().Throw<HttpRequestException>();
+            a.Should().ThrowAsync<HttpRequestException>();
         }
     }
 }

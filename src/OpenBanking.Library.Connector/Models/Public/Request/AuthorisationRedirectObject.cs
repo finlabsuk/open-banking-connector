@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;
@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     public class AuthorisationRedirectObject : ISupportsValidation
     {
-        public AuthorisationRedirectObject(string responseMode, AuthorisationCallbackPayload response)
+        public AuthorisationRedirectObject(string responseMode, AuthResult response)
         {
             ResponseMode = responseMode;
             Response = response;
@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public string ResponseMode { get; }
 
         [JsonProperty("response")]
-        public AuthorisationCallbackPayload Response { get; }
+        public AuthResult Response { get; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AuthorisationRedirectObjectValidator()

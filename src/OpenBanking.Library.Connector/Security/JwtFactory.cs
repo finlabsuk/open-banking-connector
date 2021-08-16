@@ -11,13 +11,14 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
-    public class JwtFactory
+    public static class JwtFactory
     {
-        public string CreateJwt<TClaims>(
+        public static string CreateJwt<TClaims>(
             Dictionary<string, object> headers,
             TClaims claims,
             string signingKey,
-            string signingCertificate) where TClaims : class
+            string signingCertificate)
+            where TClaims : class
         {
             claims.ArgNotNull(nameof(claims));
             signingKey.ArgNotNull(nameof(signingKey));
@@ -43,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
             return result;
         }
-        
+
         public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>
             new Dictionary<string, object>
             {

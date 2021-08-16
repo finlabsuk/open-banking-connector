@@ -2,11 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.ApiModels.Base;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FluentValidation;
-using FluentValidation.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
@@ -22,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
         internal static bool HasDelimiters<T>(
             T arg1,
             string? arg2,
-            PropertyValidatorContext arg3,
+            ValidationContext<T> arg3,
             char delimiter,
             int maxLength)
         {

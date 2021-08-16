@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FluentAssertions;
@@ -10,9 +11,9 @@ using FsCheck;
 using FsCheck.Xunit;
 using Xunit;
 using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p4.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation.Models;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
@@ -20,13 +21,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
     public class EntityMapperTests
     {
         [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property OpenBankingToPublic_SimpleMap_V3_1_2_RC1_ToPublic_2(
-            PaymentInitiationModelsV3p1p4.OBPostalAddress6 value)
+        public Property OpenBankingToPublic_SimpleMap_V3_1_4_ToPublic_2(
+            PaymentInitiationModelsV3p1p4.OBAddressTypeCodeEnum addressType,
+            string department,
+            string subDepartment,
+            string streetName,
+            string buildingNumber,
+            string postCode,
+            string townName,
+            string countrySubDivision,
+            string country,
+            IList<string> addressLine)
         {
             ApiVariantMapper mapper = new ApiVariantMapper();
 
             Func<bool> rule = () =>
             {
+                PaymentInitiationModelsV3p1p4.OBPostalAddress6 value =
+                    new PaymentInitiationModelsV3p1p4.OBPostalAddress6(
+                        addressType,
+                        department,
+                        subDepartment,
+                        streetName,
+                        buildingNumber,
+                        postCode,
+                        townName,
+                        countrySubDivision,
+                        country,
+                        addressLine);
+
                 mapper.Map(value, out PaymentInitiationModelsPublic.OBPostalAddress6 r1);
 
                 return r1.AddressLine.SequenceEqual(value.AddressLine) &&
@@ -55,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
 
 
         [Fact]
-        public void OpenBankingToPublic_SimpleMap_V3_1_2_ToPublic()
+        public void OpenBankingToPublic_SimpleMap_V3_1_4_ToPublic()
         {
             ApiVariantMapper mapper = new ApiVariantMapper();
 

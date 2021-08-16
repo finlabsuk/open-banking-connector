@@ -13,7 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 
         string? GetValue(string key);
 
-        T? GetEnumValue<T>(string key) where T : struct;
+        T? GetEnumValue<T>(string key)
+            where T : struct;
 
         BankRegistrationClaimsOverrides? GetOpenBankingClientRegistrationClaimsOverrides();
 

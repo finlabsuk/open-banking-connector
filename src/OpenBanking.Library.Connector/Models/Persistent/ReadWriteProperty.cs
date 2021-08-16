@@ -8,6 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
+    /// <summary>
+    ///     Mutable property in DB.
+    ///     Please note that properties are read-only so they are created via the
+    ///     constructor only when the object is replaced and not adjusted one by one.
+    ///     This means they must also be explicitly mapped in OnModelCreating().
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
     [Owned]
     public class ReadWriteProperty<TData>
     {

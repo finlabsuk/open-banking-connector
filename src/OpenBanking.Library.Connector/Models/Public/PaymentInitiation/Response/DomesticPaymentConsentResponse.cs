@@ -3,16 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.OpenBankingUk.ReadWriteApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
-    public interface IDomesticPaymentConsentPublicQuery
+    public interface IDomesticPaymentConsentPublicQuery : IBaseQuery
     {
-        Guid Id { get; }
-        PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 OBWriteDomesticConsentResponse { get; }
+        ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse { get; }
 
         Guid BankRegistrationId { get; }
 
@@ -22,64 +23,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Respnose to GetLocal
     /// </summary>
-    public class DomesticPaymentConsentGetLocalResponse : IDomesticPaymentConsentPublicQuery
+    public class DomesticPaymentConsentResponse : BaseResponse, IDomesticPaymentConsentPublicQuery
     {
-        internal DomesticPaymentConsentGetLocalResponse(
+        public DomesticPaymentConsentResponse(
             Guid id,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> bankApiResponse,
             Guid bankRegistrationId,
-            Guid bankApiInformationId)
+            Guid bankApiInformationId) : base(id, name, created, createdBy)
         {
-            Id = id;
-            OBWriteDomesticConsentResponse = obWriteDomesticConsentResponse;
+            BankApiResponse = bankApiResponse;
             BankRegistrationId = bankRegistrationId;
             BankApiInformationId = bankApiInformationId;
         }
 
-        public Guid Id { get; }
-
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 OBWriteDomesticConsentResponse
-        {
-            get;
-            set;
-        }
-
+        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse { get; }
         public Guid BankRegistrationId { get; }
         public Guid BankApiInformationId { get; }
-    }
-
-    public class DomesticPaymentConsentGetResponse : DomesticPaymentConsentGetLocalResponse
-    {
-        internal DomesticPaymentConsentGetResponse(
-            Guid id,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
-            Guid bankRegistrationId,
-            Guid bankApiInformationId) : base(
-            id,
-            obWriteDomesticConsentResponse,
-            bankRegistrationId,
-            bankApiInformationId) { }
-    }
-
-    /// <summary>
-    ///     Response to Post
-    /// </summary>
-    public class DomesticPaymentConsentPostResponse : DomesticPaymentConsentGetResponse
-    {
-        internal DomesticPaymentConsentPostResponse(
-            string authUrl,
-            Guid id,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 obWriteDomesticConsentResponse,
-            Guid bankRegistrationId,
-            Guid bankApiInformationId) : base(
-            id,
-            obWriteDomesticConsentResponse,
-            bankRegistrationId,
-            bankApiInformationId)
-        {
-            AuthUrl = authUrl;
-        }
-
-        public string AuthUrl { get; }
     }
 }
