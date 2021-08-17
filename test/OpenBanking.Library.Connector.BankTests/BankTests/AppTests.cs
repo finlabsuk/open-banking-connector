@@ -137,23 +137,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Create test data writers
             string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
-            TestDataWriter testDataProcessorFluentRequestLogging = new TestDataWriter(
+            FilePathBuilder testDataProcessorFluentRequestLogging = new FilePathBuilder(
                 Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/fluent"),
-                testName);
+                testName,
+                ".json");
 
-            TestDataWriter? testDataProcessorApiLogging = null;
+            FilePathBuilder? testDataProcessorApiLogging = null;
             if (bankTestSettings.LogExternalApiData)
             {
-                testDataProcessorApiLogging = new TestDataWriter(
+                testDataProcessorApiLogging = new FilePathBuilder(
                     Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/api"),
-                    testName);
+                    testName,
+                    ".json");
             }
 
-            TestDataWriter testDataProcessorApiOverrides = new TestDataWriter(
+            FilePathBuilder testDataProcessorApiOverrides = new FilePathBuilder(
                 Path.Combine(
                     bankTestSettings.GetDataDirectoryForCurrentOs(),
                     $"{topLevelFolderName}/apiOverrides"),
-                testName);
+                testName,
+                ".json");
 
             // Dereference bank
             BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);

@@ -22,16 +22,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder,
             BankProfile bankProfile,
             string testNameUnique,
-            TestDataWriter testDataProcessorFluentRequestLogging,
-            TestDataWriter? testDataProcessorApiLogging,
-            TestDataWriter testDataProcessorApiOverrides)
+            FilePathBuilder testDataProcessorFluentRequestLogging,
+            FilePathBuilder? testDataProcessorApiLogging,
+            FilePathBuilder testDataProcessorApiOverrides)
         {
             // Create bank
             Bank bankRequest = bankProfile.BankObject("placeholder: dynamically generated based on unused names");
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
-                .ProcessData(bankRequest, ".json");
+                .WriteFile(bankRequest);
             bankRequest.Name = testNameUnique;
             IFluentResponse<BankResponse> bankResp = await requestBuilder.ClientRegistration
                 .Banks
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string filePath = testDataProcessorApiOverrides
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postResponse")
-                .GetFilePath(".json");
+                .GetFilePath();
             string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
 
             BankRegistration registrationRequest = bankProfile.BankRegistration(
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postRequest")
-                .ProcessData(registrationRequest, ".json");
+                .WriteFile(registrationRequest);
 
             registrationRequest.Name = testNameUnique;
             registrationRequest.BankId = bankId;
@@ -67,9 +67,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     registrationRequest,
                     null,
                     testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postRequest")
-                        .GetFilePath(".json"),
+                        .GetFilePath(),
                     testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postResponse")
-                        .GetFilePath(".json"),
+                        .GetFilePath(),
                     apiResponseOverrideFile);
 
             registrationResp.Should().NotBeNull();
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankApiInformation")
                 .AppendToPath("postRequest")
-                .ProcessData(apiInformationRequest, ".json");
+                .WriteFile(apiInformationRequest);
 
             apiInformationRequest.Name = testNameUnique;
             apiInformationRequest.BankId = bankId;

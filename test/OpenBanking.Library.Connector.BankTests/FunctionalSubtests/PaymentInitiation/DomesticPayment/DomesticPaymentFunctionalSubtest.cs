@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilderIn,
             Func<IScopedRequestBuilder>? requestBuilderGenerator,
             string testNameUnique,
-            TestDataWriter testDataProcessorFluentRequestLogging,
+            FilePathBuilder testDataProcessorFluentRequestLogging,
             bool includeConsentAuth,
             INodeJSService? nodeJsService,
             PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
-                .ProcessData(domesticConsentPaymentRequest, ".json");
+                .WriteFile(domesticConsentPaymentRequest);
             domesticConsentPaymentRequest.BankRegistrationId = bankRegistrationId;
             domesticConsentPaymentRequest.BankApiInformationId = bankApiInformationId;
             domesticConsentPaymentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
@@ -192,7 +192,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 await testDataProcessorFluentRequestLogging
                     .AppendToPath("domesticPayment")
                     .AppendToPath("postRequest")
-                    .ProcessData(domesticPaymentRequest, ".json");
+                    .WriteFile(domesticPaymentRequest);
                 domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
                 domesticPaymentRequest.Name = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
