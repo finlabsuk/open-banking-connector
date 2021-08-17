@@ -32,7 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// </summary>
         public bool IgnoreExecutablePathAndArgs { get; set; } = false;
 
-        public string? ExecutablePath { get; set; }
+
+        /// <summary>
+        ///     Path to chrome folder.
+        /// </summary>
+        public ExecutablePath? ExecutablePath { get; set; }
 
         public string[] Args { get; set; } = new string[0];
 
@@ -40,14 +44,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         {
             var js = new PuppeteerLaunchOptionsJavaScript { Headless = Headless, SlowMo = SlowMo, Devtools = DevTools };
 
+            //if using executable path then retrieve path using the GetExecutablePath method
             if (!IgnoreExecutablePathAndArgs)
             {
-                js.ExecutablePath = ExecutablePath;
+                js.ExecutablePath = GetExecutablePathForCurrentOs();
                 js.Args = Args;
             }
 
             return js;
         }
+
+        // Gets chrome directory for current OS platform
+        public string? GetExecutablePathForCurrentOs() =>
+            OsPlatformEnumHelper.GetCurrentOsPlatform() switch
+            {
+                OsPlatformEnum.MacOs => ExecutablePath?.MacOs,
+                OsPlatformEnum.Linux => ExecutablePath?.Linux,
+                OsPlatformEnum.Windows => ExecutablePath?.Windows,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 
     /// <summary>
@@ -164,6 +179,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public string Linux { get; set; } = "";
     }
 
+    /// <summary>
+    ///     Path to Chrome folder.
+    ///     This must be set to a valid
+    ///     file path for the current OS platform.
+    /// </summary>
+    public class ExecutablePath
+    {
+        // Path to chrome folder when current OS is macOS
+        public string? MacOs { get; set; }
+
+        // Path to chrome folder when current OS is Windows
+        public string? Windows { get; set; }
+
+        // Path to chrome folder when current OS is Linux
+        public string? Linux { get; set; }
+    }
+
     public class TestedBanks
     {
         /// <summary>
@@ -203,12 +235,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// </summary>
         public DataDirectory DataDirectory { get; set; } = new DataDirectory();
 
+
         /// <summary>
         ///     Log external API requests/responses. Off by default.
         /// </summary>
         public bool LogExternalApiData { get; set; } = false;
 
         public string SettingsSectionName => "BankTests";
+
 
         public BankTestSettings Validate()
         {
@@ -217,6 +251,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
                 throw new DirectoryNotFoundException(
                     "Can't locate data path specified in bank test setting DataDirectory:" +
                     $"{GetDataDirectoryForCurrentOs()}. Please update app settings.");
+            }
+
+            // Check executable path in the case where this is not ignored
+            if (!ConsentAuthoriser.PuppeteerLaunch.IgnoreExecutablePathAndArgs)
+            {
+                // Check executable path is not null
+                if (ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs() is null)
+                {
+                    throw new ArgumentException("Please specify an executable path in app settings.");
+                }
+
+                // Check executable path exists
+                if (!File.Exists(ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs()))
+                {
+                    throw new DirectoryNotFoundException(
+                        "Can't locate executable path specified in bank test setting ExecutablePath:" +
+                        $"{ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
+                }
             }
 
             return this;
