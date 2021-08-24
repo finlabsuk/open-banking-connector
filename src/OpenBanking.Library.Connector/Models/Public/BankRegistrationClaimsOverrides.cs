@@ -21,10 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         [JsonProperty("aud")]
         public string? Audience { get; set; }
 
-        [JsonProperty("token_endpoint_auth_method")]
-        public ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum?
-            TokenEndpointAuthMethod { get; set; }
-
         [JsonProperty("grant_types")]
         public IList<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>? GrantTypes
         {

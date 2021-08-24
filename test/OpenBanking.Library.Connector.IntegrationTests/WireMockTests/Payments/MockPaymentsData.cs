@@ -113,7 +113,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 ResponseModesSupported = new List<string> { "fragment", "query", "form_post" },
                 TokenEndpoint = $"{MockRoutes.Url}{MockRoutes.Token}",
                 AuthorizationEndpoint = $"{MockRoutes.Url}{MockRoutes.Authorize}",
-                RegistrationEndpoint = $"{MockRoutes.Url}{MockRoutes.Register}"
+                RegistrationEndpoint = $"{MockRoutes.Url}{MockRoutes.Register}",
+                TokenEndpointAuthMethodsSupported = new List<TokenEndpointAuthMethodEnum>
+                    { TokenEndpointAuthMethodEnum.TlsClientAuth }
             };
 
             return JsonConvert.SerializeObject(openIdConfig);

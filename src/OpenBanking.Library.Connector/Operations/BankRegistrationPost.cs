@@ -123,6 +123,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfileId {softwareStatementProfileId}");
+            
+            // Determine registration scope
+            RegistrationScope registrationScope =
+                request.RegistrationScope ??
+                softwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
 
             // STEP 1
             // Compute claims associated with Open Banking client
@@ -137,6 +142,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 openIdConfiguration.RegistrationEndpoint = registrationEndpointOverride;
             }
 
+            // Update OpenID Connect configuration info based on overrides
             IList<string>? responseModesSupportedOverride =
                 request.OpenIdConfigurationOverrides?.ResponseModesSupported;
             if (!(responseModesSupportedOverride is null))
@@ -152,10 +158,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 nonErrorMessages.AddRange(newNonErrorMessages);
             }
 
-            // Determine registration scope
-            RegistrationScope registrationScope =
-                request.RegistrationScope ??
-                softwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
+            // Save registration scope and Open ID Connect config
             persistedObject.UpdateOpenIdGet(
                 registrationScope,
                 openIdConfiguration);
@@ -163,6 +166,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Create claims for client reg
             ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
                 RegistrationClaimsFactory.CreateRegistrationClaims(
+                    openIdConfiguration.TokenEndpointAuthMethodsSupported,
                     softwareStatementProfile,
                     registrationScope,
                     request.BankRegistrationClaimsOverrides,

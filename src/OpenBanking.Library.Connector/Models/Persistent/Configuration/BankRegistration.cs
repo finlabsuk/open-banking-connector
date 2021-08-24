@@ -86,7 +86,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                                 (c1, c2) => c1.SequenceEqual(c2),
                                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                                 c => c));
+                    od.Property(p => p.TokenEndpointAuthMethodsSupported)
+                        .HasConversion(
+                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.DeserializeObject<IList<TokenEndpointAuthMethodEnum>>(v)!,
+                            new ValueComparer<IList<TokenEndpointAuthMethodEnum>>(
+                                (c1, c2) => c1.SequenceEqual(c2),
+                                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                                c => c));
                 });
+
             builder.Navigation(p => p.OpenIdConfiguration).IsRequired();
             builder.OwnsOne(
                 p => p.BankApiResponse,

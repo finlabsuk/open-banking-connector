@@ -211,8 +211,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
                 },
                 Audience = "audience",
-                TokenEndpointAuthMethod = ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth,
                 TokenEndpointAuthSigningAlgorithm = "alg"
             },
             OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides

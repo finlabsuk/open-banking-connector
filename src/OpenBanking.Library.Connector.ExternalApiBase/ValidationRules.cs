@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentValidation;
 
@@ -10,9 +11,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
 {
     public static class ValidationRules
     {
+        /// <summary>
+        /// Check string has minimum length.
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="minLength"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static bool HasLengthAtLeast<T>(T arg1, string arg2, ValidationContext<T> arg3, int minLength)
         {
             return arg2.Length >= minLength;
+        }
+ 
+        /// <summary>
+        /// Check IList<T> has minimum count (length).
+        /// </summary>
+        /// <param name="arg1"></param>
+        /// <param name="arg2"></param>
+        /// <param name="arg3"></param>
+        /// <param name="minLength"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <returns></returns>
+        public static bool HasCountAtLeast<T, T2>(T arg1, IList<T2> arg2, ValidationContext<T> arg3, int minLength)
+        {
+            return arg2.Count >= minLength;
         }
 
         public static bool HasLengthAtMost<T>(T arg1, string? arg2, ValidationContext<T> arg3, int maxLength)
