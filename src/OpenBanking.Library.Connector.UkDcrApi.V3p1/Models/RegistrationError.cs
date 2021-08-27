@@ -60,17 +60,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// </exception>
         public virtual void Validate()
         {
-            if (ErrorDescription != null)
-            {
-                if (ErrorDescription.Length > 500)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "ErrorDescription", 500);
-                }
-                if (ErrorDescription.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "ErrorDescription", 1);
-                }
-            }
         }
     }
 }

@@ -47,7 +47,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p2.Models
         /// measured in UTC. Set to 0 if does not expire</param>
         /// <param name="tokenEndpointAuthSigningAlg">Possible values include:
         /// 'RS256', 'PS256', 'ES256'</param>
-        public OBRegistrationProperties1(IList<string> redirectUris, OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod, IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes, string scope, string softwareStatement, OBRegistrationProperties1applicationTypeEnum applicationType, SupportedAlgorithmsEnum idTokenSignedResponseAlg, SupportedAlgorithmsEnum requestObjectSigningAlg, string clientId = default(string), string clientSecret = default(string), DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?), DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?), IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes = default(IList<OBRegistrationProperties1responseTypesItemEnum>), string softwareId = default(string), SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?), string tlsClientAuthSubjectDn = default(string))
+        public OBRegistrationProperties1(
+            IList<string> redirectUris,
+            OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes,
+            string scope,
+            string softwareStatement,
+            OBRegistrationProperties1applicationTypeEnum applicationType,
+            SupportedAlgorithmsEnum idTokenSignedResponseAlg,
+            SupportedAlgorithmsEnum requestObjectSigningAlg,
+            string clientId = default(string),
+            string clientSecret = default(string),
+            DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?),
+            DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?),
+            IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes =
+                default(IList<OBRegistrationProperties1responseTypesItemEnum>),
+            string softwareId = default(string),
+            SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?),
+            string tlsClientAuthSubjectDn = default(string))
         {
             ClientId = clientId;
             ClientSecret = clientSecret;

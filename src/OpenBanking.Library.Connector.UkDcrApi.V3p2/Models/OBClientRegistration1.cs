@@ -61,8 +61,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p2.Models
         /// measured in UTC. Set to 0 if does not expire</param>
         /// <param name="tokenEndpointAuthSigningAlg">Possible values include:
         /// 'RS256', 'PS256', 'ES256'</param>
-        public OBClientRegistration1(IList<string> redirectUris, OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod, IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes, string scope, string softwareStatement, OBRegistrationProperties1applicationTypeEnum applicationType, SupportedAlgorithmsEnum idTokenSignedResponseAlg, SupportedAlgorithmsEnum requestObjectSigningAlg, string iss, DateTimeOffset iat, DateTimeOffset exp, string aud, string jti, string clientId = default(string), string clientSecret = default(string), DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?), DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?), IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes = default(IList<OBRegistrationProperties1responseTypesItemEnum>), string softwareId = default(string), SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?), string tlsClientAuthSubjectDn = default(string))
-            : base(redirectUris, tokenEndpointAuthMethod, grantTypes, scope, softwareStatement, applicationType, idTokenSignedResponseAlg, requestObjectSigningAlg, clientId, clientSecret, clientIdIssuedAt, clientSecretExpiresAt, responseTypes, softwareId, tokenEndpointAuthSigningAlg, tlsClientAuthSubjectDn)
+        public OBClientRegistration1(
+            IList<string> redirectUris,
+            OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes,
+            string scope,
+            string softwareStatement,
+            OBRegistrationProperties1applicationTypeEnum applicationType,
+            SupportedAlgorithmsEnum idTokenSignedResponseAlg,
+            SupportedAlgorithmsEnum requestObjectSigningAlg,
+            string iss,
+            DateTimeOffset iat,
+            DateTimeOffset exp,
+            string aud,
+            string jti,
+            string clientId = default(string),
+            string clientSecret = default(string),
+            DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?),
+            DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?),
+            IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes =
+                default(IList<OBRegistrationProperties1responseTypesItemEnum>),
+            string softwareId = default(string),
+            SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?),
+            string tlsClientAuthSubjectDn = default(string))
+            : base(
+                redirectUris,
+                tokenEndpointAuthMethod,
+                grantTypes,
+                scope,
+                softwareStatement,
+                applicationType,
+                idTokenSignedResponseAlg,
+                requestObjectSigningAlg,
+                clientId,
+                clientSecret,
+                clientIdIssuedAt,
+                clientSecretExpiresAt,
+                responseTypes,
+                softwareId,
+                tokenEndpointAuthSigningAlg,
+                tlsClientAuthSubjectDn)
         {
             Iss = iss;
             Iat = iat;
@@ -99,7 +137,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p2.Models
         [JsonProperty(PropertyName = "exp")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
         public DateTimeOffset Exp { get; set; }
-
 
         /// <summary>
         /// Gets or sets the audience for the request. This should be the

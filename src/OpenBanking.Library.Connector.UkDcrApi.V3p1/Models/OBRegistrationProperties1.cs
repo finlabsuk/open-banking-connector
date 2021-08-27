@@ -218,53 +218,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "GrantTypes");
             }
+            if (Scope == null || !Scope.Any())
+            {
+                throw new ValidationException(ValidationRules.MinItems, "Scope");
+            }
             if (SoftwareStatement == null)
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "SoftwareStatement");
-            }
-            if (TlsClientAuthDn == null)
-            {
-                throw new ValidationException(ValidationRules.CannotBeNull, "TlsClientAuthDn");
-            }
-            if (ClientId != null)
-            {
-                if (ClientId.Length > 36)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "ClientId", 36);
-                }
-                if (ClientId.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "ClientId", 1);
-                }
-            }
-            if (ClientSecret != null)
-            {
-                if (ClientSecret.Length > 36)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "ClientSecret", 36);
-                }
-                if (ClientSecret.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "ClientSecret", 1);
-                }
-            }
-            if (GrantTypes != null)
-            {
-                if (GrantTypes.Count < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinItems, "GrantTypes", 1);
-                }
-            }
-            if (TlsClientAuthDn != null)
-            {
-                if (TlsClientAuthDn.Length > 128)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "TlsClientAuthDn", 128);
-                }
-                if (TlsClientAuthDn.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "TlsClientAuthDn", 1);
-                }
             }
         }
     }

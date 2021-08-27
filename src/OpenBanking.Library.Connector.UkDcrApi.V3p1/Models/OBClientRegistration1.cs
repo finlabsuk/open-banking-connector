@@ -174,51 +174,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
             {
                 throw new ValidationException(ValidationRules.CannotBeNull, "Jti");
             }
-            if (Iss != null)
-            {
-                if (Iss.Length > 18)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "Iss", 18);
-                }
-                if (Iss.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "Iss", 1);
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Iss, "^[0-9a-zA-Z]{1,18}$"))
-                {
-                    throw new ValidationException(ValidationRules.Pattern, "Iss", "^[0-9a-zA-Z]{1,18}$");
-                }
-            }
-            if (Aud != null)
-            {
-                if (Aud.Length > 18)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "Aud", 18);
-                }
-                if (Aud.Length < 1)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "Aud", 1);
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Aud, "^[0-9a-zA-Z]{1,18}$"))
-                {
-                    throw new ValidationException(ValidationRules.Pattern, "Aud", "^[0-9a-zA-Z]{1,18}$");
-                }
-            }
-            if (Jti != null)
-            {
-                if (Jti.Length > 36)
-                {
-                    throw new ValidationException(ValidationRules.MaxLength, "Jti", 36);
-                }
-                if (Jti.Length < 36)
-                {
-                    throw new ValidationException(ValidationRules.MinLength, "Jti", 36);
-                }
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Jti, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"))
-                {
-                    throw new ValidationException(ValidationRules.Pattern, "Jti", "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$");
-                }
-            }
         }
     }
 }
