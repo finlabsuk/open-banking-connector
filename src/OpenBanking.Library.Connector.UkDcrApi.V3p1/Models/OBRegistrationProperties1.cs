@@ -4,6 +4,9 @@
 // regenerated.
 // </auto-generated>
 
+using System;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
 {
     using Microsoft.Rest;
@@ -43,7 +46,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// measured in UTC. Set to 0 if does not expire</param>
         /// <param name="tokenEndpointAuthSigningAlg">Possible values include:
         /// 'RS256', 'PS256', 'ES256'</param>
-        public OBRegistrationProperties1(IList<string> redirectUris, OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod, IList<OBRegistrationProperties1grantTypesItemEnum?> grantTypes, string softwareStatement, OBRegistrationProperties1applicationTypeEnum applicationType, SupportedAlgorithmsEnum idTokenSignedResponseAlg, SupportedAlgorithmsEnum requestObjectSigningAlg, string tlsClientAuthDn, string clientId = default(string), string clientSecret = default(string), int? clientIdIssuedAt = default(int?), int? clientSecretExpiresAt = default(int?), IList<OBRegistrationProperties1responseTypesItemEnum?> responseTypes = default(IList<OBRegistrationProperties1responseTypesItemEnum?>), string softwareId = default(string), IList<string> scope = default(IList<string>), SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?))
+        public OBRegistrationProperties1(
+            IList<string> redirectUris,
+            OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes,
+            string softwareStatement,
+            OBRegistrationProperties1applicationTypeEnum applicationType,
+            SupportedAlgorithmsEnum idTokenSignedResponseAlg,
+            SupportedAlgorithmsEnum requestObjectSigningAlg,
+            string tlsClientAuthDn,
+            string clientId = default(string),
+            string clientSecret = default(string),
+            DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?),
+            DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?),
+            IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes =
+                default(IList<OBRegistrationProperties1responseTypesItemEnum>),
+            string softwareId = default(string),
+            IList<string> scope = default(IList<string>),
+            SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?))
         {
             ClientId = clientId;
             ClientSecret = clientSecret;
@@ -80,13 +100,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// </summary>
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
+        
+        /// <summary>
+        /// Optional parameter from OpenID DCR spec
+        /// </summary>
+        [JsonProperty(PropertyName = "registration_access_token")]
+        public string RegistrationAccessToken { get; set; }
+        
+        /// <summary>
+        /// Optional parameter from OpenID DCR spec
+        /// </summary>
+        [JsonProperty(PropertyName = "registration_client_uri")]
+        public string RegistrationClientUri { get; set; }
+        
+        /// <summary>
+        /// Optional parameter from OpenID DCR spec
+        /// </summary>
+        [JsonProperty(PropertyName = "subject_type")]
+        public string SubjectType { get; set; }
 
         /// <summary>
         /// Gets or sets time at which the client identifier was issued
         /// expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "client_id_issued_at")]
-        public int? ClientIdIssuedAt { get; set; }
+        [JsonConverter(typeof(DateTimeOffsetNullableUnixConverter))]
+        public DateTimeOffset? ClientIdIssuedAt { get; set; }
 
         /// <summary>
         /// Gets or sets time at which the client secret will expire expressed
@@ -94,7 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// if does not expire
         /// </summary>
         [JsonProperty(PropertyName = "client_secret_expires_at")]
-        public int? ClientSecretExpiresAt { get; set; }
+        [JsonConverter(typeof(DateTimeOffsetNullableUnixConverter))]
+        public DateTimeOffset? ClientSecretExpiresAt { get; set; }
 
         /// <summary>
         /// </summary>
@@ -111,12 +151,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "grant_types")]
-        public IList<OBRegistrationProperties1grantTypesItemEnum?> GrantTypes { get; set; }
+        public IList<OBRegistrationProperties1grantTypesItemEnum> GrantTypes { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "response_types")]
-        public IList<OBRegistrationProperties1responseTypesItemEnum?> ResponseTypes { get; set; }
+        public IList<OBRegistrationProperties1responseTypesItemEnum> ResponseTypes { get; set; }
 
         /// <summary>
         /// </summary>
@@ -206,20 +246,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
                 if (ClientSecret.Length < 1)
                 {
                     throw new ValidationException(ValidationRules.MinLength, "ClientSecret", 1);
-                }
-            }
-            if (ClientIdIssuedAt != null)
-            {
-                if (ClientIdIssuedAt < 0)
-                {
-                    throw new ValidationException(ValidationRules.InclusiveMinimum, "ClientIdIssuedAt", 0);
-                }
-            }
-            if (ClientSecretExpiresAt != null)
-            {
-                if (ClientSecretExpiresAt < 0)
-                {
-                    throw new ValidationException(ValidationRules.InclusiveMinimum, "ClientSecretExpiresAt", 0);
                 }
             }
             if (GrantTypes != null)

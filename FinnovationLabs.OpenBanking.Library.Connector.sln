@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ExternalApiBase", "src\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj", "{04072B15-C213-498E-9818-F28AA9F2D847}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkDcrApi.V3p1", "src\OpenBanking.Library.Connector.UkDcrApi.V3p1\OpenBanking.Library.Connector.UkDcrApi.V3p1.csproj", "{57E2AA81-10A8-4225-98CE-EE5CC83F6332}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,10 @@ Global
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{27118347-85B0-478A-80F7-30049AB03D12} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
@@ -137,5 +143,6 @@ Global
 		{0BED124A-DBB2-44E3-A421-07FA67EBD35B} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{586614D6-24A0-44E9-A31D-9DDCAB84932D} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{04072B15-C213-498E-9818-F28AA9F2D847} = {E5683E11-C013-4874-8160-3EF6AD717480}
+		{57E2AA81-10A8-4225-98CE-EE5CC83F6332} = {E5683E11-C013-4874-8160-3EF6AD717480}
 	EndGlobalSection
 EndGlobal

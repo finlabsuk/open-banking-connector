@@ -4,6 +4,9 @@
 // regenerated.
 // </auto-generated>
 
+using System;
+using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
 {
     using Microsoft.Rest;
@@ -57,8 +60,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// measured in UTC. Set to 0 if does not expire</param>
         /// <param name="tokenEndpointAuthSigningAlg">Possible values include:
         /// 'RS256', 'PS256', 'ES256'</param>
-        public OBClientRegistration1(IList<string> redirectUris, OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod, IList<OBRegistrationProperties1grantTypesItemEnum?> grantTypes, string softwareStatement, OBRegistrationProperties1applicationTypeEnum applicationType, SupportedAlgorithmsEnum idTokenSignedResponseAlg, SupportedAlgorithmsEnum requestObjectSigningAlg, string tlsClientAuthDn, string iss, int iat, int exp, string aud, string jti, string clientId = default(string), string clientSecret = default(string), int? clientIdIssuedAt = default(int?), int? clientSecretExpiresAt = default(int?), IList<OBRegistrationProperties1responseTypesItemEnum?> responseTypes = default(IList<OBRegistrationProperties1responseTypesItemEnum?>), string softwareId = default(string), IList<string> scope = default(IList<string>), SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?))
-            : base(redirectUris, tokenEndpointAuthMethod, grantTypes, softwareStatement, applicationType, idTokenSignedResponseAlg, requestObjectSigningAlg, tlsClientAuthDn, clientId, clientSecret, clientIdIssuedAt, clientSecretExpiresAt, responseTypes, softwareId, scope, tokenEndpointAuthSigningAlg)
+        public OBClientRegistration1(
+            IList<string> redirectUris,
+            OBRegistrationProperties1tokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            IList<OBRegistrationProperties1grantTypesItemEnum> grantTypes,
+            string softwareStatement,
+            OBRegistrationProperties1applicationTypeEnum applicationType,
+            SupportedAlgorithmsEnum idTokenSignedResponseAlg,
+            SupportedAlgorithmsEnum requestObjectSigningAlg,
+            string tlsClientAuthDn,
+            string iss,
+            DateTimeOffset iat,
+            DateTimeOffset exp,
+            string aud,
+            string jti,
+            string clientId = default(string),
+            string clientSecret = default(string),
+            DateTimeOffset? clientIdIssuedAt = default(DateTimeOffset?),
+            DateTimeOffset? clientSecretExpiresAt = default(DateTimeOffset?),
+            IList<OBRegistrationProperties1responseTypesItemEnum> responseTypes =
+                default(IList<OBRegistrationProperties1responseTypesItemEnum>),
+            string softwareId = default(string),
+            IList<string> scope = default(IList<string>),
+            SupportedAlgorithmsEnum? tokenEndpointAuthSigningAlg = default(SupportedAlgorithmsEnum?))
+            : base(
+                redirectUris,
+                tokenEndpointAuthMethod,
+                grantTypes,
+                softwareStatement,
+                applicationType,
+                idTokenSignedResponseAlg,
+                requestObjectSigningAlg,
+                tlsClientAuthDn,
+                clientId,
+                clientSecret,
+                clientIdIssuedAt,
+                clientSecretExpiresAt,
+                responseTypes,
+                softwareId,
+                scope,
+                tokenEndpointAuthSigningAlg)
         {
             Iss = iss;
             Iat = iat;
@@ -85,14 +126,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         /// expressed as seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "iat")]
-        public int Iat { get; set; }
+        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        public DateTimeOffset Iat { get; set; }
 
         /// <summary>
         /// Gets or sets the time at which the request expires expressed as
         /// seconds since 1970-01-01T00:00:00Z as measured in UTC
         /// </summary>
         [JsonProperty(PropertyName = "exp")]
-        public int Exp { get; set; }
+        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        public DateTimeOffset Exp { get; set; }
 
         /// <summary>
         /// Gets or sets the audience for the request. This should be the
