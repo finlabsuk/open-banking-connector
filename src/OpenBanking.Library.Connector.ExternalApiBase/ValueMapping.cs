@@ -11,6 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
     {
         SetNull,
         CommaDelimitedStringToIEnumerable,
-        CommaDelimitedStringToIEnumerableReverse
+        CommaDelimitedStringToIEnumerableReverse,
+        StringIdentityValueConverter
     }
 }

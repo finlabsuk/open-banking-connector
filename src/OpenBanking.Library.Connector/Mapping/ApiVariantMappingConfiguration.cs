@@ -126,6 +126,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
                             destinationMember,
                             valueMapping switch
                             {
+                                ValueMapping.StringIdentityValueConverter => delegate(
+                                    IMemberConfigurationExpression opt)
+                                {
+                                    opt.ConvertUsing(
+                                        new IdentityValueConverter<string>(),
+                                        sourceMember);
+                                },
                                 ValueMapping.SetNull => delegate(IMemberConfigurationExpression opt)
                                 {
                                     opt.MapFrom(src => (object?) null);

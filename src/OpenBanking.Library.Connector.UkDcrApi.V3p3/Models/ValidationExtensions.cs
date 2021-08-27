@@ -17,6 +17,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models
     }
 
     [SourceApiEquivalent(
+        typeof(V3p1.Models.OBClientRegistration1),
+        ValueMappingSourceMembers = new[]
+        {
+            null,
+            null,
+            null,
+            null,
+            "TlsClientAuthDn"
+        },
+        ValueMappingDestinationMembers = new[]
+        {
+            "BackchannelTokenDeliveryMode",
+            "BackchannelClientNotificationEndpoint",
+            "BackchannelAuthenticationRequestSigningAlg",
+            "BackchannelUserCodeParameterSupported",
+            "TlsClientAuthSubjectDn"
+        },
+        ValueMappings = new[]
+        {
+            ValueMapping.SetNull,
+            ValueMapping.SetNull,
+            ValueMapping.SetNull,
+            ValueMapping.SetNull,
+            ValueMapping.StringIdentityValueConverter
+        })
+    ]
+    [SourceApiEquivalent(
         typeof(V3p2.Models.OBClientRegistration1),
         ValueMappingSourceMembers = new string[]
         {

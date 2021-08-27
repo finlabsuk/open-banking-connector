@@ -16,6 +16,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models
     using System.Collections.Generic;
     using System.Linq;
 
+    [TargetApiEquivalent(typeof(V3p1.Models.OBClientRegistration1),
+        ValueMappingSourceMembers = new string[]
+        {
+            "TlsClientAuthSubjectDn",
+        },
+        ValueMappingDestinationMembers = new []
+        {
+            "TlsClientAuthDn"
+        },
+        ValueMappings = new []
+        {
+            ValueMapping.StringIdentityValueConverter
+        })
+    ]
     [TargetApiEquivalent(typeof(V3p2.Models.OBClientRegistration1))]
     public partial class OBClientRegistration1 : OBRegistrationProperties1
     {

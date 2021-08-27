@@ -20,6 +20,7 @@
     <ItemGroup>
         <ProjectReference Include="..\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj"/>
         <ProjectReference Include="..\OpenBanking.Library.Connector.UkDcrApi.V3p2\OpenBanking.Library.Connector.UkDcrApi.V3p2.csproj"/>
+        <ProjectReference Include="..\OpenBanking.Library.Connector.UkDcrApi.V3p1\OpenBanking.Library.Connector.UkDcrApi.V3p1.csproj"/>
     </ItemGroup>
 
 </Project>
