@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
     public enum DelimitedStringConverterOptions
     {
         None = 0,
-        JsonStringArrayNotString = 1
+        JsonIsStringArrayNotString = 1
     }
 
     public abstract class
@@ -21,14 +21,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
     {
         public DelimitedStringGenericConverter() { }
 
-        public DelimitedStringGenericConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
+        public DelimitedStringGenericConverter(JsonConverterLabel jsonConverterLabel) :
+            base(jsonConverterLabel) { }
     }
 
     public class DelimitedStringNullableConverter : DelimitedStringGenericConverter<string?>
     {
         public DelimitedStringNullableConverter() { }
 
-        public DelimitedStringNullableConverter(DelimitedStringConverterOptions activeOptions) : base(activeOptions) { }
+        public DelimitedStringNullableConverter(JsonConverterLabel jsonConverterLabel) :
+            base(jsonConverterLabel) { }
+
 
         public override void WriteJson(JsonWriter writer, string? value, JsonSerializer serializer)
         {
@@ -37,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
             {
                 writer.WriteNull();
             }
-            else if (options.HasFlag(DelimitedStringConverterOptions.JsonStringArrayNotString))
+            else if (options.HasFlag(DelimitedStringConverterOptions.JsonIsStringArrayNotString))
             {
                 string[] elementList = value.Split(" ");
                 writer.WriteStartArray();
@@ -65,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
             {
                 DelimitedStringConverterOptions options = GetOptions(serializer);
                 string? output = null;
-                if (options.HasFlag(DelimitedStringConverterOptions.JsonStringArrayNotString) &&
+                if (options.HasFlag(DelimitedStringConverterOptions.JsonIsStringArrayNotString) &&
                     reader.TokenType == JsonToken.StartArray)
                 {
                     StringBuilder builder = new StringBuilder();
@@ -81,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
 
                     output = builder.ToString();
                 }
-                else if (!options.HasFlag(DelimitedStringConverterOptions.JsonStringArrayNotString) &&
+                else if (!options.HasFlag(DelimitedStringConverterOptions.JsonIsStringArrayNotString) &&
                          reader.TokenType == JsonToken.String &&
                          !(reader.Value is null))
                 {

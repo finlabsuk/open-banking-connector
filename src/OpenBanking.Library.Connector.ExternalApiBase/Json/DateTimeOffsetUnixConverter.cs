@@ -9,33 +9,33 @@ using Newtonsoft.Json.Linq;
 namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
 {
     [Flags]
-    public enum DateTimeOffsetUnixConverterOptions
+    public enum DateTimeOffsetToUnixConverterOptions
     {
         None = 0,
-        MilliSecondsNotSeconds = 1
+        JsonUsesMilliSecondsNotSeconds = 1
     }
 
     public abstract class
         DateTimeOffsetGenericUnixConverter<TDateTimeOffset> : JsonConverterWithOptions<TDateTimeOffset,
-            DateTimeOffsetUnixConverterOptions>
+            DateTimeOffsetToUnixConverterOptions>
     {
         public DateTimeOffsetGenericUnixConverter() { }
 
-        public DateTimeOffsetGenericUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(
-            activeOptions) { }
+        public DateTimeOffsetGenericUnixConverter(JsonConverterLabel jsonConverterLabel) :
+            base(jsonConverterLabel) { }
 
-        protected long GetUnixTime(DateTimeOffset time, DateTimeOffsetUnixConverterOptions options)
+        protected long GetUnixTime(DateTimeOffset time, DateTimeOffsetToUnixConverterOptions options)
         {
             long seconds = time.ToUnixTimeSeconds();
-            long timeValue = options.HasFlag(DateTimeOffsetUnixConverterOptions.MilliSecondsNotSeconds)
+            long timeValue = options.HasFlag(DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds)
                 ? seconds * 1000
                 : seconds;
             return timeValue;
         }
 
-        protected DateTimeOffset GetTime(long unixTime, DateTimeOffsetUnixConverterOptions options)
+        protected DateTimeOffset GetTime(long unixTime, DateTimeOffsetToUnixConverterOptions options)
         {
-            long seconds = options.HasFlag(DateTimeOffsetUnixConverterOptions.MilliSecondsNotSeconds)
+            long seconds = options.HasFlag(DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds)
                 ? unixTime / 1000
                 : unixTime;
             return DateTimeOffset.FromUnixTimeSeconds(seconds);
@@ -46,11 +46,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
     {
         public DateTimeOffsetUnixConverter() { }
 
-        public DateTimeOffsetUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(activeOptions) { }
+        public DateTimeOffsetUnixConverter(JsonConverterLabel jsonConverterLabel) :
+            base(jsonConverterLabel) { }
 
         public override void WriteJson(JsonWriter writer, DateTimeOffset value, JsonSerializer serializer)
         {
-            DateTimeOffsetUnixConverterOptions options = GetOptions(serializer);
+            DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
             long timeValue = GetUnixTime(value, options);
             JToken jt = JToken.FromObject(timeValue);
             jt.WriteTo(writer);
@@ -73,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
                 throw new NullReferenceException("Null received when type is non-nullable DateTime.");
             }
 
-            DateTimeOffsetUnixConverterOptions options = GetOptions(serializer);
+            DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
             long timeValue = long.Parse(reader.Value.ToString());
             return GetTime(timeValue, options);
         }
@@ -83,12 +84,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
     {
         public DateTimeOffsetNullableUnixConverter() { }
 
-        public DateTimeOffsetNullableUnixConverter(DateTimeOffsetUnixConverterOptions activeOptions) : base(
-            activeOptions) { }
+        public DateTimeOffsetNullableUnixConverter(JsonConverterLabel jsonConverterLabel) :
+            base(jsonConverterLabel) { }
 
         public override void WriteJson(JsonWriter writer, DateTimeOffset? value, JsonSerializer serializer)
         {
-            DateTimeOffsetUnixConverterOptions options = GetOptions(serializer);
+            DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
             if (value is null)
             {
                 writer.WriteNull();
@@ -118,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
                 return null;
             }
 
-            DateTimeOffsetUnixConverterOptions options = GetOptions(serializer);
+            DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
             long timeValue = long.Parse(reader.Value.ToString());
             return GetTime(timeValue, options);
         }

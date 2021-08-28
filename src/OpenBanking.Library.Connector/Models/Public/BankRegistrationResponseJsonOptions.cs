@@ -15,10 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     /// </summary>
     public class BankRegistrationResponseJsonOptions
     {
-        public DateTimeOffsetUnixConverterOptions DateTimeOffsetUnixConverterOptions { get; set; } =
-            DateTimeOffsetUnixConverterOptions.None;
+        public DateTimeOffsetToUnixConverterOptions ClientIdIssuedAtConverterOptions { get; set; } =
+            DateTimeOffsetToUnixConverterOptions.None;
 
-        public DelimitedStringConverterOptions DelimitedStringConverterOptions { get; set; } =
+        public DelimitedStringConverterOptions ScopeConverterOptions { get; set; } =
             DelimitedStringConverterOptions.None;
     }
 }

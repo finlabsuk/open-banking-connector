@@ -8,38 +8,37 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
 {
+    /// <summary>
+    ///     Base class for JSON converter with options and optionally a label. A label allows bank-specific options
+    ///     to be used only for specific instances of the converter.
+    /// </summary>
+    /// <typeparam name="TClass"></typeparam>
+    /// <typeparam name="TOptionsEnum"></typeparam>
     public abstract class JsonConverterWithOptions<TClass, TOptionsEnum> : JsonConverter<TClass>
         where TOptionsEnum : struct, Enum
     {
-        protected JsonConverterWithOptions(TOptionsEnum activeOptions = default)
+        private readonly JsonConverterLabel _jsonConverterLabel;
+
+        protected JsonConverterWithOptions(JsonConverterLabel jsonConverterLabel = JsonConverterLabel.NoLabel)
         {
-            ActiveOptions = activeOptions;
+            _jsonConverterLabel = jsonConverterLabel;
         }
 
-        protected TOptionsEnum ActiveOptions { get; }
-
-        protected TOptionsEnum GetOptions(JsonSerializer serializer)
-        {
-            var contextOptions = serializer.Context.Context as List<string>;
-            if (contextOptions is null ||
-                ActiveOptions.Equals(default(TOptionsEnum)))
-            {
-                return default;
-            }
-
-            var options = 0;
-            Array values = Enum.GetValues(typeof(TOptionsEnum));
-            foreach (TOptionsEnum item in values)
-            {
-                bool optionActive = ActiveOptions.HasFlag(item);
-                bool optionSelected = contextOptions.Contains($"{typeof(TOptionsEnum).Name}:{item.ToString()}");
-                if (optionActive && optionSelected)
+        /// <summary>
+        /// Get options for label from serializer if available. Otherwise return default value (no options).
+        /// </summary>
+        /// <param name="serializer"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        protected TOptionsEnum GetOptions(JsonSerializer serializer) =>
+            _jsonConverterLabel is JsonConverterLabel.NoLabel
+                ? default
+                : serializer.Context.Context switch
                 {
-                    options |= (int) (object) item;
-                }
-            }
-
-            return (TOptionsEnum) (object) options;
-        }
+                    null => default,
+                    Dictionary<JsonConverterLabel, int> x => (TOptionsEnum) (object)
+                        (x.TryGetValue(_jsonConverterLabel, out int value) ? value : default),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
     }
 }

@@ -35,8 +35,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     {
                         registration.BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
                         {
-                            DateTimeOffsetUnixConverterOptions =
-                                DateTimeOffsetUnixConverterOptions.MilliSecondsNotSeconds
+                            ClientIdIssuedAtConverterOptions =
+                                DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds
                         };
                         return registration;
                     },

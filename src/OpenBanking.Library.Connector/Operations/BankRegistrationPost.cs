@@ -123,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfileId {softwareStatementProfileId}");
-            
+
             // Determine registration scope
             RegistrationScope registrationScope =
                 request.RegistrationScope ??
@@ -178,33 +178,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             JsonSerializerSettings? jsonSerializerSettings = null;
             if (!(request.BankRegistrationResponseJsonOptions is null))
             {
-                IEnumerable<string> optionList1 =
-                    Enum.GetValues(typeof(DateTimeOffsetUnixConverterOptions))
-                        .Cast<Enum>()
-                        .Where(
-                            x => !Equals((int) (object) x, 0)
-                                 && request.BankRegistrationResponseJsonOptions
-                                     .DateTimeOffsetUnixConverterOptions
-                                     .HasFlag(x))
-                        .Select(x => $"{nameof(DateTimeOffsetUnixConverterOptions)}:{x}");
-                IEnumerable<string> optionList2 =
-                    Enum.GetValues(typeof(DelimitedStringConverterOptions))
-                        .Cast<Enum>()
-                        .Where(
-                            x => !Equals((int) (object) x, 0)
-                                 && request.BankRegistrationResponseJsonOptions
-                                     .DelimitedStringConverterOptions
-                                     .HasFlag(x))
-                        .Select(x => $"{nameof(DelimitedStringConverterOptions)}:{x}");
-                List<string> optionList =
-                    optionList1
-                        .Concat(optionList2)
-                        .ToList();
+                var optionsDict = new Dictionary<JsonConverterLabel, int>
+                {
+                    {
+                        JsonConverterLabel.DcrRegClientIdIssuedAt,
+                        (int) request.BankRegistrationResponseJsonOptions.ClientIdIssuedAtConverterOptions
+                    },
+                    {
+                        JsonConverterLabel.DcrRegScope,
+                        (int) request.BankRegistrationResponseJsonOptions.ScopeConverterOptions
+                    }
+                };
                 jsonSerializerSettings = new JsonSerializerSettings
                 {
                     Context = new StreamingContext(
                         StreamingContextStates.All,
-                        optionList)
+                        optionsDict)
                 };
             }
 

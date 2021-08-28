@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     {
                         registration.BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
                         {
-                            DelimitedStringConverterOptions = DelimitedStringConverterOptions.JsonStringArrayNotString
+                            ScopeConverterOptions = DelimitedStringConverterOptions.JsonIsStringArrayNotString
                         };
                         return registration;
                     },

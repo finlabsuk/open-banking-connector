@@ -133,8 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models
         /// </summary>
         [JsonProperty(PropertyName = "client_id_issued_at")]
         [JsonConverter(
-            converterType: typeof(DateTimeOffsetNullableUnixConverter),
-            DateTimeOffsetUnixConverterOptions.MilliSecondsNotSeconds)]
+            typeof(DateTimeOffsetNullableUnixConverter),
+            JsonConverterLabel.DcrRegClientIdIssuedAt)]
         public DateTimeOffset? ClientIdIssuedAt { get; set; }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models
         /// </summary>
         [JsonProperty(PropertyName = "scope")]
         [JsonConverter(
-            converterType: typeof(DelimitedStringNullableConverter),
-            DelimitedStringConverterOptions.JsonStringArrayNotString)]
+            typeof(DelimitedStringNullableConverter),
+            JsonConverterLabel.DcrRegScope)]
         public string Scope { get; set; }
 
         /// <summary>
