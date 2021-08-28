@@ -22,7 +22,8 @@ using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
 using ClientRegistrationModelsV3p2 =
     FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p2.Models;
-
+using ClientRegistrationModelsV3p1 =
+    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -129,6 +130,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             IInstrumentationClient instrumentationClient) =>
             clientRegistrationApiVersion switch
             {
+                ClientRegistrationApiVersion.Version3p1 =>
+                    new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                        ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                        ClientRegistrationModelsV3p1.OBClientRegistration1,
+                        ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                        new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient),
+                        new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                            softwareStatementProfile,
+                            instrumentationClient)),
                 ClientRegistrationApiVersion.Version3p2 =>
                     new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                         ClientRegistrationModelsPublic.OBClientRegistration1Response,
