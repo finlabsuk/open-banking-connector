@@ -34,12 +34,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{60520745-0F99-46C2-B580-E84180CBB4FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkRwApi.V3p1p2.PaymentInitiation", "src\OpenBanking.Library.Connector.UkRwApi.V3p1p2.PaymentInitiation\OpenBanking.Library.Connector.UkRwApi.V3p1p2.PaymentInitiation.csproj", "{08A35160-38CD-4389-98DB-8C4D7F61E3A2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation", "src\OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation\OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation.csproj", "{377B0061-0A42-41F5-A78F-D88020F2CAB5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation", "src\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.csproj", "{0379D472-D2A1-4D49-9DB0-E6D3550D778B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ExternalApiBase", "src\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj", "{04072B15-C213-498E-9818-F28AA9F2D847}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.BankApiModels", "src\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj", "{12482C03-0237-423D-8FA7-2266F59D711B}"
@@ -93,18 +87,6 @@ Global
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08A35160-38CD-4389-98DB-8C4D7F61E3A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08A35160-38CD-4389-98DB-8C4D7F61E3A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08A35160-38CD-4389-98DB-8C4D7F61E3A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08A35160-38CD-4389-98DB-8C4D7F61E3A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{377B0061-0A42-41F5-A78F-D88020F2CAB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{377B0061-0A42-41F5-A78F-D88020F2CAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{377B0061-0A42-41F5-A78F-D88020F2CAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{377B0061-0A42-41F5-A78F-D88020F2CAB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -125,9 +107,6 @@ Global
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{CD78E88C-1DB3-4E5C-BA98-A6943C385A68} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{60520745-0F99-46C2-B580-E84180CBB4FE} = {B0A70349-C30C-4658-8CAA-BBBE48023C09}
-		{08A35160-38CD-4389-98DB-8C4D7F61E3A2} = {E5683E11-C013-4874-8160-3EF6AD717480}
-		{377B0061-0A42-41F5-A78F-D88020F2CAB5} = {E5683E11-C013-4874-8160-3EF6AD717480}
-		{0379D472-D2A1-4D49-9DB0-E6D3550D778B} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{04072B15-C213-498E-9818-F28AA9F2D847} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{12482C03-0237-423D-8FA7-2266F59D711B} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 	EndGlobalSection

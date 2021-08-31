@@ -29,7 +29,6 @@
     <ItemGroup>
         <ProjectReference Include="..\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj" />
         <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj" />
-        <ProjectReference Include="..\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.csproj" />
     </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FluentAssertions;
 using Xunit;
 using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
