@@ -3,7 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
@@ -14,10 +17,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SoftwareStatementProfileCached =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
@@ -51,6 +56,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                         sp.GetRequiredService<IOptions<SoftwareStatementProfilesSettings>>().Value;
                     return new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(
                         softwareStatementProfilesSettings);
+                });
+            
+            // Get settings via IOptions (ensure no updates after app start) and add to service collection
+            services
+                .Configure<BankProfileSettings>(configuration.GetSection(new BankProfileSettings().SettingsSectionName))
+                .AddOptions();
+            services.AddSingleton<ISettingsProvider<BankProfileSettings>>(
+                sp =>
+                {
+                    BankProfileSettings bankProfileSettings =
+                        sp.GetRequiredService<IOptions<BankProfileSettings>>().Value;
+                    return new DefaultSettingsProvider<BankProfileSettings>(bankProfileSettings);
+                });
+
+            // Set up bank profile definitions
+            services.AddSingleton(
+                sp =>
+                {
+                    BankProfileSettings bankProfileSettings =
+                        sp.GetRequiredService<ISettingsProvider<BankProfileSettings>>().GetSettings();
+                    return new BankProfileDefinitions(
+                        DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
+                            bankProfileSettings.HiddenPropertiesFile,
+                            new JsonSerializerSettings()).GetAwaiter().GetResult());
                 });
 
             // Set up software statement cache

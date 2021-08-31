@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Utility
+namespace FinnovationLabs.OpenBanking.Library.Connector.Utility
 {
     // Supported OS platforms enum
     public enum OsPlatformEnum

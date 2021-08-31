@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
@@ -35,8 +34,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             services
                 // Add .NET generic host app services 
                 .AddGenericHostServices(Configuration)
-                // Add bank profile services
-                .AddBankProfileServices(Configuration)
                 // Add .NET web host app services
                 .AddWebHostServices(Configuration)
                 // Add consent authoriser services

@@ -4,10 +4,9 @@
 
 using System;
 using System.IO;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Utility;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 {
     /// <summary>
     ///     Path to data directory used for hidden bank bank profile properties.
