@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Fapi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi
 {
     public class AuthorisationCallbackPayload
     {

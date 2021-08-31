@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

@@ -5,9 +5,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
 {
     public static class FluentResponseExtensions
     {

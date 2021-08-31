@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
 {
     public static class ApplicationBuilderExtensions
     {

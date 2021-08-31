@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.HostedServices
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
 {
     public class WebAppInformationHostedService : IHostedService
     {

@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.Benchmarks", "test\OpenBanking.Library.Connector.Benchmarks\OpenBanking.Library.Connector.Benchmarks.csproj", "{3E1773EC-58F7-4852-9645-D064A1463F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.WebHost", "src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj", "{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.Web", "src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj", "{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{60520745-0F99-46C2-B580-E84180CBB4FE}"
 EndProject

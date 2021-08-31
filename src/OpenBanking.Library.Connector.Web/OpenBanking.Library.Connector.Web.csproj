@@ -4,12 +4,12 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-        <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.WebHost</AssemblyName>
-        <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.WebHost</RootNamespace>
+        <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.Web</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Web</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
         <Title>Open Banking Connector (version for Web apps)</Title>
-        <PackageId>FinnovationLabs.OpenBanking.Library.Connector.WebHost</PackageId>
+        <PackageId>FinnovationLabs.OpenBanking.Library.Connector.Web</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
         <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>

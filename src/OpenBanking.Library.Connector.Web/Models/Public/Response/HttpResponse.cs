@@ -4,7 +4,7 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Public.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response
 {
     /// <summary>
     ///     HTTP response for request that does not return data

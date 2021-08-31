@@ -8,13 +8,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.WebHost.Controllers
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
 {
     [ApiController]
     public class RedirectController : ControllerBase

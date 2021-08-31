@@ -30,7 +30,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj" />
-        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
+        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
     </ItemGroup>
 
     <ItemGroup>

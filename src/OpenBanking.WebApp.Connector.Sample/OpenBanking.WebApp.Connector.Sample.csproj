@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.WebHost\OpenBanking.Library.Connector.WebHost.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
         <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj" />
     </ItemGroup>
 

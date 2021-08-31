@@ -5,7 +5,7 @@
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using WebHostServiceCollectionExtensions =
-    FinnovationLabs.OpenBanking.Library.Connector.WebHost.Extensions.ServiceCollectionExtensions;
+    FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
