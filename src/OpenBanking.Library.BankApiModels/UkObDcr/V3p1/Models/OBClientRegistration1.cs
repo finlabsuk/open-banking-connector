@@ -5,7 +5,7 @@
 // </auto-generated>
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p1.Models
 {

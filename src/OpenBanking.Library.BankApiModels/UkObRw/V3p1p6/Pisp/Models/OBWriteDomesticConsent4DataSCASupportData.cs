@@ -4,8 +4,6 @@
 // regenerated.
 // </auto-generated>
 
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
-
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models
 {
     using Newtonsoft.Json;

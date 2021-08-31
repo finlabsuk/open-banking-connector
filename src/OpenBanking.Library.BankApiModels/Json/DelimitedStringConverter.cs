@@ -6,7 +6,9 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     [Flags]
     public enum DelimitedStringConverterOptions

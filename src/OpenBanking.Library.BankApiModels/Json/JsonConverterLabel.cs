@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     /// <summary>
     /// Label for particular usages of a JSON converter. This allows bank-specific

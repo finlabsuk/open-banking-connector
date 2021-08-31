@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;
 using Newtonsoft.Json;

@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;

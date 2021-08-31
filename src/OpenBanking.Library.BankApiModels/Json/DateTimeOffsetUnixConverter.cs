@@ -6,7 +6,9 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     [Flags]
     public enum DateTimeOffsetToUnixConverterOptions

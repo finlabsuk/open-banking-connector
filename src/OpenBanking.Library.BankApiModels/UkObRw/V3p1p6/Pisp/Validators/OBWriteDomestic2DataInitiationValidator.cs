@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.RegularExpressions;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using FluentValidation;
 

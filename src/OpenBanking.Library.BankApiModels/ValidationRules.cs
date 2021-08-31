@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels
 {
     public static class ValidationRules
     {

@@ -9,16 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="10.1.1"/>
-        <PackageReference Include="FluentValidation" Version="10.3.0"/>
-        <PackageReference Include="jose-jwt" Version="3.2.0"/>
-        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.23"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj"/>
+        <PackageReference Include="AutoMapper" Version="10.1.1" />
+        <PackageReference Include="FluentValidation" Version="10.3.0" />
+        <PackageReference Include="jose-jwt" Version="3.2.0" />
+        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.23" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

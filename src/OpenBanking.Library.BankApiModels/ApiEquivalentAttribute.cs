@@ -4,7 +4,9 @@
 
 using System;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels
 {
     public abstract class ApiEquivalentAttribute : Attribute
     {

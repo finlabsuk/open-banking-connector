@@ -4,11 +4,13 @@
 
 using System;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class TargetApiEquivalentAttribute : ApiEquivalentAttribute
+    public class SourceApiEquivalentAttribute : ApiEquivalentAttribute
     {
-        public TargetApiEquivalentAttribute(Type equivalentType) : base(equivalentType) { }
+        public SourceApiEquivalentAttribute(Type equivalentType) : base(equivalentType) { }
     }
 }

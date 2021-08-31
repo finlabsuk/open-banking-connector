@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi

@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     /// <summary>
     ///     Base class for JSON converter with options and optionally a label. A label allows bank-specific options

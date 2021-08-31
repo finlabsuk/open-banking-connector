@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Validators;
 using FluentValidation.Results;
 

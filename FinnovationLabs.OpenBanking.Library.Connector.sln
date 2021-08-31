@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.6.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApis", "ExternalApis", "{E5683E11-C013-4874-8160-3EF6AD717480}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{B0A70349-C30C-4658-8CAA-BBBE48023C09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D2E3A6FC-5975-479C-A788-DF988A2C34F3}"
@@ -33,8 +31,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.BankProfiles", "src\OpenBanking.Library.Connector.BankProfiles\OpenBanking.Library.Connector.BankProfiles.csproj", "{CD78E88C-1DB3-4E5C-BA98-A6943C385A68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{60520745-0F99-46C2-B580-E84180CBB4FE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ExternalApiBase", "src\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj", "{04072B15-C213-498E-9818-F28AA9F2D847}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.BankApiModels", "src\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj", "{12482C03-0237-423D-8FA7-2266F59D711B}"
 EndProject
@@ -87,10 +83,6 @@ Global
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -107,7 +99,6 @@ Global
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{CD78E88C-1DB3-4E5C-BA98-A6943C385A68} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{60520745-0F99-46C2-B580-E84180CBB4FE} = {B0A70349-C30C-4658-8CAA-BBBE48023C09}
-		{04072B15-C213-498E-9818-F28AA9F2D847} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{12482C03-0237-423D-8FA7-2266F59D711B} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 	EndGlobalSection
 EndGlobal

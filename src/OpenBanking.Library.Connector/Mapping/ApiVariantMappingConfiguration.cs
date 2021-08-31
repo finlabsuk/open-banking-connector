@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Converters;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using ClientRegistrationModelsPublic =

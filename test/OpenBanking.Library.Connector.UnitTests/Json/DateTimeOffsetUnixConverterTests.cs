@@ -4,7 +4,7 @@
 
 using System;
 using System.IO;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase.Json;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FsCheck;
 using FsCheck.Xunit;
 using Newtonsoft.Json;

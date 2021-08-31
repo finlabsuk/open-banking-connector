@@ -5,7 +5,9 @@
 using System.Threading.Tasks;
 using FluentValidation.Results;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase
+#nullable enable
+
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels
 {
     public interface ISupportsValidation
     {

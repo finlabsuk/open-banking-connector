@@ -5,8 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
