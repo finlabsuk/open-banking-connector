@@ -18,6 +18,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     {
         [EnumMember(Value = "client_secret_basic")]
         ClientSecretBasic,
+        
+        [EnumMember(Value = "client_secret_post")]
+        ClientSecretPost,
 
         [EnumMember(Value = "client_secret_jwt")]
         ClientSecretJwt,
