@@ -31,7 +31,7 @@ using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Mo
 using OAuth2RequestObjectClaimsOverridesRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {

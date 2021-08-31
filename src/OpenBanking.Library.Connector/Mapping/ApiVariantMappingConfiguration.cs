@@ -13,7 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.ExternalApiBase;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.Models;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 {

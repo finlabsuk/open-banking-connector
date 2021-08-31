@@ -5,7 +5,7 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {

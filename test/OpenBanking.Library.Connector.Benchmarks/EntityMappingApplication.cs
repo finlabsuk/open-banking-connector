@@ -13,7 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.Connector.UkRwApi.V3p1p4.PaymentInitiation.Models;
 using PaymentInitiationModelsPublic =

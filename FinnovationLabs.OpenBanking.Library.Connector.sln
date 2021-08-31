@@ -40,13 +40,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation", "src\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation\OpenBanking.Library.Connector.UkRwApi.V3p1p6.PaymentInitiation.csproj", "{0379D472-D2A1-4D49-9DB0-E6D3550D778B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkDcrApi.V3p2", "src\OpenBanking.Library.Connector.UkDcrApi.V3p2\OpenBanking.Library.Connector.UkDcrApi.V3p2.csproj", "{0BED124A-DBB2-44E3-A421-07FA67EBD35B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkDcrApi.V3p3", "src\OpenBanking.Library.Connector.UkDcrApi.V3p3\OpenBanking.Library.Connector.UkDcrApi.V3p3.csproj", "{586614D6-24A0-44E9-A31D-9DDCAB84932D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.ExternalApiBase", "src\OpenBanking.Library.Connector.ExternalApiBase\OpenBanking.Library.Connector.ExternalApiBase.csproj", "{04072B15-C213-498E-9818-F28AA9F2D847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UkDcrApi.V3p1", "src\OpenBanking.Library.Connector.UkDcrApi.V3p1\OpenBanking.Library.Connector.UkDcrApi.V3p1.csproj", "{57E2AA81-10A8-4225-98CE-EE5CC83F6332}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.BankApiModels", "src\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj", "{12482C03-0237-423D-8FA7-2266F59D711B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,22 +105,14 @@ Global
 		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0379D472-D2A1-4D49-9DB0-E6D3550D778B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BED124A-DBB2-44E3-A421-07FA67EBD35B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BED124A-DBB2-44E3-A421-07FA67EBD35B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BED124A-DBB2-44E3-A421-07FA67EBD35B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BED124A-DBB2-44E3-A421-07FA67EBD35B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{586614D6-24A0-44E9-A31D-9DDCAB84932D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{586614D6-24A0-44E9-A31D-9DDCAB84932D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{586614D6-24A0-44E9-A31D-9DDCAB84932D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{586614D6-24A0-44E9-A31D-9DDCAB84932D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04072B15-C213-498E-9818-F28AA9F2D847}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57E2AA81-10A8-4225-98CE-EE5CC83F6332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12482C03-0237-423D-8FA7-2266F59D711B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12482C03-0237-423D-8FA7-2266F59D711B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{27118347-85B0-478A-80F7-30049AB03D12} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
@@ -140,9 +128,7 @@ Global
 		{08A35160-38CD-4389-98DB-8C4D7F61E3A2} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{377B0061-0A42-41F5-A78F-D88020F2CAB5} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{0379D472-D2A1-4D49-9DB0-E6D3550D778B} = {E5683E11-C013-4874-8160-3EF6AD717480}
-		{0BED124A-DBB2-44E3-A421-07FA67EBD35B} = {E5683E11-C013-4874-8160-3EF6AD717480}
-		{586614D6-24A0-44E9-A31D-9DDCAB84932D} = {E5683E11-C013-4874-8160-3EF6AD717480}
 		{04072B15-C213-498E-9818-F28AA9F2D847} = {E5683E11-C013-4874-8160-3EF6AD717480}
-		{57E2AA81-10A8-4225-98CE-EE5CC83F6332} = {E5683E11-C013-4874-8160-3EF6AD717480}
+		{12482C03-0237-423D-8FA7-2266F59D711B} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 	EndGlobalSection
 EndGlobal

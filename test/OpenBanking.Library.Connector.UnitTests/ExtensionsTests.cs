@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FluentAssertions;
 using Xunit;
 using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p3.Models;
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
