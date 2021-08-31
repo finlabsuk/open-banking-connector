@@ -21,7 +21,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UkDcrApi.V3p1.Models
         [EnumMember(Value = "private_key_jwt")]
         PrivateKeyJwt,
         [EnumMember(Value = "tls_client_auth")]
-        TlsClientAuth
+        TlsClientAuth,
+        [EnumMember(Value = "client_secret_basic")]
+        ClientSecretBasic,
+        [EnumMember(Value = "client_secret_post")]
+        ClientSecretPost
     }
     internal static class OBRegistrationProperties1tokenEndpointAuthMethodEnumEnumExtension
     {
