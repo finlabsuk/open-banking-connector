@@ -8,6 +8,14 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.WebHost</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <Title>Open Banking Connector (version for Web apps)</Title>
+        <PackageId>FinnovationLabs.OpenBanking.Library.Connector.WebHost</PackageId>
+        <Version>1.0.0-alpha01</Version>
+        <Authors>Finnovation Labs Limited and Contributors</Authors>
+        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <Description>
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. Use this version for apps using a .NET Generic Host which are ASP.NET Core web apps.
+        </Description>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
     </ItemGroup>
 
     <ItemGroup>

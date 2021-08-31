@@ -7,6 +7,14 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <Title>Open Banking Connector (version for "plain" apps)</Title>
+        <PackageId>FinnovationLabs.OpenBanking.Library.Connector</PackageId>
+        <Version>1.0.0-alpha01</Version>
+        <Authors>Finnovation Labs Limited and Contributors</Authors>
+        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <Description>
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. Use this version for apps not using a .NET Generic Host and its features such as dependency injection ("plain" apps).
+        </Description>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
