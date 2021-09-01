@@ -11,8 +11,20 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent
 {
+    /// <summary>
+    /// Domestic payment consent methods
+    /// </summary>
     public static class DomesticPaymentConsentMethods
     {
+        /// <summary>
+        /// Create domestic payment consent
+        /// </summary>
+        /// <param name="bankProfile"></param>
+        /// <param name="bankRegistrationId"></param>
+        /// <param name="bankApiInformationId"></param>
+        /// <param name="requestBuilder"></param>
+        /// <param name="testNameUnique"></param>
+        /// <returns></returns>
         public static async Task<Guid> Create(
             BankProfile bankProfile,
             Guid bankRegistrationId,
@@ -20,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IRequestBuilder requestBuilder,
             string testNameUnique)
         {
-            // POST domestic payment consent
+            // Create domestic payment consent
             DomesticPaymentConsent domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     bankRegistrationId,
@@ -34,9 +46,15 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     .PostAsync(domesticPaymentConsentRequest);
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
 
+            // Return ID of created object
             return domesticPaymentConsentId;
         }
 
+        /// <summary>
+        /// Get domestic payment consent
+        /// </summary>
+        /// <param name="requestBuilder"></param>
+        /// <param name="domesticPaymentConsentId"></param>
         public static async Task Get(
             IRequestBuilder requestBuilder,
             Guid domesticPaymentConsentId)

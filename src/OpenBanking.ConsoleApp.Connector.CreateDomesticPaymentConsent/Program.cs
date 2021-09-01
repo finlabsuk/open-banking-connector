@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -19,10 +20,18 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         private static void Main(string[] args)
         {
             // Create and start .NET Generic Host
-            IHost host = CreateHostBuilder(args)
+            using IHost host = CreateHostBuilder(args)
                 .Build();
             host.Start();
 
+            // Perform operations using Open Banking Connector
+            PerformOperations(host)
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        private static async Task PerformOperations(IHost host)
+        {
             // Get bank profile definitions
             var bankProfileDefinitions =
                 host.Services.GetRequiredService<BankProfileDefinitions>();
@@ -35,36 +44,31 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             // Create bank configuration
             // (includes Bank, BankRegistration and BankApiInformation)
             BankProfile bankProfile = bankProfileDefinitions.Modelo;
-            var demoNameUnique = "Demo" + Guid.NewGuid();
+            string demoNameUnique = "Demo" + Guid.NewGuid();
             (Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId) =
-                BankConfigurationMethods.Create(
-                        "All",
-                        RegistrationScope.All,
-                        requestBuilder,
-                        bankProfileDefinitions.Modelo,
-                        demoNameUnique)
-                    .GetAwaiter()
-                    .GetResult(); 
+                await BankConfigurationMethods.Create(
+                    "All",
+                    RegistrationScope.All,
+                    requestBuilder,
+                    bankProfileDefinitions.Modelo,
+                    demoNameUnique);
 
             // Create domestic payment consent
-            Guid domesticPaymentConsentId = DomesticPaymentConsentMethods.Create(
+            Guid domesticPaymentConsentId =
+                await DomesticPaymentConsentMethods.Create(
                     bankProfile,
                     bankRegistrationId,
                     bankApiInformationId,
                     requestBuilder,
-                    demoNameUnique)
-                .GetAwaiter()
-                .GetResult();
+                    demoNameUnique);
 
-            // Get domestic payment consent
-            DomesticPaymentConsentMethods.Get(requestBuilder, domesticPaymentConsentId)
-                .GetAwaiter()
-                .GetResult();
+            // Retrieve domestic payment consent
+            await DomesticPaymentConsentMethods.Get(requestBuilder, domesticPaymentConsentId);
         }
 
         // Create host builder method based on default but with
         // service setup
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices(
                     (hostBuilderContext, services) =>

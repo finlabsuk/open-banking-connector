@@ -13,12 +13,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent
 {
     /// <summary>
-    ///     Class for creating bank registration
+    ///     Bank configuration methods
     /// </summary>
     public static class BankConfigurationMethods
     {
         /// <summary>
-        ///     Create bank registration including bank, bank API information and
+        ///     Create bank configuration including bank, bank API information and
         ///     bank registration objects
         /// </summary>
         public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId)> Create(
@@ -57,6 +57,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 .PostLocalAsync(apiInformationRequest);
             Guid bankApiInformationId = apiInformationResponse.Data!.Id;
 
+            // Return IDs of created objects
             return (bankId, bankRegistrationId, bankApiInformationId);
         }
     }
