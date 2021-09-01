@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
+        <AssemblyName>FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent</AssemblyName>
+        <RootNamespace>FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent</RootNamespace>
+        <Copyright>Finnovation Labs Limited and Contributors</Copyright>
+        <Company>Finnovation Labs Limited</Company>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Development.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
+</Project>
