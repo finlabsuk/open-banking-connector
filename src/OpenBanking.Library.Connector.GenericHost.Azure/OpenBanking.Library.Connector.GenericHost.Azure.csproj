@@ -7,15 +7,19 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Azure</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
-        <Title>Open Banking Connector Azure Integration (version for .NET Generic Host apps)</Title>
+        <Title>Open Banking Connector (version for .NET Generic Host apps, with Azure integration)</Title>
         <PackageId>FinnovationLabs.OpenBanking.Library.Connector.Azure</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
-        <PackageTags>Finnovation Labs;Open Banking;Azure;Open Banking Connector</PackageTags>
+        <PackageTags>finnovation;labs;open;banking;connector;payments;azure</PackageTags>
         <Description>
-            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. This library provides an Azure integration for Open Banking Connector. It is suitable for apps using a .NET Generic Host.
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences, handling bank registrations and tokens, and more.
+            Use this version for apps using a .NET Generic Host which are not web apps (e.g. console apps).
+            This version includes an Azure integration for Open Banking Connector.
         </Description>
-
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

@@ -3,11 +3,11 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

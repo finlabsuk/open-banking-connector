@@ -9,6 +9,7 @@
         <RootNamespace>FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

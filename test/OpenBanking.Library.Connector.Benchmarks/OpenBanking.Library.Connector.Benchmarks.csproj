@@ -8,6 +8,7 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Benchmarks</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>

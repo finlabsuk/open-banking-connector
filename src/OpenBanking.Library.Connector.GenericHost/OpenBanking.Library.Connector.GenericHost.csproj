@@ -11,10 +11,14 @@
         <PackageId>FinnovationLabs.OpenBanking.Library.Connector.GenericHost</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
-        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <PackageTags>finnovation;labs;open;banking;connector;payments</PackageTags>
         <Description>
-            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. Use this version for apps using a .NET Generic Host which are not web apps (e.g. console apps).
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences, handling bank registrations and tokens, and more.
+            Use this version for apps using a .NET Generic Host which are not web apps (e.g. console apps).
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

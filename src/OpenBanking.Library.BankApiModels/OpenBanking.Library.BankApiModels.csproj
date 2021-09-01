@@ -6,14 +6,18 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.BankApiModels</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
-        <Title>Open Banking Bank API Models</Title>
+        <Title>Open Banking Connector Bank API Models</Title>
         <PackageId>FinnovationLabs.OpenBanking.Library.BankApiModels</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
-        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <PackageTags>finnovation;labs;open;banking;connector;payments</PackageTags>
         <Description>
-            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. This library provides bank API models used by Open Banking Connector.
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences, handling bank registrations and tokens, and more.
+            This library was created to provide bank API models to Open Banking Connector.
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

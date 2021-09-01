@@ -11,10 +11,14 @@
         <PackageId>FinnovationLabs.OpenBanking.Library.Connector</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
-        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <PackageTags>finnovation;labs;open;banking;connector;payments</PackageTags>
         <Description>
-            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. Use this version for apps not using a .NET Generic Host and its features such as dependency injection ("plain" apps).
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences, handling bank registrations and tokens, and more.
+            Use this version for apps not using a .NET Generic Host and its features such as dependency injection ("plain" apps).
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,16 +30,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="10.1.1" />
-        <PackageReference Include="FluentValidation" Version="10.3.0" />
-        <PackageReference Include="jose-jwt" Version="3.2.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9" />
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.12.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="AutoMapper" Version="10.1.1"/>
+        <PackageReference Include="FluentValidation" Version="10.3.0"/>
+        <PackageReference Include="jose-jwt" Version="3.2.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.9"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.12.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -8,31 +8,35 @@
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Web</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
-        <Title>Open Banking Connector (version for Web apps)</Title>
+        <Title>Open Banking Connector (version for web apps)</Title>
         <PackageId>FinnovationLabs.OpenBanking.Library.Connector.Web</PackageId>
         <Version>1.0.0-alpha01</Version>
         <Authors>Finnovation Labs Limited and Contributors</Authors>
-        <PackageTags>Finnovation Labs;Open Banking;Open Banking Connector</PackageTags>
+        <PackageTags>finnovation;labs;open;banking;connector;payments</PackageTags>
         <Description>
-            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences and handling bank registrations and tokens. Use this version for apps using a .NET Generic Host which are ASP.NET Core web apps.
+            Open Banking Connector simplifies connections to UK Open Banking APIs by absorbing bank differences, handling bank registrations and tokens, and more.
+            Use this version for apps using a .NET Generic Host which are ASP.NET Core web apps.
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <IsPackable>true</IsPackable>
+        <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.9" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.9"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="wwwroot\**" />
+        <EmbeddedResource Include="wwwroot\**"/>
     </ItemGroup>
 
 </Project>
