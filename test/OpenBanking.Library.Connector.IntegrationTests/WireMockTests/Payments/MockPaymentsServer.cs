@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using WireMock.Logging;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -84,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                         .WithBody(_mockData.GetOpenIdTokenEndpointResponseJson()));
         }
 
-        public void SetupPaymentEndpointMock()
+        public void SetupPaymentEndpointMock(BankProfile bankProfile)
         {
             _server
                 .Given(
@@ -94,13 +95,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                         .WithHeader("Authorization", "*")
                         .WithHeader("x-idempotency-key", "*")
                         .WithHeader("x-jws-signature", "*")
-                        .WithBody(b => b.Contains(_mockData.GetOBWriteDomesticConsent()))
+                        .WithBody(b => b.Contains(_mockData.GetOBWriteDomesticConsent(bankProfile)))
                         .UsingPost())
                 .RespondWith(
                     Response.Create()
                         .WithStatusCode(200)
                         .WithHeader("Content-Type", "application/json")
-                        .WithBody(_mockData.GetOBWriteDomesticConsentResponse2()));
+                        .WithBody(_mockData.GetOBWriteDomesticConsentResponse2(bankProfile)));
         }
 
         public void SetUpAuthEndpoint()

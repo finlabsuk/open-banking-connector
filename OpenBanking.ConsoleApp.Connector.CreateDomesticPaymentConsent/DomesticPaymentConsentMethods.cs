@@ -23,8 +23,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             // POST domestic payment consent
             var domesticConsentPaymentRequest = new DomesticPaymentConsent
             {
-                WriteDomesticConsent = DomesticPaymentFunctionalSubtest.DomesticPaymentConsent(
-                    DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest,
+                WriteDomesticConsent = bankProfile.DomesticPaymentConsent(
+                    DomesticPaymentTypeEnum.PersonToMerchant,
                     Guid.NewGuid().ToString("N"),
                     Guid.NewGuid().ToString("N")),
                 BankApiInformationId = bankApiInformationId,

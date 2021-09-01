@@ -7,20 +7,25 @@ using System.Collections.Generic;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
-    public partial class DomesticPaymentFunctionalSubtest
+    public enum DomesticPaymentTypeEnum
     {
-        public static PaymentInitiationModelsPublic.OBWriteDomesticConsent4 DomesticPaymentConsent(
-            DomesticPaymentFunctionalSubtestEnum domesticPaymentFunctionalSubtestEnum,
+        PersonToPerson,
+        PersonToMerchant
+    }
+
+    public partial class BankProfile
+    {
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 DomesticPaymentConsent(
+            DomesticPaymentTypeEnum domesticPaymentType,
             string instructionIdentification,
             string endToEndIdentification)
         {
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 domesticPaymentConsent =
-                domesticPaymentFunctionalSubtestEnum switch
+                domesticPaymentType switch
                 {
-                    DomesticPaymentFunctionalSubtestEnum.PersonToPersonSubtest => new
+                    DomesticPaymentTypeEnum.PersonToPerson => new
                         PaymentInitiationModelsPublic.OBWriteDomesticConsent4
                         {
                             Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
@@ -75,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             },
                             Risk = null
                         },
-                    DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest =>
+                    DomesticPaymentTypeEnum.PersonToMerchant =>
                         new PaymentInitiationModelsPublic.OBWriteDomesticConsent4
                         {
                             Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
@@ -135,7 +140,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             },
                         },
                     _ => throw new ArgumentException(
-                        $"{nameof(DomesticPaymentFunctionalSubtestEnum)} is not valid ${nameof(DomesticPayment.DomesticPaymentFunctionalSubtestEnum)} or needs to be added to this switch statement.")
+                        $"{nameof(DomesticPaymentTypeEnum)} is not valid ${nameof(DomesticPaymentTypeEnum)} or needs to be added to this switch statement.")
                 };
             return domesticPaymentConsent;
         }

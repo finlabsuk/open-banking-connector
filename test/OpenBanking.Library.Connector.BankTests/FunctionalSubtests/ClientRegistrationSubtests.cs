@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             FilePathBuilder testDataProcessorApiOverrides)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankObject("placeholder: dynamically generated based on unused names");
+            Bank bankRequest = bankProfile.Bank("placeholder: dynamically generated based on unused names");
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")

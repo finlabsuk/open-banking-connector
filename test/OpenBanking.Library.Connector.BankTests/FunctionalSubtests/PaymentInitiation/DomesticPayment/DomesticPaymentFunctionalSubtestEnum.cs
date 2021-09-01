@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
 {
@@ -32,6 +33,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             {
                 DomesticPaymentFunctionalSubtestEnum.PersonToPersonSubtest => TestDefinitions.PersonToPersonSubtest,
                 DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest => TestDefinitions.PersonToMerchantSubtest,
+                _ => throw new ArgumentException(
+                    $"{nameof(subtestEnum)} is not valid DomesticPaymentFunctionalTestEnum or needs to be added to this switch statement.")
+            };
+
+        public static DomesticPaymentTypeEnum DomesticPaymentType(DomesticPaymentFunctionalSubtestEnum subtestEnum) =>
+            subtestEnum switch
+            {
+                DomesticPaymentFunctionalSubtestEnum.PersonToPersonSubtest => DomesticPaymentTypeEnum
+                    .PersonToPerson,
+                DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest => DomesticPaymentTypeEnum
+                    .PersonToMerchant,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid DomesticPaymentFunctionalTestEnum or needs to be added to this switch statement.")
             };

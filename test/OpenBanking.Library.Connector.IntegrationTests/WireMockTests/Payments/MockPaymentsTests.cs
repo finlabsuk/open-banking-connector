@@ -128,8 +128,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             bankApiInformationResponse.Data.Should().NotBeNull();
             Guid bankApiInformationId = bankApiInformationResponse.Data!.Id;
 
-            _mockPaymentsServer.SetupTokenEndpointMock();
-            _mockPaymentsServer.SetupPaymentEndpointMock();
+            // _mockPaymentsServer.SetupTokenEndpointMock();
+            // _mockPaymentsServer.SetupPaymentEndpointMock();
 
             // DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
             // {

@@ -72,8 +72,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // POST domestic payment consent
             DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
             {
-                WriteDomesticConsent = DomesticPaymentConsent(
-                    subtest.DomesticPaymentFunctionalSubtestEnum,
+                WriteDomesticConsent = bankProfile.DomesticPaymentConsent(
+                    DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(
+                        subtest.DomesticPaymentFunctionalSubtestEnum),
                     "placeholder: OBC consent ID",
                     "placeholder: random GUID"),
                 BankApiInformationId = Guid.Empty,

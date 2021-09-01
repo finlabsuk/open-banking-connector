@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankObject(testNameUnique);
+            Bank bankRequest = bankProfile.Bank(testNameUnique);
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .ClientRegistration
                 .Banks

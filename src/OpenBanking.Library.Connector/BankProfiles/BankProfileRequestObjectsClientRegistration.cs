@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 registrationScope);
         }
 
-        public Bank BankObject(string name) =>
+        public Bank Bank(string name) =>
             new Bank
             {
                 IssuerUrl = IssuerUrl,

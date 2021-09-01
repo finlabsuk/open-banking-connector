@@ -51,7 +51,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     }
 
     /// <summary>
-    ///     Bank Profile which describes configuration and settings used when testing with a particular bank.
+    ///     A Bank Profile describes configuration and settings used when testing with a particular bank.
+    ///     It also provides convenient functions for generating request objects to use with Open Banking Connector.
     /// </summary>
     public partial class BankProfile
     {

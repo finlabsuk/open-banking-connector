@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -261,11 +261,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             return requestBuilder;
         }
 
-        public string GetOBWriteDomesticConsent()
+        public string GetOBWriteDomesticConsent(BankProfile bankProfile)
         {
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
-                DomesticPaymentFunctionalSubtest.DomesticPaymentConsent(
-                    DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest,
+                bankProfile.DomesticPaymentConsent(
+                    DomesticPaymentTypeEnum.PersonToMerchant,
                     "placeholder: OBC consent ID",
                     "placeholder: random GUID");
 
@@ -277,11 +277,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 });
         }
 
-        public string GetOBWriteDomesticConsentResponse2()
+        public string GetOBWriteDomesticConsentResponse2(BankProfile bankProfile)
         {
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
-                DomesticPaymentFunctionalSubtest.DomesticPaymentConsent(
-                    DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest,
+                bankProfile.DomesticPaymentConsent(
+                    DomesticPaymentTypeEnum.PersonToMerchant,
                     "placeholder: OBC consent ID",
                     "placeholder: random GUID");
 

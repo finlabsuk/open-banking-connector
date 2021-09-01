@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using WireMock.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests
@@ -10,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
     public interface IMockPaymentServer
     {
         void SetUpOpenIdMock();
-        void SetupPaymentEndpointMock();
+        void SetupPaymentEndpointMock(BankProfile bankProfile);
         void SetUpOBDomesticResponseEndpoint();
         void SetupRegistrationMock();
         void SetupTokenEndpointMock();
