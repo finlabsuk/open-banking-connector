@@ -59,11 +59,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                 tokenEndpointAuthMethod;
             if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.TlsClientAuth))
             {
-                tokenEndpointAuthMethod = ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth;
+                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth;
             }
             else if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.ClientSecretBasic))
             {
-                tokenEndpointAuthMethod = ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic;
+                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic;
             }
             else
             {

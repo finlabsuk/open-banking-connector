@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     return new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(
                         softwareStatementProfilesSettings);
                 });
-            
+
             // Get settings via IOptions (ensure no updates after app start) and add to service collection
             services
                 .Configure<BankProfileSettings>(configuration.GetSection(new BankProfileSettings().SettingsSectionName))

@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
         }
 
         /// <summary>
-        /// Get options for label from serializer if available. Otherwise return default value (no options).
+        ///     Get options for label from serializer if available. Otherwise return default value (no options).
         /// </summary>
         /// <param name="serializer"></param>
         /// <returns></returns>

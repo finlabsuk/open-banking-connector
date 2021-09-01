@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels
     public static class ValidationRules
     {
         /// <summary>
-        /// Check string has minimum length.
+        ///     Check string has minimum length.
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
@@ -26,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels
         {
             return arg2.Length >= minLength;
         }
- 
+
         /// <summary>
-        /// Check IList<T> has minimum count (length).
+        ///     Check IList<T> has minimum count (length).
         /// </summary>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>

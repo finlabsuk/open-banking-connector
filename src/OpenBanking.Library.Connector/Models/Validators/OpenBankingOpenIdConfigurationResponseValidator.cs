@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
             CascadeMode = CascadeMode.Continue;
             CreateRules();
         }
-        
+
         private void CreateRules()
         {
             // Check RegistrationEndpoint
@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
             // Check TokenEndpointAuthMethodsSupported
             RuleFor(x => x.TokenEndpointAuthMethodsSupported)
                 .Must(ValidationRules.IsNotNull) // not null
-                .Must(x=>x.Any()) // contains at least one value
+                .Must(x => x.Any()) // contains at least one value
                 .WithMessage($"{nameof(OpenIdConfiguration.TokenEndpointAuthMethodsSupported)} is missing or empty.");
             RuleForEach(x => x.TokenEndpointAuthMethodsSupported)
                 .IsInEnum() // values are valid enums
@@ -36,4 +36,3 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
         }
     }
 }
-    
