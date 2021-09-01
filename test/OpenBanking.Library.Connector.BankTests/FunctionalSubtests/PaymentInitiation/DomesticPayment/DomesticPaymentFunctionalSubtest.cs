@@ -70,33 +70,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             DomesticPaymentFunctionalSubtest subtest = DomesticPaymentFunctionalSubtestHelper.Test(subtestEnum);
 
             // POST domestic payment consent
-            DomesticPaymentConsent domesticConsentPaymentRequest = new DomesticPaymentConsent
-            {
-                WriteDomesticConsent = bankProfile.DomesticPaymentConsent(
+            DomesticPaymentConsent domesticPaymentConsentRequest =
+                bankProfile.DomesticPaymentConsentRequest(
+                    Guid.Empty,
+                    Guid.Empty,
                     DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(
                         subtest.DomesticPaymentFunctionalSubtestEnum),
                     "placeholder: OBC consent ID",
-                    "placeholder: random GUID"),
-                BankApiInformationId = Guid.Empty,
-                BankRegistrationId = Guid.Empty
-            };
-            domesticConsentPaymentRequest =
-                bankProfile.PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(
-                    domesticConsentPaymentRequest);
+                    "placeholder: random GUID",
+                    null);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
-                .WriteFile(domesticConsentPaymentRequest);
-            domesticConsentPaymentRequest.BankRegistrationId = bankRegistrationId;
-            domesticConsentPaymentRequest.BankApiInformationId = bankApiInformationId;
-            domesticConsentPaymentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
+                .WriteFile(domesticPaymentConsentRequest);
+            domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
+            domesticPaymentConsentRequest.BankApiInformationId = bankApiInformationId;
+            domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
                 Guid.NewGuid().ToString("N");
-            domesticConsentPaymentRequest.WriteDomesticConsent.Data.Initiation.EndToEndIdentification =
+            domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.EndToEndIdentification =
                 Guid.NewGuid().ToString("N");
-            domesticConsentPaymentRequest.Name = testNameUnique;
+            domesticPaymentConsentRequest.Name = testNameUnique;
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .PostAsync(domesticConsentPaymentRequest);
+                    .PostAsync(domesticPaymentConsentRequest);
 
             // Checks
             domesticPaymentConsentResp.Should().NotBeNull();

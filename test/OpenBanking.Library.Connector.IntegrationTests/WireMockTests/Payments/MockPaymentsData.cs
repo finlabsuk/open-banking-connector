@@ -263,65 +263,67 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOBWriteDomesticConsent(BankProfile bankProfile)
         {
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
-                bankProfile.DomesticPaymentConsent(
-                    DomesticPaymentTypeEnum.PersonToMerchant,
-                    "placeholder: OBC consent ID",
-                    "placeholder: random GUID");
-
-            return JsonConvert.SerializeObject(
-                requestModel,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
+            // PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
+            //     bankProfile.DomesticPaymentConsent(
+            //         DomesticPaymentTypeEnum.PersonToMerchant,
+            //         "placeholder: OBC consent ID",
+            //         "placeholder: random GUID");
+            //
+            // return JsonConvert.SerializeObject(
+            //     requestModel,
+            //     new JsonSerializerSettings
+            //     {
+            //         NullValueHandling = NullValueHandling.Ignore
+            //     });
+            return "";
         }
 
         public string GetOBWriteDomesticConsentResponse2(BankProfile bankProfile)
         {
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
-                bankProfile.DomesticPaymentConsent(
-                    DomesticPaymentTypeEnum.PersonToMerchant,
-                    "placeholder: OBC consent ID",
-                    "placeholder: random GUID");
-
-            string consentId = Guid.NewGuid().ToString();
-            _mapper.Map(
-                requestModel.Data.Initiation,
-                out PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5DataInitiation dataInitiation);
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5Data data =
-                new PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5Data(
-                    consentId,
-                    DateTime.Now,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5DataStatusEnum
-                        .AwaitingAuthorisation,
-                    DateTime.Now,
-                    cutOffDateTime: DateTime.Now.Add(new TimeSpan(1, 0, 0, 0)),
-                    expectedExecutionDateTime: DateTime.Now,
-                    expectedSettlementDateTime: DateTime.Now,
-                    charges: null,
-                    initiation: dataInitiation);
-
-            PaymentInitiationModelsPublic.OBRisk1 risk = requestModel.Risk;
-
-            PaymentInitiationModelsPublic.Links links =
-                new PaymentInitiationModelsPublic.Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}/{consentId}");
-
-            PaymentInitiationModelsPublic.Meta meta = new PaymentInitiationModelsPublic.Meta(1);
-
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 model =
-                new PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5(
-                    data,
-                    risk,
-                    links,
-                    meta);
-
-            return JsonConvert.SerializeObject(
-                model,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
+            // PaymentInitiationModelsPublic.OBWriteDomesticConsent4 requestModel =
+            //     bankProfile.DomesticPaymentConsent(
+            //         DomesticPaymentTypeEnum.PersonToMerchant,
+            //         "placeholder: OBC consent ID",
+            //         "placeholder: random GUID");
+            //
+            // string consentId = Guid.NewGuid().ToString();
+            // _mapper.Map(
+            //     requestModel.Data.Initiation,
+            //     out PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5DataInitiation dataInitiation);
+            // PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5Data data =
+            //     new PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5Data(
+            //         consentId,
+            //         DateTime.Now,
+            //         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5DataStatusEnum
+            //             .AwaitingAuthorisation,
+            //         DateTime.Now,
+            //         cutOffDateTime: DateTime.Now.Add(new TimeSpan(1, 0, 0, 0)),
+            //         expectedExecutionDateTime: DateTime.Now,
+            //         expectedSettlementDateTime: DateTime.Now,
+            //         charges: null,
+            //         initiation: dataInitiation);
+            //
+            // PaymentInitiationModelsPublic.OBRisk1 risk = requestModel.Risk;
+            //
+            // PaymentInitiationModelsPublic.Links links =
+            //     new PaymentInitiationModelsPublic.Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}/{consentId}");
+            //
+            // PaymentInitiationModelsPublic.Meta meta = new PaymentInitiationModelsPublic.Meta(1);
+            //
+            // PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 model =
+            //     new PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5(
+            //         data,
+            //         risk,
+            //         links,
+            //         meta);
+            //
+            // return JsonConvert.SerializeObject(
+            //     model,
+            //     new JsonSerializerSettings
+            //     {
+            //         NullValueHandling = NullValueHandling.Ignore
+            //     });
+            return "";
         }
 
         public string GetOBWriteDomesticResponse2()

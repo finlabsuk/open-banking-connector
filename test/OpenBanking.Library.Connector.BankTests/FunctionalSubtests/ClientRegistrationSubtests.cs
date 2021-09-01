@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             FilePathBuilder testDataProcessorApiOverrides)
         {
             // Create bank
-            Bank bankRequest = bankProfile.Bank("placeholder: dynamically generated based on unused names");
+            Bank bankRequest = bankProfile.BankRequest("placeholder: dynamically generated based on unused names");
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .GetFilePath();
             string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
 
-            BankRegistration registrationRequest = bankProfile.BankRegistration(
+            BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
                 "placeholder: dynamically generated based on unused names",
                 default,
                 softwareStatementProfileId,
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
             // Create bank API information
-            BankApiInformation apiInformationRequest = bankProfile.BankApiInformation(
+            BankApiInformation apiInformationRequest = bankProfile.BankApiInformationRequest(
                 "placeholder: dynamically generated based on unused names",
                 default);
             await testDataProcessorFluentRequestLogging

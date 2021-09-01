@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // Create bank
-            Bank bankRequest = bankProfile.Bank(testNameUnique);
+            Bank bankRequest = bankProfile.BankRequest(testNameUnique);
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .ClientRegistration
                 .Banks
@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid bankId = bankResp.Data!.Id;
 
             // Create bank registration
-            BankRegistration registrationRequest = bankProfile.BankRegistration(
+            BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
                 testNameUnique,
                 bankId,
                 softwareStatementProfileId,
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
             // Create bank API information
-            BankApiInformation apiInformationRequest = bankProfile.BankApiInformation(
+            BankApiInformation apiInformationRequest = bankProfile.BankApiInformationRequest(
                 testNameUnique,
                 bankId);
             IFluentResponse<BankApiInformationResponse> apiInformationResponse = await requestBuilder

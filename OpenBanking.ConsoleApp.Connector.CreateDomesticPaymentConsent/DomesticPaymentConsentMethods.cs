@@ -21,22 +21,17 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // POST domestic payment consent
-            var domesticConsentPaymentRequest = new DomesticPaymentConsent
-            {
-                WriteDomesticConsent = bankProfile.DomesticPaymentConsent(
+            DomesticPaymentConsent domesticPaymentConsentRequest =
+                bankProfile.DomesticPaymentConsentRequest(
+                    bankRegistrationId,
+                    bankApiInformationId,
                     DomesticPaymentTypeEnum.PersonToMerchant,
                     Guid.NewGuid().ToString("N"),
-                    Guid.NewGuid().ToString("N")),
-                BankApiInformationId = bankApiInformationId,
-                BankRegistrationId = bankRegistrationId,
-                Name = testNameUnique
-            };
-            domesticConsentPaymentRequest =
-                bankProfile.PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(
-                    domesticConsentPaymentRequest);
+                    Guid.NewGuid().ToString("N"),
+                    testNameUnique);
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .PostAsync(domesticConsentPaymentRequest);
+                    .PostAsync(domesticPaymentConsentRequest);
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
 
             return domesticPaymentConsentId;

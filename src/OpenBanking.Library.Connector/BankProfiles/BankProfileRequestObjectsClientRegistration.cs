@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     public partial class BankProfile
     {
-        public BankRegistration BankRegistration(
+        public BankRegistration BankRegistrationRequest(
             string name,
             Guid bankId,
             string softwareStatementProfileId,
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 registrationScope);
         }
 
-        public Bank Bank(string name) =>
+        public Bank BankRequest(string name) =>
             new Bank
             {
                 IssuerUrl = IssuerUrl,
@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 Name = name
             };
 
-        public BankApiInformation BankApiInformation(string name, Guid bankId) =>
+        public BankApiInformation BankApiInformationRequest(string name, Guid bankId) =>
             new BankApiInformation
             {
                 BankId = bankId,
