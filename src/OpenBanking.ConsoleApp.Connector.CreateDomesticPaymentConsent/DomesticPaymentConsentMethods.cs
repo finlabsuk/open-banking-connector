@@ -12,12 +12,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent
 {
     /// <summary>
-    /// Domestic payment consent methods
+    ///     Domestic payment consent methods
     /// </summary>
     public static class DomesticPaymentConsentMethods
     {
         /// <summary>
-        /// Create domestic payment consent
+        ///     Create domestic payment consent
         /// </summary>
         /// <param name="bankProfile"></param>
         /// <param name="bankRegistrationId"></param>
@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         }
 
         /// <summary>
-        /// Get domestic payment consent
+        ///     Get domestic payment consent
         /// </summary>
         /// <param name="requestBuilder"></param>
         /// <param name="domesticPaymentConsentId"></param>

@@ -13,13 +13,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FinnovationLabs.OpenBanking.Library.Connector.GenericHost" Version="1.0.0-alpha01"/>
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj"/>
-    </ItemGroup>
 
     <ItemGroup>
         <None Update="appsettings.json">
