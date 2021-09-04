@@ -13,14 +13,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using ClientRegistrationModelsPublic =
@@ -242,7 +241,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         }
 
         public IRequestBuilder CreateMockRequestBuilder(
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository)
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository)
         {
             HttpClient httpClient = new HttpClient
             {

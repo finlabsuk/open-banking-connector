@@ -21,14 +21,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
-        protected readonly IReadOnlyRepository<SoftwareStatementProfile> _softwareStatementProfileRepo;
+        protected readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
         public LocalEntityDelete(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<SoftwareStatementProfile> softwareStatementProfileRepo)
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo)
         {
             _entityMethods = entityMethods;
             _dbSaveChangesMethod = dbSaveChangesMethod;

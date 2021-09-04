@@ -18,13 +18,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         where TVariantApiRequest : class
     {
         private readonly IInstrumentationClient _instrumentationClient;
-        private readonly SoftwareStatementProfile _softwareStatementProfile;
+        private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
 
         public JwtRequestProcessor(
-            SoftwareStatementProfile softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient)
         {
-            _softwareStatementProfile = softwareStatementProfile;
+            _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
             _instrumentationClient = instrumentationClient;
         }
 
@@ -40,10 +40,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         {
             // Create JWT and log
             string jwt = JwtFactory.CreateJwt(
-                JwtFactory.DefaultJwtHeadersIncludingTyp(_softwareStatementProfile.SigningKeyId),
+                JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.SigningKeyId),
                 variantRequest,
-                _softwareStatementProfile.SigningKey,
-                _softwareStatementProfile.SigningCertificate);
+                _processedSoftwareStatementProfile.SigningKey,
+                _processedSoftwareStatementProfile.SigningCertificate);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### JWT ({requestDescription})")
                 .Append(jwt);

@@ -6,12 +6,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using NSubstitute;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
@@ -26,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IDbService>(),
                 Substitute
-                    .For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                    .For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
                 Substitute.For<IApiVariantMapper>());
         }
 
@@ -38,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 new ApiVariantMapper(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IApiClient>(),
-                Substitute.For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
                 Substitute.For<IDbService>());
         }
     }

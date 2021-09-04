@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly string _orgId;
         private readonly PaymentInitiationApi _paymentInitiationApi;
-        private readonly SoftwareStatementProfile _softwareStatementProfile;
+        private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
         private readonly TokenEndpointResponse _tokenEndpointResponse;
 
         public PaymentInitiationPostRequestProcessor(
@@ -29,12 +29,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             TokenEndpointResponse tokenEndpointResponse,
             IInstrumentationClient instrumentationClient,
             PaymentInitiationApi paymentInitiationApi,
-            SoftwareStatementProfile softwareStatementProfile)
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
         {
             _instrumentationClient = instrumentationClient;
             _orgId = orgId;
             _paymentInitiationApi = paymentInitiationApi;
-            _softwareStatementProfile = softwareStatementProfile;
+            _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
             _tokenEndpointResponse = tokenEndpointResponse;
         }
 
@@ -46,13 +46,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             // Create JWT and log
             string jwt = JwtFactory.CreateJwt(
                 GetJoseHeaders(
-                    _softwareStatementProfile.SoftwareStatementPayload.OrgId,
-                    _softwareStatementProfile.SoftwareStatementPayload.SoftwareId,
-                    _softwareStatementProfile.SigningKeyId,
+                    _processedSoftwareStatementProfile.SoftwareStatementPayload.OrgId,
+                    _processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareId,
+                    _processedSoftwareStatementProfile.SigningKeyId,
                     _paymentInitiationApi.PaymentInitiationApiVersion),
                 variantRequest,
-                _softwareStatementProfile.SigningKey,
-                _softwareStatementProfile.SigningCertificate);
+                _processedSoftwareStatementProfile.SigningKey,
+                _processedSoftwareStatementProfile.SigningCertificate);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### JWT ({requestDescription})")
                 .Append(jwt);

@@ -88,13 +88,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
-            SoftwareStatementProfile softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
                 bankFinancialId,
                 tokenEndpointResponse,
-                softwareStatementProfile,
+                processedSoftwareStatementProfile,
                 instrumentationClient);
 
 
@@ -103,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
-            SoftwareStatementProfile softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             paymentInitiationApi.PaymentInitiationApiVersion switch
             {
@@ -119,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                         tokenEndpointResponse,
                         instrumentationClient,
                         paymentInitiationApi,
-                        softwareStatementProfile)),
+                        processedSoftwareStatementProfile)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomestic2,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
@@ -132,7 +132,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                         tokenEndpointResponse,
                         instrumentationClient,
                         paymentInitiationApi,
-                        softwareStatementProfile)),
+                        processedSoftwareStatementProfile)),
                 _ => throw new ArgumentOutOfRangeException()
             };
     }
@@ -151,13 +151,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
-            SoftwareStatementProfile softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
                 bankFinancialId,
                 tokenEndpointResponse,
-                softwareStatementProfile,
+                processedSoftwareStatementProfile,
                 instrumentationClient);
     }
 }

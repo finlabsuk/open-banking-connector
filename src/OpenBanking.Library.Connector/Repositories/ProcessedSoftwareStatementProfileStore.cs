@@ -5,24 +5,28 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentValidation.Results;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 {
-    public class SoftwareStatementProfileCache : MemoryRepository<SoftwareStatementProfileCached>
+    public class ProcessedSoftwareStatementProfileStore : IReadOnlyRepository<ProcessedSoftwareStatementProfile>
     {
-        public SoftwareStatementProfileCache(
+        private readonly MemoryRepository<ProcessedSoftwareStatementProfile> _memoryRepo =
+            new MemoryRepository<ProcessedSoftwareStatementProfile>();
+
+        public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
             ISettingsProvider<ObCertificateProfilesSettings> obCertificateProfileSettingsProvider,
@@ -91,14 +95,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     .CreateMessageHandler();
 
                 // Add to cache
-                SoftwareStatementProfileCached softwareStatementProfileCached = new SoftwareStatementProfileCached(
+                ProcessedSoftwareStatementProfile softwareStatementProfileCached = new ProcessedSoftwareStatementProfile(
                     softwareStatementProfileId,
                     obCertificateProfile,
                     softwareStatementProfile,
                     new ApiClient(instrumentationClient, new HttpClient(handler)));
 
-                _cache.TryAdd(softwareStatementProfileId, softwareStatementProfileCached);
+                _memoryRepo.SetAsync(softwareStatementProfileCached);
             }
         }
+
+        public async Task<ProcessedSoftwareStatementProfile?> GetAsync(string id) => await _memoryRepo.GetAsync(id);
+
+        public async Task<IQueryable<ProcessedSoftwareStatementProfile>> GetAsync(
+            Expression<Func<ProcessedSoftwareStatementProfile, bool>> predicate) =>
+            await _memoryRepo.GetAsync(predicate);
+
+        public async Task<IList<string>> GetIdsAsync() =>
+            await _memoryRepo.GetIdsAsync();
     }
 }

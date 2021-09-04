@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
 
         public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
             IList<TokenEndpointAuthMethodEnum> tokenEndpointAuthMethodsSupported,
-            SoftwareStatementProfile sProfile,
+            ProcessedSoftwareStatementProfile sProfile,
             RegistrationScope registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
             string bankXFapiFinancialId)

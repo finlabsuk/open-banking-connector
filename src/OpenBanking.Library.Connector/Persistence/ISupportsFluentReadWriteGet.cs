@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
-            SoftwareStatementProfile softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
     }
 }

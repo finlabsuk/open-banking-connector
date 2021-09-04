@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
-            IReadOnlyRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
             entityMethods,
@@ -69,11 +69,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new NullReferenceException("Bank API Information record has null Payment Initiation API.");
 
             // Get software statement profile
-            SoftwareStatementProfile softwareStatementProfile =
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(bankRegistration.SoftwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfile with ID {bankRegistration.SoftwareStatementProfileId}");
-            IApiClient apiClient = softwareStatementProfile.ApiClient;
+            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get client credentials grant token if necessary
             TokenEndpointResponse tokenEndpointResponse =
@@ -93,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 paymentInitiationApi,
                 bankFinancialId,
                 tokenEndpointResponse,
-                softwareStatementProfile,
+                processedSoftwareStatementProfile,
                 _instrumentationClient);
 
             return (persistedObject, apiRequests, apiClient, uri, jsonSerializerSettings,

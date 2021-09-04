@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         public string Linux { get; set; } = "";
     }
 
-    public class BankProfileSettings : ISettings<BankProfileSettings>
+    public class BankProfilesSettings : ISettings<BankProfilesSettings>
     {
         /// <summary>
         ///     Path to data directory used for hidden bank bank profile properties.
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
         public string SettingsSectionName => "BankProfiles";
 
-        public BankProfileSettings Validate()
+        public BankProfilesSettings Validate()
         {
             if (!Directory.Exists(GetDataDirectoryForCurrentOs()))
             {

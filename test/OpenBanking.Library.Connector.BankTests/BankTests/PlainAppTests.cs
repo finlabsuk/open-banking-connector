@@ -17,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -29,8 +30,6 @@ using NSubstitute;
 using RichardSzalay.MockHttp;
 using Xunit;
 using Xunit.Abstractions;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
@@ -103,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obCertificateProfilesSettingsProvider =
                 new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
-            var softwareStatementProfilesRepository = new SoftwareStatementProfileCache(
+            var softwareStatementProfilesRepository = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
                 obCertificateProfilesSettingsProvider,
@@ -153,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient instrumentationClient,
             IApiClient apiClient,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository)
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository)
         {
             RequestBuilder requestBuilder = new RequestBuilder(
                 timeProvider,

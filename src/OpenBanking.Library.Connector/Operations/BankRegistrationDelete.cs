@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<SoftwareStatementProfile> softwareStatementProfileRepo) : base(
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -49,11 +49,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new KeyNotFoundException($"No record found for Bank Registration with ID {id}.");
 
             // Get software statement profile
-            SoftwareStatementProfile softwareStatementProfile =
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(persistedObject.SoftwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfile with ID {persistedObject.SoftwareStatementProfileId}");
-            IApiClient apiClient = softwareStatementProfile.ApiClient;
+            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             string bankApiId = persistedObject.BankApiId;
 

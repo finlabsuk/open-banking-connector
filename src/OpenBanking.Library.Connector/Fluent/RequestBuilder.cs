@@ -8,11 +8,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -40,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         private readonly IApiVariantMapper _apiVariantMapper;
         private readonly IDbService _dbService;
         private readonly IInstrumentationClient _logger;
-        private readonly IReadOnlyRepository<SoftwareStatementProfileCached> _softwareStatementProfileCachedRepo;
+        private readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileCachedRepo;
         private readonly ITimeProvider _timeProvider;
 
         public RequestBuilder(
@@ -48,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient logger,
             IApiClient apiClient,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileCachedRepo,
             IDbService dbService)
         {
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));

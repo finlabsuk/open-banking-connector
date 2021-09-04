@@ -4,18 +4,17 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMockTests
 {
     public interface IMockPaymentData
     {
         IRequestBuilder CreateMockRequestBuilder(
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository);
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository);
 
         string GetAccessToken();
         string GetBase64TokenString();

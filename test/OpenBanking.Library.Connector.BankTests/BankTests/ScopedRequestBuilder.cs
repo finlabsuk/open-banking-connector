@@ -7,11 +7,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
@@ -24,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient instrumentationClient,
             IApiClient apiClient,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfilesRepository,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository,
             BaseDbContext dbContext)
         {
             _dbContext = dbContext;

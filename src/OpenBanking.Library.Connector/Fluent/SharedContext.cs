@@ -6,11 +6,10 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -21,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiClient apiClient,
             IInstrumentationClient instrumentation,
             IDbService dbService,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileCachedRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileCachedRepo,
             IApiVariantMapper apiVariantMapper)
         {
             TimeProvider = timeProvider;
@@ -37,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public IApiClient ApiClient { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IDbService DbService { get; }
-        public IReadOnlyRepository<SoftwareStatementProfileCached> SoftwareStatementProfileCachedRepo { get; }
+        public IReadOnlyRepository<ProcessedSoftwareStatementProfile> SoftwareStatementProfileCachedRepo { get; }
         public IApiVariantMapper ApiVariantMapper { get; }
     }
 }

@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
-            IReadOnlyRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 throw new KeyNotFoundException(
                     $"No record found for Domestic Payment Consent with ID {persistedObject.DomesticPaymentConsentId}.");
 
-            SoftwareStatementProfile softwareStatementProfile =
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId) ??
                 throw new KeyNotFoundException(
@@ -66,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             var state = persistedObject.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.BankApiResponse.Data.Data.ConsentId,
-                softwareStatementProfile,
+                processedSoftwareStatementProfile,
                 domesticPaymentConsent.BankRegistrationNavigation,
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,

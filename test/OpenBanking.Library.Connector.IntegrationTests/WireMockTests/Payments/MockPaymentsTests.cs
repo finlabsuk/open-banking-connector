@@ -70,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                         { [softwareStatementProfileId] = obCertificateProfile });
 
             // Set up request builder
-            var softwareStatementProfilesRepository = new SoftwareStatementProfileCache(
+            var softwareStatementProfilesRepository = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
                 obCertificateProfilesSettingsProvider,

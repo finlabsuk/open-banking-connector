@@ -12,14 +12,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -32,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IInstrumentationClient _instrumentationClient;
-        private readonly IReadOnlyRepository<SoftwareStatementProfileCached> _softwareStatementProfileRepo;
+        private readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
 
@@ -41,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ITimeProvider timeProvider,
             IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContext>
                 authContextMethods,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
         {
             _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -84,13 +83,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             string softwareStatementProfileId = authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation
                 .SoftwareStatementProfileId;
-            SoftwareStatementProfileCached softwareStatementProfile =
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfile with ID {softwareStatementProfileId}.");
 
             // Obtain token for consent
-            string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponse tokenEndpointResponse =
                 await PostTokenRequest.PostAuthCodeGrantAsync(
@@ -98,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     redirectUrl,
                     authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
                     jsonSerializerSettings,
-                    softwareStatementProfile.ApiClient);
+                    processedSoftwareStatementProfile.ApiClient);
 
             // Update auth context with token
             authContext.TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(

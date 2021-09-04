@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -22,9 +23,6 @@ using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -45,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
             entityMethods,

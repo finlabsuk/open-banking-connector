@@ -8,11 +8,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -26,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsent> _domesticPaymentConsentMethods;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         protected readonly IInstrumentationClient _instrumentationClient;
-        protected readonly IReadOnlyRepository<SoftwareStatementProfileCached> _softwareStatementProfileRepo;
+        protected readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
         protected readonly ITimeProvider _timeProvider;
 
 
@@ -35,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
-            IReadOnlyRepository<SoftwareStatementProfileCached> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
         {
             _entityMethods = entityMethods;

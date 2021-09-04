@@ -56,11 +56,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             //var env = AppConfiguration.EnvironmentName;
 
             // Get bank profile definitions
-            BankProfileSettings bankProfileSettings = AppConfiguration.GetSettings<BankProfileSettings>();
-            bankProfileSettings.Validate();
+            BankProfilesSettings bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
+            bankProfilesSettings.Validate();
             Dictionary<string, Dictionary<string, BankProfileHiddenProperties>> bankProfileHiddenProperties =
                 DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
-                    bankProfileSettings.HiddenPropertiesFile,
+                    bankProfilesSettings.HiddenPropertiesFile,
                     new JsonSerializerSettings()).GetAwaiter().GetResult();
             var bankProfileDefinitions =
                 new BankProfileDefinitions(bankProfileHiddenProperties);

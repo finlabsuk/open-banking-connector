@@ -13,10 +13,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 {
     /// <summary>
-    ///     Base class for repository implemented as in-memory cache. Can be sub-classed with custom constructor.
+    ///     Repository implemented as in-memory cache.
     /// </summary>
     /// <typeparam name="TRepositoryItem"></typeparam>
-    public abstract class MemoryRepository<TRepositoryItem> : IRepository<TRepositoryItem>
+    public class MemoryRepository<TRepositoryItem> : IRepository<TRepositoryItem>
         where TRepositoryItem : class, IRepositoryItem
 
     {

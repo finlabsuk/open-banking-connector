@@ -8,10 +8,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
@@ -20,13 +19,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     {
         internal static string Create(
             string consentId,
-            SoftwareStatementProfileCached softwareStatementProfile,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
             string issuerUrl,
             string state,
             IInstrumentationClient instrumentationClient)
         {
-            string redirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             if (redirectUrl == "")
             {
                 redirectUrl = bankRegistration.BankApiResponse.Data.RedirectUris[0];
@@ -41,10 +40,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     issuerUrl,
                     state);
             string requestObjectJwt = JwtFactory.CreateJwt(
-                JwtFactory.DefaultJwtHeadersExcludingTyp(softwareStatementProfile.SigningKeyId),
+                JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
                 oAuth2RequestObjectClaims,
-                softwareStatementProfile.SigningKey,
-                softwareStatementProfile.SigningCertificate);
+                processedSoftwareStatementProfile.SigningKey,
+                processedSoftwareStatementProfile.SigningCertificate);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine("#### JWT (Request Object)")
                 .Append(requestObjectJwt);

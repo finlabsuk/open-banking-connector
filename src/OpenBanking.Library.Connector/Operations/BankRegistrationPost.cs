@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
-            IReadOnlyRepository<SoftwareStatementProfile> softwareStatementProfileRepo,
+            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
             IApiClient apiClient,
@@ -119,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Load relevant objects
             string softwareStatementProfileId = request.SoftwareStatementProfileId;
-            SoftwareStatementProfile softwareStatementProfile =
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
                 throw new KeyNotFoundException(
                     $"No record found for SoftwareStatementProfileId {softwareStatementProfileId}");
@@ -127,7 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Determine registration scope
             RegistrationScope registrationScope =
                 request.RegistrationScope ??
-                softwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
+                processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
 
             // STEP 1
             // Compute claims associated with Open Banking client
@@ -167,7 +167,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
                 RegistrationClaimsFactory.CreateRegistrationClaims(
                     openIdConfiguration.TokenEndpointAuthMethodsSupported,
-                    softwareStatementProfile,
+                    processedSoftwareStatementProfile,
                     registrationScope,
                     request.BankRegistrationClaimsOverrides,
                     bank.FinancialId);
@@ -202,10 +202,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                 persistedObject.ApiPostRequests(
                     request.ClientRegistrationApi,
-                    softwareStatementProfile,
+                    processedSoftwareStatementProfile,
                     _instrumentationClient);
 
-            return (persistedObject, apiRequest, apiRequests, softwareStatementProfile.ApiClient, uri,
+            return (persistedObject, apiRequest, apiRequests, processedSoftwareStatementProfile.ApiClient, uri,
                 jsonSerializerSettings, nonErrorMessages);
         }
     }

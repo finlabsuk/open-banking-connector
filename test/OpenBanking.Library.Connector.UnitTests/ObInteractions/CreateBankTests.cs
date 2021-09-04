@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -14,8 +15,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
-using SoftwareStatementProfileCached =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Repository.SoftwareStatementProfile;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
 {
@@ -33,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<IDbSaveChangesMethod>(),
                     Substitute.For<ITimeProvider>(),
                     Substitute.For<IDbEntityMethods<DomesticPaymentConsent>>(),
-                    Substitute.For<IReadOnlyRepository<SoftwareStatementProfileCached>>(),
+                    Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
                     Substitute.For<IInstrumentationClient>());
 
             Models.Public.Request.Bank newBank = new Models.Public.Request.Bank
