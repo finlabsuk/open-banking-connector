@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,15 +40,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Connect output to logging
             SetTestLogging();
 
-            // Get request builder
-            using IScopedRequestBuilder scopedRequestBuilder = new ScopedRequestBuilder(_serviceProvider);
-            IRequestBuilder requestBuilder = scopedRequestBuilder.RequestBuilder;
-
             await TestAllInner(
                 bank,
                 bankRegistrationType,
-                requestBuilder,
-                () => new ScopedRequestBuilder(_serviceProvider),
+                () => new ScopedRequestBuilderContainer(_serviceProvider),
                 true);
 
             UnsetTestLogging();

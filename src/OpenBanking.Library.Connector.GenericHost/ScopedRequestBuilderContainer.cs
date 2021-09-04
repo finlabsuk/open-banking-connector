@@ -8,16 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
 {
-    public interface IScopedRequestBuilder : IDisposable
-    {
-        IRequestBuilder RequestBuilder { get; }
-    }
-
-    public class ScopedRequestBuilder : IScopedRequestBuilder
+    /// <summary>
+    ///     Scoped request builder source
+    /// </summary>
+    public class ScopedRequestBuilderContainer : IRequestBuilderContainer
     {
         private readonly IServiceScope _serviceScope;
 
-        public ScopedRequestBuilder(IServiceProvider serviceProvider)
+        public ScopedRequestBuilderContainer(IServiceProvider serviceProvider)
         {
             _serviceScope = serviceProvider.CreateScope();
             RequestBuilder = _serviceScope.ServiceProvider.GetRequiredService<IRequestBuilder>();

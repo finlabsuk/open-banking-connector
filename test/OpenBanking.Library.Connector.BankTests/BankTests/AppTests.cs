@@ -11,9 +11,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
@@ -105,8 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         protected async Task TestAllInner(
             BankProfileEnum bank,
             BankRegistrationType bankRegistrationType,
-            IRequestBuilder requestBuilder,
-            Func<IScopedRequestBuilder>? requestBuilderGenerator,
+            Func<IRequestBuilderContainer> requestBuilderGenerator,
             bool genericNotPlainAppTest)
         {
             // Test name
@@ -124,7 +124,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Get bank users
             List<BankUser> bankUserList =
-                _serviceProvider.GetRequiredService<BankUsers>()
+                _serviceProvider.GetRequiredService<BankUserStore>()
                     .GetRequiredBankUserList(bank);
 
             // Get consent authoriser inputs
@@ -135,6 +135,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             //     services.GetRequiredService<IOptions<NodeJSProcessOptions>>().Value;
             PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
                 bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
+
+            // Get request builder
+            using IRequestBuilderContainer requestBuilderContainer = requestBuilderGenerator();
+            IRequestBuilder requestBuilder = requestBuilderContainer.RequestBuilder;
 
             // Create test data writers
             string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";

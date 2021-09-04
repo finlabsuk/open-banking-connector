@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         public async Task DeleteBankRegistration()
         {
             // Get request builder
-            using IScopedRequestBuilder scopedRequestBuilder = new ScopedRequestBuilder(_serviceProvider);
+            using IRequestBuilderContainer scopedRequestBuilder = new ScopedRequestBuilderContainer(_serviceProvider);
             IRequestBuilder requestBuilder = scopedRequestBuilder.RequestBuilder;
 
             // Get bank profile definitions

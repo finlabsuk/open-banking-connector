@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
     /// <summary>
     ///     Get app configuration outside of .NET Generic Host dependency injection.

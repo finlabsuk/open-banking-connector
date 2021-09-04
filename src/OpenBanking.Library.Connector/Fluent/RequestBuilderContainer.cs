@@ -2,8 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
+using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -12,13 +11,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
-    public class ScopedRequestBuilder2 : IScopedRequestBuilder
+    public interface IRequestBuilderContainer : IDisposable
+    {
+        IRequestBuilder RequestBuilder { get; }
+    }
+
+    public class RequestBuilderContainer : IRequestBuilderContainer
     {
         private readonly BaseDbContext _dbContext;
 
-        public ScopedRequestBuilder2(
+        public RequestBuilderContainer(
             ITimeProvider timeProvider,
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient instrumentationClient,

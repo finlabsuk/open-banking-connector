@@ -6,14 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories
 {
-    public partial class BankUsers
+    public partial class BankUserStore
     {
         private readonly Dictionary<string, Dictionary<string, List<BankUser>>> _bankUserDictionary;
 
-        public BankUsers(Dictionary<string, Dictionary<string, List<BankUser>>> bankUserDictionary)
+        public BankUserStore(Dictionary<string, Dictionary<string, List<BankUser>>> bankUserDictionary)
         {
             _bankUserDictionary = bankUserDictionary;
         }

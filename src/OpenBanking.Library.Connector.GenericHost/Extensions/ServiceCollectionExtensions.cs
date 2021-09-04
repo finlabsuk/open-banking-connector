@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -23,9 +24,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 {
@@ -35,50 +34,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // Get settings via IOptions (ensure no updates after app start) and add to service collection
+            // For each settings section, get settings via IOptions and pass to settings provider which performs validation
+            // and allows use of alternative sources
             services
                 .Configure<OpenBankingConnectorSettings>(
                     configuration.GetSection(new OpenBankingConnectorSettings().SettingsSectionName))
-                .Configure<SoftwareStatementProfilesSettings>(
-                    configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
-                .Configure<ObCertificateProfilesSettings>(
-                    configuration.GetSection(new ObCertificateProfilesSettings().SettingsSectionName))
-                .AddOptions();
-            services.AddSingleton<ISettingsProvider<OpenBankingConnectorSettings>>(
-                sp =>
-                {
-                    OpenBankingConnectorSettings obcSettings =
-                        sp.GetRequiredService<IOptions<OpenBankingConnectorSettings>>().Value;
-                    return new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
-                });
-            services.AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>>(
-                sp =>
-                {
-                    SoftwareStatementProfilesSettings softwareStatementProfilesSettings =
-                        sp.GetRequiredService<IOptions<SoftwareStatementProfilesSettings>>().Value;
-                    return new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(
-                        softwareStatementProfilesSettings);
-                });
-            services.AddSingleton<ISettingsProvider<ObCertificateProfilesSettings>>(
-                sp =>
-                {
-                    ObCertificateProfilesSettings obCertificateProfilesSettings =
-                        sp.GetRequiredService<IOptions<ObCertificateProfilesSettings>>().Value;
-                    return new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
-                });
-
-            // Get settings via IOptions (ensure no updates after app start) and add to service collection
-            services
+                .AddSingleton<ISettingsProvider<OpenBankingConnectorSettings>,
+                    ConfigurationSettingsProvider<OpenBankingConnectorSettings>>()
                 .Configure<BankProfilesSettings>(
                     configuration.GetSection(new BankProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<BankProfilesSettings>,
+                    ConfigurationSettingsProvider<BankProfilesSettings>>()
+                .Configure<SoftwareStatementProfilesSettings>(
+                    configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>,
+                    ConfigurationSettingsProvider<SoftwareStatementProfilesSettings>>()
+                .Configure<ObCertificateProfilesSettings>(
+                    configuration.GetSection(new ObCertificateProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<ObCertificateProfilesSettings>,
+                    ConfigurationSettingsProvider<ObCertificateProfilesSettings>>()
                 .AddOptions();
-            services.AddSingleton<ISettingsProvider<BankProfilesSettings>>(
-                sp =>
-                {
-                    BankProfilesSettings bankProfilesSettings =
-                        sp.GetRequiredService<IOptions<BankProfilesSettings>>().Value;
-                    return new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
-                });
 
             // Set up bank profile definitions
             services.AddSingleton(
@@ -92,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                             new JsonSerializerSettings()).GetAwaiter().GetResult());
                 });
 
-            // Set up software statement cache
+            // Set up software statement store
             services
                 .AddSingleton<IReadOnlyRepository<ProcessedSoftwareStatementProfile>,
                     ProcessedSoftwareStatementProfileStore>();

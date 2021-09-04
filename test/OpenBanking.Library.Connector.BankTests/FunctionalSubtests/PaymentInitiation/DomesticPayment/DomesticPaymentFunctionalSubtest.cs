@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FluentAssertions;
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid bankApiInformationId,
             PaymentInitiationApiSettings paymentInitiationApiSettings,
             IRequestBuilder requestBuilderIn,
-            Func<IScopedRequestBuilder>? requestBuilderGenerator,
+            Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
             FilePathBuilder testDataProcessorFluentRequestLogging,
             bool includeConsentAuth,
@@ -144,11 +144,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             if (includeConsentAuth)
             {
                 if (puppeteerLaunchOptions is null ||
-                    nodeJsService is null ||
-                    requestBuilderGenerator is null)
+                    nodeJsService is null )
                 {
                     throw new ArgumentNullException(
-                        $"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)} or  {nameof(requestBuilderGenerator)}");
+                        $"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
                 }
 
                 // Call Node JS to authorise consent in UI via Puppeteer
@@ -166,7 +165,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     args);
 
                 // Refresh scope to ensure user token acquired following consent is available
-                using IScopedRequestBuilder scopedRequestBuilderNew = requestBuilderGenerator();
+                using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
                 IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
 
                 if (paymentInitiationApiSettings.UseConsentGetFundsConfirmationEndpoint)

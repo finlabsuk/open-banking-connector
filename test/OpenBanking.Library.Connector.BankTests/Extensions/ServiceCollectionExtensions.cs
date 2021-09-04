@@ -5,7 +5,10 @@
 using System.Collections.Generic;
 using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.Configuration;
@@ -21,17 +24,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // Get settings via IOptions (ensure no updates after app start) and add to service collection
+            // For each settings section, get settings via IOptions and pass to settings provider which performs validation
+            // and allows use of alternative sources
             services
                 .Configure<BankTestSettings>(configuration.GetSection(new BankTestSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<BankTestSettings>,
+                    ConfigurationSettingsProvider<BankTestSettings>>()
                 .AddOptions();
-            services.AddSingleton<ISettingsProvider<BankTestSettings>>(
-                sp =>
-                {
-                    BankTestSettings bankTestSettings =
-                        sp.GetRequiredService<IOptions<BankTestSettings>>().Value;
-                    return new DefaultSettingsProvider<BankTestSettings>(bankTestSettings);
-                });
 
             // Set up Node JS services
             services.AddSingleton<IOptions<NodeJSProcessOptions>>(
@@ -60,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
                     string bankUsersFile = Path.Combine(
                         bankTestSettings.GetDataDirectoryForCurrentOs(),
                         "bankUsers.json");
-                    var bankUsers = new BankUsers(
+                    var bankUsers = new BankUserStore(
                         DataFile.ReadFile<Dictionary<string, Dictionary<string, List<BankUser>>>>(
                             bankUsersFile,
                             new JsonSerializerSettings()).GetAwaiter().GetResult());

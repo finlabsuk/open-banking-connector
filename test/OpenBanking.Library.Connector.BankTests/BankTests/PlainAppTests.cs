@@ -17,7 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -75,11 +74,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             BankProfileEnum bank,
             BankRegistrationType bankRegistrationType)
         {
-            // Set up logging
-            var timeProvider = new TimeProvider();
-            var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
-
-            // Collect settings from configuration   
+            // Collect settings from configuration (to ensure common settings with Generic Host tests;
+            // a "plain app" might get settings from environment variables or a custom system;
+            // see comment in next section).
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
@@ -96,73 +93,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .Get<ObCertificateProfilesSettings>();
 
             // Create providers from settings
+            // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
+            // settings as might be done in a "plain app".
             var obcSettingsProvider =
                 new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obCertificateProfilesSettingsProvider =
                 new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
-            var softwareStatementProfilesRepository = new ProcessedSoftwareStatementProfileStore(
+
+            // Create stores
+            var timeProvider = new TimeProvider();
+            var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
+            var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
                 obCertificateProfilesSettingsProvider,
                 instrumentationClient);
-            var apiClient = new ApiClient(instrumentationClient, new HttpClient());
+
+            // Run test            
             var apiVariantMapper = new ApiVariantMapper();
-            IRequestBuilder requestBuilder = CreateRequestBuilder(
-                timeProvider,
-                apiVariantMapper,
-                instrumentationClient,
-                apiClient,
-                softwareStatementProfilesRepository);
-
-            var requestBuilderGenerator = new ScopedRequestBuilder2(
-                timeProvider,
-                apiVariantMapper,
-                instrumentationClient,
-                apiClient,
-                softwareStatementProfilesRepository,
-                GetDbContext());
-            requestBuilder = requestBuilderGenerator.RequestBuilder;
-
-            // softwareStatementProfileResp.Should().NotBeNull();
-            // softwareStatementProfileResp.Messages.Should().BeEmpty();
-            // softwareStatementProfileResp.Data.Should().NotBeNull();
-            // softwareStatementProfileResp.Data.Id.Should().NotBeNullOrWhiteSpace();
-
-            // Where you see TestConfig.GetValue( .. )
-            // these are injecting test data values. Here they're from test data, but can be anything else: database queries, Azure Key Vault configuration, etc.
-
+            var apiClient = new ApiClient(instrumentationClient, new HttpClient());
             await TestAllInner(
                 bank,
                 bankRegistrationType,
-                requestBuilder,
-                () => new ScopedRequestBuilder2(
+                () => new RequestBuilderContainer(
                     timeProvider,
                     apiVariantMapper,
                     instrumentationClient,
                     apiClient,
-                    softwareStatementProfilesRepository,
+                    processedSoftwareStatementProfileStore,
                     GetDbContext()),
                 false);
-        }
-
-        public IRequestBuilder CreateRequestBuilder(
-            ITimeProvider timeProvider,
-            IApiVariantMapper apiVariantMapper,
-            IInstrumentationClient instrumentationClient,
-            IApiClient apiClient,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository)
-        {
-            RequestBuilder requestBuilder = new RequestBuilder(
-                timeProvider,
-                apiVariantMapper,
-                instrumentationClient,
-                apiClient,
-                softwareStatementProfilesRepository,
-                new DbService(GetDbContext()));
-
-            return requestBuilder;
         }
 
         public IApiClient GetApiClient()
