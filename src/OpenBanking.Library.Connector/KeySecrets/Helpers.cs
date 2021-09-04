@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
 {

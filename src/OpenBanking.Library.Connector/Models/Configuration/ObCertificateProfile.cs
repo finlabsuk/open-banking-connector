@@ -2,9 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
-namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 {
     /// <summary>
     ///     UK Open Banking certificate type
@@ -12,18 +10,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
     public enum CertificateType
     {
         /// <summary>
-        ///     Used for mock software statement profile only
-        /// </summary>
-        None,
-
-        /// <summary>
         ///     Legacy certificates used by UK Open Banking Directory
         /// </summary>
         LegacyOB,
 
         /// <summary>
         ///     New OBWAC and OBSeal certificates used by UK Open Banking Directory.
-        ///     For future use.
         /// </summary>
         OBWacAndOBSeal
     }
@@ -33,34 +25,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
     ///     <see cref="SoftwareStatementProfilesSettings" />.
     ///     This class captures a software statement and associated data such as keys and certificates.
     /// </summary>
-    public class SoftwareStatementProfile
+    public class ObCertificateProfile
     {
-        public SoftwareStatementProfile(
-            string softwareStatement,
+        public ObCertificateProfile(
             string certificateType,
             string signingKeyId,
             string signingKey,
             string signingCertificate,
             string transportKey,
-            string transportCertificate,
-            string defaultFragmentRedirectUrl)
+            string transportCertificate)
         {
-            SoftwareStatement = softwareStatement ?? throw new ArgumentNullException(nameof(softwareStatement));
-            SigningKeyId = signingKeyId ?? throw new ArgumentNullException(nameof(signingKeyId));
-            SigningKey = signingKey ?? throw new ArgumentNullException(nameof(signingKey));
-            SigningCertificate = signingCertificate ?? throw new ArgumentNullException(nameof(signingCertificate));
-            TransportKey = transportKey ?? throw new ArgumentNullException(nameof(transportKey));
-            TransportCertificate =
-                transportCertificate ?? throw new ArgumentNullException(nameof(transportCertificate));
-            DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl ??
-                                         throw new ArgumentNullException(nameof(defaultFragmentRedirectUrl));
             CertificateType = certificateType;
+            SigningKeyId = signingKeyId;
+            SigningKey = signingKey;
+            SigningCertificate = signingCertificate;
+            TransportKey = transportKey;
+            TransportCertificate = transportCertificate;
         }
 
-        public SoftwareStatementProfile() { }
-
-        /// Software statement as string, e.g. "A.B.C"
-        public string SoftwareStatement { get; set; } = null!;
+        public ObCertificateProfile() { }
 
         /// <summary>
         ///     Type of certificate used for transport and signing certificates
@@ -81,8 +64,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 
         /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         public string TransportCertificate { get; set; } = null!;
-
-        /// Default redirect URL for OAuth clients with response_mode == fragment.
-        public string DefaultFragmentRedirectUrl { get; set; } = null!;
     }
 }

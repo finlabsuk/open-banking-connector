@@ -47,7 +47,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
 
         public static IEnumerable<IFluentResponseInfoOrWarningMessage> ProcessValidationResultsAndRaiseErrors(
             this ValidationResult validationResult,
-            string messagePrefix)
+            string messagePrefix,
+            string topLevelMessage = "Validation failure when checking Open Banking API types. These checks are performed on outgoing and incoming data for every Open Banking API call.")
         {
             // If any error messages, throw aggregate exception with messages
             List<Exception> otherErrorExceptions = validationResult.Errors
@@ -57,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
             if (otherErrorExceptions.Any())
             {
                 throw new AggregateException(
-                    "Validation failure when checking Open Banking API types. These checks are performed on outgoing and incoming data for every Open Banking API call.",
+                    topLevelMessage,
                     otherErrorExceptions);
             }
 

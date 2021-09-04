@@ -15,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -79,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var timeProvider = new TimeProvider();
             var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
 
-            // Get request builder   
+            // Collect settings from configuration   
             IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
                 .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
@@ -91,13 +92,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             SoftwareStatementProfilesSettings softwareStatementProfilesSettings = configuration
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
                 .Get<SoftwareStatementProfilesSettings>();
+            ObCertificateProfilesSettings obCertificateProfilesSettings = configuration
+                .GetSection(new ObCertificateProfilesSettings().SettingsSectionName)
+                .Get<ObCertificateProfilesSettings>();
+
+            // Create providers from settings
             var obcSettingsProvider =
                 new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
+            var obCertificateProfilesSettingsProvider =
+                new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
             var softwareStatementProfilesRepository = new SoftwareStatementProfileCache(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
+                obCertificateProfilesSettingsProvider,
                 instrumentationClient);
             var apiClient = new ApiClient(instrumentationClient, new HttpClient());
             var apiVariantMapper = new ApiVariantMapper();

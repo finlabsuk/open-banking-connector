@@ -5,10 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 {
     /// <summary>
     ///     Database options

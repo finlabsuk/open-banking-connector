@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -41,6 +42,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     configuration.GetSection(new OpenBankingConnectorSettings().SettingsSectionName))
                 .Configure<SoftwareStatementProfilesSettings>(
                     configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
+                .Configure<ObCertificateProfilesSettings>(
+                    configuration.GetSection(new ObCertificateProfilesSettings().SettingsSectionName))
                 .AddOptions();
             services.AddSingleton<ISettingsProvider<OpenBankingConnectorSettings>>(
                 sp =>
@@ -56,6 +59,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                         sp.GetRequiredService<IOptions<SoftwareStatementProfilesSettings>>().Value;
                     return new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(
                         softwareStatementProfilesSettings);
+                });
+            services.AddSingleton<ISettingsProvider<ObCertificateProfilesSettings>>(
+                sp =>
+                {
+                    ObCertificateProfilesSettings obCertificateProfilesSettings =
+                        sp.GetRequiredService<IOptions<ObCertificateProfilesSettings>>().Value;
+                    return new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
                 });
 
             // Get settings via IOptions (ensure no updates after app start) and add to service collection

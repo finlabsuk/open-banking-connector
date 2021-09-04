@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 {

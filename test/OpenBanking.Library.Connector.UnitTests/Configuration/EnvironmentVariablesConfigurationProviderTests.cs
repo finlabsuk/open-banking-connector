@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FsCheck;
 using FsCheck.Xunit;
 

@@ -5,6 +5,7 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -15,13 +16,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
     {
         public SoftwareStatementProfile(
             string id,
+            ObCertificateProfile obCertificateProfile,
             Configuration.SoftwareStatementProfile inputProfile,
             IApiClient apiClient)
         {
             // Pass-through properties
-            SigningKeyId = inputProfile.SigningKeyId;
-            SigningKey = inputProfile.SigningKey;
-            SigningCertificate = inputProfile.SigningCertificate;
+            SigningKeyId = obCertificateProfile.SigningKeyId;
+            SigningKey = obCertificateProfile.SigningKey;
+            SigningCertificate = obCertificateProfile.SigningCertificate;
             DefaultFragmentRedirectUrl = inputProfile.DefaultFragmentRedirectUrl;
             Id = id;
 

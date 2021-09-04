@@ -8,8 +8,8 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using ClientRegistrationModelsPublic =
@@ -42,6 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private BankRegistration _client = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation _dataInitiation = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4 _domesticConsent = null!;
+        private ObCertificateProfile _obCertificateProfile = null!;
         private PaymentInitiationModelsPublic.OBRisk1 _risk = null!;
         private SoftwareStatementProfile _softwareStatement = null!;
 
@@ -55,6 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
             _risk = CreateRisk();
             _domesticConsent = CreateDomesticConsent();
             _softwareStatement = CreateSoftwareStatement();
+            _obCertificateProfile = CreateObCertificateProfile();
             _client = CreateClient();
         }
 
@@ -224,13 +226,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private SoftwareStatementProfile CreateSoftwareStatement() => new SoftwareStatementProfile
         {
             DefaultFragmentRedirectUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
+            SoftwareStatement =
+                "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="
+        };
+
+        private ObCertificateProfile CreateObCertificateProfile() => new ObCertificateProfile
+        {
             SigningKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             SigningKeyId = "b",
             SigningCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
             TransportKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             TransportCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
-            SoftwareStatement =
-                "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="
         };
     }
 }

@@ -9,9 +9,9 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class SoftwareStatementProfileValidator : AbstractValidator<SoftwareStatementProfile>
+    public class ObCertificateProfileValidator : AbstractValidator<ObCertificateProfile>
     {
-        public SoftwareStatementProfileValidator()
+        public ObCertificateProfileValidator()
         {
             CascadeMode = CascadeMode.Continue;
 
@@ -31,21 +31,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
         private void CreateRules()
         {
-            RuleFor(p => p.SoftwareStatement)
+            RuleFor(p => p.SigningKeyId)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.SoftwareStatement)}.");
+                .WithMessage("Please provide a Signing Key ID.");
 
-            RuleFor(p => p.SoftwareStatement)
-                .Must((x, y, z) => HasDelimiters(x, y, z, '.', 2))
-                .WithMessage($"Please provide a valid {nameof(SoftwareStatementProfile.SoftwareStatement)}.");
-
-            RuleFor(p => p.DefaultFragmentRedirectUrl)
-                .Cascade(CascadeMode.Stop)
+            RuleFor(p => p.SigningKey)
                 .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.")
-                .Must(ValidationRules.IsUrl)
-                .WithMessage(
-                    $"Please provide a valid URL for {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.");
+                .WithMessage("Please provide a SigningKey.");
+
+            RuleFor(p => p.SigningCertificate)
+                .Must(ValidationRules.IsNonWhitespace)
+                .WithMessage("Please provide a SigningCertificate.");
+
+            RuleFor(p => p.TransportKey)
+                .Must(ValidationRules.IsNonWhitespace)
+                .WithMessage("Please provide a TransportKey.");
+
+            RuleFor(p => p.TransportCertificate)
+                .Must(ValidationRules.IsNonWhitespace)
+                .WithMessage("Please provide a TransportCertificate.");
         }
     }
 }

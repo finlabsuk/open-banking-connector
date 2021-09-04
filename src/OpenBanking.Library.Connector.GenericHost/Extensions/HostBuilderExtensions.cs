@@ -4,9 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
