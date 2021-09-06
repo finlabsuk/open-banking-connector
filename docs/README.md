@@ -46,20 +46,25 @@ Open Banking Connector contains a set of bank profiles which represent the confi
 ## Bank Tests
 
 
-## Website Generation
+## Docs Website
 
-To generate the docs website locally based on current edits, please ensure you have Python 3 installed and then open a terminal and `cd` to the OBC repo root. Run the following commands:
+To generate the docs website based on the contents of a local open-banking-connector repo (i.e. latest edits), you will need to install Python 3 and Material for MkDocs (mkdocs-material).
+
+Assuming you have installed Python, you can install Material for MkDocs as follows:
 ```powershell
 pip install mkdocs-material # if mkdocs-material not installed
+```
+
+To deploy the website locally for inspection and testing, please `cd` to the OBC repo root and run the following command:
+```powershell
 mkdocs serve
 ```
+This will return the URL you can use to see the website.
 
-If you have permissions you can update the public website on Git Pages using
+If you have permissions, you can update the public website on GitHub Pages using
 ```powershell
-mkdocs gh-deploy -m "Test deployment" -r upstream # adjust commit message and remote as required
+mkdocs gh-deploy -m "Test deployment" -r publicRemote # adjust commit message and remote as required
 ```
-
-
 
 
 
