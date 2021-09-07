@@ -1,7 +1,6 @@
 # Get Started
 
 Open Banking Connector is a collection of C# class libraries provided as packages in Nuget.
-
 ## Overview
 
 In order to use Open Banking Connector in your C# Open Banking application you will need to:
@@ -11,6 +10,8 @@ The following additional setup steps are also required and might differ between 
 - [Install the UK Open Banking root certificate](#install-the-uk-open-banking-root-certificate)
 - [Configure settings](#configure-settings) for Open Banking Connector including a database connection string
 - [Configure secrets](#configure-secrets) for Open Banking Connector including software statements and Open Banking certificates
+
+You can then use Open Banking Connector's [interface](../interface/README.md) within your application. Please see [interface docs](../interface/README.md) for examples of simple tasks such as configuring a bank (including registration creation) and creating a payment consent etc.
 
 ## Select a Nuget package
 
@@ -40,6 +41,3 @@ More information is provided [here.](./configure-settings.md)
 Open Banking Connector is also configured by secrets which provide sensitive information such as SoftwareStatementProfiles and ObCertificateProfiles.
 
 More information is provided here.
-
-
-

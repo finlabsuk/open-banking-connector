@@ -1,4 +1,4 @@
-# OpenBanking.Library.Connector Client Interface
+# Interface
 
 OBC.NET is an in-process functional library providing abstract integration with PISP providers. 
 

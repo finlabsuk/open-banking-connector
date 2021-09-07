@@ -42,7 +42,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 bankId,
                 softwareStatementProfileId,
                 registrationScope);
-            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder.ClientRegistration
+            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
+                .ClientRegistration
                 .BankRegistrations
                 .PostAsync(registrationRequest);
             Guid bankRegistrationId = registrationResp.Data!.Id;
