@@ -34,7 +34,7 @@ For staging/production environment, please follow your internal procedures.
 
 Open Banking Connector is configured by settings which e.g. provide a database connection string and limits which SoftwareStatementProfiles are loaded.
 
-More information is provided here.
+More information is provided [here.](./configure-settings.md)
 ## Configure secrets
 
 Open Banking Connector is also configured by secrets which provide sensitive information such as SoftwareStatementProfiles and ObCertificateProfiles.
