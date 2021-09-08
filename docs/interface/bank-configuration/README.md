@@ -1,23 +1,27 @@
-# Bank Configuration
+# Bank configuration
 
-The bank configuration interface allows you to set up a bank in Open Banking connector including its registration and functional (e.g. PISP) APIs.
+The `BankConfiguration` interface allows you to create and read configuration for a bank in Open Banking Connector.
 
-The bank configuration interface allows creation and use of three types of persisted objects.
+The interface consists of three [object types](#interface-object-types) on which [various methods](#supported-methods) are supported. Created objects correspond to records in the Open Banking Connector database.
 
-A Local only object type denotes the object stores the information in the local database.<br/>
-If the object is not local this means the object communicates with the bank.
+To set up a bank, you typically will create a `Bank `and at least one `BankRegistration` and one `BankApiInformationObject` object. More information is provided [here](./set-up-a-bank.md).
 
-Object Type | Parent Type | Local only | Description | 
+## Interface object types
+
+The thee bank configuration object types are shown in the table below. Each corresponds to a table in the Open Banking Connector database. Two of the types are local-only and are not created externally at a bank. Objects of `BankRegistration` type, however, are created externally at a bank as well as having a local database record.
+
+Object type | Parent type | Created at bank? | Description | 
 --- | --- | --- | ---
-Bank | N/A | Yes |
-BankApiInformationObject | Bank| Yes |
-BankRegistration | Bank| No |
+Bank | N/A | No | Base object for a bank which includes its IssuerUrl and FinancialId
+BankApiInformationObject | Bank| No | Object which describes a bank's functional APIs (e.g. PISP). Use multiple objects to allow access to multiple API versions supported by a bank (e.g. multiple versions of PISP), or to test new endpoints etc.
+BankReistration | Bank| Yes | Object which describes a registration (i.e. OAuth2 client registration) with a bank based on a software statement. Use multiple objects to support multiple registrations with a bank or to test a new registration etc.
 
+## Supported methods
 
-# Methods supported
+The table below shows the methods supported for each object type as well as the main request and response types for these methods. Methods that include the word "Local" operate on the Open Banking Connector database but not at the external bank.
 
-Objects | Methods |Request Type|Response Type
+Object type | Methods | Request type| Response type
  --- | --- | ---| ---
- Bank|GetLocalAsync <br/> PostLocalAsync <br/> DeleteLocalAsync <br/>|[Bank](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/Bank.cs#L23)|[Bank](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankResponse.cs#L18)
+ Bank|GetLocalAsync <br/> PostLocalAsync <br/> DeleteLocalAsync <br/>|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Request/Bank.cs#L23)|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankResponse.cs#L18)
 BankRegistration| PostAsync <br/> GetLocalAsync <br/> DeleteAsync |[BankRegistration](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/BankRegistration.cs#L17)|[BankRegistration](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankRegistrationResponse.cs#L22)
 BankApiInformation| GetLocalAsyn <br/> PostLocalAsync <br/> DeleteLocalAsync |[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/BankApiInformation.cs#L14)|[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankApiInformationResponse.cs#L20)
