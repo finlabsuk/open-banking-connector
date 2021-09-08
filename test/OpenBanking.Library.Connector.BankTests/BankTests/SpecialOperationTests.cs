@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 _serviceProvider.GetRequiredService<BankProfileDefinitions>();
 
             // GET bank (example: NatWest)
-            IFluentResponse<IQueryable<BankResponse>> bankResp = await requestBuilder.ClientRegistration
+            IFluentResponse<IQueryable<BankResponse>> bankResp = await requestBuilder.BankConfiguration
                 .Banks
                 .GetLocalAsync(x => x.FinancialId == bankProfileDefinitions.NatWest.FinancialId);
             bankResp.Messages.Should().BeEmpty();
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // GET bank registration (example: assume single registration for Lloyds)
             IFluentResponse<IQueryable<BankRegistrationResponse>> registrationResp = await requestBuilder
-                .ClientRegistration
+                .BankConfiguration
                 .BankRegistrations
                 .GetLocalAsync(x => x.BankId == bank.Id);
             registrationResp.Messages.Should().BeEmpty();
@@ -51,7 +51,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             BankRegistrationResponse bankRegistration = registrationResp.Data!.Single();
 
             // DELETE bank registration
-            IFluentResponse registrationResp2 = await requestBuilder.ClientRegistration
+            IFluentResponse registrationResp2 = await requestBuilder
+                .BankConfiguration
                 .BankRegistrations
                 .DeleteAsync(bankRegistration.Id, null, true);
             registrationResp2.Messages.Should().BeEmpty();

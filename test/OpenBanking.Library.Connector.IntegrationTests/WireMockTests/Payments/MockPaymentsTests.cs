@@ -91,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 FinancialId = _mockData.GetFapiHeader(),
                 Name = "MyBank"
             };
-            IFluentResponse<BankResponse> bankResp = requestBuilder.ClientRegistration
+            IFluentResponse<BankResponse> bankResp = requestBuilder.BankConfiguration
                 .Banks
                 .PostLocalAsync(bankRequest)
                 .Result;
@@ -109,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 RegistrationScope = RegistrationScope.PaymentInitiation,
                 AllowMultipleRegistrations = false
             };
-            IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.ClientRegistration
+            IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.BankConfiguration
                 .BankRegistrations
                 .PostAsync(registrationRequest)
                 .Result;
@@ -130,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 }
             };
             IFluentResponse<BankApiInformationResponse> bankApiInformationResponse = requestBuilder
-                .ClientRegistration
+                .BankConfiguration
                 .BankApiInformationObjects
                 .PostLocalAsync(apiInformationRequest)
                 .Result;

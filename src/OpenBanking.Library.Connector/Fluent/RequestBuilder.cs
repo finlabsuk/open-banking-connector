@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         /// <summary>
         ///     API for setting up banks in OBC including OAuth2 clients and functional APIs
         /// </summary>
-        IClientRegistrationContext ClientRegistration { get; }
+        IBankConfigurationContext BankConfiguration { get; }
 
         /// <summary>
         ///     API corresponding to UK Open Banking Payment Initiation functional API
@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
 
-        public IClientRegistrationContext ClientRegistration => new ClientRegistrationContext(CreateContext());
+        public IBankConfigurationContext BankConfiguration => new BankConfigurationContext(CreateContext());
         public IPaymentInitiationContext PaymentInitiation => new PaymentInitiationContext(CreateContext());
 
         public IAccountAndTransactionContext AccountAndTransaction =>

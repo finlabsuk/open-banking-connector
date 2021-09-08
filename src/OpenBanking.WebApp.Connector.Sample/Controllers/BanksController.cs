@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         public async Task<IActionResult> PostAsync([FromBody] Bank request)
         {
             // Operation
-            IFluentResponse<BankResponse> fluentResponse = await _obcRequestBuilder.ClientRegistration
+            IFluentResponse<BankResponse> fluentResponse = await _obcRequestBuilder.BankConfiguration
                 .Banks
                 .PostLocalAsync(request);
 

@@ -33,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postRequest")
                 .WriteFile(bankRequest);
             bankRequest.Name = testNameUnique;
-            IFluentResponse<BankResponse> bankResp = await requestBuilder.ClientRegistration
+            IFluentResponse<BankResponse> bankResp = await requestBuilder
+                .BankConfiguration
                 .Banks
                 .PostLocalAsync(bankRequest);
 
@@ -61,7 +62,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             registrationRequest.Name = testNameUnique;
             registrationRequest.BankId = bankId;
-            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder.ClientRegistration
+            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
+                .BankConfiguration
                 .BankRegistrations
                 .PostAsync(
                     registrationRequest,
@@ -89,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             apiInformationRequest.Name = testNameUnique;
             apiInformationRequest.BankId = bankId;
             IFluentResponse<BankApiInformationResponse> apiInformationResponse = await requestBuilder
-                .ClientRegistration
+                .BankConfiguration
                 .BankApiInformationObjects
                 .PostLocalAsync(apiInformationRequest);
 
@@ -109,7 +111,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ClientRegistrationApiSettings clientRegistrationApiSettings)
         {
             // Delete objects
-            IFluentResponse bankApiInformationResp = await requestBuilder.ClientRegistration
+            IFluentResponse bankApiInformationResp = await requestBuilder
+                .BankConfiguration
                 .BankApiInformationObjects
                 .DeleteLocalAsync(bankApiInformationId);
             bankApiInformationResp.Should().NotBeNull();
@@ -118,13 +121,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IFluentResponse bankRegistrationResp;
             if (clientRegistrationApiSettings.UseDeleteEndpoint)
             {
-                bankRegistrationResp = await requestBuilder.ClientRegistration
+                bankRegistrationResp = await requestBuilder
+                    .BankConfiguration
                     .BankRegistrations
                     .DeleteAsync(bankRegistrationId, null, clientRegistrationApiSettings.UseRegistrationAccessToken);
             }
             else
             {
-                bankRegistrationResp = await requestBuilder.ClientRegistration
+                bankRegistrationResp = await requestBuilder
+                    .BankConfiguration
                     .BankRegistrations
                     .DeleteLocalAsync(bankRegistrationId);
             }
@@ -132,7 +137,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankRegistrationResp.Should().NotBeNull();
             bankRegistrationResp.Messages.Should().BeEmpty();
 
-            IFluentResponse bankResp = await requestBuilder.ClientRegistration
+            IFluentResponse bankResp = await requestBuilder
+                .BankConfiguration
                 .Banks
                 .DeleteLocalAsync(bankId);
             bankResp.Should().NotBeNull();

@@ -11,7 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.ClientRegistration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
         IPostContext<BankRegistration, BankRegistrationResponse>,

@@ -42,7 +42,9 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     Guid.NewGuid().ToString("N"),
                     testNameUnique);
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
-                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
+                await requestBuilder
+                    .PaymentInitiation
+                    .DomesticPaymentConsents
                     .PostAsync(domesticPaymentConsentRequest);
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
 
@@ -61,7 +63,9 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         {
             // GET domestic payment consent
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp2 =
-                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
+                await requestBuilder
+                    .PaymentInitiation
+                    .DomesticPaymentConsents
                     .GetAsync(domesticPaymentConsentId);
         }
     }

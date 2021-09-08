@@ -7,9 +7,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
 using BankApiInformationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiInformation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.ClientRegistration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
-    public interface IClientRegistrationContext
+    public interface IBankConfigurationContext
     {
         /// <summary>
         ///     API for Bank object which is the base object for a bank and is parent to BankRegistration and BankProfile objects
@@ -31,11 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.ClientRegistratio
             BankRegistrations { get; }
     }
 
-    internal class ClientRegistrationContext : IClientRegistrationContext
+    internal class BankConfigurationContext : IBankConfigurationContext
     {
         private readonly ISharedContext _sharedContext;
 
-        public ClientRegistrationContext(ISharedContext sharedContext)
+        public BankConfigurationContext(ISharedContext sharedContext)
         {
             _sharedContext = sharedContext;
         }

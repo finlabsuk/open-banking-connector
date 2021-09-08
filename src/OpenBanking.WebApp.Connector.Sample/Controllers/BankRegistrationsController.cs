@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         {
             // Operation
             IFluentResponse<BankRegistrationResponse> fluentResponse = await _obcRequestBuilder
-                .ClientRegistration
+                .BankConfiguration
                 .BankRegistrations
                 .PostAsync(request);
 
