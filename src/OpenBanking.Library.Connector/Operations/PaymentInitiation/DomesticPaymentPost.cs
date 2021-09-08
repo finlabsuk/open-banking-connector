@@ -89,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 {
                     Data = new PaymentInitiationModelsPublic.OBWriteDomestic2Data
                     {
-                        ConsentId = domesticPaymentConsent.BankApiId,
+                        ConsentId = domesticPaymentConsent.ExternalApiId,
                         Initiation = initiation
                     },
                     Risk = consentRequest.Risk

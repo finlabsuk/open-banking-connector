@@ -34,7 +34,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     {
         public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 BankApiRequest { get; set; } = null!;
 
-        public string BankApiId => BankApiResponse.Data.Data.ConsentId;
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        public string ExternalApiId { get; set; } = null!;
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -106,6 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     apiResponse,
                     timeProvider,
                     modifiedBy);
+            ExternalApiId = BankApiResponse.Data.Data.ConsentId;
         }
 
         public DomesticPaymentConsentResponse PublicPostResponse => PublicGetResponse;
@@ -189,7 +194,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
-            => UpdateAfterApiPost(apiResponse, modifiedBy, timeProvider);
+        {
+            BankApiResponse =
+                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
+                    apiResponse,
+                    timeProvider,
+                    modifiedBy);
+        }
 
         public void UpdateAfterApiGet(
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 apiResponse,

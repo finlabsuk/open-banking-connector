@@ -77,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
-            string bankApiId = persistedObject.BankApiId;
+            string bankApiId = persistedObject.ExternalApiId;
 
             return (bankApiId, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
                 null, nonErrorMessages);

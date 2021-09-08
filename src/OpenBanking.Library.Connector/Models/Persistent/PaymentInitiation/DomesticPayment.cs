@@ -38,7 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public PaymentInitiationModelsPublic.OBWriteDomestic2 BankApiRequest { get; set; } = null!;
 
-        public string BankApiId => BankApiResponse.Data.Data.DomesticPaymentId;
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        public string ExternalApiId { get; set; } = null!;
 
         public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; set; } =
             null!;
@@ -81,6 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     apiResponse,
                     timeProvider,
                     modifiedBy);
+            ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
         }
 
         public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
@@ -145,7 +150,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
-            => UpdateAfterApiPost(apiResponse, modifiedBy, timeProvider);
+        {
+            BankApiResponse =
+                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    apiResponse,
+                    timeProvider,
+                    modifiedBy);
+        }
 
         public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
             PaymentInitiationApi paymentInitiationApi,

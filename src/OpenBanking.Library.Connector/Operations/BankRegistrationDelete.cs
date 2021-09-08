@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     $"No record found for SoftwareStatementProfile with ID {persistedObject.SoftwareStatementProfileId}");
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            string bankApiId = persistedObject.BankApiId;
+            string bankApiId = persistedObject.ExternalApiId;
 
             Uri uri = new Uri(persistedObject.OpenIdConfiguration.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 

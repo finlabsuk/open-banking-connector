@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {id}.");
-            string bankApiId = persistedObject.BankApiId;
+            string bankApiId = persistedObject.ExternalApiId;
             BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
