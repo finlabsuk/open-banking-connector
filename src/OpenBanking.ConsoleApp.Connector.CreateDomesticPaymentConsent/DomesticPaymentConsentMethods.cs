@@ -21,14 +21,14 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// </summary>
         /// <param name="bankProfile"></param>
         /// <param name="bankRegistrationId"></param>
-        /// <param name="bankApiInformationId"></param>
+        /// <param name="bankApiSetId"></param>
         /// <param name="requestBuilder"></param>
         /// <param name="testNameUnique"></param>
         /// <returns></returns>
         public static async Task<Guid> Create(
             BankProfile bankProfile,
             Guid bankRegistrationId,
-            Guid bankApiInformationId,
+            Guid bankApiSetId,
             IRequestBuilder requestBuilder,
             string testNameUnique)
         {
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             DomesticPaymentConsent domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     bankRegistrationId,
-                    bankApiInformationId,
+                    bankApiSetId,
                     DomesticPaymentTypeEnum.PersonToMerchant,
                     Guid.NewGuid().ToString("N"),
                     Guid.NewGuid().ToString("N"),

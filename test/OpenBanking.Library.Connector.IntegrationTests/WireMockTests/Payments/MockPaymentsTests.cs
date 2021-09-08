@@ -49,7 +49,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature",
                 ObCertificateProfileId = "0",
                 DefaultFragmentRedirectUrl = "http://redirecturl.com",
-
             };
             var obCertificateProfile = new ObCertificateProfile
             {
@@ -120,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             Guid bankRegistrationId = bankRegistrationResp.Data!.Id;
 
             // Create bank API information
-            BankApiInformation apiInformationRequest = new BankApiInformation
+            BankApiSet apiSetRequest = new BankApiSet
             {
                 BankId = bankId,
                 PaymentInitiationApi = new PaymentInitiationApi
@@ -129,10 +128,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     BaseUrl = MockRoutes.Url
                 }
             };
-            IFluentResponse<BankApiInformationResponse> bankApiInformationResponse = requestBuilder
+            IFluentResponse<BankApiSetResponse> bankApiInformationResponse = requestBuilder
                 .BankConfiguration
-                .BankApiInformationObjects
-                .PostLocalAsync(apiInformationRequest)
+                .BankApiSets
+                .PostLocalAsync(apiSetRequest)
                 .Result;
 
             bankApiInformationResponse.Should().NotBeNull();

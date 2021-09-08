@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 {
     public static class ClientRegistrationSubtests
     {
-        public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId)> PostAndGetObjects(
+        public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> PostAndGetObjects(
             string softwareStatementProfileId,
             RegistrationScope registrationScope,
             IRequestBuilder requestBuilder,
@@ -80,27 +80,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
             // Create bank API information
-            BankApiInformation apiInformationRequest = bankProfile.BankApiInformationRequest(
+            BankApiSet apiSetRequest = bankProfile.BankApiSetRequest(
                 "placeholder: dynamically generated based on unused names",
                 default);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankApiInformation")
                 .AppendToPath("postRequest")
-                .WriteFile(apiInformationRequest);
+                .WriteFile(apiSetRequest);
 
-            apiInformationRequest.Name = testNameUnique;
-            apiInformationRequest.BankId = bankId;
-            IFluentResponse<BankApiInformationResponse> apiInformationResponse = await requestBuilder
+            apiSetRequest.Name = testNameUnique;
+            apiSetRequest.BankId = bankId;
+            IFluentResponse<BankApiSetResponse> apiSetResponse = await requestBuilder
                 .BankConfiguration
-                .BankApiInformationObjects
-                .PostLocalAsync(apiInformationRequest);
+                .BankApiSets
+                .PostLocalAsync(apiSetRequest);
 
-            apiInformationResponse.Should().NotBeNull();
-            apiInformationResponse.Messages.Should().BeEmpty();
-            apiInformationResponse.Data.Should().NotBeNull();
-            Guid bankApiInformationId = apiInformationResponse.Data!.Id;
+            apiSetResponse.Should().NotBeNull();
+            apiSetResponse.Messages.Should().BeEmpty();
+            apiSetResponse.Data.Should().NotBeNull();
+            Guid bankApiSetId = apiSetResponse.Data!.Id;
 
-            return (bankId, bankRegistrationId, bankApiInformationId);
+            return (bankId, bankRegistrationId, bankApiSetId);
         }
 
         public static async Task DeleteObjects(
@@ -113,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Delete objects
             IFluentResponse bankApiInformationResp = await requestBuilder
                 .BankConfiguration
-                .BankApiInformationObjects
+                .BankApiSets
                 .DeleteLocalAsync(bankApiInformationId);
             bankApiInformationResp.Should().NotBeNull();
             bankApiInformationResp.Messages.Should().BeEmpty();

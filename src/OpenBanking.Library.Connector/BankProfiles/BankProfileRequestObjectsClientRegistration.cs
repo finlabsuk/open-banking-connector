@@ -38,8 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 Name = name
             };
 
-        public BankApiInformation BankApiInformationRequest(string name, Guid bankId) =>
-            new BankApiInformation
+        public BankApiSet BankApiSetRequest(string name, Guid bankId) =>
+            new BankApiSet
             {
                 BankId = bankId,
                 PaymentInitiationApi = PaymentInitiationApi,

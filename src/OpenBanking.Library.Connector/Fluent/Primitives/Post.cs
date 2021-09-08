@@ -17,7 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FluentValidation.Results;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
-using BankApiInformationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiInformation;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
 using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
@@ -165,7 +165,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
                 context.ApiVariantMapper,
-                context.DbService.GetDbEntityMethodsClass<BankApiInformationPersisted>(),
+                context.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
                 context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 

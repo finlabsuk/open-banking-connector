@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
     ///     A Bank is the base type used to describe a bank ("ASPSP") in OBC.
     ///     It effectively captures the static data associated with a bank which is then used when
     ///     creating bank registrations and profiles for that bank.
-    ///     Each <see cref="BankRegistration" /> and <see cref="BankApiInformation" /> is
+    ///     Each <see cref="BankRegistration" /> and <see cref="BankApiSet" /> is
     ///     a child object of a Bank.
     ///     Such child objects can, when created, update their Bank parent to point to them
     ///     as e.g. the "default bank registration" or "default bank profile" allowing

@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
-using BankApiInformationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiInformation;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
@@ -19,9 +19,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         /// <summary>
         ///     API for BankProfile object which adds configures functional API endpoints for a BankRegistration
         /// </summary>
-        ILocalEntityContext<BankApiInformation,
-                IBankApiInformationPublicQuery, BankApiInformationResponse>
-            BankApiInformationObjects { get; }
+        ILocalEntityContext<BankApiSet,
+                IBankApiSetPublicQuery, BankApiSetResponse>
+            BankApiSets { get; }
 
         /// <summary>
         ///     API for BankRegistration object which corresponds to an OAuth2 client registration with a bank (represented by a
@@ -48,10 +48,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
             BankRegistrations =>
             new BankRegistrationsContext(_sharedContext);
 
-        public ILocalEntityContext<BankApiInformation, IBankApiInformationPublicQuery,
-                BankApiInformationResponse>
-            BankApiInformationObjects =>
-            new LocalEntityContext<BankApiInformationPersisted, BankApiInformation,
-                IBankApiInformationPublicQuery, BankApiInformationResponse>(_sharedContext);
+        public ILocalEntityContext<BankApiSet, IBankApiSetPublicQuery,
+                BankApiSetResponse>
+            BankApiSets =>
+            new LocalEntityContext<BankApiSetPersisted, BankApiSet,
+                IBankApiSetPublicQuery, BankApiSetResponse>(_sharedContext);
     }
 }

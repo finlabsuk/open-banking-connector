@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 
         Guid BankRegistrationId { get; }
 
-        Guid BankApiInformationId { get; }
+        Guid BankApiSetId { get; }
     }
 
     /// <summary>
@@ -32,15 +32,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string? createdBy,
             ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> bankApiResponse,
             Guid bankRegistrationId,
-            Guid bankApiInformationId) : base(id, name, created, createdBy)
+            Guid bankApiSetId) : base(id, name, created, createdBy)
         {
             BankApiResponse = bankApiResponse;
             BankRegistrationId = bankRegistrationId;
-            BankApiInformationId = bankApiInformationId;
+            BankApiSetId = bankApiSetId;
         }
 
         public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse { get; }
         public Guid BankRegistrationId { get; }
-        public Guid BankApiInformationId { get; }
+        public Guid BankApiSetId { get; }
     }
 }

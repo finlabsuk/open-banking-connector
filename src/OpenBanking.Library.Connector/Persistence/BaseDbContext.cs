@@ -9,8 +9,8 @@ using Newtonsoft.Json;
 using BankConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Bank;
 using BankRegistrationConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankRegistration;
-using BankApiInformationConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankApiInformation;
+using BankApiSetConfig =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankApiSet;
 using DomesticPaymentConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsent;
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         internal DbSet<BankRegistration> BankRegistrations => Set<BankRegistration>();
 
-        internal DbSet<BankApiInformation> BankApiInformationRecords => Set<BankApiInformation>();
+        internal DbSet<BankApiSet> BankApiSets => Set<BankApiSet>();
 
         internal DbSet<DomesticPaymentConsent> DomesticPaymentConsents => Set<DomesticPaymentConsent>();
 
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             modelBuilder.ApplyConfiguration(new BankConfig(JsonFormatting));
 
-            modelBuilder.ApplyConfiguration(new BankApiInformationConfig(JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankApiSetConfig(JsonFormatting));
 
             modelBuilder.ApplyConfiguration(new BankRegistrationConfig(JsonFormatting));
 

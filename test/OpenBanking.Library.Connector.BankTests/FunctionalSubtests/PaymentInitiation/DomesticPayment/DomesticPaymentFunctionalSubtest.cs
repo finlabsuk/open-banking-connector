@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             DomesticPaymentFunctionalSubtestEnum subtestEnum,
             BankProfile bankProfile,
             Guid bankRegistrationId,
-            Guid bankApiInformationId,
+            Guid bankApiSetId,
             PaymentInitiationApiSettings paymentInitiationApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postRequest")
                 .WriteFile(domesticPaymentConsentRequest);
             domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
-            domesticPaymentConsentRequest.BankApiInformationId = bankApiInformationId;
+            domesticPaymentConsentRequest.BankApiSetId = bankApiSetId;
             domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.EndToEndIdentification =
@@ -144,10 +144,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             if (includeConsentAuth)
             {
                 if (puppeteerLaunchOptions is null ||
-                    nodeJsService is null )
+                    nodeJsService is null)
                 {
-                    throw new ArgumentNullException(
-                        $"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
+                    throw new ArgumentNullException($"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
                 }
 
                 // Call Node JS to authorise consent in UI via Puppeteer

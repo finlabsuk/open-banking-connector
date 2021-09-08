@@ -11,20 +11,20 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
-using BankApiInformationRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankApiInformation;
+using BankApiSetRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankApiSet;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     /// <summary>
-    ///     Persisted type for BankProfile.
+    ///     Persisted type for Bank API Set
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    internal partial class BankApiInformation :
+    internal partial class BankApiSet :
         EntityBase,
-        ISupportsFluentDeleteLocal<BankApiInformation>,
-        IBankApiInformationPublicQuery
+        ISupportsFluentDeleteLocal<BankApiSet>,
+        IBankApiSetPublicQuery
     {
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
@@ -36,10 +36,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public Guid BankId { get; set; }
     }
 
-    internal partial class BankApiInformation :
-        ISupportsFluentLocalEntityPost<BankApiInformationRequest, BankApiInformationResponse>
+    internal partial class BankApiSet :
+        ISupportsFluentLocalEntityPost<BankApiSetRequest, BankApiSetResponse>
     {
-        public BankApiInformationResponse PublicGetResponse => new BankApiInformationResponse(
+        public BankApiSetResponse PublicGetResponse => new BankApiSetResponse(
             Id,
             Name,
             Created,
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             BankId);
 
         public void Initialise(
-            BankApiInformationRequest request,
+            BankApiSetRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
@@ -57,9 +57,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             BankId = request.BankId;
         }
 
-        public BankApiInformationResponse PublicPostResponse => PublicGetResponse;
+        public BankApiSetResponse PublicPostResponse => PublicGetResponse;
     }
 
-    internal partial class BankApiInformation :
-        ISupportsFluentLocalEntityGet<BankApiInformationResponse> { }
+    internal partial class BankApiSet :
+        ISupportsFluentLocalEntityGet<BankApiSetResponse> { }
 }

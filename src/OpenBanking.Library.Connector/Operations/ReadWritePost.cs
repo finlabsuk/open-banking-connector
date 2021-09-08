@@ -20,7 +20,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using BankApiInformationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiInformation;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
 using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
@@ -113,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract
             Task<(
                 TApiRequest apiRequest,
-                BankApiInformationPersisted bankApiInformation,
+                BankApiSetPersisted bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
                 TokenEndpointResponse? userTokenEndpointResponse,

@@ -10,16 +10,16 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
-    internal class BankApiInformation : Base<Persistent.BankApiInformation>
+    internal class BankApiSet : Base<Persistent.BankApiSet>
     {
         private readonly Formatting _formatting;
 
-        public BankApiInformation(Formatting formatting)
+        public BankApiSet(Formatting formatting)
         {
             _formatting = formatting;
         }
 
-        public override void Configure(EntityTypeBuilder<Persistent.BankApiInformation> builder)
+        public override void Configure(EntityTypeBuilder<Persistent.BankApiSet> builder)
         {
             base.Configure(builder);
 

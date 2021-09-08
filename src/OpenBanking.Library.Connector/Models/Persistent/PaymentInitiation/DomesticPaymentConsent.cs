@@ -39,8 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
 
-        [ForeignKey("BankApiInformationId")]
-        public BankApiInformation BankApiInformationNavigation { get; set; } = null!;
+        [ForeignKey("BankApiSetId")]
+        public BankApiSet BankApiSetNavigation { get; set; } = null!;
 
         public List<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
 
@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public Guid BankRegistrationId { get; set; }
 
-        public Guid BankApiInformationId { get; set; }
+        public Guid BankApiSetId { get; set; }
 
         public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse
         {
@@ -74,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 CreatedBy,
                 BankApiResponse,
                 BankRegistrationId,
-                BankApiInformationId);
+                BankApiSetId);
 
         public void Initialise(
             DomesticPaymentConsentRequest request,
@@ -83,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             BankRegistrationId = request.BankRegistrationId;
-            BankApiInformationId = request.BankApiInformationId;
+            BankApiSetId = request.BankApiSetId;
             BankApiFundsConfirmationResponse =
                 new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
                     null,

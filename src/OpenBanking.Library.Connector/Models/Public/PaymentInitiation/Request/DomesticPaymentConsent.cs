@@ -16,26 +16,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public class DomesticPaymentConsent : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     Request object from recent version of UK Open Banking spec. Open Banking can be configured
+        ///     to translate this for banks supporting an earlier spec version.
+        /// </summary>
         public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 WriteDomesticConsent { get; set; } = null!;
 
         /// <summary>
-        ///     Specifies BankProfile to be used for consent.
-        ///     When not specified (null), <see cref="BankId" /> must be specified (non-null) and will be used to
-        ///     specify the BankProfile according to <see cref="Persistent.Bank.DefaultBankProfileId" /> or
-        ///     <see cref="Persistent.Bank.StagingBankProfileId" /> (depending on
-        ///     <see cref="UseStagingNotDefaultBankProfile" />).
+        ///     Specifies Bank API Set to use when creating consent.
+        ///     Both <see cref="BankApiSetId" /> and <see cref="BankRegistrationId" /> must point to objects with the same parent
+        ///     (Bank ID).
         /// </summary>
-        public Guid BankApiInformationId { get; set; }
+        public Guid BankApiSetId { get; set; }
 
         /// <summary>
-        ///     Specifies BankRegistration to be used for consent.
-        ///     When not specified (null), <see cref="BankId" /> must be specified (non-null) and will be used to
-        ///     specify the BankRegistration according to <see cref="Persistent.Bank.DefaultBankRegistrationId" /> or
-        ///     <see cref="Persistent.Bank.StagingBankRegistrationId" /> (depending on
-        ///     <see cref="UseStagingNotDefaultBankRegistration" />).
+        ///     Specifies Bank Registration to use when creating consent.
+        ///     Both <see cref="BankApiSetId" /> and <see cref="BankRegistrationId" /> must point to objects with the same parent
+        ///     (Bank ID).
         /// </summary>
         public Guid BankRegistrationId { get; set; }
-
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new DomesticPaymentConsentValidator()

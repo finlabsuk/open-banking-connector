@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         public DomesticPaymentConsent DomesticPaymentConsentRequest(
             Guid bankRegistrationId,
-            Guid bankApiInformationId,
+            Guid bankApiSetId,
             DomesticPaymentTypeEnum domesticPaymentType,
             string instructionIdentification,
             string endToEndIdentification,
@@ -148,7 +148,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                         _ => throw new ArgumentException(
                             $"{nameof(DomesticPaymentTypeEnum)} is not valid ${nameof(DomesticPaymentTypeEnum)} or needs to be added to this switch statement.")
                     },
-                BankApiInformationId = bankApiInformationId,
+                BankApiSetId = bankApiSetId,
                 BankRegistrationId = bankRegistrationId,
                 Name = name
             };

@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    public interface IBankApiInformationPublicQuery : IBaseQuery
+    public interface IBankApiSetPublicQuery : IBaseQuery
     {
         PaymentInitiationApi? PaymentInitiationApi { get; }
 
@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class BankApiInformationResponse : BaseResponse, IBankApiInformationPublicQuery
+    public class BankApiSetResponse : BaseResponse, IBankApiSetPublicQuery
     {
-        internal BankApiInformationResponse(
+        internal BankApiSetResponse(
             Guid id,
             string? name,
             DateTimeOffset created,

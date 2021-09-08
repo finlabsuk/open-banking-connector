@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     {
         public List<BankRegistration> BankRegistrationsNavigation { get; set; } = null!;
 
-        public List<BankApiInformation> BankApiInformationRecordsNavigation { get; set; } = null!;
+        public List<BankApiSet> BankApiSetsNavigation { get; set; } = null!;
 
         public string IssuerUrl { get; set; } = null!;
 

@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
     {
-        private readonly IDbReadOnlyEntityMethods<BankApiInformation> _bankApiInformationMethods;
+        private readonly IDbReadOnlyEntityMethods<BankApiSet> _bankApiSetMethods;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
 
         public DomesticPaymentConsentPost(
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IDbReadOnlyEntityMethods<BankApiInformation> bankApiInformationMethods,
+            IDbReadOnlyEntityMethods<BankApiSet> bankApiSetMethods,
             IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -55,14 +55,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient,
             mapper)
         {
-            _bankApiInformationMethods = bankApiInformationMethods;
+            _bankApiSetMethods = bankApiSetMethods;
             _bankRegistrationMethods = bankRegistrationMethods;
         }
 
         protected override string RelativePath => "/domestic-payment-consents";
 
         protected override async
-            Task<(PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest, BankApiInformation
+            Task<(PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest, BankApiSet
                 bankApiInformation, BankRegistration bankRegistration, string bankFinancialId,
                 TokenEndpointResponse? userTokenEndpointResponse, List<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> ApiPostRequestData(DomesticPaymentConsent request)
@@ -80,14 +80,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-            Guid bankApiInformationId = request.BankApiInformationId;
-            BankApiInformation bankApiInformation =
-                await _bankApiInformationMethods
+            Guid bankApiInformationId = request.BankApiSetId;
+            BankApiSet bankApiSet =
+                await _bankApiSetMethods
                     .DbSetNoTracking
                     .SingleOrDefaultAsync(x => x.Id == bankApiInformationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankApiInformation {bankApiInformationId} specified by request.");
-            if (bankApiInformation.BankId != bankRegistration.BankId)
+            if (bankApiSet.BankId != bankRegistration.BankId)
             {
                 throw new ArgumentException("BankRegistrationId and BankProfileId objects do not share same BankId.");
             }
@@ -97,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Create request
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest = request.WriteDomesticConsent;
 
-            return (apiRequest, bankApiInformation, bankRegistration, bankFinancialId, null,
+            return (apiRequest, bankApiSet, bankRegistration, bankFinancialId, null,
                 nonErrorMessages);
         }
     }

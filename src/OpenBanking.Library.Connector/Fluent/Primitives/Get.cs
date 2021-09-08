@@ -13,7 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using BankApiInformationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiInformation;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
 using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -138,7 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
                 context.ApiVariantMapper,
-                context.DbService.GetDbEntityMethodsClass<BankApiInformationPersisted>(),
+                context.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
                 context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 
@@ -155,7 +155,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
                 context.ApiVariantMapper,
-                context.DbService.GetDbEntityMethodsClass<BankApiInformationPersisted>(),
+                context.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
                 context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 

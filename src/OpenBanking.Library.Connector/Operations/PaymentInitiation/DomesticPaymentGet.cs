@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         protected override string RelativePathBeforeId => "/domestic-payments";
 
         protected override async Task<(string bankApiId, DomesticPayment
-            persistedObject, BankApiInformation bankApiInformation, BankRegistration bankRegistration,
+            persistedObject, BankApiSet bankApiInformation, BankRegistration bankRegistration,
             string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSet
                     .Include(x => x.DomesticPaymentConsentNavigation)
-                    .ThenInclude(x => x.BankApiInformationNavigation)
+                    .ThenInclude(x => x.BankApiSetNavigation)
                     .Include(x => x.DomesticPaymentConsentNavigation)
                     .ThenInclude(x => x.BankRegistrationNavigation)
                     .ThenInclude(x => x.BankNavigation)
@@ -73,13 +73,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 throw new KeyNotFoundException($"No record found for Domestic Payment with ID {id}.");
             DomesticPaymentConsent domesticPaymentConsent =
                 persistedObject.DomesticPaymentConsentNavigation;
-            BankApiInformation bankApiInformation = domesticPaymentConsent.BankApiInformationNavigation;
+            BankApiSet bankApiSet = domesticPaymentConsent.BankApiSetNavigation;
             BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             string bankApiId = persistedObject.BankApiId;
 
-            return (bankApiId, persistedObject, bankApiInformation, bankRegistration, bankFinancialId,
+            return (bankApiId, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
                 null, nonErrorMessages);
         }
     }

@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentConsentResponse,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
     {
-        private readonly IDbReadOnlyEntityMethods<BankApiInformation> _bankApiInformationMethods;
+        private readonly IDbReadOnlyEntityMethods<BankApiSet> _bankApiSetMethods;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
 
         public DomesticPaymentConsentGetFundsConfirmation(
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IDbReadOnlyEntityMethods<BankApiInformation> bankApiInformationMethods,
+            IDbReadOnlyEntityMethods<BankApiSet> bankApiSetMethods,
             IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient,
             mapper)
         {
-            _bankApiInformationMethods = bankApiInformationMethods;
+            _bankApiSetMethods = bankApiSetMethods;
             _bankRegistrationMethods = bankRegistrationMethods;
         }
 
@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         protected override string RelativePathAfterId => "/funds-confirmation";
 
         protected override async Task<(string bankApiId, DomesticPaymentConsentPersisted
-            persistedObject, BankApiInformation bankApiInformation, BankRegistration bankRegistration,
+            persistedObject, BankApiSet bankApiInformation, BankRegistration bankRegistration,
             string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
@@ -77,13 +77,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSet
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiInformationNavigation)
+                    .Include(o => o.BankApiSetNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {id}.");
             string bankApiId = persistedObject.BankApiId;
-            BankApiInformation bankApiInformation = persistedObject.BankApiInformationNavigation;
+            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         .First()! // We already filtered out null entries above
                     : throw new InvalidOperationException("No token is available for Domestic Payment Consent.");
 
-            return (bankApiId, persistedObject, bankApiInformation, bankRegistration, bankFinancialId,
+            return (bankApiId, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
                 userTokenEndpointResponse, nonErrorMessages);
         }
     }

@@ -8,9 +8,9 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class BankApiInformationValidator : AbstractValidator<BankApiInformation>
+    public class BankApiSetValidator : AbstractValidator<BankApiSet>
     {
-        public BankApiInformationValidator()
+        public BankApiSetValidator()
         {
             CascadeMode = CascadeMode.Continue;
             CreateRules();
@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
             RuleFor(x => x.PaymentInitiationApi)
                 .Must(ValidationRules.IsNotNull)
-                .WithMessage($"Missing {nameof(BankApiInformation.PaymentInitiationApi)}.");
+                .WithMessage($"Missing {nameof(BankApiSet.PaymentInitiationApi)}.");
             //
             // RuleFor(x => x.BankClient)
             //     .SetValidator(new OpenBankingClientValidator());

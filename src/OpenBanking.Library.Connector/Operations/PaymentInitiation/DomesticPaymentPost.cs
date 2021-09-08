@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         protected override string RelativePath => "/domestic-payments";
 
-        protected override async Task<(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest, BankApiInformation
+        protected override async Task<(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest, BankApiSet
             bankApiInformation, BankRegistration bankRegistration, string bankFinancialId,
             TokenEndpointResponse? userTokenEndpointResponse, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages
             )> ApiPostRequestData(DomesticPaymentRequest request)
@@ -68,13 +68,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _domesticPaymentConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiInformationNavigation)
+                    .Include(o => o.BankApiSetNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == domesticPaymentConsentId) ??
                 throw new KeyNotFoundException(
                     $"No record found for Domestic Payment Consent with ID {domesticPaymentConsentId}.");
-            BankApiInformation bankApiInformation = domesticPaymentConsent.BankApiInformationNavigation;
+            BankApiSet bankApiSet = domesticPaymentConsent.BankApiSetNavigation;
             BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
@@ -109,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         .First()! // We already filtered out null entries above
                     : throw new InvalidOperationException("No token is available for Domestic Payment Consent.");
 
-            return (apiRequest, bankApiInformation, bankRegistration, bankFinancialId,
+            return (apiRequest, bankApiSet, bankRegistration, bankFinancialId,
                 userTokenEndpointResponse, nonErrorMessages);
         }
     }

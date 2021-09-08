@@ -11,7 +11,7 @@ using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
-    public class BankApiInformation : Base, ISupportsValidation
+    public class BankApiSet : Base, ISupportsValidation
     {
         /// <summary>
         ///     Bank for which this profile is to be created.
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 
 
         public async Task<ValidationResult> ValidateAsync() =>
-            await new BankApiInformationValidator()
+            await new BankApiSetValidator()
                 .ValidateAsync(this)!;
     }
 }

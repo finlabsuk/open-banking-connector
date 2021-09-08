@@ -42,10 +42,9 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IRequestBuilder requestBuilder = scopedRequestBuilder.RequestBuilder;
 
             // Create bank configuration
-            // (includes Bank, BankRegistration and BankApiInformation)
             BankProfile bankProfile = bankProfileDefinitions.Modelo;
             string demoNameUnique = "Demo" + Guid.NewGuid();
-            (Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId) =
+            (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await BankConfigurationMethods.Create(
                     "All",
                     RegistrationScope.All,
@@ -58,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 await DomesticPaymentConsentMethods.Create(
                     bankProfile,
                     bankRegistrationId,
-                    bankApiInformationId,
+                    bankApiSetId,
                     requestBuilder,
                     demoNameUnique);
 

@@ -166,7 +166,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Dereference bank
             BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
 
-            (Guid bankId, Guid bankRegistrationId, Guid bankApiInformationId) =
+            (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await ClientRegistrationSubtests.PostAndGetObjects(
                     bankRegistrationType.SoftwareStatementProfileId,
                     bankRegistrationType.RegistrationScope,
@@ -188,7 +188,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     subTest,
                     bankProfile,
                     bankRegistrationId,
-                    bankApiInformationId,
+                    bankApiSetId,
                     bankProfile.PaymentInitiationApiSettings,
                     requestBuilder,
                     requestBuilderGenerator,
@@ -204,7 +204,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             await ClientRegistrationSubtests.DeleteObjects(
                 requestBuilder,
-                bankApiInformationId,
+                bankApiSetId,
                 bankRegistrationId,
                 bankId,
                 bankProfile.ClientRegistrationApiSettings);
