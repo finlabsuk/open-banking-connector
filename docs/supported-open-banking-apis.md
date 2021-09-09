@@ -39,7 +39,7 @@ Open Banking Connector supports the following endpoints for this API.
 
  API Endpoint | Fluent Interface Method
  --- | ---
-POST ​/domestic-payment-consents | <pre>```requestBuilder```<br/>```  .PaymentInitiation```<br/>```  .DomesticPaymentConsents```<br/>```  .PostAsync()```
+POST ​/domestic-payment-consents | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPaymentConsents```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PostAsync()```
 GET ​/domestic-payment-consents​/{ConsentId} | `requestBuilder.PaymentInitiation.DomesticPaymentConsents.GetAsync()`
 GET ​/domestic-payment-consents​/{ConsentId}​/funds-confirmation | `requestBuilder.PaymentInitiation.DomesticPaymentConsents.GetFundsConfirmationAsync()`
 POST ​/domestic-payments | `requestBuilder.PaymentInitiation.DomesticPayments.PostAsync()`
