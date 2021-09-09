@@ -3,11 +3,12 @@
 
 The thee payment configuration object types are shown in the table below. Each corresponds to a table in the Open Banking Connector database. 
 
-Object type | Parent type | Created at bank? | Description | 
+Object type | Parent type(s) | Created at bank? | Description | 
 --- | --- | --- | ---
-DomesticPaymentConsents | N/A | No | 
-DomesticPayments | Payment| No | 
-AuthContexts| Payment| Yes | 
+DomesticPaymentConsents | `BankRegistration`, `BankApiSet` | Yes | Object a user can "authorise" to consent to a payment 
+authorisation a domestic payment.
+DomesticPayments | `DomesticPaymentConsent`| Yes | Payment object
+AuthContexts| `DomesticPaymentConsent`| No | Object which represents a session allowing the user to authorise a consent
 
 ## Supported methods
 

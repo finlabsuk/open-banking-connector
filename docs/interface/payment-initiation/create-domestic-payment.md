@@ -1,5 +1,11 @@
 # Create Domestic Payments
 
+Before making a domestic payment you must have created and authorised a consent.
+
+Then make a domestic payment, you must:
+- create a `DomesticPayment`
+- read the `DomesticPayment` to check its status.
+
 # Example
 Here is an example of how to set up the domestic payment consent. The example is based on code in the [demo app](../../../src/OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent/DomesticPaymentConsentMethods.cs#39).
 
