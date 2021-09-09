@@ -37,10 +37,12 @@ v3.1.4 | v3.1.6 request/repsonse types are mapped to v3.1.4
 
 Open Banking Connector supports the following endpoints for this API.
 
+ 
+
  API Endpoint | Fluent Interface Method
  --- | ---
 POST ​/domestic-payment-consents | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPaymentConsents```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PostAsync()```
-GET ​/domestic-payment-consents​/{ConsentId} | `requestBuilder.PaymentInitiation.DomesticPaymentConsents.GetAsync()`
-GET ​/domestic-payment-consents​/{ConsentId}​/funds-confirmation | `requestBuilder.PaymentInitiation.DomesticPaymentConsents.GetFundsConfirmationAsync()`
-POST ​/domestic-payments | `requestBuilder.PaymentInitiation.DomesticPayments.PostAsync()`
-GET ​/domestic-payments​/{DomesticPaymentId} | `requestBuilder.PaymentInitiation.DomesticPayments.GetAsync()`
+GET ​/domestic-payment-consents/{ConsentId} | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPaymentConsents```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.GetAsync()```
+GET ​/domestic-payment-consents/{ConsentId}/funds-confirmation | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPaymentConsents```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.GetFundsConfirmationAsync()```
+POST ​/domestic-payments | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPayments```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PostAsync()```
+GET ​/domestic-payments​/{DomesticPaymentId} | ```requestBuilder```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.PaymentInitiation```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.DomesticPayments```<br/>&nbsp;&nbsp;&nbsp;&nbsp;```.GetAsync()```
