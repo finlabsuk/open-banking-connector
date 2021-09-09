@@ -64,5 +64,5 @@ IFluentResponse<DomesticPaymentConsentAuthContextPostResponse> authContextRespon
         .PostLocalAsync(authContextRequest);
 ```
 
-Once this is complete, the next step is to create the domestic payment. [See here](./create-domestic-payment.md)
+Once a `DomesticPaymentConsent` has been created and authorised, a domestic payment [may be made](./make-domestic-payment.md).
 
