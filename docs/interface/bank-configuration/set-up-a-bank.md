@@ -1,9 +1,12 @@
 # Set up a bank
 
 To set up a bank, you need to create:
-- a `Bank` object
-- at least one `BankRegistration` object
-- at least one `BankApiInformationObject`
+
+* a `Bank` object
+
+* at least one `BankRegistration` object
+
+* at least one `BankApiInformationObject`
 
 You can take advantage of Bank Profiles to generate request objects to use when creating these. Or you can use completely custom request objects.
 

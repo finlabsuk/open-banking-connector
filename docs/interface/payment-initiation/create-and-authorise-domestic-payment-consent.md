@@ -1,12 +1,19 @@
 # Create and Authorise domestic payment consent
 
 To set up domestic payment consent, you need to:
+
 - create a `DomesticPaymentConsent`
+
 - [optional] check for funds confirmation
+
 - create an `AuthContext` which generates an auth URL
+
 - let the user authorise the consent using the URL which will generate a redirect
+
 - either
+
     - (a) use Open Banking Connector to process the redirect
+    
     - (b) use external software to process the redirect and pass the results to Open Banking Connector
 
 

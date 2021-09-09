@@ -3,7 +3,9 @@
 Before making a domestic payment you must have created and authorised a consent.
 
 Then make a domestic payment, you must:
+
 - create a `DomesticPayment`
+
 - read the `DomesticPayment` to check its status.
 
 # Example
