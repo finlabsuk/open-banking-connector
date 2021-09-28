@@ -2,22 +2,21 @@
 
 This file contains the configuration for generating My API from the OpenAPI specification.
 
-Note: used tag v3.1.8r4
-
 > see https://aka.ms/autorest
-
+> 
 ``` yaml
 input-file:
-  - C:\Repos\OBUK.read-write-api-specs\dist\swagger\payment-initiation-swagger.yaml
+  - ./swagger.json
 csharp:
-  namespace: FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp
+  namespace: FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Pisp
   use-datetimeoffset: true
 output-folder: .
 
 directive:
   - from: swagger-document # do it globally 
     where: $.paths.*.* 
-    transform: $.operationId = `OBC2_${$.tags[0]}`
+    transform:transform:
+      $["operationId"] = `${$path[$path.length - 1]}  ${$.tags[0]}`;
   - from: swagger-document # do it globally 
     where: $..*[?(@.enum)]
     transform: >-
@@ -27,11 +26,11 @@ directive:
         {
           name += "Item";
         }
-        else if (pathElement && pathElement != "properties" && pathElement != "definitions")
+        else if (pathElement && pathElement != "properties" && pathElement != "definitions" && pathElement != "components" && pathElement != "schemas")
         {
           name += pathElement;
         }
       }
       name += "Enum";
       $["x-ms-enum"] = { name: name, modelAsString: false };
-``` 
+```
