@@ -15,7 +15,7 @@ output-folder: .
 directive:
   - from: swagger-document # do it globally 
     where: $.paths.*.* 
-    transform:transform:
+    transform:
       $["operationId"] = `${$path[$path.length - 1]}  ${$.tags[0]}`;
   - from: swagger-document # do it globally 
     where: $..*[?(@.enum)]
