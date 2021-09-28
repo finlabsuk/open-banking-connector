@@ -173,4 +173,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.Instrumentation,
                 context.ApiVariantMapper)) { }
     }
+
+    internal class DomesticVrpConsentGet :
+        GetBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
+    {
+        // TODO: update for VRPs
+        internal DomesticVrpConsentGet(ISharedContext context) : base(
+            context,
+            new DomesticPaymentGet(
+                context.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
+                context.DbService.GetDbSaveChangesMethodClass(),
+                context.TimeProvider,
+                context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation,
+                context.ApiVariantMapper)) { }
+    }
 }
