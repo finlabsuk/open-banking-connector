@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -31,6 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         ///     API corresponding to UK Open Banking Account and Transaction functional API
         /// </summary>
         IAccountAndTransactionContext AccountAndTransaction { get; }
+
+        /// <summary>
+        ///     API corresponding to UK Open Banking Variable Recurring Payments functional API
+        /// </summary>
+        IVariableRecurringPaymentsContext VariableRecurringPayments { get; }
     }
 
     public class RequestBuilder : IRequestBuilder
@@ -63,6 +69,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
         public IAccountAndTransactionContext AccountAndTransaction =>
             new AccountAndTransactionContext(CreateContext());
+
+        public IVariableRecurringPaymentsContext VariableRecurringPayments =>
+            new VariableRecurringPaymentsContext(CreateContext());
 
         private ISharedContext CreateContext()
         {
