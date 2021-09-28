@@ -99,12 +99,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -117,12 +115,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -135,7 +131,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -145,12 +140,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -163,7 +156,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -173,7 +165,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -183,7 +174,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -197,7 +187,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -207,12 +196,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -299,12 +286,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -317,12 +302,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -335,7 +318,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -345,12 +327,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -363,7 +343,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -373,7 +352,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -383,7 +361,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -397,7 +374,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -407,12 +383,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -490,12 +464,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -508,7 +480,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -518,12 +489,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -536,7 +505,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -546,7 +514,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -556,7 +523,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -570,7 +536,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -580,12 +545,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -678,12 +641,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -696,12 +657,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -714,7 +673,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -724,12 +682,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -742,7 +698,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -752,7 +707,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -762,7 +716,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -776,7 +729,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -786,12 +738,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -887,12 +837,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -905,12 +853,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -923,7 +869,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -933,12 +878,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -951,7 +894,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -961,7 +903,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -971,7 +912,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -985,7 +925,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -995,12 +934,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1087,12 +1024,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1105,12 +1040,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1123,7 +1056,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1133,12 +1065,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1151,7 +1081,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1161,7 +1090,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1171,7 +1099,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1185,7 +1112,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1195,12 +1121,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1277,12 +1201,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1295,12 +1217,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1313,7 +1233,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1323,12 +1242,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
@@ -1341,7 +1258,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1351,7 +1267,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1361,7 +1276,6 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1375,7 +1289,6 @@
               },
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               }
             }
@@ -1385,12 +1298,10 @@
             "headers": {
               "x-fapi-interaction-id": {
                 "description": "An RFC4122 UID used as a correlation id.",
-                "required": true,
                 "type": "string"
               },
               "x-jws-signature": {
                 "description": "Header containing a detached JWS signature of the body of the payload.",
-                "required": true,
                 "type": "string"
               }
             },
