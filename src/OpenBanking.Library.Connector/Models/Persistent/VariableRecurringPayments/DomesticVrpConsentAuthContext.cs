@@ -6,11 +6,15 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using DomesticPaymentConsentAuthContextRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
-    DomesticPaymentConsentAuthContext;
+using DomesticPaymentConsentAuthContextResponse =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response.
+    DomesticPaymentConsentAuthContextResponse;
+using DomesticVrpConsentAuthContextRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
+    DomesticVrpConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments
 {
@@ -25,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public Guid DomesticPaymentConsentId { get; set; }
 
         [ForeignKey("DomesticPaymentConsentId")]
-        public VariableRecurringPayments.DomesticVrpConsent DomesticPaymentConsentNavigation { get; set; } = null!;
+        public DomesticVrpConsent DomesticPaymentConsentNavigation { get; set; } = null!;
 
         /// <summary>
         ///     Token endpoint response. If null, indicates auth not successfully completed.
@@ -34,11 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityPost<DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextPostResponse>
+        ISupportsFluentLocalEntityPost<DomesticVrpConsentAuthContextRequest,
+            DomesticVrpConsentAuthContextPostResponse>
     {
         public void Initialise(
-            DomesticPaymentConsentAuthContextRequest request,
+            DomesticVrpConsentAuthContextRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
@@ -50,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 createdBy);
         }
 
-        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponse =>
+        public DomesticVrpConsentAuthContextPostResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");
 
         public DomesticPaymentConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
