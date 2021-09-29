@@ -4,14 +4,15 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
     public interface IBankApiSetPublicQuery : IBaseQuery
     {
-        PaymentInitiationApi? PaymentInitiationApi { get; }
-
         Guid BankId { get; }
+        PaymentInitiationApi? PaymentInitiationApi { get; }
+        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
     }
 
     /// <summary>
@@ -25,13 +26,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
             DateTimeOffset created,
             string? createdBy,
             PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             Guid bankId) : base(id, name, created, createdBy)
         {
-            PaymentInitiationApi = paymentInitiationApi;
             BankId = bankId;
+            PaymentInitiationApi = paymentInitiationApi;
+            VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
         }
 
-        public PaymentInitiationApi? PaymentInitiationApi { get; }
         public Guid BankId { get; }
+        public PaymentInitiationApi? PaymentInitiationApi { get; }
+        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
     }
 }

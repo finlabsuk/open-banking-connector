@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
 
+        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; set; }
+
         public Guid BankId { get; set; }
     }
 
@@ -45,6 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             Created,
             CreatedBy,
             PaymentInitiationApi,
+            VariableRecurringPaymentsApi,
             BankId);
 
         public void Initialise(

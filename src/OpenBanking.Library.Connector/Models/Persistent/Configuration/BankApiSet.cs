@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -31,6 +32,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v => JsonConvert.SerializeObject(v, _formatting),
                     v =>
                         JsonConvert.DeserializeObject<PaymentInitiationApi>(v))
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.VariableRecurringPaymentsApi)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v =>
+                        JsonConvert.DeserializeObject<VariableRecurringPaymentsApi>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Name)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
