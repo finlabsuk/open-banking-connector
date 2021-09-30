@@ -11,6 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.M
     using System.Linq;
 
     [TargetApiEquivalent(typeof(V3p1p4.Pisp.Models.OBWriteDomestic2))]
+    [SourceApiEquivalent(typeof(OBWriteDomesticConsent4))]
     public partial class OBWriteDomestic2
     {
         /// <summary>

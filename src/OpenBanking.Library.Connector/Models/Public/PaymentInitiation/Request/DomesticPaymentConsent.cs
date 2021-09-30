@@ -17,10 +17,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     public class DomesticPaymentConsent : Base, ISupportsValidation
     {
         /// <summary>
-        ///     Request object from recent version of UK Open Banking spec. Open Banking can be configured
+        ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 WriteDomesticConsent { get; set; } = null!;
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 OBWriteDomesticConsent { get; set; } = null!;
 
         /// <summary>
         ///     Specifies Bank API Set to use when creating consent.

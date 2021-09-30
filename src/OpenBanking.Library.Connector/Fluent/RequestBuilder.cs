@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Utility;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -19,24 +20,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     public interface IRequestBuilder
     {
         /// <summary>
-        ///     API for setting up banks in OBC including OAuth2 clients and functional APIs
+        ///     API for setting up banks in Open Banking Connector including OAuth2 clients and functional APIs.
         /// </summary>
         IBankConfigurationContext BankConfiguration { get; }
 
         /// <summary>
-        ///     API corresponding to UK Open Banking Payment Initiation functional API
+        ///     API corresponding to UK Open Banking Payment Initiation functional API.
         /// </summary>
         IPaymentInitiationContext PaymentInitiation { get; }
 
         /// <summary>
-        ///     API corresponding to UK Open Banking Account and Transaction functional API
+        ///     API corresponding to UK Open Banking Account and Transaction functional API.
         /// </summary>
         IAccountAndTransactionContext AccountAndTransaction { get; }
 
         /// <summary>
-        ///     API corresponding to UK Open Banking Variable Recurring Payments functional API
+        ///     API corresponding to UK Open Banking Variable Recurring Payments functional API.
         /// </summary>
         IVariableRecurringPaymentsContext VariableRecurringPayments { get; }
+
+        /// <summary>
+        ///     API containing utility methods.
+        /// </summary>
+        IUtilityContext Utility { get; }
     }
 
     public class RequestBuilder : IRequestBuilder
@@ -63,6 +69,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             _logger = logger.ArgNotNull(nameof(logger));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
+
+        public IUtilityContext Utility => new UtilityContext(CreateContext());
 
         public IBankConfigurationContext BankConfiguration => new BankConfigurationContext(CreateContext());
         public IPaymentInitiationContext PaymentInitiation => new PaymentInitiationContext(CreateContext());

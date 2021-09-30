@@ -13,12 +13,16 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FluentAssertions;
 using Jering.Javascript.NodeJS;
+using DomesticPaymentConsentRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using DomesticPaymentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
+using PaymentInitiationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
 {
-    public delegate DomesticPaymentConsent DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
+    public delegate DomesticPaymentConsentRequest DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
 
     public partial class DomesticPaymentFunctionalSubtest
     {
@@ -69,25 +73,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             DomesticPaymentFunctionalSubtest subtest = DomesticPaymentFunctionalSubtestHelper.Test(subtestEnum);
 
-            // POST domestic payment consent
-            DomesticPaymentConsent domesticPaymentConsentRequest =
+            // Basic request object for domestic payment consent
+            DomesticPaymentConsentRequest domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     Guid.Empty,
                     Guid.Empty,
                     DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(
                         subtest.DomesticPaymentFunctionalSubtestEnum),
-                    "placeholder: OBC consent ID",
+                    "placeholder: random GUID",
                     "placeholder: random GUID",
                     null);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
                 .WriteFile(domesticPaymentConsentRequest);
+
+            // Basic request object for domestic payment
+            requestBuilder.Utility.Map(
+                domesticPaymentConsentRequest.OBWriteDomesticConsent,
+                out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
+            DomesticPaymentRequest domesticPaymentRequest =
+                new DomesticPaymentRequest
+                {
+                    OBWriteDomestic = obWriteDomestic,
+                    DomesticPaymentConsentId = default,
+                    Name = null
+                };
+
+            // POST domestic payment consent
             domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticPaymentConsentRequest.BankApiSetId = bankApiSetId;
-            domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.InstructionIdentification =
+            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification =
                 Guid.NewGuid().ToString("N");
-            domesticPaymentConsentRequest.WriteDomesticConsent.Data.Initiation.EndToEndIdentification =
+            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification =
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.Name = testNameUnique;
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
@@ -181,14 +199,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // POST domestic payment
-                DomesticPaymentRequest domesticPaymentRequest =
-                    new DomesticPaymentRequest
-                        { DomesticPaymentConsentId = default };
                 await testDataProcessorFluentRequestLogging
                     .AppendToPath("domesticPayment")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticPaymentRequest);
                 domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
+                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.InstructionIdentification =
+                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification;
+                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.EndToEndIdentification =
+                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification;
                 domesticPaymentRequest.Name = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments

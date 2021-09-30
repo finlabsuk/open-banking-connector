@@ -95,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
             // Create request
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest = request.WriteDomesticConsent;
+            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest = request.OBWriteDomesticConsent;
 
             return (apiRequest, bankApiSet, bankRegistration, bankFinancialId, null,
                 nonErrorMessages);

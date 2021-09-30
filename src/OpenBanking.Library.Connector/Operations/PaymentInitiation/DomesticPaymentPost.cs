@@ -79,21 +79,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             // Create request
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4
-                consentRequest = domesticPaymentConsent.BankApiRequest;
-            _mapper.Map(
-                consentRequest.Data.Initiation,
-                out PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiation initiation);
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest =
-                new PaymentInitiationModelsPublic.OBWriteDomestic2
-                {
-                    Data = new PaymentInitiationModelsPublic.OBWriteDomestic2Data
-                    {
-                        ConsentId = domesticPaymentConsent.ExternalApiId,
-                        Initiation = initiation
-                    },
-                    Risk = consentRequest.Risk
-                };
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest = request.OBWriteDomestic;
+            if (request.OBWriteDomestic.Data.ConsentId is null)
+            {
+                apiRequest.Data.ConsentId = domesticPaymentConsent.ExternalApiId;
+            }
+            else if (apiRequest.Data.ConsentId != domesticPaymentConsent.ExternalApiId)
+            {
+                throw new ArgumentException(
+                    $"OBWriteDomestic contains consent ID that differs from {domesticPaymentConsent.ExternalApiId} (inferred from DomesticPaymentConsentId)");
+            }
 
             // Get token
             List<DomesticPaymentConsentAuthContextPersisted> authContextsWithToken =
