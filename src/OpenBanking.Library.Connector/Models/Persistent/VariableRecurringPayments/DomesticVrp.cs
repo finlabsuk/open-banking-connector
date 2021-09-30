@@ -7,18 +7,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using DomesticVrpRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments
 {
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     internal partial class DomesticVrp :
         EntityBase,
         ISupportsFluentDeleteLocal<DomesticVrp>,
-        IDomesticPaymentPublicQuery
+        IDomesticVrpPublicQuery
     {
         public Guid DomesticPaymentConsentId { get; set; }
 
@@ -49,10 +49,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrp :
-        ISupportsFluentReadWritePost<DomesticPaymentRequest, DomesticPaymentResponse,
+        ISupportsFluentReadWritePost<DomesticVrpRequest, DomesticVrpResponse,
             PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
     {
-        public DomesticPaymentResponse PublicGetResponse => new DomesticPaymentResponse(
+        public DomesticVrpResponse PublicGetResponse => new DomesticVrpResponse(
             Id,
             Name,
             Created,
@@ -60,15 +60,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             BankApiResponse);
 
         public void Initialise(
-            DomesticPaymentRequest request,
+            DomesticVrpRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
+            DomesticPaymentConsentId = request.DomesticVrpConsentId;
         }
 
-        public DomesticPaymentResponse PublicPostResponse => PublicGetResponse;
+        public DomesticVrpResponse PublicPostResponse => PublicGetResponse;
 
         public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
         {
@@ -143,7 +143,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrp :
-        ISupportsFluentReadWriteGet<DomesticPaymentResponse,
+        ISupportsFluentReadWriteGet<DomesticVrpResponse,
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
     {
         public void UpdateAfterApiGet(

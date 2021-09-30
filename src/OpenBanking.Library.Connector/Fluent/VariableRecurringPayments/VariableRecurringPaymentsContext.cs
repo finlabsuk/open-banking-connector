@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         ///     API for DomesticVrp object which corresponds to domestic VRP.
         /// </summary>
         IDomesticVrpContext DomesticVrp { get; }
-        
+
         /// <summary>
         ///     API for DomesticPayment which corresponds to a domestic payment.
         /// </summary>
@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
         public IDomesticVrpContext DomesticVrp =>
             new DomesticVrpContext(_sharedContext);
-        
+
         public IEntityContext<DomesticPaymentRequest, IDomesticPaymentPublicQuery, DomesticPaymentResponse>
             DomesticPayments =>
             new DomesticPaymentsContext(_sharedContext);

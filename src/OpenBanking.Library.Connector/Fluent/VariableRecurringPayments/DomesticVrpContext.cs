@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     public interface IDomesticVrpContext :
         IEntityContext<DomesticPaymentRequest, IDomesticPaymentPublicQuery, DomesticPaymentResponse> { }
 
-    internal class DomesticVrpContext : 
+    internal class DomesticVrpContext :
         ObjectContextBase<DomesticPayment>, IDomesticVrpContext
     {
         private readonly DomesticVrpGet _domesticVRPGet;

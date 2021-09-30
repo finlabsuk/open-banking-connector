@@ -20,7 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             _formatting = formatting;
         }
 
-        public override void Configure(EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrpConsent> builder)
+        public override void Configure(
+            EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrpConsent> builder)
         {
             base.Configure(builder);
 
