@@ -4,8 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FluentValidation;
-using PaymentInitiationValidatorsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
+using VariableRecurringPaymentsValidatorsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments
 {
@@ -20,8 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
         private void CreateRules()
         {
             // WriteDomesticConsent
-            RuleFor(x => x.WriteDomesticConsent)
-                .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator());
+            RuleFor(x => x.OBDomesticVRPConsentRequest)
+                .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPConsentRequestValidator());
         }
     }
 }

@@ -8,19 +8,23 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
 using FluentValidation.Results;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
 {
     public class DomesticVrpConsent : Base, ISupportsValidation
     {
         /// <summary>
-        ///     Request object from recent version of UK Open Banking spec. Open Banking can be configured
+        ///     Request object from recent version of UK Open Banking spec. Where applicable, Open Banking Connector can be
+        ///     configured
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 WriteDomesticConsent { get; set; } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest OBDomesticVRPConsentRequest
+        {
+            get;
+            set;
+        } = null!;
 
         /// <summary>
         ///     Specifies Bank API Set to use when creating consent.

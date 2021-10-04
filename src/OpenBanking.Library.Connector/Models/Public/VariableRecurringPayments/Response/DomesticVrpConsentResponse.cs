@@ -5,15 +5,14 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response
 {
     public interface IDomesticVrpConsentPublicQuery : IBaseQuery
     {
-        ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse { get; }
+        ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> BankApiResponse { get; }
 
         Guid BankRegistrationId { get; }
 
@@ -30,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> bankApiResponse,
+            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> bankApiResponse,
             Guid bankRegistrationId,
             Guid bankApiSetId) : base(id, name, created, createdBy)
         {
@@ -39,7 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             BankApiSetId = bankApiSetId;
         }
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse { get; }
+        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> BankApiResponse
+        {
+            get;
+        }
+
         public Guid BankRegistrationId { get; }
         public Guid BankApiSetId { get; }
     }

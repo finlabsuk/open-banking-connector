@@ -17,10 +17,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using DomesticVrpConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments
 {
@@ -33,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         ISupportsFluentDeleteLocal<DomesticVrpConsent>,
         IDomesticVrpConsentPublicQuery
     {
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 BankApiRequest { get; set; } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest BankApiRequest { get; set; } = null!;
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
@@ -52,14 +50,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public List<DomesticVrpConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; set; } =
             null!;
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>
+        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>
             BankApiFundsConfirmationResponse { get; set; } = null!;
 
         public Guid BankRegistrationId { get; set; }
 
         public Guid BankApiSetId { get; set; }
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse
+        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> BankApiResponse
         {
             get;
             set;
@@ -68,8 +66,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrpConsent :
         ISupportsFluentReadWritePost<DomesticVrpConsentRequest,
-            DomesticVrpConsentResponse, PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
+            DomesticVrpConsentResponse, VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
         public DomesticVrpConsentResponse PublicGetResponse =>
             new DomesticVrpConsentResponse(
@@ -90,24 +88,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             BankRegistrationId = request.BankRegistrationId;
             BankApiSetId = request.BankApiSetId;
             BankApiFundsConfirmationResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>(
                     null,
                     timeProvider,
                     createdBy);
         }
 
-        public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest)
+        public void UpdateBeforeApiPost(VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest)
         {
             BankApiRequest = apiRequest;
         }
 
         public void UpdateAfterApiPost(
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
         {
             BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                     apiResponse,
                     timeProvider,
                     modifiedBy);
@@ -116,8 +114,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
         public DomesticVrpConsentResponse PublicPostResponse => PublicGetResponse;
 
-        public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiPostRequests(
+        public IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiPostRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
@@ -130,8 +128,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 processedSoftwareStatementProfile,
                 instrumentationClient);
 
-        public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiRequests(
+        public IApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
@@ -140,26 +138,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             => paymentInitiationApi.PaymentInitiationApiVersion switch
             {
                 PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticConsentResponse4>(
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
                     new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4>(
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
                         bankFinancialId,
                         tokenEndpointResponse,
                         instrumentationClient,
                         paymentInitiationApi,
                         processedSoftwareStatementProfile)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
                     new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
                         bankFinancialId,
                         tokenEndpointResponse,
                         instrumentationClient,
@@ -171,9 +169,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrpConsent :
         ISupportsFluentReadWriteGet<DomesticVrpConsentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
-        public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiGetRequests(
+        public IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiGetRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
@@ -189,35 +187,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrpConsent :
         ISupportsFluentReadWriteGet<DomesticVrpConsentResponse,
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
     {
         public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
         {
             BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                     apiResponse,
                     timeProvider,
                     modifiedBy);
         }
 
         public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
         {
             BankApiFundsConfirmationResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>(
                     apiResponse,
                     timeProvider,
                     modifiedBy);
         }
 
-        IApiGetRequests<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
+        IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
             ISupportsFluentReadWriteGet<DomesticVrpConsentResponse,
-                PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>.ApiGetRequests(
+                VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>.ApiGetRequests(
                 PaymentInitiationApi paymentInitiationApi,
                 string bankFinancialId,
                 TokenEndpointResponse tokenEndpointResponse,
@@ -226,8 +224,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             => paymentInitiationApi.PaymentInitiationApiVersion switch
             {
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
-                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
-                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
+                    VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse,
+                    VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
                         tokenEndpointResponse)),
