@@ -181,10 +181,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                         .AppendToPath("clientReg"));
 
             // Run domestic payment subtests
-            foreach (DomesticPaymentFunctionalSubtestEnum subTest in
-                DomesticPaymentFunctionalSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+            foreach (DomesticPaymentSubtestEnum subTest in
+                DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
             {
-                await DomesticPaymentFunctionalSubtest.RunTest(
+                await DomesticPaymentSubtest.RunTest(
                     subTest,
                     bankProfile,
                     bankRegistrationId,

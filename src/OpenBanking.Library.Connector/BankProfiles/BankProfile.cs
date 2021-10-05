@@ -49,6 +49,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public DomesticPaymentConsentAdjustments
             DomesticPaymentConsentAdjustments { get; set; } = x => x;
     }
+    
+    public class VariableRecurringPaymentsApiSettings { 
+    public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
+
+
+}
+    
 
     /// <summary>
     ///     A Bank Profile describes configuration and settings used when testing with a particular bank.

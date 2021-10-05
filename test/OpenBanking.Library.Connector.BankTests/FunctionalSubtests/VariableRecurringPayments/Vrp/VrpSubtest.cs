@@ -20,29 +20,21 @@ using DomesticPaymentRequest =
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.Vrp
 {
     public delegate DomesticPaymentConsentRequest DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
 
-    public partial class DomesticPaymentFunctionalSubtest
+    public class VrpSubtest
     {
-        public DomesticPaymentFunctionalSubtest(
-            DomesticPaymentFunctionalSubtestEnum domesticPaymentFunctionalSubtestEnum)
-        {
-            DomesticPaymentFunctionalSubtestEnum = domesticPaymentFunctionalSubtestEnum;
-        }
-
-        public DomesticPaymentFunctionalSubtestEnum DomesticPaymentFunctionalSubtestEnum { get; }
-
-        public static ISet<DomesticPaymentFunctionalSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(
-            BankProfile bankProfile) => DomesticPaymentFunctionalSubtestHelper.AllDomesticPaymentFunctionalTests;
+        public static ISet<VrpSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(BankProfile bankProfile) =>
+            VrpSubtestHelper.AllDomesticPaymentFunctionalTests;
 
         public static async Task RunTest(
-            DomesticPaymentFunctionalSubtestEnum subtestEnum,
+            VrpSubtestEnum subtestEnum,
             BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid bankApiSetId,
-            PaymentInitiationApiSettings paymentInitiationApiSettings,
+            VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
@@ -54,11 +46,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         {
             bool subtestSkipped = subtestEnum switch
             {
-                DomesticPaymentFunctionalSubtestEnum.PersonToPersonSubtest =>
-                    true,
-                DomesticPaymentFunctionalSubtestEnum.PersonToMerchantSubtest => false,
+                VrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => false,
                 _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(DomesticPaymentFunctionalSubtestEnum)} or needs to be added to this switch statement.")
+                    $"{nameof(subtestEnum)} is not valid {nameof(VrpSubtestEnum)} or needs to be added to this switch statement.")
             };
             if (subtestSkipped)
             {
@@ -71,15 +61,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
-            DomesticPaymentFunctionalSubtest subtest = DomesticPaymentFunctionalSubtestHelper.Test(subtestEnum);
-
             // Basic request object for domestic payment consent
             DomesticPaymentConsentRequest domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     Guid.Empty,
                     Guid.Empty,
-                    DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(
-                        subtest.DomesticPaymentFunctionalSubtestEnum),
+                    VrpSubtestHelper.DomesticPaymentType(subtestEnum),
                     "placeholder: random GUID",
                     "placeholder: random GUID",
                     null);
@@ -185,7 +172,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
                 IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
 
-                if (paymentInitiationApiSettings.UseConsentGetFundsConfirmationEndpoint)
+                if (variableRecurringPaymentsApiSettings.UseConsentGetFundsConfirmationEndpoint)
                 {
                     // GET consent funds confirmation
                     IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
