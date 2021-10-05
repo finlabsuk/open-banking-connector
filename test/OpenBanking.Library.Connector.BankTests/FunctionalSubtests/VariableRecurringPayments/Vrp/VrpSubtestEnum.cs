@@ -27,6 +27,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
         public static ISet<VrpSubtestEnum> AllDomesticPaymentFunctionalTests { get; }
 
+        public static DomesticVrpTypeEnum DomesticVrpType(VrpSubtestEnum subtestEnum) =>
+            subtestEnum switch
+            {
+                VrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp =>
+                    DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedByPisp,
+                _ => throw new ArgumentException(
+                    $"{nameof(subtestEnum)} is not valid {nameof(VrpSubtestEnum)} or needs to be added to this switch statement.")
+            };
+
+        // TODO: remove
         public static DomesticPaymentTypeEnum DomesticPaymentType(VrpSubtestEnum subtestEnum) =>
             subtestEnum switch
             {

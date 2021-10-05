@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistra
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
@@ -19,6 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
     public delegate DomesticPaymentConsent DomesticPaymentConsentAdjustments(
         DomesticPaymentConsent domesticPaymentConsent);
+
+    public delegate DomesticVrpConsent DomesticVrpConsentAdjustments(DomesticVrpConsent domesticVrpConsent);
 
     public class ClientRegistrationApiSettings
     {
@@ -49,13 +52,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public DomesticPaymentConsentAdjustments
             DomesticPaymentConsentAdjustments { get; set; } = x => x;
     }
-    
-    public class VariableRecurringPaymentsApiSettings { 
-    public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
 
+    public class VariableRecurringPaymentsApiSettings
+    {
+        public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
 
-}
-    
+        public DomesticVrpConsentAdjustments
+            DomesticVrpConsentAdjustments { get; set; } = x => x;
+    }
+
 
     /// <summary>
     ///     A Bank Profile describes configuration and settings used when testing with a particular bank.
@@ -113,5 +118,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// </summary>
         public PaymentInitiationApiSettings PaymentInitiationApiSettings { get; set; } =
             new PaymentInitiationApiSettings();
+
+        /// <summary>
+        ///     Settings used when testing Variable Recurring Payments API.
+        /// </summary>
+        public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; set; } =
+            new VariableRecurringPaymentsApiSettings();
     }
 }
