@@ -4,6 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
+using PaymentInitiationValidatorsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation
 {
@@ -20,6 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Paymen
             RuleFor(x => x.DomesticPaymentConsentId)
                 .NotEmpty()
                 .WithMessage($"Missing or invalid {nameof(DomesticPayment.DomesticPaymentConsentId)}.");
+
+            // WriteDomesticConsent
+            //RuleFor(x => x.OBWriteDomestic)
+              //  .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator());
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

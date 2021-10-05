@@ -15,6 +15,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 {
     public class DomesticVrp : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
+        ///     to translate this for banks supporting an earlier spec version.
+        ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
+        /// </summary>
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest OBDomesticVRPRequest { get; set; } = null!;
+
+        /// <summary>
+        ///     Specifies Variable Recurring Payment to use when creating payment.
+        ///     If Variable Recurring Payment consent has been successfully authorised, a token will be associated with the consent
+        ///     which can
+        ///     be used to create the payment.
+        /// </summary>
         public Guid DomesticVrpConsentId { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>

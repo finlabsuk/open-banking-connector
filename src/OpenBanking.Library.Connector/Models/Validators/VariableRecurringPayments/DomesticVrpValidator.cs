@@ -23,6 +23,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
                 .NotEmpty()
                 .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
 
+            // WriteDomestic
+            RuleFor(x => x.OBDomesticVRPRequest)
+                .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator());
+            
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)
             //     .Must(ValidationRules.IsAbsoluteUrl)
