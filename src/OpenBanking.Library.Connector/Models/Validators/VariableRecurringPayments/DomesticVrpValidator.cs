@@ -4,6 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FluentValidation;
+using VariableRecurringPaymentsValidatorsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments
 {

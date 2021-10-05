@@ -15,10 +15,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using DomesticVrpRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments
 {
@@ -36,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         [ForeignKey("DomesticPaymentConsentId")]
         public DomesticVrp DomesticPaymentConsentNavigation { get; set; } = null!;
 
-        public PaymentInitiationModelsPublic.OBWriteDomestic2 BankApiRequest { get; set; } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest BankApiRequest { get; set; } = null!;
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
@@ -44,13 +42,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         /// </summary>
         public string ExternalApiId { get; set; } = null!;
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; set; } =
+        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> BankApiResponse
+        {
+            get;
+            set;
+        } =
             null!;
     }
 
     internal partial class DomesticVrp :
         ISupportsFluentReadWritePost<DomesticVrpRequest, DomesticVrpResponse,
-            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
         public DomesticVrpResponse PublicGetResponse => new DomesticVrpResponse(
             Id,
@@ -70,26 +73,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
         public DomesticVrpResponse PublicPostResponse => PublicGetResponse;
 
-        public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
+        public void UpdateBeforeApiPost(VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest)
         {
             BankApiRequest = apiRequest;
         }
 
         public void UpdateAfterApiPost(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
         {
             BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     apiResponse,
                     timeProvider,
                     modifiedBy);
-            ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
+            ExternalApiId = BankApiResponse.Data.Data.DomesticVRPId;
         }
 
-        public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiPostRequests(
+        public IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiPostRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
@@ -103,8 +106,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 instrumentationClient);
 
 
-        public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
+        public IApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
@@ -113,26 +116,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             paymentInitiationApi.PaymentInitiationApiVersion switch
             {
                 PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
                     new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
                         bankFinancialId,
                         tokenEndpointResponse,
                         instrumentationClient,
                         paymentInitiationApi,
                         processedSoftwareStatementProfile)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
                     new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsPublic.OBWriteDomestic2>(
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
                         bankFinancialId,
                         tokenEndpointResponse,
                         instrumentationClient,
@@ -144,21 +147,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrp :
         ISupportsFluentReadWriteGet<DomesticVrpResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
         public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse,
             string? modifiedBy,
             ITimeProvider timeProvider)
         {
             BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     apiResponse,
                     timeProvider,
                     modifiedBy);
         }
 
-        public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
+        public IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiGetRequests(
             PaymentInitiationApi paymentInitiationApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,

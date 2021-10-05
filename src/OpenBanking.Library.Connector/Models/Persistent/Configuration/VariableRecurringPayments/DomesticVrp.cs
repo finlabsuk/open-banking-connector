@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments
 {
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .HasConversion(
                     v => JsonConvert.SerializeObject(v, _formatting),
                     v =>
-                        JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomestic2>(v)!)
+                        JsonConvert.DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
             // Second-level property info
@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                             v => JsonConvert.SerializeObject(v, _formatting),
                             v =>
                                 JsonConvert
-                                    .DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(v)!)
+                                    .DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(v)!)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     od.Property(e => e.Modified)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

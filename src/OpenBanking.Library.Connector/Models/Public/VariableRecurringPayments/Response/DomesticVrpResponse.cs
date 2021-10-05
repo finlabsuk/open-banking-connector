@@ -5,15 +5,15 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response
 {
     public interface IDomesticVrpPublicQuery : IBaseQuery
     {
-        ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
+        ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> BankApiResponse { get; }
     }
 
     public class DomesticVrpResponse : BaseResponse, IDomesticVrpPublicQuery
@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> bankApiResponse) : base(
+            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> bankApiResponse) : base(
             id,
             name,
             created,
@@ -32,6 +32,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             BankApiResponse = bankApiResponse;
         }
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
+        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> BankApiResponse { get; }
     }
 }

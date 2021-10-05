@@ -28,4 +28,18 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Mo
             await new OBVRPFundsConfirmationResponseValidator()
                 .ValidateAsync(this)!;
     }
+
+    public partial class OBDomesticVRPRequest : ISupportsValidation
+    {
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new OBDomesticVRPRequestValidator()
+                .ValidateAsync(this)!;
+    }
+
+    public partial class OBDomesticVRPResponse : ISupportsValidation
+    {
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new OBDomesticVRPResponseValidator()
+                .ValidateAsync(this)!;
+    }
 }
