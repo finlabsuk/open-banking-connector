@@ -174,16 +174,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal class DomesticVrpConsentGet :
-        GetBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
+        GetBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
     {
-        // TODO: update for VRPs
         internal DomesticVrpConsentGet(ISharedContext context) : base(
             context,
-            new DomesticPaymentGet(
-                context.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
+            new Operations.VariableRecurringPayments.DomesticVrpConsentGet(
+                context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
-                context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
                 context.ApiVariantMapper)) { }

@@ -22,11 +22,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     {
         static DomesticPaymentFunctionalSubtestHelper()
         {
-            AllDomesticPaymentFunctionalTests = Enum.GetValues(typeof(DomesticPaymentSubtestEnum))
+            AllDomesticPaymentSubtests = Enum.GetValues(typeof(DomesticPaymentSubtestEnum))
                 .Cast<DomesticPaymentSubtestEnum>().ToHashSet();
         }
 
-        public static ISet<DomesticPaymentSubtestEnum> AllDomesticPaymentFunctionalTests { get; }
+        public static ISet<DomesticPaymentSubtestEnum> AllDomesticPaymentSubtests { get; }
 
         public static DomesticPaymentTypeEnum DomesticPaymentType(DomesticPaymentSubtestEnum subtestEnum) =>
             subtestEnum switch

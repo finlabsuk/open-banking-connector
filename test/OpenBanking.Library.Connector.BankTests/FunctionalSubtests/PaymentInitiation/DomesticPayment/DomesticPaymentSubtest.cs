@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     public class DomesticPaymentSubtest
     {
         public static ISet<DomesticPaymentSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(
-            BankProfile bankProfile) => DomesticPaymentFunctionalSubtestHelper.AllDomesticPaymentFunctionalTests;
+            BankProfile bankProfile) => DomesticPaymentFunctionalSubtestHelper.AllDomesticPaymentSubtests;
 
         public static async Task RunTest(
             DomesticPaymentSubtestEnum subtestEnum,

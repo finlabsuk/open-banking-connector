@@ -20,17 +20,19 @@ using DomesticPaymentRequest =
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.Vrp
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
+    DomesticVrp
 {
     public delegate DomesticPaymentConsentRequest DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
 
-    public class VrpSubtest
+    public class DomesticVrpSubtest
     {
-        public static ISet<VrpSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(BankProfile bankProfile) =>
-            VrpSubtestHelper.AllDomesticPaymentFunctionalTests;
+        public static ISet<DomesticVrpSubtestEnum>
+            DomesticPaymentFunctionalSubtestsSupported(BankProfile bankProfile) =>
+            DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
 
         public static async Task RunTest(
-            VrpSubtestEnum subtestEnum,
+            DomesticVrpSubtestEnum subtestEnum,
             BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid bankApiSetId,
@@ -46,9 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         {
             bool subtestSkipped = subtestEnum switch
             {
-                VrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => false,
+                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => false,
                 _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(VrpSubtestEnum)} or needs to be added to this switch statement.")
+                    $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
             };
             if (subtestSkipped)
             {
@@ -66,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 bankProfile.DomesticPaymentConsentRequest(
                     Guid.Empty,
                     Guid.Empty,
-                    VrpSubtestHelper.DomesticPaymentType(subtestEnum),
+                    DomesticVrpSubtestHelper.DomesticPaymentType(subtestEnum),
                     "placeholder: random GUID",
                     "placeholder: random GUID",
                     null);

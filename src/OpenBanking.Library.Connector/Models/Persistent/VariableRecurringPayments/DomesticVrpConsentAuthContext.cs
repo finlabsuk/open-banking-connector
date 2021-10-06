@@ -5,7 +5,6 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -57,8 +56,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public DomesticVrpConsentAuthContextPostResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");
 
-        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
-            new DomesticPaymentConsentAuthContextPostResponse(
+        public DomesticVrpConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
+            new DomesticVrpConsentAuthContextPostResponse(
                 Id,
                 Name,
                 Created,

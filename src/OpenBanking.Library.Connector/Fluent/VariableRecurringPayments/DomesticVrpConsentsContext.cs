@@ -7,18 +7,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using DomesticVrpConsentRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments
 {
     public interface IDomesticVrpConsentsContext :
-        IEntityContext<DomesticPaymentRequest, IDomesticPaymentPublicQuery, DomesticPaymentResponse> { }
+        IEntityContext<DomesticVrpConsentRequest, IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse> { }
 
     internal class DomesticVrpConsentsContext :
-        ObjectContextBase<DomesticPayment>, IDomesticVrpConsentsContext
+        ObjectContextBase<DomesticVrpConsent>, IDomesticVrpConsentsContext
     {
         private readonly DomesticVrpConsentGet _domesticPaymentsConsentGet;
         private readonly DomesticVrpConsentPost _domesticPaymentsConsentPost;
@@ -29,15 +29,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             _domesticPaymentsConsentPost = new DomesticVrpConsentPost(sharedContext);
         }
 
-        public Task<IFluentResponse<DomesticPaymentResponse>> GetAsync(
+        public Task<IFluentResponse<DomesticVrpConsentResponse>> GetAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
             _domesticPaymentsConsentGet.GetAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
 
-        public Task<IFluentResponse<DomesticPaymentResponse>> PostAsync(
-            DomesticPaymentRequest publicRequest,
+        public Task<IFluentResponse<DomesticVrpConsentResponse>> PostAsync(
+            DomesticVrpConsentRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
@@ -49,11 +49,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<IQueryable<DomesticPaymentResponse>>> GetLocalAsync(
-            Expression<Func<IDomesticPaymentPublicQuery, bool>> predicate) =>
+        public Task<IFluentResponse<IQueryable<DomesticVrpConsentResponse>>> GetLocalAsync(
+            Expression<Func<IDomesticVrpConsentPublicQuery, bool>> predicate) =>
             _domesticPaymentsConsentGet.GetAsync(predicate);
 
-        public Task<IFluentResponse<DomesticPaymentResponse>> GetLocalAsync(Guid id) =>
+        public Task<IFluentResponse<DomesticVrpConsentResponse>> GetLocalAsync(Guid id) =>
             _domesticPaymentsConsentGet.GetAsync(id, null);
     }
 }

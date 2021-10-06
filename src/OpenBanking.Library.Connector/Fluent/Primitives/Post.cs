@@ -27,6 +27,8 @@ using DomesticVrpConsentPersisted =
 using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
+using DomesticVrpConsentRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using DomesticPaymentConsentAuthContextRequest =
@@ -196,19 +198,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal class DomesticVrpConsentPost :
-        PostBase<DomesticPaymentRequest, DomesticPaymentResponse>
+        PostBase<DomesticVrpConsentRequest, DomesticVrpConsentResponse>
     {
-        // TODO: update for VRPs
         internal DomesticVrpConsentPost(ISharedContext context) : base(
             context,
-            new DomesticPaymentPost(
-                context.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
+            new Operations.VariableRecurringPayments.DomesticVrpConsentPost(
+                context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
-                context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
-                context.ApiVariantMapper)) { }
+                context.ApiVariantMapper,
+                context.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 
     internal class DomesticVrpPost :
