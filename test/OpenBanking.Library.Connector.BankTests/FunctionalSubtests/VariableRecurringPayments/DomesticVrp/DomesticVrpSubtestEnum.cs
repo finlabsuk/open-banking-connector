@@ -15,7 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     /// </summary>
     public enum DomesticVrpSubtestEnum
     {
-        VrpWithDebtorAccountSpecifiedByPisp
+        VrpWithDebtorAccountSpecifiedByPisp,
+        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
     }
 
     public static class DomesticVrpSubtestHelper
@@ -33,6 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             {
                 DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp =>
                     DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedByPisp,
+                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation =>
+                    DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
             };
