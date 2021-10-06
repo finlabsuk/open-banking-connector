@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             base.Configure(builder);
 
             // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.DomesticPaymentConsentId)
+            builder.Property(e => e.DomesticVrpConsentId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiRequest)
                 .HasConversion(

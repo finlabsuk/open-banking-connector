@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -22,7 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         where TPublicRequest : Base
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-        protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsent> _domesticPaymentConsentMethods;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         protected readonly IInstrumentationClient _instrumentationClient;
         protected readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
@@ -33,14 +31,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
         {
             _entityMethods = entityMethods;
             _dbSaveChangesMethod = dbSaveChangesMethod;
             _timeProvider = timeProvider;
-            _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _instrumentationClient = instrumentationClient;
         }

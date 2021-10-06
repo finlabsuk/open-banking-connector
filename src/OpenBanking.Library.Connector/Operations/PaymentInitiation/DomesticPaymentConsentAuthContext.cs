@@ -28,6 +28,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentConsentAuthContextRequest,
             DomesticPaymentConsentAuthContextPostResponse>
     {
+        protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
+
         public DomesticPaymentConsentAuthContext(
             IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
                 entityMethods,
@@ -39,9 +41,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            domesticPaymentConsentMethods,
             softwareStatementProfileRepo,
-            instrumentationClient) { }
+            instrumentationClient)
+        {
+            _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        }
 
         protected override async Task<DomesticPaymentConsentAuthContextPostResponse> CreateResponse(
             DomesticPaymentConsentAuthContextPersisted persistedObject)

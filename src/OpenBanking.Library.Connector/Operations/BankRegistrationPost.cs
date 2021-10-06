@@ -57,7 +57,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            domesticPaymentConsentMethods,
             softwareStatementProfileRepo,
             instrumentationClient,
             mapper)

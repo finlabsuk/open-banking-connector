@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
         public List<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
 
-        public List<DomesticVrpConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; set; } =
+        public List<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; set; } =
             null!;
 
         public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>

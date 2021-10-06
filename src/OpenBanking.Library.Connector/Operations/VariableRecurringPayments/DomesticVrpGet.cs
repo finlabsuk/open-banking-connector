@@ -10,34 +10,32 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
-using DomesticPaymentPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPayment;
+using DomesticVrpRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
+using DomesticVrpPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrp;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticPaymentGet : ReadWriteGet<DomesticPaymentPersisted,
-            IDomesticPaymentPublicQuery,
-            DomesticPaymentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+        DomesticVrpGet : ReadWriteGet<DomesticVrpPersisted,
+            IDomesticVrpPublicQuery,
+            DomesticVrpResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
-        public DomesticPaymentGet(
-            IDbReadWriteEntityMethods<DomesticPaymentPersisted> entityMethods,
+        public DomesticVrpGet(
+            IDbReadWriteEntityMethods<DomesticVrpPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsent>
-                domesticPaymentConsentMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
@@ -48,9 +46,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient,
             mapper) { }
 
-        protected override string RelativePathBeforeId => "/domestic-payments";
+        protected override string RelativePathBeforeId => "/domestic-vrps";
 
-        protected override async Task<(string bankApiId, DomesticPayment
+        protected override async Task<(string bankApiId, DomesticVrpPersisted
             persistedObject, BankApiSet bankApiInformation, BankRegistration bankRegistration,
             string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
@@ -60,18 +58,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Load object
-            DomesticPayment persistedObject =
+            DomesticVrpPersisted persistedObject =
                 await _entityMethods
                     .DbSet
-                    .Include(x => x.DomesticPaymentConsentNavigation)
+                    .Include(x => x.DomesticVrpConsentNavigation)
                     .ThenInclude(x => x.BankApiSetNavigation)
-                    .Include(x => x.DomesticPaymentConsentNavigation)
+                    .Include(x => x.DomesticVrpConsentNavigation)
                     .ThenInclude(x => x.BankRegistrationNavigation)
                     .ThenInclude(x => x.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment with ID {id}.");
-            DomesticPaymentConsent domesticPaymentConsent =
-                persistedObject.DomesticPaymentConsentNavigation;
+            DomesticVrpConsent domesticPaymentConsent =
+                persistedObject.DomesticVrpConsentNavigation;
             BankApiSet bankApiSet = domesticPaymentConsent.BankApiSetNavigation;
             BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;

@@ -40,8 +40,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted>
-                domesticPaymentConsentMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
@@ -50,7 +48,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            domesticPaymentConsentMethods,
             softwareStatementProfileRepo,
             instrumentationClient,
             mapper)

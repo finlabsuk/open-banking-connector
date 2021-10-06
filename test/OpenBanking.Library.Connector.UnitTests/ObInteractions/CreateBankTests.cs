@@ -5,7 +5,6 @@
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -31,7 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<IDbEntityMethods<Bank>>(),
                     Substitute.For<IDbSaveChangesMethod>(),
                     Substitute.For<ITimeProvider>(),
-                    Substitute.For<IDbEntityMethods<DomesticPaymentConsent>>(),
                     Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
                     Substitute.For<IInstrumentationClient>());
 

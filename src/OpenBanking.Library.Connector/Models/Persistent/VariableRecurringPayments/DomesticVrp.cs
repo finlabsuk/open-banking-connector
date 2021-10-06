@@ -29,10 +29,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         ISupportsFluentDeleteLocal<DomesticVrp>,
         IDomesticVrpPublicQuery
     {
-        public Guid DomesticPaymentConsentId { get; set; }
+        public Guid DomesticVrpConsentId { get; set; }
 
-        [ForeignKey("DomesticPaymentConsentId")]
-        public DomesticVrp DomesticPaymentConsentNavigation { get; set; } = null!;
+        [ForeignKey("DomesticVrpConsentId")]
+        public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
 
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest BankApiRequest { get; set; } = null!;
 
@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticPaymentConsentId = request.DomesticVrpConsentId;
+            DomesticVrpConsentId = request.DomesticVrpConsentId;
         }
 
         public DomesticVrpResponse PublicPostResponse => PublicGetResponse;

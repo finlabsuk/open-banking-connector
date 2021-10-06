@@ -11,38 +11,41 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
-using DomesticPaymentPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPayment;
-using DomesticPaymentConsentPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
-using DomesticPaymentConsentAuthContextPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
+using DomesticVrpRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
+using DomesticVrpPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrp;
+using DomesticVrpConsentPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
+using DomesticVrpConsentAuthContextPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
+    DomesticVrpConsentAuthContext;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticPaymentPost : ReadWritePost<DomesticPaymentPersisted, DomesticPaymentRequest,
-            DomesticPaymentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+        DomesticVrpPost : ReadWritePost<DomesticVrpPersisted, DomesticVrpRequest,
+            DomesticVrpResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
-        protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
+        protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticVrpConsentMethods;
 
-        public DomesticPaymentPost(
-            IDbReadWriteEntityMethods<DomesticPaymentPersisted> entityMethods,
+
+        public DomesticVrpPost(
+            IDbReadWriteEntityMethods<DomesticVrpPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted>
-                domesticPaymentConsentMethods,
+            IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted>
+                domesticVrpConsentMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
@@ -53,26 +56,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient,
             mapper)
         {
-            _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+            _domesticVrpConsentMethods = domesticVrpConsentMethods;
         }
 
-        protected override string RelativePath => "/domestic-payments";
+        protected override string RelativePath => "/domestic-vrps";
 
-        protected override async Task<(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest, BankApiSet
+        protected override async Task<(VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest, BankApiSet
             bankApiInformation, BankRegistration bankRegistration, string bankFinancialId,
             TokenEndpointResponse? userTokenEndpointResponse, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages
-            )> ApiPostRequestData(DomesticPaymentRequest request)
+            )> ApiPostRequestData(DomesticVrpRequest request)
         {
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Load relevant data
-            Guid domesticPaymentConsentId = request.DomesticPaymentConsentId;
-            DomesticPaymentConsentPersisted domesticPaymentConsent =
-                await _domesticPaymentConsentMethods
+            Guid domesticPaymentConsentId = request.DomesticVrpConsentId;
+            DomesticVrpConsentPersisted domesticPaymentConsent =
+                await _domesticVrpConsentMethods
                     .DbSetNoTracking
-                    .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
+                    .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
                     .Include(o => o.BankApiSetNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
@@ -84,8 +87,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             // Create request
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest = request.OBWriteDomestic;
-            if (request.OBWriteDomestic.Data.ConsentId is null)
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest = request.OBDomesticVRPRequest;
+            if (request.OBDomesticVRPRequest.Data.ConsentId is null)
             {
                 apiRequest.Data.ConsentId = domesticPaymentConsent.ExternalApiId;
             }
@@ -96,8 +99,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             }
 
             // Get token
-            List<DomesticPaymentConsentAuthContextPersisted> authContextsWithToken =
-                domesticPaymentConsent.DomesticPaymentConsentAuthContextsNavigation
+            List<DomesticVrpConsentAuthContextPersisted> authContextsWithToken =
+                domesticPaymentConsent.DomesticVrpConsentAuthContextsNavigation
                     .Where(x => x.TokenEndpointResponse.Data != null)
                     .ToList();
 

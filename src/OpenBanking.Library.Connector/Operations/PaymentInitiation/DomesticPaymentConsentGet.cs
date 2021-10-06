@@ -31,31 +31,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentConsentResponse,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
     {
-        private readonly IDbReadOnlyEntityMethods<BankApiSet> _bankApiSetMethods;
-        private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
-
         public DomesticPaymentConsentGet(
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted>
-                domesticPaymentConsentMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IApiVariantMapper mapper,
-            IDbReadOnlyEntityMethods<BankApiSet> bankApiSetMethods,
-            IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
+            IApiVariantMapper mapper) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            domesticPaymentConsentMethods,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper)
-        {
-            _bankApiSetMethods = bankApiSetMethods;
-            _bankRegistrationMethods = bankRegistrationMethods;
-        }
+            mapper) { }
 
         protected override string RelativePathBeforeId => "/domestic-payment-consents";
 
