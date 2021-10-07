@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         [ForeignKey("BankApiSetId")]
         public BankApiSet BankApiSetNavigation { get; set; } = null!;
 
-        public List<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
+        public List<DomesticVrp> DomesticVrpsNavigation { get; set; } = null!;
 
         public List<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; set; } =
             null!;

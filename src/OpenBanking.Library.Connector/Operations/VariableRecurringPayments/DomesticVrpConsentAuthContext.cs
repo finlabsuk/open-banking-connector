@@ -58,9 +58,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == persistedObject.DomesticPaymentConsentId) ??
+                    .SingleOrDefault(x => x.Id == persistedObject.DomesticVrpConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {persistedObject.DomesticPaymentConsentId}.");
+                    $"No record found for Domestic Payment Consent with ID {persistedObject.DomesticVrpConsentId}.");
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(

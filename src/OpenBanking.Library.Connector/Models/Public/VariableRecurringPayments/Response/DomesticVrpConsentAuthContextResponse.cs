@@ -13,10 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class DomesticPaymentConsentAuthContextResponse : BaseResponse,
+    public class DomesticVrpConsentAuthContextResponse : BaseResponse,
         IDomesticPaymentConsentAuthContextPublicQuery
     {
-        internal DomesticPaymentConsentAuthContextResponse(
+        internal DomesticVrpConsentAuthContextResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// <summary>
     ///     Response to Get, Post
     /// </summary>
-    public class DomesticVrpConsentAuthContextPostResponse : DomesticPaymentConsentAuthContextResponse
+    public class DomesticVrpConsentAuthContextPostResponse : DomesticVrpConsentAuthContextResponse
     {
         internal DomesticVrpConsentAuthContextPostResponse(
             Guid id,

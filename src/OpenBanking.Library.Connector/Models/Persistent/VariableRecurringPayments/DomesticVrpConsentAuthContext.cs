@@ -8,9 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using DomesticPaymentConsentAuthContextResponse =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response.
-    DomesticPaymentConsentAuthContextResponse;
 using DomesticVrpConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
@@ -25,10 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         EntityBase,
         ISupportsFluentDeleteLocal<DomesticVrpConsentAuthContext>
     {
-        public Guid DomesticPaymentConsentId { get; set; }
+        public Guid DomesticVrpConsentId { get; set; }
 
-        [ForeignKey("DomesticPaymentConsentId")]
-        public DomesticVrpConsent DomesticPaymentConsentNavigation { get; set; } = null!;
+        [ForeignKey("DomesticVrpConsentId")]
+        public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
 
         /// <summary>
         ///     Token endpoint response. If null, indicates auth not successfully completed.
@@ -46,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticPaymentConsentId = request.DomesticVrpConsentId;
+            DomesticVrpConsentId = request.DomesticVrpConsentId;
             TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
                 null,
                 timeProvider,
@@ -66,10 +63,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextResponse>
+        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextResponse>
     {
-        public DomesticPaymentConsentAuthContextResponse PublicGetResponse =>
-            new DomesticPaymentConsentAuthContextResponse(
+        public DomesticVrpConsentAuthContextResponse PublicGetResponse =>
+            new DomesticVrpConsentAuthContextResponse(
                 Id,
                 Name,
                 Created,

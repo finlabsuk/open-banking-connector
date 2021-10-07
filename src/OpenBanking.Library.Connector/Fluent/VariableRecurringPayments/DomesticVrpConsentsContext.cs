@@ -17,6 +17,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     public interface IDomesticVrpConsentsContext :
         IEntityContext<DomesticVrpConsentRequest, IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
     {
+        /// <summary>
+        ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
+        ///     authorisation of consent.
+        /// </summary>
+        IDomesticVrpConsentAuthContextsContext AuthContexts { get; }
+
         Task<IFluentResponse<DomesticVrpConsentResponse>> GetFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
@@ -29,11 +35,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     {
         private readonly DomesticVrpConsentFundsConfirmationGet
             _domesticVrpConsentFundsConfirmationGet;
+
         private readonly DomesticVrpConsentGet _domesticVrpConsentGet;
         private readonly DomesticVrpConsentPost _domesticVrpConsentPost;
+        private readonly ISharedContext _sharedContext;
 
         public DomesticVrpConsentsContext(ISharedContext sharedContext) : base(sharedContext)
         {
+            _sharedContext = sharedContext;
             _domesticVrpConsentGet = new DomesticVrpConsentGet(sharedContext);
             _domesticVrpConsentPost = new DomesticVrpConsentPost(sharedContext);
             _domesticVrpConsentFundsConfirmationGet =
@@ -63,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         public Task<IFluentResponse<IQueryable<DomesticVrpConsentResponse>>> GetLocalAsync(
             Expression<Func<IDomesticVrpConsentPublicQuery, bool>> predicate) =>
             _domesticVrpConsentGet.GetAsync(predicate);
-        
+
         public Task<IFluentResponse<DomesticVrpConsentResponse>> GetFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
@@ -75,6 +84,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
+        public IDomesticVrpConsentAuthContextsContext AuthContexts =>
+            new DomesticVrpConsentAuthContextsContext(_sharedContext);
 
         public Task<IFluentResponse<DomesticVrpConsentResponse>> GetLocalAsync(Guid id) =>
             _domesticVrpConsentGet.GetAsync(id, null);
