@@ -9,10 +9,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using DomesticVrpPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrp;
@@ -158,6 +160,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
+    internal class DomesticVrpConsentFundsConfirmationGet :
+        GetBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
+    {
+        internal DomesticVrpConsentFundsConfirmationGet(ISharedContext context) : base(
+            context,
+            new DomesticVrpConsentGetFundsConfirmation(
+                context.DbService.GetDbEntityMethodsClass<DomesticVrpConsent>(),
+                context.DbService.GetDbSaveChangesMethodClass(),
+                context.TimeProvider,
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation,
+                context.ApiVariantMapper)) { }
+    }
     internal class DomesticPaymentsGet :
         GetBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
     {
