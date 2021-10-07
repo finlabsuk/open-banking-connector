@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 {
     public class DomesticVrpConsentAuthContext : Base, ISupportsValidation
     {
-        public Guid DomesticPaymentConsentId { get; set; }
+        public Guid DomesticVrpConsentId { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AuthContextValidator2()

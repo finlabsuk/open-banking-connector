@@ -11,14 +11,23 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FluentAssertions;
 using Jering.Javascript.NodeJS;
+using DomesticPaymentConsentAuthContextResponse =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response.
+    DomesticPaymentConsentAuthContextResponse;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using DomesticPaymentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
+using DomesticVrpRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrp
@@ -64,63 +73,60 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Basic request object for domestic payment consent
-            DomesticPaymentConsentRequest domesticPaymentConsentRequest =
-                bankProfile.DomesticPaymentConsentRequest(
+            DomesticVrpConsent domesticVrpConsentRequest =
+                bankProfile.DomesticVrpConsentRequest(
                     Guid.Empty,
                     Guid.Empty,
-                    DomesticVrpSubtestHelper.DomesticPaymentType(subtestEnum),
+                    DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum),
                     "placeholder: random GUID",
                     "placeholder: random GUID",
                     null);
             await testDataProcessorFluentRequestLogging
-                .AppendToPath("domesticPaymentConsent")
+                .AppendToPath("domesticVrpConsent")
                 .AppendToPath("postRequest")
-                .WriteFile(domesticPaymentConsentRequest);
+                .WriteFile(domesticVrpConsentRequest);
+
 
             // Basic request object for domestic payment
             requestBuilder.Utility.Map(
-                domesticPaymentConsentRequest.OBWriteDomesticConsent,
-                out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
-            DomesticPaymentRequest domesticPaymentRequest =
-                new DomesticPaymentRequest
+                domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
+                out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest);
+            DomesticVrpRequest domesticVrpRequest =
+                new DomesticVrpRequest
                 {
-                    OBWriteDomestic = obWriteDomestic,
-                    DomesticPaymentConsentId = default,
-                    Name = null
+                    Name = null,
+                    OBDomesticVRPRequest = obDomesticVrpRequest,
+                    DomesticVrpConsentId = default
                 };
 
             // POST domestic payment consent
-            domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
-            domesticPaymentConsentRequest.BankApiSetId = bankApiSetId;
-            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification =
-                Guid.NewGuid().ToString("N");
-            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification =
-                Guid.NewGuid().ToString("N");
-            domesticPaymentConsentRequest.Name = testNameUnique;
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
-                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .PostAsync(domesticPaymentConsentRequest);
+            domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
+            domesticVrpConsentRequest.BankApiSetId = bankApiSetId;
+            domesticVrpConsentRequest.Name = testNameUnique;
+            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp =
+                await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
+                    .PostAsync(domesticVrpConsentRequest);
 
             // Checks
-            domesticPaymentConsentResp.Should().NotBeNull();
-            domesticPaymentConsentResp.Messages.Should().BeEmpty();
-            domesticPaymentConsentResp.Data.Should().NotBeNull();
-            Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
+            domesticVrpConsentResp.Should().NotBeNull();
+            domesticVrpConsentResp.Messages.Should().BeEmpty();
+            domesticVrpConsentResp.Data.Should().NotBeNull();
+            Guid domesticVrpConsentId = domesticVrpConsentResp.Data!.Id;
 
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp2 =
-                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .GetAsync(domesticPaymentConsentId);
+            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp2 =
+                await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
+                    .GetAsync(domesticVrpConsentId);
 
             // Checks
-            domesticPaymentConsentResp2.Should().NotBeNull();
-            domesticPaymentConsentResp2.Messages.Should().BeEmpty();
-            domesticPaymentConsentResp2.Data.Should().NotBeNull();
+            domesticVrpConsentResp2.Should().NotBeNull();
+            domesticVrpConsentResp2.Messages.Should().BeEmpty();
+            domesticVrpConsentResp2.Data.Should().NotBeNull();
 
             // POST auth context
             var authContextRequest = new DomesticPaymentConsentAuthContext
             {
-                DomesticPaymentConsentId = domesticPaymentConsentId,
+                DomesticPaymentConsentId = domesticVrpConsentId,
                 Name = testNameUnique
             };
             IFluentResponse<DomesticPaymentConsentAuthContextPostResponse> authContextResponse =
@@ -179,7 +185,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     // GET consent funds confirmation
                     IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
                         await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
-                            .GetFundsConfirmationAsync(domesticPaymentConsentId);
+                            .GetFundsConfirmationAsync(domesticVrpConsentId);
 
                     // Checks
                     domesticPaymentConsentResp4.Should().NotBeNull();
@@ -189,56 +195,52 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                 // POST domestic payment
                 await testDataProcessorFluentRequestLogging
-                    .AppendToPath("domesticPayment")
+                    .AppendToPath("domesticVrp")
                     .AppendToPath("postRequest")
-                    .WriteFile(domesticPaymentRequest);
-                domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
-                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.InstructionIdentification =
-                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification;
-                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.EndToEndIdentification =
-                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification;
-                domesticPaymentRequest.Name = testNameUnique;
-                IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
-                    await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .PostAsync(domesticPaymentRequest);
+                    .WriteFile(domesticVrpRequest);
+                domesticVrpRequest.DomesticVrpConsentId = domesticVrpConsentId;
+                domesticVrpRequest.Name = testNameUnique;
+                IFluentResponse<DomesticVrpResponse>? domesticVrpResp =
+                    await requestBuilderNew.VariableRecurringPayments.DomesticVrps
+                        .PostAsync(domesticVrpRequest);
 
                 // Checks
-                domesticPaymentResp.Should().NotBeNull();
-                domesticPaymentResp.Messages.Should().BeEmpty();
-                domesticPaymentResp.Data.Should().NotBeNull();
-                Guid domesticPaymentId = domesticPaymentResp.Data!.Id;
+                domesticVrpResp.Should().NotBeNull();
+                domesticVrpResp.Messages.Should().BeEmpty();
+                domesticVrpResp.Data.Should().NotBeNull();
+                Guid domesticVrpId = domesticVrpResp.Data!.Id;
 
                 // GET domestic payment
-                IFluentResponse<DomesticPaymentResponse> domesticPaymentResp2 =
-                    await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .GetAsync(domesticPaymentId);
+                IFluentResponse<DomesticVrpResponse> domesticVrpResp2 =
+                    await requestBuilderNew.VariableRecurringPayments.DomesticVrps
+                        .GetAsync(domesticVrpId);
 
                 // Checks
-                domesticPaymentResp2.Should().NotBeNull();
-                domesticPaymentResp2.Messages.Should().BeEmpty();
-                domesticPaymentResp2.Data.Should().NotBeNull();
+                domesticVrpResp2.Should().NotBeNull();
+                domesticVrpResp2.Messages.Should().BeEmpty();
+                domesticVrpResp2.Data.Should().NotBeNull();
 
                 // DELETE domestic payment
-                IFluentResponse domesticPaymentResp3 = await requestBuilderNew.PaymentInitiation
-                    .DomesticPayments
-                    .DeleteLocalAsync(domesticPaymentId);
+                IFluentResponse domesticVrpResp3 = await requestBuilderNew.VariableRecurringPayments
+                    .DomesticVrps
+                    .DeleteLocalAsync(domesticVrpId);
 
                 // Checks
-                domesticPaymentResp3.Should().NotBeNull();
-                domesticPaymentResp3.Messages.Should().BeEmpty();
+                domesticVrpResp3.Should().NotBeNull();
+                domesticVrpResp3.Messages.Should().BeEmpty();
             }
 
             // DELETE auth context
 
 
             // DELETE domestic payment consent
-            IFluentResponse domesticPaymentConsentResp3 = await requestBuilder.PaymentInitiation
-                .DomesticPaymentConsents
-                .DeleteLocalAsync(domesticPaymentConsentId);
+            IFluentResponse domesticVrpConsentResp3 = await requestBuilder.VariableRecurringPayments
+                .DomesticVrpConsents
+                .DeleteLocalAsync(domesticVrpConsentId);
 
             // Checks
-            domesticPaymentConsentResp3.Should().NotBeNull();
-            domesticPaymentConsentResp3.Messages.Should().BeEmpty();
+            domesticVrpConsentResp3.Should().NotBeNull();
+            domesticVrpConsentResp3.Messages.Should().BeEmpty();
         }
     }
 }

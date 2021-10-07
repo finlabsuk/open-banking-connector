@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
+            DomesticPaymentConsentId = request.DomesticVrpConsentId;
             TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
                 null,
                 timeProvider,

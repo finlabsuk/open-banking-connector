@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
     public partial class BankProfile
     {
-        public DomesticVrpConsent VrpRequest(
+        public DomesticVrpConsent DomesticVrpConsentRequest(
             Guid bankRegistrationId,
             Guid bankApiSetId,
             DomesticVrpTypeEnum domesticVrpType,
