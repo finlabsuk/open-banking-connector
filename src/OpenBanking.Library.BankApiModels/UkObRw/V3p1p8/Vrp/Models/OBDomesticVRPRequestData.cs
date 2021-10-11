@@ -10,6 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Mo
     using Newtonsoft.Json;
     using System.Linq;
 
+    [SourceApiEquivalent(typeof(OBDomesticVRPConsentRequestData))]
+
     public partial class OBDomesticVRPRequestData
     {
         /// <summary>
