@@ -43,8 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                         new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                                         {
                                             ValidFromDateTime = DateTimeOffset.Now,
-                                            //do now + 3 years - google
-                                            ValidToDateTime = DateTimeOffset.Now,
+                                            ValidToDateTime = DateTimeOffset.Now.AddYears(3),
                                             MaximumIndividualAmount =
                                                 new VariableRecurringPaymentsModelsPublic.
                                                     OBDomesticVRPControlParametersMaximumIndividualAmount
@@ -123,22 +122,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                                 new List<VariableRecurringPaymentsModelsPublic.
                                                     OBDomesticVRPControlParametersPeriodicLimitsItem>
                                                 {
-                                                    //this is supposed to have amount, currency, periodalignment, periodtype
-                                                    // fix this 
                                                     new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParametersPeriodicLimitsItem
                                                     {
-                                                        PeriodType = VariableRecurringPaymentsModelsPublic
-                                                            .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
-                                                            .Day,
+                                                        Amount = "200.00",
+                                                        Currency = "GBP",
                                                         PeriodAlignment = VariableRecurringPaymentsModelsPublic
                                                             .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
                                                             .Consent,
-                                                        Amount = null,
-                                                        Currency = null
+                                                        PeriodType = VariableRecurringPaymentsModelsPublic
+                                                            .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
+                                                            .Week
                                                     }
-
-
-
+                                                    
                                                 },
                                         },
                                     Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
@@ -149,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                                 {
                                                     Unstructured = null,
                                                     Reference = "Sweepco"
-                                                }
+                                                }   
                                     }
                                 },
                                 Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
