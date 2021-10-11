@@ -9,35 +9,24 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FluentAssertions;
 using Jering.Javascript.NodeJS;
-using DomesticPaymentConsentAuthContextResponse =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response.
-    DomesticPaymentConsentAuthContextResponse;
-using DomesticPaymentConsentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
+using DomesticVrpConsentRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 using DomesticVrpRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrp
 {
-    public delegate DomesticPaymentConsentRequest DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
-
     public class DomesticVrpSubtest
     {
         public static ISet<DomesticVrpSubtestEnum>
-            DomesticPaymentFunctionalSubtestsSupported(BankProfile bankProfile) =>
+            DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
             DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
 
         public static async Task RunTest(
@@ -73,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Basic request object for domestic payment consent
-            DomesticVrpConsent domesticVrpConsentRequest =
+            DomesticVrpConsentRequest domesticVrpConsentRequest =
                 bankProfile.DomesticVrpConsentRequest(
                     Guid.Empty,
                     Guid.Empty,
@@ -124,14 +113,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticVrpConsentResp2.Data.Should().NotBeNull();
 
             // POST auth context
-            var authContextRequest = new DomesticPaymentConsentAuthContext
+            var authContextRequest = new DomesticVrpConsentAuthContext
             {
-                DomesticPaymentConsentId = domesticVrpConsentId,
+                DomesticVrpConsentId = domesticVrpConsentId,
                 Name = testNameUnique
             };
-            IFluentResponse<DomesticPaymentConsentAuthContextPostResponse> authContextResponse =
-                await requestBuilder.PaymentInitiation
-                    .DomesticPaymentConsents
+            IFluentResponse<DomesticVrpConsentAuthContextPostResponse> authContextResponse =
+                await requestBuilder.VariableRecurringPayments
+                    .DomesticVrpConsents
                     .AuthContexts
                     .PostLocalAsync(authContextRequest);
 
@@ -144,8 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string authUrl = authContextResponse.Data!.AuthUrl!;
 
             // GET auth context
-            IFluentResponse<DomesticPaymentConsentAuthContextResponse> authContextResponse2 =
-                await requestBuilder.PaymentInitiation.DomesticPaymentConsents
+            IFluentResponse<DomesticVrpConsentAuthContextResponse> authContextResponse2 =
+                await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .AuthContexts
                     .GetLocalAsync(authContextId);
             // Checks
@@ -167,7 +156,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 {
                     authUrl,
                     bankProfile.BankProfileEnum.ToString(),
-                    "DomesticPaymentConsent",
+                    "DomesticVrpConsent",
                     bankUser,
                     puppeteerLaunchOptions
                 };
@@ -183,8 +172,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 if (variableRecurringPaymentsApiSettings.UseConsentGetFundsConfirmationEndpoint)
                 {
                     // GET consent funds confirmation
-                    IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
-                        await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
+                    IFluentResponse<DomesticVrpConsentResponse> domesticPaymentConsentResp4 =
+                        await requestBuilderNew.VariableRecurringPayments.DomesticVrpConsents
                             .GetFundsConfirmationAsync(domesticVrpConsentId);
 
                     // Checks

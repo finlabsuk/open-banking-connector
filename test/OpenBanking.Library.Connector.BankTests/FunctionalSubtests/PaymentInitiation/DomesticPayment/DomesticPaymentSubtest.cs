@@ -22,8 +22,6 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
 {
-    public delegate DomesticPaymentConsentRequest DomesticPaymentConsentDelegate(BankProfile bankProfile, Guid bankId);
-
     public class DomesticPaymentSubtest
     {
         public static ISet<DomesticPaymentSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(

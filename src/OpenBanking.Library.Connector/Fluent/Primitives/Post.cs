@@ -133,9 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         }
     }
 
-    internal class
-        LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> :
-            PostBase<TPublicRequest, TPublicResponse>
+    internal class LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> :
+        PostBase<TPublicRequest, TPublicResponse>
         where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse>,
         new()
         where TPublicRequest : BaseRequest, ISupportsValidation
