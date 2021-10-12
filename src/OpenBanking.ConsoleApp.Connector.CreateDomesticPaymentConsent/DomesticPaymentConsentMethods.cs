@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IRequestBuilder requestBuilder,
             string testNameUnique)
         {
-            // Create domestic payment consent
+            // Create domestic payment consent request
             DomesticPaymentConsent domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     bankRegistrationId,
@@ -41,32 +41,52 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     Guid.NewGuid().ToString("N"),
                     Guid.NewGuid().ToString("N"),
                     testNameUnique);
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
+            
+            // POST domestic payment consent
+            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
                     .PostAsync(domesticPaymentConsentRequest);
-            Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
+            Guid domesticPaymentConsentId = domesticPaymentConsentResponse.Data!.Id;
 
             // Return ID of created object
             return domesticPaymentConsentId;
         }
 
         /// <summary>
-        ///     Get domestic payment consent
+        ///     Read domestic payment consent
         /// </summary>
         /// <param name="requestBuilder"></param>
         /// <param name="domesticPaymentConsentId"></param>
-        public static async Task Get(
+        public static async Task Read(
             IRequestBuilder requestBuilder,
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp2 =
+            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
                     .GetAsync(domesticPaymentConsentId);
         }
+        
+        /// <summary>
+        ///     Read domestic payment consent funds confirmation
+        /// </summary>
+        /// <param name="requestBuilder"></param>
+        /// <param name="domesticPaymentConsentId"></param>
+        public static async Task ReadFundsConfirmation(
+            IRequestBuilder requestBuilder,
+            Guid domesticPaymentConsentId)
+        {
+            // GET domestic payment consent
+            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
+                await requestBuilder
+                    .PaymentInitiation
+                    .DomesticPaymentConsents
+                    .GetFundsConfirmationAsync(domesticPaymentConsentId);
+        }
+        
     }
 }

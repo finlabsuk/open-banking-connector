@@ -61,8 +61,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     requestBuilder,
                     demoNameUnique);
 
-            // Retrieve domestic payment consent
-            await DomesticPaymentConsentMethods.Get(requestBuilder, domesticPaymentConsentId);
+            // Read domestic payment consent
+            await DomesticPaymentConsentMethods.Read(requestBuilder, domesticPaymentConsentId);
         }
 
         // Create host builder method based on default but with
