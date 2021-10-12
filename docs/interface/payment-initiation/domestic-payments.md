@@ -5,8 +5,7 @@ The thee payment configuration object types are shown in the table below. Each c
 
 Object type | Parent type(s) | Created at bank? | Description | 
 --- | --- | --- | ---
-DomesticPaymentConsents | `BankRegistration`, `BankApiSet` | Yes | Object a user can "authorise" to consent to a payment 
-authorisation a domestic payment.
+DomesticPayment<br/>Consents |`BankRegistration`, `BankApiSet` | Yes | Object a user can "authorise" to consent to a payment authorisation a domestic payment.|
 DomesticPayments | `DomesticPaymentConsent`| Yes | Payment object
 AuthContexts| `DomesticPaymentConsent`| No | Object which represents a session allowing the user to authorise a consent
 
