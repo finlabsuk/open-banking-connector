@@ -138,9 +138,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient)
-            => paymentInitiationApi.PaymentInitiationApiVersion switch
+            => variableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
+                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
@@ -153,20 +153,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                         instrumentationClient,
                         paymentInitiationApi,
                         processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
-                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
-                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
-                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
-                    VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
-                    new PaymentInitiationPostRequestProcessor<
-                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
-                        bankFinancialId,
-                        tokenEndpointResponse,
-                        instrumentationClient,
-                        paymentInitiationApi,
-                        processedSoftwareStatementProfile)),
-                _ => throw new ArgumentOutOfRangeException()
+                null => throw new NullReferenceException("No VRP API specified for this bank."),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"VRP API version {variableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion} not supported.")
             };
     }
 

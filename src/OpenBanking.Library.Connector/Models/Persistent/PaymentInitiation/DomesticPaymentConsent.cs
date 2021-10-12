@@ -229,7 +229,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 TokenEndpointResponse tokenEndpointResponse,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
                 IInstrumentationClient instrumentationClient)
-            => paymentInitiationApi.PaymentInitiationApiVersion switch
+            => paymentInitiationApi?.PaymentInitiationApiVersion switch
             {
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
@@ -237,7 +237,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
                         tokenEndpointResponse)),
-                _ => throw new ArgumentOutOfRangeException()
+                null => throw new NullReferenceException("No PISP API specified for this bank."),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"PISP API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")
             };
     }
 }
