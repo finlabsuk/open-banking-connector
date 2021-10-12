@@ -9,24 +9,24 @@ Then make a domestic payment, you must:
 - read the `DomesticPayment` to check its status.
 
 # Example
-Here is an example of how to make a domestic payment.
+Here is an example of how to make a domestic payment. We here create a domestic payment request object based on a previously created domestic payment consent request object (`domesticPaymentConsentRequest`) and a domestic payment consent ID (`domesticPaymentConsentId`).
 
-sample code:
 ```csharp
-// POST domestic payment
+// Create domestic payment request
+requestBuilder.Utility.Map(
+    domesticPaymentConsentRequest.OBWriteDomesticConsent,
+    out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);    // maps Open Banking
+                                                                            // request objects
 DomesticPaymentRequest domesticPaymentRequest =
     new DomesticPaymentRequest
-        { DomesticPaymentConsentId = default };
-await testDataProcessorFluentRequestLogging
-    .AppendToPath("domesticPayment")
-    .AppendToPath("postRequest")
-    .WriteFile(domesticPaymentRequest);
-domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
-domesticPaymentRequest.Name = testNameUnique;
+    {
+        OBWriteDomestic = obWriteDomestic,
+        DomesticPaymentConsentId = domesticPaymentConsentId,
+        Name = "name"
+    };
 
-// Makes call to Open Banking Connector. Creates objectand stores in database.
+// POST domestic payment
 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
-    await requestBuilderNew.PaymentInitiation.DomesticPayments
+    await requestBuilder.PaymentInitiation.DomesticPayments
         .PostAsync(domesticPaymentRequest);
-
 ```
