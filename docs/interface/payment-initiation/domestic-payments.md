@@ -1,7 +1,11 @@
 # Domestic Payments
-## Payment object types
 
-The thee payment configuration object types are shown in the table below. Each corresponds to a table in the Open Banking Connector database. 
+The Payment Initiation API supports creating and reading domestic payments.
+
+## Interface object types
+
+The three domestic payment object types are shown in the table below. Each corresponds to a table in the Open Banking Connector database.
+
 
 Object type | Parent type(s) | Created at bank? | Description | 
 --- | --- | --- | ---

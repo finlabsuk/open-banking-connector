@@ -1,32 +1,37 @@
 # Make Domestic Payment
 
-Before making a domestic payment you must have created and authorised a consent.
+Before making a domestic payment you need to create and authorise a domestic payment consent.
 
-Then make a domestic payment, you must:
-
-- create a `DomesticPayment`
-
-- read the `DomesticPayment` to check its status.
+You can then make a domestic payment by:
+- using the `PostAsync` method on `requestBuilder.PaymentInitiation.DomesticPayments`
 
 # Example
-Here is an example of how to make a domestic payment. We here create a domestic payment request object based on a previously created domestic payment consent request object (`domesticPaymentConsentRequest`) and a domestic payment consent ID (`domesticPaymentConsentId`).
+
+This is an example of how to make a domestic payment. We here create a request object for the domestic payment based on the previously created request object for the *domestic payment consent*.
+
+The required inputs are:
+- `domesticPaymentConsentRequest`: the consent request object
+- `domesticPaymentConsentId`: the consent ID
+- `testNameUnique`: the name field for the payment
 
 ```csharp
 // Create domestic payment request
 requestBuilder.Utility.Map(
     domesticPaymentConsentRequest.OBWriteDomesticConsent,
-    out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);    // maps Open Banking
-                                                                            // request objects
-DomesticPaymentRequest domesticPaymentRequest =
-    new DomesticPaymentRequest
+    out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic); // maps Open Banking request objects
+DomesticPayment domesticPaymentRequest =
+    new DomesticPayment
     {
         OBWriteDomestic = obWriteDomestic,
         DomesticPaymentConsentId = domesticPaymentConsentId,
-        Name = "name"
+        Name = testNameUnique
     };
 
 // POST domestic payment
-IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
-    await requestBuilder.PaymentInitiation.DomesticPayments
+IFluentResponse<DomesticPaymentResponse> domesticPaymentResponse =
+    await requestBuilder
+        .PaymentInitiation
+        .DomesticPayments
         .PostAsync(domesticPaymentRequest);
+Guid domesticPaymentId = domesticPaymentResponse.Data!.Id;
 ```
