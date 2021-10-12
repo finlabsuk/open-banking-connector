@@ -216,15 +216,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 TokenEndpointResponse tokenEndpointResponse,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
                 IInstrumentationClient instrumentationClient)
-            => paymentInitiationApi.PaymentInitiationApiVersion switch
+            => variableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
+                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiGetRequests<
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse,
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
                         tokenEndpointResponse)),
-                _ => throw new ArgumentOutOfRangeException()
+                null => throw new NullReferenceException("No VRP API specified for this bank."),
+
+                _ => throw new ArgumentOutOfRangeException(
+                    $"VRP API version {variableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion} not supported.")
             };
     }
 }
