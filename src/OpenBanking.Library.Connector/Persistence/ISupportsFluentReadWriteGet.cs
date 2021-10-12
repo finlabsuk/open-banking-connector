@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
@@ -16,7 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         where TApiResponse : class, ISupportsValidation
     {
         public IApiGetRequests<TApiResponse> ApiGetRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,

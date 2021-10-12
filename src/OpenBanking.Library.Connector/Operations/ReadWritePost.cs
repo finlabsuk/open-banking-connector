@@ -97,7 +97,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             JsonSerializerSettings? jsonSerializerSettings = null;
 
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests = new TEntity().ApiPostRequests(
-                paymentInitiationApi,
+                bankApiInformation.PaymentInitiationApi,
+                bankApiInformation.VariableRecurringPaymentsApi,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,

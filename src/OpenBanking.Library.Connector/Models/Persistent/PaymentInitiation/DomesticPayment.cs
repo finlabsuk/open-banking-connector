@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
@@ -90,13 +91,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiPostRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
+                variableRecurringPaymentsApi,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
@@ -105,7 +108,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -159,13 +163,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         }
 
         public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
+                variableRecurringPaymentsApi,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,

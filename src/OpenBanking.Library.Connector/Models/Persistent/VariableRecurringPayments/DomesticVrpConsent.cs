@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -116,13 +116,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
         public IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiPostRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
+                variableRecurringPaymentsApi,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
@@ -130,7 +132,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
         public IApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -172,13 +175,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
         public IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiGetRequests(
-            PaymentInitiationApi paymentInitiationApi,
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             string bankFinancialId,
             TokenEndpointResponse tokenEndpointResponse,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             ApiRequests(
                 paymentInitiationApi,
+                variableRecurringPaymentsApi,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
@@ -216,7 +221,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
             ISupportsFluentReadWriteGet<DomesticVrpConsentResponse,
                 VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>.ApiGetRequests(
-                PaymentInitiationApi paymentInitiationApi,
+                PaymentInitiationApi? paymentInitiationApi,
+                VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
                 string bankFinancialId,
                 TokenEndpointResponse tokenEndpointResponse,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
