@@ -14,22 +14,29 @@ Here is an example of how to make a variable recurring payment. We create a dome
 ```csharp
 // Create domestic vrp request
 requestBuilder.Utility.Map(
-            domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
-            out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest);                                                                                     // request objects
-DomesticVrpRequest domesticVrpRequest =
-    new DomesticVrpRequest
-    {
-        OBDomesticVRPRequest = obDomesticVrpRequest,
-        DomesticVrpConsentId = domesticVrpConsentId,
-        Name = "name"
-    };
-// POST domestic payment
-IFluentResponse<DomesticVrpResponse> domesticVrpResp =
-                await requestBuilder.VariableRecurringPayments.DomesticVrp
+                domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
+                out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest); 
+
+// maps Open Banking request objects
+DomesticVrp domesticVrpRequest =
+        new DomesticVrp
+        {
+            OBDomesticVRPRequest = obDomesticVrpRequest,
+            Name = testNameUnique,
+            DomesticVrpConsentId = domesticVrpConsentId,
+        };
+
+// POST domestic VRP 
+IFluentResponse<DomesticVrpResponse> domesticVrpResponse =
+                await requestBuilder
+                    .VariableRecurringPayments
+                    .DomesticVrps
                     .PostAsync(domesticVrpRequest);
+                    
+// Response from Open Banking Connector.
+Guid domesticVrpId = domesticVrpResponse.Data!.Id;
 
 ```
-
 
 
 

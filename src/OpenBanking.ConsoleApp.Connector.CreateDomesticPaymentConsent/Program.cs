@@ -58,6 +58,9 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     bankProfile,
                     bankRegistrationId,
                     bankApiSetId,
+                    DomesticPaymentTypeEnum.PersonToMerchant,
+                    Guid.NewGuid().ToString("N"),
+                    Guid.NewGuid().ToString("N"),
                     requestBuilder,
                     demoNameUnique);
 

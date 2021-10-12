@@ -22,22 +22,25 @@ Here is an example of how to set up the domestic vrp consent. The example is bas
 ## First, we create a domestic vrp consent object:
 sample code: <br />
 ```csharp
-// Create domestic vrp consent
-DomesticVrpConsentRequest domesticVrpConsentRequest =
-    bankProfile.DomesticVrpConsentRequest(
-        Guid.Empty,
-        Guid.Empty,
-        DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum),
-        "placeholder: random GUID",
-        "placeholder: random GUID",
-        null);
+// Create domestic VRP consent 
+DomesticVrpConsent domesticVrpConsentRequest =
+bankProfile.DomesticVrpConsentRequest(
+bankRegistrationId,
+bankApiSetId,
+domesticVrpTypeEnum,
+testNameUnique);
+
 // Makes call to Open Banking Connector. Creates objectand stores in database.
-IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp =
-await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
+IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResponse =
+await requestBuilder
+.VariableRecurringPayments
+.DomesticVrpConsents
 .PostAsync(domesticVrpConsentRequest);
+
 // Response from Open Banking Connector.
-Guid domesticVrpConsentId = domesticVrpConsentResp.Data!.Id;
+Guid domesticVrpConsentId = domesticVrpConsentResponse.Data!.Id;
 ```
+
 
 ## Next, get the Domestic Vrp Consent Funds Confirmation
 sample code:

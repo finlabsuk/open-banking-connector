@@ -23,8 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             Guid bankRegistrationId,
             Guid bankApiSetId,
             DomesticVrpTypeEnum domesticVrpType,
-            string instructionIdentification,
-            string endToEndIdentification,
             string? name)
         {
             var domesticVrpConsentRequest = new DomesticVrpConsent

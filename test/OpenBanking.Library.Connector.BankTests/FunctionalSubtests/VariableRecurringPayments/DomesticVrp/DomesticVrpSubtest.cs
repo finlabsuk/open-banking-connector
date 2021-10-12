@@ -67,14 +67,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     Guid.Empty,
                     Guid.Empty,
                     DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum),
-                    "placeholder: random GUID",
-                    "placeholder: random GUID",
                     null);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("domesticVrpConsent")
                 .AppendToPath("postRequest")
                 .WriteFile(domesticVrpConsentRequest);
-
 
             // Basic request object for domestic payment
             requestBuilder.Utility.Map(
