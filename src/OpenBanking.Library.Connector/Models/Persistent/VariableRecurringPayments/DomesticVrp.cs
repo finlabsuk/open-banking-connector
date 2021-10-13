@@ -130,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                         bankFinancialId,
                         tokenEndpointResponse,
                         instrumentationClient,
-                        paymentInitiationApi,
+                        false,
                         processedSoftwareStatementProfile)),
                 null => throw new NullReferenceException("No VRP API specified for this bank."),
 

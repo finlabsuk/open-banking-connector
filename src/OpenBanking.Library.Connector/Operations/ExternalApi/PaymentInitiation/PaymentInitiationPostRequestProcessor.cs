@@ -8,7 +8,6 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
@@ -20,20 +19,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
     {
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly string _orgId;
-        private readonly PaymentInitiationApi _paymentInitiationApi;
         private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
         private readonly TokenEndpointResponse _tokenEndpointResponse;
+        private readonly bool _useB64;
 
         public PaymentInitiationPostRequestProcessor(
             string orgId,
             TokenEndpointResponse tokenEndpointResponse,
             IInstrumentationClient instrumentationClient,
-            PaymentInitiationApi paymentInitiationApi,
+            bool useB64,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
         {
             _instrumentationClient = instrumentationClient;
             _orgId = orgId;
-            _paymentInitiationApi = paymentInitiationApi;
+            _useB64 = useB64;
             _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
             _tokenEndpointResponse = tokenEndpointResponse;
         }
@@ -49,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
                     _processedSoftwareStatementProfile.SoftwareStatementPayload.OrgId,
                     _processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareId,
                     _processedSoftwareStatementProfile.SigningKeyId,
-                    _paymentInitiationApi.PaymentInitiationApiVersion),
+                    _useB64),
                 variantRequest,
                 _processedSoftwareStatementProfile.SigningKey,
                 _processedSoftwareStatementProfile.SigningCertificate);
@@ -87,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             string orgId,
             string softwareId,
             string signingId,
-            PaymentInitiationApiVersion paymentInitiationPaymentInitiationApiVersion)
+            bool useB64)
         {
             signingId.ArgNotNull(nameof(signingId));
             orgId.ArgNotNull(nameof(orgId));
@@ -96,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             // b64 header was removed from 3.1.4 onwards
             string[] crit;
             bool? b64;
-            if (paymentInitiationPaymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4)
+            if (useB64)
             {
                 crit = new[]
                 {
