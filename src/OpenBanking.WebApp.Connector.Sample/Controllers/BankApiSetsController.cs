@@ -15,16 +15,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
 {
     [ApiController]
-    public class BankApiInformationRecordsController : ControllerBase
+    public class BankApiSetsController : ControllerBase
     {
         private readonly IRequestBuilder _obcRequestBuilder;
 
-        public BankApiInformationRecordsController(IRequestBuilder obcRequestBuilder)
+        public BankApiSetsController(IRequestBuilder obcRequestBuilder)
         {
             _obcRequestBuilder = obcRequestBuilder;
         }
 
-        [Route("bank-api-information-records")]
+        [Route("bank-api-sets")]
         [HttpPost]
         [ProducesResponseType(
             typeof(HttpResponse<BankApiSetResponse>),
