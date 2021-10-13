@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.DomesticVrp;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
@@ -166,6 +167,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Dereference bank
             BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
 
+            // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await ClientRegistrationSubtests.PostAndGetObjects(
                     bankRegistrationType.SoftwareStatementProfileId,
@@ -202,6 +204,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     bankUserList);
             }
 
+            // Run domestic VRP subtests
+            foreach (DomesticVrpSubtestEnum subTest in
+                DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+            {
+                await DomesticVrpSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    bankApiSetId,
+                    bankProfile.VariableRecurringPaymentsApiSettings,
+                    requestBuilder,
+                    requestBuilderGenerator,
+                    testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("vrp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    genericNotPlainAppTest,
+                    nodeJsService,
+                    puppeteerLaunchOptions,
+                    bankUserList);
+            }
+
+            // Delete bank configuration objects
             await ClientRegistrationSubtests.DeleteObjects(
                 requestBuilder,
                 bankApiSetId,

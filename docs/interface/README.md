@@ -1,11 +1,10 @@
 # Interface
 
-OBC.NET is an in-process functional library providing abstract integration with PISP providers. 
+Open Banking Connector is an in-process functional library providing abstract integration with banks. 
 
-Our aim is to provide a simple, low-risk developer experience to help users making payments as fast as possible.
-To this end we will make a DSL via standard C# fluent interface techniques.
+Our aim is to provide a simple, low-risk developer experience to help users make payments and access bank APIs as fast as possible. To this end we will make a DSL via standard C# fluent interface techniques.
 
-```IObRequestBuilder``` is an injectable .NET type that serves as the DSL's root object. As an example, take the following expression:
+```IRequestBuilder``` is an injectable .NET type that serves as the DSL's root object. As an example, take the following expression:
 
 ```csharp
 var resp = await requestBuilder.Payment().With(ConsentInfo.FromJwt("<some jwt>"))
@@ -15,5 +14,5 @@ var resp = await requestBuilder.Payment().With(ConsentInfo.FromJwt("<some jwt>")
                 .Submit();
 ```
 
-This inteface style is the facade that user code will use. 
+This interface style is the facade that user code will use. 
 

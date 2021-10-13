@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistra
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
@@ -73,12 +74,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             string issuerUrl,
             string financialId,
             ClientRegistrationApiVersion clientRegistrationApiVersion,
-            PaymentInitiationApi? paymentInitiationApi)
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi)
         {
             BankProfileEnum = bankProfileEnum;
             IssuerUrl = issuerUrl ?? throw new ArgumentNullException(nameof(issuerUrl));
             FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
             PaymentInitiationApi = paymentInitiationApi;
+            VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
             ClientRegistrationApiVersion = clientRegistrationApiVersion;
         }
 
@@ -103,9 +106,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public ClientRegistrationApiVersion ClientRegistrationApiVersion { get; }
 
         /// <summary>
-        ///     Payment Initiation (PISP) API version. May be null because this API may not be used in testing.
+        ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
         /// </summary>
         public PaymentInitiationApi? PaymentInitiationApi { get; }
+
+        /// <summary>
+        ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
+        /// </summary>
+        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
 
         /// <summary>
         ///     Settings used when testing Client Registration API.

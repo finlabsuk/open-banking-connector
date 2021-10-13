@@ -25,9 +25,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 {
     public class DomesticVrpSubtest
     {
-        public static ISet<DomesticVrpSubtestEnum>
-            DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
-            DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
+        public static ISet<DomesticVrpSubtestEnum> DomesticVrpFunctionalSubtestsSupported(BankProfile bankProfile) =>
+            bankProfile.VariableRecurringPaymentsApi is null
+                ? new HashSet<DomesticVrpSubtestEnum>() // empty set
+                : DomesticVrpSubtestHelper.AllDomesticVrpSubtests;
 
         public static async Task RunTest(
             DomesticVrpSubtestEnum subtestEnum,
@@ -47,6 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bool subtestSkipped = subtestEnum switch
             {
                 DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => false,
+                DomesticVrpSubtestEnum
+                        .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
+                    => true,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
             };
