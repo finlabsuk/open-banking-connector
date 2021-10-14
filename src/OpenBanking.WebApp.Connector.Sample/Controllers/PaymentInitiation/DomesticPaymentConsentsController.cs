@@ -3,10 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
@@ -17,13 +20,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentConsentsController : ControllerBase
     {
-        private readonly IRequestBuilder _obcRequestBuilder;
+        private readonly IRequestBuilder _requestBuilder;
 
-        public DomesticPaymentConsentsController(IRequestBuilder obcRequestBuilder)
+        public DomesticPaymentConsentsController(IRequestBuilder requestBuilder)
         {
-            _obcRequestBuilder = obcRequestBuilder;
+            _requestBuilder = requestBuilder;
         }
-
+        
         [Route("pisp/domestic-payment-consents")]
         [HttpPost]
         [ProducesResponseType(
@@ -37,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
         {
-            IFluentResponse<DomesticPaymentConsentResponse> fluentResponse = await _obcRequestBuilder
+            IFluentResponse<DomesticPaymentConsentResponse> fluentResponse = await _requestBuilder
                 .PaymentInitiation
                 .DomesticPaymentConsents
                 .PostAsync(request);
@@ -49,6 +52,39 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
                 FluentSuccessResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status201Created,
                 FluentBadRequestErrorResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status400BadRequest,
                 FluentOtherErrorResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status500InternalServerError,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            return new ObjectResult(httpResponse)
+                { StatusCode = statusCode };
+        }
+        
+        // GET /pisp/domestic-payment-consents
+        [Route("pisp/domestic-payment-consents")]
+        [HttpGet]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+            StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+            StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAsync()
+        {
+            // Operation
+            IFluentResponse<IQueryable<DomesticPaymentConsentResponse>> fluentResponse = await _requestBuilder
+                .PaymentInitiation
+                .DomesticPaymentConsents
+                .GetLocalAsync(query => true);
+
+            // HTTP response
+            HttpResponse<IQueryable<DomesticPaymentConsentResponse>> httpResponse = fluentResponse.ToHttpResponse();
+            int statusCode = fluentResponse switch
+            {
+                FluentSuccessResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status200OK,
+                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

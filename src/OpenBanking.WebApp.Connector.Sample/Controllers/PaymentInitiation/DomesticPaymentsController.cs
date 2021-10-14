@@ -3,10 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
@@ -17,13 +20,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentsController : ControllerBase
     {
-        private readonly IRequestBuilder _obcRequestBuilder;
+       private readonly IRequestBuilder _requestBuilder;
 
-        public DomesticPaymentsController(IRequestBuilder obcRequestBuilder)
+        public DomesticPaymentsController(IRequestBuilder requestBuilder)
         {
-            _obcRequestBuilder = obcRequestBuilder;
+            _requestBuilder = requestBuilder;
         }
-
+        
         [Route("pisp/domestic-payments")]
         [HttpPost]
         [ProducesResponseType(
@@ -37,7 +40,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PostAsync([FromBody] DomesticPayment request)
         {
-            IFluentResponse<DomesticPaymentResponse> fluentResponse = await _obcRequestBuilder.PaymentInitiation
+            IFluentResponse<DomesticPaymentResponse> fluentResponse = await _requestBuilder
+                .PaymentInitiation
                 .DomesticPayments
                 .PostAsync(request);
 
@@ -48,6 +52,39 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
                 FluentSuccessResponse<DomesticPaymentResponse> _ => StatusCodes.Status201Created,
                 FluentBadRequestErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status400BadRequest,
                 FluentOtherErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status500InternalServerError,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            return new ObjectResult(httpResponse)
+                { StatusCode = statusCode };
+        }
+        
+        // GET /pisp/domestic-payments
+        [Route("pisp/domestic-payments")]
+        [HttpGet]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentResponse>>),
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentResponse>>),
+            StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(
+            typeof(HttpResponse<IList<DomesticPaymentResponse>>),
+            StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetAsync()
+        {
+            // Operation
+            IFluentResponse<IQueryable<DomesticPaymentResponse>> fluentResponse = await _requestBuilder
+                .PaymentInitiation
+                .DomesticPayments
+                .GetLocalAsync(query => true);
+
+            // HTTP response
+            HttpResponse<IQueryable<DomesticPaymentResponse>> httpResponse = fluentResponse.ToHttpResponse();
+            int statusCode = fluentResponse switch
+            {
+                FluentSuccessResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status200OK,
+                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)
