@@ -16,6 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         Modelo,
         NatWest,
+        VrpHackathon,
         Monzo,
         BankOfIreland,
         Nationwide,
@@ -32,14 +33,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public static IEnumerable<BankProfileEnum> AllBanks { get; }
 
         /// <summary>
-        ///     Convert bank name (BankEnum member name) to BankEnum
-        /// </summary>
-        /// <param name="bankEnumMemberName"></param>
-        /// <returns></returns>
-        public static BankProfileEnum GetBankEnum(string bankEnumMemberName) =>
-            Enum.Parse<BankProfileEnum>(bankEnumMemberName);
-
-        /// <summary>
         ///     Convert BankEnum to Bank
         /// </summary>
         /// <param name="bankProfileEnum"></param>
@@ -52,6 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             {
                 BankProfileEnum.Modelo => bankProfileDefinitions.Modelo,
                 BankProfileEnum.NatWest => bankProfileDefinitions.NatWest,
+                BankProfileEnum.VrpHackathon => bankProfileDefinitions.VrpHackathon,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };

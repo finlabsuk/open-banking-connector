@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             // Initialise bank profiles
             Modelo = GetModelo();
             NatWest = GetNatWest();
+            VrpHackathon = GetVrpHackathon();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)

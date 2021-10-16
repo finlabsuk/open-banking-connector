@@ -5,16 +5,29 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     /// <summary>
-    ///     Describes <see cref="PaymentInitiationApiVersion" /> hidden properties object in bankProfileHiddenProperties.json
-    ///     Properties are nullable versions (since optional) of those in <see cref="PaymentInitiationApiVersion" />.
+    ///     Describes <see cref="PaymentInitiationApi" /> hidden properties object in bankProfileHiddenProperties.json
+    ///     Properties are nullable versions (since optional) of those in <see cref="PaymentInitiationApi" />.
     /// </summary>
     public class PaymentInitiationApiHiddenProperties
     {
         public PaymentInitiationApiVersion? PaymentInitiationApiVersion { get; set; }
+
+        public string? BaseUrl { get; set; }
+    }
+    
+    /// <summary>
+    ///     Describes <see cref="VariableRecurringPaymentsApi" /> hidden properties object in bankProfileHiddenProperties.json
+    ///     Properties are nullable versions (since optional) of those in <see cref="VariableRecurringPaymentsApi" />.
+    /// </summary>
+    public class VariableRecurringPaymentsApiHiddenProperties
+    {
+        public VariableRecurringPaymentsApiVersion? VariableRecurringPaymentsApiVersion { get; set; }
 
         public string? BaseUrl { get; set; }
     }
@@ -33,8 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public PaymentInitiationApiHiddenProperties? DefaultPaymentInitiationApi { get; set; }
 
-        public string GetRequiredPaymentInitiationApiBaseUrl() =>
-            DefaultPaymentInitiationApi?.BaseUrl ?? throw new Exception("No base URL");
+        public VariableRecurringPaymentsApiHiddenProperties? DefaultVariableRecurringPaymentsApi { get; set; }
 
         public string GetRequiredIssuerUrl() =>
             IssuerUrl ?? throw new Exception("No issuer URL");
@@ -47,6 +59,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public PaymentInitiationApiVersion GetRequiredPaymentInitiationApiVersion() =>
             DefaultPaymentInitiationApi?.PaymentInitiationApiVersion ??
-            throw new Exception("No PaymentInitiationApiVersion");
+            throw new Exception("No PISP API version");
+        public string GetRequiredPaymentInitiationApiBaseUrl() =>
+            DefaultPaymentInitiationApi?.BaseUrl ?? throw new Exception("No PISP base URL");
+        
+        public VariableRecurringPaymentsApiVersion GetRequiredVariableRecurringPaymentsApiVersion() =>
+            DefaultVariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+            throw new Exception("No VRP API version");
+        public string GetRequiredVariableRecurringPaymentsApiBaseUrl() =>
+            DefaultVariableRecurringPaymentsApi?.BaseUrl ?? throw new Exception("No VRP base URL");
+        
     }
 }
