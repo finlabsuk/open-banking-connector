@@ -41,7 +41,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 testNameUnique,
                 bankId,
                 softwareStatementProfileId,
-                registrationScope);
+                registrationScope,
+                null);
             IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations

@@ -14,7 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             string name,
             Guid bankId,
             string softwareStatementProfileId,
-            RegistrationScope registrationScope)
+            RegistrationScope registrationScope,
+            string? openIdConfigurationReplacement)
         {
             var bankRegistration = new BankRegistration
             {
@@ -23,7 +24,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 RegistrationScope = registrationScope,
                 ClientRegistrationApi = ClientRegistrationApiVersion,
-                AllowMultipleRegistrations = true
+                AllowMultipleRegistrations = true,
+                OpenIdConfigurationReplacement = openIdConfigurationReplacement
             };
             return ClientRegistrationApiSettings.BankRegistrationAdjustments.Invoke(
                 bankRegistration,
