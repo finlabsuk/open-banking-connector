@@ -2,14 +2,21 @@
 
 Before making a variable recurring payment you must have created and authorised a consent.
 
-Then make a domestic payment, you must:
+You can then make a variable recurring payment by:
 
-- create a `VariableRecurringPayment`
+- creating a `VariableRecurringPayment`
 
-- read the `VariableRecurringPayment` to check its status.
+- reading the `VariableRecurringPayment` to check its status.
+
+- using the `PostAsync` method on `requestBuilder.VariableRecurringPayment.DomesticVrpPayments`
 
 # Example
-Here is an example of how to make a variable recurring payment. We create a domestic vrp request object based on a previously created domestic vrp consent request object (`domesticVrpConsentRequest`) and a domestic vrp consent ID (`domesticVrpConsentId`)
+Here is an example of how to make a variable recurring payment. We create a domestic vrp request object based on a previously created domestic vrp consent request object.
+
+The required inputs are:
+- `domesticVrpConsentRequest` : the consent request object
+- `domesticVrpConsentId` : the consent ID
+- `testNameUnique` :the name field for the payment
 
 ```csharp
 // Create domestic vrp request
