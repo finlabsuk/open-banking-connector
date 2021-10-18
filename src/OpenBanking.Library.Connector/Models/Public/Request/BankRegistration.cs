@@ -41,6 +41,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         public ClientRegistrationApiVersion ClientRegistrationApi { get; set; }
 
+        /// <summary>
+        ///     JSON string with Open ID configuration (well-known endpoint) response to be used
+        ///     instead of calling bank API. When null, bank API endpoint provides response.
+        /// </summary>
+        public string? OpenIdConfigurationReplacement { get; set; } = null;
+
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
         public HttpMtlsConfigurationOverrides? HttpMtlsConfigurationOverrides { get; set; }
