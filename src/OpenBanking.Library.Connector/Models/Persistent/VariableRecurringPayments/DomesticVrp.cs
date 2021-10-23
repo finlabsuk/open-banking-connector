@@ -155,6 +155,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                     modifiedBy);
         }
 
+        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.VariableRecurringPayments;
+
         public IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiGetRequests(
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi,

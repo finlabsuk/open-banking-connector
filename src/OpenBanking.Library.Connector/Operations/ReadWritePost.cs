@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -71,10 +70,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 TokenEndpointResponse? userTokenEndpointResponse,
                 var nonErrorMessages) = await ApiPostRequestData(request);
 
-            // Get PISP API
-            PaymentInitiationApi paymentInitiationApi =
-                bankApiInformation.PaymentInitiationApi ??
-                throw new NullReferenceException("Bank API Information record has null Payment Initiation API.");
+            // Check API specified and get base URL
+            string baseUrl = new TEntity().GetReadWriteApiType() switch
+            {
+                ReadWriteApiType.PaymentInitiation =>
+                    bankApiInformation.PaymentInitiationApi?.BaseUrl ??
+                    throw new NullReferenceException("Bank API Set has null Payment Initiation API."),
+                ReadWriteApiType.VariableRecurringPayments =>
+                    bankApiInformation.VariableRecurringPaymentsApi?.BaseUrl ??
+                    throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API."),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -93,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     apiClient);
 
             // Create new Open Banking object by posting JWT
-            Uri uri = new Uri(paymentInitiationApi.BaseUrl + RelativePath);
+            Uri uri = new Uri(baseUrl + RelativePath);
             JsonSerializerSettings? jsonSerializerSettings = null;
 
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests = new TEntity().ApiPostRequests(

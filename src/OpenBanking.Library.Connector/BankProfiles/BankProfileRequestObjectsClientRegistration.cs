@@ -45,6 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             {
                 BankId = bankId,
                 PaymentInitiationApi = PaymentInitiationApi,
+                VariableRecurringPaymentsApi = VariableRecurringPaymentsApi,
                 Name = name
             };
     }

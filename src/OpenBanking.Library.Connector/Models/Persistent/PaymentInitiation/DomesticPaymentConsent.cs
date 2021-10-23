@@ -192,6 +192,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
                 instrumentationClient);
+
+        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.PaymentInitiation;
     }
 
     internal partial class DomesticPaymentConsent :

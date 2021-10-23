@@ -177,6 +177,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
                 instrumentationClient);
+
+        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.VariableRecurringPayments;
     }
 
     internal partial class DomesticVrpConsent :

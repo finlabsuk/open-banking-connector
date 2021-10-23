@@ -13,8 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     public enum DomesticVrpTypeEnum
     {
-        VrpWithDebtorAccountSpecifiedByPisp,
-        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
+        VrpWithDebtorAccountSpecifiedByPisp, // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
+        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation, // same as VrpWithDebtorAccountSpecifiedByPisp but no debtor account specified
+        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
     }
 
     public partial class BankProfile
@@ -49,21 +50,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                                         Amount = "100.00",
                                                         Currency = "GBP"
                                                     },
-                                            PeriodicLimits = new List<VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParametersPeriodicLimitsItem>()
-                                            {
-                                                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParametersPeriodicLimitsItem
+                                            PeriodicLimits =
+                                                new List<VariableRecurringPaymentsModelsPublic.
+                                                    OBDomesticVRPControlParametersPeriodicLimitsItem>
                                                 {
-                                                    Amount = "200.00",
-                                                    Currency = "GBP",
-                                                    PeriodAlignment = VariableRecurringPaymentsModelsPublic
-                                                        .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
-                                                        .Consent,
-                                                    PeriodType = VariableRecurringPaymentsModelsPublic
-                                                        .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
-                                                        .Week
-
-                                                }
-                                            },
+                                                    new VariableRecurringPaymentsModelsPublic.
+                                                        OBDomesticVRPControlParametersPeriodicLimitsItem
+                                                        {
+                                                            Amount = "200.00",
+                                                            Currency = "GBP",
+                                                            PeriodAlignment = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
+                                                                .Consent,
+                                                            PeriodType = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
+                                                                .Week
+                                                        }
+                                                },
                                             VRPType = new List<string> { "UK.OBIE.VRPType.Sweeping" },
                                             PSUAuthenticationMethods = new List<string> { "UK.OBIE.SCA" },
                                             SupplementaryData = null
@@ -105,7 +108,76 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                     DeliveryAddress = null
                                 }
                             },
-
+                        DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation => new
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
+                            {
+                                Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestData
+                                {
+                                    ReadRefundAccount = VariableRecurringPaymentsModelsPublic
+                                        .OBDomesticVRPConsentRequestDataReadRefundAccountEnum.Yes,
+                                    ControlParameters =
+                                        new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
+                                        {
+                                            ValidFromDateTime = DateTimeOffset.Now,
+                                            ValidToDateTime = DateTimeOffset.Now.AddYears(3),
+                                            MaximumIndividualAmount =
+                                                new VariableRecurringPaymentsModelsPublic.
+                                                    OBDomesticVRPControlParametersMaximumIndividualAmount
+                                                    {
+                                                        Amount = "100.00",
+                                                        Currency = "GBP"
+                                                    },
+                                            PeriodicLimits =
+                                                new List<VariableRecurringPaymentsModelsPublic.
+                                                    OBDomesticVRPControlParametersPeriodicLimitsItem>
+                                                {
+                                                    new VariableRecurringPaymentsModelsPublic.
+                                                        OBDomesticVRPControlParametersPeriodicLimitsItem
+                                                        {
+                                                            Amount = "200.00",
+                                                            Currency = "GBP",
+                                                            PeriodAlignment = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
+                                                                .Consent,
+                                                            PeriodType = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
+                                                                .Week
+                                                        }
+                                                },
+                                            VRPType = new List<string> { "UK.OBIE.VRPType.Sweeping" },
+                                            PSUAuthenticationMethods = new List<string> { "UK.OBIE.SCA" },
+                                            SupplementaryData = null
+                                        },
+                                    Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
+                                    {
+                                        DebtorAccount = null,
+                                        CreditorAgent = null,
+                                        CreditorAccount =
+                                            new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                                            {
+                                                SchemeName = "SortCodeAccountNumber",
+                                                Identification = "30949330000010",
+                                                SecondaryIdentification = "Roll 90210",
+                                                Name = "Marcus Sweepimus"
+                                            },
+                                        RemittanceInformation =
+                                            new VariableRecurringPaymentsModelsPublic.
+                                                OBDomesticVRPInitiationRemittanceInformation
+                                                {
+                                                    Unstructured = null,
+                                                    Reference = "Sweepco"
+                                                }
+                                    }
+                                },
+                                Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
+                                {
+                                    PaymentContextCode = VariableRecurringPaymentsModelsPublic
+                                        .OBRisk1PaymentContextCodeEnum.PartyToParty,
+                                    MerchantCategoryCode = null,
+                                    MerchantCustomerIdentification = null,
+                                    DeliveryAddress = null
+                                }
+                            },
                         DomesticVrpTypeEnum
                                 .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
                             =>
@@ -134,18 +206,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                                 new List<VariableRecurringPaymentsModelsPublic.
                                                     OBDomesticVRPControlParametersPeriodicLimitsItem>
                                                 {
-                                                    new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParametersPeriodicLimitsItem
-                                                    {
-                                                        Amount = "200.00",
-                                                        Currency = "GBP",
-                                                        PeriodAlignment = VariableRecurringPaymentsModelsPublic
-                                                            .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
-                                                            .Consent,
-                                                        PeriodType = VariableRecurringPaymentsModelsPublic
-                                                            .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
-                                                            .Week
-                                                    }
-                                                    
+                                                    new VariableRecurringPaymentsModelsPublic.
+                                                        OBDomesticVRPControlParametersPeriodicLimitsItem
+                                                        {
+                                                            Amount = "200.00",
+                                                            Currency = "GBP",
+                                                            PeriodAlignment = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum
+                                                                .Consent,
+                                                            PeriodType = VariableRecurringPaymentsModelsPublic
+                                                                .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
+                                                                .Week
+                                                        }
                                                 },
                                         },
                                     Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
@@ -156,7 +228,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                                                 {
                                                     Unstructured = null,
                                                     Reference = "Sweepco"
-                                                }   
+                                                }
                                     }
                                 },
                                 Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1

@@ -58,6 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             PaymentInitiationApi = request.PaymentInitiationApi;
+            VariableRecurringPaymentsApi = request.VariableRecurringPaymentsApi;
             BankId = request.BankId;
         }
 

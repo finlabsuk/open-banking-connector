@@ -132,8 +132,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Compute claims associated with Open Banking client
 
             // Get OpenID Connect configuration info
-            OpenIdConfiguration openIdConfiguration =
-                await GetOpenIdConfigurationAsync(bank.IssuerUrl);
+            OpenIdConfiguration openIdConfiguration;
+            if (request.OpenIdConfigurationReplacement is null)
+            {
+                openIdConfiguration = await GetOpenIdConfigurationAsync(bank.IssuerUrl);
+            }
+            else
+            {
+                openIdConfiguration =
+                    JsonConvert.DeserializeObject<OpenIdConfiguration>(
+                        request.OpenIdConfigurationReplacement,
+                        new JsonSerializerSettings()) ??
+                    throw new Exception("Can't de-serialise supplied bank API response");
+            }
+
+            // Update OpenID Connect configuration info based on overrides
             string? registrationEndpointOverride =
                 request.OpenIdConfigurationOverrides?.RegistrationEndpoint;
             if (!(registrationEndpointOverride is null))
@@ -141,7 +154,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 openIdConfiguration.RegistrationEndpoint = registrationEndpointOverride;
             }
 
-            // Update OpenID Connect configuration info based on overrides
             IList<string>? responseModesSupportedOverride =
                 request.OpenIdConfigurationOverrides?.ResponseModesSupported;
             if (!(responseModesSupportedOverride is null))
@@ -149,6 +161,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
             }
 
+            // Validate OpenID Configuration
             {
                 IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
                     new OpenBankingOpenIdConfigurationResponseValidator()

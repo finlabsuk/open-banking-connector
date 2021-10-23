@@ -14,6 +14,8 @@ using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 {
@@ -24,6 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 
         private static readonly Type PaymentInitiationModelsRootType = typeof(PaymentInitiationModelsPublic.Meta);
 
+        private static readonly Type VariableRecurringPaymentsModelsRootType =
+            typeof(VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest);
+
         public IEnumerable<Type> GetPublicApiModelsTypes()
         {
             IEnumerable<Type> clientRegistrationTypes = ClientRegistrationModelsRootType.Assembly.GetTypes()
@@ -31,7 +36,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 
             IEnumerable<Type> paymentInitiationTypes = PaymentInitiationModelsRootType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(PaymentInitiationModelsRootType, t));
-            return clientRegistrationTypes.Concat(paymentInitiationTypes);
+
+            IEnumerable<Type> variableRecurringPaymentsTypes = VariableRecurringPaymentsModelsRootType.Assembly
+                .GetTypes()
+                .Where(t => t.IsClass && IsInNamespace(VariableRecurringPaymentsModelsRootType, t));
+
+            return clientRegistrationTypes
+                .Concat(paymentInitiationTypes)
+                .Concat(variableRecurringPaymentsTypes);
         }
 
         public IEnumerable<TypeMapping> GetTypesWithTargetApiEquivalent(Type type)

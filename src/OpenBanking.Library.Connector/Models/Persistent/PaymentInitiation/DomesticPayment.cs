@@ -164,6 +164,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     modifiedBy);
         }
 
+        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.PaymentInitiation;
+
         public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi,

@@ -54,7 +54,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("getResponse")
                 .GetFilePath();
             string? openIdConfigurationReplacement =
-                File.Exists(filePath) ? await File.ReadAllTextAsync(filePath) : null;
+                File.Exists(openIdConfigurationReplacementPath)
+                    ? await File.ReadAllTextAsync(openIdConfigurationReplacementPath)
+                    : null;
 
             BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
                 "placeholder: dynamically generated based on unused names",

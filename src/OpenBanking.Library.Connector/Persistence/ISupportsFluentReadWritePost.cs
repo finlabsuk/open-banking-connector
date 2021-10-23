@@ -18,6 +18,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
+        public ReadWriteApiType GetReadWriteApiType();
+
         public IApiPostRequests<TApiRequest, TApiResponse> ApiPostRequests(
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi,

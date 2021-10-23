@@ -12,10 +12,19 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
+    internal enum ReadWriteApiType
+    {
+        AccountTransaction,
+        PaymentInitiation,
+        VariableRecurringPayments
+    }
+
     internal interface ISupportsFluentReadWriteGet<out TPublicResponse, TApiResponse> :
         ISupportsFluentEntityGet<TPublicResponse, TApiResponse>
         where TApiResponse : class, ISupportsValidation
     {
+        public ReadWriteApiType GetReadWriteApiType();
+
         public IApiGetRequests<TApiResponse> ApiGetRequests(
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi,

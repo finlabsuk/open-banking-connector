@@ -47,7 +47,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         {
             bool subtestSkipped = subtestEnum switch
             {
-                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => false,
+                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => true,
+                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation => false,
                 DomesticVrpSubtestEnum
                         .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
                     => true,
@@ -90,6 +91,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 };
 
             // POST domestic payment consent
+            DomesticVrpAccountIndexPair domesticVrpAccountIndexPair = bankUser.DomesticVrpAccountIndexPairs[0];
+            Account creditorAccount = bankUser.Accounts[domesticVrpAccountIndexPair.Dest];
+            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.SchemeName =
+                creditorAccount.SchemeName;
+            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.Identification =
+                creditorAccount.Identification;
+            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.Name =
+                creditorAccount.Name;
             domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticVrpConsentRequest.BankApiSetId = bankApiSetId;
             domesticVrpConsentRequest.Name = testNameUnique;
