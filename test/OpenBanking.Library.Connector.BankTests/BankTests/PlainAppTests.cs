@@ -88,9 +88,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             SoftwareStatementProfilesSettings softwareStatementProfilesSettings = configuration
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
                 .Get<SoftwareStatementProfilesSettings>();
-            ObCertificateProfilesSettings obCertificateProfilesSettings = configuration
-                .GetSection(new ObCertificateProfilesSettings().SettingsSectionName)
-                .Get<ObCertificateProfilesSettings>();
+            OBCertificateProfilesSettings obCertificateProfilesSettings = configuration
+                .GetSection(new OBCertificateProfilesSettings().SettingsSectionName)
+                .Get<OBCertificateProfilesSettings>();
 
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obCertificateProfilesSettingsProvider =
-                new DefaultSettingsProvider<ObCertificateProfilesSettings>(obCertificateProfilesSettings);
+                new DefaultSettingsProvider<OBCertificateProfilesSettings>(obCertificateProfilesSettings);
 
             // Create stores
             var timeProvider = new TimeProvider();

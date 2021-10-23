@@ -49,8 +49,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
-        public HttpMtlsConfigurationOverrides? HttpMtlsConfigurationOverrides { get; set; }
-
         public BankRegistrationClaimsOverrides? BankRegistrationClaimsOverrides { get; set; }
 
         public BankRegistrationResponseJsonOptions? BankRegistrationResponseJsonOptions { get; set; }

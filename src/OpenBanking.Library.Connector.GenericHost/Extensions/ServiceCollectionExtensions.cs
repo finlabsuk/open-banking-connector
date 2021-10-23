@@ -49,10 +49,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
                 .AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>,
                     ConfigurationSettingsProvider<SoftwareStatementProfilesSettings>>()
-                .Configure<ObCertificateProfilesSettings>(
-                    configuration.GetSection(new ObCertificateProfilesSettings().SettingsSectionName))
-                .AddSingleton<ISettingsProvider<ObCertificateProfilesSettings>,
-                    ConfigurationSettingsProvider<ObCertificateProfilesSettings>>()
+                .Configure<OBCertificateProfilesSettings>(
+                    configuration.GetSection(new OBCertificateProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<OBCertificateProfilesSettings>,
+                    ConfigurationSettingsProvider<OBCertificateProfilesSettings>>()
                 .AddOptions();
 
             // Set up bank profile definitions

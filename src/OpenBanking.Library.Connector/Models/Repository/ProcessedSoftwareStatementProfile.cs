@@ -66,14 +66,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
     }
 
     /// <summary>
-    /// Processed software statement profile generated at start-up which includes
-    /// information from a <see cref="SoftwareStatementProfile"/> and a <see cref="ObCertificateProfile"/>
+    ///     Processed software statement profile generated at start-up which includes
+    ///     information from a <see cref="SoftwareStatementProfile" /> and a <see cref="OBCertificateProfile" />
     /// </summary>
     public class ProcessedSoftwareStatementProfile : IRepositoryItem
     {
         public ProcessedSoftwareStatementProfile(
             string id,
-            ObCertificateProfile obCertificateProfile,
+            OBCertificateProfile obCertificateProfile,
             SoftwareStatementProfile softwareStatementProfile,
             IApiClient apiClient)
         {
@@ -85,7 +85,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
             Id = id;
 
             // Break software statement into components
-            string[] softwareStatementComponentsBase64 = softwareStatementProfile.SoftwareStatement.Split(new[] { '.' });
+            string[] softwareStatementComponentsBase64 =
+                softwareStatementProfile.SoftwareStatement.Split(new[] { '.' });
             if (softwareStatementComponentsBase64.Length != 3)
             {
                 throw new ArgumentException("softwareStatementComponentsBase64 needs 3 components.");

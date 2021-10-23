@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
         public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
-            ISettingsProvider<ObCertificateProfilesSettings> obCertificateProfileSettingsProvider,
+            ISettingsProvider<OBCertificateProfilesSettings> obCertificateProfileSettingsProvider,
             IInstrumentationClient instrumentationClient)
         {
             OpenBankingConnectorSettings obcSettings = obcSettingsProvider.GetSettings();
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 softwareStatementProfilesSettingsProvider.GetSettings();
             softwareStatementProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
-            ObCertificateProfilesSettings obCertificateProfilesSettings =
+            OBCertificateProfilesSettings obCertificateProfilesSettings =
                 obCertificateProfileSettingsProvider.GetSettings();
             obCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
@@ -62,11 +62,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     "Validation failure when checking software statement profile.");
 
                 // Get and validate OB certificate profile
-                string obCertificateProfileId = softwareStatementProfile.ObCertificateProfileId;
+                string obCertificateProfileId = softwareStatementProfile.OBCertificateProfileId;
 
                 if (!obCertificateProfilesSettings.TryGetValue(
                     obCertificateProfileId,
-                    out ObCertificateProfile obCertificateProfile))
+                    out OBCertificateProfile obCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find OB certificate profile with ID {obCertificateProfileId}");
@@ -90,16 +90,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     transportCerts.Add(transportCert);
                 }
 
-                HttpMessageHandler handler = new HttpRequestBuilder()
-                    .SetClientCertificates(transportCerts)
-                    .CreateMessageHandler();
+                IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()
+                    .SetClientCertificates(transportCerts);
+                if (obCertificateProfile.DisableTlsCertificateVerification)
+                {
+                    httpRequestBuilder
+                        .SetServerCertificateValidator(new DefaultServerCertificateValidator());
+                }
+
+                HttpMessageHandler handler = httpRequestBuilder.CreateMessageHandler();
 
                 // Add to cache
-                ProcessedSoftwareStatementProfile softwareStatementProfileCached = new ProcessedSoftwareStatementProfile(
-                    softwareStatementProfileId,
-                    obCertificateProfile,
-                    softwareStatementProfile,
-                    new ApiClient(instrumentationClient, new HttpClient(handler)));
+                ProcessedSoftwareStatementProfile softwareStatementProfileCached =
+                    new ProcessedSoftwareStatementProfile(
+                        softwareStatementProfileId,
+                        obCertificateProfile,
+                        softwareStatementProfile,
+                        new ApiClient(instrumentationClient, new HttpClient(handler)));
 
                 _memoryRepo.SetAsync(softwareStatementProfileCached);
             }

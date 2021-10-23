@@ -9,7 +9,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class ObCertificateProfileValidator : AbstractValidator<ObCertificateProfile>
+    public class ObCertificateProfileValidator : AbstractValidator<OBCertificateProfile>
     {
         public ObCertificateProfileValidator()
         {

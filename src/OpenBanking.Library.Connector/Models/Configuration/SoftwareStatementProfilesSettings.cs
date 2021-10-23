@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             string defaultFragmentRedirectUrl)
         {
             SoftwareStatement = softwareStatement;
-            ObCertificateProfileId = obCertificateProfileId;
+            OBCertificateProfileId = obCertificateProfileId;
             DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl;
         }
 
@@ -31,14 +31,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         public string SoftwareStatement { get; set; } = null!;
 
         /// <summary>
-        ///     ID of <see cref="ObCertificateProfile" /> to use with this software statement profile
+        ///     ID of <see cref="OBCertificateProfile" /> to use with this software statement profile
         /// </summary>
-        public string ObCertificateProfileId { get; set; } = null!;
+        public string OBCertificateProfileId { get; set; } = null!;
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         public string DefaultFragmentRedirectUrl { get; set; } = null!;
     }
-    
+
     /// <summary>
     ///     Software statement profiles settings. This is a dictionary of <see cref="SoftwareStatementProfile" /> objects
     ///     keyed by ID to Open Banking Connector. It is expected this is provided by a collection of key secrets.

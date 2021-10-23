@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
                     SigningKey = value,
                     SigningKeyId = "a",
@@ -65,13 +65,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
+                    CertificateType = "LegacyOB",
                     SigningKey = "a",
                     SigningKeyId = value,
                     SigningCertificate = "a",
                     TransportKey = "a",
-                    TransportCertificate = "a",
+                    TransportCertificate = "a"
                 };
 
                 List<ValidationFailure> results =
@@ -88,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -111,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -134,7 +135,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -157,7 +158,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                ObCertificateProfile profile = new ObCertificateProfile
+                OBCertificateProfile profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",

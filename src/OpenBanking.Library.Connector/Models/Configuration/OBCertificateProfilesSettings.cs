@@ -29,15 +29,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     ///     <see cref="SoftwareStatementProfilesSettings" />.
     ///     This class captures a software statement and associated data such as keys and certificates.
     /// </summary>
-    public class ObCertificateProfile
+    public class OBCertificateProfile
     {
-        public ObCertificateProfile(
+        public OBCertificateProfile(
             string certificateType,
             string signingKeyId,
             string signingKey,
             string signingCertificate,
             string transportKey,
-            string transportCertificate)
+            string transportCertificate,
+            bool disableTlsCertificateVerification)
         {
             CertificateType = certificateType;
             SigningKeyId = signingKeyId;
@@ -45,14 +46,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             SigningCertificate = signingCertificate;
             TransportKey = transportKey;
             TransportCertificate = transportCertificate;
+            DisableTlsCertificateVerification = disableTlsCertificateVerification;
         }
 
-        public ObCertificateProfile() { }
+        public OBCertificateProfile() { }
 
         /// <summary>
         ///     Type of certificate used for transport and signing certificates
         /// </summary>
         public string CertificateType { get; set; } = null!;
+
+        /// <summary>
+        ///     Disable verification of external bank TLS certificates. Not for production use but
+        ///     helpful when testing against sandboxes using self-signed certificates.
+        /// </summary>
+        public bool DisableTlsCertificateVerification { get; set; }
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
         public string SigningKeyId { get; set; } = null!;
@@ -70,18 +78,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         public string TransportCertificate { get; set; } = null!;
     }
 
-    public class ObCertificateProfilesSettings : Dictionary<string, ObCertificateProfile>,
-        ISettings<ObCertificateProfilesSettings>
+    public class OBCertificateProfilesSettings : Dictionary<string, OBCertificateProfile>,
+        ISettings<OBCertificateProfilesSettings>
     {
         public string SettingsSectionName => "ObCertificateProfiles";
 
         /// <summary>
-        ///     Placeholder. Validation is performed only on individual <see cref="ObCertificateProfile" /> entries
+        ///     Placeholder. Validation is performed only on individual <see cref="OBCertificateProfile" /> entries
         ///     that are to be used by Open Banking Connector. This validation is performed in the constructor
         ///     of <see cref="ProcessedSoftwareStatementProfileStore" />
         /// </summary>
         /// <returns></returns>
-        public ObCertificateProfilesSettings Validate()
+        public OBCertificateProfilesSettings Validate()
         {
             return this;
         }

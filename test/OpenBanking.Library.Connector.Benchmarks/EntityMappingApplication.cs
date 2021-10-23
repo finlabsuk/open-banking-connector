@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private BankRegistration _client = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation _dataInitiation = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4 _domesticConsent = null!;
-        private ObCertificateProfile _obCertificateProfile = null!;
+        private OBCertificateProfile _obCertificateProfile = null!;
         private PaymentInitiationModelsPublic.OBRisk1 _risk = null!;
         private SoftwareStatementProfile _softwareStatement = null!;
 
@@ -191,12 +191,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 
         private BankRegistration CreateClient() => new BankRegistration
         {
-            //IssuerUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
-            HttpMtlsConfigurationOverrides = new HttpMtlsConfigurationOverrides
-            {
-                TlsCertificateVerification = "aaaa",
-                TlsRenegotiationSupport = "bbb"
-            },
             BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
             {
                 GrantTypes = new[]
@@ -230,8 +224,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="
         };
 
-        private ObCertificateProfile CreateObCertificateProfile() => new ObCertificateProfile
+        private OBCertificateProfile CreateObCertificateProfile() => new OBCertificateProfile
         {
+            CertificateType = "LegacyOB",
             SigningKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             SigningKeyId = "b",
             SigningCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
