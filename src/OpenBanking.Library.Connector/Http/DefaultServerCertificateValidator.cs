@@ -8,6 +8,10 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
+    /// <summary>
+    ///     Disable verification of external TLS certificates. Not for production use but
+    ///     helpful when testing against sandboxes using self-signed certificates.
+    /// </summary>
     public class DefaultServerCertificateValidator : IServerCertificateValidator
     {
         public bool IsOk(HttpRequestMessage msg, X509Certificate2 cert, X509Chain chain, SslPolicyErrors errors)

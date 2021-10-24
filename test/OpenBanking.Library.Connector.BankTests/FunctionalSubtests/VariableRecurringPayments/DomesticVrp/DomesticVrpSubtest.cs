@@ -99,6 +99,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 creditorAccount.Identification;
             domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.Name =
                 creditorAccount.Name;
+            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount
+                    .SecondaryIdentification =
+                creditorAccount.SecondaryIdentification;
             domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticVrpConsentRequest.BankApiSetId = bankApiSetId;
             domesticVrpConsentRequest.Name = testNameUnique;

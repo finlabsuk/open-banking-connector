@@ -20,6 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Reposit
         public string Identification { get; }
 
         public string Name { get; }
+
+        public string? SecondaryIdentification { get; set; }
     }
 
     public class DomesticVrpAccountIndexPair
