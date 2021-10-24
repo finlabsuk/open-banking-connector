@@ -25,6 +25,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
         public DateTimeOffset Iat { get; set; }
 
+        [JsonProperty(PropertyName = "nbf")]
+        [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+        public DateTimeOffset Nbf { get; set; }
+
         /// <summary>
         ///     Gets or sets the time at which the request expires expressed as
         ///     seconds since 1970-01-01T00:00:00Z as measured in UTC

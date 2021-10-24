@@ -2,10 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using Jose;
 using Newtonsoft.Json;
 
@@ -31,18 +29,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                     NullValueHandling = NullValueHandling.Ignore
                 });
 
-            X509Certificate2 privateKey = CertificateFactories.GetCertificate2FromPem(
-                signingKey,
-                signingCertificate) ?? throw new InvalidOperationException();
-            RSA privateKeyRsa = privateKey.GetRSAPrivateKey();
+            // X509Certificate2 privateKey = CertificateFactories.GetCertificate2FromPem(
+            //     signingKey,
+            //     signingCertificate) ?? throw new InvalidOperationException();
+            // RSA privateKeyRsa = privateKey.GetRSAPrivateKey();
 
-            string result = JWT.Encode(
-                payloadJson,
-                privateKeyRsa,
-                JwsAlgorithm.PS256,
-                headers);
+            RSA rsa = RSA.Create();
+            try
+            {
+                CertificateFactories.ImportPrivateKey(signingKey, ref rsa);
 
-            return result;
+                string result = JWT.Encode(
+                    payloadJson,
+                    rsa,
+                    JwsAlgorithm.PS256,
+                    headers);
+                return result;
+            }
+            finally
+            {
+                rsa.Dispose();
+            }
         }
 
         public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>

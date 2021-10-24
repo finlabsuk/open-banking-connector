@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
             {
                 Iss = bankRegistration.BankApiResponse.Data.ClientId,
                 Iat = DateTimeOffset.Now,
-                // TODO: Nbf is upcoming requirement.
+                Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
                 Aud = bankRegistration.OAuth2RequestObjectClaimsOverrides?.Audience ??
                       issuerUrl,

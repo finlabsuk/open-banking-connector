@@ -10,6 +10,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
     public static class CertificateFactories
     {
+        public static void ImportPrivateKey(string privateKey, ref RSA rsaContainer)
+        {
+            string[] privateKeyBlocks = privateKey.Split(
+                "-",
+                StringSplitOptions.RemoveEmptyEntries);
+            byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
+
+            if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
+            {
+                rsaContainer.ImportPkcs8PrivateKey(privateKeyBytes, out _);
+            }
+            else if (privateKeyBlocks[0] == "BEGIN RSA PRIVATE KEY")
+            {
+                rsaContainer.ImportRSAPrivateKey(privateKeyBytes, out _);
+            }
+        }
+
         public static X509Certificate2? GetCertificate2FromPem(string privateKey, string pem)
         {
             /*
