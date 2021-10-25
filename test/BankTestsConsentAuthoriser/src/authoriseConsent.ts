@@ -2,6 +2,7 @@ import puppeteer = require('puppeteer');
 import * as NatWest from './Sandbox/natwest'
 import * as Modelo from './Sandbox/modelo'
 import * as Lloyds from './Sandbox/lloyds'
+import * as VrpHackathon from './Sandbox/vrpHackathon'
 import {assert} from './utility'
 
 // Consent variety enum and utility class
@@ -13,7 +14,8 @@ export enum ConsentVariety {
 export enum Bank {
     NatWest = "NatWest",
     Modelo = "Modelo",
-    Lloyds = "Lloyds"
+    Lloyds = "Lloyds",
+    VrpHackathon = "VrpHackathon"
 }
 
 // Bank user
@@ -33,7 +35,8 @@ export type ConsentUIInteractions = (
 const bankConsentUIInteractions: { [index in Bank]: ConsentUIInteractions } = {
     NatWest: NatWest.consentUIInteractions,
     Modelo: Modelo.consentUIInteractions,
-    Lloyds: Lloyds.consentUIInteractions
+    Lloyds: Lloyds.consentUIInteractions,
+    VrpHackathon: VrpHackathon.consentUIInteractions
 }
 
 export async function authoriseConsent(
