@@ -1,4 +1,4 @@
-# How-to: Set up software statement profiles
+# How to: Set up software statement profiles
 
 In UK Open Banking, a software statement is used to identify the entity (the "TPP") connecting to the bank. A software statement may for example may be created in the UK Open Banking directory.
 

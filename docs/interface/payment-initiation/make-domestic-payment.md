@@ -3,6 +3,7 @@
 Before making a domestic payment you need to create and authorise a domestic payment consent.
 
 You can then make a domestic payment by:
+
 - using the `PostAsync` method on `requestBuilder.PaymentInitiation.DomesticPayments`
 
 # Example
@@ -10,8 +11,11 @@ You can then make a domestic payment by:
 This is an example of how to make a domestic payment. We here create a request object for the domestic payment based on the previously created request object for the *domestic payment consent*.
 
 The required inputs are:
+
 - `domesticPaymentConsentRequest`: the consent request object
+
 - `domesticPaymentConsentId`: the consent ID
+
 - `testNameUnique`: the name field for the payment
 
 ```csharp

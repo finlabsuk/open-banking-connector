@@ -20,8 +20,7 @@ To set up domestic payment consent, you need to:
 # Example
 Here is an example of how to set up the domestic payment consent. The example is based on code in the [demo app](../../../src/OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent/DomesticPaymentConsentMethods.cs#39).
 
-## First, we create a domenstic payment consent object:
-sample code: <br />
+First, we create a domenstic payment consent object:
 ```csharp
 // Create domestic payment consent
 DomesticPaymentConsent domesticPaymentConsentRequest =
@@ -42,8 +41,7 @@ Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
 ```
 
 
-## Next, get the Domestic Payment Consent Funds Confirmation 
-sample code:
+Next, get the Domestic Payment Consent Funds Confirmation 
 ```csharp
 // GET consent funds confirmation
 // Makes call to Open Banking Connector. Creates objectand stores in database.
@@ -52,10 +50,7 @@ IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
         .GetFundsConfirmationAsync(domesticPaymentConsentId);
 ```
 
-<br />
-
-## Then, create the Auth Context
-sample code:
+Then, create the Auth Context
 ```csharp
 // POST auth context
 var authContextRequest = new DomesticPaymentConsentAuthContext

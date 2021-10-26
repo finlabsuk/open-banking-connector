@@ -19,8 +19,7 @@ To set up domestic vrp consent, you need to:
 # Example
 Here is an example of how to set up the domestic vrp consent. The example is based on code in the [demo app](../../../src/OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent/DomesticPaymentConsentMethods.cs#39).
 
-## First, we create a domestic vrp consent object:
-sample code: <br />
+First, we create a domestic vrp consent object:
 ```csharp
 // Create domestic VRP consent 
 DomesticVrpConsent domesticVrpConsentRequest =
@@ -42,8 +41,7 @@ Guid domesticVrpConsentId = domesticVrpConsentResponse.Data!.Id;
 ```
 
 
-## Next, get the Domestic Vrp Consent Funds Confirmation
-sample code:
+Next, get the Domestic Vrp Consent Funds Confirmation:
 ```csharp
 // GET consent funds confirmation
 // Makes call to Open Banking Connector. Creates objectand stores in database.
@@ -52,8 +50,7 @@ IFluentResponse<DomesticVrpConsentResponse> domesticPaymentConsentResp4 =
            .GetFundsConfirmationAsync(domesticVrpConsentId);
 ```
 
-## Then, create the Auth Context
-sample code:
+Then, create the Auth Context:
 ```csharp
  // POST auth context
             var authContextRequest = new DomesticVrpConsentAuthContext
@@ -68,7 +65,7 @@ sample code:
                     .PostLocalAsync(authContextRequest);
 ```
 <br />
-Once a `DomesticPaymentConsent` has been created and authorised, a domestic payment [may be made](./make-domestic-payment.md).
+Once a `DomesticPaymentConsent` has been created and authorised, a domestic payment [may be made](./make-domestic-vrps.md).
 
 <br />
 <br />

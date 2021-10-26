@@ -3,6 +3,52 @@ repo_url: https://github.com/finlabsuk/open-banking-connector-csharp
 repo_name: Open Banking Connector
 theme:
   name: material
+  features:
+    - navigation.indexes
+    - navigation.tabs
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
+plugins:
+  - section-index
+
+nav:
+  - Overview:
+      - tmp/README.md
+      - Supported Open Banking API's: supported-open-banking-apis.md
+      - Definitions: definitions.md
+
+  - Get Started:
+      - get-started/README.md
+      - Dev Environment: 
+          - Install OB Root Cerftificate: get-started/dev-environment/install-ob-root-cert.md
+      - Configure Secrets: get-started/configure-secrets.md
+      - Configure Settings: get-started/configure-settings.md
+  - How to:
+      - how-to/set-up-software-statement-profiles.md
+  - Interface:
+      - interface/README.md
+      - Bank Configuration:
+              - interface/bank-configuration/README.md
+              - Setting up a bank: interface/bank-configuration/set-up-a-bank.md
+      - Payment Intiation:
+            - interface/payment-initiation/README.md
+            - Domestic Payments: interface/payment-initiation/domestic-payments.md
+            - Create and authorise Domestic Payment Consent: interface/payment-initiation/create-and-authorise-domestic-payment-consent.md
+            - Make Domestic Payments: interface/payment-initiation/make-domestic-payment.md
+      - Variable Recurring Payments:
+            - interface/variable-recurring-payments/README.md
+            - Domestic VRP: interface/variable-recurring-payments/domestic-vrps.md
+            - Create and authorise Domestic VRP Consent: interface/variable-recurring-payments/create-and-authorise-domestic-vrp-consent.md
+            - Make Domestic VRP: interface/variable-recurring-payments/make-domestic-vrps.md
+        
+  - Architecture:
+      - architecture/README.md
+      - Components: architecture/Components.md
+      - Classes: architecture/OBC_Connector_Classes.md
+      - Payments: architecture/OpenBanking.Connector.md
+      - Benchmarks: architecture/OpenBanking.Connector.Benchmarks.md
+      - Integration Tests: architecture/OpenBanking.Connector.IntegrationTests.md
+      - Service Payments: architecture/OpenBanking.ServicePayments.md
+      - Suggested API endpoints: architecture/Suggested_API_endpoints.md
+        

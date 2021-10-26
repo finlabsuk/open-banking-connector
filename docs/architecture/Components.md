@@ -1,5 +1,5 @@
 
-![OBC.Net components](OpenBanking.Library.Connector.Net.Components.png)
+![OBC.Net components](OpenBanking.Connector.Net.Components.png)
 
 # Components
 

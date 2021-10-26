@@ -1,4 +1,4 @@
-# Open Banking Connector
+# Overview
 
 ## Introduction
 

@@ -14,9 +14,12 @@ You can then make a variable recurring payment by:
 Here is an example of how to make a variable recurring payment. We create a domestic vrp request object based on a previously created domestic vrp consent request object.
 
 The required inputs are:
+
 - `domesticVrpConsentRequest` : the consent request object
+
 - `domesticVrpConsentId` : the consent ID
-- `testNameUnique` :the name field for the payment
+
+- `testNameUnique` : the name field for the payment
 
 ```csharp
 // Create domestic vrp request
