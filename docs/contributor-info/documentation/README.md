@@ -1,19 +1,17 @@
 # Documentation
 
+This section provides contributor information both on creating documentation and publishing it to the [docs website](https://docs.openbankingconnector.io/).  
 
-The project documentation is written in Markdown and configured using a `mkdocs.yml` file.
+Documentation is written in Markdown and stored in the `docs` folder in the repo.
 
-The documentation can be viewed on:
+The documentation is available publicly:
 
-- [/docs folder in the Github repo](https://github.com/finlabsuk/open-banking-connector/tree/master/docs)
-- [docs website generated using mkdocs](https://docs.openbankingconnector.io/)
+- on the [GitHub repo pages](https://github.com/finlabsuk/open-banking-connector/tree/master/docs) (reflects latest commits)
+- on the [docs website](https://docs.openbankingconnector.io/) (reflects capture of documentation most recently pushed to `gh_pages` branch)
 
-
-This section is split into two sections: 
-
-- How to [update documentation](./update-documentation.md)
-
-- How to [deploy new documentation](./deploy-documentation.md)
+We here provide guidance for
+- [updating documentation](./update-documentation.md) in the `docs` folder
+- [deploying documentation](./deploy-documentation.md) from the `docs` folder to the [docs website](https://docs.openbankingconnector.io/).  
 
 
 
