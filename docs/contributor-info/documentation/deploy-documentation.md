@@ -36,7 +36,9 @@ git tag "docs_v1.0"
 ```
 
 - push tag to github
-
+```
+git push publicRemote docs_v1.0
+```
 
 
 Github tags are used to create a version number for a new release. This separates different versions of code and links depending on the version. 
