@@ -6,15 +6,20 @@ theme:
   features:
     - navigation.indexes
     - navigation.tabs
+    - search.share
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
 plugins:
   - section-index
+  - search:
+       lang: en
+       separator: '[\s\-\.]'
+       indexing: 'full'
 
 nav:
   - Overview:
-      - tmp/README.md
+      - overview/README.md
       - Supported Open Banking API's: supported-open-banking-apis.md
       - Definitions: definitions.md
 
@@ -40,15 +45,19 @@ nav:
             - interface/variable-recurring-payments/README.md
             - Domestic VRP: interface/variable-recurring-payments/domestic-vrps.md
             - Create and authorise Domestic VRP Consent: interface/variable-recurring-payments/create-and-authorise-domestic-vrp-consent.md
-            - Make Domestic VRP: interface/variable-recurring-payments/make-domestic-vrps.md
-        
+            - Make Domestic VRP: interface/variable-recurring-payments/make-domestic-vrps.md   
   - Architecture:
       - architecture/README.md
       - Components: architecture/Components.md
       - Classes: architecture/OBC_Connector_Classes.md
-      - Payments: architecture/OpenBanking.Connector.md
+      - Payments: architecture/OpenBanking.Service.Payments.md
       - Benchmarks: architecture/OpenBanking.Connector.Benchmarks.md
       - Integration Tests: architecture/OpenBanking.Connector.IntegrationTests.md
-      - Service Payments: architecture/OpenBanking.ServicePayments.md
+      - Service Payments: architecture/OpenBanking.Service.Payments.md
       - Suggested API endpoints: architecture/Suggested_API_endpoints.md
-        
+  - Contributor info:
+      - contributor-info/README.md
+      - Documentation:
+          - contributor-info/documentation/README.md
+          - Update: contributor-info/documentation/update-documentation.md
+          - Deploy: contributor-info/documentation/deploy-documentation.md

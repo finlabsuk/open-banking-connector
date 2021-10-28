@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Open Banking Connector is open-source software that manages and simplifies connections to UK Open Banking APIs. Its core is a collection of C# class libraries provided as [packages in Nuget](./get-started/README.md#select-a-nuget-package). It is designed for use with modern C# applications including "plain" apps (those without a [.NET Generic Host](https://docs.microsoft.com/en-us/dotnet/core/extensions/generic-host)) and .NET Generic Host-based/ASP.NET Core apps.
+Open Banking Connector is open-source software that manages and simplifies connections to UK Open Banking APIs. Its core is a collection of C# class libraries provided as [packages in Nuget](../get-started/README.md#select-a-nuget-package). It is designed for use with modern C# applications including "plain" apps (those without a [.NET Generic Host](https://docs.microsoft.com/en-us/dotnet/core/extensions/generic-host)) and .NET Generic Host-based/ASP.NET Core apps.
 
 Its main purposes are:
 - to manage security aspects of Open Banking API accesses including registrations and tokens
@@ -36,11 +36,11 @@ We have designed OBC to enable DB and key secret support on all main cloud platf
 ## Interface
 
 Open Banking Connector provides an intuitive, Fluent REST-inspired interface. The idea is to have
-a single, standardised interface that works with multiple banks. More information may be found [here](./interface/README.md).
+a single, standardised interface that works with multiple banks. More information may be found [here](../interface/README.md).
 
 ## Open Banking API support
 
-Open Banking Connector supports multiple Open Banking APIs (depends on bank support) and provides a Fluent interface based on the latest supported version. More information may be found [here](./supported-open-banking-apis.md).
+Open Banking Connector supports multiple Open Banking APIs (depends on bank support) and provides a Fluent interface based on the latest supported version. More information may be found [here](../supported-open-banking-apis.md).
 
 ## Documentation
 
@@ -48,11 +48,26 @@ This documentation is available both in the GitHub repo and on the [docs website
 
 The documentation is divided into the following sections:
 
-- [Overview](overview)
-- [Getting Started](get-started)
-- [How to](how-to)
-- [Client Interface](interface)
-- [Architecture](architecture)
-- [Contributor Info](contributor-info)
+- [Getting Started](../get-started)
+- [Architecture](../architecture)
+- [Client Interface](../interface)
+- [How-to](../how-to/set-up-software-statement-profiles.md)
 
 
+To generate the docs website based on the contents of a local open-banking-connector repo (i.e. latest edits), you will need to install Python 3 and Material for MkDocs (mkdocs-material).
+
+Assuming you have installed Python, you can install Material for MkDocs as follows:
+```powershell
+pip install mkdocs-material # if mkdocs-material not installed
+```
+
+To deploy the website locally for inspection and testing, please `cd` to the OBC repo root and run the following command:
+```powershell
+mkdocs serve
+```
+This will return the URL you can use to see the website.
+
+If you have permissions, you can update the public website on GitHub Pages using
+```powershell
+mkdocs gh-deploy -m "Test deployment" -r publicRemote # adjust commit message and remote as required
+```

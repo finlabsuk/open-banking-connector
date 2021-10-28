@@ -23,9 +23,9 @@ The following Open Banking Connector packages are available and you should selec
 
 App Type | Nuget Package
 --- | ---
-"Plain" app (no .NET Generic Host) | [FinnovationLabs.OpenBanking.Library.Connector](https://www.nuget.org/packages/FinnovationLabs.OpenBanking.Library.Connector)
-.NET Generic Host app | [FinnovationLabs.OpenBanking.Library.Connector.GenericHost](https://www.nuget.org/packages/FinnovationLabs.OpenBanking.Library.Connector.GenericHost)
-.NET Generic Host app (Azure-hosted)
+"Plain" app (no .NET Generic Host) | [FinnovationLabs.OpenBanking.Library.Connector](https://www.nuget.org/packages/FinnovationLabs.OpenBanking.Library.Connector) |
+.NET Generic Host app | [FinnovationLabs.OpenBanking.Library.Connector.GenericHost](https://www.nuget.org/packages/FinnovationLabs.OpenBanking.Library.Connector.GenericHost)|
+.NET Generic Host app (Azure-hosted)|
 ASP.NET Core app | [FinnovationLabs.OpenBanking.Library.Connector.Web](https://www.nuget.org/packages/FinnovationLabs.OpenBanking.Library.Connector.Web)
 
 You will also need to consider how you will handle bank authentication redirects. You can handle these externally to Open Banking Connector and provide authentication results via its Fluent interface. Or, if you use FinnovationLabs.OpenBanking.Library.Connector.Web in an ASP.NET Core app, Open Banking Connector provides web endpoints to absorb authentication redirects.
@@ -44,4 +44,4 @@ More information is provided [here.](./configure-settings.md)
 
 Open Banking Connector is also configured by secrets which provide sensitive information such as SoftwareStatementProfiles and ObCertificateProfiles.
 
-More information is provided here.
+More information is provided [here.](./configure-secrets.md)

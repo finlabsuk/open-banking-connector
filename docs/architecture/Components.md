@@ -3,11 +3,11 @@
 
 # Components
 
-[OpenBanking.Library.Connector](OpenBanking.Library.Connector.md)
+[OpenBanking.Library.Connector](OpenBanking.Connector.md)
 
-[OpenBanking.Library.Connector.IntegrationTests](OpenBanking.Library.Connector.IntegrationTests.md)
+[OpenBanking.Library.Connector.IntegrationTests](OpenBanking.Connector.IntegrationTests.md)
 
-[OpenBanking.Library.Connector.Benchmarks](OpenBanking.Library.Connector.Benchmarks.md)
+[OpenBanking.Library.Connector.Benchmarks](OpenBanking.Connector.Benchmarks.md)
 
 [OpenBanking.Library.Service.Payments](OpenBanking.Service.Payments.md)
 

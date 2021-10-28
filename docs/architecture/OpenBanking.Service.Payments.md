@@ -7,10 +7,10 @@ A sample Azure Function project demonstrating OpenBankingConnector.Net. It is in
 * Azure Function v2
 * .Net core 2  (Core 3 once full support is applied)
 * C# 7
-* 
+
 ## Endpoints
 
-See [Suggested_API_endpoints.md](Suggested_API_endpoints.md)
+See [here](Suggested_API_endpoints.md)
 
 ## Dependencies
 | Type | Dependency | Notes |
