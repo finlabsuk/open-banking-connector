@@ -9,31 +9,23 @@ Here are the steps required to:
 ##Update documentation
 To update the current documentation:
 
-- go to `/docs` repo folder
+- edit the required files in the `/docs` repo folder
 
-- edit folder name in `/docs`
+- Any changes made must be applied to the nav section in the `mkdocs.yml`. (e.g. file/folder rename or file structure changes)
 
-- edit the `README.md` file inside the folder
-
-- edit the `file.md` file
-
-Any changes made must be applied to the nav section in the `mkdocs.yml`. (e.g. file/folder rename or file structure changes)
-
-Links to content in the repo must be relative links. For example:
+- Links to content in the repo must be relative links. For example:
 
 ```
-[update documentation](./update-documentation.md)
+[Page](./page.md)
 ```
 
-The next step is to [generate docs website and deploy documentation.](./deploy-documentation.md)
+- The next step is to [generate docs website and deploy documentation.](./deploy-documentation.md)
 
 ##Add new documentation
 
 To add new documentation:
 
-- go to `/docs` repo folder
-
-- create new folder in `/docs`
+- create new folder in `/docs` repo folder
 
 - create new `README.md` file inside the folder
 

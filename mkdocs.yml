@@ -1,5 +1,6 @@
 site_name: Open Banking Connector Docs
 repo_url: https://github.com/finlabsuk/open-banking-connector-csharp
+edit_uri: ""
 repo_name: Open Banking Connector
 theme:
   name: material
@@ -16,6 +17,8 @@ plugins:
        lang: en
        separator: '[\s\-\.]'
        indexing: 'full'
+  - git-revision-date
+
 
 nav:
   - Overview:

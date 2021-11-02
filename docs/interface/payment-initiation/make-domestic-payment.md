@@ -1,6 +1,6 @@
 # Make Domestic Payment
 
-Before making a domestic payment you need to create and authorise a domestic payment consent.
+Before making a domestic payment you need to create and authorise a [domestic payment consent](./create-and-authorise-domestic-payment-consent.md).
 
 You can then make a domestic payment by:
 

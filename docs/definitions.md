@@ -19,3 +19,12 @@ UK Open Banking uses certificates for signing and transport.
 In Open Banking Connector, information relating to a signing certificate and transport certificate pair is grouped together in an *OB Certificate Profile*.
 
 Software statement profiles are provided to Open Banking Connector as key secrets.
+
+## Payment Initiation
+
+In UK Open Banking, the term Payment Initiation refers to an API which allows customers to authorise single payments directly from their bank accounts.
+
+## Variable Recurring Payments
+
+Variable Recurring Payments refers to an API which allows third party companies (such as money management apps) to authorise recurring payments from the customer's bank account to the merchants bank account.
+

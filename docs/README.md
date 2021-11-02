@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Open Banking Connector is open-source software that manages and simplifies connections to UK Open Banking APIs. Its core is a collection of C# class libraries provided as [packages in Nuget](./get-started/README.md#select-a-nuget-package). It is designed for use with modern C# applications including "plain" apps (those without a [.NET Generic Host](https://docs.microsoft.com/en-us/dotnet/core/extensions/generic-host)) and .NET Generic Host-based/ASP.NET Core apps.
+Open Banking Connector is open-source software that manages and simplifies connections to UK Open Banking APIs. Its core is a collection of C# class libraries provided as [packages in Nuget](../get-started/README.md#select-a-nuget-package). It is designed for use with modern C# applications including "plain" apps (those without a [.NET Generic Host](https://docs.microsoft.com/en-us/dotnet/core/extensions/generic-host)) and .NET Generic Host-based/ASP.NET Core apps.
 
 Its main purposes are:
 - to manage security aspects of Open Banking API accesses including registrations and tokens
@@ -36,23 +36,26 @@ We have designed OBC to enable DB and key secret support on all main cloud platf
 ## Interface
 
 Open Banking Connector provides an intuitive, Fluent REST-inspired interface. The idea is to have
-a single, standardised interface that works with multiple banks. More information may be found [here](./interface/README.md).
+a single, standardised interface that works with multiple banks. More information may be found [here](../interface/README.md).
 
 ## Open Banking API support
 
-Open Banking Connector supports multiple Open Banking APIs (depends on bank support) and provides a Fluent interface based on the latest supported version. More information may be found [here](./supported-open-banking-apis.md).
+Open Banking Connector supports multiple Open Banking APIs (depends on bank support) and provides a Fluent interface based on the latest supported version. More information may be found [here](../supported-open-banking-apis.md).
 
 ## Documentation
 
-This documentation is available both in the GitHub repo and on the [docs website](https://docs.openbankingconnector.io/).
+This documentation is available both in the [GitHub repo](https://github.com/finlabsuk/open-banking-connector/tree/master/docs) and on the [docs website](https://docs.openbankingconnector.io/).
+
+Please raise a [github issue](https://github.com/finlabsuk/open-banking-connector/issues) if you experience any problems or have any feedback.
 
 The documentation is divided into the following sections:
 
-- [Overview](overview)
-- [Getting Started](get-started)
-- [How to](how-to)
-- [Client Interface](interface)
-- [Architecture](architecture)
-- [Contributor Info](contributor-info)
+- [Getting Started](../get-started/README.md)
+- [How to](../how-to/set-up-software-statement-profiles.md)
+- [Client Interface](../interface/README.md)
+- [Architecture](../architecture/README.md)
+- [Contributor Info](../contributor-info/README.md)
+
+
 
 

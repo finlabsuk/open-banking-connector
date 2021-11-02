@@ -22,6 +22,6 @@ The table below shows the methods supported for each object type as well as the 
 
 Object type | Methods | Request type| Response type
  --- | --- | ---| ---
- Bank|GetLocalAsync <br/> PostLocalAsync <br/> DeleteLocalAsync <br/>|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Request/Bank.cs#L23)|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankResponse.cs#L18)
+Bank|GetLocalAsync <br/> PostLocalAsync <br/> DeleteLocalAsync <br/>|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Request/Bank.cs#L23)|[Bank](../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankResponse.cs#L18)
 BankRegistration| PostAsync <br/> GetLocalAsync <br/> DeleteAsync |[BankRegistration](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/BankRegistration.cs#L17)|[BankRegistration](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankRegistrationResponse.cs#L22)
-BankApiInformation| GetLocalAsyn <br/> PostLocalAsync <br/> DeleteLocalAsync |[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/BankApiInformation.cs#L14)|[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankApiInformationResponse.cs#L20)
+BankApiInformation| GetLocalAsyn <br/> PostLocalAsync <br/> DeleteLocalAsync |[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Request/BankApiSet.cs#L18)|[BankApiInformation](./../../../src/OpenBanking.Library.Connector/Models/Public/Response/BankApiSetResponse.cs#L21)
