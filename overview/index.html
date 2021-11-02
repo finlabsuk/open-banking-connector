@@ -141,7 +141,7 @@
     
       <div class="md-header__source">
         
-<a href="https://github.com/finlabsuk/open-banking-connector-csharp/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -269,7 +269,7 @@
   
     <div class="md-nav__source">
       
-<a href="https://github.com/finlabsuk/open-banking-connector-csharp/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -502,10 +502,6 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/finlabsuk/open-banking-connector-csharp/edit/master/docs/overview/README.md" title="Edit this page" class="md-content__button md-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-                  </a>
-                
                 
                 <h1 id="overview">Overview</h1>
 <h2 id="introduction">Introduction</h2>
@@ -536,25 +532,29 @@ a single, standardised interface that works with multiple banks. More informatio
 <h2 id="open-banking-api-support">Open Banking API support</h2>
 <p>Open Banking Connector supports multiple Open Banking APIs (depends on bank support) and provides a Fluent interface based on the latest supported version. More information may be found <a href="../supported-open-banking-apis/">here</a>.</p>
 <h2 id="documentation">Documentation</h2>
-<p>This documentation is available both in the GitHub repo and on the <a href="https://docs.openbankingconnector.io/">docs website</a>.</p>
+<p>This documentation is available both in the <a href="https://github.com/finlabsuk/open-banking-connector/tree/master/docs">GitHub repo</a> and on the <a href="https://docs.openbankingconnector.io/">docs website</a>.</p>
+<p>Please raise a <a href="https://github.com/finlabsuk/open-banking-connector/issues">github issue</a> if you experience any problems or have any feedback.</p>
 <p>The documentation is divided into the following sections:</p>
 <ul>
-<li><a href="../get-started">Getting Started</a></li>
-<li><a href="../architecture">Architecture</a></li>
-<li><a href="../interface">Client Interface</a></li>
-<li><a href="../how-to/set-up-software-statement-profiles/">How-to</a></li>
+<li><a href="../get-started/">Getting Started</a></li>
+<li><a href="../how-to/set-up-software-statement-profiles/">How to</a></li>
+<li><a href="../interface/">Client Interface</a></li>
+<li><a href="../architecture/">Architecture</a></li>
+<li><a href="../contributor-info/">Contributor Info</a></li>
 </ul>
-<p>To generate the docs website based on the contents of a local open-banking-connector repo (i.e. latest edits), you will need to install Python 3 and Material for MkDocs (mkdocs-material).</p>
-<p>Assuming you have installed Python, you can install Material for MkDocs as follows:
-<div class="highlight"><pre><span></span><code><span class="n">pip</span> <span class="n">install</span> <span class="n">mkdocs-material</span> <span class="c"># if mkdocs-material not installed</span>
-</code></pre></div></p>
-<p>To deploy the website locally for inspection and testing, please <code>cd</code> to the OBC repo root and run the following command:
-<div class="highlight"><pre><span></span><code><span class="n">mkdocs</span> <span class="n">serve</span>
-</code></pre></div>
-This will return the URL you can use to see the website.</p>
-<p>If you have permissions, you can update the public website on GitHub Pages using
-<div class="highlight"><pre><span></span><code><span class="n">mkdocs</span> <span class="n">gh-deploy</span> <span class="n">-m</span> <span class="s2">&quot;Test deployment&quot;</span> <span class="n">-r</span> <span class="n">publicRemote</span> <span class="c"># adjust commit message and remote as required</span>
-</code></pre></div></p>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: 2021-11-01
+    
+  </small>
+</div>
+                  
                 
               
               

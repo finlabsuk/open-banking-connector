@@ -141,7 +141,7 @@
     
       <div class="md-header__source">
         
-<a href="https://github.com/finlabsuk/open-banking-connector-csharp/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -269,7 +269,7 @@
   
     <div class="md-nav__source">
       
-<a href="https://github.com/finlabsuk/open-banking-connector-csharp/" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -635,10 +635,6 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/finlabsuk/open-banking-connector-csharp/edit/master/docs/interface/bank-configuration/set-up-a-bank.md" title="Edit this page" class="md-content__button md-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-                  </a>
-                
                 
                 <h1 id="set-up-a-bank">Set up a bank</h1>
 <p>To set up a bank, you need to create:</p>
@@ -655,7 +651,7 @@
 </ul>
 <p>You can take advantage of Bank Profiles to generate request objects to use when creating these. Or you can use completely custom request objects.</p>
 <h1 id="example">Example</h1>
-<p>Here is an example of how to set up a bank using a Bank Profile and is based on code in the <a href="../../../../src/OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent/BankConfigurationMethods.cs#39">demo app</a>.</p>
+<p>Here is an example of how to set up a bank using a Bank Profile and is based on code in the <a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.3/src/OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent/BankConfigurationMethods.cs#39">demo app</a>.</p>
 <p>First we create a <code>Bank</code> object:
 <div class="highlight"><pre><span></span><code><span class="c1">// Create Bank request object from Bank Profile</span>
 <span class="n">Bank</span> <span class="n">bankRequest</span> <span class="p">=</span> <span class="n">bankProfile</span><span class="p">.</span><span class="n">BankRequest</span><span class="p">(</span><span class="n">testNameUnique</span><span class="p">);</span>
@@ -703,6 +699,19 @@
 <span class="n">Guid</span> <span class="n">bankRegistrationId</span> <span class="p">=</span> <span class="n">registrationResp</span><span class="p">.</span><span class="n">Data</span><span class="p">!.</span><span class="n">Id</span><span class="p">;</span>
 </code></pre></div></p>
 <p>We now have set up a bank and are ready to access functional APIs (e.g. PISP).</p>
+                
+                  
+                    
+
+<hr>
+<div class="md-source-date">
+  <small>
+    
+      Last update: 2021-09-09
+    
+  </small>
+</div>
+                  
                 
               
               
