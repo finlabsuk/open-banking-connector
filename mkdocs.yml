@@ -11,6 +11,8 @@ theme:
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
+  - attr_list
+  - md_in_html
 plugins:
   - section-index
   - search:
@@ -25,6 +27,7 @@ nav:
       - overview/README.md
       - Supported Open Banking API's: supported-open-banking-apis.md
       - Definitions: definitions.md
+      - Open Banking Basics: open-banking-basics.md
 
   - Get Started:
       - get-started/README.md
