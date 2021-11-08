@@ -85,5 +85,8 @@ https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.0/src
 
 Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:
 ```powershell
-mkdocs gh-deploy -m "Test deployment" -r publicRemote # adjust commit message and remote as required
+mkdocs gh-deploy -m "Deploy Docs using Tag v1.4" -r publicRemote --ignore-version # adjust commit message and remote as required 
 ```
+
+N.B. The ```--ignore-version```
+flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs version which stops the website from being deployed. 
