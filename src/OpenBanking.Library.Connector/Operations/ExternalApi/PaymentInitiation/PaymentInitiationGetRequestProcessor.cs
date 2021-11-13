@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
         (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
         {
             // Assemble headers and body
-            List<HttpHeader> headers = new List<HttpHeader>
+            var headers = new List<HttpHeader>
             {
                 new HttpHeader("x-fapi-financial-id", _orgId),
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),

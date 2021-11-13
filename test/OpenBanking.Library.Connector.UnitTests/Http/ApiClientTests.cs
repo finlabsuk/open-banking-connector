@@ -23,14 +23,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("https://yadayada.com", "just a test")]
         public async Task SendAsync_ResponseReturned(string url, string content)
         {
-            string contentType = "text/plain";
+            var contentType = "text/plain";
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(contentType, content);
 
             var client = mockHttp.ToHttpClient();
 
-            ApiClient apiClient = new ApiClient(
+            var apiClient = new ApiClient(
                 Substitute.For<IInstrumentationClient>(),
                 client);
 
@@ -51,16 +51,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("https://yadayada.com", "just a test")]
         public async Task SendAsync_TraceStarted(string url, string content)
         {
-            string contentType = "text/plain";
+            var contentType = "text/plain";
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(contentType, content);
 
             var client = mockHttp.ToHttpClient();
 
             var instrumentationClient = Substitute.For<IInstrumentationClient>();
 
-            ApiClient apiClient = new ApiClient(instrumentationClient, client);
+            var apiClient = new ApiClient(instrumentationClient, client);
 
             HttpRequestMessage req = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
@@ -77,14 +77,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("https://yadayada.com")]
         public void SendAsync_ExceptionLogged(string url)
         {
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(x => throw new HttpRequestException());
 
             var client = mockHttp.ToHttpClient();
 
             var instrumentationClient = Substitute.For<IInstrumentationClient>();
 
-            ApiClient apiClient = new ApiClient(instrumentationClient, client);
+            var apiClient = new ApiClient(instrumentationClient, client);
 
             HttpRequestMessage req = new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
@@ -110,18 +110,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            SerialisedEntity entity = new SerialisedEntity { Message = "test message" };
+            var entity = new SerialisedEntity { Message = "test message" };
             string content = JsonConvert.SerializeObject(entity);
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond("application/json", content);
 
             using (var http = mockHttp.ToHttpClient())
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
-                SerialisedEntity result = await api.RequestJsonAsync<SerialisedEntity>(
+                var result = await api.RequestJsonAsync<SerialisedEntity>(
                     req,
                     null);
 
@@ -138,15 +138,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            SerialisedEntity entity = new SerialisedEntity { Message = "test message" };
+            var entity = new SerialisedEntity { Message = "test message" };
             string content = JsonConvert.SerializeObject(entity);
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(r => new HttpResponseMessage(HttpStatusCode.OK));
 
             using (var http = mockHttp.ToHttpClient())
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
@@ -171,10 +171,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            SerialisedEntity entity = new SerialisedEntity { Message = "test message" };
+            var entity = new SerialisedEntity { Message = "test message" };
             string content = JsonConvert.SerializeObject(entity);
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(
                 r => new HttpResponseMessage(HttpStatusCode.NotFound)
                 {
@@ -186,7 +186,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
             using (var http = mockHttp.ToHttpClient())
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
@@ -211,11 +211,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .SetUri(url)
                 .Create();
 
-            SerialisedEntity entity = new SerialisedEntity { Message = "test message" };
+            var entity = new SerialisedEntity { Message = "test message" };
             string content = JsonConvert.SerializeObject(entity);
             var instrumentationClient = Substitute.For<IInstrumentationClient>();
 
-            MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+            var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(HttpMethod.Get, url).Respond(
                 r => new HttpResponseMessage(HttpStatusCode.NotFound)
                 {
@@ -227,7 +227,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
             using (var http = mockHttp.ToHttpClient())
             {
-                ApiClient api = new ApiClient(instrumentationClient, http);
+                var api = new ApiClient(instrumentationClient, http);
 
                 Action a = () =>
                 {

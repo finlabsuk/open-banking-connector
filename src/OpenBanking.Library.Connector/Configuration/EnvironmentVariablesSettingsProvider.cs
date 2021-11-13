@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 
         private Dictionary<string, string> GetEnvironmentVariables(string root)
         {
-            Dictionary<string, string> result =
+            var result =
                 new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (DictionaryEntry ev in _environmentVariables)

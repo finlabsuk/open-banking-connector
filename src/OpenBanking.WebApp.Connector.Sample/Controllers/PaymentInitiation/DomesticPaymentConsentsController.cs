@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
         {
             _requestBuilder = requestBuilder;
         }
-        
+
         [Route("pisp/domestic-payment-consents")]
         [HttpPost]
         [ProducesResponseType(
@@ -57,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /pisp/domestic-payment-consents
         [Route("pisp/domestic-payment-consents")]
         [HttpGet]
@@ -83,8 +82,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             int statusCode = fluentResponse switch
             {
                 FluentSuccessResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status200OK,
-                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status500InternalServerError,
+                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ =>
+                    StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ =>
+                    StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

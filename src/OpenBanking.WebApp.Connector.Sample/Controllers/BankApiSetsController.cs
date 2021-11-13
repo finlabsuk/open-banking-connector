@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /bank-api-sets
         [Route("bank-api-sets")]
         [HttpGet]

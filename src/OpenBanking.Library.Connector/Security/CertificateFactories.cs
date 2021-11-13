@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 "-",
                 StringSplitOptions.RemoveEmptyEntries);
             byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
-            using RSA rsa = RSA.Create();
+            using var rsa = RSA.Create();
 
             if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
             {

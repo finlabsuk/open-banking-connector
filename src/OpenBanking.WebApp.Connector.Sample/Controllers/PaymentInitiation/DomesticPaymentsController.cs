@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
@@ -20,13 +19,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
     [ApiController]
     public class DomesticPaymentsController : ControllerBase
     {
-       private readonly IRequestBuilder _requestBuilder;
+        private readonly IRequestBuilder _requestBuilder;
 
         public DomesticPaymentsController(IRequestBuilder requestBuilder)
         {
             _requestBuilder = requestBuilder;
         }
-        
+
         [Route("pisp/domestic-payments")]
         [HttpPost]
         [ProducesResponseType(
@@ -57,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /pisp/domestic-payments
         [Route("pisp/domestic-payments")]
         [HttpGet]
@@ -83,8 +82,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             int statusCode = fluentResponse switch
             {
                 FluentSuccessResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status200OK,
-                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status500InternalServerError,
+                FluentBadRequestErrorResponse<IQueryable<DomesticPaymentResponse>> _ =>
+                    StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<DomesticPaymentResponse>> _ =>
+                    StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

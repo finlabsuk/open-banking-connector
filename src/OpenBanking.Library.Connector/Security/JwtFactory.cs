@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             //     signingCertificate) ?? throw new InvalidOperationException();
             // RSA privateKeyRsa = privateKey.GetRSAPrivateKey();
 
-            RSA rsa = RSA.Create();
+            var rsa = RSA.Create();
             try
             {
                 CertificateFactories.ImportPrivateKey(signingKey, ref rsa);

@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments
                 .Select(t => t.GetConstructor())
                 .Where(t => t != null)!;
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments
                 .Select(t => t.GetConstructor())
                 .Where(t => t != null)!;
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments
                 .Select(t => t.GetConstructor())
                 .Where(t => t != null)!;
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments
                 .Select(t => t.GetConstructor())
                 .Where(t => t != null)!;
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -94,13 +94,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments
         [Fact]
         public void AllValidationObjectsAreValidatable()
         {
-            ValidationContext validationContext = new ValidationContext(new object());
+            var validationContext = new ValidationContext(new object());
 
             IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetOpenBankingModelTypes()
                 .Select(t => t.GetConstructor())
                 .Where(t => t != null)!;
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)

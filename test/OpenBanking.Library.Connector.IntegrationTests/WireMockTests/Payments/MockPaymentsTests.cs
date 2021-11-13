@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public void RunMockPaymentTest()
         {
-            string softwareStatementProfileId = "0";
+            var softwareStatementProfileId = "0";
 
             // Use default OBC settings
             var obcSettingsProvider =
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     });
 
             // Create software statement profiles
-            SoftwareStatementProfile softwareStatementProfile = new SoftwareStatementProfile
+            var softwareStatementProfile = new SoftwareStatementProfile
             {
                 SoftwareStatement =
                     "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature",
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _mockPaymentsServer.SetupRegistrationMock();
 
             // Create bank
-            Bank bankRequest = new Bank
+            var bankRequest = new Bank
             {
                 IssuerUrl = MockRoutes.Url,
                 FinancialId = _mockData.GetFapiHeader(),
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             Guid bankId = bankResp.Data!.Id;
 
             // Create bank registration
-            BankRegistration registrationRequest = new BankRegistration
+            var registrationRequest = new BankRegistration
             {
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 ClientRegistrationApi = ClientRegistrationApiVersion.Version3p3,
@@ -119,7 +119,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             Guid bankRegistrationId = bankRegistrationResp.Data!.Id;
 
             // Create bank API information
-            BankApiSet apiSetRequest = new BankApiSet
+            var apiSetRequest = new BankApiSet
             {
                 BankId = bankId,
                 PaymentInitiationApi = new PaymentInitiationApi

@@ -26,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
             HttpRequestMessage req = b.Create();
 
-            using (HttpClient http = new HttpClient())
+            using (var http = new HttpClient())
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
@@ -48,9 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
 
             HttpRequestMessage req = b.Create();
 
-            using (HttpClient http = new HttpClient())
+            using (var http = new HttpClient())
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
 
@@ -69,10 +69,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMo
                 .SetUri(url)
                 .Create();
 
-            using HttpClient http = new HttpClient();
+            using var http = new HttpClient();
             Func<Task> a = async () =>
             {
-                ApiClient api = new ApiClient(
+                var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
                 HttpResponseMessage r = await api.LowLevelSendAsync(req);

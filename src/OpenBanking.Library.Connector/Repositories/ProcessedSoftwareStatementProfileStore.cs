@@ -48,8 +48,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             {
                 // Get and validate software statement profile
                 if (!softwareStatementProfilesSettings.TryGetValue(
-                    softwareStatementProfileId,
-                    out SoftwareStatementProfile softwareStatementProfile))
+                        softwareStatementProfileId,
+                        out SoftwareStatementProfile softwareStatementProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find software statement profile with ID {softwareStatementProfileId}");
@@ -65,8 +65,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 string obCertificateProfileId = softwareStatementProfile.OBCertificateProfileId;
 
                 if (!obCertificateProfilesSettings.TryGetValue(
-                    obCertificateProfileId,
-                    out OBCertificateProfile obCertificateProfile))
+                        obCertificateProfileId,
+                        out OBCertificateProfile obCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find OB certificate profile with ID {obCertificateProfileId}");
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     "Validation failure when checking OB certificate profile.");
 
                 // Create HttpMessageHandler with transport certificates
-                List<X509Certificate2> transportCerts = new List<X509Certificate2>();
+                var transportCerts = new List<X509Certificate2>();
                 if (obCertificateProfile.CertificateType == CertificateType.LegacyOB.ToString())
                 {
                     X509Certificate2 transportCert =
@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 HttpMessageHandler handler = httpRequestBuilder.CreateMessageHandler();
 
                 // Add to cache
-                ProcessedSoftwareStatementProfile softwareStatementProfileCached =
+                var softwareStatementProfileCached =
                     new ProcessedSoftwareStatementProfile(
                         softwareStatementProfileId,
                         obCertificateProfile,

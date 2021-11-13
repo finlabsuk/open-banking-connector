@@ -33,11 +33,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_EmptyThumbprint_NullReturned()
         {
-            string thumbprint = "";
+            var thumbprint = "";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
-            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
+            var rdr = new FileCertificateReader(ioFacade);
             X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
 
             result.Should().BeNull();
@@ -48,9 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_NoFiles_NullReturned()
         {
-            string[] files = new string[0];
-            string contentPath = "";
-            string thumbprint = "abc";
+            var files = new string[0];
+            var contentPath = "";
+            var thumbprint = "abc";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
             ioFacade.GetDirectoryFiles(Arg.Any<string>(), Arg.Any<string>()).Returns(files);
 
 
-            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
+            var rdr = new FileCertificateReader(ioFacade);
             X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
 
             result.Should().BeNull();
@@ -71,8 +71,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         public void GetCertificateAsync_DirectoryNamespaceQueried()
         {
             string[] files = { "file.cert" };
-            string contentPath = "";
-            string thumbprint = "abc";
+            var contentPath = "";
+            var thumbprint = "abc";
 
             var ioFacade = Substitute.For<IIoFacade>();
 
@@ -80,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
             ioFacade.GetDirectoryFiles(contentPath, Arg.Any<string>()).Returns(files);
 
 
-            FileCertificateReader rdr = new FileCertificateReader(ioFacade);
+            var rdr = new FileCertificateReader(ioFacade);
 
             try
             {

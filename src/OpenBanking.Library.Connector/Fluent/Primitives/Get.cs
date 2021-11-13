@@ -9,7 +9,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -50,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
             try
             {
-                var (response, postEntityNonErrorMessages) =
+                (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                     await _getObject.GetAsync(
                         id,
                         modifiedBy,
@@ -89,7 +88,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
             try
             {
-                var (response, postEntityNonErrorMessages) =
+                (IQueryable<TPublicResponse> response,
+                        IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                     await _getObject.GetAsync(predicate);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 
@@ -166,13 +166,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         internal DomesticVrpConsentFundsConfirmationGet(ISharedContext context) : base(
             context,
             new DomesticVrpConsentGetFundsConfirmation(
-                context.DbService.GetDbEntityMethodsClass<DomesticVrpConsent>(),
+                context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
                 context.SoftwareStatementProfileCachedRepo,
                 context.Instrumentation,
                 context.ApiVariantMapper)) { }
     }
+
     internal class DomesticPaymentsGet :
         GetBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
     {

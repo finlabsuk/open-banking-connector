@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         {
             var mapper = new ApiVariantMapper();
             var data = new MockPaymentsData(mapper);
-            MockPaymentsTests mockTest = new MockPaymentsTests(
+            var mockTest = new MockPaymentsTests(
                 data,
                 new MockPaymentsServer(data));
 

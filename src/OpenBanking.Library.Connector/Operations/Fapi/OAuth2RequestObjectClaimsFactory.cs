@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
             string issuerUrl,
             string state)
         {
-            OAuth2RequestObjectClaims oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
+            var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
                 Iss = bankRegistration.BankApiResponse.Data.ClientId,
                 Iat = DateTimeOffset.Now,

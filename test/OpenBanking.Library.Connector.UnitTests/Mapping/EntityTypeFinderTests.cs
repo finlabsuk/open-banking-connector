@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
         [Fact]
         public void GetOpenBankingEquivalentTypes_GetsEquivalentTypes()
         {
-            ApiVariantMappingConfiguration finder = new ApiVariantMappingConfiguration();
+            var finder = new ApiVariantMappingConfiguration();
 
             Type publicType = typeof(PaymentInitiationModelsPublic.Meta);
 

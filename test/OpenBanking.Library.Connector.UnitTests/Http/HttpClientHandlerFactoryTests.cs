@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             var handler = new HttpMessageHandlerFactory().Create(info) as HttpClientHandler;
 
 
-            X509Certificate[] certs = new X509Certificate[values.Count];
+            var certs = new X509Certificate[values.Count];
             handler!.ClientCertificates.CopyTo(certs, 0);
 
             return values.SequenceEqual(certs);

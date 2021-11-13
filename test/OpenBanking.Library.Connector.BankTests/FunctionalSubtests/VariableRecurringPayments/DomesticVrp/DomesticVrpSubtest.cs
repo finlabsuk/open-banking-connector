@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             requestBuilder.Utility.Map(
                 domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
                 out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest);
-            DomesticVrpRequest domesticVrpRequest =
+            var domesticVrpRequest =
                 new DomesticVrpRequest
                 {
                     Name = null,

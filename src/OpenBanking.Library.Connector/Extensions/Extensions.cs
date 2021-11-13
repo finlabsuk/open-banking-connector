@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
                     Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
                 }).Where(a => a.Attr?.PropertyName != null && a.Prop != null);
 
-            Dictionary<string, object> result = new Dictionary<string, object>(StringComparer.InvariantCulture);
+            var result = new Dictionary<string, object>(StringComparer.InvariantCulture);
             foreach (var pair in pairs)
             {
                 object propValue = pair.Prop.Invoke(value, null);

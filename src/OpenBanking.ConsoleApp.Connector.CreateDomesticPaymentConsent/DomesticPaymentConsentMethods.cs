@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     instructionIdentification,
                     endToEndIdentification,
                     testNameUnique);
-            
+
             // POST domestic payment consent
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
                 await requestBuilder
@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     .DomesticPaymentConsents
                     .GetAsync(domesticPaymentConsentId);
         }
-        
+
         /// <summary>
         ///     Read domestic payment consent funds confirmation
         /// </summary>
@@ -93,6 +93,5 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     .DomesticPaymentConsents
                     .GetFundsConfirmationAsync(domesticPaymentConsentId);
         }
-        
     }
 }

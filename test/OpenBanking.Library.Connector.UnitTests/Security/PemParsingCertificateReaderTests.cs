@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public void GetCertificateAsync_NullThumbprint_ExceptionThrown()
         {
-            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
+            var rdr = new PemParsingCertificateReader();
 
             Action a = () => rdr.GetCertificateAsync(null!);
 
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         [Fact]
         public async Task GetCertificateAsync_EmptyThumbprint_NullReturned()
         {
-            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
+            var rdr = new PemParsingCertificateReader();
 
             X509Certificate2? result = await rdr.GetCertificateAsync("");
 
@@ -39,13 +39,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             AsymmetricCipherKeyPair keyPair = TestCertificateGenerator.GenerateKeyPair();
             using (X509Certificate originCert = TestCertificateGenerator.GenerateCertificate(
-                keyPair,
-                "test",
-                null))
+                       keyPair,
+                       "test",
+                       null))
             {
                 string pem = TestCertificateGenerator.GetPemTextFromPublicKey(keyPair);
 
-                PemParsingCertificateReader rdr = new PemParsingCertificateReader();
+                var rdr = new PemParsingCertificateReader();
 
                 X509Certificate2? result = await rdr.GetCertificateAsync(pem);
 
@@ -58,15 +58,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             AsymmetricCipherKeyPair keyPair = TestCertificateGenerator.GenerateKeyPair();
             using (X509Certificate originCert = TestCertificateGenerator.GenerateCertificate(
-                keyPair,
-                "test",
-                null))
+                       keyPair,
+                       "test",
+                       null))
             {
                 X509Certificate cert = TestCertificateGenerator.ToX509V2Cert(originCert);
 
                 string pem = TestCertificateGenerator.GetPemTextFromCertificate(cert);
 
-                PemParsingCertificateReader rdr = new PemParsingCertificateReader();
+                var rdr = new PemParsingCertificateReader();
 
                 X509Certificate2? result = await rdr.GetCertificateAsync(pem);
 

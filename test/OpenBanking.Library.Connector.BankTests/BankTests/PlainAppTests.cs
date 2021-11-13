@@ -82,13 +82,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
                 .AddEnvironmentVariables()
                 .Build();
-            OpenBankingConnectorSettings obcSettings = configuration
+            var obcSettings = configuration
                 .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
                 .Get<OpenBankingConnectorSettings>();
-            SoftwareStatementProfilesSettings softwareStatementProfilesSettings = configuration
+            var softwareStatementProfilesSettings = configuration
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
                 .Get<SoftwareStatementProfilesSettings>();
-            OBCertificateProfilesSettings obCertificateProfilesSettings = configuration
+            var obCertificateProfilesSettings = configuration
                 .GetSection(new OBCertificateProfilesSettings().SettingsSectionName)
                 .Get<OBCertificateProfilesSettings>();
 
@@ -131,7 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         {
             if (TestConfig.GetBooleanValue("mockHttp").GetValueOrDefault(false))
             {
-                MockHttpMessageHandler mockHttp = new MockHttpMessageHandler();
+                var mockHttp = new MockHttpMessageHandler();
 
                 OpenIdConfiguration openIdConfigData = TestConfig.GetOpenBankingOpenIdConfiguration()!;
                 string openIdConfig = JsonConvert.SerializeObject(openIdConfigData);

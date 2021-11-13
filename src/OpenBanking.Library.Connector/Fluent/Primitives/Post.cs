@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             // Execute operation catching errors 
             try
             {
-                var (response, postEntityNonErrorMessages) =
+                (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                     await _postObject.PostAsync(
                         publicRequest,
                         createdBy,

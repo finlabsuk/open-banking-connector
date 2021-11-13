@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using NSubstitute;
 
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 {
     internal static class TestDataFactory

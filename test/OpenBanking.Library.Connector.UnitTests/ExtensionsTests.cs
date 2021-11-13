@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         [Fact]
         public void ToObjectDictionary_ScratchTest()
         {
-            ClientRegistrationModelsPublic.OBClientRegistration1 value =
+            var value =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
                     Aud = "some aud",

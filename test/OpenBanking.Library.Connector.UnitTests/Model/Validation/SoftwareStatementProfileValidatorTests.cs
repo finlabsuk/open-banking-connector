@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                SoftwareStatementProfile profile = new SoftwareStatementProfile
+                var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = "http://test.com",
                     SoftwareStatement = $"{value}.{value}.{value}"
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     SigningKey = value,
                     SigningKeyId = "a",
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     CertificateType = "LegacyOB",
                     SigningKey = "a",
@@ -89,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -112,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -135,7 +135,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -158,7 +158,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                OBCertificateProfile profile = new OBCertificateProfile
+                var profile = new OBCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
@@ -182,7 +182,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                SoftwareStatementProfile profile = new SoftwareStatementProfile
+                var profile = new SoftwareStatementProfile
                 {
                     DefaultFragmentRedirectUrl = value,
                     SoftwareStatement = "a.b.c"

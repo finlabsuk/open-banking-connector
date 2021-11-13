@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                         .AuthorizationCode,
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
                 };
-            ClientRegistrationModelsPublic.OBClientRegistration1 registrationClaims =
+            var registrationClaims =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
                     Iss = bankClientRegistrationClaimsOverrides?.IssuerIsSoftwareStatementXFapiFinancialId ?? false

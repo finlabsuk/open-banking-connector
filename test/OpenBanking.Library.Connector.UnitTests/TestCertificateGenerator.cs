@@ -27,8 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 
         public static AsymmetricCipherKeyPair GenerateKeyPair()
         {
-            RsaKeyPairGenerator keypairgen = new RsaKeyPairGenerator();
-            KeyGenerationParameters parameters = new KeyGenerationParameters(
+            var keypairgen = new RsaKeyPairGenerator();
+            var parameters = new KeyGenerationParameters(
                 new SecureRandom(new CryptoApiRandomGenerator()),
                 1024);
             keypairgen.Init(parameters);
@@ -45,9 +45,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         {
             signatureAlgorithm = signatureAlgorithm ?? DefaultSignatureAlgorithm;
 
-            X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
+            var gen = new X509V3CertificateGenerator();
 
-            X509Name cn = new X509Name("CN=" + certName);
+            var cn = new X509Name("CN=" + certName);
             BigInteger? serial = BigInteger.ProbablePrime(120, new Random());
 
             gen.SetSerialNumber(serial);
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             gen.SetNotBefore(DateTime.Now.Subtract(new TimeSpan(7, 0, 0, 0)));
             gen.SetPublicKey(keyPair.Public);
 
-            Asn1SignatureFactory sf = new Asn1SignatureFactory(
+            var sf = new Asn1SignatureFactory(
                 signatureAlgorithm,
                 keyPair.Private);
 
@@ -72,9 +72,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             string certName,
             string signatureAlgorithm = DefaultSignatureAlgorithm)
         {
-            X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
+            var gen = new X509V3CertificateGenerator();
 
-            X509Name cn = new X509Name("CN=" + certName);
+            var cn = new X509Name("CN=" + certName);
             BigInteger? serial = BigInteger.ProbablePrime(120, new Random());
 
             gen.SetSerialNumber(serial);
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
             gen.SetPublicKey(keyPair.Public);
 
 
-            Asn1SignatureFactory sf = new Asn1SignatureFactory(
+            var sf = new Asn1SignatureFactory(
                 signatureAlgorithm,
                 keyPair.Private);
 
@@ -93,9 +93,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
 
             var cert = DotNetUtilities.ToX509Certificate(r);
 
-            X509Certificate2 certV2 = new X509Certificate2(cert);
+            var certV2 = new X509Certificate2(cert);
 
-            RsaPrivateCrtKeyParameters akp2 = (RsaPrivateCrtKeyParameters) keyPair.Private;
+            var akp2 = (RsaPrivateCrtKeyParameters) keyPair.Private;
 
             var rsaParameters = DotNetUtilities.ToRSAParameters(akp2);
 
@@ -127,7 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         public static string GetPemTextFromPublicKey(AsymmetricCipherKeyPair keys)
         {
             TextWriter textWriter = new StringWriter();
-            PemWriter pemWriter = new PemWriter(textWriter);
+            var pemWriter = new PemWriter(textWriter);
             pemWriter.WriteObject(keys.Public);
             pemWriter.Writer.Flush();
             return textWriter.ToString()!;
@@ -136,7 +136,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         public static string GetPemTextFromCertificate(X509Certificate cert)
         {
             TextWriter textWriter = new StringWriter();
-            PemWriter pemWriter = new PemWriter(textWriter);
+            var pemWriter = new PemWriter(textWriter);
 
             PemObjectGenerator pog = new PemObject("CERTIFICATE", cert.GetRawCertData());
 

@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
                 out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
                     obDomesticVrpRequest); // maps Open Banking request objects
-            DomesticVrp domesticVrpRequest =
+            var domesticVrpRequest =
                 new DomesticVrp
                 {
                     OBDomesticVRPRequest = obDomesticVrpRequest,

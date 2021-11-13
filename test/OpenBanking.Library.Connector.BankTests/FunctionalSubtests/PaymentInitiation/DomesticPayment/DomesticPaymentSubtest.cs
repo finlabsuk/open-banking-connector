@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             requestBuilder.Utility.Map(
                 domesticPaymentConsentRequest.OBWriteDomesticConsent,
                 out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
-            DomesticPaymentRequest domesticPaymentRequest =
+            var domesticPaymentRequest =
                 new DomesticPaymentRequest
                 {
                     OBWriteDomestic = obWriteDomestic,

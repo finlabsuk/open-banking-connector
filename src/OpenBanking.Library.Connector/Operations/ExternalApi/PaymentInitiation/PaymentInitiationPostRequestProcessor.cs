@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             _instrumentationClient.Info(requestTraceSb.ToString());
 
             // Assemble headers and body
-            List<HttpHeader> headers = new List<HttpHeader>
+            var headers = new List<HttpHeader>
             {
                 new HttpHeader("x-fapi-financial-id", _orgId),
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
         {
             // Create headers
             string[] jwsComponents = jwt.Split('.');
-            string jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
+            var jwsSignature = $"{jwsComponents[0]}..{jwsComponents[2]}";
             return new HttpHeader("x-jws-signature", jwsSignature);
         }
 

@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
         {
             _requestBuilder = requestBuilder;
         }
-        
+
         [Route("bank-registrations")]
         [HttpPost]
         [ProducesResponseType(
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /bank-registrations
         [Route("bank-registrations")]
         [HttpGet]
@@ -83,8 +83,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             int statusCode = fluentResponse switch
             {
                 FluentSuccessResponse<IQueryable<BankRegistrationResponse>> _ => StatusCodes.Status200OK,
-                FluentBadRequestErrorResponse<IQueryable<BankRegistrationResponse>> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<IQueryable<BankRegistrationResponse>> _ => StatusCodes.Status500InternalServerError,
+                FluentBadRequestErrorResponse<IQueryable<BankRegistrationResponse>> _ =>
+                    StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<BankRegistrationResponse>> _ =>
+                    StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

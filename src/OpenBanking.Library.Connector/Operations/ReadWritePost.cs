@@ -63,12 +63,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 _timeProvider);
 
             (
-                var apiRequest,
-                var bankApiInformation,
-                var bankRegistration,
-                var bankFinancialId,
+                TApiRequest apiRequest,
+                BankApiSetPersisted bankApiInformation,
+                BankRegistrationPersisted bankRegistration,
+                string bankFinancialId,
                 TokenEndpointResponse? userTokenEndpointResponse,
-                var nonErrorMessages) = await ApiPostRequestData(request);
+                List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) = await ApiPostRequestData(request);
 
             // Check API specified and get base URL
             string baseUrl = new TEntity().GetReadWriteApiType() switch
@@ -99,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     apiClient);
 
             // Create new Open Banking object by posting JWT
-            Uri uri = new Uri(baseUrl + RelativePath);
+            var uri = new Uri(baseUrl + RelativePath);
             JsonSerializerSettings? jsonSerializerSettings = null;
 
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests = new TEntity().ApiPostRequests(

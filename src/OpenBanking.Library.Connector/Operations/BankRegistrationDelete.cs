@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             string bankApiId = persistedObject.ExternalApiId;
 
-            Uri uri = new Uri(persistedObject.OpenIdConfiguration.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
+            var uri = new Uri(persistedObject.OpenIdConfiguration.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
             // Get appropriate token
             TokenEndpointResponse tokenEndpointResponse;

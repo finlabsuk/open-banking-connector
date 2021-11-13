@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             value.ArgNotNull(nameof(value));
 
-            HttpClientHandler clientHandler = new HttpClientHandler
+            var clientHandler = new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
             };

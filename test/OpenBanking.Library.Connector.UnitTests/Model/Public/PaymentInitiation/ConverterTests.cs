@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticConsent_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomesticConsent4
                 {
                     Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
@@ -123,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationCreditorAccount_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationCreditorAccount value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationCreditorAccount
                 {
                     Identification = "id",
@@ -146,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBPostalAddress_To_V111()
         {
-            PaymentInitiationModelsPublic.OBPostalAddress6 value = new PaymentInitiationModelsPublic.OBPostalAddress6
+            var value = new PaymentInitiationModelsPublic.OBPostalAddress6
             {
                 AddressLine = new List<string> { "1 high street", "blexley" },
                 AddressType = PaymentInitiationModelsPublic.OBAddressTypeCodeEnum.POBox,
@@ -179,7 +179,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationDebtorAccount_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationDebtorAccount value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationDebtorAccount
                 {
                     Identification = "abc",
@@ -202,7 +202,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationInstructedAmount_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationInstructedAmount value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationInstructedAmount
                 {
                     Amount = 1234.56.ToString(CultureInfo.InvariantCulture),
@@ -221,7 +221,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticDataInitiationRemittanceInformation_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationRemittanceInformation value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationRemittanceInformation
                 {
                     Reference = "reference",
@@ -240,7 +240,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBWriteDomesticConsentDataAuthorisation_To_V111()
         {
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation value =
+            var value =
                 new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
                 {
                     AuthorisationType = PaymentInitiationModelsPublic
@@ -260,7 +260,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
         [Fact]
         public void OBRisk_To_V111()
         {
-            PaymentInitiationModelsPublic.OBRisk1 value = new PaymentInitiationModelsPublic.OBRisk1
+            var value = new PaymentInitiationModelsPublic.OBRisk1
             {
                 DeliveryAddress = new PaymentInitiationModelsPublic.OBRisk1DeliveryAddress
                 {

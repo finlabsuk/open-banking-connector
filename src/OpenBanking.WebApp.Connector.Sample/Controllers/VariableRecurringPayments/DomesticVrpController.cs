@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
@@ -56,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /vrp/domestic-vrps
         [Route("vrp/domestic-vrps")]
         [HttpGet]
@@ -72,7 +71,8 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
         public async Task<IActionResult> GetAsync()
         {
             // Operation
-            IFluentResponse<IQueryable<DomesticVrpResponse>> fluentResponse = await _requestBuilder.VariableRecurringPayments
+            IFluentResponse<IQueryable<DomesticVrpResponse>> fluentResponse = await _requestBuilder
+                .VariableRecurringPayments
                 .DomesticVrps
                 .GetLocalAsync(query => true);
 

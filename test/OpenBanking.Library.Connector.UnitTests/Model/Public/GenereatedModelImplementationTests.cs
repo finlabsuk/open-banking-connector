@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
                 .Where(t => t != null)
                 .Select(t => t!);
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
                 .Where(t => t != null)
                 .Select(t => t!);
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
                 .Where(t => t != null)
                 .Select(t => t!);
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)
@@ -80,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public
                 .Where(t => t != null)
                 .Select(t => t!);
 
-            foreach (var (type, ctor) in modelTypes)
+            foreach ((Type type, ConstructorInfo ctor) in modelTypes)
             {
                 object? instance = ctor.CreateInstanceSafe();
                 if (instance != null)

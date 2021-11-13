@@ -83,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
         private ISharedContext CreateContext()
         {
-            SharedContext context = new SharedContext(
+            var context = new SharedContext(
                 _timeProvider,
                 _apiClient,
                 _logger,

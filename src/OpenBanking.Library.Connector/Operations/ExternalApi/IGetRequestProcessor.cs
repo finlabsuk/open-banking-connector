@@ -22,10 +22,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             where TResponse : class
         {
             // Process request
-            var (headers, acceptType) = HttpGetRequestData($"POST {uri})");
+            (List<HttpHeader> headers, string acceptType) = HttpGetRequestData($"POST {uri})");
 
             // POST request
-            TResponse response = await new HttpRequestBuilder()
+            var response = await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Get)
                 .SetUri(uri)
                 .SetHeaders(headers)

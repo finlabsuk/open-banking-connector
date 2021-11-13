@@ -44,8 +44,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 .ToArray()
                 .WaitAll())!;
 
-            List<X509Certificate2> result = new List<X509Certificate2>();
-            PemParsingCertificateReader rdr = new PemParsingCertificateReader();
+            var result = new List<X509Certificate2>();
+            var rdr = new PemParsingCertificateReader();
 
             foreach (KeySecret secret in pems.Where(ks => ks != null))
             {

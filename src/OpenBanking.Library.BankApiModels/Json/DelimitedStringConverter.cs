@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
                 if (options.HasFlag(DelimitedStringConverterOptions.JsonIsStringArrayNotString) &&
                     reader.TokenType == JsonToken.StartArray)
                 {
-                    StringBuilder builder = new StringBuilder();
+                    var builder = new StringBuilder();
                     while (reader.Read() && reader.TokenType == JsonToken.String && !(reader.Value is null))
                     {
                         if (builder.Length > 0)

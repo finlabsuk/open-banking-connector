@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("application/pdf")]
         public void Create_ContentTypesPreserved(string contentType)
         {
-            HttpRequestInfo info = new HttpRequestInfo
+            var info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests"),
                 Content = "abcdef"
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
             HttpRequestMessage result = info.CreateRequestMessage();
 
-            MediaTypeWithQualityHeaderValue resultContentTypes =
+            var resultContentTypes =
                 (MediaTypeWithQualityHeaderValue) result.Content.Headers.ContentType;
 
             resultContentTypes.MediaType.Should().Be(contentType);
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [InlineData("Mozilla")]
         public void Create_UserAgentPreserved(string userAgent)
         {
-            HttpRequestInfo info = new HttpRequestInfo
+            var info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests"),
                 UserAgent = userAgent
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
         [Fact]
         public void Create_EmptyContentTypesProduceDefaults()
         {
-            HttpRequestInfo info = new HttpRequestInfo
+            var info = new HttpRequestInfo
             {
                 RequestUri = new Uri("http://tests")
             };

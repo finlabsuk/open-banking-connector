@@ -71,8 +71,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ApiGet(GetRequestInfo requestInfo)
         {
             // Create persisted entity
-            (var persistedObject, var apiRequests, var apiClient, var uri,
-                    JsonSerializerSettings? jsonSerializerSettings, var nonErrorMessages) =
+            (TEntity persistedObject, IApiGetRequests<TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
+                    JsonSerializerSettings? jsonSerializerSettings,
+                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiGetData(requestInfo.Id);
 
             string? readResponseFile = requestInfo.ApiResponseOverrideFile;

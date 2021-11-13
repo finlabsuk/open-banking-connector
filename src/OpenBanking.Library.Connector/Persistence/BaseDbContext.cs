@@ -49,8 +49,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         // Auth contexts
         internal DbSet<AuthContext> AuthContexts => Set<AuthContext>();
+
         internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContexts =>
             Set<DomesticPaymentConsentAuthContext>();
+
         internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContexts =>
             Set<DomesticVrpConsentAuthContext>();
 

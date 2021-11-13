@@ -127,10 +127,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 string? json;
 
                 using (var stream = new FileStream(
-                    path,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read))
+                           path,
+                           FileMode.Open,
+                           FileAccess.Read,
+                           FileShare.Read))
                 {
                     using (var rdr = new StreamReader(stream))
                     {
@@ -149,7 +149,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             string path = Assembly.GetExecutingAssembly().Location;
             path = Path.GetDirectoryName(path)!;
 
-            string fileName = "test.settings.json";
+            var fileName = "test.settings.json";
 
             if (!string.IsNullOrEmpty(filePrefix))
             {
@@ -165,7 +165,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             Type type = typeof(T);
             if (type.GetTypeInfo().IsEnum)
             {
-                foreach (var name in Enum.GetNames(type))
+                foreach (string name in Enum.GetNames(type))
                 {
                     var attr = type.GetRuntimeField(name)
                         ?.GetCustomAttribute<EnumMemberAttribute>(true);

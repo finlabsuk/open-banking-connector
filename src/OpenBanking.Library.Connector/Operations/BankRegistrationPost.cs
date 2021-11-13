@@ -91,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Create persisted entity
-            BankRegistration persistedObject = new BankRegistration();
+            var persistedObject = new BankRegistration();
             persistedObject.Initialise(
                 request,
                 modifiedBy,

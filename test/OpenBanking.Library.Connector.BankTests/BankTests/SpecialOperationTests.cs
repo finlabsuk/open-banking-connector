@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             IRequestBuilder requestBuilder = scopedRequestBuilder.RequestBuilder;
 
             // Get bank profile definitions
-            BankProfileDefinitions bankProfileDefinitions =
+            var bankProfileDefinitions =
                 _serviceProvider.GetRequiredService<BankProfileDefinitions>();
 
             // GET bank (example: NatWest)

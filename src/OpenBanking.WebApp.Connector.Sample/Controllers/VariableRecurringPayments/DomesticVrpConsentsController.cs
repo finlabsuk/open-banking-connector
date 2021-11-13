@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
@@ -57,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
             return new ObjectResult(httpResponse)
                 { StatusCode = statusCode };
         }
-        
+
         // GET /vrp/domestic-vrp-consents
         [Route("vrp/domestic-vrp-consents")]
         [HttpGet]
@@ -83,8 +82,10 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
             int statusCode = fluentResponse switch
             {
                 FluentSuccessResponse<IQueryable<DomesticVrpConsentResponse>> _ => StatusCodes.Status200OK,
-                FluentBadRequestErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ => StatusCodes.Status400BadRequest,
-                FluentOtherErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ => StatusCodes.Status500InternalServerError,
+                FluentBadRequestErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ =>
+                    StatusCodes.Status400BadRequest,
+                FluentOtherErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ =>
+                    StatusCodes.Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };
             return new ObjectResult(httpResponse)

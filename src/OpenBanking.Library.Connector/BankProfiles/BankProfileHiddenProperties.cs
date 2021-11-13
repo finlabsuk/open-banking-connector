@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistra
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     /// <summary>
@@ -20,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public string? BaseUrl { get; set; }
     }
-    
+
     /// <summary>
     ///     Describes <see cref="VariableRecurringPaymentsApi" /> hidden properties object in bankProfileHiddenProperties.json
     ///     Properties are nullable versions (since optional) of those in <see cref="VariableRecurringPaymentsApi" />.
@@ -60,14 +59,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public PaymentInitiationApiVersion GetRequiredPaymentInitiationApiVersion() =>
             DefaultPaymentInitiationApi?.PaymentInitiationApiVersion ??
             throw new Exception("No PISP API version");
+
         public string GetRequiredPaymentInitiationApiBaseUrl() =>
             DefaultPaymentInitiationApi?.BaseUrl ?? throw new Exception("No PISP base URL");
-        
+
         public VariableRecurringPaymentsApiVersion GetRequiredVariableRecurringPaymentsApiVersion() =>
             DefaultVariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
             throw new Exception("No VRP API version");
+
         public string GetRequiredVariableRecurringPaymentsApiBaseUrl() =>
             DefaultVariableRecurringPaymentsApi?.BaseUrl ?? throw new Exception("No VRP base URL");
-        
     }
 }

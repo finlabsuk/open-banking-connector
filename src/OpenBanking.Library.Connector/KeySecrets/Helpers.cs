@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
             Func<string, string> keyFcn,
             IKeySecretProvider keySecretReadOnlyProvider)
         {
-            List<object> values = new List<object>();
+            var values = new List<object>();
             foreach (PropertyInfo property in typeof(TSettingsElement).GetProperties())
             {
                 string key = keyFcn(property.Name);

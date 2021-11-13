@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 dateTime.Second,
                 TimeSpan.Zero);
 
-            SerialisedEntity value = new SerialisedEntity
+            var value = new SerialisedEntity
             {
                 DateAndTime = dateTimeOffset
             };
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
             Func<bool> rule = () =>
             {
                 string json = JsonConvert.SerializeObject(value);
-                SerialisedEntity newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
+                var newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
 
                 return dateTimeOffset == newValue.DateAndTime;
             };
@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 DateTimeKind.Utc).AddMilliseconds(milliseconds);
             var dto = new DateTimeOffset(dt, TimeSpan.Zero);
 
-            SerialisedEntity value = new SerialisedEntity
+            var value = new SerialisedEntity
             {
                 DateAndTime = dto
             };
@@ -62,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
             Func<bool> rule = () =>
             {
                 string json = JsonConvert.SerializeObject(value);
-                SerialisedEntity newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
+                var newValue = JsonConvert.DeserializeObject<SerialisedEntity>(json)!;
 
                 double delta = Math.Abs((value.DateAndTime - newValue.DateAndTime).TotalMilliseconds);
                 return delta == milliseconds;
@@ -76,10 +76,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         {
             Func<bool> rule = () =>
             {
-                DateTimeOffsetUnixConverter converter = new DateTimeOffsetUnixConverter();
+                var converter = new DateTimeOffsetUnixConverter();
 
-                StringWriter stringWriter = new StringWriter();
-                JsonTextWriter jsonWriter = new JsonTextWriter(stringWriter);
+                var stringWriter = new StringWriter();
+                var jsonWriter = new JsonTextWriter(stringWriter);
                 jsonWriter.WriteStartObject();
                 jsonWriter.WritePropertyName("iat");
                 converter.WriteJson(jsonWriter, value, new JsonSerializer());
@@ -87,9 +87,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 jsonWriter.WriteEndObject();
 
                 jsonWriter.Flush();
-                string json = stringWriter.ToString();
+                var json = stringWriter.ToString();
 
-                DeserialisedEntity x = JsonConvert.DeserializeObject<DeserialisedEntity>(json)!;
+                var x = JsonConvert.DeserializeObject<DeserialisedEntity>(json)!;
 
                 return x.UnixDateAndTime != 0;
             };

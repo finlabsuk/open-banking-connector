@@ -53,12 +53,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             bool genericAppNotPlainAppTest)
         {
             // Get bank test settings
-            BankTestSettings bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
+            var bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
             bankTestSettings.Validate();
             //var env = AppConfiguration.EnvironmentName;
 
             // Get bank profile definitions
-            BankProfilesSettings bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
+            var bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
             bankProfilesSettings.Validate();
             Dictionary<string, Dictionary<string, BankProfileHiddenProperties>> bankProfileHiddenProperties =
                 DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var bankProfileDefinitions =
                 new BankProfileDefinitions(bankProfileHiddenProperties);
 
-            TheoryData<BankProfileEnum, BankRegistrationType> data =
+            var data =
                 new TheoryData<BankProfileEnum, BankRegistrationType>();
 
             // Loop through tested banks
@@ -120,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 _serviceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
 
             // Get bank profile definitions
-            BankProfileDefinitions bankProfileDefinitions =
+            var bankProfileDefinitions =
                 _serviceProvider.GetRequiredService<BankProfileDefinitions>();
 
             // Get bank users
@@ -129,7 +129,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     .GetRequiredBankUserList(bank);
 
             // Get consent authoriser inputs
-            INodeJSService nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
+            var nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
             // OutOfProcessNodeJSServiceOptions outOfProcessNodeJSServiceOptions =
             //     services.GetRequiredService<IOptions<OutOfProcessNodeJSServiceOptions>>().Value;
             // NodeJSProcessOptions nodeJSProcessOptions =
@@ -143,7 +143,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Create test data writers
             string topLevelFolderName = genericNotPlainAppTest ? "genericAppTests" : "plainAppTests";
-            FilePathBuilder testDataProcessorFluentRequestLogging = new FilePathBuilder(
+            var testDataProcessorFluentRequestLogging = new FilePathBuilder(
                 Path.Combine(bankTestSettings.GetDataDirectoryForCurrentOs(), $"{topLevelFolderName}/fluent"),
                 testName,
                 ".json");
@@ -157,7 +157,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     ".json");
             }
 
-            FilePathBuilder testDataProcessorApiOverrides = new FilePathBuilder(
+            var testDataProcessorApiOverrides = new FilePathBuilder(
                 Path.Combine(
                     bankTestSettings.GetDataDirectoryForCurrentOs(),
                     $"{topLevelFolderName}/apiOverrides"),
@@ -184,7 +184,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic payment subtests
             foreach (DomesticPaymentSubtestEnum subTest in
-                DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                     DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticPaymentSubtest.RunTest(
                     subTest,
@@ -206,7 +206,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic VRP subtests
             foreach (DomesticVrpSubtestEnum subTest in
-                DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                     DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticVrpSubtest.RunTest(
                     subTest,

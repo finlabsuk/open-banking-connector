@@ -55,8 +55,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             JsonSerializerSettings? jsonSerializerSettings,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id)
         {
-            (var bankApiId, var persistedObject, var bankApiInformation, var bankRegistration,
-                    var bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse, var nonErrorMessages) =
+            (string bankApiId, TEntity persistedObject, BankApiSetPersisted bankApiInformation,
+                    BankRegistrationPersisted bankRegistration,
+                    string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
+                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiGetRequestData(id);
 
             // Check API specified and get base URL
@@ -88,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     apiClient);
 
             // Create new Open Banking object by posting JWT
-            Uri uri = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
+            var uri = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
             JsonSerializerSettings? jsonSerializerSettings = null;
 
             IApiGetRequests<TApiResponse> apiRequests = new TEntity().ApiGetRequests(

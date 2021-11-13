@@ -58,8 +58,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create persisted entity
-            (var persistedObject, var apiRequest, var apiRequests, var apiClient, var uri,
-                    JsonSerializerSettings? jsonSerializerSettings, var nonErrorMessages) =
+            (TEntity persistedObject, TApiRequest apiRequest, IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
+                    IApiClient apiClient, Uri uri,
+                    JsonSerializerSettings? jsonSerializerSettings,
+                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiPostData(requestInfo.Request, requestInfo.ModifiedBy);
             persistedObject.UpdateBeforeApiPost(apiRequest);
 

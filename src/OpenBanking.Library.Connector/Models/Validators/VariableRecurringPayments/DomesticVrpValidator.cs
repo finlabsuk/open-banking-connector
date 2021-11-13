@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
             // WriteDomestic
             RuleFor(x => x.OBDomesticVRPRequest)
                 .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator());
-            
+
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)
             //     .Must(ValidationRules.IsAbsoluteUrl)

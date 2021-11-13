@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string requestDescription)
         {
             // Assemble headers and body
-            List<HttpHeader> headers = new List<HttpHeader>();
+            var headers = new List<HttpHeader>();
             switch (_bankRegistration.BankApiResponse.Data.TokenEndpointAuthMethod)
             {
                 case ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth:

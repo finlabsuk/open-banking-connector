@@ -20,8 +20,7 @@ debugger
             console.log(error)
             // Workaround for fact Chrome sometimes produces net::ERR_CERT_DATABASE_CHANGED
             // following successful fetch above on macOS.
-            if (navigator.platform === "MacIntel")
-            {
+            if (navigator.platform === "MacIntel") {
                 window.pageStatus = 'POST of fragment succeeded';
             } else {
                 window.pageStatus = 'POST of fragment failed';

@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
 
         private void LogTrace(string prefix, TraceInfo info)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (!string.IsNullOrWhiteSpace(prefix))
             {
                 sb.Append($"{prefix}: ");

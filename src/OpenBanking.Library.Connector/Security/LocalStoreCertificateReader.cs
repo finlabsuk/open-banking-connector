@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         private X509Certificate2? GetCertificateInner(string value, SecureString? password)
         {
-            using X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+            using var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             store.Open(OpenFlags.ReadOnly);
 
             return store.Certificates.Find(

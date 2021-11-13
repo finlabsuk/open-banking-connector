@@ -30,10 +30,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         [EnumMember(Value = "tls_client_auth")]
         TlsClientAuth,
-        
+
         [EnumMember(Value = "none")]
         None
-        
     }
 
 

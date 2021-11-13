@@ -17,10 +17,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Info_Recorded(string message)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
                 logger.Info(message);
 
@@ -38,10 +38,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Warning_Recorded(string message)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
                 logger.Warning(message);
 
@@ -60,10 +60,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ")]
         public void Logging_Error_Recorded(string message)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
                 logger.Error(message);
 
@@ -83,11 +83,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ", " ex msg ")]
         public void Logging_Exception_Recorded(string message, string exceptionMessage)
         {
-            Exception ex = new Exception(exceptionMessage);
-            using (MemoryStream ms = new MemoryStream())
+            var ex = new Exception(exceptionMessage);
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
                 logger.Exception(ex, message);
 
@@ -108,10 +108,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" just a test ", " end of test ")]
         public void Logging_StartTrace_EndTrace_Recorded(string startMsg, string endMsg)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
 
                 logger.StartTrace(new TraceInfo(startMsg));
@@ -134,17 +134,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
         [InlineData(" msg2 ", " just a test ", " end of test ")]
         public void Logging_StartTrace_TraceRecorded(string msg, params string[] msgs)
         {
-            TraceInfo trace = new TraceInfo(msg);
+            var trace = new TraceInfo(msg);
             for (var x = 0; x < msgs.Length; x++)
             {
                 trace.Add($"stuff{x}", msgs[x]);
             }
 
 
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                StreamWriter w = new StreamWriter(ms);
-                ConsoleInstrumentationClient logger = new ConsoleInstrumentationClient(w);
+                var w = new StreamWriter(ms);
+                var logger = new ConsoleInstrumentationClient(w);
 
                 logger.StartTrace(trace);
 
@@ -157,7 +157,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Instrumentatio
                 result = result.Trim(Environment.NewLine.ToCharArray());
 
                 result.Should().StartWith(msg);
-                foreach (var m in msgs)
+                foreach (string m in msgs)
                 {
                     result.Should().Contain(m);
                 }

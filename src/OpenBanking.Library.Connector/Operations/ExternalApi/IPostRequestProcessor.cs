@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 HttpPostRequestData(request, $"POST {uri})");
 
             // POST request
-            TResponse response = await new HttpRequestBuilder()
+            var response = await new HttpRequestBuilder()
                 .SetMethod(HttpMethod.Post)
                 .SetUri(uri)
                 .SetHeaders(headers)

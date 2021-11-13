@@ -95,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Create persisted entity
-            TEntity persistedObject = new TEntity();
+            var persistedObject = new TEntity();
             persistedObject.Initialise(
                 requestInfo.Request,
                 requestInfo.ModifiedBy,

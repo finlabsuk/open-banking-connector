@@ -33,11 +33,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
             string country,
             IList<string> addressLine)
         {
-            ApiVariantMapper mapper = new ApiVariantMapper();
+            var mapper = new ApiVariantMapper();
 
             Func<bool> rule = () =>
             {
-                PaymentInitiationModelsV3p1p4.OBPostalAddress6 value =
+                var value =
                     new PaymentInitiationModelsV3p1p4.OBPostalAddress6(
                         addressType,
                         department,
@@ -71,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
         [Fact]
         public void ConfigurationIsValid()
         {
-            ApiVariantMappingConfiguration apiVariantMappingConfiguration = new ApiVariantMappingConfiguration();
+            var apiVariantMappingConfiguration = new ApiVariantMappingConfiguration();
 
             apiVariantMappingConfiguration.CreateMapperConfiguration().AssertConfigurationIsValid();
         }
@@ -80,9 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping
         [Fact]
         public void OpenBankingToPublic_SimpleMap_V3_1_4_ToPublic()
         {
-            ApiVariantMapper mapper = new ApiVariantMapper();
+            var mapper = new ApiVariantMapper();
 
-            PaymentInitiationModelsV3p1p4.Meta m1 = new PaymentInitiationModelsV3p1p4.Meta
+            var m1 = new PaymentInitiationModelsV3p1p4.Meta
             {
                 FirstAvailableDateTime = DateTimeOffset.MaxValue,
                 LastAvailableDateTime = DateTimeOffset.UnixEpoch,

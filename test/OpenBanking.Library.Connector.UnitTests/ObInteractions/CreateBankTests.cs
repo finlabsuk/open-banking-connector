@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -25,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             // Bank resultProfile = new Bank();
             // (new Bank(Arg.Any<Models.Public.Request.Bank>())).Returns(resultProfile);
 
-            LocalEntityPost<Bank, Models.Public.Request.Bank, BankResponse> interaction =
+            var interaction =
                 new LocalEntityPost<Bank, Models.Public.Request.Bank, BankResponse>(
                     Substitute.For<IDbEntityMethods<Bank>>(),
                     Substitute.For<IDbSaveChangesMethod>(),
@@ -33,14 +35,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
                     Substitute.For<IInstrumentationClient>());
 
-            Models.Public.Request.Bank newBank = new Models.Public.Request.Bank
+            var newBank = new Models.Public.Request.Bank
             {
                 IssuerUrl = "a",
                 FinancialId = "b",
                 Name = "c"
             };
 
-            var (response, nonErrorMessages) =
+            (BankResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await interaction.PostAsync(newBank);
 
             response.Should().NotBeNull();

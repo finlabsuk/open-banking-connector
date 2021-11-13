@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient)
         {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            var keyValuePairs = new Dictionary<string, string>
             {
                 { "grant_type", "client_credentials" }
             };
@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient)
         {
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            var keyValuePairs = new Dictionary<string, string>
             {
                 { "grant_type", "authorization_code" },
                 { "redirect_uri", redirectUrl },
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             IApiClient apiClient)
         {
             // POST request
-            Uri uri = new Uri(bankRegistration.OpenIdConfiguration.TokenEndpoint);
+            var uri = new Uri(bankRegistration.OpenIdConfiguration.TokenEndpoint);
             IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
                 new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
             var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(

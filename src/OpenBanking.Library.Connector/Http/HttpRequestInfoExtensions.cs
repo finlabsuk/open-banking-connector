@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)
         {
-            List<string> acceptableContentTypes = new List<string> { "application/json", "application/jose+jwe" };
+            var acceptableContentTypes = new List<string> { "application/json", "application/jose+jwe" };
 
             foreach (string contentType in acceptableContentTypes)
             {

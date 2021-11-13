@@ -131,8 +131,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
                 if (typeMapping.ValueConverters.Any())
                 {
                     foreach ((string? sourceMember, string destinationMember,
-                        ValueMapping valueMapping) in typeMapping
-                        .ValueConverters)
+                                 ValueMapping valueMapping) in typeMapping
+                                 .ValueConverters)
                     {
                         mappingExpression.ForMember(
                             destinationMember,

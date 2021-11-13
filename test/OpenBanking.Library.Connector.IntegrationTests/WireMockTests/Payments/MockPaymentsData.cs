@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             _dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
                 .UseSqlite(_connection)
                 .Options;
-            using SqliteDbContext context = new SqliteDbContext(_dbContextOptions);
+            using var context = new SqliteDbContext(_dbContextOptions);
             context.Database.EnsureCreated();
         }
 
@@ -103,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenIdConfigJson()
         {
-            OpenIdConfiguration openIdConfig = new OpenIdConfiguration
+            var openIdConfig = new OpenIdConfiguration
             {
                 Issuer = MockRoutes.Url,
                 ResponseTypesSupported = new List<string> { "code id_token" },
@@ -122,7 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenBankingClientRegistrationResponseJson()
         {
-            ClientRegistrationModelsPublic.OBClientRegistration1 model =
+            var model =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
                     ClientId = GetClientId(),
@@ -167,7 +167,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetAuthtoriseResponse()
         {
-            AuthResult model = new AuthResult(
+            var model = new AuthResult(
                 "idToken123",
                 "code123",
                 "1ab89221-ca25-4055-9f96-7064fe953c52",
@@ -178,7 +178,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetMockPrivateKey()
         {
-            string fakePrivateKey = @"-----BEGIN PRIVATE KEY-----
+            var fakePrivateKey = @"-----BEGIN PRIVATE KEY-----
                     MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCotsqtXUIESl1d
                     0OjahnUT0evKM/GxBXiL/HU1Zf1gUQ5t17gHo2xDvMZZI28655awWNrgKqbdXUct
                     Zi2p+9pWjx5Ud4By4vzfeekNCpfc1N/U6BmNCME82rqwEH8dcUMh2PViUPX0Zado
@@ -213,7 +213,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetMockCertificate()
         {
-            string fakeCertificate = @"-----BEGIN CERTIFICATE-----
+            var fakeCertificate = @"-----BEGIN CERTIFICATE-----
                     MIIDlzCCAn8CFFeWF2pKRIFp+jN4U01mGrtpGHzyMA0GCSqGSIb3DQEBCwUAMIGH
                     MQswCQYDVQQGEwJHQjENMAsGA1UECAwES2VudDESMBAGA1UEBwwJTWFpZHN0b25l
                     MREwDwYDVQQKDAhNb2NrQmFuazELMAkGA1UECwwCSVQxEjAQBgNVBAMMCWxvY2Fs
@@ -243,13 +243,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         public IRequestBuilder CreateMockRequestBuilder(
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository)
         {
-            HttpClient httpClient = new HttpClient
+            var httpClient = new HttpClient
             {
                 BaseAddress = new Uri(MockRoutes.Url)
             };
-            SqliteDbContext dB = new SqliteDbContext(_dbContextOptions);
+            var dB = new SqliteDbContext(_dbContextOptions);
             IApiVariantMapper apiVariantMapper = _mapper;
-            RequestBuilder requestBuilder = new RequestBuilder(
+            var requestBuilder = new RequestBuilder(
                 new TimeProvider(),
                 apiVariantMapper,
                 new ConsoleInstrumentationClient(),
@@ -327,19 +327,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOBWriteDomesticResponse2()
         {
-            string consentId = Guid.NewGuid().ToString();
+            var consentId = Guid.NewGuid().ToString();
 
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiationInstructedAmount instructedAmount =
+            var instructedAmount =
                 new PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiationInstructedAmount(
                     "50",
                     "GBP");
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiationCreditorAccount creditorAccount =
+            var creditorAccount =
                 new PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiationCreditorAccount(
                     "IBAN",
                     "BE56456394728288",
                     "ACME DIY",
                     "secondary-identif");
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiation domestic2 =
+            var domestic2 =
                 new PaymentInitiationModelsPublic.OBWriteDomesticResponse5DataInitiation(
                     "instr-identification",
                     "e2e-identification",
@@ -347,7 +347,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     instructedAmount: instructedAmount,
                     debtorAccount: null,
                     creditorAccount: creditorAccount);
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5Data dataDomesticReponse2 =
+            var dataDomesticReponse2 =
                 new PaymentInitiationModelsPublic.OBWriteDomesticResponse5Data(
                     "PaymentId",
                     consentId,
@@ -359,11 +359,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     refund: null,
                     charges: null,
                     initiation: domestic2);
-            PaymentInitiationModelsPublic.Links links =
+            var links =
                 new PaymentInitiationModelsPublic.Links($"{MockRoutes.Url}/{MockRoutes.DomesticPayments}");
-            PaymentInitiationModelsPublic.Meta meta = new PaymentInitiationModelsPublic.Meta(1);
+            var meta = new PaymentInitiationModelsPublic.Meta(1);
 
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 model =
+            var model =
                 new PaymentInitiationModelsPublic.OBWriteDomesticResponse5(
                     dataDomesticReponse2,
                     links,

@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(string requestDescription)
         {
             // Assemble headers and body
-            List<HttpHeader> headers = new List<HttpHeader>
+            var headers = new List<HttpHeader>
             {
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
             };

@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
             _logger.LogInformation(string.Join(Environment.NewLine, partNames.Prepend("Application parts found:")));
 
             // Log controllers found
-            ControllerFeature feature = new ControllerFeature();
+            var feature = new ControllerFeature();
             _applicationPartManager.PopulateFeature(feature);
             IEnumerable<string> controllerNames = feature.Controllers.Select(x => x.Name);
             _logger.LogInformation(string.Join(Environment.NewLine, controllerNames.Prepend("Controllers found:")));

@@ -34,7 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiDelete(
                 DeleteRequestInfo requestInfo)
         {
-            var (persistedObject, apiClient, uri, deleteRequestProcessor, nonErrorMessages) =
+            (TEntity persistedObject, IApiClient apiClient, Uri uri, IDeleteRequestProcessor deleteRequestProcessor,
+                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiDeleteData(requestInfo.Id, requestInfo.UseRegistrationAccessToken);
 
             // Delete at API

@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Paymen
 
             // WriteDomesticConsent
             //RuleFor(x => x.OBWriteDomestic)
-              //  .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator());
+            //  .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator());
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

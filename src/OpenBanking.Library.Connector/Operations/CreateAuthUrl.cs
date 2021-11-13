@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient.Info(requestTraceSb.ToString());
 
             // Create auth URL
-            Dictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            var keyValuePairs = new Dictionary<string, string>
             {
                 { "response_type", oAuth2RequestObjectClaims.ResponseType },
                 { "client_id", oAuth2RequestObjectClaims.ClientId },

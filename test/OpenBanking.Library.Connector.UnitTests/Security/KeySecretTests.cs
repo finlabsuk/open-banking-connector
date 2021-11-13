@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             Func<bool> rule = () =>
             {
-                KeySecret ks = new KeySecret(vault, key, value);
+                var ks = new KeySecret(vault, key, value);
 
                 return ks.VaultName == vault && ks.Key == key && ks.Value == value;
             };

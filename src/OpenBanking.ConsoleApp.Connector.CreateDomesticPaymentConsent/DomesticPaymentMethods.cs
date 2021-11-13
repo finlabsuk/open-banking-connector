@@ -34,8 +34,9 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             // Create domestic payment request
             requestBuilder.Utility.Map(
                 domesticPaymentConsentRequest.OBWriteDomesticConsent,
-                out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic); // maps Open Banking request objects
-            DomesticPayment domesticPaymentRequest =
+                out PaymentInitiationModelsPublic.OBWriteDomestic2
+                    obWriteDomestic); // maps Open Banking request objects
+            var domesticPaymentRequest =
                 new DomesticPayment
                 {
                     OBWriteDomestic = obWriteDomestic,

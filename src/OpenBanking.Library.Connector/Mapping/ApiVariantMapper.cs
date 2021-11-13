@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
             _mapper = new Lazy<IMapper>(
                 () =>
                 {
-                    ApiVariantMappingConfiguration typeFinder = new ApiVariantMappingConfiguration();
+                    var typeFinder = new ApiVariantMappingConfiguration();
                     return typeFinder.CreateMapperConfiguration().CreateMapper();
                 });
         }
