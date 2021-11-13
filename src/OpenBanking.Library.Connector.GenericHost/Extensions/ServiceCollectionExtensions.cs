@@ -113,7 +113,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                                             // Suppress warnings relating to non-root auth context entities since can manually apply
                                             // unsupported global query filter to entity queries
                                             warnings.Ignore(
-                                                CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+                                                CoreEventId
+                                                    .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
                             });
                     break;
                 default:

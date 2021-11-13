@@ -17,7 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     [JsonConverter(typeof(StringEnumConverter))]
     public enum RegistrationScope
     {
-        [EnumMember(Value = "none")] None = 0,
+        [EnumMember(Value = "none")]
+        None = 0,
 
         [EnumMember(Value = "accountAndTransaction")]
         AccountAndTransaction = 1,
@@ -28,7 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         [EnumMember(Value = "fundsConfirmation")]
         FundsConfirmation = 4,
 
-        [EnumMember(Value = "all")] All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
+        [EnumMember(Value = "all")]
+        All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
     }
 
     public static class RegistrationScopeExtensions
