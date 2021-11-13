@@ -13,12 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class BankApiSet : Base<Persistent.BankApiSet>
     {
-        private readonly Formatting _formatting;
-
-        public BankApiSet(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public BankApiSet(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.BankApiSet> builder)
         {
@@ -29,13 +27,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.PaymentInitiationApi)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<PaymentInitiationApi>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.VariableRecurringPaymentsApi)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<VariableRecurringPaymentsApi>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

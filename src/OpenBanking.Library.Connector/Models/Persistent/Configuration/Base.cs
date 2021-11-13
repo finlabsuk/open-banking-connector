@@ -5,12 +5,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
     internal abstract class Base<TEntity> : IEntityTypeConfiguration<TEntity>
         where TEntity : EntityBase
     {
+        protected readonly Formatting _jsonFormatting;
+        private readonly bool _supportsGlobalQueryFilter;
+
+        protected Base(bool supportsGlobalQueryFilter, Formatting jsonFormatting)
+        {
+            _supportsGlobalQueryFilter = supportsGlobalQueryFilter;
+            _jsonFormatting = jsonFormatting;
+        }
+
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             // Top-level read-only properties
@@ -36,8 +46,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 });
             builder.Navigation(e => e.IsDeleted).IsRequired();
 
-            // Enforce soft delete
-            builder.HasQueryFilter(p => !p.IsDeleted.Data);
+            // Enforce soft delete where supported (global query filters not supported for inherited types in type per hierarchy)
+            if (_supportsGlobalQueryFilter)
+            {
+                builder.HasQueryFilter(p => !p.IsDeleted.Data);
+            }
         }
     }
 }

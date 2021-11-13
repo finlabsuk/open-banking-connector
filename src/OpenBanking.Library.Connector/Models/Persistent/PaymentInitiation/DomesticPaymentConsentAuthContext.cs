@@ -19,18 +19,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticPaymentConsentAuthContext :
-        EntityBase,
+        AuthContext,
         ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>
     {
         public Guid DomesticPaymentConsentId { get; set; }
 
+        // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticPaymentConsentId")]
         public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
-
-        /// <summary>
-        ///     Token endpoint response. If null, indicates auth not successfully completed.
-        /// </summary>
-        public ReadWriteProperty<TokenEndpointResponse?> TokenEndpointResponse { get; set; } = null!;
     }
 
     internal partial class DomesticPaymentConsentAuthContext :

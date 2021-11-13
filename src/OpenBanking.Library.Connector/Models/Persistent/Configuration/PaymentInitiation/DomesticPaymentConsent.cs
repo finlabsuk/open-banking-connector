@@ -13,12 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class DomesticPaymentConsent : Base<Persistent.PaymentInitiation.DomesticPaymentConsent>
     {
-        private readonly Formatting _formatting;
-
-        public DomesticPaymentConsent(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public DomesticPaymentConsent(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.PaymentInitiation.DomesticPaymentConsent> builder)
         {
@@ -31,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiRequest)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -43,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 {
                     od.Property(e => e.Data)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(v)
@@ -62,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     od.Property(e => e.Data)
                         .IsRequired(false)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(

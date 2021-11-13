@@ -22,6 +22,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -103,7 +104,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     services
                         // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
                         .AddDbContext<BaseDbContext, SqliteDbContext>(
-                            options => { options.UseSqlite(connectionString); });
+                            options =>
+                            {
+                                options
+                                    .UseSqlite(connectionString)
+                                    .ConfigureWarnings(
+                                        warnings =>
+                                            // Suppress warnings relating to non-root auth context entities since can manually apply
+                                            // unsupported global query filter to entity queries
+                                            warnings.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+                            });
                     break;
                 default:
                     throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);

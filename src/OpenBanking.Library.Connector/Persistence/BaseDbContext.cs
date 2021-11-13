@@ -23,6 +23,8 @@ using DomesticPaymentConfig =
 using DomesticVrpConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsent;
+using AuthContextConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContext<
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext>;
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
@@ -40,42 +42,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         // Use no JSON formatting by default.
         protected virtual Formatting JsonFormatting { get; } = Formatting.None;
 
-        // Bank configuration tables
+        // Bank configuration
         internal DbSet<Bank> Banks => Set<Bank>();
         internal DbSet<BankRegistration> BankRegistrations => Set<BankRegistration>();
         internal DbSet<BankApiSet> BankApiSets => Set<BankApiSet>();
 
-        // Domestic payment tables
-        internal DbSet<DomesticPaymentConsent> DomesticPaymentConsents => Set<DomesticPaymentConsent>();
-
+        // Auth contexts
+        internal DbSet<AuthContext> AuthContexts => Set<AuthContext>();
         internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContexts =>
             Set<DomesticPaymentConsentAuthContext>();
-
-        internal DbSet<DomesticPayment> DomesticPayments => Set<DomesticPayment>();
-
-        // Domestic VRP tables
-        internal DbSet<DomesticVrpConsent> DomesticVrpConsents => Set<DomesticVrpConsent>();
-
         internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContexts =>
             Set<DomesticVrpConsentAuthContext>();
 
+        // Domestic payments
+        internal DbSet<DomesticPaymentConsent> DomesticPaymentConsents => Set<DomesticPaymentConsent>();
+        internal DbSet<DomesticPayment> DomesticPayments => Set<DomesticPayment>();
+
+        // Domestic VRPs
+        internal DbSet<DomesticVrpConsent> DomesticVrpConsents => Set<DomesticVrpConsent>();
         internal DbSet<DomesticVrp> DomesticVrps => Set<DomesticVrp>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new BankConfig(JsonFormatting));
+            // Bank configuration
+            modelBuilder.ApplyConfiguration(new BankConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankApiSetConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankRegistrationConfig(true, JsonFormatting));
 
-            modelBuilder.ApplyConfiguration(new BankApiSetConfig(JsonFormatting));
+            // Auth contexts (note global query filter not supported for inherited types)
+            modelBuilder.ApplyConfiguration(new AuthContextConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(false, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(false, JsonFormatting));
 
-            modelBuilder.ApplyConfiguration(new BankRegistrationConfig(JsonFormatting));
+            // Domestic payments
+            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticPaymentConfig(true, JsonFormatting));
 
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConfig(JsonFormatting));
-
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConfig(JsonFormatting));
+            // Domestic VRPs
+            modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticVrpConfig(true, JsonFormatting));
         }
     }
 }

@@ -13,12 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class DomesticVrpConsent : Base<Persistent.VariableRecurringPayments.DomesticVrpConsent>
     {
-        private readonly Formatting _formatting;
-
-        public DomesticVrpConsent(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public DomesticVrpConsent(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(
             EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrpConsent> builder)
@@ -32,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiRequest)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert
                             .DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(v)!)
@@ -45,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 {
                     od.Property(e => e.Data)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<
@@ -65,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     od.Property(e => e.Data)
                         .IsRequired(false)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<

@@ -11,12 +11,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class Bank : Base<Persistent.Bank>
     {
-        private readonly Formatting _formatting;
-
-        public Bank(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public Bank(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.Bank> builder)
         {

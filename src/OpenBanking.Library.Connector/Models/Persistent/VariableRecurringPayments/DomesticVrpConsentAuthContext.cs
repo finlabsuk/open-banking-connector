@@ -19,18 +19,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticVrpConsentAuthContext :
-        EntityBase,
+        AuthContext,
         ISupportsFluentDeleteLocal<DomesticVrpConsentAuthContext>
     {
         public Guid DomesticVrpConsentId { get; set; }
 
+        // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticVrpConsentId")]
         public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
-
-        /// <summary>
-        ///     Token endpoint response. If null, indicates auth not successfully completed.
-        /// </summary>
-        public ReadWriteProperty<TokenEndpointResponse?> TokenEndpointResponse { get; set; } = null!;
     }
 
     internal partial class DomesticVrpConsentAuthContext :

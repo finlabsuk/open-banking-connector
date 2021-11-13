@@ -13,12 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class DomesticVrp : Base<Persistent.VariableRecurringPayments.DomesticVrp>
     {
-        private readonly Formatting _formatting;
-
-        public DomesticVrp(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public DomesticVrp(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrp> builder)
         {
@@ -29,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiRequest)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -41,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 {
                     od.Property(e => e.Data)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(v)!)

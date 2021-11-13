@@ -19,12 +19,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class BankRegistration : Base<Persistent.BankRegistration>
     {
-        private readonly Formatting _formatting;
-
-        public BankRegistration(Formatting formatting)
-        {
-            _formatting = formatting;
-        }
+        public BankRegistration(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(
+                supportsGlobalQueryFilter,
+                jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.BankRegistration> builder)
         {
@@ -42,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v => Enum.Parse<ClientRegistrationApiVersion>(v));
             builder.Property(e => e.OAuth2RequestObjectClaimsOverrides)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -50,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiRequest)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _formatting),
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
                         JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -64,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 {
                     od.Property(p => p.ResponseTypesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v => JsonConvert.DeserializeObject<IList<string>>(v)!,
                             new ValueComparer<IList<string>>(
                                 (c1, c2) => c1.SequenceEqual(c2),
@@ -72,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                                 c => c));
                     od.Property(p => p.ScopesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v => JsonConvert.DeserializeObject<IList<string>>(v)!,
                             new ValueComparer<IList<string>>(
                                 (c1, c2) => c1.SequenceEqual(c2),
@@ -80,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                                 c => c));
                     od.Property(p => p.ResponseModesSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v => JsonConvert.DeserializeObject<IList<string>>(v)!,
                             new ValueComparer<IList<string>>(
                                 (c1, c2) => c1.SequenceEqual(c2),
@@ -88,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                                 c => c));
                     od.Property(p => p.TokenEndpointAuthMethodsSupported)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v => JsonConvert.DeserializeObject<IList<TokenEndpointAuthMethodEnum>>(v)!,
                             new ValueComparer<IList<TokenEndpointAuthMethodEnum>>(
                                 (c1, c2) => c1.SequenceEqual(c2),
@@ -103,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 {
                     od.Property(e => e.Data)
                         .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _formatting),
+                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>
                                 JsonConvert
                                     .DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
