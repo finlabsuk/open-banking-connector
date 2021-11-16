@@ -24,6 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             VrpHackathon = GetVrpHackathon();
             Santander = GetSantander();
             Barclays = GetBarclays();
+            RoyalBankOfScotland = GetRoyalBankOfScotland();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)

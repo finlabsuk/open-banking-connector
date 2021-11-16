@@ -19,6 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         VrpHackathon,
         Santander,
         Barclays,
+        RoyalBankOfScotland,
         Monzo,
         BankOfIreland,
         Nationwide,
@@ -50,6 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.VrpHackathon => bankProfileDefinitions.VrpHackathon,
                 BankProfileEnum.Santander => bankProfileDefinitions.Santander,
                 BankProfileEnum.Barclays => bankProfileDefinitions.Barclays,
+                BankProfileEnum.RoyalBankOfScotland => bankProfileDefinitions.RoyalBankOfScotland,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };
