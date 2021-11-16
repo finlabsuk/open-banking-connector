@@ -44,10 +44,12 @@ using DomesticVrpRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
 using BankRegistrationRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankRegistration;
 using BaseRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.Base;
-using DomesticPaymentConsentAuthContext =
-    FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation.DomesticPaymentConsentAuthContext;
 using DomesticPaymentConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
+using AuthContextPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext;
+using DomesticPaymentConsentAuthContext =
+    FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
@@ -267,7 +269,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             new AuthContextAuthResult(
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
+                sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation)) { }
     }

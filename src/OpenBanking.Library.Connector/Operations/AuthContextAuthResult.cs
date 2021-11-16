@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -26,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         IObjectPost<AuthResult, DomesticPaymentConsentAuthContextResponse>
     {
         private readonly
-            IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContext>
+            IDbReadWriteEntityMethods<AuthContext>
             _authContextMethods;
 
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
@@ -38,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public AuthContextAuthResult(
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContext>
+            IDbReadWriteEntityMethods<AuthContext>
                 authContextMethods,
             IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
@@ -67,11 +68,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Load relevant data
             var authContextId = new Guid(request.State);
-            DomesticPaymentConsentAuthContext authContext =
+            AuthContext authContext =
                 _authContextMethods
                     .DbSet
-                    .Include(o => o.DomesticPaymentConsentNavigation)
-                    .Include(o => o.DomesticPaymentConsentNavigation.BankRegistrationNavigation)
+                    .Include(
+                        o => ((DomesticPaymentConsentAuthContext) o).DomesticPaymentConsentNavigation
+                            .BankRegistrationNavigation)
+                    .Include(
+                        o => ((DomesticVrpConsentAuthContext) o).DomesticVrpConsentNavigation
+                            .BankRegistrationNavigation)
                     .SingleOrDefault(x => x.Id == authContextId) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
@@ -81,8 +86,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new InvalidOperationException("Auth context already has token so aborting.");
             }
 
-            string softwareStatementProfileId = authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation
-                .SoftwareStatementProfileId;
+            BankRegistration bankRegistration = authContext switch
+            {
+                DomesticPaymentConsentAuthContext ac => ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
+                DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            string softwareStatementProfileId = bankRegistration.SoftwareStatementProfileId;
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
                 throw new KeyNotFoundException(
@@ -95,7 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await PostTokenRequest.PostAuthCodeGrantAsync(
                     request.Code,
                     redirectUrl,
-                    authContext.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
+                    bankRegistration,
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient);
 
@@ -106,7 +116,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 createdBy);
 
             // Create response (may involve additional processing based on entity)
-            DomesticPaymentConsentAuthContextResponse response = authContext.PublicGetResponse;
+            DomesticPaymentConsentAuthContextResponse response =
+                ((DomesticPaymentConsentAuthContext) authContext).PublicGetResponse;
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();
