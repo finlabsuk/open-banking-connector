@@ -40,6 +40,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         IVariableRecurringPaymentsContext VariableRecurringPayments { get; }
 
         /// <summary>
+        ///     API-independent methods for auth contexts. Method for passing back auth result obtained via bank redirect is
+        ///     included.
+        /// </summary>
+        IAuthContextsContext AuthContexts { get; }
+
+        /// <summary>
         ///     API containing utility methods.
         /// </summary>
         IUtilityContext Utility { get; }
@@ -70,16 +76,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
 
-        public IUtilityContext Utility => new UtilityContext(CreateContext());
 
-        public IBankConfigurationContext BankConfiguration => new BankConfigurationContext(CreateContext());
-        public IPaymentInitiationContext PaymentInitiation => new PaymentInitiationContext(CreateContext());
+        public IBankConfigurationContext BankConfiguration =>
+            new BankConfigurationContext(CreateContext());
 
         public IAccountAndTransactionContext AccountAndTransaction =>
             new AccountAndTransactionContext(CreateContext());
 
+        public IPaymentInitiationContext PaymentInitiation =>
+            new PaymentInitiationContext(CreateContext());
+
         public IVariableRecurringPaymentsContext VariableRecurringPayments =>
             new VariableRecurringPaymentsContext(CreateContext());
+
+        public IAuthContextsContext AuthContexts =>
+            new AuthContextsContext(CreateContext());
+
+        public IUtilityContext Utility =>
+            new UtilityContext(CreateContext());
 
         private ISharedContext CreateContext()
         {

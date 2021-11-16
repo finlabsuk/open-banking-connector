@@ -7,7 +7,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
-    public interface IDomesticPaymentConsentAuthContextPublicQuery : IBaseQuery { }
+    public interface IDomesticPaymentConsentAuthContextPublicQuery : IBaseQuery
+    {
+        public Guid DomesticPaymentConsentId { get; }
+    }
 
     /// <summary>
     ///     Response to GetLocal
@@ -19,7 +22,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid id,
             string? name,
             DateTimeOffset created,
-            string? createdBy) : base(id, name, created, createdBy) { }
+            string? createdBy,
+            Guid domesticPaymentConsentId) : base(id, name, created, createdBy)
+        {
+            DomesticPaymentConsentId = domesticPaymentConsentId;
+        }
+
+        public Guid DomesticPaymentConsentId { get; }
     }
 
     /// <summary>
@@ -32,7 +41,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            string authUrl) : base(id, name, created, createdBy)
+            Guid domesticPaymentConsentId,
+            string authUrl) : base(id, name, created, createdBy, domesticPaymentConsentId)
         {
             AuthUrl = authUrl;
         }

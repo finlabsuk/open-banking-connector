@@ -261,12 +261,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>())) { }
     }
 
-    internal class AuthAuthResultsPost :
-        PostBase<AuthResult, DomesticPaymentConsentAuthContextResponse>
+    internal class AuthResultUpdate :
+        PostBase<AuthResult, AuthContextResponse>
     {
-        internal AuthAuthResultsPost(ISharedContext sharedContext) : base(
+        internal AuthResultUpdate(ISharedContext sharedContext) : base(
             sharedContext,
-            new AuthContextAuthResult(
+            new AuthContextUpdate(
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),

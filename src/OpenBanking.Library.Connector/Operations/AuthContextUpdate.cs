@@ -12,7 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -23,8 +23,8 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal class AuthContextAuthResult :
-        IObjectPost<AuthResult, DomesticPaymentConsentAuthContextResponse>
+    internal class AuthContextUpdate :
+        IObjectPost<AuthResult, AuthContextResponse>
     {
         private readonly
             IDbReadWriteEntityMethods<AuthContext>
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly ITimeProvider _timeProvider;
 
 
-        public AuthContextAuthResult(
+        public AuthContextUpdate(
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadWriteEntityMethods<AuthContext>
@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         public async
-            Task<(DomesticPaymentConsentAuthContextResponse response, IList<IFluentResponseInfoOrWarningMessage>
+            Task<(AuthContextResponse response, IList<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> PostAsync(
                 AuthResult request,
                 string? createdBy = null,
@@ -116,8 +116,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 createdBy);
 
             // Create response (may involve additional processing based on entity)
-            DomesticPaymentConsentAuthContextResponse response =
-                ((DomesticPaymentConsentAuthContext) authContext).PublicGetResponse;
+            var response =
+                new AuthContextResponse(
+                    authContext.Id,
+                    authContext.Name,
+                    authContext.Created,
+                    authContext.CreatedBy);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();

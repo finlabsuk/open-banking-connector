@@ -20,13 +20,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     /// </summary>
     internal partial class DomesticVrpConsentAuthContext :
         AuthContext,
-        ISupportsFluentDeleteLocal<DomesticVrpConsentAuthContext>
+        ISupportsFluentDeleteLocal<DomesticVrpConsentAuthContext>,
+        IDomesticVrpConsentAuthContextPublicQuery
     {
-        public Guid DomesticVrpConsentId { get; set; }
-
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticVrpConsentId")]
         public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
+
+        public Guid DomesticVrpConsentId { get; set; }
     }
 
     internal partial class DomesticVrpConsentAuthContext :
@@ -55,6 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 Name,
                 Created,
                 CreatedBy,
+                DomesticVrpConsentId,
                 authUrl);
     }
 
@@ -66,6 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 Id,
                 Name,
                 Created,
-                CreatedBy);
+                CreatedBy,
+                DomesticVrpConsentId);
     }
 }

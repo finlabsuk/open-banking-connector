@@ -6,7 +6,6 @@ using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi;
@@ -42,22 +41,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         {
             // Operation
             AuthResult authResult = payload.ToLibraryVersion();
-            IFluentResponse<DomesticPaymentConsentAuthContextResponse> fluentResponse = await _requestBuilder
-                .PaymentInitiation
+            IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
                 .AuthContexts
-                .AuthResults
-                .PostLocalAsync(authResult);
+                .UpdateAuthResultLocalAsync(authResult);
 
             // HTTP response
-            HttpResponse<DomesticPaymentConsentAuthContextResponse> httpResponse =
+            HttpResponse<AuthContextResponse> httpResponse =
                 fluentResponse.ToHttpResponse();
             int statusCode = fluentResponse switch
             {
-                FluentSuccessResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
+                FluentSuccessResponse<AuthContextResponse> _ => StatusCodes
                     .Status201Created,
-                FluentBadRequestErrorResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
+                FluentBadRequestErrorResponse<AuthContextResponse> _ => StatusCodes
                     .Status400BadRequest,
-                FluentOtherErrorResponse<DomesticPaymentConsentAuthContextResponse> _ => StatusCodes
+                FluentOtherErrorResponse<AuthContextResponse> _ => StatusCodes
                     .Status500InternalServerError,
                 _ => throw new ArgumentOutOfRangeException()
             };

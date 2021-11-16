@@ -20,13 +20,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     /// </summary>
     internal partial class DomesticPaymentConsentAuthContext :
         AuthContext,
-        ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>
+        ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>,
+        IDomesticPaymentConsentAuthContextPublicQuery
     {
-        public Guid DomesticPaymentConsentId { get; set; }
-
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticPaymentConsentId")]
         public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
+
+        public Guid DomesticPaymentConsentId { get; set; }
     }
 
     internal partial class DomesticPaymentConsentAuthContext :
@@ -55,6 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 Name,
                 Created,
                 CreatedBy,
+                DomesticPaymentConsentId,
                 authUrl);
     }
 
@@ -66,6 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 Id,
                 Name,
                 Created,
-                CreatedBy);
+                CreatedBy,
+                DomesticPaymentConsentId);
     }
 }

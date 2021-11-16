@@ -3,24 +3,32 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response
 {
-    public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery { }
+    public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
+    {
+        public Guid DomesticVrpConsentId { get; }
+    }
 
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
     public class DomesticVrpConsentAuthContextResponse : BaseResponse,
-        IDomesticPaymentConsentAuthContextPublicQuery
+        IDomesticVrpConsentAuthContextPublicQuery
     {
         internal DomesticVrpConsentAuthContextResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
-            string? createdBy) : base(id, name, created, createdBy) { }
+            string? createdBy,
+            Guid domesticVrpConsentId) : base(id, name, created, createdBy)
+        {
+            DomesticVrpConsentId = domesticVrpConsentId;
+        }
+
+        public Guid DomesticVrpConsentId { get; }
     }
 
     /// <summary>
@@ -33,7 +41,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            string authUrl) : base(id, name, created, createdBy)
+            Guid domesticVrpConsentId,
+            string authUrl) : base(id, name, created, createdBy, domesticVrpConsentId)
         {
             AuthUrl = authUrl;
         }

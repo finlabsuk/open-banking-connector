@@ -2,6 +2,8 @@ import {ConsentUIInteractions} from "../authoriseConsent"
 import {assertIsDefined} from "../utility"
 
 export const consentUIInteractions: ConsentUIInteractions = async (page, navigationPromise, consentVariety, bankUser) => {
+
+    // Enter customer number
     await page.waitForSelector('#customer-number')
     await page.type('#customer-number', bankUser.userNameOrNumber)
     await page.waitForSelector('#customer-number-login')
