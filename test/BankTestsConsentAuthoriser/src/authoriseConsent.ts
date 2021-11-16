@@ -1,5 +1,6 @@
 import puppeteer = require('puppeteer');
 import * as NatWest from './Sandbox/natwest'
+import * as RoyalBankOfScotland from './Sandbox/royalBankOfScotland'
 import * as Modelo from './Sandbox/modelo'
 import * as Lloyds from './Sandbox/lloyds'
 import * as VrpHackathon from './Sandbox/vrpHackathon'
@@ -13,6 +14,7 @@ export enum ConsentVariety {
 
 export enum Bank {
     NatWest = "NatWest",
+    RoyalBankOfScotland = "RoyalBankOfScotland",
     Modelo = "Modelo",
     Lloyds = "Lloyds",
     VrpHackathon = "VrpHackathon"
@@ -33,6 +35,7 @@ export type ConsentUIInteractions = (
 
 // Bank interactions lookup
 const bankConsentUIInteractions: { [index in Bank]: ConsentUIInteractions } = {
+    RoyalBankOfScotland: RoyalBankOfScotland.consentUIInteractions,
     NatWest: NatWest.consentUIInteractions,
     Modelo: Modelo.consentUIInteractions,
     Lloyds: Lloyds.consentUIInteractions,
