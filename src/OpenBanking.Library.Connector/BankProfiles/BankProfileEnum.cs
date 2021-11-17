@@ -20,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         Santander,
         Barclays,
         RoyalBankOfScotland,
+        NewDayAmazon,
         Monzo,
         BankOfIreland,
         Nationwide,
@@ -52,6 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.Santander => bankProfileDefinitions.Santander,
                 BankProfileEnum.Barclays => bankProfileDefinitions.Barclays,
                 BankProfileEnum.RoyalBankOfScotland => bankProfileDefinitions.RoyalBankOfScotland,
+                BankProfileEnum.NewDayAmazon => bankProfileDefinitions.NewDayAmazon,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };

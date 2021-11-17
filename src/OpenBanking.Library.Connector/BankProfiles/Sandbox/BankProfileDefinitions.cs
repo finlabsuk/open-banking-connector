@@ -25,6 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             Santander = GetSantander();
             Barclays = GetBarclays();
             RoyalBankOfScotland = GetRoyalBankOfScotland();
+            NewDayAmazon = GetNewDayAmazon();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
