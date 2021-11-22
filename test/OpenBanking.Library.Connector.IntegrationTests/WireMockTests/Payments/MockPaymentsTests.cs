@@ -33,6 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         public void RunMockPaymentTest()
         {
             var softwareStatementProfileId = "0";
+            var obTransportCertificatProfileId = "0";
+            var obSigningCertificatProfileId = "0";
 
             // Use default OBC settings
             var obcSettingsProvider =
@@ -47,16 +49,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             {
                 SoftwareStatement =
                     "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature",
-                OBCertificateProfileId = "0",
+                OBTransportCertificateProfileId = obTransportCertificatProfileId,
+                OBSigningCertificateProfileId = obSigningCertificatProfileId,
                 DefaultFragmentRedirectUrl = "http://redirecturl.com",
             };
-            var obCertificateProfile = new OBCertificateProfile
+            var obTransportCertificateProfile = new OBTransportCertificateProfile
+            {
+                TransportKey = _mockData.GetMockPrivateKey(),
+                TransportCertificate = _mockData.GetMockCertificate(),
+                CertificateType = "OBLegacy"
+            };
+            var obSigningCertificateProfile = new OBSigningCertificateProfile
             {
                 SigningKeyId = "signingkeyid",
                 SigningKey = _mockData.GetMockPrivateKey(),
                 SigningCertificate = _mockData.GetMockCertificate(),
-                TransportKey = _mockData.GetMockPrivateKey(),
-                TransportCertificate = _mockData.GetMockCertificate(),
                 CertificateType = "OBLegacy"
             };
 
@@ -64,16 +71,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(
                     new SoftwareStatementProfilesSettings
                         { [softwareStatementProfileId] = softwareStatementProfile });
-            var obCertificateProfilesSettingsProvider =
-                new DefaultSettingsProvider<OBCertificateProfilesSettings>(
-                    new OBCertificateProfilesSettings
-                        { [softwareStatementProfileId] = obCertificateProfile });
+            var obTransportCertificateProfilesSettingsProvider =
+                new DefaultSettingsProvider<OBTransportCertificateProfilesSettings>(
+                    new OBTransportCertificateProfilesSettings
+                        { [obTransportCertificatProfileId] = obTransportCertificateProfile });
+            var obSigningCertificateProfilesSettingsProvider =
+                new DefaultSettingsProvider<OBSigningCertificateProfilesSettings>(
+                    new OBSigningCertificateProfilesSettings
+                        { [obSigningCertificatProfileId] = obSigningCertificateProfile });
 
             // Set up request builder
             var softwareStatementProfilesRepository = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
-                obCertificateProfilesSettingsProvider,
+                obTransportCertificateProfilesSettingsProvider,
+                obSigningCertificateProfilesSettingsProvider,
                 new ConsoleInstrumentationClient());
             IRequestBuilder requestBuilder = _mockData.CreateMockRequestBuilder(softwareStatementProfilesRepository);
 

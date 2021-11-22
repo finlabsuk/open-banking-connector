@@ -29,7 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
         public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
-            ISettingsProvider<OBCertificateProfilesSettings> obCertificateProfileSettingsProvider,
+            ISettingsProvider<OBTransportCertificateProfilesSettings> obTransportCertificateProfileSettingsProvider,
+            ISettingsProvider<OBSigningCertificateProfilesSettings> obSigningCertificateProfileSettingsProvider,
             IInstrumentationClient instrumentationClient)
         {
             OpenBankingConnectorSettings obcSettings = obcSettingsProvider.GetSettings();
@@ -39,9 +40,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 softwareStatementProfilesSettingsProvider.GetSettings();
             softwareStatementProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
-            OBCertificateProfilesSettings obCertificateProfilesSettings =
-                obCertificateProfileSettingsProvider.GetSettings();
-            obCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+            OBTransportCertificateProfilesSettings obTransportCertificateProfilesSettings =
+                obTransportCertificateProfileSettingsProvider.GetSettings();
+            obTransportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+
+            OBSigningCertificateProfilesSettings obSigningCertificateProfilesSettings =
+                obSigningCertificateProfileSettingsProvider.GetSettings();
+            obTransportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
             List<string> activeProfileIds = obcSettings.ProcessedSoftwareStatementProfileIds.ToList();
             foreach (string softwareStatementProfileId in activeProfileIds)
@@ -61,20 +66,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     "prefix",
                     "Validation failure when checking software statement profile.");
 
-                // Get and validate OB certificate profile
-                string obCertificateProfileId = softwareStatementProfile.OBCertificateProfileId;
+                // Get and validate OB transport certificate profile
+                string obTransportCertificateProfileId = softwareStatementProfile.OBTransportCertificateProfileId;
 
-                if (!obCertificateProfilesSettings.TryGetValue(
-                    obCertificateProfileId,
-                    out OBCertificateProfile obCertificateProfile))
+                if (!obTransportCertificateProfilesSettings.TryGetValue(
+                    obTransportCertificateProfileId,
+                    out OBTransportCertificateProfile obTransportCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
-                        $"Cannot find OB certificate profile with ID {obCertificateProfileId}");
+                        $"Cannot find OB transport certificate profile with ID {obTransportCertificateProfileId}");
                 }
 
-                ValidationResult validationResult2 = new ObCertificateProfileValidator()
-                    .Validate(obCertificateProfile);
+                ValidationResult validationResult2 = new OBTransportCertificateProfileValidator()
+                    .Validate(obTransportCertificateProfile);
                 validationResult2.ProcessValidationResultsAndRaiseErrors(
+                    "prefix",
+                    "Validation failure when checking OB certificate profile.");
+
+                // Get and validate OB signing certificate profile
+                string obSigningCertificateProfileId = softwareStatementProfile.OBSigningCertificateProfileId;
+
+                if (!obSigningCertificateProfilesSettings.TryGetValue(
+                    obSigningCertificateProfileId,
+                    out OBSigningCertificateProfile obSigningCertificateProfile))
+                {
+                    throw new ArgumentOutOfRangeException(
+                        $"Cannot find OB signing certificate profile with ID {obSigningCertificateProfileId}");
+                }
+
+                ValidationResult validationResult3 = new OBSigningCertificateProfileValidator()
+                    .Validate(obSigningCertificateProfile);
+                validationResult3.ProcessValidationResultsAndRaiseErrors(
                     "prefix",
                     "Validation failure when checking OB certificate profile.");
 
@@ -82,14 +104,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 var transportCerts = new List<X509Certificate2>();
                 X509Certificate2 transportCert =
                     CertificateFactories.GetCertificate2FromPem(
-                        obCertificateProfile.TransportKey,
-                        obCertificateProfile.TransportCertificate) ??
+                        obTransportCertificateProfile.TransportKey,
+                        obTransportCertificateProfile.TransportCertificate) ??
                     throw new InvalidOperationException();
                 transportCerts.Add(transportCert);
 
                 IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()
                     .SetClientCertificates(transportCerts);
-                if (obCertificateProfile.DisableTlsCertificateVerification)
+                if (obTransportCertificateProfile.DisableTlsCertificateVerification)
                 {
                     httpRequestBuilder
                         .SetServerCertificateValidator(new DefaultServerCertificateValidator());
@@ -101,7 +123,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 var softwareStatementProfileCached =
                     new ProcessedSoftwareStatementProfile(
                         softwareStatementProfileId,
-                        obCertificateProfile,
+                        obTransportCertificateProfile,
+                        obSigningCertificateProfile,
                         softwareStatementProfile,
                         new ApiClient(instrumentationClient, new HttpClient(handler)));
 

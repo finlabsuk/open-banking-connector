@@ -9,9 +9,9 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class ObCertificateProfileValidator : AbstractValidator<OBCertificateProfile>
+    public class OBSigningCertificateProfileValidator : AbstractValidator<OBSigningCertificateProfile>
     {
-        public ObCertificateProfileValidator()
+        public OBSigningCertificateProfileValidator()
         {
             CascadeMode = CascadeMode.Continue;
 
@@ -42,14 +42,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
             RuleFor(p => p.SigningCertificate)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a SigningCertificate.");
-
-            RuleFor(p => p.TransportKey)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage("Please provide a TransportKey.");
-
-            RuleFor(p => p.TransportCertificate)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage("Please provide a TransportCertificate.");
         }
     }
 }

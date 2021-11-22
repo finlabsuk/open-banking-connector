@@ -50,10 +50,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
                 .AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>,
                     ConfigurationSettingsProvider<SoftwareStatementProfilesSettings>>()
-                .Configure<OBCertificateProfilesSettings>(
-                    configuration.GetSection(new OBCertificateProfilesSettings().SettingsSectionName))
-                .AddSingleton<ISettingsProvider<OBCertificateProfilesSettings>,
-                    ConfigurationSettingsProvider<OBCertificateProfilesSettings>>()
+                .Configure<OBTransportCertificateProfilesSettings>(
+                    configuration.GetSection(new OBTransportCertificateProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<OBTransportCertificateProfilesSettings>,
+                    ConfigurationSettingsProvider<OBTransportCertificateProfilesSettings>>()
+                .Configure<OBSigningCertificateProfilesSettings>(
+                    configuration.GetSection(new OBSigningCertificateProfilesSettings().SettingsSectionName))
+                .AddSingleton<ISettingsProvider<OBSigningCertificateProfilesSettings>,
+                    ConfigurationSettingsProvider<OBSigningCertificateProfilesSettings>>()
                 .AddOptions();
 
             // Set up bank profile definitions

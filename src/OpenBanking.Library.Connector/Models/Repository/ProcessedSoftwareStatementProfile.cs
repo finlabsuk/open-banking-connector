@@ -67,23 +67,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
     /// <summary>
     ///     Processed software statement profile generated at start-up which includes
-    ///     information from a <see cref="SoftwareStatementProfile" /> and a <see cref="OBCertificateProfile" />
+    ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="OBTransportCertificateProfile"/>, and a <see cref="OBSigningCertificateProfile" />
     /// </summary>
     public class ProcessedSoftwareStatementProfile : IRepositoryItem
     {
         public ProcessedSoftwareStatementProfile(
             string id,
-            OBCertificateProfile obCertificateProfile,
+            OBTransportCertificateProfile obTransportCertificateProfile,
+            OBSigningCertificateProfile obSigningCertificateProfile,
             SoftwareStatementProfile softwareStatementProfile,
             IApiClient apiClient)
         {
             // Pass-through properties
-            SigningKeyId = obCertificateProfile.SigningKeyId;
-            SigningKey = obCertificateProfile.SigningKey;
-            SigningCertificate = obCertificateProfile.SigningCertificate;
-            TransportCertificateType = Enum.Parse<TransportCertificateType>(obCertificateProfile.CertificateType);
-            TransportCertificateDnOrgId = obCertificateProfile.CertificateDnOrgId;
-            TransportCertificateDnOrgName = obCertificateProfile.CertificateDnOrgName;
+            SigningKeyId = obSigningCertificateProfile.SigningKeyId;
+            SigningKey = obSigningCertificateProfile.SigningKey;
+            SigningCertificate = obSigningCertificateProfile.SigningCertificate;
+            TransportCertificateType =
+                Enum.Parse<TransportCertificateType>(obTransportCertificateProfile.CertificateType);
+            TransportCertificateDnOrgId = obTransportCertificateProfile.CertificateDnOrgId;
+            TransportCertificateDnOrgName = obTransportCertificateProfile.CertificateDnOrgName;
             DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             Id = id;
 

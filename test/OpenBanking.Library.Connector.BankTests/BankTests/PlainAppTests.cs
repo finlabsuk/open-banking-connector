@@ -88,9 +88,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var softwareStatementProfilesSettings = configuration
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
                 .Get<SoftwareStatementProfilesSettings>();
-            var obCertificateProfilesSettings = configuration
-                .GetSection(new OBCertificateProfilesSettings().SettingsSectionName)
-                .Get<OBCertificateProfilesSettings>();
+            var obTransportCertificateProfilesSettings = configuration
+                .GetSection(new OBTransportCertificateProfilesSettings().SettingsSectionName)
+                .Get<OBTransportCertificateProfilesSettings>();
+            var obSigningCertificateProfilesSettings = configuration
+                .GetSection(new OBSigningCertificateProfilesSettings().SettingsSectionName)
+                .Get<OBSigningCertificateProfilesSettings>();
 
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -99,8 +102,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
-            var obCertificateProfilesSettingsProvider =
-                new DefaultSettingsProvider<OBCertificateProfilesSettings>(obCertificateProfilesSettings);
+            var obTransportCertificateProfilesSettingsProvider =
+                new DefaultSettingsProvider<OBTransportCertificateProfilesSettings>(obTransportCertificateProfilesSettings);
+            var obSigningCertificateProfilesSettingsProvider =
+                new DefaultSettingsProvider<OBSigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
 
             // Create stores
             var timeProvider = new TimeProvider();
@@ -108,7 +113,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider,
                 softwareStatementProfilesSettingsProvider,
-                obCertificateProfilesSettingsProvider,
+                obTransportCertificateProfilesSettingsProvider,
+                obSigningCertificateProfilesSettingsProvider,
                 instrumentationClient);
 
             // Run test            

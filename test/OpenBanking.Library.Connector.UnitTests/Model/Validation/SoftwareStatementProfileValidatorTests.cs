@@ -41,17 +41,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBSigningCertificateProfile
                 {
                     SigningKey = value,
                     SigningKeyId = "a",
                     SigningCertificate = "a",
-                    TransportKey = "a",
-                    TransportCertificate = "a",
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -65,18 +63,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBSigningCertificateProfile
                 {
                     CertificateType = "LegacyOB",
                     SigningKey = "a",
                     SigningKeyId = value,
                     SigningCertificate = "a",
-                    TransportKey = "a",
-                    TransportCertificate = "a"
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -89,17 +85,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBSigningCertificateProfile
                 {
                     SigningKey = "a",
                     SigningKeyId = "a",
                     SigningCertificate = value,
-                    TransportKey = "a",
-                    TransportCertificate = "a",
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -112,17 +106,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBTransportCertificateProfile
                 {
-                    SigningKey = "a",
-                    SigningKeyId = "a",
-                    SigningCertificate = "a",
                     TransportKey = value,
                     TransportCertificate = "a",
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -135,17 +126,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBTransportCertificateProfile
                 {
-                    SigningKey = "a",
-                    SigningKeyId = "a",
-                    SigningCertificate = "a",
                     TransportKey = "a",
                     TransportCertificate = value,
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };
@@ -158,17 +146,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBCertificateProfile
+                var profile = new OBTransportCertificateProfile
                 {
-                    SigningKey = "a",
-                    SigningKeyId = "a",
-                    SigningCertificate = "a",
                     TransportKey = "a",
                     TransportCertificate = "a",
                 };
 
                 List<ValidationFailure> results =
-                    new ObCertificateProfileValidator().Validate(profile).Errors.ToList();
+                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
 
                 return results.Count == 0;
             };

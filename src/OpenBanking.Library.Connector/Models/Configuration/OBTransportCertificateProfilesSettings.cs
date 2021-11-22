@@ -9,33 +9,30 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 {
     /// <summary>
-    ///     UK Open Banking certificate type
+    ///     UK Open Banking transport certificate type
     /// </summary>
     public enum TransportCertificateType
     {
         /// <summary>
-        ///     Legacy certificates used by UK Open Banking Directory
+        ///     Legacy certificate used by UK Open Banking Directory
         /// </summary>
         OBLegacy,
 
         /// <summary>
-        ///     New OBWAC and OBSeal certificates used by UK Open Banking Directory.
+        ///     New OBWAC certificate used by UK Open Banking Directory.
         /// </summary>
         OBWac
     }
 
     /// <summary>
-    ///     Software statement profile provided to Open Banking Connector as part of
-    ///     <see cref="SoftwareStatementProfilesSettings" />.
-    ///     This class captures a software statement and associated data such as keys and certificates.
+    ///     Open Banking Transport Certificate Profile provided to Open Banking Connector as part of
+    ///     <see cref="OBTransportCertificateProfilesSettings" />.
+    ///     This class captures a transport certificate and associated data.
     /// </summary>
-    public class OBCertificateProfile
+    public class OBTransportCertificateProfile
     {
-        public OBCertificateProfile(
+        public OBTransportCertificateProfile(
             string certificateType,
-            string signingKeyId,
-            string signingKey,
-            string signingCertificate,
             string transportKey,
             string transportCertificate,
             bool disableTlsCertificateVerification,
@@ -43,9 +40,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             string certificateDnOrgId)
         {
             CertificateType = certificateType;
-            SigningKeyId = signingKeyId;
-            SigningKey = signingKey;
-            SigningCertificate = signingCertificate;
             TransportKey = transportKey;
             TransportCertificate = transportCertificate;
             DisableTlsCertificateVerification = disableTlsCertificateVerification;
@@ -53,10 +47,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             CertificateDnOrgId = certificateDnOrgId;
         }
 
-        public OBCertificateProfile() { }
+        public OBTransportCertificateProfile() { }
 
         /// <summary>
-        ///     Type of certificate used for transport and signing certificates
+        ///     Type of certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
         public string CertificateType { get; set; } = null!;
 
@@ -66,38 +60,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public bool DisableTlsCertificateVerification { get; set; }
 
+        /// <summary>
+        ///     Org name to use when constructing DN for DCR (ignored when using <see cref="TransportCertificateType.OBLegacy" />
+        ///     cert)
+        /// </summary>
         public string CertificateDnOrgName { get; set; } = null!;
 
+        /// <summary>
+        ///     Org ID to use when constructing DN for DCR (ignored when using <see cref="TransportCertificateType.OBLegacy" />
+        ///     cert)
+        /// </summary>
         public string CertificateDnOrgId { get; set; } = null!;
 
-        /// Open Banking Signing Key ID as string, e.g. "ABC"
-        public string SigningKeyId { get; set; } = null!;
-
-        /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-        public string SigningKey { get; set; } = null!;
-
-        /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string SigningCertificate { get; set; } = null!;
-
-        /// Open Banking Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         public string TransportKey { get; set; } = null!;
 
-        /// Open Banking Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         public string TransportCertificate { get; set; } = null!;
     }
 
-    public class OBCertificateProfilesSettings : Dictionary<string, OBCertificateProfile>,
-        ISettings<OBCertificateProfilesSettings>
+    public class OBTransportCertificateProfilesSettings : Dictionary<string, OBTransportCertificateProfile>,
+        ISettings<OBTransportCertificateProfilesSettings>
     {
-        public string SettingsSectionName => "ObCertificateProfiles";
+        public string SettingsSectionName => "ObTransportCertificateProfiles";
 
         /// <summary>
-        ///     Placeholder. Validation is performed only on individual <see cref="OBCertificateProfile" /> entries
+        ///     Placeholder. Validation is performed only on individual <see cref="OBTransportCertificateProfile" /> entries
         ///     that are to be used by Open Banking Connector. This validation is performed in the constructor
         ///     of <see cref="ProcessedSoftwareStatementProfileStore" />
         /// </summary>
         /// <returns></returns>
-        public OBCertificateProfilesSettings Validate()
+        public OBTransportCertificateProfilesSettings Validate()
         {
             return this;
         }
