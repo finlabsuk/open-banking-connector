@@ -81,6 +81,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
             SigningKeyId = obCertificateProfile.SigningKeyId;
             SigningKey = obCertificateProfile.SigningKey;
             SigningCertificate = obCertificateProfile.SigningCertificate;
+            TransportCertificateType = Enum.Parse<TransportCertificateType>(obCertificateProfile.CertificateType);
+            TransportCertificateDnOrgId = obCertificateProfile.CertificateDnOrgId;
+            TransportCertificateDnOrgName = obCertificateProfile.CertificateDnOrgName;
             DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             Id = id;
 
@@ -136,6 +139,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         public string DefaultFragmentRedirectUrl { get; }
+
+        public TransportCertificateType TransportCertificateType { get; }
+        public string TransportCertificateDnOrgId { get; }
+        public string TransportCertificateDnOrgName { get; }
 
         public IApiClient ApiClient { get; }
 

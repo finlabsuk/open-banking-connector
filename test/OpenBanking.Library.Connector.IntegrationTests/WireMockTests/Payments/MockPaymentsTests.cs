@@ -57,6 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 SigningCertificate = _mockData.GetMockCertificate(),
                 TransportKey = _mockData.GetMockPrivateKey(),
                 TransportCertificate = _mockData.GetMockCertificate(),
+                CertificateType = "OBLegacy"
             };
 
             var softwareStatementProfilesSettingsProvider =

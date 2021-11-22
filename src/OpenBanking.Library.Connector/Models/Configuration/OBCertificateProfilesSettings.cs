@@ -11,17 +11,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// <summary>
     ///     UK Open Banking certificate type
     /// </summary>
-    public enum CertificateType
+    public enum TransportCertificateType
     {
         /// <summary>
         ///     Legacy certificates used by UK Open Banking Directory
         /// </summary>
-        LegacyOB,
+        OBLegacy,
 
         /// <summary>
         ///     New OBWAC and OBSeal certificates used by UK Open Banking Directory.
         /// </summary>
-        OBWacAndOBSeal
+        OBWac
     }
 
     /// <summary>
@@ -38,7 +38,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             string signingCertificate,
             string transportKey,
             string transportCertificate,
-            bool disableTlsCertificateVerification)
+            bool disableTlsCertificateVerification,
+            string certificateDnOrgName,
+            string certificateDnOrgId)
         {
             CertificateType = certificateType;
             SigningKeyId = signingKeyId;
@@ -47,6 +49,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             TransportKey = transportKey;
             TransportCertificate = transportCertificate;
             DisableTlsCertificateVerification = disableTlsCertificateVerification;
+            CertificateDnOrgName = certificateDnOrgName;
+            CertificateDnOrgId = certificateDnOrgId;
         }
 
         public OBCertificateProfile() { }
@@ -61,6 +65,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     helpful when testing against sandboxes using self-signed certificates.
         /// </summary>
         public bool DisableTlsCertificateVerification { get; set; }
+
+        public string CertificateDnOrgName { get; set; } = null!;
+
+        public string CertificateDnOrgId { get; set; } = null!;
 
         /// Open Banking Signing Key ID as string, e.g. "ABC"
         public string SigningKeyId { get; set; } = null!;

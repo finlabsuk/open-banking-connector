@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -82,6 +83,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                         .AuthorizationCode,
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
                 };
+            string tlsClientAuthSubjectDn = sProfile.TransportCertificateType switch
+            {
+                TransportCertificateType.OBLegacy =>
+                    $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB",
+                TransportCertificateType.OBWac =>
+                    $"CN={sProfile.SoftwareStatementPayload.OrgId},2.5.4.97={sProfile.TransportCertificateDnOrgId},O={sProfile.TransportCertificateDnOrgName},C=GB",
+                _ => throw new ArgumentOutOfRangeException()
+            };
             var registrationClaims =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
@@ -106,8 +115,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                     SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
                     Scope = scope,
                     SoftwareStatement = sProfile.SoftwareStatement,
-                    TlsClientAuthSubjectDn =
-                        $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB"
+                    TlsClientAuthSubjectDn = tlsClientAuthSubjectDn
                 };
 
             if (!(bankClientRegistrationClaimsOverrides?.SubjectType is null))

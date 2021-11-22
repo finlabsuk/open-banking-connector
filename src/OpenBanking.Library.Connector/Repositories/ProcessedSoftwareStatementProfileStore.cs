@@ -48,8 +48,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             {
                 // Get and validate software statement profile
                 if (!softwareStatementProfilesSettings.TryGetValue(
-                        softwareStatementProfileId,
-                        out SoftwareStatementProfile softwareStatementProfile))
+                    softwareStatementProfileId,
+                    out SoftwareStatementProfile softwareStatementProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find software statement profile with ID {softwareStatementProfileId}");
@@ -65,8 +65,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 string obCertificateProfileId = softwareStatementProfile.OBCertificateProfileId;
 
                 if (!obCertificateProfilesSettings.TryGetValue(
-                        obCertificateProfileId,
-                        out OBCertificateProfile obCertificateProfile))
+                    obCertificateProfileId,
+                    out OBCertificateProfile obCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find OB certificate profile with ID {obCertificateProfileId}");
@@ -80,15 +80,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 
                 // Create HttpMessageHandler with transport certificates
                 var transportCerts = new List<X509Certificate2>();
-                if (obCertificateProfile.CertificateType == CertificateType.LegacyOB.ToString())
-                {
-                    X509Certificate2 transportCert =
-                        CertificateFactories.GetCertificate2FromPem(
-                            obCertificateProfile.TransportKey,
-                            obCertificateProfile.TransportCertificate) ??
-                        throw new InvalidOperationException();
-                    transportCerts.Add(transportCert);
-                }
+                X509Certificate2 transportCert =
+                    CertificateFactories.GetCertificate2FromPem(
+                        obCertificateProfile.TransportKey,
+                        obCertificateProfile.TransportCertificate) ??
+                    throw new InvalidOperationException();
+                transportCerts.Add(transportCert);
 
                 IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()
                     .SetClientCertificates(transportCerts);
