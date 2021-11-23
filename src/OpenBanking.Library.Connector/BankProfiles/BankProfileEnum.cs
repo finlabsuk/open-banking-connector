@@ -54,6 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.Barclays => bankProfileDefinitions.Barclays,
                 BankProfileEnum.RoyalBankOfScotland => bankProfileDefinitions.RoyalBankOfScotland,
                 BankProfileEnum.NewDayAmazon => bankProfileDefinitions.NewDayAmazon,
+                BankProfileEnum.Nationwide => bankProfileDefinitions.Nationwide,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };
