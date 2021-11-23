@@ -215,7 +215,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 persistedObject.ApiPostRequests(
                     request.ClientRegistrationApi,
                     processedSoftwareStatementProfile,
-                    _instrumentationClient);
+                    _instrumentationClient,
+                    request.UseApplicationJoseNotApplicationJwtContentTypeHeader);
 
             return (persistedObject, apiRequest, apiRequests, processedSoftwareStatementProfile.ApiClient, uri,
                 jsonSerializerSettings, nonErrorMessages);

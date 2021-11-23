@@ -132,7 +132,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             ClientRegistrationModelsPublic.OBClientRegistration1Response> ApiPostRequests(
             ClientRegistrationApiVersion clientRegistrationApiVersion,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
+            IInstrumentationClient instrumentationClient,
+            bool useApplicationJoseNotApplicationJwtContentTypeHeader) =>
             clientRegistrationApiVersion switch
             {
                 ClientRegistrationApiVersion.Version3p1 =>
@@ -142,10 +143,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                         ClientRegistrationModelsV3p1.OBClientRegistration1>(
                         new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader),
                         new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient)),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 ClientRegistrationApiVersion.Version3p2 =>
                     new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                         ClientRegistrationModelsPublic.OBClientRegistration1Response,
@@ -153,10 +156,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                         ClientRegistrationModelsV3p2.OBClientRegistration1>(
                         new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader),
                         new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient)),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 ClientRegistrationApiVersion.Version3p3 =>
                     new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                         ClientRegistrationModelsPublic.OBClientRegistration1Response,
@@ -164,10 +169,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                         ClientRegistrationModelsPublic.OBClientRegistration1Response>(
                         new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader),
                         new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
                             processedSoftwareStatementProfile,
-                            instrumentationClient)),
+                            instrumentationClient,
+                            useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(clientRegistrationApiVersion),
                     clientRegistrationApiVersion,

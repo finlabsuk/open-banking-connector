@@ -19,13 +19,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
     {
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
+        private readonly bool _useApplicationJoseNotApplicationJwtContentTypeHeader;
 
         public JwtRequestProcessor(
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient)
+            IInstrumentationClient instrumentationClient,
+            bool useApplicationJoseNotApplicationJwtContentTypeHeader)
         {
             _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
             _instrumentationClient = instrumentationClient;
+            _useApplicationJoseNotApplicationJwtContentTypeHeader =
+                useApplicationJoseNotApplicationJwtContentTypeHeader;
         }
 
         (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
@@ -49,7 +53,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 .Append(jwt);
             _instrumentationClient.Info(requestTraceSb.ToString());
 
-            return (new List<HttpHeader>(), jwt, "application/jwt");
+            return (new List<HttpHeader>(), jwt,
+                _useApplicationJoseNotApplicationJwtContentTypeHeader ? "application/jose" : "application/jwt");
         }
     }
 }

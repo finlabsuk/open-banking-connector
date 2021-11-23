@@ -47,6 +47,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         public string? OpenIdConfigurationReplacement { get; set; } = null;
 
+        /// <summary>
+        ///     Set Content-Type header to "application/jose" rather than "application/jwt" when POSTing to bank
+        ///     registration endpoint
+        /// </summary>
+        public bool UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; } = false;
+
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
         public BankRegistrationClaimsOverrides? BankRegistrationClaimsOverrides { get; set; }
