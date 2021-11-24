@@ -53,10 +53,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// Signing Key ID as string, e.g. "ABC"
         public string SigningKeyId { get; set; } = null!;
 
-        /// Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// <summary>
+        ///     Signing key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
+        ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// </summary>
         public string SigningKey { get; set; } = null!;
 
-        /// Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// <summary>
+        ///     Signing certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
+        ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// </summary>
         public string SigningCertificate { get; set; } = null!;
     }
 

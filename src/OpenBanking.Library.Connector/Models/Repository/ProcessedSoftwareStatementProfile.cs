@@ -67,7 +67,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
     /// <summary>
     ///     Processed software statement profile generated at start-up which includes
-    ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="OBTransportCertificateProfile"/>, and a <see cref="OBSigningCertificateProfile" />
+    ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="OBTransportCertificateProfile" />, and a
+    ///     <see cref="OBSigningCertificateProfile" />
     /// </summary>
     public class ProcessedSoftwareStatementProfile : IRepositoryItem
     {
@@ -85,6 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
             TransportCertificateType =
                 Enum.Parse<TransportCertificateType>(obTransportCertificateProfile.CertificateType);
             TransportCertificateDnOrgId = obTransportCertificateProfile.CertificateDnOrgId;
+            TransportCertificateDnOrgIdHexEncoded = obTransportCertificateProfile.CertificateDnOrgIdHexEncoded;
             TransportCertificateDnOrgName = obTransportCertificateProfile.CertificateDnOrgName;
             DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             Id = id;
@@ -144,6 +146,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
         public TransportCertificateType TransportCertificateType { get; }
         public string TransportCertificateDnOrgId { get; }
+
+        public string TransportCertificateDnOrgIdHexEncoded { get; }
+
         public string TransportCertificateDnOrgName { get; }
 
         public IApiClient ApiClient { get; }

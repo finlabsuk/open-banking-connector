@@ -53,6 +53,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         public bool UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; } = false;
 
+        /// <summary>
+        ///     Use <see cref="Models.Configuration.OBTransportCertificateProfile.CertificateDnOrgIdHexEncoded" /> rather than
+        ///     <see cref="Models.Configuration.OBTransportCertificateProfile.CertificateDnOrgId" /> DN org ID. Ignored where
+        ///     software statement profile specifies <see cref="TransportCertificateType.OBLegacy" /> transport certificate.
+        ///     Hex-encoded variant used by default as suggested
+        ///     by https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 for decimal-dotted AttributeValue.
+        /// </summary>
+        public bool UseHexEncodedTransportCertificateDnOrgId { get; set; } = true;
+
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
         public BankRegistrationClaimsOverrides? BankRegistrationClaimsOverrides { get; set; }

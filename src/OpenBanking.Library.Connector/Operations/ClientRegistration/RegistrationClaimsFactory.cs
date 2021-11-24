@@ -39,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScope registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
-            string bankXFapiFinancialId)
+            string bankXFapiFinancialId,
+            bool useHexEncodedTransportCertificateDnOrgId)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
@@ -83,12 +84,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                         .AuthorizationCode,
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
                 };
+            string dnOrgId = useHexEncodedTransportCertificateDnOrgId
+                ? sProfile.TransportCertificateDnOrgIdHexEncoded
+                : sProfile.TransportCertificateDnOrgId;
             string tlsClientAuthSubjectDn = sProfile.TransportCertificateType switch
             {
                 TransportCertificateType.OBLegacy =>
                     $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB",
                 TransportCertificateType.OBWac =>
-                    $"CN={sProfile.SoftwareStatementPayload.OrgId},2.5.4.97={sProfile.TransportCertificateDnOrgId},O={sProfile.TransportCertificateDnOrgName},C=GB",
+                    $"CN={sProfile.SoftwareStatementPayload.OrgId},2.5.4.97={dnOrgId},O={sProfile.TransportCertificateDnOrgName},C=GB",
                 _ => throw new ArgumentOutOfRangeException()
             };
             var registrationClaims =

@@ -37,7 +37,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             string transportCertificate,
             bool disableTlsCertificateVerification,
             string certificateDnOrgName,
-            string certificateDnOrgId)
+            string certificateDnOrgId,
+            string certificateDnOrgIdHexEncoded)
         {
             CertificateType = certificateType;
             TransportKey = transportKey;
@@ -45,6 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             DisableTlsCertificateVerification = disableTlsCertificateVerification;
             CertificateDnOrgName = certificateDnOrgName;
             CertificateDnOrgId = certificateDnOrgId;
+            CertificateDnOrgIdHexEncoded = certificateDnOrgIdHexEncoded;
         }
 
         public OBTransportCertificateProfile() { }
@@ -68,14 +70,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
         /// <summary>
         ///     Org ID to use when constructing DN for DCR (ignored when using <see cref="TransportCertificateType.OBLegacy" />
-        ///     cert)
+        ///     cert). Whether <see cref="CertificateDnOrgId" /> or <see cref="CertificateDnOrgIdHexEncoded" /> is used is
+        ///     determined by <see cref="Models.Public.Request.BankRegistration.UseHexEncodedTransportCertificateDnOrgId" />
         /// </summary>
         public string CertificateDnOrgId { get; set; } = null!;
 
-        /// Transport Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// <summary>
+        ///     Hex-encoded Org ID to use when constructing DN for DCR (ignored when using
+        ///     <see cref="TransportCertificateType.OBLegacy" /> cert). Whether <see cref="CertificateDnOrgId" /> or
+        ///     <see cref="CertificateDnOrgIdHexEncoded" /> is used is
+        ///     determined by <see cref="Models.Public.Request.BankRegistration.UseHexEncodedTransportCertificateDnOrgId" />
+        /// </summary>
+        public string CertificateDnOrgIdHexEncoded { get; set; } = null!;
+
+        /// <summary>
+        ///     Transport key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
+        ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        /// </summary>
         public string TransportKey { get; set; } = null!;
 
-        /// Transport Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// <summary>
+        ///     Transport certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
+        ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
+        /// </summary>
         public string TransportCertificate { get; set; } = null!;
     }
 
