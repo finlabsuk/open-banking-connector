@@ -27,6 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             RoyalBankOfScotland = GetRoyalBankOfScotland();
             NewDayAmazon = GetNewDayAmazon();
             Nationwide = GetNationwide();
+            HSBC = GetHSBC();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
