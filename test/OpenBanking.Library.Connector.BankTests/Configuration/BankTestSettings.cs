@@ -137,10 +137,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public RegistrationScope RegistrationScope { get; set; }
 
         /// <summary>
-        ///     Banks to exclude from testing with this registration type.
+        ///     Banks to exclude when testing with this registration type.
         ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" /> is
+        ///     ignored.
         /// </summary>
         public List<BankProfileEnum> ExcludedBanks { get; set; } =
+            new List<BankProfileEnum>();
+
+        /// <summary>
+        ///     Banks to include when testing with this registration type.
+        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        /// </summary>
+        public List<BankProfileEnum> IncludedBanks { get; set; } =
             new List<BankProfileEnum>();
 
         public void Deserialize(IXunitSerializationInfo info)

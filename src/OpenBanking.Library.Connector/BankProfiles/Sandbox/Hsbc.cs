@@ -8,14 +8,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
     public partial class BankProfileDefinitions
     {
-        public BankProfile HSBC { get; }
+        public BankProfile Hsbc { get; }
 
-        private BankProfile GetHSBC()
+        private BankProfile GetHsbc()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.HSBC);
+                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Hsbc);
             return new BankProfile(
-                BankProfileEnum.HSBC,
+                BankProfileEnum.Hsbc,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),

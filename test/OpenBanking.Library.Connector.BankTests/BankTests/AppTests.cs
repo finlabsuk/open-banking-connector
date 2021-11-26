@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
@@ -81,11 +82,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     bankProfileDefinitions);
                 foreach (BankRegistrationType bankRegistrationType in bankTestSettings.TestedBankRegistrationTypes)
                 {
-                    // Ignore excluded banks
-                    List<BankProfileEnum> excludedBanks = bankRegistrationType.ExcludedBanks;
-                    if (excludedBanks.Contains(bankProfile.BankProfileEnum))
+                    
+                    // Handle included and excluded banks
+                    List<BankProfileEnum> includedBanks = bankRegistrationType.IncludedBanks;
+                    if (!includedBanks.Any())
                     {
-                        continue;
+                        List<BankProfileEnum> excludedBanks = bankRegistrationType.ExcludedBanks;
+                        if (excludedBanks.Contains(bankProfile.BankProfileEnum))
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (!includedBanks.Contains(bankProfile.BankProfileEnum))
+                        {
+                            continue;
+                        }
                     }
 
                     // Determine skip status based on registration scope and add to Theory if matches skippedNotUnskipped
@@ -184,7 +197,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic payment subtests
             foreach (DomesticPaymentSubtestEnum subTest in
-                     DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticPaymentSubtest.RunTest(
                     subTest,
@@ -206,7 +219,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic VRP subtests
             foreach (DomesticVrpSubtestEnum subTest in
-                     DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticVrpSubtest.RunTest(
                     subTest,
