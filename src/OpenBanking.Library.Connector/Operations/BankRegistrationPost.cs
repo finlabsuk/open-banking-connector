@@ -183,7 +183,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     registrationScope,
                     request.BankRegistrationClaimsOverrides,
                     bank.FinancialId,
-                    request.UseHexEncodedTransportCertificateDnOrgId);
+                    request.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues);
 
             // STEP 3
             // Create serialiser settings.

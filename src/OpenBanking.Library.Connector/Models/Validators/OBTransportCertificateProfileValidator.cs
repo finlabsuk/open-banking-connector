@@ -9,7 +9,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class OBTransportCertificateProfileValidator : AbstractValidator<OBTransportCertificateProfile>
+    public class OBTransportCertificateProfileValidator : AbstractValidator<TransportCertificateProfile>
     {
         public OBTransportCertificateProfileValidator()
         {
@@ -30,11 +30,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
         private void CreateRules()
         {
-            RuleFor(p => p.TransportKey)
+            RuleFor(p => p.AssociatedKey)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a TransportKey.");
 
-            RuleFor(p => p.TransportCertificate)
+            RuleFor(p => p.Certificate)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a TransportCertificate.");
         }

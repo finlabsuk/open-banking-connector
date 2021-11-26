@@ -33,12 +33,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         public string SoftwareStatement { get; set; } = null!;
 
         /// <summary>
-        ///     ID of <see cref="OBTransportCertificateProfile" /> to use with this software statement profile
+        ///     ID of <see cref="TransportCertificateProfile" /> to use with this software statement profile
         /// </summary>
         public string OBTransportCertificateProfileId { get; set; } = null!;
 
         /// <summary>
-        ///     ID of <see cref="OBSigningCertificateProfile" /> to use with this software statement profile
+        ///     ID of <see cref="SigningCertificateProfile" /> to use with this software statement profile
         /// </summary>
         public string OBSigningCertificateProfileId { get; set; } = null!;
 

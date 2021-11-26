@@ -89,11 +89,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
                 .Get<SoftwareStatementProfilesSettings>();
             var obTransportCertificateProfilesSettings = configuration
-                .GetSection(new OBTransportCertificateProfilesSettings().SettingsSectionName)
-                .Get<OBTransportCertificateProfilesSettings>();
+                .GetSection(new TransportCertificateProfilesSettings().SettingsSectionName)
+                .Get<TransportCertificateProfilesSettings>();
             var obSigningCertificateProfilesSettings = configuration
-                .GetSection(new OBSigningCertificateProfilesSettings().SettingsSectionName)
-                .Get<OBSigningCertificateProfilesSettings>();
+                .GetSection(new SigningCertificateProfilesSettings().SettingsSectionName)
+                .Get<SigningCertificateProfilesSettings>();
 
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -103,9 +103,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obTransportCertificateProfilesSettingsProvider =
-                new DefaultSettingsProvider<OBTransportCertificateProfilesSettings>(obTransportCertificateProfilesSettings);
+                new DefaultSettingsProvider<TransportCertificateProfilesSettings>(
+                    obTransportCertificateProfilesSettings);
             var obSigningCertificateProfilesSettingsProvider =
-                new DefaultSettingsProvider<OBSigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
+                new DefaultSettingsProvider<SigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
 
             // Create stores
             var timeProvider = new TimeProvider();

@@ -54,13 +54,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public bool UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; } = false;
 
         /// <summary>
-        ///     Use <see cref="Models.Configuration.OBTransportCertificateProfile.CertificateDnOrgIdHexEncoded" /> rather than
-        ///     <see cref="Models.Configuration.OBTransportCertificateProfile.CertificateDnOrgId" /> DN org ID. Ignored where
-        ///     software statement profile specifies <see cref="TransportCertificateType.OBLegacy" /> transport certificate.
-        ///     Hex-encoded variant used by default as suggested
-        ///     by https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 for decimal-dotted AttributeValue.
+        ///     Use
+        ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
+        ///     rather than
+        ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
+        ///     as transport certificate DN for registration. This setting is irrelevant where the
+        ///     software statement profile specifies a <see cref="TransportCertificateType.OBLegacy" /> transport certificate.
+        ///     https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 specifies hex-encoding for a decimal-dotted
+        ///     AttributeValue and thus this setting defaults to false.
         /// </summary>
-        public bool UseHexEncodedTransportCertificateDnOrgId { get; set; } = true;
+        public bool UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues { get; set; } = false;
 
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 

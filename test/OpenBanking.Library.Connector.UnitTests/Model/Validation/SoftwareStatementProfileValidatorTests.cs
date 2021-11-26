@@ -41,11 +41,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBSigningCertificateProfile
+                var profile = new SigningCertificateProfile
                 {
-                    SigningKey = value,
-                    SigningKeyId = "a",
-                    SigningCertificate = "a",
+                    AssociatedKey = value,
+                    AssociatedKeyId = "a",
+                    Certificate = "a",
                 };
 
                 List<ValidationFailure> results =
@@ -63,12 +63,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBSigningCertificateProfile
+                var profile = new SigningCertificateProfile
                 {
                     CertificateType = "LegacyOB",
-                    SigningKey = "a",
-                    SigningKeyId = value,
-                    SigningCertificate = "a",
+                    AssociatedKey = "a",
+                    AssociatedKeyId = value,
+                    Certificate = "a",
                 };
 
                 List<ValidationFailure> results =
@@ -85,11 +85,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBSigningCertificateProfile
+                var profile = new SigningCertificateProfile
                 {
-                    SigningKey = "a",
-                    SigningKeyId = "a",
-                    SigningCertificate = value,
+                    AssociatedKey = "a",
+                    AssociatedKeyId = "a",
+                    Certificate = value,
                 };
 
                 List<ValidationFailure> results =
@@ -106,10 +106,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBTransportCertificateProfile
+                var profile = new TransportCertificateProfile
                 {
-                    TransportKey = value,
-                    TransportCertificate = "a",
+                    AssociatedKey = value,
+                    Certificate = "a",
                 };
 
                 List<ValidationFailure> results =
@@ -126,10 +126,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBTransportCertificateProfile
+                var profile = new TransportCertificateProfile
                 {
-                    TransportKey = "a",
-                    TransportCertificate = value,
+                    AssociatedKey = "a",
+                    Certificate = value,
                 };
 
                 List<ValidationFailure> results =
@@ -146,10 +146,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             Func<bool> rule = () =>
             {
-                var profile = new OBTransportCertificateProfile
+                var profile = new TransportCertificateProfile
                 {
-                    TransportKey = "a",
-                    TransportCertificate = "a",
+                    AssociatedKey = "a",
+                    Certificate = "a",
                 };
 
                 List<ValidationFailure> results =

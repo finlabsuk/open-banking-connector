@@ -67,27 +67,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
     /// <summary>
     ///     Processed software statement profile generated at start-up which includes
-    ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="OBTransportCertificateProfile" />, and a
-    ///     <see cref="OBSigningCertificateProfile" />
+    ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="TransportCertificateProfile" />, and a
+    ///     <see cref="SigningCertificateProfile" />
     /// </summary>
     public class ProcessedSoftwareStatementProfile : IRepositoryItem
     {
         public ProcessedSoftwareStatementProfile(
             string id,
-            OBTransportCertificateProfile obTransportCertificateProfile,
-            OBSigningCertificateProfile obSigningCertificateProfile,
+            TransportCertificateProfile transportCertificateProfile,
+            SigningCertificateProfile signingCertificateProfile,
             SoftwareStatementProfile softwareStatementProfile,
             IApiClient apiClient)
         {
             // Pass-through properties
-            SigningKeyId = obSigningCertificateProfile.SigningKeyId;
-            SigningKey = obSigningCertificateProfile.SigningKey;
-            SigningCertificate = obSigningCertificateProfile.SigningCertificate;
+            SigningKeyId = signingCertificateProfile.AssociatedKeyId;
+            SigningKey = signingCertificateProfile.AssociatedKey;
+            SigningCertificate = signingCertificateProfile.Certificate;
             TransportCertificateType =
-                Enum.Parse<TransportCertificateType>(obTransportCertificateProfile.CertificateType);
-            TransportCertificateDnOrgId = obTransportCertificateProfile.CertificateDnOrgId;
-            TransportCertificateDnOrgIdHexEncoded = obTransportCertificateProfile.CertificateDnOrgIdHexEncoded;
-            TransportCertificateDnOrgName = obTransportCertificateProfile.CertificateDnOrgName;
+                Enum.Parse<TransportCertificateType>(transportCertificateProfile.CertificateType);
+            TransportCertificateDnWithHexDottedDecimalAttributeValues =
+                transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
+            TransportCertificateDnWithStringDottedDecimalAttributeValues = transportCertificateProfile
+                .CertificateDnWithStringDottedDecimalAttributeValues;
             DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             Id = id;
 
@@ -145,11 +146,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         public string DefaultFragmentRedirectUrl { get; }
 
         public TransportCertificateType TransportCertificateType { get; }
-        public string TransportCertificateDnOrgId { get; }
 
-        public string TransportCertificateDnOrgIdHexEncoded { get; }
+        public string TransportCertificateDnWithHexDottedDecimalAttributeValues { get; }
 
-        public string TransportCertificateDnOrgName { get; }
+        public string TransportCertificateDnWithStringDottedDecimalAttributeValues { get; }
 
         public IApiClient ApiClient { get; }
 

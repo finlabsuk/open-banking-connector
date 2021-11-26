@@ -9,7 +9,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class OBSigningCertificateProfileValidator : AbstractValidator<OBSigningCertificateProfile>
+    public class OBSigningCertificateProfileValidator : AbstractValidator<SigningCertificateProfile>
     {
         public OBSigningCertificateProfileValidator()
         {
@@ -31,15 +31,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
         private void CreateRules()
         {
-            RuleFor(p => p.SigningKeyId)
+            RuleFor(p => p.AssociatedKeyId)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a Signing Key ID.");
 
-            RuleFor(p => p.SigningKey)
+            RuleFor(p => p.AssociatedKey)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a SigningKey.");
 
-            RuleFor(p => p.SigningCertificate)
+            RuleFor(p => p.Certificate)
                 .Must(ValidationRules.IsNonWhitespace)
                 .WithMessage("Please provide a SigningCertificate.");
         }

@@ -42,9 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private BankRegistration _client = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation _dataInitiation = null!;
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4 _domesticConsent = null!;
-        private OBTransportCertificateProfile _obTransportCertificateProfile = null!;
         private PaymentInitiationModelsPublic.OBRisk1 _risk = null!;
         private SoftwareStatementProfile _softwareStatement = null!;
+        private TransportCertificateProfile _transportCertificateProfile = null!;
 
 
         [GlobalSetup]
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
             _risk = CreateRisk();
             _domesticConsent = CreateDomesticConsent();
             _softwareStatement = CreateSoftwareStatement();
-            _obTransportCertificateProfile = CreateObCertificateProfile();
+            _transportCertificateProfile = CreateObCertificateProfile();
             _client = CreateClient();
         }
 
@@ -224,11 +224,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                 "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="
         };
 
-        private OBTransportCertificateProfile CreateObCertificateProfile() => new OBTransportCertificateProfile
+        private TransportCertificateProfile CreateObCertificateProfile() => new TransportCertificateProfile
         {
             CertificateType = "LegacyOB",
-            TransportKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
-            TransportCertificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
+            AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
+            Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
         };
     }
 }

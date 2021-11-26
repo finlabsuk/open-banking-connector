@@ -29,8 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
         public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
-            ISettingsProvider<OBTransportCertificateProfilesSettings> obTransportCertificateProfileSettingsProvider,
-            ISettingsProvider<OBSigningCertificateProfilesSettings> obSigningCertificateProfileSettingsProvider,
+            ISettingsProvider<TransportCertificateProfilesSettings> obTransportCertificateProfileSettingsProvider,
+            ISettingsProvider<SigningCertificateProfilesSettings> obSigningCertificateProfileSettingsProvider,
             IInstrumentationClient instrumentationClient)
         {
             OpenBankingConnectorSettings obcSettings = obcSettingsProvider.GetSettings();
@@ -40,13 +40,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 softwareStatementProfilesSettingsProvider.GetSettings();
             softwareStatementProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
-            OBTransportCertificateProfilesSettings obTransportCertificateProfilesSettings =
+            TransportCertificateProfilesSettings transportCertificateProfilesSettings =
                 obTransportCertificateProfileSettingsProvider.GetSettings();
-            obTransportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+            transportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
-            OBSigningCertificateProfilesSettings obSigningCertificateProfilesSettings =
+            SigningCertificateProfilesSettings signingCertificateProfilesSettings =
                 obSigningCertificateProfileSettingsProvider.GetSettings();
-            obTransportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+            transportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
             List<string> activeProfileIds = obcSettings.ProcessedSoftwareStatementProfileIds.ToList();
             foreach (string softwareStatementProfileId in activeProfileIds)
@@ -69,9 +69,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 // Get and validate OB transport certificate profile
                 string obTransportCertificateProfileId = softwareStatementProfile.OBTransportCertificateProfileId;
 
-                if (!obTransportCertificateProfilesSettings.TryGetValue(
+                if (!transportCertificateProfilesSettings.TryGetValue(
                     obTransportCertificateProfileId,
-                    out OBTransportCertificateProfile obTransportCertificateProfile))
+                    out TransportCertificateProfile obTransportCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find OB transport certificate profile with ID {obTransportCertificateProfileId}");
@@ -86,9 +86,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 // Get and validate OB signing certificate profile
                 string obSigningCertificateProfileId = softwareStatementProfile.OBSigningCertificateProfileId;
 
-                if (!obSigningCertificateProfilesSettings.TryGetValue(
+                if (!signingCertificateProfilesSettings.TryGetValue(
                     obSigningCertificateProfileId,
-                    out OBSigningCertificateProfile obSigningCertificateProfile))
+                    out SigningCertificateProfile obSigningCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
                         $"Cannot find OB signing certificate profile with ID {obSigningCertificateProfileId}");
@@ -104,8 +104,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 var transportCerts = new List<X509Certificate2>();
                 X509Certificate2 transportCert =
                     CertificateFactories.GetCertificate2FromPem(
-                        obTransportCertificateProfile.TransportKey,
-                        obTransportCertificateProfile.TransportCertificate) ??
+                        obTransportCertificateProfile.AssociatedKey,
+                        obTransportCertificateProfile.Certificate) ??
                     throw new InvalidOperationException();
                 transportCerts.Add(transportCert);
 

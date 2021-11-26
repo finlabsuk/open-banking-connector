@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
             RegistrationScope registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
             string bankXFapiFinancialId,
-            bool useHexEncodedTransportCertificateDnOrgId)
+            bool useTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
@@ -84,17 +84,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                         .AuthorizationCode,
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
                 };
-            string dnOrgId = useHexEncodedTransportCertificateDnOrgId
-                ? sProfile.TransportCertificateDnOrgIdHexEncoded
-                : sProfile.TransportCertificateDnOrgId;
-            string tlsClientAuthSubjectDn = sProfile.TransportCertificateType switch
+            string tlsClientAuthSubjectDn;
+            if (sProfile.TransportCertificateType is TransportCertificateType.OBLegacy)
             {
-                TransportCertificateType.OBLegacy =>
-                    $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB",
-                TransportCertificateType.OBWac =>
-                    $"CN={sProfile.SoftwareStatementPayload.OrgId},2.5.4.97={dnOrgId},O={sProfile.TransportCertificateDnOrgName},C=GB",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                tlsClientAuthSubjectDn =
+                    $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB";
+            }
+            else
+            {
+                tlsClientAuthSubjectDn = useTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues
+                    ? sProfile.TransportCertificateDnWithStringDottedDecimalAttributeValues
+                    : sProfile.TransportCertificateDnWithHexDottedDecimalAttributeValues;
+            }
+
             var registrationClaims =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {

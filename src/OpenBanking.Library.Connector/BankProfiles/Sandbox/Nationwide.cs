@@ -35,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BankRegistrationAdjustments = (registration, set) =>
                     {
                         registration.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
+                        registration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true;
                         registration.BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
                         {
                             ClientIdIssuedAtConverterOptions =
