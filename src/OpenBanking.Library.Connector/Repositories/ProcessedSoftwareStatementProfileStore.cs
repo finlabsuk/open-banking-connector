@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     "Validation failure when checking software statement profile.");
 
                 // Get and validate OB transport certificate profile
-                string obTransportCertificateProfileId = softwareStatementProfile.OBTransportCertificateProfileId;
+                string obTransportCertificateProfileId = softwareStatementProfile.TransportCertificateProfileId;
 
                 if (!transportCertificateProfilesSettings.TryGetValue(
                     obTransportCertificateProfileId,
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     "Validation failure when checking OB certificate profile.");
 
                 // Get and validate OB signing certificate profile
-                string obSigningCertificateProfileId = softwareStatementProfile.OBSigningCertificateProfileId;
+                string obSigningCertificateProfileId = softwareStatementProfile.SigningCertificateProfileId;
 
                 if (!signingCertificateProfilesSettings.TryGetValue(
                     obSigningCertificateProfileId,

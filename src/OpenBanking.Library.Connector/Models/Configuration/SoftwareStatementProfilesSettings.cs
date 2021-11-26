@@ -17,13 +17,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     {
         public SoftwareStatementProfile(
             string softwareStatement,
-            string obTransportCertificateProfileId,
-            string obSigningCertificateProfileId,
+            string transportCertificateProfileId,
+            string signingCertificateProfileId,
             string defaultFragmentRedirectUrl)
         {
             SoftwareStatement = softwareStatement;
-            OBTransportCertificateProfileId = obTransportCertificateProfileId;
-            OBSigningCertificateProfileId = obSigningCertificateProfileId;
+            TransportCertificateProfileId = transportCertificateProfileId;
+            SigningCertificateProfileId = signingCertificateProfileId;
             DefaultFragmentRedirectUrl = defaultFragmentRedirectUrl;
         }
 
@@ -35,12 +35,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <summary>
         ///     ID of <see cref="TransportCertificateProfile" /> to use with this software statement profile
         /// </summary>
-        public string OBTransportCertificateProfileId { get; set; } = null!;
+        public string TransportCertificateProfileId { get; set; } = null!;
 
         /// <summary>
         ///     ID of <see cref="SigningCertificateProfile" /> to use with this software statement profile
         /// </summary>
-        public string OBSigningCertificateProfileId { get; set; } = null!;
+        public string SigningCertificateProfileId { get; set; } = null!;
 
         /// Default redirect URL for OAuth clients with response_mode == fragment.
         public string DefaultFragmentRedirectUrl { get; set; } = null!;
