@@ -74,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 
             // Set up software statement store
             services
-                .AddSingleton<IReadOnlyRepository<ProcessedSoftwareStatementProfile>,
+                .AddSingleton<IProcessedSoftwareStatementProfileStore,
                     ProcessedSoftwareStatementProfileStore>();
 
             // Set up time provider

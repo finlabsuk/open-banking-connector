@@ -39,6 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     {
         public string SoftwareStatementProfileId { get; set; } = null!;
 
+        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
+
         /// <summary>
         ///     Functional APIs used for bank registration.
         /// </summary>
@@ -96,6 +98,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             ClientRegistrationApi = request.ClientRegistrationApi;
             SoftwareStatementProfileId = request.SoftwareStatementProfileId;
+            SoftwareStatementAndCertificateProfileOverrideCase =
+                request.SoftwareStatementAndCertificateProfileOverrideCase;
             OAuth2RequestObjectClaimsOverrides = request.OAuth2RequestObjectClaimsOverrides;
             BankId = request.BankId;
         }

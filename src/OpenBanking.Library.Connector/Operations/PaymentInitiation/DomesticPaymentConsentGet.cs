@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
             entityMethods,

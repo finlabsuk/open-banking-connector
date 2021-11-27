@@ -3,9 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -21,16 +20,35 @@ using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 {
-    public class ProcessedSoftwareStatementProfileStore : IReadOnlyRepository<ProcessedSoftwareStatementProfile>
+    public interface IProcessedSoftwareStatementProfileStore
     {
-        private readonly MemoryRepository<ProcessedSoftwareStatementProfile> _memoryRepo =
-            new MemoryRepository<ProcessedSoftwareStatementProfile>();
+        Task<ProcessedSoftwareStatementProfile> GetAsync(string id, string? overrideVariant = null);
+    }
+
+    public class CacheValue
+    {
+        public CacheValue(ProcessedSoftwareStatementProfile defaultVariant)
+        {
+            DefaultVariant = defaultVariant;
+        }
+
+        public ProcessedSoftwareStatementProfile DefaultVariant { get; }
+
+        public ConcurrentDictionary<string, ProcessedSoftwareStatementProfile> OverrideVariants { get; } =
+            new ConcurrentDictionary<string, ProcessedSoftwareStatementProfile>(
+                StringComparer.InvariantCultureIgnoreCase);
+    }
+
+    public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatementProfileStore
+    {
+        private readonly ConcurrentDictionary<string, CacheValue> _cache =
+            new ConcurrentDictionary<string, CacheValue>(StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
-            ISettingsProvider<TransportCertificateProfilesSettings> obTransportCertificateProfileSettingsProvider,
-            ISettingsProvider<SigningCertificateProfilesSettings> obSigningCertificateProfileSettingsProvider,
+            ISettingsProvider<TransportCertificateProfilesSettings> transportCertificateProfilesSettingsProvider,
+            ISettingsProvider<SigningCertificateProfilesSettings> signingCertificateProfilesSettingsProvider,
             IInstrumentationClient instrumentationClient)
         {
             OpenBankingConnectorSettings obcSettings = obcSettingsProvider.GetSettings();
@@ -41,77 +59,125 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             softwareStatementProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
 
             TransportCertificateProfilesSettings transportCertificateProfilesSettings =
-                obTransportCertificateProfileSettingsProvider.GetSettings();
-            transportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+                transportCertificateProfilesSettingsProvider.GetSettings();
+            transportCertificateProfilesSettings.ArgNotNull(nameof(transportCertificateProfilesSettings));
 
             SigningCertificateProfilesSettings signingCertificateProfilesSettings =
-                obSigningCertificateProfileSettingsProvider.GetSettings();
-            transportCertificateProfilesSettings.ArgNotNull(nameof(softwareStatementProfilesSettings));
+                signingCertificateProfilesSettingsProvider.GetSettings();
+            signingCertificateProfilesSettings.ArgNotNull(nameof(signingCertificateProfilesSettings));
 
-            List<string> activeProfileIds = obcSettings.ProcessedSoftwareStatementProfileIds.ToList();
-            foreach (string softwareStatementProfileId in activeProfileIds)
+            List<string> softwareStatementProfileIds = obcSettings.SoftwareStatementProfileIdsAsList;
+            List<string> softwareStatementAndCertificateOverrideCases =
+                obcSettings.SoftwareStatementAndCertificateOverrideCasesAsList;
+
+            foreach (string softwareStatementProfileId in softwareStatementProfileIds)
             {
-                // Get and validate software statement profile
-                if (!softwareStatementProfilesSettings.TryGetValue(
-                    softwareStatementProfileId,
-                    out SoftwareStatementProfile softwareStatementProfile))
+                // Create and store default profile
+                ProcessedSoftwareStatementProfile defaultProfile =
+                    ProcessedSoftwareStatementProfile(
+                        softwareStatementProfileId,
+                        null);
+                var cacheValue = new CacheValue(defaultProfile);
+                if (!_cache.TryAdd(softwareStatementProfileId, cacheValue))
                 {
-                    throw new ArgumentOutOfRangeException(
-                        $"Cannot find software statement profile with ID {softwareStatementProfileId}");
+                    throw new InvalidOperationException(
+                        $"Software statement profile with ID {softwareStatementProfileId} already exists. Is this ID duplicated?");
                 }
 
+                // Create and store override profiles
+                foreach (string softwareStatementAndCertificateOverrideCase in
+                    softwareStatementAndCertificateOverrideCases)
+                {
+                    ProcessedSoftwareStatementProfile profile =
+                        ProcessedSoftwareStatementProfile(
+                            softwareStatementProfileId,
+                            softwareStatementAndCertificateOverrideCase);
+
+                    if (!cacheValue.OverrideVariants.TryAdd(
+                        softwareStatementAndCertificateOverrideCase,
+                        profile))
+                    {
+                        throw new InvalidOperationException(
+                            $"Override case {softwareStatementAndCertificateOverrideCase} already exists. Is this case duplicated?");
+                    }
+                }
+            }
+
+            ProcessedSoftwareStatementProfile ProcessedSoftwareStatementProfile(
+                string s,
+                string? softwareStatementAndCertificateOverrideCase)
+            {
+                // Get software statement profile and apply overrides
+                if (!softwareStatementProfilesSettings.TryGetValue(
+                    s,
+                    out SoftwareStatementProfileWithOverrideProperties
+                        softwareStatementProfileWithOverrideProperties))
+                {
+                    throw new ArgumentOutOfRangeException(
+                        $"No software statement profile with ID {s} supplied in key secrets.");
+                }
+
+                SoftwareStatementProfile softwareStatementProfile = softwareStatementProfileWithOverrideProperties
+                    .ApplyOverrides(softwareStatementAndCertificateOverrideCase);
+
+                // Validate software statement profile
                 ValidationResult validationResult = new SoftwareStatementProfileValidator()
                     .Validate(softwareStatementProfile);
                 validationResult.ProcessValidationResultsAndRaiseErrors(
                     "prefix",
                     "Validation failure when checking software statement profile.");
 
-                // Get and validate OB transport certificate profile
-                string obTransportCertificateProfileId = softwareStatementProfile.TransportCertificateProfileId;
-
+                // Get transport certificate profile and apply overrides
+                string transportCertificateProfileId = softwareStatementProfile.TransportCertificateProfileId;
                 if (!transportCertificateProfilesSettings.TryGetValue(
-                    obTransportCertificateProfileId,
-                    out TransportCertificateProfile obTransportCertificateProfile))
+                    transportCertificateProfileId,
+                    out TransportCertificateProfileWithOverrideProperties
+                        transportCertificateProfileWithOverrideProperties))
                 {
                     throw new ArgumentOutOfRangeException(
-                        $"Cannot find OB transport certificate profile with ID {obTransportCertificateProfileId}");
+                        $"No transport certificate profile with ID {transportCertificateProfileId} supplied in key secrets.");
                 }
 
+                TransportCertificateProfile transportCertificateProfile =
+                    transportCertificateProfileWithOverrideProperties
+                        .ApplyOverrides(softwareStatementAndCertificateOverrideCase);
+
+                // Validate transport certificate profile
                 ValidationResult validationResult2 = new OBTransportCertificateProfileValidator()
-                    .Validate(obTransportCertificateProfile);
+                    .Validate(transportCertificateProfile);
                 validationResult2.ProcessValidationResultsAndRaiseErrors(
                     "prefix",
-                    "Validation failure when checking OB certificate profile.");
+                    "Validation failure when checking transport certificate profile.");
 
                 // Get and validate OB signing certificate profile
-                string obSigningCertificateProfileId = softwareStatementProfile.SigningCertificateProfileId;
+                string signingCertificateProfileId = softwareStatementProfile.SigningCertificateProfileId;
 
                 if (!signingCertificateProfilesSettings.TryGetValue(
-                    obSigningCertificateProfileId,
-                    out SigningCertificateProfile obSigningCertificateProfile))
+                    signingCertificateProfileId,
+                    out SigningCertificateProfile signingCertificateProfile))
                 {
                     throw new ArgumentOutOfRangeException(
-                        $"Cannot find OB signing certificate profile with ID {obSigningCertificateProfileId}");
+                        $"No signing certificate profile with ID {signingCertificateProfileId} supplied in key secrets.");
                 }
 
                 ValidationResult validationResult3 = new OBSigningCertificateProfileValidator()
-                    .Validate(obSigningCertificateProfile);
+                    .Validate(signingCertificateProfile);
                 validationResult3.ProcessValidationResultsAndRaiseErrors(
                     "prefix",
-                    "Validation failure when checking OB certificate profile.");
+                    "Validation failure when checking signing certificate profile.");
 
                 // Create HttpMessageHandler with transport certificates
                 var transportCerts = new List<X509Certificate2>();
                 X509Certificate2 transportCert =
                     CertificateFactories.GetCertificate2FromPem(
-                        obTransportCertificateProfile.AssociatedKey,
-                        obTransportCertificateProfile.Certificate) ??
+                        transportCertificateProfile.AssociatedKey,
+                        transportCertificateProfile.Certificate) ??
                     throw new InvalidOperationException();
                 transportCerts.Add(transportCert);
 
                 IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()
                     .SetClientCertificates(transportCerts);
-                if (obTransportCertificateProfile.DisableTlsCertificateVerification)
+                if (transportCertificateProfile.DisableTlsCertificateVerification)
                 {
                     httpRequestBuilder
                         .SetServerCertificateValidator(new DefaultServerCertificateValidator());
@@ -119,26 +185,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 
                 HttpMessageHandler handler = httpRequestBuilder.CreateMessageHandler();
 
-                // Add to cache
-                var softwareStatementProfileCached =
-                    new ProcessedSoftwareStatementProfile(
-                        softwareStatementProfileId,
-                        obTransportCertificateProfile,
-                        obSigningCertificateProfile,
-                        softwareStatementProfile,
-                        new ApiClient(instrumentationClient, new HttpClient(handler)));
-
-                _memoryRepo.SetAsync(softwareStatementProfileCached);
+                var processedSoftwareStatementProfile = new ProcessedSoftwareStatementProfile(
+                    s,
+                    transportCertificateProfile,
+                    signingCertificateProfile,
+                    softwareStatementProfile,
+                    new ApiClient(instrumentationClient, new HttpClient(handler)));
+                return processedSoftwareStatementProfile;
             }
         }
 
-        public async Task<ProcessedSoftwareStatementProfile?> GetAsync(string id) => await _memoryRepo.GetAsync(id);
+        public Task<ProcessedSoftwareStatementProfile> GetAsync(string id, string? overrideVariant)
+        {
+            // Load cache value
+            if (!_cache.TryGetValue(id, out CacheValue cacheValue))
+            {
+                throw new KeyNotFoundException($"Software statement profile with ID {id} not found.");
+            }
 
-        public async Task<IQueryable<ProcessedSoftwareStatementProfile>> GetAsync(
-            Expression<Func<ProcessedSoftwareStatementProfile, bool>> predicate) =>
-            await _memoryRepo.GetAsync(predicate);
+            // Return default case where no override case
+            if (overrideVariant is null)
+            {
+                return cacheValue.DefaultVariant.ToTaskResult();
+            }
 
-        public async Task<IList<string>> GetIdsAsync() =>
-            await _memoryRepo.GetIdsAsync();
+            // Return override case or throw exception if not available
+            if (!cacheValue.OverrideVariants.TryGetValue(
+                overrideVariant,
+                out ProcessedSoftwareStatementProfile processedSoftwareStatementProfile))
+            {
+                throw new KeyNotFoundException(
+                    $"Software statement profile with ID {id} found but no override case {overrideVariant} found for this software statement profile.");
+            }
+
+            return processedSoftwareStatementProfile.ToTaskResult();
+        }
     }
 }

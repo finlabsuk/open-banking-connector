@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
     public interface IMockPaymentData
     {
         IRequestBuilder CreateMockRequestBuilder(
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository);
+            IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository);
 
         string GetAccessToken();
         string GetBase64TokenString();

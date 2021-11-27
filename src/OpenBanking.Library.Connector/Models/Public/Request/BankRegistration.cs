@@ -30,6 +30,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public string SoftwareStatementProfileId { get; set; } = null!;
 
         /// <summary>
+        ///     Optional override case to use with software statement and certificate profiles. Override cases
+        ///     can be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.
+        ///     When null no override case is specified.
+        /// </summary>
+        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; } = null;
+
+        /// <summary>
         ///     Functional APIs used for bank registration.
         ///     If not supplied, registration scope implied by software statement profile will be used.
         /// </summary>

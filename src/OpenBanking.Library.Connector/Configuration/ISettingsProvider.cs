@@ -5,8 +5,10 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 {
     /// <summary>
-    ///     Settings provider which validates settings on creation so
-    ///     app does not run with faulty settings.
+    ///     An <see cref="ISettingsProvider{TSettings}" /> class:
+    ///     * provides settings which have been validated at app startup and which do not change during app lifetime (the app
+    ///     should arted to pick up settings changes)
+    ///     * is not required to depend on .NET Generic Host options pattern features
     /// </summary>
     /// <typeparam name="TSettings"></typeparam>
     public interface ISettingsProvider<out TSettings>

@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo) : base(
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,

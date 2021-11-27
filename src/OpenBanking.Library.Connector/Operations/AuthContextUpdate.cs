@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IInstrumentationClient _instrumentationClient;
-        private readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
+        private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
 
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ITimeProvider timeProvider,
             IDbReadWriteEntityMethods<AuthContext>
                 authContextMethods,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
         {
             _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -92,11 +92,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            string softwareStatementProfileId = bankRegistration.SoftwareStatementProfileId;
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for SoftwareStatementProfile with ID {softwareStatementProfileId}.");
+                await _softwareStatementProfileRepo.GetAsync(
+                    bankRegistration.SoftwareStatementProfileId,
+                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Obtain token for consent
             string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;

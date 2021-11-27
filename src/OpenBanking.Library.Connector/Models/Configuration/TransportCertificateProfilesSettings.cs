@@ -31,28 +31,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// </summary>
     public class TransportCertificateProfile
     {
-        public TransportCertificateProfile(
-            string certificateType,
-            bool disableTlsCertificateVerification,
-            string certificateDnWithHexDottedDecimalAttributeValues,
-            string certificateDnWithStringDottedDecimalAttributeValues,
-            string associatedKey,
-            string certificate)
-        {
-            CertificateType = certificateType;
-            DisableTlsCertificateVerification = disableTlsCertificateVerification;
-            CertificateDnWithHexDottedDecimalAttributeValues = certificateDnWithHexDottedDecimalAttributeValues;
-            CertificateDnWithStringDottedDecimalAttributeValues = certificateDnWithStringDottedDecimalAttributeValues;
-            AssociatedKey = associatedKey;
-            Certificate = certificate;
-        }
-
-        public TransportCertificateProfile() { }
-
         /// <summary>
         ///     Type of certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
-        public string CertificateType { get; set; } = null!;
+        public string CertificateType { get; set; } = string.Empty;
 
         /// <summary>
         ///     Disable verification of external bank TLS certificates. Not for production use but
@@ -70,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . Neither is used for DCR with <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
-        public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = null!;
+        public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = string.Empty;
 
         /// <summary>
         ///     Alternative transport certificate DN to use for DCR with string (not hex) values for dotted-decimal attributes
@@ -81,22 +63,96 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . Neither is used for DCR with <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
-        public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = null!;
+        public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = string.Empty;
 
         /// <summary>
         ///     Transport key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
         ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// </summary>
-        public string AssociatedKey { get; set; } = null!;
+        public string AssociatedKey { get; set; } = string.Empty;
 
         /// <summary>
         ///     Transport certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
         ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         /// </summary>
-        public string Certificate { get; set; } = null!;
+        public string Certificate { get; set; } = string.Empty;
     }
 
-    public class TransportCertificateProfilesSettings : Dictionary<string, TransportCertificateProfile>,
+    public class TransportCertificateProfileWithOverrideProperties : TransportCertificateProfile
+    {
+        /// <summary>
+        ///     Bank-specific overrides for
+        ///     <see cref="TransportCertificateProfile.DisableTlsCertificateVerification" />
+        /// </summary>
+        public Dictionary<string, bool> DisableTlsCertificateVerificationOverrides { get; set; } =
+            new Dictionary<string, bool>();
+
+        /// <summary>
+        ///     Bank-specific overrides for
+        ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
+        /// </summary>
+        public Dictionary<string, string> CertificateDnWithHexDottedDecimalAttributeValuesOverrides { get; set; } =
+            new Dictionary<string, string>();
+
+        /// <summary>
+        ///     Bank-specific overrides for
+        ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
+        /// </summary>
+        public Dictionary<string, string> CertificateDnWithStringDottedDecimalAttributeValuesOverrides { get; set; } =
+            new Dictionary<string, string>();
+
+        /// <summary>
+        ///     Returns profile with override substitution based on override case and override properties removed
+        /// </summary>
+        /// <param name="overrideCase"></param>
+        /// <returns></returns>
+        public TransportCertificateProfile ApplyOverrides(string? overrideCase)
+        {
+            var newObject = new TransportCertificateProfile
+            {
+                CertificateType = CertificateType,
+                DisableTlsCertificateVerification = DisableTlsCertificateVerification,
+                CertificateDnWithHexDottedDecimalAttributeValues = CertificateDnWithHexDottedDecimalAttributeValues,
+                CertificateDnWithStringDottedDecimalAttributeValues =
+                    CertificateDnWithStringDottedDecimalAttributeValues,
+                AssociatedKey = AssociatedKey,
+                Certificate = Certificate
+            };
+
+            if (overrideCase is null)
+            {
+                return newObject;
+            }
+
+            if (DisableTlsCertificateVerificationOverrides.TryGetValue(
+                overrideCase,
+                out bool disableTlsCertificateVerification))
+            {
+                newObject.DisableTlsCertificateVerification = disableTlsCertificateVerification;
+            }
+
+            if (CertificateDnWithHexDottedDecimalAttributeValuesOverrides.TryGetValue(
+                overrideCase,
+                out string certificateDnWithHexDottedDecimalAttributeValues))
+            {
+                newObject.CertificateDnWithHexDottedDecimalAttributeValues =
+                    certificateDnWithHexDottedDecimalAttributeValues;
+            }
+
+            if (CertificateDnWithStringDottedDecimalAttributeValuesOverrides.TryGetValue(
+                overrideCase,
+                out string certificateDnWithStringDottedDecimalAttributeValues))
+            {
+                newObject.CertificateDnWithStringDottedDecimalAttributeValues =
+                    certificateDnWithStringDottedDecimalAttributeValues;
+            }
+
+            return newObject;
+        }
+    }
+
+    public class TransportCertificateProfilesSettings :
+        Dictionary<string, TransportCertificateProfileWithOverrideProperties>,
         ISettings<TransportCertificateProfilesSettings>
     {
         public string SettingsSectionName => "TransportCertificateProfiles";

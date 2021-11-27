@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<IDbEntityMethods<Bank>>(),
                     Substitute.For<IDbSaveChangesMethod>(),
                     Substitute.For<ITimeProvider>(),
-                    Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
+                    Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                     Substitute.For<IInstrumentationClient>());
 
             var newBank = new Models.Public.Request.Bank

@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         IApiClient ApiClient { get; }
         IInstrumentationClient Instrumentation { get; }
         IDbService DbService { get; }
-        IReadOnlyRepository<ProcessedSoftwareStatementProfile> SoftwareStatementProfileCachedRepo { get; }
+        IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
         IApiVariantMapper ApiVariantMapper { get; }
         ITimeProvider TimeProvider { get; }
     }

@@ -31,6 +31,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.SoftwareStatementProfileId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.SoftwareStatementAndCertificateProfileOverrideCase)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RegistrationScope)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             // TODO: check how this conversion handles invalid data

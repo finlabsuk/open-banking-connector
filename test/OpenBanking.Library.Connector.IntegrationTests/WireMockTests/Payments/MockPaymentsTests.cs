@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                     });
 
             // Create software statement profiles
-            var softwareStatementProfile = new SoftwareStatementProfile
+            var softwareStatementProfile = new SoftwareStatementProfileWithOverrideProperties
             {
                 SoftwareStatement =
                     "header.ewogICJzb2Z0d2FyZV9pZCI6ICJpZCIsCiAgInNvZnR3YXJlX2NsaWVudF9pZCI6ICJjbGllbnRfaWQiLAogICJzb2Z0d2FyZV9jbGllbnRfbmFtZSI6ICJUUFAgQ2xpZW50IiwKICAic29mdHdhcmVfY2xpZW50X2Rlc2NyaXB0aW9uIjogIkNsaWVudCBkZXNjcmlwdGlvbiIsCiAgInNvZnR3YXJlX3ZlcnNpb24iOiAxLAogICJzb2Z0d2FyZV9jbGllbnRfdXJpIjogImh0dHBzOi8vZXhhbXBsZS5jb20iLAogICJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjogWwogICAgImh0dHBzOi8vZXhhbXBsZS5jb20iCiAgXSwKICAic29mdHdhcmVfcm9sZXMiOiBbCiAgICAiQUlTUCIsCiAgICAiUElTUCIsCiAgICAiQ0JQSUkiCiAgXSwKICAib3JnX2lkIjogIm9yZ19pZCIsCiAgIm9yZ19uYW1lIjogIk9yZyBOYW1lIiwKICAic29mdHdhcmVfb25fYmVoYWxmX29mX29yZyI6ICJPcmcgTmFtZSIKfQ==.signature",
@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 SigningCertificateProfileId = obSigningCertificatProfileId,
                 DefaultFragmentRedirectUrl = "http://redirecturl.com",
             };
-            var obTransportCertificateProfile = new TransportCertificateProfile
+            var transportCertificateProfile = new TransportCertificateProfileWithOverrideProperties
             {
                 AssociatedKey = _mockData.GetMockPrivateKey(),
                 Certificate = _mockData.GetMockCertificate(),
@@ -74,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             var obTransportCertificateProfilesSettingsProvider =
                 new DefaultSettingsProvider<TransportCertificateProfilesSettings>(
                     new TransportCertificateProfilesSettings
-                        { [obTransportCertificatProfileId] = obTransportCertificateProfile });
+                        { [obTransportCertificatProfileId] = transportCertificateProfile });
             var obSigningCertificateProfilesSettingsProvider =
                 new DefaultSettingsProvider<SigningCertificateProfilesSettings>(
                     new SigningCertificateProfilesSettings

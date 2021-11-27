@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IDbReadWriteEntityMethods<DomesticVrpPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
             entityMethods,

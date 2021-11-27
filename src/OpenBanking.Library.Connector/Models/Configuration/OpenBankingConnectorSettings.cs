@@ -54,12 +54,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class OpenBankingConnectorSettings : ISettings<OpenBankingConnectorSettings>
     {
         /// <summary>
-        ///     Whitelist of software statement profile IDs to be extracted from key secrets.
-        ///     Each ID should be separated by spaces. Software statement profiles are specified by
-        ///     key secrets which implement <see cref="SoftwareStatementProfilesSettings" /> where the
+        ///     Whitelist of software statement profiles (<see cref="SoftwareStatementProfile" />) specified by ID to be extracted
+        ///     from key secrets. Each ID should be separated by spaces.
+        ///     Software statement profiles are
+        ///     specified by key secrets which implement <see cref="SoftwareStatementProfilesSettings" /> where the
         ///     dictionary keys are the IDs specified here.
+        ///     Only software statement profiles listed here will be extracted from key secrets by Open Banking Connector.
         /// </summary>
-        public string SoftwareStatementProfileIds { get; set; } = "";
+        public string SoftwareStatementProfileIds { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Whitelist of override cases for software statement (<see cref="SoftwareStatementProfile" />), transport certificate
+        ///     (<see cref="TransportCertificateProfile" />) and signing certificate (<see cref="SigningCertificateProfile" />)
+        ///     profiles to be extracted from key secrets. Each override case should be separated by spaces.
+        ///     Override cases are keys in dictionary properties of those profiles with end in "Overrides". For example
+        ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileIdOverrides" /> allows override cases for
+        ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileId" />.
+        ///     They are typically bank names allowing profiles to customised for a particular bank.
+        ///     Only override cases listed here will be extracted from key secrets by Open Banking Connector.
+        /// </summary>
+        public string SoftwareStatementAndCertificateOverrideCases { get; set; } = string.Empty;
 
         /// <summary>
         ///     Database options.
@@ -75,7 +89,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public KeySecretOptions? KeySecrets { get; set; }
 
-        public IList<string> ProcessedSoftwareStatementProfileIds => SoftwareStatementProfileIds.Split(' ').ToList();
+        public List<string> SoftwareStatementProfileIdsAsList =>
+            SoftwareStatementProfileIds.Split(' ').ToList();
+
+        public List<string> SoftwareStatementAndCertificateOverrideCasesAsList =>
+            SoftwareStatementAndCertificateOverrideCases.Split(' ').ToList();
 
         public string SettingsSectionName => "OpenBankingConnector";
 

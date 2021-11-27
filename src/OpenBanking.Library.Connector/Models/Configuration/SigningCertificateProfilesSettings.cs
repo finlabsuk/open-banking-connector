@@ -31,39 +31,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// </summary>
     public class SigningCertificateProfile
     {
-        public SigningCertificateProfile(
-            string certificateType,
-            string associatedKeyId,
-            string associatedKey,
-            string certificate)
-        {
-            CertificateType = certificateType;
-            AssociatedKeyId = associatedKeyId;
-            AssociatedKey = associatedKey;
-            Certificate = certificate;
-        }
-
-        public SigningCertificateProfile() { }
-
         /// <summary>
         ///     Type of certificate used - see <see cref="SigningCertificateType" />
         /// </summary>
-        public string CertificateType { get; set; } = null!;
+        public string CertificateType { get; set; } = string.Empty;
 
         /// Signing Key ID as string, e.g. "ABC"
-        public string AssociatedKeyId { get; set; } = null!;
+        public string AssociatedKeyId { get; set; } = string.Empty;
 
         /// <summary>
         ///     Signing key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
         ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         /// </summary>
-        public string AssociatedKey { get; set; } = null!;
+        public string AssociatedKey { get; set; } = string.Empty;
 
         /// <summary>
         ///     Signing certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
         ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         /// </summary>
-        public string Certificate { get; set; } = null!;
+        public string Certificate { get; set; } = string.Empty;
     }
 
     public class SigningCertificateProfilesSettings : Dictionary<string, SigningCertificateProfile>,

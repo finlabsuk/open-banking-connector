@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
             IApiClient apiClient,
@@ -117,11 +117,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Load relevant objects
-            string softwareStatementProfileId = request.SoftwareStatementProfileId;
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(softwareStatementProfileId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for SoftwareStatementProfileId {softwareStatementProfileId}");
+                await _softwareStatementProfileRepo.GetAsync(
+                    request.SoftwareStatementProfileId,
+                    request.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Determine registration scope
             RegistrationScope registrationScope =

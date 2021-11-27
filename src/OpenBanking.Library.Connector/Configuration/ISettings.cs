@@ -5,9 +5,11 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 {
     /// <summary>
-    ///     Settings section (collection) used by Open Banking Connector. Represents
+    ///     Settings section (group) used by Open Banking Connector. Represents
     ///     a group of related settings at the same level of nesting e.g.
-    ///     section in appSettings.json or user secrets.
+    ///     section in appSettings.json or user secrets. For flexibility, these classes do not depend on .NET Generic Host
+    ///     options pattern features.
+    ///     All properties in <see cref="TSelf" /> should ultimately resolve to strings for the case of key secrets settings.
     /// </summary>
     /// <typeparam name="TSelf"></typeparam>
     public interface ISettings<out TSelf>

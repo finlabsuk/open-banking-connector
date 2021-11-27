@@ -241,7 +241,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
         }
 
         public IRequestBuilder CreateMockRequestBuilder(
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository)
+            IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository)
         {
             var httpClient = new HttpClient
             {

@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient instrumentationClient,
             IApiClient apiClient,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfilesRepository,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
             BaseDbContext dbContext)
         {
             _dbContext = dbContext;

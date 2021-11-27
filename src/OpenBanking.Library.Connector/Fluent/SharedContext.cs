@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiClient apiClient,
             IInstrumentationClient instrumentation,
             IDbService dbService,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileCachedRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
             IApiVariantMapper apiVariantMapper)
         {
             TimeProvider = timeProvider;
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         public IApiClient ApiClient { get; }
         public IInstrumentationClient Instrumentation { get; }
         public IDbService DbService { get; }
-        public IReadOnlyRepository<ProcessedSoftwareStatementProfile> SoftwareStatementProfileCachedRepo { get; }
+        public IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
         public IApiVariantMapper ApiVariantMapper { get; }
     }
 }

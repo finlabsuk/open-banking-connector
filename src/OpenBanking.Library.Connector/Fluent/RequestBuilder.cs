@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         private readonly IApiVariantMapper _apiVariantMapper;
         private readonly IDbService _dbService;
         private readonly IInstrumentationClient _logger;
-        private readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileCachedRepo;
+        private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
         private readonly ITimeProvider _timeProvider;
 
         public RequestBuilder(
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiVariantMapper apiVariantMapper,
             IInstrumentationClient logger,
             IApiClient apiClient,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileCachedRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
             IDbService dbService)
         {
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));

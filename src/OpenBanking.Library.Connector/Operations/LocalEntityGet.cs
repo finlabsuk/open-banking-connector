@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         protected readonly IInstrumentationClient _instrumentationClient;
-        protected readonly IReadOnlyRepository<ProcessedSoftwareStatementProfile> _softwareStatementProfileRepo;
+        protected readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         protected readonly ITimeProvider _timeProvider;
 
 
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient)
         {
             _entityMethods = entityMethods;

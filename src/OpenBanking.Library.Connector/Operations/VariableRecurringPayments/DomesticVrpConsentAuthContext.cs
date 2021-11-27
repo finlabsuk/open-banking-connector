@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticPaymentConsentMethods,
-            IReadOnlyRepository<ProcessedSoftwareStatementProfile> softwareStatementProfileRepo,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -64,9 +64,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for SoftwareStatementProfile with ID {domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId}.");
+                    domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
+                    domesticPaymentConsent.BankRegistrationNavigation
+                        .SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Create auth URL
             var state = persistedObject.Id.ToString();

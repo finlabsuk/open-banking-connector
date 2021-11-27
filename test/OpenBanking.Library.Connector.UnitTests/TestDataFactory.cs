@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IDbService>(),
                 Substitute
-                    .For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
+                    .For<IProcessedSoftwareStatementProfileStore>(),
                 Substitute.For<IApiVariantMapper>());
         }
 
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 new ApiVariantMapper(),
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IApiClient>(),
-                Substitute.For<IReadOnlyRepository<ProcessedSoftwareStatementProfile>>(),
+                Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                 Substitute.For<IDbService>());
         }
     }
