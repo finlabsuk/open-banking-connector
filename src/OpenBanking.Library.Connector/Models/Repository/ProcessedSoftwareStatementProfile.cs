@@ -83,8 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
             SigningKeyId = signingCertificateProfile.AssociatedKeyId;
             SigningKey = signingCertificateProfile.AssociatedKey;
             SigningCertificate = signingCertificateProfile.Certificate;
-            TransportCertificateType =
-                Enum.Parse<TransportCertificateType>(transportCertificateProfile.CertificateType);
+            TransportCertificateType = transportCertificateProfile.CertificateType;
             TransportCertificateDnWithHexDottedDecimalAttributeValues =
                 transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
             TransportCertificateDnWithStringDottedDecimalAttributeValues = transportCertificateProfile

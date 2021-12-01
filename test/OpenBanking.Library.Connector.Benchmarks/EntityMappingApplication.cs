@@ -226,7 +226,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 
         private TransportCertificateProfile CreateObCertificateProfile() => new TransportCertificateProfile
         {
-            CertificateType = "LegacyOB",
+            CertificateType = TransportCertificateType.OBLegacy,
             AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
             Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
         };

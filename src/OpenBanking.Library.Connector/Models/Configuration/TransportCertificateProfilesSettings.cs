@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <summary>
         ///     Type of certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
-        public string CertificateType { get; set; } = string.Empty;
+        public TransportCertificateType CertificateType { get; set; } = TransportCertificateType.OBWac;
 
         /// <summary>
         ///     Disable verification of external bank TLS certificates. Not for production use but

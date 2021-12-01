@@ -57,14 +57,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             {
                 AssociatedKey = _mockData.GetMockPrivateKey(),
                 Certificate = _mockData.GetMockCertificate(),
-                CertificateType = "OBLegacy"
+                CertificateType = TransportCertificateType.OBLegacy
             };
             var obSigningCertificateProfile = new SigningCertificateProfile
             {
                 AssociatedKeyId = "signingkeyid",
                 AssociatedKey = _mockData.GetMockPrivateKey(),
                 Certificate = _mockData.GetMockCertificate(),
-                CertificateType = "OBLegacy"
+                CertificateType = SigningCertificateType.OBLegacy
             };
 
             var softwareStatementProfilesSettingsProvider =

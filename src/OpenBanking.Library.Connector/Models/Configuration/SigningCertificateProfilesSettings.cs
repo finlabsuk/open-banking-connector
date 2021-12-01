@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <summary>
         ///     Type of certificate used - see <see cref="SigningCertificateType" />
         /// </summary>
-        public string CertificateType { get; set; } = string.Empty;
+        public SigningCertificateType CertificateType { get; set; } = SigningCertificateType.OBSeal;
 
         /// Signing Key ID as string, e.g. "ABC"
         public string AssociatedKeyId { get; set; } = string.Empty;

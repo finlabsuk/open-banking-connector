@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
             {
                 var profile = new SigningCertificateProfile
                 {
-                    CertificateType = "LegacyOB",
+                    CertificateType = SigningCertificateType.OBLegacy,
                     AssociatedKey = "a",
                     AssociatedKeyId = value,
                     Certificate = "a",
