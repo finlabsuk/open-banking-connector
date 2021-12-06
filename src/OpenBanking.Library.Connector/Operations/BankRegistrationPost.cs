@@ -160,6 +160,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
             }
 
+            IList<TokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
+                request.OpenIdConfigurationOverrides?.TokenEndpointAuthMethodsSupported;
+            if (!(tokenEndpointAuthMethodsSupportedOverride is null))
+            {
+                openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
+            }
+
             // Validate OpenID Configuration
             {
                 IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =

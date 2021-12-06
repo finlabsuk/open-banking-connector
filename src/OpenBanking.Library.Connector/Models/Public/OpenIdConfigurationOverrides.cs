@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
@@ -20,5 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         public string? RegistrationEndpoint { get; set; }
 
         public IList<string>? ResponseModesSupported { get; set; }
+        
+        public IList<TokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupported { get; set; }
+        
     }
 }

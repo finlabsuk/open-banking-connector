@@ -28,6 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             NewDayAmazon = GetNewDayAmazon();
             Nationwide = GetNationwide();
             Hsbc = GetHsbc();
+            Danske = GetDanske();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
