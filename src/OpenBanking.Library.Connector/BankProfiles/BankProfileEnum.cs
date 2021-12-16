@@ -21,13 +21,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         Barclays,
         RoyalBankOfScotland,
         NewDayAmazon,
-        Monzo,
         BankOfIreland,
         Nationwide,
         Lloyds,
         Hsbc,
         Danske,
-        AlliedIrish
+        AlliedIrish,
+        Monzo
     }
 
     public static class BankProfileEnumHelper
@@ -61,6 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.Hsbc => bankProfileDefinitions.Hsbc,
                 BankProfileEnum.Danske => bankProfileDefinitions.Danske,
                 BankProfileEnum.AlliedIrish => bankProfileDefinitions.AlliedIrish,
+                BankProfileEnum.Monzo => bankProfileDefinitions.Monzo,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };
