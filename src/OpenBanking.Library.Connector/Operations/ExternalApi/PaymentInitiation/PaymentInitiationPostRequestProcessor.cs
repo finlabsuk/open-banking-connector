@@ -40,6 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
             HttpPostRequestData(
                 TVariantApiRequest variantRequest,
+                JsonSerializerSettings? requestJsonSerializerSettings,
                 string requestDescription)
         {
             // Create JWT and log
@@ -65,12 +66,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
                 new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
             };
             headers.Add(CreateJwsSignatureHeader(jwt));
+            JsonSerializerSettings jsonSerializerSettings =
+                requestJsonSerializerSettings ?? new JsonSerializerSettings();
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             string content = JsonConvert.SerializeObject(
                 variantRequest,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
+                jsonSerializerSettings);
             return (headers, content, "application/json");
         }
 

@@ -23,18 +23,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
     {
         protected (List<HttpHeader> headers, string body, string contentType) HttpPostRequestData(
             TRequest variantRequest,
+            JsonSerializerSettings? requestJsonSerializerSettings,
             string requestDescription);
 
         public async Task<TResponse> PostAsync<TResponse>(
             Uri uri,
             TRequest request,
-            JsonSerializerSettings? jsonSerializerSettings,
+            JsonSerializerSettings? requestJsonSerializerSettings,
+            JsonSerializerSettings? responseJsonSerializerSettings,
             IApiClient apiClient)
             where TResponse : class
         {
             // Process request
             (List<HttpHeader> headers, string content, string contentType) =
-                HttpPostRequestData(request, $"POST {uri})");
+                HttpPostRequestData(request, requestJsonSerializerSettings, $"POST {uri})");
 
             // POST request
             var response = await new HttpRequestBuilder()
@@ -46,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 .Create()
                 .RequestJsonAsync<TResponse>(
                     apiClient,
-                    jsonSerializerSettings);
+                    responseJsonSerializerSettings);
 
             return response;
         }

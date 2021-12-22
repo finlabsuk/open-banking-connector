@@ -81,8 +81,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest,
             IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                 ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests, IApiClient apiClient, Uri uri
-            , JsonSerializerSettings? jsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages
-            )> ApiPostData(
+            , JsonSerializerSettings? requestJsonSerializerSettings, JsonSerializerSettings?
+            responseJsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiPostData(
             BankRegistrationRequest request,
             string? modifiedBy)
         {
@@ -192,9 +192,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     request.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues);
 
             // STEP 3
-            // Create serialiser settings.
             var uri = new Uri(openIdConfiguration.RegistrationEndpoint);
-            JsonSerializerSettings? jsonSerializerSettings = null;
+
+            // Create request serialiser settings.
+            JsonSerializerSettings? requestJsonSerializerSettings = null;
+            if (!(request.BankRegistrationClaimsJsonOptions is null))
+            {
+                var optionsDict = new Dictionary<JsonConverterLabel, int>
+                {
+                    {
+                        JsonConverterLabel.DcrRegScope,
+                        (int) request.BankRegistrationClaimsJsonOptions.ScopeConverterOptions
+                    }
+                };
+                requestJsonSerializerSettings = new JsonSerializerSettings
+                {
+                    Context = new StreamingContext(
+                        StreamingContextStates.All,
+                        optionsDict)
+                };
+            }
+
+            // Create response serialiser settings.
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
             if (!(request.BankRegistrationResponseJsonOptions is null))
             {
                 var optionsDict = new Dictionary<JsonConverterLabel, int>
@@ -208,7 +228,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         (int) request.BankRegistrationResponseJsonOptions.ScopeConverterOptions
                     }
                 };
-                jsonSerializerSettings = new JsonSerializerSettings
+                responseJsonSerializerSettings = new JsonSerializerSettings
                 {
                     Context = new StreamingContext(
                         StreamingContextStates.All,
@@ -226,7 +246,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     request.UseApplicationJoseNotApplicationJwtContentTypeHeader);
 
             return (persistedObject, apiRequest, apiRequests, processedSoftwareStatementProfile.ApiClient, uri,
-                jsonSerializerSettings, nonErrorMessages);
+                requestJsonSerializerSettings,
+                responseJsonSerializerSettings, nonErrorMessages);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         private static async Task<TokenEndpointResponse> PostGrantAsync(
             Dictionary<string, string> keyValuePairs,
             BankRegistration bankRegistration,
-            JsonSerializerSettings? jsonSerializerSettings,
+            JsonSerializerSettings? responseJsonSerializerSettings,
             IApiClient apiClient)
         {
             // POST request
@@ -71,7 +71,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
                 uri,
                 keyValuePairs,
-                jsonSerializerSettings,
+                null,
+                responseJsonSerializerSettings,
                 apiClient);
 
             // TODO: validate response?

@@ -40,10 +40,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="request"></param>
-        /// <param name="requestProcessor"></param>
-        /// <param name="jsonSerializerSettings"></param>
-        /// <param name="softwareStatementProfile"></param>
+        /// <param name="requestJsonSerializerSettings"></param>
+        /// <param name="responseJsonSerializerSettings"></param>
+        /// <param name="apiClient"></param>
         /// <param name="mapper"></param>
+        /// <param name="requestProcessor"></param>
+        /// <param name="softwareStatementProfile"></param>
         /// <typeparam name="TVariantApiRequest"></typeparam>
         /// <typeparam name="TVariantApiResponse"></typeparam>
         /// B
@@ -52,7 +54,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             PostAsync(
                 Uri uri,
                 TApiRequest request,
-                JsonSerializerSettings? jsonSerializerSettings,
+                JsonSerializerSettings? requestJsonSerializerSettings,
+                JsonSerializerSettings? responseJsonSerializerSettings,
                 IApiClient apiClient,
                 IApiVariantMapper mapper)
         {
@@ -74,7 +77,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             var variantResponse = await _postRequestProcessor.PostAsync<TVariantApiResponse>(
                 uri,
                 variantRequest,
-                jsonSerializerSettings,
+                requestJsonSerializerSettings,
+                responseJsonSerializerSettings,
                 apiClient);
 
             // Map response type if necessary

@@ -15,19 +15,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
             Dictionary<string, object> headers,
             TClaims claims,
             string signingKey,
-            string signingCertificate)
+            string signingCertificate,
+            JsonSerializerSettings? jsonSerializerSettingsOverride = null)
             where TClaims : class
         {
             claims.ArgNotNull(nameof(claims));
             signingKey.ArgNotNull(nameof(signingKey));
             signingCertificate.ArgNotNull(nameof(signingCertificate));
 
+            // Create JSON serialiser settings
+            JsonSerializerSettings jsonSerializerSettings =
+                jsonSerializerSettingsOverride ?? new JsonSerializerSettings();
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+
             string payloadJson = JsonConvert.SerializeObject(
                 claims,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
+                jsonSerializerSettings);
 
             // X509Certificate2 privateKey = CertificateFactories.GetCertificate2FromPem(
             //     signingKey,

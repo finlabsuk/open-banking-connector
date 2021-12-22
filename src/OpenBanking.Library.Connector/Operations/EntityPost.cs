@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -60,7 +59,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Create persisted entity
             (TEntity persistedObject, TApiRequest apiRequest, IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
                     IApiClient apiClient, Uri uri,
-                    JsonSerializerSettings? jsonSerializerSettings,
+                    JsonSerializerSettings? requestJsonSerializerSettings,
+                    JsonSerializerSettings? responseJsonSerializerSettings,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiPostData(requestInfo.Request, requestInfo.ModifiedBy);
             persistedObject.UpdateBeforeApiPost(apiRequest);
@@ -72,14 +72,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Log request to file
             if (!(writeRequestFile is null))
             {
-                await DataFile.WriteFile(apiRequest, writeRequestFile, jsonSerializerSettings);
+                await DataFile.WriteFile(apiRequest, writeRequestFile, requestJsonSerializerSettings);
             }
 
             // Either use API response override or call API
             TApiResponse apiResponse;
             if (!(readResponseFile is null))
             {
-                apiResponse = await DataFile.ReadFile<TApiResponse>(readResponseFile, jsonSerializerSettings);
+                apiResponse = await DataFile.ReadFile<TApiResponse>(readResponseFile, responseJsonSerializerSettings);
             }
             else
             {
@@ -89,7 +89,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     await apiRequests.PostAsync(
                         uri,
                         apiRequest,
-                        jsonSerializerSettings,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
                         apiClient,
                         _mapper);
 
@@ -99,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Log response to file
             if (!(writeResponseFile is null))
             {
-                await DataFile.WriteFile(apiResponse, writeResponseFile, jsonSerializerSettings);
+                await DataFile.WriteFile(apiResponse, writeResponseFile, responseJsonSerializerSettings);
             }
 
             // Create and store persistent object
@@ -110,14 +111,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             return (persistedObject, nonErrorMessages);
         }
 
-        protected abstract Task<(
-            TEntity persistedObject,
-            TApiRequest apiRequest,
-            IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
-            IApiClient apiClient,
-            Uri uri,
-            JsonSerializerSettings? jsonSerializerSettings,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiPostData(
+        protected abstract Task<(TEntity persistedObject, TApiRequest apiRequest,
+            IApiPostRequests<TApiRequest, TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
+            JsonSerializerSettings? requestJsonSerializerSettings,
+            JsonSerializerSettings? responseJsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage>
+            nonErrorMessages)> ApiPostData(
             TPublicRequest request,
             string? modifiedBy);
     }

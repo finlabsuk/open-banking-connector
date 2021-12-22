@@ -51,8 +51,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected override async Task<(TEntity persistedObject, TApiRequest apiRequest,
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
-            JsonSerializerSettings?
-            jsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiPostData(
+            JsonSerializerSettings? requestJsonSerializerSettings, JsonSerializerSettings?
+            responseJsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiPostData(
             TPublicRequest request,
             string? modifiedBy)
         {
@@ -100,7 +100,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Create new Open Banking object by posting JWT
             var uri = new Uri(baseUrl + RelativePath);
-            JsonSerializerSettings? jsonSerializerSettings = null;
+            JsonSerializerSettings? requestJsonSerializerSettings = null;
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
 
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests = new TEntity().ApiPostRequests(
                 bankApiInformation.PaymentInitiationApi,
@@ -110,7 +111,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
-            return (persistedObject, apiRequest, apiRequests, apiClient, uri, jsonSerializerSettings,
+            return (persistedObject, apiRequest, apiRequests, apiClient, uri, requestJsonSerializerSettings,
+                responseJsonSerializerSettings,
                 nonErrorMessages);
         }
 

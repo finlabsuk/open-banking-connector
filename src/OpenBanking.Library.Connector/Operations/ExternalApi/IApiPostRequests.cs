@@ -17,12 +17,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
-        Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            PostAsync(
-                Uri uri,
-                TApiRequest request,
-                JsonSerializerSettings? jsonSerializerSettings,
-                IApiClient apiClient,
-                IApiVariantMapper mapper);
+        Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
+            Uri uri,
+            TApiRequest request,
+            JsonSerializerSettings? requestJsonSerializerSettings,
+            JsonSerializerSettings? responseJsonSerializerSettings,
+            IApiClient apiClient,
+            IApiVariantMapper mapper);
     }
 }

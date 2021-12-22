@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
@@ -40,6 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
             HttpPostRequestData(
                 TVariantApiRequest variantRequest,
+                JsonSerializerSettings? requestJsonSerializerSettings,
                 string requestDescription)
         {
             // Create JWT and log
@@ -47,7 +49,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.SigningKeyId),
                 variantRequest,
                 _processedSoftwareStatementProfile.SigningKey,
-                _processedSoftwareStatementProfile.SigningCertificate);
+                _processedSoftwareStatementProfile.SigningCertificate,
+                requestJsonSerializerSettings);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### JWT ({requestDescription})")
                 .Append(jwt);

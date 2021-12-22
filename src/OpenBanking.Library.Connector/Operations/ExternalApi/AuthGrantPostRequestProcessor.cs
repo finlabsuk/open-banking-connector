@@ -8,6 +8,7 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using Newtonsoft.Json;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -25,6 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
             TRequest variantRequest,
+            JsonSerializerSettings? requestJsonSerializerSettings,
             string requestDescription)
         {
             // Assemble headers and body
