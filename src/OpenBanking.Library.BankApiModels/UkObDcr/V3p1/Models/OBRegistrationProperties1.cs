@@ -168,9 +168,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p1.Models
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "scope")]
-        [JsonConverter(
-            typeof(DelimitedStringNullableConverter),
-            JsonConverterLabel.DcrRegScope)]
         public IList<string> Scope { get; set; }
 
         /// <summary>
