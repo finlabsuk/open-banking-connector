@@ -28,20 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
-                null)
-            {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
-                {
-                    BankRegistrationAdjustments = (registration, set) =>
-                    {
-                        registration.BankRegistrationClaimsJsonOptions = new BankRegistrationClaimsJsonOptions
-                        {
-                            ScopeConverterOptions = DelimitedStringConverterOptions.JsonIsStringArrayNotString
-                        };
-                        return registration;
-                    },
-                }
-            };
+                null);
         }
     }
 }
