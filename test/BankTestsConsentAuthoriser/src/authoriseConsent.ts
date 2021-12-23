@@ -6,6 +6,8 @@ import * as Lloyds from './Sandbox/lloyds'
 import * as VrpHackathon from './Sandbox/vrpHackathon'
 import * as Danske from './Sandbox/danske'
 import * as Nationwide from './Sandbox/nationwide'
+import * as Monzo from './Sandbox/monzo'
+
 import {assert} from './utility'
 
 // Consent variety enum and utility class
@@ -21,7 +23,8 @@ export enum Bank {
     Lloyds = "Lloyds",
     VrpHackathon = "VrpHackathon",
     Danske = "Danske",
-    Nationwide = "Nationwide"
+    Nationwide = "Nationwide",
+    Monzo = "Monzo"
 }
 
 // Bank user
@@ -45,7 +48,8 @@ const bankConsentUIInteractions: { [index in Bank]: ConsentUIInteractions } = {
     Lloyds: Lloyds.consentUIInteractions,
     VrpHackathon: VrpHackathon.consentUIInteractions,
     Danske: Danske.consentUIInteractions,
-    Nationwide: Nationwide.consentUIInteractions
+    Nationwide: Nationwide.consentUIInteractions,
+    Monzo: Monzo.consentUIInteractions
 }
 
 export async function authoriseConsent(
