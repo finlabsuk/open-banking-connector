@@ -5,8 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,14 +35,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             true)]
         public async Task TestAll(
             BankProfileEnum bank,
-            BankRegistrationType bankRegistrationType)
+            string softwareStatementProfileId,
+            RegistrationScope registrationScope)
         {
             // Connect output to logging
             SetTestLogging();
 
             await TestAllInner(
                 bank,
-                bankRegistrationType,
+                softwareStatementProfileId,
+                registrationScope,
                 () => new ScopedRequestBuilderContainer(_serviceProvider),
                 true);
 

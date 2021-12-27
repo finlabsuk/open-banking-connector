@@ -30,7 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
     public abstract class AppTests
     {
-        protected readonly string _dataFolder;
         protected readonly ITestOutputHelper _outputHelper;
         protected readonly IServiceProvider _serviceProvider;
 
@@ -38,18 +37,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         {
             _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
             _serviceProvider = appContextFixture.Host.Services;
-            _dataFolder = appContextFixture.DataFolder;
         }
 
-        public static TheoryData<BankProfileEnum, BankRegistrationType> TestedSkippedBanksById(
+        public static TheoryData<BankProfileEnum, string, RegistrationScope> TestedSkippedBanksById(
             bool genericAppNotPlainAppTest) =>
             TestedBanksById(true, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankProfileEnum, BankRegistrationType> TestedUnskippedBanksById(
+        public static TheoryData<BankProfileEnum, string, RegistrationScope> TestedUnskippedBanksById(
             bool genericAppNotPlainAppTest) =>
             TestedBanksById(false, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankProfileEnum, BankRegistrationType> TestedBanksById(
+        public static TheoryData<BankProfileEnum, string, RegistrationScope> TestedBanksById(
             bool skippedNotUnskipped,
             bool genericAppNotPlainAppTest)
         {
@@ -69,25 +67,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 new BankProfileDefinitions(bankProfileHiddenProperties);
 
             var data =
-                new TheoryData<BankProfileEnum, BankRegistrationType>();
+                new TheoryData<BankProfileEnum, string, RegistrationScope>();
 
-            // Loop through tested banks
-            List<BankProfileEnum> testedBanks = genericAppNotPlainAppTest
-                ? bankTestSettings.TestedBanks.GenericHostAppTests
-                : bankTestSettings.TestedBanks.PlainAppTests;
-            foreach (BankProfileEnum bankEnum in testedBanks)
+            List<TestCaseGroup> testCases = genericAppNotPlainAppTest
+                ? bankTestSettings.GenericHostAppTestCases
+                : bankTestSettings.PlainAppTestCases;
+
+            // Loop through test case entries
+            foreach (TestCaseGroup testCaseGroup in testCases)
             {
-                BankProfile bankProfile = BankProfileEnumHelper.GetBank(
-                    bankEnum,
-                    bankProfileDefinitions);
-                foreach (BankRegistrationType bankRegistrationType in bankTestSettings.TestedBankRegistrationTypes)
+                // Loop through bank profiles
+                List<BankProfileEnum> testedBanks = bankTestSettings.TestedBankProfiles;
+                foreach (BankProfileEnum bankEnum in testedBanks)
                 {
-                    
-                    // Handle included and excluded banks
-                    List<BankProfileEnum> includedBanks = bankRegistrationType.IncludedBanks;
+                    BankProfile bankProfile = BankProfileEnumHelper.GetBank(
+                        bankEnum,
+                        bankProfileDefinitions);
+
+                    // Go no further for bank profiles not satisfying included/excluded filters
+                    List<BankProfileEnum> includedBanks = testCaseGroup.IncludedBanks;
                     if (!includedBanks.Any())
                     {
-                        List<BankProfileEnum> excludedBanks = bankRegistrationType.ExcludedBanks;
+                        List<BankProfileEnum> excludedBanks = testCaseGroup.ExcludedBanks;
                         if (excludedBanks.Contains(bankProfile.BankProfileEnum))
                         {
                             continue;
@@ -104,12 +105,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Determine skip status based on registration scope and add to Theory if matches skippedNotUnskipped
                     bool testCaseSkipped =
                         !bankProfile.ClientRegistrationApiSettings.UseRegistrationScope(
-                            bankRegistrationType.RegistrationScope);
+                            testCaseGroup.RegistrationScope);
                     if (testCaseSkipped == skippedNotUnskipped)
                     {
                         data.Add(
                             bankEnum,
-                            bankRegistrationType);
+                            testCaseGroup.SoftwareStatementProfileId,
+                            testCaseGroup.RegistrationScope);
                     }
                 }
             }
@@ -119,13 +121,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
         protected async Task TestAllInner(
             BankProfileEnum bank,
-            BankRegistrationType bankRegistrationType,
+            string softwareStatementProfileId,
+            RegistrationScope registrationScope,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             bool genericNotPlainAppTest)
         {
             // Test name
             var testName =
-                $"{bank}_{bankRegistrationType.SoftwareStatementProfileId}_{bankRegistrationType.RegistrationScope.AbbreviatedName()}";
+                $"{bank}_{softwareStatementProfileId}_{registrationScope.AbbreviatedName()}";
             var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
             // Get bank test settings
@@ -183,8 +186,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await ClientRegistrationSubtests.PostAndGetObjects(
-                    bankRegistrationType.SoftwareStatementProfileId,
-                    bankRegistrationType.RegistrationScope,
+                    softwareStatementProfileId,
+                    registrationScope,
                     requestBuilder,
                     bankProfile,
                     testNameUnique,
@@ -197,7 +200,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic payment subtests
             foreach (DomesticPaymentSubtestEnum subTest in
-                DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                     DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticPaymentSubtest.RunTest(
                     subTest,
@@ -219,7 +222,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Run domestic VRP subtests
             foreach (DomesticVrpSubtestEnum subTest in
-                DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                     DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
             {
                 await DomesticVrpSubtest.RunTest(
                     subTest,

@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
-using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 {
@@ -81,7 +80,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public string[]? Args { get; set; }
     }
 
-
     /// <summary>
     /// </summary>
     public class NodeJSOptions
@@ -128,46 +126,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
     }
 
     /// <summary>
-    ///     Registration to test specified by software statement profile and registration scope
+    ///     Test case group specified by parameters and bank filtering rules
     /// </summary>
-    public class BankRegistrationType : IXunitSerializable
+    public class TestCaseGroup
     {
+        /// <summary>
+        ///     Software statement profile ID to use for this group of test cases
+        /// </summary>
         public string SoftwareStatementProfileId { get; set; } = null!;
 
+        /// <summary>
+        ///     Bank registration scope to sue for this group of test cases
+        /// </summary>
         public RegistrationScope RegistrationScope { get; set; }
 
         /// <summary>
-        ///     Banks to exclude when testing with this registration type.
+        ///     Banks to exclude for this group of test cases.
         ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
-        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" /> is
-        ///     ignored.
+        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
+        ///     is ignored.
         /// </summary>
         public List<BankProfileEnum> ExcludedBanks { get; set; } =
             new List<BankProfileEnum>();
 
         /// <summary>
-        ///     Banks to include when testing with this registration type.
+        ///     Banks to include for this group of test cases.
         ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
+        ///     is ignored.
         /// </summary>
         public List<BankProfileEnum> IncludedBanks { get; set; } =
             new List<BankProfileEnum>();
-
-        public void Deserialize(IXunitSerializationInfo info)
-        {
-            SoftwareStatementProfileId = info.GetValue<string>(nameof(SoftwareStatementProfileId));
-            RegistrationScope = info.GetValue<RegistrationScope>(nameof(RegistrationScope));
-        }
-
-        public void Serialize(IXunitSerializationInfo info)
-        {
-            info.AddValue(nameof(SoftwareStatementProfileId), SoftwareStatementProfileId);
-            info.AddValue(nameof(RegistrationScope), RegistrationScope);
-        }
-
-        public override string ToString()
-        {
-            return $"{{ SoftwareStatementProfileId = {SoftwareStatementProfileId}, Scope = {RegistrationScope} }}";
-        }
     }
 
     /// <summary>
@@ -205,32 +194,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public string? Linux { get; set; }
     }
 
-    public class TestedBanks
-    {
-        /// <summary>
-        ///     Banks to test in Generic Host App Tests.
-        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
-        /// </summary>
-        public List<BankProfileEnum> GenericHostAppTests { get; set; } = new List<BankProfileEnum>();
-
-        /// <summary>
-        ///     Banks to test in Plain App Tests.
-        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
-        /// </summary>
-        public List<BankProfileEnum> PlainAppTests { get; set; } = new List<BankProfileEnum>();
-    }
-
     public class BankTestSettings : ISettings<BankTestSettings>
     {
         /// <summary>
-        ///     Banks to test.
+        ///     List of banks to test
         /// </summary>
-        public TestedBanks TestedBanks { get; set; } = new TestedBanks();
+        public List<BankProfileEnum> TestedBankProfiles { get; set; } = new List<BankProfileEnum>();
 
         /// <summary>
-        ///     Bank registration types (clients) to test
+        ///     Groups of test cases for Generic Host App Test.
         /// </summary>
-        public List<BankRegistrationType> TestedBankRegistrationTypes { get; set; } = new List<BankRegistrationType>();
+        public List<TestCaseGroup> GenericHostAppTestCases { get; set; } =
+            new List<TestCaseGroup>();
+
+        /// <summary>
+        ///     Groups of test cases for Plain App Test.
+        /// </summary>
+        public List<TestCaseGroup> PlainAppTestCases { get; set; } = new List<TestCaseGroup>();
 
         /// <summary>
         ///     Do not allow use of "API overrides" instead of bank API call for creating bank registrations (POST /register)

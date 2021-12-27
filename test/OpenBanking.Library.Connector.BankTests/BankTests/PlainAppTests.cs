@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -17,6 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -72,7 +72,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             false)]
         public async Task TestAllNoConsentAuth(
             BankProfileEnum bank,
-            BankRegistrationType bankRegistrationType)
+            string softwareStatementProfileId,
+            RegistrationScope registrationScope)
         {
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;
@@ -123,7 +124,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var apiClient = new ApiClient(instrumentationClient, new HttpClient());
             await TestAllInner(
                 bank,
-                bankRegistrationType,
+                softwareStatementProfileId,
+                registrationScope,
                 () => new RequestBuilderContainer(
                     timeProvider,
                     apiVariantMapper,
