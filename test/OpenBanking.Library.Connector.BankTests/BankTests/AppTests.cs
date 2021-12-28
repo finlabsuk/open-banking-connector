@@ -208,6 +208,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await ClientRegistrationSubtests.PostAndGetObjects(
                     softwareStatementProfile.SoftwareStatementProfileId,
+                    softwareStatementProfile.OverrideCase,
                     registrationScope,
                     requestBuilder,
                     bankProfile,

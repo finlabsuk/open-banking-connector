@@ -14,6 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             string name,
             Guid bankId,
             string softwareStatementProfileId,
+            string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScope registrationScope,
             string? openIdConfigurationReplacement)
         {
@@ -22,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 Name = name,
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
+                SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
                 RegistrationScope = registrationScope,
                 ClientRegistrationApi = ClientRegistrationApiVersion,
                 AllowMultipleRegistrations = true,

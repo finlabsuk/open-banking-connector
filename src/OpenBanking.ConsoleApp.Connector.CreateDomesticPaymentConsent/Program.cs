@@ -47,6 +47,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
                 await BankConfigurationMethods.Create(
                     "All",
+                    null,
                     RegistrationScope.All,
                     requestBuilder,
                     bankProfileDefinitions.Modelo,

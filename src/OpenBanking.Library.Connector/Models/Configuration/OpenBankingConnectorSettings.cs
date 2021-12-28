@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     They are typically bank names allowing profiles to customised for a particular bank.
         ///     Only override cases listed here will be extracted from key secrets by Open Banking Connector.
         /// </summary>
-        public string SoftwareStatementAndCertificateOverrideCases { get; set; } = string.Empty;
+        public string SoftwareStatementAndCertificateProfileOverrideCases { get; set; } = string.Empty;
 
         /// <summary>
         ///     Database options.
@@ -93,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             SoftwareStatementProfileIds.Split(' ').ToList();
 
         public List<string> SoftwareStatementAndCertificateOverrideCasesAsList =>
-            SoftwareStatementAndCertificateOverrideCases.Split(' ').ToList();
+            SoftwareStatementAndCertificateProfileOverrideCases.Split(' ').ToList();
 
         public string SettingsSectionName => "OpenBankingConnector";
 

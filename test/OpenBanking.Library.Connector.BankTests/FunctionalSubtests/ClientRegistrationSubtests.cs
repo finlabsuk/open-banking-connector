@@ -18,6 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     {
         public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> PostAndGetObjects(
             string softwareStatementProfileId,
+            string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScope registrationScope,
             IRequestBuilder requestBuilder,
             BankProfile bankProfile,
@@ -62,6 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 "placeholder: dynamically generated based on unused names",
                 default,
                 softwareStatementProfileId,
+                softwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
                 openIdConfigurationReplacement);
             await testDataProcessorFluentRequestLogging

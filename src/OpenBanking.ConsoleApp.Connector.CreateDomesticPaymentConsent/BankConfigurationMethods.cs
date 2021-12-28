@@ -23,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// </summary>
         public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> Create(
             string softwareStatementProfileId,
+            string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScope registrationScope,
             IRequestBuilder requestBuilder,
             BankProfile bankProfile,
@@ -41,6 +42,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 testNameUnique,
                 bankId,
                 softwareStatementProfileId,
+                softwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
                 null);
             IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
