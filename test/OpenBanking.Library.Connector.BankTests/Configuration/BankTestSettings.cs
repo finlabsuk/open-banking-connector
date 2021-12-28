@@ -128,7 +128,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
     /// <summary>
     ///     Test case group specified by parameters and bank filtering rules
     /// </summary>
-    public class TestCaseGroup
+    public class TestGroup
     {
         /// <summary>
         ///     Software statement profile ID to use for this group of test cases
@@ -157,6 +157,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// </summary>
         public List<BankProfileEnum> IncludedBanks { get; set; } =
             new List<BankProfileEnum>();
+    }
+
+    /// <summary>
+    ///     Bank-specific override for software statement and certificate profiles.
+    /// </summary>
+    public class SoftwareStatementAndCertificateProfileOverride
+    {
+        public BankProfileEnum Bank { get; set; }
+
+        public string OverrideCase { get; set; } = null!;
     }
 
     /// <summary>
@@ -196,21 +206,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
     public class BankTestSettings : ISettings<BankTestSettings>
     {
+        public List<SoftwareStatementAndCertificateProfileOverride>
+            SoftwareStatementAndCertificateProfileOverrides { get; set; } =
+            new List<SoftwareStatementAndCertificateProfileOverride>();
+
         /// <summary>
         ///     List of banks to test
         /// </summary>
-        public List<BankProfileEnum> TestedBankProfiles { get; set; } = new List<BankProfileEnum>();
+        public List<BankProfileEnum> TestedBanks { get; set; } = new List<BankProfileEnum>();
+
 
         /// <summary>
         ///     Groups of test cases for Generic Host App Test.
         /// </summary>
-        public List<TestCaseGroup> GenericHostAppTestCases { get; set; } =
-            new List<TestCaseGroup>();
+        public List<TestGroup> GenericHostAppTests { get; set; } =
+            new List<TestGroup>();
 
         /// <summary>
         ///     Groups of test cases for Plain App Test.
         /// </summary>
-        public List<TestCaseGroup> PlainAppTestCases { get; set; } = new List<TestCaseGroup>();
+        public List<TestGroup> PlainAppTests { get; set; } = new List<TestGroup>();
 
         /// <summary>
         ///     Do not allow use of "API overrides" instead of bank API call for creating bank registrations (POST /register)
@@ -223,7 +238,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     Path to data folder used for logging, "API overrides", and bank user information.
         /// </summary>
         public DataDirectory DataDirectory { get; set; } = new DataDirectory();
-
 
         /// <summary>
         ///     Log external API requests/responses. Off by default.

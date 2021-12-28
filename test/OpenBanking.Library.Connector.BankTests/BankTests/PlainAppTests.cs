@@ -72,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             false)]
         public async Task TestAllNoConsentAuth(
             BankProfileEnum bank,
-            string softwareStatementProfileId,
+            SoftwareStatementProfileData softwareStatementProfile,
             RegistrationScope registrationScope)
         {
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
@@ -124,7 +124,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var apiClient = new ApiClient(instrumentationClient, new HttpClient());
             await TestAllInner(
                 bank,
-                softwareStatementProfileId,
+                softwareStatementProfile,
                 registrationScope,
                 () => new RequestBuilderContainer(
                     timeProvider,

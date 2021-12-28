@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             true)]
         public async Task TestAll(
             BankProfileEnum bank,
-            string softwareStatementProfileId,
+            SoftwareStatementProfileData softwareStatementProfile,
             RegistrationScope registrationScope)
         {
             // Connect output to logging
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             await TestAllInner(
                 bank,
-                softwareStatementProfileId,
+                softwareStatementProfile,
                 registrationScope,
                 () => new ScopedRequestBuilderContainer(_serviceProvider),
                 true);
