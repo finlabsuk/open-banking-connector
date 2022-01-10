@@ -62,6 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.Danske => bankProfileDefinitions.Danske,
                 BankProfileEnum.AlliedIrish => bankProfileDefinitions.AlliedIrish,
                 BankProfileEnum.Monzo => bankProfileDefinitions.Monzo,
+                BankProfileEnum.Lloyds => bankProfileDefinitions.Lloyds,
                 _ => throw new ArgumentException(
                     $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
             };

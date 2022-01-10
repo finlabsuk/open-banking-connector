@@ -31,6 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             Danske = GetDanske();
             AlliedIrish = GetAlliedIrish();
             Monzo = GetMonzo();
+            Lloyds = GetLloyds();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
