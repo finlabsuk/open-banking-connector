@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -12,21 +13,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
     {
         public BankProfile Modelo { get; }
 
+        //See https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
         private BankProfile GetModelo()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
                 GetRequiredBankProfileHiddenProperties(BankProfileEnum.Modelo);
             return new BankProfile(
                 BankProfileEnum.Modelo,
-                bankProfileHiddenProperties.GetRequiredIssuerUrl(),
-                bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                "https://ob19-auth1-ui.o3bank.co.uk", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+                "0015800001041RHAAY", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+                ClientRegistrationApiVersion
+                    .Version3p2, // inferred from registration_endpoint in : https://ob19-auth1-ui.o3bank.co.uk/.well-known/openid-configuration
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiBaseUrl()
+                    BaseUrl =
+                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp" //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
                 },
                 null)
             {

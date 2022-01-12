@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -13,21 +13,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
     {
         public BankProfile Danske { get; }
 
+        //See https://developers.danskebank.com/documentation
+
         private BankProfile GetDanske()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
                 GetRequiredBankProfileHiddenProperties(BankProfileEnum.Danske);
             return new BankProfile(
                 BankProfileEnum.Danske,
-                bankProfileHiddenProperties.GetRequiredIssuerUrl(),
-                bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
+                "0015800000jf7AeAAI", //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
+                ClientRegistrationApiVersion.Version3p2, // from https://developers.danskebank.com/documentation
                 new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiBaseUrl()
+                    PaymentInitiationApiVersion =
+                        PaymentInitiationApiVersion
+                            .Version3p1p6, // from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
+                    BaseUrl =
+                        "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
                 },
                 null)
             {
@@ -39,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                         registration.OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
                         {
                             //register endpoint response does not provide one
-                            ResponseModesSupported = new List<string>() { "fragment" }
+                            ResponseModesSupported = new List<string> { "fragment" }
                         };
                         return registration;
                     },
@@ -48,4 +51,3 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
         }
     }
 }
-
