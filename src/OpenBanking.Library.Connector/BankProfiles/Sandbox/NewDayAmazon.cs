@@ -17,15 +17,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 GetRequiredBankProfileHiddenProperties(BankProfileEnum.NewDayAmazon);
             return new BankProfile(
                 BankProfileEnum.NewDayAmazon,
-                bankProfileHiddenProperties.GetRequiredIssuerUrl(),
+                "https://api.newdaycards.com/sandbox/identity/v1.0/amazon/", //from https://developer.newdaycards.com/docs/services/AuthenticationSandbox/operations/wellknown
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiBaseUrl()
+                    BaseUrl = "https://api.newdaycards.com/sandbox/open-banking/v3.1/pisp" // from https://developer.newdaycards.com/docs/services/SandboxOpenBankingPISPAPI/operations/PostDomesticPaymentConsents
                 },
                 null)
             {

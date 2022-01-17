@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -19,8 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             return new BankProfile(
                 BankProfileEnum.AlliedIrish,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
-                bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                "0015800000jf9VgAAI", //from https://developer.aibgb.co.uk/sandbox-for-api-testing-gb
+                ClientRegistrationApiVersion
+                    .Version3p2, //from https://developer.aibgb.co.uk/dynamic-client-registration-api-v3-2-gb/apis
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties

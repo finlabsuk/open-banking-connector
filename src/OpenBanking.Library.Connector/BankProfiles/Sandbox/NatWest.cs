@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -19,12 +20,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             return new BankProfile(
                 BankProfileEnum.NatWest,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
-                bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                "0015800000jfwxXAAQ", // from https://bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                ClientRegistrationApiVersion.Version3p2, // from https://www.bankofapis.com/products/natwest-group-open-banking/dynamic-client-registration/documentation/nwb/1.0
                 new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiVersion(),
+                    PaymentInitiationApiVersion =
+                        PaymentInitiationApiVersion
+                            .Version3p1p6, // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.6
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
