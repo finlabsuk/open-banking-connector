@@ -23,8 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = bankProfileHiddenProperties
-                        .GetRequiredPaymentInitiationApiBaseUrl()
+                    BaseUrl = "https://openbanking-ma-sandbox.santander.co.uk/sanuk/external-sandbox/open-banking/v3.1/pisp" //from https://sandbox-developer.santander.co.uk/sanuk/external-sandbox/api/payment-initiation-v3-sandbox-0 
                 },
                 null);
         }
