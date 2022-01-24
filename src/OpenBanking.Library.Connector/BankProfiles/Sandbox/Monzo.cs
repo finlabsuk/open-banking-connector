@@ -2,8 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -26,9 +25,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" //from https://docs.monzo.com/#well-known-endpoints58
+                    BaseUrl =
+                        "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" //from https://docs.monzo.com/#well-known-endpoints58
                 },
-                null);
+                null)
+            {
+                PaymentInitiationApiSettings = new PaymentInitiationApiSettings
+                {
+                    DomesticPaymentConsentAdjustments = registration =>
+                    {
+                        registration.OBWriteDomesticConsent.Data.Initiation.SupplementaryData =
+                            new Dictionary<string, object>
+                            {
+                                ["DesiredStatus"] = "Authorised",
+                                ["UserID"] = "user_000xxx"
+                            };
+
+                        return registration;
+                    }
+                }
+            };
         }
     }
 }
