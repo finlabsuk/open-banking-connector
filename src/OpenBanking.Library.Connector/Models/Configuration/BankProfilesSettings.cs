@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
         public string HiddenPropertiesFile => Path.Combine(
             GetDataDirectoryForCurrentOs(),
-            "bankProfileHiddenProperties.json");
+            "bankProfileHiddenProperties.jsonc");
 
         public string SettingsSectionName => "BankProfiles";
 
@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             if (!File.Exists(HiddenPropertiesFile))
             {
                 throw new FileNotFoundException(
-                    "Can't locate bankProfileHiddenProperties.json file in BankProfiles:DataDirectory setting" +
+                    "Can't locate bankProfileHiddenProperties.jsonc file in BankProfiles:DataDirectory setting" +
                     $"{GetDataDirectoryForCurrentOs()}. Please update app settings.");
             }
 
