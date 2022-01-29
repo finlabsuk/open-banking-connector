@@ -38,15 +38,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs["scope"] = scope;
             }
 
-            if (bankRegistration.BankApiResponse.Data.TokenEndpointAuthMethod is
-                ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt)
+            if (bankRegistration.TokenEndpointAuthMethod is
+                TokenEndpointAuthMethodEnum.PrivateKeyJwt)
             {
                 // Create JWT
                 var claims = new
                 {
-                    iss = bankRegistration.BankApiResponse.Data.ClientId,
-                    sub = bankRegistration.BankApiResponse.Data.ClientId,
-                    aud = bankRegistration.OpenIdConfiguration.TokenEndpoint,
+                    iss = bankRegistration.ExternalApiId,
+                    sub = bankRegistration.ExternalApiId,
+                    aud = bankRegistration.TokenEndpoint,
                     jti = Guid.NewGuid().ToString(),
                     iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
                     exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds()
@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             IApiClient apiClient)
         {
             // POST request
-            var uri = new Uri(bankRegistration.OpenIdConfiguration.TokenEndpoint);
+            var uri = new Uri(bankRegistration.TokenEndpoint);
             IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
                 new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
             var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(

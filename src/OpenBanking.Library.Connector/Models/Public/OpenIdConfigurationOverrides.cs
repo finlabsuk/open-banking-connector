@@ -21,8 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         public string? RegistrationEndpoint { get; set; }
 
         public IList<string>? ResponseModesSupported { get; set; }
-        
-        public IList<TokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupported { get; set; }
-        
+
+        public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupported { get; set; }
     }
 }

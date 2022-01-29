@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             if (redirectUrl == "")
             {
-                redirectUrl = bankRegistration.BankApiResponse.Data.RedirectUris[0];
+                redirectUrl = bankRegistration.RedirectUris[0];
             }
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 { "state", oAuth2RequestObjectClaims.State }
             };
             string queryString = keyValuePairs.ToUrlEncoded();
-            string authUrl = bankRegistration.OpenIdConfiguration.AuthorizationEndpoint + "?" + queryString;
+            string authUrl = bankRegistration.AuthorizationEndpoint + "?" + queryString;
             StringBuilder authUrlTraceSb = new StringBuilder()
                 .AppendLine("#### Auth URL (Domestic Consent)")
                 .Append(authUrl);

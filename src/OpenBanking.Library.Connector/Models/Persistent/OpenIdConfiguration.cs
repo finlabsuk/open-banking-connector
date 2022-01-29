@@ -4,17 +4,16 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     /// <summary>
-    ///     Token endpoint auth method.
+    ///     Valid elements for token_endpoint_auth_methods_supported in OpenID Configuration
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum TokenEndpointAuthMethodEnum
+    public enum OpenIdConfigurationTokenEndpointAuthMethodEnum
     {
         [EnumMember(Value = "client_secret_basic")]
         ClientSecretBasic,
@@ -29,14 +28,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         PrivateKeyJwt,
 
         [EnumMember(Value = "tls_client_auth")]
-        TlsClientAuth,
+        TlsClientAuth
+    }
 
-        [EnumMember(Value = "none")]
-        None
+    /// <summary>
+    ///     Token endpoint auth methods supported by Open Banking Connector
+    /// </summary>
+    public enum TokenEndpointAuthMethodEnum
+    {
+        ClientSecretBasic,
+        PrivateKeyJwt,
+        TlsClientAuth
     }
 
 
-    [Owned]
     public class OpenIdConfiguration
     {
         [JsonProperty("issuer")]
@@ -61,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string RegistrationEndpoint { get; set; } = null!;
 
         [JsonProperty("token_endpoint_auth_methods_supported")]
-        public IList<TokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
-            new List<TokenEndpointAuthMethodEnum>();
+        public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
+            new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>();
     }
 }

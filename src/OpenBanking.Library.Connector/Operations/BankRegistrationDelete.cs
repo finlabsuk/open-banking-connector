@@ -60,14 +60,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             string bankApiId = persistedObject.ExternalApiId;
 
-            var uri = new Uri(persistedObject.OpenIdConfiguration.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
+            var uri = new Uri(persistedObject.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
             // Get appropriate token
             TokenEndpointResponse tokenEndpointResponse;
             if (useRegistrationAccessToken)
             {
                 string accessToken =
-                    persistedObject.BankApiResponse.Data.RegistrationAccessToken ??
+                    persistedObject.RegistrationAccessToken ??
                     throw new InvalidOperationException("No registration access token available");
                 tokenEndpointResponse = new TokenEndpointResponse
                 {

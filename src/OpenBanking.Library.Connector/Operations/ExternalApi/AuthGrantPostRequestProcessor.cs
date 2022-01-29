@@ -9,8 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Newtonsoft.Json;
-using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
@@ -31,23 +29,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         {
             // Assemble headers and body
             var headers = new List<HttpHeader>();
-            switch (_bankRegistration.BankApiResponse.Data.TokenEndpointAuthMethod)
+            switch (_bankRegistration.TokenEndpointAuthMethod)
             {
-                case ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth:
-                    variantRequest["client_id"] = _bankRegistration.BankApiResponse.Data.ClientId;
+                case TokenEndpointAuthMethodEnum.TlsClientAuth:
+                    variantRequest["client_id"] = _bankRegistration.ExternalApiId;
                     break;
-                case ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum
-                    .ClientSecretBasic:
+                case TokenEndpointAuthMethodEnum.ClientSecretBasic:
                 {
-                    _bankRegistration.BankApiResponse.Data.ClientSecret.InvalidOpOnNull("No client secret available.");
-                    string authString = _bankRegistration.BankApiResponse.Data.ClientId + ":" +
-                                        _bankRegistration.BankApiResponse.Data.ClientSecret;
+                    string clientSecret =
+                        _bankRegistration.ExternalApiSecret ??
+                        throw new InvalidOperationException("No client secret available.");
+                    string authString = _bankRegistration.ExternalApiId + ":" + clientSecret;
                     byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
                     string authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
                     headers.Add(new HttpHeader("Authorization", authHeader));
                     break;
                 }
-                case ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt:
+                case TokenEndpointAuthMethodEnum.PrivateKeyJwt:
                     break;
                 default:
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");

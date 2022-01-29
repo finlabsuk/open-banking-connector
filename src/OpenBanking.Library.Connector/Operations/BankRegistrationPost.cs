@@ -130,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // STEP 1
             // Compute claims associated with Open Banking client
 
-            // Get OpenID Connect configuration info
+            // Get OpenID Connect configuration (normally from (well-known endpoint)
             OpenIdConfiguration openIdConfiguration;
             if (request.OpenIdConfigurationReplacement is null)
             {
@@ -145,7 +145,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     throw new Exception("Can't de-serialise supplied bank API response");
             }
 
-            // Update OpenID Connect configuration info based on overrides
+            // Update OpenID Connect configuration based on overrides
             string? registrationEndpointOverride =
                 request.OpenIdConfigurationOverrides?.RegistrationEndpoint;
             if (!(registrationEndpointOverride is null))
@@ -160,14 +160,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
             }
 
-            IList<TokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
+            IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
                 request.OpenIdConfigurationOverrides?.TokenEndpointAuthMethodsSupported;
             if (!(tokenEndpointAuthMethodsSupportedOverride is null))
             {
                 openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
             }
 
-            // Validate OpenID Configuration
+            // Validate OpenID Connect configuration
             {
                 IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
                     new OpenBankingOpenIdConfigurationResponseValidator()
@@ -176,15 +176,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 nonErrorMessages.AddRange(newNonErrorMessages);
             }
 
+            // Select tokenEndpointAuthMethod based on most preferred
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod;
+            if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                    OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
+            {
+                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth;
+            }
+            else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                         OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
+            {
+                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.PrivateKeyJwt;
+            }
+            else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                         OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic))
+            {
+                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.ClientSecretBasic;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"No supported value in {openIdConfiguration.TokenEndpointAuthMethodsSupported}");
+            }
+
             // Save registration scope and Open ID Connect config
-            persistedObject.UpdateOpenIdGet(
-                registrationScope,
-                openIdConfiguration);
+            persistedObject.UpdateOpenIdGet(registrationScope,
+                openIdConfiguration , // TODO: update to store raw response
+                openIdConfiguration.Issuer,
+                openIdConfiguration.TokenEndpoint,
+                openIdConfiguration.AuthorizationEndpoint,
+                openIdConfiguration.RegistrationEndpoint,
+                tokenEndpointAuthMethod);
 
             // Create claims for client reg
             ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
                 RegistrationClaimsFactory.CreateRegistrationClaims(
-                    openIdConfiguration.TokenEndpointAuthMethodsSupported,
+                    tokenEndpointAuthMethod,
                     processedSoftwareStatementProfile,
                     registrationScope,
                     request.BankRegistrationClaimsOverrides,

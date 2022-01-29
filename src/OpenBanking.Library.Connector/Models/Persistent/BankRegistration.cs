@@ -48,7 +48,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public ClientRegistrationApiVersion ClientRegistrationApi { get; set; }
 
-        public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;
+        /// <summary>
+        ///     Log of OpenID Configuration provided by well-known endpoint. Archived for debugging and should not be accessed by
+        ///     Open Banking Connector.
+        /// </summary>
+        public OpenIdConfiguration OpenIdConfigurationResponse { get; set; } = null!;
+
+        /// <summary>
+        ///     Issuer (normally supplied from OpenID Configuration)
+        /// </summary>
+        public string Issuer { get; set; } = null!;
+
+        /// <summary>
+        ///     Token endpoint (normally supplied from OpenID Configuration)
+        /// </summary>
+        public string TokenEndpoint { get; set; } = null!;
+
+        /// <summary>
+        ///     Authorization endpoint (normally supplied from OpenID Configuration)
+        /// </summary>
+        public string AuthorizationEndpoint { get; set; } = null!;
+
+        /// <summary>
+        ///     Registration endpoint (normally supplied from OpenID Configuration)
+        /// </summary>
+        public string RegistrationEndpoint { get; set; } = null!;
+
+        /// <summary>
+        ///     Redirect URIs valid for this registration
+        /// </summary>
+        public IList<string> RedirectUris { get; set; } = new List<string>();
+
+        /// <summary>
+        ///     Token endpoint authorisation method
+        /// </summary>
+        public TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; set; }
 
         public ClientRegistrationModelsPublic.OBClientRegistration1 BankApiRequest { get; set; } = null!;
 
@@ -64,6 +98,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
         /// </summary>
         public string ExternalApiId { get; set; } = null!;
+
+        /// <summary>
+        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
+        /// </summary>
+        public string? ExternalApiSecret { get; set; }
+
+        /// <summary>
+        ///     External API registration access token. Sometimes used to support registration adjustments etc.
+        /// </summary>
+        public string? RegistrationAccessToken { get; set; }
 
         public ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response> BankApiResponse
         {
@@ -122,14 +166,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                     timeProvider,
                     modifiedBy);
             ExternalApiId = BankApiResponse.Data.ClientId;
+            ExternalApiSecret = BankApiResponse.Data.ClientSecret;
+            RegistrationAccessToken = BankApiResponse.Data.RegistrationAccessToken;
+            RedirectUris = BankApiResponse.Data.RedirectUris;
         }
 
         public void UpdateOpenIdGet(
             RegistrationScope registrationScope,
-            OpenIdConfiguration openIdConfiguration)
+            OpenIdConfiguration openIdConfigurationResponse,
+            string issuer,
+            string tokenEndpoint,
+            string authorizationEndpoint,
+            string registrationEndpoint,
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod)
         {
             RegistrationScope = registrationScope;
-            OpenIdConfiguration = openIdConfiguration;
+            OpenIdConfigurationResponse = openIdConfigurationResponse;
+            Issuer = issuer;
+            TokenEndpoint = tokenEndpoint;
+            AuthorizationEndpoint = authorizationEndpoint;
+            RegistrationEndpoint = registrationEndpoint;
+            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         }
 
         public IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,

@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
         }
 
         public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
-            IList<TokenEndpointAuthMethodEnum> tokenEndpointAuthMethodsSupported,
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScope registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
@@ -56,28 +56,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
 
             string scope = ApiTypesToScope(registrationScope);
 
-            // Select tokenEndpointAuthMethod based on information from OpenID Connect configuration (well-known endpoint)
+            // Convert tokenEndpointAuthMethod to spec type
             ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum
-                tokenEndpointAuthMethod;
-            if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.TlsClientAuth))
+                tokenEndpointAuthMethodLocal;
+            tokenEndpointAuthMethodLocal = tokenEndpointAuthMethod switch
             {
-                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth;
-            }
-            else if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.PrivateKeyJwt))
-            {
-                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt;
-            }
-            else if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.ClientSecretBasic))
-            {
-                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic;
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException($"No supported value in {tokenEndpointAuthMethodsSupported}");
-            }
+                TokenEndpointAuthMethodEnum.ClientSecretBasic => ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic,
+                TokenEndpointAuthMethodEnum.PrivateKeyJwt => ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt,
+                TokenEndpointAuthMethodEnum.TlsClientAuth => ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(tokenEndpointAuthMethod),
+                    tokenEndpointAuthMethod,
+                    null)
+            };
 
             IList<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum> grantTypes =
                 bankClientRegistrationClaimsOverrides?.GrantTypes ??
@@ -113,7 +107,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                     Aud = bankClientRegistrationClaimsOverrides?.Audience ??
                           bankXFapiFinancialId,
                     Jti = Guid.NewGuid().ToString(),
-                    TokenEndpointAuthMethod = tokenEndpointAuthMethod,
+                    TokenEndpointAuthMethod = tokenEndpointAuthMethodLocal,
                     GrantTypes = grantTypes,
                     ResponseTypes = new[]
                     {

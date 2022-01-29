@@ -13,7 +13,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -113,8 +112,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 TokenEndpoint = $"{MockRoutes.Url}{MockRoutes.Token}",
                 AuthorizationEndpoint = $"{MockRoutes.Url}{MockRoutes.Authorize}",
                 RegistrationEndpoint = $"{MockRoutes.Url}{MockRoutes.Register}",
-                TokenEndpointAuthMethodsSupported = new List<TokenEndpointAuthMethodEnum>
-                    { TokenEndpointAuthMethodEnum.TlsClientAuth }
+                TokenEndpointAuthMethodsSupported = new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>
+                    { OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth }
             };
 
             return JsonConvert.SerializeObject(openIdConfig);

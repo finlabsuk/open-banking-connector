@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = bankRegistration.BankApiResponse.Data.ClientId,
+                Iss = bankRegistration.ExternalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
-                ClientId = bankRegistration.BankApiResponse.Data.ClientId,
+                ClientId = bankRegistration.ExternalApiId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,
