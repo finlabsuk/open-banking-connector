@@ -47,6 +47,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     headers.Add(new HttpHeader("Authorization", authHeader));
                     break;
                 }
+                case ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt:
+                    break;
                 default:
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
             }

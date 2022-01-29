@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -14,6 +13,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
@@ -38,17 +39,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             }
 
             if (bankRegistration.BankApiResponse.Data.TokenEndpointAuthMethod is
-                OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt)
+                ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt)
             {
                 // Create JWT
                 var claims = new
                 {
-                    Iss = bankRegistration.BankApiResponse.Data.ClientId,
-                    Sub = bankRegistration.BankApiResponse.Data.ClientId,
-                    Aud = bankRegistration.OpenIdConfiguration.TokenEndpoint,
-                    Jti = Guid.NewGuid().ToString(),
-                    Iat = DateTimeOffset.Now,
-                    Exp = DateTimeOffset.UtcNow.AddHours(1),
+                    iss = bankRegistration.BankApiResponse.Data.ClientId,
+                    sub = bankRegistration.BankApiResponse.Data.ClientId,
+                    aud = bankRegistration.OpenIdConfiguration.TokenEndpoint,
+                    jti = Guid.NewGuid().ToString(),
+                    iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                    exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds()
                 };
                 string jwt = JwtFactory.CreateJwt(
                     JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),

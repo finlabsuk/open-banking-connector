@@ -64,6 +64,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
                 tokenEndpointAuthMethod = ClientRegistrationModelsPublic
                     .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth;
             }
+            else if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.PrivateKeyJwt))
+            {
+                tokenEndpointAuthMethod = ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt;
+            }
             else if (tokenEndpointAuthMethodsSupported.Contains(TokenEndpointAuthMethodEnum.ClientSecretBasic))
             {
                 tokenEndpointAuthMethod = ClientRegistrationModelsPublic
