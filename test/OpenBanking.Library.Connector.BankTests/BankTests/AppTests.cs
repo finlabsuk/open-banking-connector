@@ -68,8 +68,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             bankProfilesSettings.Validate();
             Dictionary<string, Dictionary<string, BankProfileHiddenProperties>> bankProfileHiddenProperties =
                 DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
-                    bankProfilesSettings.HiddenPropertiesFile,
-                    new JsonSerializerSettings()).GetAwaiter().GetResult();
+                        bankProfilesSettings.HiddenPropertiesFile,
+                        new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore
+                        }).GetAwaiter()
+                    .GetResult();
             var bankProfileDefinitions =
                 new BankProfileDefinitions(bankProfileHiddenProperties);
 

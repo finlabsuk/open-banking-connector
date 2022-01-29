@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -24,11 +25,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo) : base(
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+            IInstrumentationClient instrumentationClient) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            softwareStatementProfileRepo) { }
+            softwareStatementProfileRepo,
+            instrumentationClient) { }
 
         protected override async
             Task<(BankRegistration persistedObject, IApiClient apiClient, Uri uri, IDeleteRequestProcessor
@@ -76,9 +79,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 tokenEndpointResponse =
                     await PostTokenRequest.PostClientCredentialsGrantAsync(
                         null, // no scope - not clear this is correct yet...
+                        processedSoftwareStatementProfile,
                         persistedObject,
                         null,
-                        apiClient);
+                        apiClient,
+                        _instrumentationClient);
             }
 
             IDeleteRequestProcessor deleteRequestProcessor = new ApiDeleteRequestProcessor(tokenEndpointResponse);

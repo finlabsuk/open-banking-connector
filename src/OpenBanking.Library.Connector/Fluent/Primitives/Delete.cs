@@ -72,7 +72,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.DbService.GetDbEntityMethodsClass<TEntity>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
-                context.SoftwareStatementProfileCachedRepo)) { }
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation)) { }
     }
 
     internal class BankRegistrationDelete : DeleteBase
@@ -83,6 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.DbService.GetDbEntityMethodsClass<BankRegistration>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
-                context.SoftwareStatementProfileCachedRepo)) { }
+                context.SoftwareStatementProfileCachedRepo,
+                context.Instrumentation)) { }
     }
 }

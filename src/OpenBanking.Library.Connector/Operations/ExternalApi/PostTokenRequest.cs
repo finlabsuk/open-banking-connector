@@ -4,10 +4,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
@@ -16,9 +21,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
     {
         public static async Task<TokenEndpointResponse> PostClientCredentialsGrantAsync(
             string? scope,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
             JsonSerializerSettings? jsonSerializerSettings,
-            IApiClient apiClient)
+            IApiClient apiClient,
+            IInstrumentationClient instrumentationClient)
         {
             var keyValuePairs = new Dictionary<string, string>
             {
@@ -28,6 +35,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             if (!(scope is null))
             {
                 keyValuePairs["scope"] = scope;
+            }
+
+            if (bankRegistration.BankApiResponse.Data.TokenEndpointAuthMethod is
+                OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt)
+            {
+                // Create JWT
+                var claims = new
+                {
+                    Iss = bankRegistration.BankApiResponse.Data.ClientId,
+                    Sub = bankRegistration.BankApiResponse.Data.ClientId,
+                    Aud = bankRegistration.OpenIdConfiguration.TokenEndpoint,
+                    Jti = Guid.NewGuid().ToString(),
+                    Iat = DateTimeOffset.Now,
+                    Exp = DateTimeOffset.UtcNow.AddHours(1),
+                };
+                string jwt = JwtFactory.CreateJwt(
+                    JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
+                    claims,
+                    processedSoftwareStatementProfile.SigningKey,
+                    processedSoftwareStatementProfile.SigningCertificate);
+                StringBuilder requestTraceSb = new StringBuilder()
+                    .AppendLine("#### JWT (Client Auth)")
+                    .Append(jwt);
+                instrumentationClient.Info(requestTraceSb.ToString());
+
+                // Add parameters
+                keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+                keyValuePairs["client_assertion"] = jwt;
             }
 
             return await PostGrantAsync(

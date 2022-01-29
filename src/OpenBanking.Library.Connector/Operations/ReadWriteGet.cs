@@ -85,9 +85,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 userTokenEndpointResponse ??
                 await PostTokenRequest.PostClientCredentialsGrantAsync(
                     "payments",
+                    processedSoftwareStatementProfile,
                     bankRegistration,
                     null,
-                    apiClient);
+                    apiClient,
+                    _instrumentationClient);
 
             // Create new Open Banking object by posting JWT
             var uri = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);

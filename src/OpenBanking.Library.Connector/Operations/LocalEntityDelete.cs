@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
+        protected readonly IInstrumentationClient _instrumentationClient;
         protected readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
@@ -28,12 +29,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+            IInstrumentationClient instrumentationClient)
         {
             _entityMethods = entityMethods;
             _dbSaveChangesMethod = dbSaveChangesMethod;
             _timeProvider = timeProvider;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
+            _instrumentationClient = instrumentationClient;
         }
 
         public async

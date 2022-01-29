@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -24,11 +24,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo) : base(
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+            IInstrumentationClient instrumentationClient) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
-            softwareStatementProfileRepo) { }
+            softwareStatementProfileRepo,
+            instrumentationClient) { }
 
         protected override async
             Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiDelete(
