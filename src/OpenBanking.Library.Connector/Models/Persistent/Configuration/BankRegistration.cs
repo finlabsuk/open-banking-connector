@@ -86,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     new ValueComparer<IList<string>>(
                         (c1, c2) => c1.SequenceEqual(c2),
                         c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                        c => c.ToList()))
+                        c => (IList<string>) c.ToList())) // NB: cast is required to avoid error and not redundant
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ExternalApiSecret)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
