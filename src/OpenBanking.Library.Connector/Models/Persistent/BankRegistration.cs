@@ -55,11 +55,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public OpenIdConfiguration OpenIdConfigurationResponse { get; set; } = null!;
 
         /// <summary>
-        ///     Issuer (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string Issuer { get; set; } = null!;
-
-        /// <summary>
         ///     Token endpoint (normally supplied from OpenID Configuration)
         /// </summary>
         public string TokenEndpoint { get; set; } = null!;
@@ -174,7 +169,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public void UpdateOpenIdGet(
             RegistrationScope registrationScope,
             OpenIdConfiguration openIdConfigurationResponse,
-            string issuer,
             string tokenEndpoint,
             string authorizationEndpoint,
             string registrationEndpoint,
@@ -182,7 +176,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         {
             RegistrationScope = registrationScope;
             OpenIdConfigurationResponse = openIdConfigurationResponse;
-            Issuer = issuer;
             TokenEndpoint = tokenEndpoint;
             AuthorizationEndpoint = authorizationEndpoint;
             RegistrationEndpoint = registrationEndpoint;

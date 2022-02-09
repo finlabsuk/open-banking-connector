@@ -66,8 +66,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v =>
                         JsonConvert.DeserializeObject<OpenIdConfiguration>(v)!)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.Issuer)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.TokenEndpoint)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.AuthorizationEndpoint)

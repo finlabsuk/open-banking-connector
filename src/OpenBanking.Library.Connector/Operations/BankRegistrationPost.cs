@@ -200,9 +200,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Save registration scope and Open ID Connect config
-            persistedObject.UpdateOpenIdGet(registrationScope,
-                openIdConfiguration , // TODO: update to store raw response
-                openIdConfiguration.Issuer,
+            persistedObject.UpdateOpenIdGet(
+                registrationScope,
+                openIdConfiguration, // TODO: update to store raw response
                 openIdConfiguration.TokenEndpoint,
                 openIdConfiguration.AuthorizationEndpoint,
                 openIdConfiguration.RegistrationEndpoint,
