@@ -284,7 +284,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
             result.DeliveryAddress.TownName.Should().Be(value.DeliveryAddress.TownName);
             result.DeliveryAddress.AddressLine.Should().BeEquivalentTo(value.DeliveryAddress.AddressLine);
             result.DeliveryAddress.BuildingNumber.Should().Be(value.DeliveryAddress.BuildingNumber);
-            result.DeliveryAddress.CountrySubDivision.Should().BeEquivalentTo(value.DeliveryAddress.CountrySubDivision);
+            result.DeliveryAddress.CountrySubDivision.Should()
+                .BeEquivalentTo(value.DeliveryAddress.CountrySubDivision.Split(" "));
             result.DeliveryAddress.PostCode.Should().Be(value.DeliveryAddress.PostCode);
             result.DeliveryAddress.StreetName.Should().Be(value.DeliveryAddress.StreetName);
             result.MerchantCategoryCode.Should().Be(value.MerchantCategoryCode);
