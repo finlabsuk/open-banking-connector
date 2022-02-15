@@ -32,16 +32,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             {
                 PaymentInitiationApiSettings = new PaymentInitiationApiSettings
                 {
-                    DomesticPaymentConsentAdjustments = registration =>
+                    DomesticPaymentConsentAdjustments = consent =>
                     {
-                        registration.OBWriteDomesticConsent.Data.Initiation.SupplementaryData =
+                        consent.OBWriteDomesticConsent.Data.Initiation.SupplementaryData =
                             new Dictionary<string, object>
                             {
                                 ["DesiredStatus"] = "Authorised",
-                                ["UserID"] = "user_000xxx"
+                                ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
+                                ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
                             };
-
-                        return registration;
+                        return consent;
                     }
                 }
             };
