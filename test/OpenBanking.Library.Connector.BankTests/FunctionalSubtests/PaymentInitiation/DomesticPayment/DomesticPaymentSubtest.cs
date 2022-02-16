@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FluentAssertions;
@@ -43,7 +44,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bool includeConsentAuth,
             INodeJSService? nodeJsService,
             PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
-            List<BankUser> bankUserList)
+            List<BankUser> bankUserList,
+            IApiClient apiClient)
         {
             bool subtestSkipped = subtestEnum switch
             {

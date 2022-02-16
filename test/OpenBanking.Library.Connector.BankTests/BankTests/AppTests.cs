@@ -17,8 +17,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.DependencyInjection;
@@ -178,6 +181,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
                 bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
 
+            // Get API client
+            var processedSoftwareStatementProfileStore =
+                _serviceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                await processedSoftwareStatementProfileStore.GetAsync(
+                    softwareStatementProfile.SoftwareStatementProfileId,
+                    softwareStatementProfile.OverrideCase);
+            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+
             // Get request builder
             using IRequestBuilderContainer requestBuilderContainer = requestBuilderGenerator();
             IRequestBuilder requestBuilder = requestBuilderContainer.RequestBuilder;
@@ -243,7 +255,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     genericNotPlainAppTest,
                     nodeJsService,
                     puppeteerLaunchOptions,
-                    bankUserList);
+                    bankUserList,
+                    apiClient);
             }
 
             // Run domestic VRP subtests
