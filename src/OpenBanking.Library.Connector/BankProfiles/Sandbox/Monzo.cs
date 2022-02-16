@@ -42,7 +42,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                                 ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
                             };
                         return consent;
-                    }
+                    },
+                    UseConsentGetFundsConfirmationEndpoint = false
                 }
             };
         }
