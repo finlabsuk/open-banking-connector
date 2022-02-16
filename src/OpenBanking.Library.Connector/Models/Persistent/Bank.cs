@@ -26,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public List<BankApiSet> BankApiSetsNavigation { get; set; } = null!;
 
-        public string IssuerUrl { get; set; } = null!;
+        public string IssuerUrl { get; } = null!;
 
-        public string FinancialId { get; set; } = null!;
+        public string FinancialId { get; } = null!;
 
         public BankResponse PublicGetResponse => new BankResponse(
             Id,
@@ -42,17 +42,62 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     internal partial class Bank :
         ISupportsFluentLocalEntityPost<BankRequest, BankResponse>
     {
+        /// <summary>
+        ///     Constructor (to be removed) that doesn't initialise anything
+        /// </summary>
+        public Bank() { }
+
+        /// <summary>
+        ///     New constructor that initialises get-only properties
+        /// </summary>
+        /// <param name="issuerUrl"></param>
+        /// <param name="financialId"></param>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="createdBy"></param>
+        /// <param name="timeProvider"></param>
+        private Bank(
+            string issuerUrl,
+            string financialId,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            IssuerUrl = issuerUrl;
+            FinancialId = financialId;
+        }
+
         public void Initialise(
             BankRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            IssuerUrl = request.IssuerUrl;
-            FinancialId = request.FinancialId;
         }
 
         public BankResponse PublicPostResponse => PublicGetResponse;
+
+        public Bank Create(
+            BankRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var output = new Bank(
+                request.IssuerUrl,
+                request.FinancialId,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider);
+            // Temporarily use initialise for unconverted properties
+            //output.Initialise(request, createdBy, timeProvider);
+            return output;
+        }
     }
 
     internal partial class Bank :
