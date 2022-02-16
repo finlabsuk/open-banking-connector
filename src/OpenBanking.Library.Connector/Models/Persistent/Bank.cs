@@ -26,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 
         public List<BankApiSet> BankApiSetsNavigation { get; set; } = null!;
 
-        public string IssuerUrl { get; } = null!;
+        public string IssuerUrl { get; set; } = null!;
 
-        public string FinancialId { get; } = null!;
+        public string FinancialId { get; set; } = null!;
 
         public BankResponse PublicGetResponse => new BankResponse(
             Id,
@@ -78,6 +78,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             ITimeProvider timeProvider)
         {
             base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
+            IssuerUrl = request.IssuerUrl;
+            FinancialId = request.FinancialId;
         }
 
         public BankResponse PublicPostResponse => PublicGetResponse;
