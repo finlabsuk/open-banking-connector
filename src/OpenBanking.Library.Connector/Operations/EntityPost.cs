@@ -52,19 +52,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _mapper = mapper;
         }
 
-        protected override async
-            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiPost(PostRequestInfo requestInfo)
+        protected async
+            Task<(TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            EntityPostCommon(
+                PostRequestInfo requestInfo,
+                TApiRequest apiRequest,
+                IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
+                IApiClient apiClient,
+                Uri uri,
+                JsonSerializerSettings? requestJsonSerializerSettings,
+                JsonSerializerSettings? responseJsonSerializerSettings,
+                List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
         {
-            // Create persisted entity
-            (TEntity persistedObject, TApiRequest apiRequest, IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
-                    IApiClient apiClient, Uri uri,
-                    JsonSerializerSettings? requestJsonSerializerSettings,
-                    JsonSerializerSettings? responseJsonSerializerSettings,
-                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await ApiPostData(requestInfo.Request, requestInfo.ModifiedBy);
-            persistedObject.UpdateBeforeApiPost(apiRequest);
-
             string? writeRequestFile = requestInfo.ApiRequestWriteFile;
             string? readResponseFile = requestInfo.ApiResponseOverrideFile;
             string? writeResponseFile = requestInfo.ApiResponseWriteFile;
@@ -103,20 +102,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await DataFile.WriteFile(apiResponse, writeResponseFile, responseJsonSerializerSettings);
             }
 
-            // Create and store persistent object
-            persistedObject.UpdateAfterApiPost(apiResponse, "", _timeProvider);
 
-            await _entityMethods.AddAsync(persistedObject);
-
-            return (persistedObject, nonErrorMessages);
+            return (apiResponse, nonErrorMessages);
         }
-
-        protected abstract Task<(TEntity persistedObject, TApiRequest apiRequest,
-            IApiPostRequests<TApiRequest, TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
-            JsonSerializerSettings? requestJsonSerializerSettings,
-            JsonSerializerSettings? responseJsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage>
-            nonErrorMessages)> ApiPostData(
-            TPublicRequest request,
-            string? modifiedBy);
     }
 }

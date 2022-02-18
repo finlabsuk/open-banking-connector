@@ -49,26 +49,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected abstract string RelativePath { get; }
 
-        protected override async Task<(TEntity persistedObject, TApiRequest apiRequest,
-            IApiPostRequests<TApiRequest, TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
-            JsonSerializerSettings? requestJsonSerializerSettings, JsonSerializerSettings?
-            responseJsonSerializerSettings, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiPostData(
-            TPublicRequest request,
-            string? modifiedBy)
+        protected override async
+            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            ApiPost(PostRequestInfo requestInfo)
         {
-            var persistedObject = new TEntity();
-            persistedObject.Initialise(
-                request,
-                modifiedBy,
-                _timeProvider);
-
             (
-                TApiRequest apiRequest,
-                BankApiSetPersisted bankApiInformation,
-                BankRegistrationPersisted bankRegistration,
-                string bankFinancialId,
-                TokenEndpointResponse? userTokenEndpointResponse,
-                List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) = await ApiPostRequestData(request);
+                    TApiRequest apiRequest,
+                    BankApiSetPersisted bankApiInformation,
+                    BankRegistrationPersisted bankRegistration,
+                    string bankFinancialId,
+                    TokenEndpointResponse? userTokenEndpointResponse,
+                    List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
+                await ApiPostRequestData(requestInfo.Request);
 
             // Check API specified and get base URL
             string baseUrl = new TEntity().GetReadWriteApiType() switch
@@ -113,9 +105,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
-            return (persistedObject, apiRequest, apiRequests, apiClient, uri, requestJsonSerializerSettings,
-                responseJsonSerializerSettings,
-                nonErrorMessages);
+
+            (TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
+                await EntityPostCommon(
+                    requestInfo,
+                    apiRequest,
+                    apiRequests,
+                    apiClient,
+                    uri,
+                    requestJsonSerializerSettings,
+                    responseJsonSerializerSettings,
+                    nonErrorMessages);
+
+            // Create persisted entity
+            var persistedObject = new TEntity();
+            persistedObject.Initialise(
+                requestInfo.Request,
+                requestInfo.ModifiedBy,
+                _timeProvider);
+            persistedObject.UpdateBeforeApiPost(apiRequest);
+            
+            // Update with results of POST
+            persistedObject.UpdateAfterApiPost(apiResponse, "", _timeProvider);
+
+            return (persistedObject, nonErrorMessages2);
         }
 
         protected abstract

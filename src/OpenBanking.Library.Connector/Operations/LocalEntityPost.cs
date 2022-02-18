@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -60,10 +59,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
-            // GET from bank API
+            // POST to bank API and create entity
             (TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await ApiPost(requestInfo);
             nonErrorMessages.AddRange(newNonErrorMessages);
+
+            // Save entity
+            await _entityMethods.AddAsync(persistedObject);
 
             // Create response (may involve additional processing based on entity)
             TPublicResponse response1 = await CreateResponse(persistedObject);
@@ -86,8 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         ///     Empty function as by definition POST local does not include POST to bank API.
         /// </summary>
         /// <returns></returns>
-        protected virtual async
-            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        protected virtual Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create non-error list
@@ -100,9 +101,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 requestInfo.Request,
                 requestInfo.ModifiedBy,
                 _timeProvider);
-            await _entityMethods.AddAsync(persistedObject);
 
-            return (persistedObject, nonErrorMessages);
+            return Task
+                .FromResult<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>(
+                    (persistedObject, nonErrorMessages));
         }
 
         public class PostRequestInfo
