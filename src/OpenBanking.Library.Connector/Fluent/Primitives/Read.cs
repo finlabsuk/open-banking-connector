@@ -25,19 +25,19 @@ using DomesticVrpConsentAuthContextPersisted =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
-    internal abstract class GetBase<TPublicQuery, TPublicResponse>
+    internal abstract class ReadBase<TPublicQuery, TPublicResponse>
         where TPublicResponse : class
     {
         private readonly ISharedContext _context;
         private readonly IObjectGet<TPublicQuery, TPublicResponse> _getObject;
 
-        internal GetBase(ISharedContext context, IObjectGet<TPublicQuery, TPublicResponse> getObject)
+        internal ReadBase(ISharedContext context, IObjectGet<TPublicQuery, TPublicResponse> getObject)
         {
             _context = context;
             _getObject = getObject;
         }
 
-        public async Task<IFluentResponse<TPublicResponse>> GetAsync(
+        public async Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid id,
             string? modifiedBy,
             string? apiResponseWriteFile = null,
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             }
         }
 
-        public async Task<IFluentResponse<IQueryable<TPublicResponse>>> GetAsync(
+        public async Task<IFluentResponse<IQueryable<TPublicResponse>>> ReadAsync(
             Expression<Func<TPublicQuery, bool>> predicate)
         {
             // Create non-error list
@@ -117,12 +117,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal class
-        LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> :
-            GetBase<TPublicQuery, TPublicResponse>
+        LocalEntityRead<TEntity, TPublicQuery, TPublicResponse> :
+            ReadBase<TPublicQuery, TPublicResponse>
         where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity, new()
         where TPublicResponse : class
     {
-        internal LocalEntityGet(ISharedContext context) : base(
+        internal LocalEntityRead(ISharedContext context) : base(
             context,
             new Operations.LocalEntityGet<TEntity, TPublicQuery, TPublicResponse>(
                 context.DbService.GetDbEntityMethodsClass<TEntity>(),
@@ -132,10 +132,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.Instrumentation)) { }
     }
 
-    internal class DomesticPaymentConsentsGet :
-        GetBase<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentResponse>
+    internal class DomesticPaymentConsentsRead :
+        ReadBase<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentResponse>
     {
-        internal DomesticPaymentConsentsGet(ISharedContext context) : base(
+        internal DomesticPaymentConsentsRead(ISharedContext context) : base(
             context,
             new DomesticPaymentConsentGet(
                 context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
@@ -146,10 +146,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticPaymentConsentFundsConfirmationGet :
-        GetBase<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentResponse>
+    internal class DomesticPaymentConsentFundsConfirmationRead :
+        ReadBase<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentResponse>
     {
-        internal DomesticPaymentConsentFundsConfirmationGet(ISharedContext context) : base(
+        internal DomesticPaymentConsentFundsConfirmationRead(ISharedContext context) : base(
             context,
             new DomesticPaymentConsentGetFundsConfirmation(
                 context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
@@ -160,10 +160,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticVrpConsentFundsConfirmationGet :
-        GetBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
+    internal class DomesticVrpConsentFundsConfirmationRead :
+        ReadBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
     {
-        internal DomesticVrpConsentFundsConfirmationGet(ISharedContext context) : base(
+        internal DomesticVrpConsentFundsConfirmationRead(ISharedContext context) : base(
             context,
             new DomesticVrpConsentGetFundsConfirmation(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -174,10 +174,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticPaymentsGet :
-        GetBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
+    internal class DomesticPaymentsRead :
+        ReadBase<IDomesticPaymentPublicQuery, DomesticPaymentResponse>
     {
-        internal DomesticPaymentsGet(ISharedContext context) : base(
+        internal DomesticPaymentsRead(ISharedContext context) : base(
             context,
             new DomesticPaymentGet(
                 context.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
@@ -189,10 +189,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticVrpConsentGet :
-        GetBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
+    internal class DomesticVrpConsentRead :
+        ReadBase<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
     {
-        internal DomesticVrpConsentGet(ISharedContext context) : base(
+        internal DomesticVrpConsentRead(ISharedContext context) : base(
             context,
             new Operations.VariableRecurringPayments.DomesticVrpConsentGet(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -203,10 +203,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticVrpGet :
-        GetBase<IDomesticVrpPublicQuery, DomesticVrpResponse>
+    internal class DomesticVrpRead :
+        ReadBase<IDomesticVrpPublicQuery, DomesticVrpResponse>
     {
-        internal DomesticVrpGet(ISharedContext context) : base(
+        internal DomesticVrpRead(ISharedContext context) : base(
             context,
             new Operations.VariableRecurringPayments.DomesticVrpGet(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpPersisted>(),

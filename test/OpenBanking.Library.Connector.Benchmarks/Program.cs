@@ -13,6 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         {
             try
             {
+                // Should this be simplified to BenchmarkRunner.Run<TestClass>() ?
                 BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
             }
             catch (Exception ex)

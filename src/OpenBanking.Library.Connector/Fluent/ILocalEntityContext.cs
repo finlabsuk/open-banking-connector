@@ -7,8 +7,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicResponse> :
-        IPostLocalContext<TPublicRequest, TPublicResponse>,
-        IGetLocalContext<TPublicQuery, TPublicResponse>,
+        ICreateLocalContext<TPublicRequest, TPublicResponse>,
+        IReadLocalContext<TPublicQuery, TPublicResponse>,
         IDeleteLocalContext
         where TPublicResponse : class { }
 }

@@ -102,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticPaymentConsentRequest.Name = testNameUnique;
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .PostAsync(domesticPaymentConsentRequest);
+                    .CreateAsync(domesticPaymentConsentRequest);
 
             // Checks
             domesticPaymentConsentResp.Should().NotBeNull();
@@ -113,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // GET domestic payment consent
             IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp2 =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
-                    .GetAsync(domesticPaymentConsentId);
+                    .ReadAsync(domesticPaymentConsentId);
 
             // Checks
             domesticPaymentConsentResp2.Should().NotBeNull();
@@ -130,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 await requestBuilder.PaymentInitiation
                     .DomesticPaymentConsents
                     .AuthContexts
-                    .PostLocalAsync(authContextRequest);
+                    .CreateLocalAsync(authContextRequest);
 
             // Checks
             authContextResponse.Should().NotBeNull();
@@ -182,7 +182,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     // GET consent funds confirmation
                     IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
                         await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
-                            .GetFundsConfirmationAsync(domesticPaymentConsentId);
+                            .ReadFundsConfirmationAsync(domesticPaymentConsentId);
 
                     // Checks
                     domesticPaymentConsentResp4.Should().NotBeNull();
@@ -203,7 +203,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticPaymentRequest.Name = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .PostAsync(domesticPaymentRequest);
+                        .CreateAsync(domesticPaymentRequest);
 
                 // Checks
                 domesticPaymentResp.Should().NotBeNull();
@@ -214,7 +214,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 // GET domestic payment
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp2 =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .GetAsync(domesticPaymentId);
+                        .ReadAsync(domesticPaymentId);
 
                 // Checks
                 domesticPaymentResp2.Should().NotBeNull();

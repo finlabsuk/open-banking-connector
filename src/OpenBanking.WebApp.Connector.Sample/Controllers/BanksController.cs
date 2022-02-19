@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             IFluentResponse<BankResponse> fluentResponse = await _requestBuilder
                 .BankConfiguration
                 .Banks
-                .PostLocalAsync(request);
+                .CreateLocalAsync(request);
 
             // HTTP response
             HttpResponse<BankResponse> httpResponse = fluentResponse.ToHttpResponse();

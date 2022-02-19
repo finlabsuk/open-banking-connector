@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
     /// <summary>
-    ///     Fluent interface for local entities. These are data objects persisted to DB locally but not at bank API.
+    ///     Fluent interface methods for Delete.
     /// </summary>
     public interface IDeleteContext
     {
         /// <summary>
-        ///     DELETE entity from Open Banking Connector.
+        ///     DELETE object by ID (includes DELETE-ing object at bank API).
+        ///     Object will be deleted at bank and also from local database if it is a Bank Registration or Consent.
+        ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
+        /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
+        /// <param name="useRegistrationAccessToken"></param>
         /// <returns></returns>
         Task<IFluentResponse> DeleteAsync(
             Guid id,

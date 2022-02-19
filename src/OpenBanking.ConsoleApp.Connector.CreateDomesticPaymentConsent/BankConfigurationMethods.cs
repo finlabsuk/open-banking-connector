@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
-                .PostLocalAsync(bankRequest);
+                .CreateLocalAsync(bankRequest);
             Guid bankId = bankResp.Data!.Id;
 
             // Create bank registration
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .PostAsync(registrationRequest);
+                .CreateAsync(registrationRequest);
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
             // Create bank API information
@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IFluentResponse<BankApiSetResponse> apiInformationResponse = await requestBuilder
                 .BankConfiguration
                 .BankApiSets
-                .PostLocalAsync(apiSetRequest);
+                .CreateLocalAsync(apiSetRequest);
             Guid bankApiSetId = apiInformationResponse.Data!.Id;
 
             // Return IDs of created objects

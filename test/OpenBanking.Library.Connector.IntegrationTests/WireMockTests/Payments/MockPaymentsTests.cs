@@ -105,7 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             };
             IFluentResponse<BankResponse> bankResp = requestBuilder.BankConfiguration
                 .Banks
-                .PostLocalAsync(bankRequest)
+                .CreateLocalAsync(bankRequest)
                 .Result;
             bankResp.Should().NotBeNull();
             bankResp.Messages.Should().BeEmpty();
@@ -123,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             };
             IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.BankConfiguration
                 .BankRegistrations
-                .PostAsync(registrationRequest)
+                .CreateAsync(registrationRequest)
                 .Result;
 
             bankRegistrationResp.Should().NotBeNull();
@@ -144,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             IFluentResponse<BankApiSetResponse> bankApiInformationResponse = requestBuilder
                 .BankConfiguration
                 .BankApiSets
-                .PostLocalAsync(apiSetRequest)
+                .CreateLocalAsync(apiSetRequest)
                 .Result;
 
             bankApiInformationResponse.Should().NotBeNull();

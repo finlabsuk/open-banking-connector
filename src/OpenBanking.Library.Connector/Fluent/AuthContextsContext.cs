@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _authResultUpdate.PostAsync(
+            _authResultUpdate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,

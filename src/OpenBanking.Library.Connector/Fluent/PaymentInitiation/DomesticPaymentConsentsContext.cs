@@ -25,11 +25,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         IDomesticPaymentConsentAuthContextsContext AuthContexts { get; }
 
         /// <summary>
-        ///     GET entity by ID from Open Banking Connector.
+        ///     READ funds confirmation by ID (includes GETing object from bank API).
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<IFluentResponse<DomesticPaymentConsentResponse>> GetFundsConfirmationAsync(
+        Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
@@ -40,61 +40,62 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         ObjectContextBase<DomesticPaymentConsent>,
         IDomesticPaymentConsentsContext
     {
-        private readonly DomesticPaymentConsentFundsConfirmationGet
-            _domesticPaymentConsentFundsConfirmationGet;
+        private readonly DomesticPaymentConsentFundsConfirmationRead
+            _domesticPaymentConsentFundsConfirmationRead;
 
-        private readonly DomesticPaymentConsentsGet _domesticPaymentConsentsGet;
-        private readonly DomesticPaymentConsentsPost _domesticPaymentConsentsPost;
+        private readonly DomesticPaymentConsentsCreate _domesticPaymentConsentsCreate;
+
+        private readonly DomesticPaymentConsentsRead _domesticPaymentConsentsRead;
         private readonly ISharedContext _sharedContext;
 
         public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            _domesticPaymentConsentsGet = new DomesticPaymentConsentsGet(sharedContext);
-            _domesticPaymentConsentFundsConfirmationGet =
-                new DomesticPaymentConsentFundsConfirmationGet(sharedContext);
-            _domesticPaymentConsentsPost = new DomesticPaymentConsentsPost(sharedContext);
+            _domesticPaymentConsentsRead = new DomesticPaymentConsentsRead(sharedContext);
+            _domesticPaymentConsentFundsConfirmationRead =
+                new DomesticPaymentConsentFundsConfirmationRead(sharedContext);
+            _domesticPaymentConsentsCreate = new DomesticPaymentConsentsCreate(sharedContext);
         }
 
         public IDomesticPaymentConsentAuthContextsContext AuthContexts =>
             new DomesticPaymentConsentAuthContextsContext(_sharedContext);
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> GetFundsConfirmationAsync(
+        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentFundsConfirmationGet.GetAsync(
+            _domesticPaymentConsentFundsConfirmationRead.ReadAsync(
                 id,
                 modifiedBy,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> GetAsync(
+        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentsGet.GetAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
+            _domesticPaymentConsentsRead.ReadAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> PostAsync(
+        public Task<IFluentResponse<DomesticPaymentConsentResponse>> CreateAsync(
             DomesticPaymentConsentRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentsPost.PostAsync(
+            _domesticPaymentConsentsCreate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<IQueryable<DomesticPaymentConsentResponse>>> GetLocalAsync(
+        public Task<IFluentResponse<IQueryable<DomesticPaymentConsentResponse>>> ReadLocalAsync(
             Expression<Func<IDomesticPaymentConsentPublicQuery, bool>> predicate) =>
-            _domesticPaymentConsentsGet.GetAsync(predicate);
+            _domesticPaymentConsentsRead.ReadAsync(predicate);
 
         public Task<IFluentResponse<DomesticPaymentConsentResponse>> GetLocalAsync(Guid id)
-            => GetAsync(id);
+            => ReadAsync(id);
     }
 }

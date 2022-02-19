@@ -53,20 +53,20 @@ using DomesticPaymentConsentAuthContext =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
-    internal abstract class PostBase<TPublicRequest, TPublicResponse>
+    internal abstract class CreateBase<TPublicRequest, TPublicResponse>
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {
         private readonly ISharedContext _context;
         private readonly IObjectPost<TPublicRequest, TPublicResponse> _postObject;
 
-        internal PostBase(ISharedContext context, IObjectPost<TPublicRequest, TPublicResponse> postObject)
+        internal CreateBase(ISharedContext context, IObjectPost<TPublicRequest, TPublicResponse> postObject)
         {
             _context = context;
             _postObject = postObject;
         }
 
-        public async Task<IFluentResponse<TPublicResponse>> PostAsync(
+        public async Task<IFluentResponse<TPublicResponse>> CreateAsync(
             TPublicRequest publicRequest,
             string? createdBy,
             string? apiRequestWriteFile = null,
@@ -135,14 +135,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         }
     }
 
-    internal class LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> :
-        PostBase<TPublicRequest, TPublicResponse>
+    internal class LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse> :
+        CreateBase<TPublicRequest, TPublicResponse>
         where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse>,
         new()
         where TPublicRequest : BaseRequest, ISupportsValidation
         where TPublicResponse : class
     {
-        internal LocalEntityPost(ISharedContext context) : base(
+        internal LocalEntityCreate(ISharedContext context) : base(
             context,
             new Operations.LocalEntityPost<TEntity, TPublicRequest, TPublicResponse>(
                 context.DbService.GetDbEntityMethodsClass<TEntity>(),
@@ -152,11 +152,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.Instrumentation)) { }
     }
 
-    internal class DomesticPaymentConsentAuthPost :
-        PostBase<DomesticPaymentConsentAuthContextRequest,
+    internal class DomesticPaymentConsentAuthCreate :
+        CreateBase<DomesticPaymentConsentAuthContextRequest,
             DomesticPaymentConsentAuthContextPostResponse>
     {
-        internal DomesticPaymentConsentAuthPost(ISharedContext context) : base(
+        internal DomesticPaymentConsentAuthCreate(ISharedContext context) : base(
             context,
             new DomesticPaymentConsentAuthContext(
                 context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
@@ -167,10 +167,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.Instrumentation)) { }
     }
 
-    internal class DomesticPaymentConsentsPost :
-        PostBase<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse>
+    internal class DomesticPaymentConsentsCreate :
+        CreateBase<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse>
     {
-        internal DomesticPaymentConsentsPost(ISharedContext context) : base(
+        internal DomesticPaymentConsentsCreate(ISharedContext context) : base(
             context,
             new DomesticPaymentConsentPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
@@ -183,10 +183,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 
-    internal class DomesticPaymentsPost :
-        PostBase<DomesticPaymentRequest, DomesticPaymentResponse>
+    internal class DomesticPaymentsCreate :
+        CreateBase<DomesticPaymentRequest, DomesticPaymentResponse>
     {
-        internal DomesticPaymentsPost(ISharedContext context) : base(
+        internal DomesticPaymentsCreate(ISharedContext context) : base(
             context,
             new DomesticPaymentPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
@@ -198,10 +198,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class DomesticVrpConsentPost :
-        PostBase<DomesticVrpConsentRequest, DomesticVrpConsentResponse>
+    internal class DomesticVrpConsentCreate :
+        CreateBase<DomesticVrpConsentRequest, DomesticVrpConsentResponse>
     {
-        internal DomesticVrpConsentPost(ISharedContext context) : base(
+        internal DomesticVrpConsentCreate(ISharedContext context) : base(
             context,
             new Operations.VariableRecurringPayments.DomesticVrpConsentPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -214,11 +214,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>())) { }
     }
 
-    internal class DomesticVrpConsentAuthPost :
-        PostBase<DomesticVrpConsentAuthContextRequest,
+    internal class DomesticVrpConsentAuthCreate :
+        CreateBase<DomesticVrpConsentAuthContextRequest,
             DomesticVrpConsentAuthContextPostResponse>
     {
-        internal DomesticVrpConsentAuthPost(ISharedContext context) : base(
+        internal DomesticVrpConsentAuthCreate(ISharedContext context) : base(
             context,
             new DomesticVrpConsentAuthContext(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
@@ -229,10 +229,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.Instrumentation)) { }
     }
 
-    internal class DomesticVrpPost :
-        PostBase<DomesticVrpRequest, DomesticVrpResponse>
+    internal class DomesticVrpCreate :
+        CreateBase<DomesticVrpRequest, DomesticVrpResponse>
     {
-        internal DomesticVrpPost(ISharedContext context) : base(
+        internal DomesticVrpCreate(ISharedContext context) : base(
             context,
             new Operations.VariableRecurringPayments.DomesticVrpPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpPersisted>(),
@@ -244,10 +244,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 context.ApiVariantMapper)) { }
     }
 
-    internal class BankRegistrationsPost :
-        PostBase<BankRegistrationRequest, BankRegistrationResponse>
+    internal class BankRegistrationsCreate :
+        CreateBase<BankRegistrationRequest, BankRegistrationResponse>
     {
-        internal BankRegistrationsPost(ISharedContext sharedContext) : base(
+        internal BankRegistrationsCreate(ISharedContext sharedContext) : base(
             sharedContext,
             new BankRegistrationPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
@@ -262,7 +262,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal class AuthResultUpdate :
-        PostBase<AuthResult, AuthContextResponse>
+        CreateBase<AuthResult, AuthContextResponse>
     {
         internal AuthResultUpdate(ISharedContext sharedContext) : base(
             sharedContext,

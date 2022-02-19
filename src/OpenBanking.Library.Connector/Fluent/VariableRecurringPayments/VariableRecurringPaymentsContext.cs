@@ -10,12 +10,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     public interface IVariableRecurringPaymentsContext
     {
         /// <summary>
-        ///     API for DomesticVrpConsent object which corresponds to user consent for a domestic VRP.
+        ///     API for DomesticVrpConsent objects.
+        ///     A DomesticVrpConsent is an Open Banking object and corresponds to an "intended" domestic variable recurring
+        ///     payment.
         /// </summary>
         IDomesticVrpConsentsContext DomesticVrpConsents { get; }
 
         /// <summary>
-        ///     API for DomesticVrp object which corresponds to domestic VRP.
+        ///     API for DomesticVrp objects.
+        ///     A DomesticVrp corresponds to a domestic variable recurring payment and may be created once a DomesticVrpConsent is
+        ///     approved by a user.
         /// </summary>
         IDomesticVrpsContext DomesticVrps { get; }
     }

@@ -107,7 +107,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticVrpConsentRequest.Name = testNameUnique;
             IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
-                    .PostAsync(domesticVrpConsentRequest);
+                    .CreateAsync(domesticVrpConsentRequest);
 
             // Checks
             domesticVrpConsentResp.Should().NotBeNull();
@@ -118,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // GET domestic payment consent
             IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp2 =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
-                    .GetAsync(domesticVrpConsentId);
+                    .ReadAsync(domesticVrpConsentId);
 
             // Checks
             domesticVrpConsentResp2.Should().NotBeNull();
@@ -135,7 +135,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 await requestBuilder.VariableRecurringPayments
                     .DomesticVrpConsents
                     .AuthContexts
-                    .PostLocalAsync(authContextRequest);
+                    .CreateLocalAsync(authContextRequest);
 
             // Checks
             authContextResponse.Should().NotBeNull();
@@ -204,7 +204,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticVrpRequest.Name = testNameUnique;
                 IFluentResponse<DomesticVrpResponse>? domesticVrpResp =
                     await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                        .PostAsync(domesticVrpRequest);
+                        .CreateAsync(domesticVrpRequest);
 
                 // Checks
                 domesticVrpResp.Should().NotBeNull();
@@ -215,7 +215,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 // GET domestic payment
                 IFluentResponse<DomesticVrpResponse> domesticVrpResp2 =
                     await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                        .GetAsync(domesticVrpId);
+                        .ReadAsync(domesticVrpId);
 
                 // Checks
                 domesticVrpResp2.Should().NotBeNull();

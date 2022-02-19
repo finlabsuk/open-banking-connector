@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             IFluentResponse<DomesticPaymentConsentResponse> fluentResponse = await _requestBuilder
                 .PaymentInitiation
                 .DomesticPaymentConsents
-                .PostAsync(request);
+                .CreateAsync(request);
 
             // HTTP response
             HttpResponse<DomesticPaymentConsentResponse> httpResponse = fluentResponse.ToHttpResponse();
@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Paymen
             IFluentResponse<IQueryable<DomesticPaymentConsentResponse>> fluentResponse = await _requestBuilder
                 .PaymentInitiation
                 .DomesticPaymentConsents
-                .GetLocalAsync(query => true);
+                .ReadLocalAsync(query => true);
 
             // HTTP response
             HttpResponse<IQueryable<DomesticPaymentConsentResponse>> httpResponse = fluentResponse.ToHttpResponse();

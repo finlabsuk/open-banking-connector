@@ -20,40 +20,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     internal class DomesticVrpsContext :
         ObjectContextBase<DomesticVrp>, IDomesticVrpsContext
     {
-        private readonly DomesticVrpGet _domesticVrpGet;
-        private readonly DomesticVrpPost _domesticVrpPost;
+        private readonly DomesticVrpRead _domesticVrpRead;
+        private readonly DomesticVrpCreate _domesticVrpCreate;
 
         public DomesticVrpsContext(ISharedContext sharedContext) : base(sharedContext)
         {
-            _domesticVrpGet = new DomesticVrpGet(sharedContext);
-            _domesticVrpPost = new DomesticVrpPost(sharedContext);
+            _domesticVrpRead = new DomesticVrpRead(sharedContext);
+            _domesticVrpCreate = new DomesticVrpCreate(sharedContext);
         }
 
-        public Task<IFluentResponse<DomesticVrpResponse>> GetAsync(
+        public Task<IFluentResponse<DomesticVrpResponse>> ReadAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticVrpGet.GetAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
+            _domesticVrpRead.ReadAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
 
-        public Task<IFluentResponse<DomesticVrpResponse>> PostAsync(
+        public Task<IFluentResponse<DomesticVrpResponse>> CreateAsync(
             DomesticVrpRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticVrpPost.PostAsync(
+            _domesticVrpCreate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<IQueryable<DomesticVrpResponse>>> GetLocalAsync(
+        public Task<IFluentResponse<IQueryable<DomesticVrpResponse>>> ReadLocalAsync(
             Expression<Func<IDomesticVrpPublicQuery, bool>> predicate) =>
-            _domesticVrpGet.GetAsync(predicate);
+            _domesticVrpRead.ReadAsync(predicate);
 
         public Task<IFluentResponse<DomesticVrpResponse>> GetLocalAsync(Guid id) =>
-            _domesticVrpGet.GetAsync(id, null);
+            _domesticVrpRead.ReadAsync(id, null);
     }
 }

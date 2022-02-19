@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
-                .PostLocalAsync(bankRequest);
+                .CreateLocalAsync(bankRequest);
 
             bankResp.Should().NotBeNull();
             bankResp.Messages.Should().BeEmpty();
@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .PostAsync(
+                .CreateAsync(
                     registrationRequest,
                     null,
                     testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postRequest")
@@ -104,7 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IFluentResponse<BankApiSetResponse> apiSetResponse = await requestBuilder
                 .BankConfiguration
                 .BankApiSets
-                .PostLocalAsync(apiSetRequest);
+                .CreateLocalAsync(apiSetRequest);
 
             apiSetResponse.Should().NotBeNull();
             apiSetResponse.Messages.Should().BeEmpty();

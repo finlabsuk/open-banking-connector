@@ -10,23 +10,24 @@ using System.Threading.Tasks;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
     /// <summary>
-    ///     Fluent interface for local entities. These are data objects persisted to DB locally but not at bank API.
+    ///     Fluent interface methods for ReadLocal.
     /// </summary>
-    /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicResponse"></typeparam>
     /// <typeparam name="TPublicQuery"></typeparam>
-    public interface IGetLocalContext<TPublicQuery, TPublicResponse>
+    /// <typeparam name="TPublicResponse"></typeparam>
+    public interface IReadLocalContext<TPublicQuery, TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
-        ///     GET entity by ID from Open Banking Connector.
+        ///     READ local object by ID (does not include GETing object from bank API).
+        ///     Object will be read from local database only.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> GetLocalAsync(Guid id);
 
         /// <summary>
-        ///     GET entity by query from Open Banking Connector.
+        ///     READ local object(s) by query (does not include GETing object(s) from bank API).
+        ///     Object(s) will be read from local database only.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>

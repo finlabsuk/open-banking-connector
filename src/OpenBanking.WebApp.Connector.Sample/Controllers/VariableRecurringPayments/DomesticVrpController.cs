@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
         {
             IFluentResponse<DomesticVrpResponse> fluentResponse = await _requestBuilder.VariableRecurringPayments
                 .DomesticVrps
-                .PostAsync(request);
+                .CreateAsync(request);
 
             // HTTP response
             HttpResponse<DomesticVrpResponse> httpResponse = fluentResponse.ToHttpResponse();
@@ -74,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers.Variab
             IFluentResponse<IQueryable<DomesticVrpResponse>> fluentResponse = await _requestBuilder
                 .VariableRecurringPayments
                 .DomesticVrps
-                .GetLocalAsync(query => true);
+                .ReadLocalAsync(query => true);
 
             // HTTP response
             HttpResponse<IQueryable<DomesticVrpResponse>> httpResponse = fluentResponse.ToHttpResponse();

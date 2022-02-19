@@ -12,20 +12,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
     public interface IBankConfigurationContext
     {
         /// <summary>
-        ///     API for Bank object which is the base object for a bank and is parent to BankRegistration and BankProfile objects
+        ///     API for Bank objects.
+        ///     A Bank is the base object for a bank in Open Banking Connector and is parent to BankRegistration and BankApiSet
+        ///     objects
         /// </summary>
         ILocalEntityContext<Bank, IBankPublicQuery, BankResponse> Banks { get; }
 
         /// <summary>
-        ///     API for BankProfile object which adds configures functional API endpoints for a BankRegistration
+        ///     API for BankApiSet objects.
+        ///     A BankApiSet specifies functional API(s) supported by a Bank. Multiple BankApiSets may be
+        ///     created for the same bank.
         /// </summary>
         ILocalEntityContext<BankApiSet,
                 IBankApiSetPublicQuery, BankApiSetResponse>
             BankApiSets { get; }
 
         /// <summary>
-        ///     API for BankRegistration object which corresponds to an OAuth2 client registration with a bank (represented by a
-        ///     Bank object)
+        ///     API for BankRegistration objects.
+        ///     A BankRegistration corresponds to an OAuth2 client registration with a Bank. Multiple BankRegistrations may be
+        ///     created for the same bank.
         /// </summary>
         IBankRegistrationsContext
             BankRegistrations { get; }

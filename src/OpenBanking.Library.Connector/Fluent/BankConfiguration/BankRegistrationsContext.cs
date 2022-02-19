@@ -14,8 +14,8 @@ using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
-        IPostContext<BankRegistration, BankRegistrationResponse>,
-        IGetLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        ICreateContext<BankRegistration, BankRegistrationResponse>,
+        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IDeleteLocalContext,
         IDeleteContext { }
 
@@ -24,35 +24,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         IBankRegistrationsContext
     {
         private readonly BankRegistrationDelete _bankRegistrationDelete;
-        private readonly BankRegistrationsPost _bankRegistrationsPost;
+        private readonly BankRegistrationsCreate _bankRegistrationsCreate;
 
-        private readonly LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-            BankRegistrationResponse> _localEntityGet;
+        private readonly LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
+            BankRegistrationResponse> _localEntityRead;
 
         public BankRegistrationsContext(ISharedContext sharedContext) : base(sharedContext)
         {
-            _bankRegistrationsPost = new BankRegistrationsPost(sharedContext);
-            _localEntityGet =
-                new LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery,
+            _bankRegistrationsCreate = new BankRegistrationsCreate(sharedContext);
+            _localEntityRead =
+                new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
                     BankRegistrationResponse>(sharedContext);
             _bankRegistrationDelete = new BankRegistrationDelete(sharedContext);
         }
 
         public Task<IFluentResponse<IQueryable<BankRegistrationResponse>>> GetLocalAsync(
             Expression<Func<IBankRegistrationPublicQuery, bool>> predicate) =>
-            _localEntityGet.GetAsync(predicate);
+            _localEntityRead.ReadAsync(predicate);
 
         public Task<IFluentResponse<BankRegistrationResponse>>
             GetLocalAsync(Guid id) =>
-            _localEntityGet.GetAsync(id, null);
+            _localEntityRead.ReadAsync(id, null);
 
-        public Task<IFluentResponse<BankRegistrationResponse>> PostAsync(
+        public Task<IFluentResponse<BankRegistrationResponse>> CreateAsync(
             BankRegistration publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _bankRegistrationsPost.PostAsync(
+            _bankRegistrationsCreate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,

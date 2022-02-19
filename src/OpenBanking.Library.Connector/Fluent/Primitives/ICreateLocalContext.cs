@@ -6,16 +6,22 @@ using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
-    public interface IPostContext<in TPublicRequest, TPublicResponse>
-        where TPublicResponse : class
+    /// <summary>
+    ///     Fluent interface methods for CreateLocal.
+    /// </summary>
+    /// <typeparam name="TPublicRequest"></typeparam>
+    /// <typeparam name="TPublicPostResponse"></typeparam>
+    public interface ICreateLocalContext<in TPublicRequest, TPublicPostResponse>
+        where TPublicPostResponse : class
     {
         /// <summary>
-        ///     POST object to Open Banking Connector (creates local and remote objects, includes bank API POST).
+        ///     CREATE local object (does not include POSTing object to bank API).
+        ///     Object will be created in local database only.
         /// </summary>
         /// <param name="publicRequest">Request object</param>
         /// <param name="createdBy">Optional user name or comment for DB record(s).</param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> PostAsync(
+        Task<IFluentResponse<TPublicPostResponse>> CreateLocalAsync(
             TPublicRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,

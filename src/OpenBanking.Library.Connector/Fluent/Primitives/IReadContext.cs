@@ -10,31 +10,32 @@ using System.Threading.Tasks;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
     /// <summary>
-    ///     Fluent interface for local entities. These are data objects persisted to DB locally but not at bank API.
+    ///     Fluent interface methods for Read.
     /// </summary>
-    /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicResponse"></typeparam>
     /// <typeparam name="TPublicQuery"></typeparam>
-    public interface IGetContext<TPublicQuery, TPublicResponse>
+    /// <typeparam name="TPublicResponse"></typeparam>
+    public interface IReadContext<TPublicQuery, TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
-        ///     GET entity by ID from Open Banking Connector.
+        ///     READ object by ID (includes GETing object from bank API).
+        ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> GetAsync(
+        Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null);
 
         /// <summary>
-        ///     GET entity by query from Open Banking Connector.
+        ///     READ objects by query (includes GETing object from bank API).
+        ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<IFluentResponse<IQueryable<TPublicResponse>>> GetLocalAsync(
+        Task<IFluentResponse<IQueryable<TPublicResponse>>> ReadLocalAsync(
             Expression<Func<TPublicQuery, bool>> predicate);
     }
 }

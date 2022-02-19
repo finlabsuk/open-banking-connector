@@ -19,40 +19,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
     internal class DomesticPaymentsContext : ObjectContextBase<DomesticPayment>, IDomesticPaymentsContext
     {
-        private readonly DomesticPaymentsGet _domesticPaymentsGet;
-        private readonly DomesticPaymentsPost _domesticPaymentsPost;
+        private readonly DomesticPaymentsRead _domesticPaymentsRead;
+        private readonly DomesticPaymentsCreate _domesticPaymentsCreate;
 
         public DomesticPaymentsContext(ISharedContext sharedContext) : base(sharedContext)
         {
-            _domesticPaymentsGet = new DomesticPaymentsGet(sharedContext);
-            _domesticPaymentsPost = new DomesticPaymentsPost(sharedContext);
+            _domesticPaymentsRead = new DomesticPaymentsRead(sharedContext);
+            _domesticPaymentsCreate = new DomesticPaymentsCreate(sharedContext);
         }
 
-        public Task<IFluentResponse<DomesticPaymentResponse>> GetAsync(
+        public Task<IFluentResponse<DomesticPaymentResponse>> ReadAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticPaymentsGet.GetAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
+            _domesticPaymentsRead.ReadAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
 
-        public Task<IFluentResponse<DomesticPaymentResponse>> PostAsync(
+        public Task<IFluentResponse<DomesticPaymentResponse>> CreateAsync(
             DomesticPaymentRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _domesticPaymentsPost.PostAsync(
+            _domesticPaymentsCreate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<IQueryable<DomesticPaymentResponse>>> GetLocalAsync(
+        public Task<IFluentResponse<IQueryable<DomesticPaymentResponse>>> ReadLocalAsync(
             Expression<Func<IDomesticPaymentPublicQuery, bool>> predicate) =>
-            _domesticPaymentsGet.GetAsync(predicate);
+            _domesticPaymentsRead.ReadAsync(predicate);
 
         public Task<IFluentResponse<DomesticPaymentResponse>> GetLocalAsync(Guid id) =>
-            _domesticPaymentsGet.GetAsync(id, null);
+            _domesticPaymentsRead.ReadAsync(id, null);
     }
 }

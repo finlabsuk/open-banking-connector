@@ -10,12 +10,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
     public interface IPaymentInitiationContext
     {
         /// <summary>
-        ///     API for DomesticPaymentConsent object which corresponds to user consent for a domestic payment.
+        ///     API for DomesticPaymentConsent objects.
+        ///     A DomesticPaymentConsent is an Open Banking object and corresponds to an "intended" domestic payment.
         /// </summary>
         IDomesticPaymentConsentsContext DomesticPaymentConsents { get; }
 
         /// <summary>
-        ///     API for DomesticPayment which corresponds to a domestic payment.
+        ///     API for DomesticPayment objects.
+        ///     A DomesticPayment corresponds to a domestic payment and may be created once a DomesticPaymentConsent is approved by
+        ///     a user.
         /// </summary>
         IDomesticPaymentsContext DomesticPayments { get; }
     }

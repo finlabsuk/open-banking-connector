@@ -23,23 +23,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         where TPublicResponse : class
         where TPublicRequest : Base, ISupportsValidation
     {
-        private readonly LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> _localEntityGet;
-        private readonly LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> _localEntityPost;
+        private readonly LocalEntityRead<TEntity, TPublicQuery, TPublicResponse> _localEntityRead;
+        private readonly LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse> _localEntityCreate;
 
         public LocalEntityContext(ISharedContext sharedContext) : base(sharedContext)
         {
-            _localEntityGet = new LocalEntityGet<TEntity, TPublicQuery, TPublicResponse>(sharedContext);
-            _localEntityPost =
-                new LocalEntityPost<TEntity, TPublicRequest, TPublicResponse>(sharedContext);
+            _localEntityRead = new LocalEntityRead<TEntity, TPublicQuery, TPublicResponse>(sharedContext);
+            _localEntityCreate =
+                new LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse>(sharedContext);
         }
 
-        Task<IFluentResponse<TPublicResponse>> IPostLocalContext<TPublicRequest, TPublicResponse>.PostLocalAsync(
+        Task<IFluentResponse<TPublicResponse>> ICreateLocalContext<TPublicRequest, TPublicResponse>.CreateLocalAsync(
             TPublicRequest publicRequest,
             string? createdBy,
             string? apiRequestWriteFile,
             string? apiResponseWriteFile,
             string? apiResponseOverrideFile) =>
-            _localEntityPost.PostAsync(
+            _localEntityCreate.CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
@@ -47,10 +47,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 apiResponseOverrideFile);
 
         public Task<IFluentResponse<TPublicResponse>> GetLocalAsync(Guid id) =>
-            _localEntityGet.GetAsync(id, null);
+            _localEntityRead.ReadAsync(id, null);
 
         public Task<IFluentResponse<IQueryable<TPublicResponse>>> GetLocalAsync(
             Expression<Func<TPublicQuery, bool>> predicate) =>
-            _localEntityGet.GetAsync(predicate);
+            _localEntityRead.ReadAsync(predicate);
     }
 }
