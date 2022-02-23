@@ -8,22 +8,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
     public partial class BankProfileDefinitions
     {
-        public BankProfile TSB { get; }
+        public BankProfile Tsb { get; }
 
-        private BankProfile GetTSB()
+        private BankProfile GetTsb()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.TSB);
+                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Tsb);
             return new BankProfile(
-                BankProfileEnum.TSB,
-              "https://apis.tsb.co.uk/apis/sandbox/open-banking/v3.1",// from https://apis.developer.tsb.co.uk/?WT.mc_id=&WT.srch=1&keyword=&matchtype=&adid=&cmp=&agrp=&eact=&ch=ppc&sch=perfmax&pf=mor&co=acq&gclid=Cj0KCQiAubmPBhCyARIsAJWNpiMGIo64EcPICBrMmxT3nK1J6hx_fNkHXW3FP-zxqQJzTe8Aig7xQNMaAnPNEALw_wcB&gclsrc=aw.ds
+                BankProfileEnum.Tsb,
+                "https://apis.tsb.co.uk/apis/sandbox/open-banking/v3.1", // from https://apis.developer.tsb.co.uk/?WT.mc_id=&WT.srch=1&keyword=&matchtype=&adid=&cmp=&agrp=&eact=&ch=ppc&sch=perfmax&pf=mor&co=acq&gclid=Cj0KCQiAubmPBhCyARIsAJWNpiMGIo64EcPICBrMmxT3nK1J6hx_fNkHXW3FP-zxqQJzTe8Aig7xQNMaAnPNEALw_wcB&gclsrc=aw.ds
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiVersion(),
-                    BaseUrl = "https://apis.tsb.co.uk/apis/sandbox/open-banking/v3.1/pisp" //from https://apis.developer.tsb.co.uk/?WT.mc_id=&WT.srch=1&keyword=&matchtype=&adid=&cmp=&agrp=&eact=&ch=ppc&sch=perfmax&pf=mor&co=acq&gclid=Cj0KCQiAubmPBhCyARIsAJWNpiMGIo64EcPICBrMmxT3nK1J6hx_fNkHXW3FP-zxqQJzTe8Aig7xQNMaAnPNEALw_wcB&gclsrc=aw.ds
+                    BaseUrl =
+                        "https://apis.tsb.co.uk/apis/sandbox/open-banking/v3.1/pisp" //from https://apis.developer.tsb.co.uk/?WT.mc_id=&WT.srch=1&keyword=&matchtype=&adid=&cmp=&agrp=&eact=&ch=ppc&sch=perfmax&pf=mor&co=acq&gclid=Cj0KCQiAubmPBhCyARIsAJWNpiMGIo64EcPICBrMmxT3nK1J6hx_fNkHXW3FP-zxqQJzTe8Aig7xQNMaAnPNEALw_wcB&gclsrc=aw.ds
                 },
                 null);
         }

@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             AlliedIrish = GetAlliedIrish();
             Monzo = GetMonzo();
             Lloyds = GetLloyds();
-            TSB = GetTSB();
+            Tsb = GetTsb();
         }
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
