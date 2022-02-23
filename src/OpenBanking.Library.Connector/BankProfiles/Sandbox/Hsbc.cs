@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -26,7 +27,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
-                null);
+                null)
+            {
+                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                {
+                    BankRegistrationAdjustments = (registration, scope) =>
+                    {
+                        registration.OAuth2RequestObjectClaimsOverrides = new OAuth2RequestObjectClaimsOverrides
+                        {
+                            Issuer = bankProfileHiddenProperties.GetAdditionalProperty1(),
+                            Audience = bankProfileHiddenProperties.GetAdditionalProperty2()
+                        };
+                        return registration;
+                    },
+                },
+            };
         }
     }
 }

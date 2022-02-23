@@ -1,34 +1,45 @@
-import {ConsentUIInteractions, ConsentVariety} from "../authoriseConsent"
+import {ConsentUIInteractions} from "../authoriseConsent"
 
 export const consentUIInteractions: ConsentUIInteractions = async (page, navigationPromise, consentVariety, bankUser) => {
 
-    await page.waitForSelector('#wizardContent > #loginForm #loginName')
-    await page.click('#wizardContent > #loginForm #loginName')
-    await page.type('#wizardContent > #loginForm #loginName', bankUser.userNameOrNumber)
+    await page.waitForSelector('username-component > .content-section > .username-input-box > .input-container > .form-field-input')
+    await page.click('username-component > .content-section > .username-input-box > .input-container > .form-field-input')
+    await page.type('username-component > .content-section > .username-input-box > .input-container > .form-field-input', bankUser.userNameOrNumber)
 
-    await page.waitForSelector('#wizardContent > #loginForm #password')
-    await page.click('#wizardContent > #loginForm #password')
-    await page.type('#wizardContent > #loginForm #password', bankUser.password)
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(1)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(1)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(1)', bankUser.password.charAt(0))
 
-    await page.waitForSelector('.col-md-9 > #wizardContent > .nav > .nav-item:nth-child(1) > .nav-link')
-    await page.click('.col-md-9 > #wizardContent > .nav > .nav-item:nth-child(1) > .nav-link')
-    await navigationPromise
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(2)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(2)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(2)', bankUser.password.charAt(1))
 
-    if (consentVariety == ConsentVariety.AccountAccessConsent) {
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(3)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(3)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(3)', bankUser.password.charAt(2))
 
-        await page.select('#selectAccountsPage > #loginForm #accounts', '700004000000000000000002')
-        await page.waitForSelector('#loginForm > .form-row > .form-group > #accounts > option:nth-child(2)')
-        await page.click('#loginForm > .form-row > .form-group > #accounts > option:nth-child(2)')
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(4)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(4)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(4)', bankUser.password.charAt(3))
 
-    } else {
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(5)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(5)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(5)', bankUser.password.charAt(4))
 
-        await page.waitForSelector('#selectAccountsPage > #loginForm #account')
-        await page.click('#selectAccountsPage > #loginForm #account')
+    await page.waitForSelector('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(6)')
+    await page.click('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(6)')
+    await page.type('security-code-component > .content-section > .authentication-code-container > .input-container > .form-field-input:nth-child(6)', bankUser.password.charAt(5))
 
-    }
+    await page.waitForSelector('.main-section > security-code-component > .content-section > .button-container > .btn')
+    await page.click('.main-section > security-code-component > .content-section > .button-container > .btn')
 
-    await page.waitForSelector('#wizardContent > #selectAccountsPage > .nav > .nav-item:nth-child(1) > .nav-link')
-    await page.click('#wizardContent > #selectAccountsPage > .nav > .nav-item:nth-child(1) > .nav-link')
+    // Second screen - don't await navigationPromise as doesn't return
+    await page.waitForSelector('.ng-star-inserted > .obie-aisp-section > .ng-star-inserted > .accounts-box > .account-box')
+    await page.click('.ng-star-inserted > .obie-aisp-section > .ng-star-inserted > .accounts-box > .account-box')
+
+    await page.waitForSelector('.main-section > .ng-star-inserted > .obie-aisp-section > .button-box > .btn')
+    await page.click('.main-section > .ng-star-inserted > .obie-aisp-section > .button-box > .btn')
+
     await navigationPromise
 
 }

@@ -15,5 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     {
         [JsonProperty("aud")]
         public string? Audience { get; set; }
+
+        [JsonProperty("iss")]
+        public string? Issuer { get; set; }
     }
 }

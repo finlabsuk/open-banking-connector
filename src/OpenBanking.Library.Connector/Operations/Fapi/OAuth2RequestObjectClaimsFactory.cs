@@ -21,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = bankRegistration.ExternalApiId,
+                Iss = bankRegistration.OAuth2RequestObjectClaimsOverrides?.Issuer ??
+                      bankRegistration.ExternalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddHours(1),

@@ -23,11 +23,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         /// </summary>
         [JsonProperty(PropertyName = "iat")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
-        public DateTimeOffset Iat { get; set; }
+        public DateTimeOffset? Iat { get; set; }
 
         [JsonProperty(PropertyName = "nbf")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
-        public DateTimeOffset Nbf { get; set; }
+        public DateTimeOffset? Nbf { get; set; }
 
         /// <summary>
         ///     Gets or sets the time at which the request expires expressed as
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         /// </summary>
         [JsonProperty(PropertyName = "exp")]
         [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
-        public DateTimeOffset Exp { get; set; }
+        public DateTimeOffset? Exp { get; set; }
 
         /// <summary>
         ///     Gets or sets the audience for the request. This should be the
@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public string Scope { get; set; } = null!;
 
         [JsonProperty("max_age")]
-        public int MaxAge { get; set; }
+        public int? MaxAge { get; set; }
 
         [JsonProperty("claims")]
         public OAuth2RequestObjectInnerClaims Claims { get; set; } = null!;

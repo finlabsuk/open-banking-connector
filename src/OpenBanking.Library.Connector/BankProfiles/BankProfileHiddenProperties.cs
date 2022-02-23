@@ -47,6 +47,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public VariableRecurringPaymentsApiHiddenProperties? DefaultVariableRecurringPaymentsApi { get; set; }
 
+        public string? AdditionalProperty1 { get; set; }
+
+        public string? AdditionalProperty2 { get; set; }
+
         public string GetRequiredIssuerUrl() =>
             IssuerUrl ?? throw new Exception("No issuer URL");
 
@@ -69,5 +73,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public string GetRequiredVariableRecurringPaymentsApiBaseUrl() =>
             DefaultVariableRecurringPaymentsApi?.BaseUrl ?? throw new Exception("No VRP base URL");
+
+        public string GetAdditionalProperty1() =>
+            AdditionalProperty1 ?? throw new Exception($"Hidden property not found: {AdditionalProperty1}");
+
+        public string GetAdditionalProperty2() =>
+            AdditionalProperty2 ?? throw new Exception($"Hidden property not found: {AdditionalProperty2}");
     }
 }
