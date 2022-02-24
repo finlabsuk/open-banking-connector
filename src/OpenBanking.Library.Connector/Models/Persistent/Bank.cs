@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     }
 
     internal partial class Bank :
-        ISupportsFluentLocalEntityPost<BankRequest, BankResponse>
+        ISupportsFluentLocalEntityPost<BankRequest, BankResponse, Bank>
     {
         /// <summary>
         ///     Constructor (to be removed) that doesn't initialise anything

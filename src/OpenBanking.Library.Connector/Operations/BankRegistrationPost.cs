@@ -270,6 +270,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 requestInfo.Request,
                 requestInfo.ModifiedBy,
                 _timeProvider);
+
+            persistedObject.Create(
+                requestInfo.Request,
+                requestInfo.ModifiedBy,
+                _timeProvider,
+                registrationScope,
+                openIdConfiguration, // TODO: update to store raw response
+                openIdConfiguration.TokenEndpoint,
+                openIdConfiguration.AuthorizationEndpoint,
+                openIdConfiguration.RegistrationEndpoint,
+                tokenEndpointAuthMethod,
+                apiRequest);
+            
             persistedObject.UpdateOpenIdGet(
                 registrationScope,
                 openIdConfiguration, // TODO: update to store raw response

@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         EntityPost<TEntity, TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse> :
             LocalEntityPost<TEntity, TPublicRequest, TPublicPostResponse>
         where TEntity : class, IEntity,
-        ISupportsFluentEntityPost<TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse>,
+        ISupportsFluentEntityPost<TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse, TEntity>,
         new()
         where TPublicRequest : Base
         where TApiResponse : class, ISupportsValidation

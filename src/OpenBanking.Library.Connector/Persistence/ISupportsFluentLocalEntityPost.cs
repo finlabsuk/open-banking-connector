@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     ///     <see cref="ISupportsFluentDeleteLocal{TSelf,TPublicRequest,TPublicResponse,TPublicQuery}" />) but are
     ///     not directly persisted to DB and can only be POSTed.
     /// </summary>
-    internal interface ISupportsFluentLocalEntityPost<in TPublicRequest, out TPublicResponse>
+    internal interface ISupportsFluentLocalEntityPost<in TPublicRequest, out TPublicResponse, TEntity>
     {
         TPublicResponse PublicPostResponse { get; }
 
@@ -22,6 +22,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         /// <param name="createdBy"></param>
         /// <param name="timeProvider"></param>
         void Initialise(
+            TPublicRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider);
+
+        TEntity Create(
             TPublicRequest request,
             string? createdBy,
             ITimeProvider timeProvider);

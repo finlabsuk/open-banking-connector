@@ -32,8 +32,49 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrpConsentAuthContext :
         ISupportsFluentLocalEntityPost<DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextPostResponse>
+            DomesticVrpConsentAuthContextPostResponse, DomesticVrpConsentAuthContext>
     {
+        
+        public DomesticVrpConsentAuthContext () {}
+
+        private DomesticVrpConsentAuthContext(
+             Guid domesticVrpConsentId,
+             ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+             Guid id,
+             string? name,
+             string? createdBy,
+             ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            DomesticVrpConsentId = domesticVrpConsentId;
+            TokenEndpointResponse = tokenEndpointResponse;
+        }
+
+        public DomesticVrpConsentAuthContext Create(
+            DomesticVrpConsentAuthContextRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                null,
+                timeProvider,
+                createdBy);
+
+            var output = new DomesticVrpConsentAuthContext(
+                request.DomesticVrpConsentId,
+                tokenEndpointResponse,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
+        
+        
         public void Initialise(
             DomesticVrpConsentAuthContextRequest request,
             string? createdBy,

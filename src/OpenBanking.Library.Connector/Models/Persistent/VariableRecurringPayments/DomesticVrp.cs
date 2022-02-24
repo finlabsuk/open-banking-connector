@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     internal partial class DomesticVrp :
         ISupportsFluentReadWritePost<DomesticVrpRequest, DomesticVrpResponse,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse, DomesticVrp>
     {
         public DomesticVrpResponse PublicGetResponse => new DomesticVrpResponse(
             Id,
@@ -63,6 +63,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             CreatedBy,
             BankApiResponse);
 
+        public DomesticVrp() {}
+
+        private DomesticVrp(
+            Guid domesticVrpConsentId,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            DomesticVrpConsentId = domesticVrpConsentId;
+            BankApiRequest = apiRequest;
+        }
+        
+        
+        public DomesticVrp Create(
+            DomesticVrpRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest)
+        {
+            var output = new DomesticVrp(
+                request.DomesticVrpConsentId,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider,
+                apiRequest);
+
+            return output;
+        }
+
+        public DomesticVrp Create(
+            DomesticVrpRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            return null;
+        }
+        
         public void Initialise(
             DomesticVrpRequest request,
             string? createdBy,

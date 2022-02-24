@@ -9,16 +9,24 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     internal interface
-        ISupportsFluentReadWritePost<in TPublicRequest, out TPublicResponse, in TApiRequest, TApiResponse> :
-            ISupportsFluentEntityPost<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
+        ISupportsFluentReadWritePost<in TPublicRequest, out TPublicResponse, in TApiRequest, TApiResponse, TEntity> :
+            ISupportsFluentEntityPost<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse, TEntity>
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
         public ReadWriteApiType GetReadWriteApiType();
+
+        public TEntity Create(
+            TPublicRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            TApiRequest apiRequest);
+        
 
         public IApiPostRequests<TApiRequest, TApiResponse> ApiPostRequests(
             PaymentInitiationApi? paymentInitiationApi,

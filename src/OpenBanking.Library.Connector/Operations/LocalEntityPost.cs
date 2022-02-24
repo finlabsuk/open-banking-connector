@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> :
         IObjectPost<TPublicRequest, TPublicResponse>
-        where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse>,
+        where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>,
         new()
         where TPublicRequest : Base
     {
@@ -98,6 +98,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Create persisted entity
             var persistedObject = new TEntity();
             persistedObject.Initialise(
+                requestInfo.Request,
+                requestInfo.ModifiedBy,
+                _timeProvider);
+
+            persistedObject.Create(
                 requestInfo.Request,
                 requestInfo.ModifiedBy,
                 _timeProvider);

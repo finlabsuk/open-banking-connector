@@ -8,8 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     internal interface
-        ISupportsFluentEntityPost<in TPublicRequest, out TPublicResponse, in TApiRequest, in TApiResponse> :
-            ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse>
+        ISupportsFluentEntityPost<in TPublicRequest, out TPublicResponse, in TApiRequest, in TApiResponse, TEntity> :
+            ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {

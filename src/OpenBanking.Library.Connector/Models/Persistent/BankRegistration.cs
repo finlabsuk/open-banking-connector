@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
@@ -119,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     internal partial class BankRegistration :
         ISupportsFluentEntityPost<BankRegistrationRequest, BankRegistrationResponse,
             ClientRegistrationModelsPublic.OBClientRegistration1,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response>
+            ClientRegistrationModelsPublic.OBClientRegistration1Response, BankRegistration>
     {
         public BankRegistrationResponse PublicGetResponse => new BankRegistrationResponse(
             Id,
@@ -128,7 +129,93 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             CreatedBy,
             BankApiResponse,
             BankId);
+        
+        public BankRegistration ( ) { }
 
+        private BankRegistration( 
+            ClientRegistrationApiVersion clientRegistrationApi,
+            string softwareStatementProfileId,
+            string? softwareStatementAndCertificateProfileOverrideCase,
+            OAuth2RequestObjectClaimsOverrides? oAuth2RequestObjectClaimsOverrides,
+            Guid bankId,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            RegistrationScope registrationScope,
+            OpenIdConfiguration openIdConfigurationResponse,
+            string tokenEndpoint,
+            string authorizationEndpoint,
+            string registrationEndpoint,
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider )
+        {
+            ClientRegistrationApi = clientRegistrationApi;
+            SoftwareStatementProfileId = softwareStatementProfileId;
+            SoftwareStatementAndCertificateProfileOverrideCase =
+                softwareStatementAndCertificateProfileOverrideCase;
+            OAuth2RequestObjectClaimsOverrides = oAuth2RequestObjectClaimsOverrides;
+            BankId = bankId;
+            
+            // Code to replace 'UpdateOpenIdGet'
+            RegistrationScope = registrationScope;
+            OpenIdConfigurationResponse = openIdConfigurationResponse;
+            TokenEndpoint = tokenEndpoint;
+            AuthorizationEndpoint = authorizationEndpoint;
+            RegistrationEndpoint = registrationEndpoint;
+            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
+            
+            // Code to replace 'UpdateBeforeApiPost'
+            BankApiRequest = apiRequest;
+            
+        }
+
+        public BankRegistration Create(
+            BankRegistrationRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            return null;
+        }
+        
+        public BankRegistration Create(
+            BankRegistrationRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            RegistrationScope registrationScope,
+            OpenIdConfiguration openIdConfigurationResponse,
+            string tokenEndpoint,
+            string authorizationEndpoint,
+            string registrationEndpoint,
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest)
+        {
+            var output = new BankRegistration(
+                request.ClientRegistrationApi,
+                request.SoftwareStatementProfileId,
+                request.SoftwareStatementAndCertificateProfileOverrideCase,
+                request.OAuth2RequestObjectClaimsOverrides,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider,
+                registrationScope,
+                openIdConfigurationResponse,
+                tokenEndpoint,
+                authorizationEndpoint,
+                registrationEndpoint,
+                tokenEndpointAuthMethod,
+                apiRequest
+            );
+            
+            return output;
+        }
+            
         public void Initialise(
             BankRegistrationRequest request,
             string? createdBy,

@@ -137,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal class LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse> :
         CreateBase<TPublicRequest, TPublicResponse>
-        where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse>,
+        where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>,
         new()
         where TPublicRequest : BaseRequest, ISupportsValidation
         where TPublicResponse : class

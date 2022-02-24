@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TEntity,
             TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
         where TEntity : class, IEntity,
-        ISupportsFluentReadWritePost<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>, new()
+        ISupportsFluentReadWritePost<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse, TEntity>, new()
         where TPublicRequest : Base
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
@@ -123,6 +123,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 requestInfo.Request,
                 requestInfo.ModifiedBy,
                 _timeProvider);
+
+            persistedObject.Create(
+                requestInfo.Request,
+                requestInfo.ModifiedBy,
+                _timeProvider,
+                apiRequest);
+            
             persistedObject.UpdateBeforeApiPost(apiRequest);
             
             // Update with results of POST

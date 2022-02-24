@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     internal partial class DomesticVrpConsent :
         ISupportsFluentReadWritePost<DomesticVrpConsentRequest,
             DomesticVrpConsentResponse, VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse, DomesticVrpConsent>
     {
         public DomesticVrpConsentResponse PublicGetResponse =>
             new DomesticVrpConsentResponse(
@@ -79,6 +79,62 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 BankRegistrationId,
                 BankApiSetId);
 
+        
+        public DomesticVrpConsent() {}
+
+        private DomesticVrpConsent(
+            Guid bankRegistrationId,
+            Guid bankApiSetId,
+            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?> bankApiFundsConfirmationResponse, 
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            BankRegistrationId = bankRegistrationId;
+            BankApiSetId = bankApiSetId;
+            BankApiFundsConfirmationResponse = bankApiFundsConfirmationResponse;
+            BankApiRequest = apiRequest;
+        }
+
+        public DomesticVrpConsent Create(
+            DomesticVrpConsentRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest)
+        {
+            var bankApiFundsConfirmationResponse = new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>(
+                null,
+                timeProvider,
+                createdBy);
+
+            var output = new DomesticVrpConsent(
+                request.BankRegistrationId,
+                request.BankApiSetId,
+                bankApiFundsConfirmationResponse,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider,
+                apiRequest);
+
+            return output;
+
+        }
+
+        public DomesticVrpConsent Create(
+            DomesticVrpConsentRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            return null;
+        }
+        
         public void Initialise(
             DomesticVrpConsentRequest request,
             string? createdBy,

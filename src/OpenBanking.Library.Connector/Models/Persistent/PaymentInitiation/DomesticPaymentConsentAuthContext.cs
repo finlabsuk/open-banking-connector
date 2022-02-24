@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -32,8 +33,49 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
     internal partial class DomesticPaymentConsentAuthContext :
         ISupportsFluentLocalEntityPost<DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextPostResponse>
+            DomesticPaymentConsentAuthContextPostResponse, DomesticPaymentConsentAuthContext>
     {
+        
+        public DomesticPaymentConsentAuthContext () {}
+
+        private DomesticPaymentConsentAuthContext( 
+            Guid domesticPaymentConsentId,
+            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base (
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            DomesticPaymentConsentId = domesticPaymentConsentId;
+            TokenEndpointResponse = tokenEndpointResponse;
+        }
+
+        public DomesticPaymentConsentAuthContext Create(
+            DomesticPaymentConsentAuthContextRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                null,
+                timeProvider,
+                createdBy);
+
+            var output = new DomesticPaymentConsentAuthContext(
+                request.DomesticPaymentConsentId,
+                tokenEndpointResponse,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
+        
+        
         public void Initialise(
             DomesticPaymentConsentAuthContextRequest request,
             string? createdBy,

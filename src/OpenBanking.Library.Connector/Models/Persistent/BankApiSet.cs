@@ -40,8 +40,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     }
 
     internal partial class BankApiSet :
-        ISupportsFluentLocalEntityPost<BankApiSetRequest, BankApiSetResponse>
+        ISupportsFluentLocalEntityPost<BankApiSetRequest, BankApiSetResponse, BankApiSet>
     {
+        public BankApiSet() { }
+
+        private BankApiSet(
+            PaymentInitiationApi? paymentInitiationApi,
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
+            Guid bankId,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            PaymentInitiationApi = paymentInitiationApi;
+            VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
+            BankId = bankId;
+        }
+
         public BankApiSetResponse PublicGetResponse => new BankApiSetResponse(
             Id,
             Name,
@@ -50,6 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             PaymentInitiationApi,
             VariableRecurringPaymentsApi,
             BankId);
+
 
         public void Initialise(
             BankApiSetRequest request,
@@ -63,6 +84,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         }
 
         public BankApiSetResponse PublicPostResponse => PublicGetResponse;
+
+        public BankApiSet Create(
+            BankApiSetRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var output = new BankApiSet(
+                request.PaymentInitiationApi,
+                request.VariableRecurringPaymentsApi,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
     }
 
     internal partial class BankApiSet :

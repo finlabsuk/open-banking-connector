@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -51,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
     internal partial class DomesticPayment :
         ISupportsFluentReadWritePost<DomesticPaymentRequest, DomesticPaymentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
+            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5, DomesticPayment>
     {
         public DomesticPaymentResponse PublicGetResponse => new DomesticPaymentResponse(
             Id,
@@ -60,6 +61,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             CreatedBy,
             BankApiResponse);
 
+        
+        public DomesticPayment () {}
+
+        private DomesticPayment(
+            Guid domesticPaymentConsentId,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest) : base (
+            id,
+            name,
+            createdBy,
+            timeProvider )
+        {
+            DomesticPaymentConsentId = domesticPaymentConsentId;
+            BankApiRequest = apiRequest;
+        }
+
+        public DomesticPayment Create(
+            DomesticPaymentRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
+        {
+            var output = new DomesticPayment(
+                request.DomesticPaymentConsentId,
+                Guid.NewGuid(),
+                request.Name,
+                createdBy,
+                timeProvider,
+                apiRequest);
+
+            return output;
+        }
+
+        public DomesticPayment Create(
+            DomesticPaymentRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            return null;
+        }
+        
         public void Initialise(
             DomesticPaymentRequest request,
             string? createdBy,
