@@ -2,14 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Extensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -35,15 +31,18 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
                 .AddWebHostServices(Configuration)
                 // Configure Swagger
                 .AddSwaggerGen(
-                    c =>
+                    options =>
                     {
-                        c.SwaggerDoc(
+                        options.SwaggerDoc(
                             "v1",
                             new OpenApiInfo
                             {
-                                Title = "Open Banking Connector",
-                                Version = "V1"
+                                Title = "Open Banking Connector Web App API",
+                                Version = "V1",
+                                Description = "API for Web App version of Open Banking Connector"
                             });
+                        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
                     })
                 .AddSwaggerGenNewtonsoftSupport()
                 // Add controllers

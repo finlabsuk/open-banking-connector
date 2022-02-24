@@ -2,16 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
@@ -26,6 +21,12 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
             _requestBuilder = requestBuilder;
         }
 
+        /// <summary>
+        ///     Create a BankRegistration object
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         [Route("bank-registrations")]
         [HttpPost]
         [ProducesResponseType(
@@ -58,7 +59,11 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Controllers
                 { StatusCode = statusCode };
         }
 
-        // GET /bank-registrations
+        /// <summary>
+        ///     Read all BankRegistration objects
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         [Route("bank-registrations")]
         [HttpGet]
         [ProducesResponseType(

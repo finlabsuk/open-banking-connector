@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
         <AssemblyName>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.WebApp.Connector.Sample</RootNamespace>
@@ -12,19 +13,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.22" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.14">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.14" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.14"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.2.3"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
-        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj"/>
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
 
 </Project>

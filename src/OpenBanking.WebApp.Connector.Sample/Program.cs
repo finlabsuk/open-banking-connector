@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.KeySecrets;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Sample
 {
