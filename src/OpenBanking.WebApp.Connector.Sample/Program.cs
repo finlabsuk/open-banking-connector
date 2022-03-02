@@ -53,11 +53,8 @@ builder.Host.ConfigureKeySecrets(KeySecretProviders.Providers);
 // Build app
 WebApplication app = builder.Build();
 
+// Errors
 if (!app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
@@ -72,13 +69,12 @@ app.UseStaticFiles();
 // Add web host static files
 app.UseWebHostStaticFiles();
 
+// Add Swagger generation
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenBankingConnector"); });
 
-app.UseRouting();
+// Add controller endpoints
+app.MapControllers();
 
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
-app.MapGet("/hello", () => "Hello World!");
-
+// Run 
 app.Run();
