@@ -5,8 +5,8 @@
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.Extensions;
-using FinnovationLabs.OpenBanking.WebApp.Connector.Sample.KeySecrets;
+using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
+using FinnovationLabs.OpenBanking.WebApp.Connector.KeySecrets;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

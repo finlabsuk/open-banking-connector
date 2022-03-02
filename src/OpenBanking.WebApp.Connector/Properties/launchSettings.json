@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "OpenBanking.WebApp.Connector.Sample": {
+    "OpenBanking.WebApp.Connector": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": false,

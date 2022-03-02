@@ -1,50 +1,47 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.6.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{B0A70349-C30C-4658-8CAA-BBBE48023C09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D2E3A6FC-5975-479C-A788-DF988A2C34F3}"
-ProjectSection(SolutionItems) = preProject
-	README.md = README.md
-EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector", "src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj", "{27118347-85B0-478A-80F7-30049AB03D12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector", "src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj", "{27118347-85B0-478A-80F7-30049AB03D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.GenericHost", "src\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj", "{1C1859A3-B639-4167-8A8C-6D478D2A1C97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.GenericHost", "src\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj", "{1C1859A3-B639-4167-8A8C-6D478D2A1C97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.GenericHost.Azure", "src\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj", "{7B6C1F6E-8BB8-4870-9244-EB40CDA85047}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.GenericHost.Azure", "src\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj", "{7B6C1F6E-8BB8-4870-9244-EB40CDA85047}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B9A1B4B0-39B3-4540-A60B-50F4E94587B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.BankTests", "test\OpenBanking.Library.Connector.BankTests\OpenBanking.Library.Connector.BankTests.csproj", "{B19AAE21-C034-4872-AECC-D6C247ADECDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.BankTests", "test\OpenBanking.Library.Connector.BankTests\OpenBanking.Library.Connector.BankTests.csproj", "{B19AAE21-C034-4872-AECC-D6C247ADECDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.IntegrationTests", "test\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj", "{2FAB174D-EC2A-4EB7-8567-7D228BE272CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.IntegrationTests", "test\OpenBanking.Library.Connector.IntegrationTests\OpenBanking.Library.Connector.IntegrationTests.csproj", "{2FAB174D-EC2A-4EB7-8567-7D228BE272CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.UnitTests", "test\OpenBanking.Library.Connector.UnitTests\OpenBanking.Library.Connector.UnitTests.csproj", "{A2BC8CF0-148F-4D18-989A-04AA0C282A98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.UnitTests", "test\OpenBanking.Library.Connector.UnitTests\OpenBanking.Library.Connector.UnitTests.csproj", "{A2BC8CF0-148F-4D18-989A-04AA0C282A98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.Benchmarks", "test\OpenBanking.Library.Connector.Benchmarks\OpenBanking.Library.Connector.Benchmarks.csproj", "{3E1773EC-58F7-4852-9645-D064A1463F94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.Benchmarks", "test\OpenBanking.Library.Connector.Benchmarks\OpenBanking.Library.Connector.Benchmarks.csproj", "{3E1773EC-58F7-4852-9645-D064A1463F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.Connector.Web", "src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj", "{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.Connector.Web", "src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj", "{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.WebApp.Connector.Sample", "src\OpenBanking.WebApp.Connector.Sample\OpenBanking.WebApp.Connector.Sample.csproj", "{60520745-0F99-46C2-B580-E84180CBB4FE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.Library.BankApiModels", "src\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj", "{12482C03-0237-423D-8FA7-2266F59D711B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.Library.BankApiModels", "src\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj", "{12482C03-0237-423D-8FA7-2266F59D711B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{02C170A9-1C57-4A94-982F-34BBD5154A3F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{F809E40D-B245-447F-9C0C-E6BE4EE8C9D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent", "src\OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent\OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent.csproj", "{3C054E9F-EFB2-475B-9880-629CAF510BC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent", "src\OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent\OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent.csproj", "{3C054E9F-EFB2-475B-9880-629CAF510BC7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenBanking.WebApp.Connector", "src\OpenBanking.WebApp.Connector\OpenBanking.WebApp.Connector.csproj", "{EB9820E5-E632-400B-83E8-CFD273A55F84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{27118347-85B0-478A-80F7-30049AB03D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -79,10 +76,6 @@ Global
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60520745-0F99-46C2-B580-E84180CBB4FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60520745-0F99-46C2-B580-E84180CBB4FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60520745-0F99-46C2-B580-E84180CBB4FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12482C03-0237-423D-8FA7-2266F59D711B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -91,20 +84,30 @@ Global
 		{3C054E9F-EFB2-475B-9880-629CAF510BC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C054E9F-EFB2-475B-9880-629CAF510BC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C054E9F-EFB2-475B-9880-629CAF510BC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9820E5-E632-400B-83E8-CFD273A55F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9820E5-E632-400B-83E8-CFD273A55F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9820E5-E632-400B-83E8-CFD273A55F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9820E5-E632-400B-83E8-CFD273A55F84}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{27118347-85B0-478A-80F7-30049AB03D12} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{1C1859A3-B639-4167-8A8C-6D478D2A1C97} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
+		{7B6C1F6E-8BB8-4870-9244-EB40CDA85047} = {02C170A9-1C57-4A94-982F-34BBD5154A3F}
 		{B19AAE21-C034-4872-AECC-D6C247ADECDF} = {B9A1B4B0-39B3-4540-A60B-50F4E94587B1}
 		{2FAB174D-EC2A-4EB7-8567-7D228BE272CB} = {B9A1B4B0-39B3-4540-A60B-50F4E94587B1}
 		{A2BC8CF0-148F-4D18-989A-04AA0C282A98} = {B9A1B4B0-39B3-4540-A60B-50F4E94587B1}
 		{3E1773EC-58F7-4852-9645-D064A1463F94} = {B9A1B4B0-39B3-4540-A60B-50F4E94587B1}
 		{E9A34AE4-2A61-4040-8BC1-4B4B806700A7} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
-		{60520745-0F99-46C2-B580-E84180CBB4FE} = {B0A70349-C30C-4658-8CAA-BBBE48023C09}
 		{12482C03-0237-423D-8FA7-2266F59D711B} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
 		{02C170A9-1C57-4A94-982F-34BBD5154A3F} = {D2E3A6FC-5975-479C-A788-DF988A2C34F3}
-		{7B6C1F6E-8BB8-4870-9244-EB40CDA85047} = {02C170A9-1C57-4A94-982F-34BBD5154A3F}
 		{F809E40D-B245-447F-9C0C-E6BE4EE8C9D6} = {B0A70349-C30C-4658-8CAA-BBBE48023C09}
 		{3C054E9F-EFB2-475B-9880-629CAF510BC7} = {F809E40D-B245-447F-9C0C-E6BE4EE8C9D6}
+		{EB9820E5-E632-400B-83E8-CFD273A55F84} = {B0A70349-C30C-4658-8CAA-BBBE48023C09}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E316379-FBCF-4100-B75F-A6A80297B20E}
 	EndGlobalSection
 EndGlobal
