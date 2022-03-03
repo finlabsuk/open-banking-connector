@@ -40,8 +40,8 @@ jobs:
         tags: |
           type=semver,pattern={{version}},value=${{ env.IMAGE_TAG }}
         labels: |
-          org.opencontainers.image.title="Open Banking Connector Web App"
-          org.opencontainers.image.description="This image contains the Open Banking Connector Web App." 
+          org.opencontainers.image.title=Open Banking Connector Web App
+          org.opencontainers.image.description=This image contains the Open Banking Connector Web App.
         
     - name: Log values
       run: |
