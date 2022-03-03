@@ -10,7 +10,7 @@ on:
         
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}-web-app
   IMAGE_TAG: ${{ github.event.inputs.version}}
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
         echo "Tags"
         echo ${{ steps.meta.outputs.tags }}
         echo "Labels"
-        ${{ steps.meta.outputs.labels }}
+        echo ${{ steps.meta.outputs.labels }}
     
     #- name: Build and push Docker image
     #  uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
