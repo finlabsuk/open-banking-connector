@@ -38,7 +38,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
-          type=semver,pattern={{version}},value=${{ env.IMAGE_NAME }}
+          type=semver,pattern={{version}},value=${{ env.IMAGE_TAG }}
         
     - name: Log values
       run: |
