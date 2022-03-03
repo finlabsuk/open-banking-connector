@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'     
+        required: true
+        default: '1.0.0-alpha01'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file src/OpenBanking.WebApp.Connector/Dockerfile --tag open-banking-connector-web-app:${{ github.event.inputs.version}}
