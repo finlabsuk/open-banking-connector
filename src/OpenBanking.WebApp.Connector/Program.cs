@@ -25,12 +25,36 @@ builder.Services
         options =>
         {
             options.SwaggerDoc(
-                "v1",
+                "bank-config",
                 new OpenApiInfo
                 {
-                    Title = "Open Banking Connector Web App API",
-                    Version = "V1",
-                    Description = "API for Web App version of Open Banking Connector"
+                    Title = "Bank Configuration API",
+                    Version = "code-generated",
+                    Description = "Bank Configuration API for Open Banking Connector Web App"
+                });
+            options.SwaggerDoc(
+                "pisp",
+                new OpenApiInfo
+                {
+                    Title = "Payment Initiation API",
+                    Version = "code-generated",
+                    Description = "Payment Initiation API for Open Banking Connector Web App"
+                });
+            options.SwaggerDoc(
+                "vrp",
+                new OpenApiInfo
+                {
+                    Title = "Variable Recurring Payments API",
+                    Version = "code-generated",
+                    Description = "Variable Recurring Payments API for Open Banking Connector Web App"
+                });
+            options.SwaggerDoc(
+                "auth-contexts",
+                new OpenApiInfo
+                {
+                    Title = "Auth Contexts API",
+                    Version = "code-generated",
+                    Description = "Auth Contexts API for Open Banking Connector Web App"
                 });
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -71,7 +95,14 @@ app.UseWebHostStaticFiles();
 
 // Add Swagger generation
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenBankingConnector"); });
+app.UseSwaggerUI(
+    c =>
+    {
+        c.SwaggerEndpoint("/swagger/bank-config/swagger.json", "Bank Configuration API");
+        c.SwaggerEndpoint("/swagger/pisp/swagger.json", "Payment Initiation API");
+        c.SwaggerEndpoint("/swagger/vrp/swagger.json", "Variable Recurring Payments API");
+        c.SwaggerEndpoint("/swagger/auth-contexts/swagger.json", "Auth Contexts API");
+    });
 
 // Add controller endpoints
 app.MapControllers();

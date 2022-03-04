@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
 {
     [ApiController]
+    [ApiExplorerSettings(GroupName = "auth-contexts")]
     public class RedirectController : ControllerBase
     {
         private readonly IRequestBuilder _requestBuilder;

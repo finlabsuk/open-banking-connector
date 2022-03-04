@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitiation;
 
 [ApiController]
+[ApiExplorerSettings(GroupName = "pisp")]
 public class DomesticPaymentConsentsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;

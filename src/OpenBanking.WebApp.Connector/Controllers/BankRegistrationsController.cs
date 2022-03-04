@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers;
 
 [ApiController]
+[ApiExplorerSettings(GroupName = "bank-config")]
 public class BankRegistrationsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.VariableRecurringPayments;
 
 [ApiController]
+[ApiExplorerSettings(GroupName = "vrp")]
 public class DomesticVrpController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -21,6 +22,12 @@ public class DomesticVrpController : ControllerBase
         _requestBuilder = requestBuilder;
     }
 
+    /// <summary>
+    ///     Create a DomesticVrp object
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("vrp/domestic-vrps")]
     [HttpPost]
     [ProducesResponseType(
@@ -51,7 +58,11 @@ public class DomesticVrpController : ControllerBase
             { StatusCode = statusCode };
     }
 
-    // GET /vrp/domestic-vrps
+    /// <summary>
+    ///     Return all DomesticVrp objects
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("vrp/domestic-vrps")]
     [HttpGet]
     [ProducesResponseType(
