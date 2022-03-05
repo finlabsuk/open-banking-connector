@@ -25,7 +25,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj" />
-        <ProjectReference Include="..\OpenBanking.Library.Connector.BankTests\OpenBanking.Library.Connector.BankTests.csproj" />
     </ItemGroup>
 
 </Project>
