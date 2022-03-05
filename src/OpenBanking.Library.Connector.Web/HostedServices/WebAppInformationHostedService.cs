@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
                 async () =>
                 {
                     await Task.Delay(3000); // wait 3 seconds for middleware to be built
-                    IEnumerable<string> endpointNames = _endpointDataSource.Endpoints.Select(x => x.DisplayName);
+                    IEnumerable<string?> endpointNames = _endpointDataSource.Endpoints.Select(x => x.DisplayName);
                     _logger.LogInformation(string.Join(Environment.NewLine, endpointNames.Prepend("Endpoints found:")));
                 });
 

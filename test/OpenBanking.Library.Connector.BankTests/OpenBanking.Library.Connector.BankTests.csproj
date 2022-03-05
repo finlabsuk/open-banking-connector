@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.BankTests</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.BankTests</RootNamespace>

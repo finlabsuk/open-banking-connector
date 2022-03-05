@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
         <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.Web</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.Library.Connector.Web</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
+        <IsPackable>true</IsPackable>
         <Title>Open Banking Connector (version for web apps)</Title>
         <PackageId>FinnovationLabs.OpenBanking.Library.Connector.Web</PackageId>
         <Version>1.0.0-alpha01</Version>
@@ -18,7 +20,6 @@
             Use this version for apps using a .NET Generic Host which are ASP.NET Core web apps.
         </Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <IsPackable>true</IsPackable>
         <RepositoryUrl>https://github.com/finlabsuk/open-banking-connector-csharp</RepositoryUrl>
     </PropertyGroup>
 
