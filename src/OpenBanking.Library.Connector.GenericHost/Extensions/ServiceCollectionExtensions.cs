@@ -31,28 +31,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // For each settings section, get settings via IOptions and pass to settings provider which performs validation
-            // and allows use of alternative sources
+            // Add settings groups
             services
-                .Configure<OpenBankingConnectorSettings>(
-                    configuration.GetSection(new OpenBankingConnectorSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<OpenBankingConnectorSettings>,
-                    ConfigurationSettingsProvider<OpenBankingConnectorSettings>>()
-                .Configure<BankProfilesSettings>(configuration.GetSection(new BankProfilesSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<BankProfilesSettings>,
-                    ConfigurationSettingsProvider<BankProfilesSettings>>()
-                .Configure<SoftwareStatementProfilesSettings>(
-                    configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>,
-                    ConfigurationSettingsProvider<SoftwareStatementProfilesSettings>>()
-                .Configure<TransportCertificateProfilesSettings>(
-                    configuration.GetSection(new TransportCertificateProfilesSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<TransportCertificateProfilesSettings>,
-                    ConfigurationSettingsProvider<TransportCertificateProfilesSettings>>()
-                .Configure<SigningCertificateProfilesSettings>(
-                    configuration.GetSection(new SigningCertificateProfilesSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<SigningCertificateProfilesSettings>,
-                    ConfigurationSettingsProvider<SigningCertificateProfilesSettings>>();
+                .AddSettingsGroup<OpenBankingConnectorSettings>(configuration)
+                .AddSettingsGroup<BankProfilesSettings>(configuration)
+                .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)
+                .AddSettingsGroup<TransportCertificateProfilesSettings>(configuration)
+                .AddSettingsGroup<SigningCertificateProfilesSettings>(configuration);
 
             // Set up bank profile definitions
             services.AddSingleton(
@@ -127,6 +112,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 
             // Startup tasks
             services.AddHostedService<StartupTasksHostedService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSettingsGroup<TSettings>(
+            this IServiceCollection services,
+            IConfiguration configuration)
+            where TSettings : class, ISettings<TSettings>, new()
+        {
+            // Get settings group from configuration and validate
+            services
+                .AddOptions<TSettings>()
+                .Bind(configuration.GetSection(new TSettings().SettingsGroupName))
+                .ValidateDataAnnotations()
+                .Validate(
+                    settings =>
+                    {
+                        settings.Validate();
+                        return true;
+                    })
+                .ValidateOnStart();
+
+            // Convert to ISettingsProvider which is independent of .NET Generic Host
+            services
+                .AddSingleton<ISettingsProvider<TSettings>,
+                    ConfigurationSettingsProvider<TSettings>>();
 
             return services;
         }

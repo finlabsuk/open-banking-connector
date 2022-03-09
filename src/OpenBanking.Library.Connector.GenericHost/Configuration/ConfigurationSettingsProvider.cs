@@ -8,21 +8,16 @@ using Microsoft.Extensions.Options;
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration
 {
     /// <summary>
-    ///     Settings provider that gets settings via ISettings from .NET Generic Host configuration and validates settings on
-    ///     creation
-    /// </summary>
-    /// <typeparam name="TSettings"></typeparam>
+    ///     Settings provider that gets settings via ISettings from .NET Generic Host configuration
+    ///     <typeparam name="TSettings"></typeparam>
     public class ConfigurationSettingsProvider<TSettings> : ISettingsProvider<TSettings>
         where TSettings : class, ISettings<TSettings>, new()
     {
         private readonly TSettings _settings;
 
-
         public ConfigurationSettingsProvider(IOptions<TSettings> options)
         {
-            _settings = options
-                .Value
-                .Validate();
+            _settings = options.Value;
         }
 
         public TSettings GetSettings()

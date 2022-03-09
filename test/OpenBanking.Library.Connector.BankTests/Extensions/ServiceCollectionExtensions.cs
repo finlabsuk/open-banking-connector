@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.Configuration;
@@ -22,12 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // For each settings section, get settings via IOptions and pass to settings provider which performs validation
-            // and allows use of alternative sources
+            // Add settings groups
             services
-                .Configure<BankTestSettings>(configuration.GetSection(new BankTestSettings().SettingsGroupName))
-                .AddSingleton<ISettingsProvider<BankTestSettings>,
-                    ConfigurationSettingsProvider<BankTestSettings>>();
+                .AddSettingsGroup<BankTestSettings>(configuration);
 
             // Set up Node JS services
             services.AddSingleton<IOptions<NodeJSProcessOptions>>(
