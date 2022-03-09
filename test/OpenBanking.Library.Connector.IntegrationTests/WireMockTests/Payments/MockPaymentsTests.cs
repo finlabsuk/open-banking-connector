@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new DefaultSettingsProvider<OpenBankingConnectorSettings>(
                     new OpenBankingConnectorSettings
                     {
-                        SoftwareStatementProfileIds = softwareStatementProfileId
+                        //SoftwareStatementProfileIds = softwareStatementProfileId
                     });
 
             // Create software statement profiles

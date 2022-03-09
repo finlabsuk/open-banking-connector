@@ -10,7 +10,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 {
     public class SoftwareStatementProfile
     {
-        /// Software statement as string, e.g. "A.B.C"
+        /// <summary>
+        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        /// </summary>
+        public bool Active { get; set; } = true;
+
+        /// <summary>
+        ///     Software statement as string, e.g. "A.B.C"
+        /// </summary>
         public string SoftwareStatement { get; set; } = string.Empty;
 
         /// <summary>
@@ -23,7 +30,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public string SigningCertificateProfileId { get; set; } = string.Empty;
 
-        /// Default redirect URL for OAuth clients with response_mode == fragment.
+        /// <summary>
+        ///     Default redirect URL for OAuth clients with response_mode == fragment.
+        /// </summary>
         public string DefaultFragmentRedirectUrl { get; set; } = string.Empty;
     }
 

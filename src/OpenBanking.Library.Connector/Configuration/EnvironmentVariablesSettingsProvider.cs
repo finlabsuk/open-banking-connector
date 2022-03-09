@@ -36,10 +36,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
             // TODO: If we keep this class, code below is placeholder and needs generalisation to all TSettings types
             if (result is OpenBankingConnectorSettings resultObcSettings)
             {
-                resultObcSettings.SoftwareStatementProfileIds =
-                    GetEnvVarValue(evs, $"{_root}:SoftwareStatementProfileIds") ??
-                    resultObcSettings.SoftwareStatementProfileIds;
-                return (resultObcSettings as TSettings)!;
+                // resultObcSettings.SoftwareStatementProfileIds =
+                //     GetEnvVarValue(evs, $"{_root}:SoftwareStatementProfileIds") ??
+                //     resultObcSettings.SoftwareStatementProfileIds;
+                // return (resultObcSettings as TSettings)!;
             }
 
             return result;

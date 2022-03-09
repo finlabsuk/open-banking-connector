@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
             // Ensure DB exists
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
-            if (obcSettings.Database.ProcessedEnsureDbCreated)
+            if (obcSettings.Database.EnsureDbCreated)
             {
                 // Create DB if configured to do so and DB doesn't exist
                 context.Database.EnsureCreated();

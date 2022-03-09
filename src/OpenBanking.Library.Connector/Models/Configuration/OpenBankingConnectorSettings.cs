@@ -16,21 +16,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// </summary>
     public class DatabaseOptions
     {
-        public string Provider { get; set; } = "Sqlite";
+        public DbProvider Provider { get; set; } = DbProvider.Sqlite;
 
         public string ConnectionStringName { get; set; } = "SqliteDbConnectionString";
 
         /// <summary>
         ///     Ensures DB is created if does not exist. Intended for use in Development environment only.
         /// </summary>
-        public string EnsureDbCreated { get; set; } = "false";
+        public bool EnsureDbCreated { get; set; } = false;
 
-        public bool ProcessedEnsureDbCreated => string.Equals(
-            EnsureDbCreated,
-            "true",
-            StringComparison.InvariantCultureIgnoreCase);
-
-        public DbProvider ProcessedProvider => DbProviderHelper.DbProvider(Provider);
     }
 
     /// <summary>
@@ -53,15 +47,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// </summary>
     public class OpenBankingConnectorSettings : ISettings<OpenBankingConnectorSettings>
     {
-        /// <summary>
-        ///     Whitelist of software statement profiles (<see cref="SoftwareStatementProfile" />) specified by ID to be extracted
-        ///     from key secrets. Each ID should be separated by spaces.
-        ///     Software statement profiles are
-        ///     specified by key secrets which implement <see cref="SoftwareStatementProfilesSettings" /> where the
-        ///     dictionary keys are the IDs specified here.
-        ///     Only software statement profiles listed here will be extracted from key secrets by Open Banking Connector.
-        /// </summary>
-        public string SoftwareStatementProfileIds { get; set; } = string.Empty;
 
         /// <summary>
         ///     Whitelist of override cases for software statement (<see cref="SoftwareStatementProfile" />), transport certificate
@@ -88,9 +73,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     both are used).
         /// </summary>
         public KeySecretOptions? KeySecrets { get; set; }
-
-        public List<string> SoftwareStatementProfileIdsAsList =>
-            SoftwareStatementProfileIds.Split(' ').ToList();
 
         public List<string> SoftwareStatementAndCertificateOverrideCasesAsList =>
             SoftwareStatementAndCertificateProfileOverrideCases.Split(' ').ToList();

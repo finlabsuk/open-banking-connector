@@ -32,6 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class TransportCertificateProfile
     {
         /// <summary>
+        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        /// </summary>
+        public bool Active { get; set; } = true;
+        
+        /// <summary>
         ///     Type of certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
         public TransportCertificateType CertificateType { get; set; } = TransportCertificateType.OBWac;

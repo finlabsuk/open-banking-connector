@@ -32,6 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SigningCertificateProfile
     {
         /// <summary>
+        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        /// </summary>
+        public bool Active { get; set; } = true;
+        
+        /// <summary>
         ///     Type of certificate used - see <see cref="SigningCertificateType" />
         /// </summary>
         public SigningCertificateType CertificateType { get; set; } = SigningCertificateType.OBSeal;

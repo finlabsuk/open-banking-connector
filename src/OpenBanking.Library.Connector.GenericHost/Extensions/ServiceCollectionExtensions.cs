@@ -81,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 .Database;
             string connectionString = configuration.GetConnectionString(databaseOptions.ConnectionStringName) ??
                                       throw new ArgumentException("Database connection string not found.");
-            switch (databaseOptions.ProcessedProvider)
+            switch (databaseOptions.Provider)
             {
                 case DbProvider.Sqlite:
                     services

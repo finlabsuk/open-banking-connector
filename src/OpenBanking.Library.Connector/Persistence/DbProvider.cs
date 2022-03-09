@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     public enum DbProvider
     {
         Sqlite,
-        SqliteInMemory
+        Postgres
     }
 
     public static class DbProviderHelper
@@ -24,6 +24,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         public static IEnumerable<DbProvider> AllDbProviders { get; }
 
-        public static DbProvider DbProvider(string dbProviderString) => Enum.Parse<DbProvider>(dbProviderString);
     }
 }

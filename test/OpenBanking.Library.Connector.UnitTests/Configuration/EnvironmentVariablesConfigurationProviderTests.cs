@@ -13,38 +13,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 {
     public class EnvironmentVariablesConfigurationProviderTests
     {
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetRuntimeConfiguration_SoftwareIdInherited(string value)
-        {
-            IDictionary evs = new Hashtable();
-
-            Func<bool> rule = () =>
-            {
-                OpenBankingConnectorSettings config =
-                    new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
-
-                return config.SoftwareStatementProfileIds != value;
-            };
-
-            return rule.When(!string.IsNullOrEmpty(value));
-        }
-
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property GetRuntimeConfiguration_SoftwareIdApplied(string value)
-        {
-            IDictionary evs = new Hashtable();
-            evs["OpenBankingConnector:SoftwareStatementProfileIds"] = value;
-
-            Func<bool> rule = () =>
-            {
-                OpenBankingConnectorSettings config =
-                    new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
-
-                return config.SoftwareStatementProfileIds == value;
-            };
-
-            return rule.When(value != null);
-        }
+        // [Property(Verbose = PropertyTests.VerboseTests)]
+        // public Property GetRuntimeConfiguration_SoftwareIdInherited(string value)
+        // {
+        //     IDictionary evs = new Hashtable();
+        //
+        //     Func<bool> rule = () =>
+        //     {
+        //         OpenBankingConnectorSettings config =
+        //             new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
+        //
+        //         return config.SoftwareStatementProfileIds != value;
+        //     };
+        //
+        //     return rule.When(!string.IsNullOrEmpty(value));
+        // }
+        //
+        // [Property(Verbose = PropertyTests.VerboseTests)]
+        // public Property GetRuntimeConfiguration_SoftwareIdApplied(string value)
+        // {
+        //     IDictionary evs = new Hashtable();
+        //     evs["OpenBankingConnector:SoftwareStatementProfileIds"] = value;
+        //
+        //     Func<bool> rule = () =>
+        //     {
+        //         OpenBankingConnectorSettings config =
+        //             new EnvironmentVariablesSettingsProvider<OpenBankingConnectorSettings>(evs).GetSettings();
+        //
+        //         return config.SoftwareStatementProfileIds == value;
+        //     };
+        //
+        //     return rule.When(value != null);
+        // }
 
 
         // [Property(Verbose = PropertyTests.VerboseTests)]

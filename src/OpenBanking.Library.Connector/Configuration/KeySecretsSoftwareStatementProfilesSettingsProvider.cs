@@ -28,8 +28,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 
             _settings = new SoftwareStatementProfilesSettings();
 
-            List<string> activeProfileIds = obcSettings.SoftwareStatementProfileIdsAsList.ToList();
-            foreach (string id in activeProfileIds)
+            //List<string> activeProfileIds = obcSettings.SoftwareStatementProfileIdsAsList.ToList();
+            foreach (string id in new List<string>())
             {
                 SoftwareStatementProfileWithOverrideProperties item = Helpers
                     .GetAsync<SoftwareStatementProfileWithOverrideProperties>(
