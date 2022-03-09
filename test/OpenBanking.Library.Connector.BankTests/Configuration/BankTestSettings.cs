@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -87,12 +84,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// <summary>
         ///     User-supplied settings which are processed in <see cref="GetProccessedNodeJSProcessOptions" />.
         /// </summary>
-        public NodeJSProcessOptions NodeJSProcessOptions { get; set; } = new NodeJSProcessOptions();
+        public NodeJSProcessOptions NodeJSProcessOptions { get; set; } = new();
 
         public bool NodeJSProcessOptionsAddInspectBrk { get; set; } = false;
 
-        public OutOfProcessNodeJSServiceOptions OutOfProcessNodeJSServiceOptions { get; set; } =
-            new OutOfProcessNodeJSServiceOptions();
+        public OutOfProcessNodeJSServiceOptions OutOfProcessNodeJSServiceOptions { get; set; } = new();
 
         /// <summary>
         ///     Get processed version of <see cref="NodeJSProcessOptions" />
@@ -117,12 +113,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
     public class ConsentAuthoriserOptions
     {
-        public NodeJSOptions NodeJS { get; set; } = new NodeJSOptions();
+        public NodeJSOptions NodeJS { get; set; } = new();
 
         /// <summary>
         ///     User-supplied settings which are processed in <see cref="GetProcessedPuppeteerLaunch" />.
         /// </summary>
-        public PuppeteerLaunchOptions PuppeteerLaunch { get; set; } = new PuppeteerLaunchOptions();
+        public PuppeteerLaunchOptions PuppeteerLaunch { get; set; } = new();
     }
 
     /// <summary>
@@ -147,7 +143,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     is ignored.
         /// </summary>
         public List<BankProfileEnum> ExcludedBanks { get; set; } =
-            new List<BankProfileEnum>();
+            new();
 
         /// <summary>
         ///     Banks to include for this group of test cases.
@@ -156,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     is ignored.
         /// </summary>
         public List<BankProfileEnum> IncludedBanks { get; set; } =
-            new List<BankProfileEnum>();
+            new();
     }
 
     /// <summary>
@@ -208,43 +204,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
     {
         public List<SoftwareStatementAndCertificateProfileOverride>
             SoftwareStatementAndCertificateProfileOverrides { get; set; } =
-            new List<SoftwareStatementAndCertificateProfileOverride>();
+            new();
 
         /// <summary>
         ///     List of banks to test
         /// </summary>
-        public List<BankProfileEnum> TestedBanks { get; set; } = new List<BankProfileEnum>();
+        public List<BankProfileEnum> TestedBanks { get; set; } = new();
 
 
         /// <summary>
         ///     Groups of test cases for Generic Host App Test.
         /// </summary>
         public List<TestGroup> GenericHostAppTests { get; set; } =
-            new List<TestGroup>();
+            new();
 
         /// <summary>
         ///     Groups of test cases for Plain App Test.
         /// </summary>
-        public List<TestGroup> PlainAppTests { get; set; } = new List<TestGroup>();
+        public List<TestGroup> PlainAppTests { get; set; } = new();
 
         /// <summary>
         ///     Do not allow use of "API overrides" instead of bank API call for creating bank registrations (POST /register)
         /// </summary>
         public bool ForceNewBankRegistration { get; set; } = false;
 
-        public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new ConsentAuthoriserOptions();
+        public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new();
 
         /// <summary>
         ///     Path to data folder used for logging, "API overrides", and bank user information.
         /// </summary>
-        public DataDirectory DataDirectory { get; set; } = new DataDirectory();
+        public DataDirectory DataDirectory { get; set; } = new();
 
         /// <summary>
         ///     Log external API requests/responses. Off by default.
         /// </summary>
         public bool LogExternalApiData { get; set; } = false;
 
-        public string SettingsSectionName => "BankTests";
+        public string SettingsGroupName => "BankTests";
 
 
         public BankTestSettings Validate()

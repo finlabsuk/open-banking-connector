@@ -16,8 +16,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
     public interface ISettings<out TSelf>
         where TSelf : ISettings<TSelf>
     {
-        string SettingsSectionName { get; }
+        string SettingsGroupName { get; }
 
+        /// <summary>
+        ///     Validate settings. Returns itself to allow for method chaining.
+        /// </summary>
+        /// <returns></returns>
         TSelf Validate();
     }
 }

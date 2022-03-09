@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SigningCertificateProfilesSettings : Dictionary<string, SigningCertificateProfile>,
         ISettings<SigningCertificateProfilesSettings>
     {
-        public string SettingsSectionName => "SigningCertificateProfiles";
+        public string SettingsGroupName => "SigningCertificateProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="TransportCertificateProfile" /> entries

@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             GetDataDirectoryForCurrentOs(),
             "bankProfileHiddenProperties.jsonc");
 
-        public string SettingsSectionName => "BankProfiles";
+        public string SettingsGroupName => "BankProfiles";
 
         public BankProfilesSettings Validate()
         {

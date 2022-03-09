@@ -69,15 +69,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             }
 
             if (TransportCertificateProfileIdOverrides.TryGetValue(
-                overrideCase,
-                out string transportCertificateProfileId))
+                    overrideCase,
+                    out string transportCertificateProfileId))
             {
                 newObject.TransportCertificateProfileId = transportCertificateProfileId;
             }
 
             if (SigningCertificateProfileIdOverrides.TryGetValue(
-                overrideCase,
-                out string signingCertificateProfileId))
+                    overrideCase,
+                    out string signingCertificateProfileId))
             {
                 newObject.SigningCertificateProfileId = signingCertificateProfileId;
             }
@@ -93,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SoftwareStatementProfilesSettings : Dictionary<string, SoftwareStatementProfileWithOverrideProperties>,
         ISettings<SoftwareStatementProfilesSettings>
     {
-        public string SettingsSectionName => "SoftwareStatementProfiles";
+        public string SettingsGroupName => "SoftwareStatementProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="SoftwareStatementProfile" /> entries

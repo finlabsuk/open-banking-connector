@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
         /// <returns></returns>
         public static string KeyWithId<TSettings>(string id, string propertyName)
             where TSettings : class, ISettings<TSettings>, new() =>
-            $"{new TSettings().SettingsSectionName}:{id}:{propertyName}";
+            $"{new TSettings().SettingsGroupName}:{id}:{propertyName}";
 
         /// <summary>
         ///     Assemble object from individual key secrets where object properties

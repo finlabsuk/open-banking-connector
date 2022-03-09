@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -30,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 {
                     IConfigurationRoot builtConfig = config.Build();
                     KeySecretOptions? keySecretsOptions = builtConfig
-                        .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
+                        .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
                         .Get<OpenBankingConnectorSettings>()
                         .Validate()
                         .KeySecrets;

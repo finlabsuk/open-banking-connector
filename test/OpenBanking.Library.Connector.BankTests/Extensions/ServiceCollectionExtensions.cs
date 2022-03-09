@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.IO;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
@@ -27,10 +25,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
             // For each settings section, get settings via IOptions and pass to settings provider which performs validation
             // and allows use of alternative sources
             services
-                .Configure<BankTestSettings>(configuration.GetSection(new BankTestSettings().SettingsSectionName))
+                .Configure<BankTestSettings>(configuration.GetSection(new BankTestSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<BankTestSettings>,
-                    ConfigurationSettingsProvider<BankTestSettings>>()
-                .AddOptions();
+                    ConfigurationSettingsProvider<BankTestSettings>>();
 
             // Set up Node JS services
             services.AddSingleton<IOptions<NodeJSProcessOptions>>(

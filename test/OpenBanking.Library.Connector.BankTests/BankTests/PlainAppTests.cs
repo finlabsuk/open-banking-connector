@@ -2,11 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
@@ -84,16 +81,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .AddEnvironmentVariables()
                 .Build();
             var obcSettings = configuration
-                .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
+                .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
                 .Get<OpenBankingConnectorSettings>();
             var softwareStatementProfilesSettings = configuration
-                .GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName)
+                .GetSection(new SoftwareStatementProfilesSettings().SettingsGroupName)
                 .Get<SoftwareStatementProfilesSettings>();
             var obTransportCertificateProfilesSettings = configuration
-                .GetSection(new TransportCertificateProfilesSettings().SettingsSectionName)
+                .GetSection(new TransportCertificateProfilesSettings().SettingsGroupName)
                 .Get<TransportCertificateProfilesSettings>();
             var obSigningCertificateProfilesSettings = configuration
-                .GetSection(new SigningCertificateProfilesSettings().SettingsSectionName)
+                .GetSection(new SigningCertificateProfilesSettings().SettingsGroupName)
                 .Get<SigningCertificateProfilesSettings>();
 
             // Create providers from settings

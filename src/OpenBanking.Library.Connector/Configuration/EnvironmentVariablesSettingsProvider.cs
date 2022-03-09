@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
         where TSettings : class, ISettings<TSettings>, new()
     {
         private readonly IDictionary _environmentVariables;
-        private readonly string _root = new TSettings().SettingsSectionName;
+        private readonly string _root = new TSettings().SettingsGroupName;
 
         public EnvironmentVariablesSettingsProvider()
             : this(Environment.GetEnvironmentVariables()) { }

@@ -95,7 +95,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         public List<string> SoftwareStatementAndCertificateOverrideCasesAsList =>
             SoftwareStatementAndCertificateProfileOverrideCases.Split(' ').ToList();
 
-        public string SettingsSectionName => "OpenBankingConnector";
+        public string SettingsGroupName => "OpenBankingConnector";
 
         public OpenBankingConnectorSettings Validate()
         {

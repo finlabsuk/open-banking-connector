@@ -125,23 +125,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             }
 
             if (DisableTlsCertificateVerificationOverrides.TryGetValue(
-                overrideCase,
-                out bool disableTlsCertificateVerification))
+                    overrideCase,
+                    out bool disableTlsCertificateVerification))
             {
                 newObject.DisableTlsCertificateVerification = disableTlsCertificateVerification;
             }
 
             if (CertificateDnWithHexDottedDecimalAttributeValuesOverrides.TryGetValue(
-                overrideCase,
-                out string certificateDnWithHexDottedDecimalAttributeValues))
+                    overrideCase,
+                    out string certificateDnWithHexDottedDecimalAttributeValues))
             {
                 newObject.CertificateDnWithHexDottedDecimalAttributeValues =
                     certificateDnWithHexDottedDecimalAttributeValues;
             }
 
             if (CertificateDnWithStringDottedDecimalAttributeValuesOverrides.TryGetValue(
-                overrideCase,
-                out string certificateDnWithStringDottedDecimalAttributeValues))
+                    overrideCase,
+                    out string certificateDnWithStringDottedDecimalAttributeValues))
             {
                 newObject.CertificateDnWithStringDottedDecimalAttributeValues =
                     certificateDnWithStringDottedDecimalAttributeValues;
@@ -155,7 +155,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         Dictionary<string, TransportCertificateProfileWithOverrideProperties>,
         ISettings<TransportCertificateProfilesSettings>
     {
-        public string SettingsSectionName => "TransportCertificateProfiles";
+        public string SettingsGroupName => "TransportCertificateProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="TransportCertificateProfile" /> entries

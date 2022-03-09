@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
@@ -16,7 +13,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -39,26 +35,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // and allows use of alternative sources
             services
                 .Configure<OpenBankingConnectorSettings>(
-                    configuration.GetSection(new OpenBankingConnectorSettings().SettingsSectionName))
+                    configuration.GetSection(new OpenBankingConnectorSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<OpenBankingConnectorSettings>,
                     ConfigurationSettingsProvider<OpenBankingConnectorSettings>>()
-                .Configure<BankProfilesSettings>(
-                    configuration.GetSection(new BankProfilesSettings().SettingsSectionName))
+                .Configure<BankProfilesSettings>(configuration.GetSection(new BankProfilesSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<BankProfilesSettings>,
                     ConfigurationSettingsProvider<BankProfilesSettings>>()
                 .Configure<SoftwareStatementProfilesSettings>(
-                    configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsSectionName))
+                    configuration.GetSection(new SoftwareStatementProfilesSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<SoftwareStatementProfilesSettings>,
                     ConfigurationSettingsProvider<SoftwareStatementProfilesSettings>>()
                 .Configure<TransportCertificateProfilesSettings>(
-                    configuration.GetSection(new TransportCertificateProfilesSettings().SettingsSectionName))
+                    configuration.GetSection(new TransportCertificateProfilesSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<TransportCertificateProfilesSettings>,
                     ConfigurationSettingsProvider<TransportCertificateProfilesSettings>>()
                 .Configure<SigningCertificateProfilesSettings>(
-                    configuration.GetSection(new SigningCertificateProfilesSettings().SettingsSectionName))
+                    configuration.GetSection(new SigningCertificateProfilesSettings().SettingsGroupName))
                 .AddSingleton<ISettingsProvider<SigningCertificateProfilesSettings>,
-                    ConfigurationSettingsProvider<SigningCertificateProfilesSettings>>()
-                .AddOptions();
+                    ConfigurationSettingsProvider<SigningCertificateProfilesSettings>>();
 
             // Set up bank profile definitions
             services.AddSingleton(
@@ -96,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 
             // Configure DB
             DatabaseOptions databaseOptions = configuration
-                .GetSection(new OpenBankingConnectorSettings().SettingsSectionName)
+                .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
                 .Get<OpenBankingConnectorSettings>()
                 .Validate()
                 .Database;
