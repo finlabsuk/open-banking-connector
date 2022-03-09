@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -17,11 +14,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 {
     public class StartupTasksHostedService : IHostedService
     {
-        private readonly ISettingsProvider<OpenBankingConnectorSettings> _obcSettingsProvider;
+        private readonly ISettingsProvider<DatabaseSettings> _obcSettingsProvider;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public StartupTasksHostedService(
-            ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
+            ISettingsProvider<DatabaseSettings> obcSettingsProvider,
             IServiceScopeFactory serviceScopeFactory)
         {
             _obcSettingsProvider = obcSettingsProvider ??
@@ -32,12 +29,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
         public Task StartAsync(CancellationToken cancellationToken)
         {
             // Load Open Banking Connector configuration options
-            OpenBankingConnectorSettings obcSettings = _obcSettingsProvider.GetSettings();
+            DatabaseSettings obcSettings = _obcSettingsProvider.GetSettings();
 
             // Ensure DB exists
             using IServiceScope scope = _serviceScopeFactory.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
-            if (obcSettings.Database.EnsureDbCreated)
+            if (obcSettings.EnsureDbCreated)
             {
                 // Create DB if configured to do so and DB doesn't exist
                 context.Database.EnsureCreated();

@@ -34,6 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // Add settings groups
             services
                 .AddSettingsGroup<OpenBankingConnectorSettings>(configuration)
+                .AddSettingsGroup<DatabaseSettings>(configuration)
                 .AddSettingsGroup<BankProfilesSettings>(configuration)
                 .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)
                 .AddSettingsGroup<TransportCertificateProfilesSettings>(configuration)
@@ -74,14 +75,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             services.AddSingleton<IApiVariantMapper, ApiVariantMapper>();
 
             // Configure DB
-            DatabaseOptions databaseOptions = configuration
-                .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
-                .Get<OpenBankingConnectorSettings>()
-                .Validate()
-                .Database;
-            string connectionString = configuration.GetConnectionString(databaseOptions.ConnectionStringName) ??
-                                      throw new ArgumentException("Database connection string not found.");
-            switch (databaseOptions.Provider)
+            DatabaseSettings databaseSettings = configuration
+                .GetSection(new DatabaseSettings().SettingsGroupName)
+                .Get<DatabaseSettings>()
+                .Validate();
+            if (!databaseSettings.ConnectionStrings.TryGetValue(
+                    databaseSettings.Provider,
+                    out string? connectionString))
+            {
+                throw new ArgumentException(
+                    $"No database connection string found for provider {databaseSettings.Provider}.");
+            }
+            switch (databaseSettings.Provider)
             {
                 case DbProvider.Sqlite:
                     services
@@ -101,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                             });
                     break;
                 default:
-                    throw new ArgumentException("Unknown DB provider", configuration["DbProvider"]);
+                    throw new ArgumentException("Unsupported DB provider", configuration["DbProvider"]);
             }
 
             // Configure DB service

@@ -2,31 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 {
-    /// <summary>
-    ///     Database options
-    /// </summary>
-    public class DatabaseOptions
-    {
-        public DbProvider Provider { get; set; } = DbProvider.Sqlite;
-
-        public string ConnectionStringName { get; set; } = "SqliteDbConnectionString";
-
-        /// <summary>
-        ///     Ensures DB is created if does not exist. Intended for use in Development environment only.
-        /// </summary>
-        public bool EnsureDbCreated { get; set; } = false;
-
-    }
-
     /// <summary>
     ///     Key secrets options. Note that .Net Generic Host apps usually also
     ///     have access to local user secrets when running in Development envrionment.
@@ -47,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     /// </summary>
     public class OpenBankingConnectorSettings : ISettings<OpenBankingConnectorSettings>
     {
-
         /// <summary>
         ///     Whitelist of override cases for software statement (<see cref="SoftwareStatementProfile" />), transport certificate
         ///     (<see cref="TransportCertificateProfile" />) and signing certificate (<see cref="SigningCertificateProfile" />)
@@ -59,11 +40,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     Only override cases listed here will be extracted from key secrets by Open Banking Connector.
         /// </summary>
         public string SoftwareStatementAndCertificateProfileOverrideCases { get; set; } = string.Empty;
-
-        /// <summary>
-        ///     Database options.
-        /// </summary>
-        public DatabaseOptions Database { get; set; } = new DatabaseOptions();
 
         /// <summary>
         ///     Key Secrets options.
