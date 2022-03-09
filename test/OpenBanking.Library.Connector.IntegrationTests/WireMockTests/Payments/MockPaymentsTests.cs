@@ -38,8 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
             // Use default OBC settings
             var obcSettingsProvider =
-                new DefaultSettingsProvider<OpenBankingConnectorSettings>(
-                    new OpenBankingConnectorSettings
+                new DefaultSettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>(
+                    new SoftwareStatementAndCertificateProfileOverridesSettings
                     {
                         //SoftwareStatementProfileIds = softwareStatementProfileId
                     });

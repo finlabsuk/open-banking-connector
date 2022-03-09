@@ -80,9 +80,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
                 .AddEnvironmentVariables()
                 .Build();
-            var obcSettings = configuration
+            var openBankingConnectorSettings = configuration
                 .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
                 .Get<OpenBankingConnectorSettings>();
+            var softwareStatementAndCertificateProfileOverridesSettings = configuration
+                .GetSection(new SoftwareStatementAndCertificateProfileOverridesSettings().SettingsGroupName)
+                .Get<SoftwareStatementAndCertificateProfileOverridesSettings>();
             var softwareStatementProfilesSettings = configuration
                 .GetSection(new SoftwareStatementProfilesSettings().SettingsGroupName)
                 .Get<SoftwareStatementProfilesSettings>();
@@ -97,7 +100,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
             // settings as might be done in a "plain app".
             var obcSettingsProvider =
-                new DefaultSettingsProvider<OpenBankingConnectorSettings>(obcSettings);
+                new DefaultSettingsProvider<OpenBankingConnectorSettings>(openBankingConnectorSettings);
+            var obcSettingsProvider2 =
+                new DefaultSettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>(
+                    softwareStatementAndCertificateProfileOverridesSettings);
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obTransportCertificateProfilesSettingsProvider =
@@ -110,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var timeProvider = new TimeProvider();
             var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
             var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
-                obcSettingsProvider,
+                obcSettingsProvider2,
                 softwareStatementProfilesSettingsProvider,
                 obTransportCertificateProfilesSettingsProvider,
                 obSigningCertificateProfilesSettingsProvider,

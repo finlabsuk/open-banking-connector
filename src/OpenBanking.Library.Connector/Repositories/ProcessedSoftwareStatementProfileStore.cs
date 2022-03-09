@@ -45,14 +45,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             new ConcurrentDictionary<string, CacheValue>(StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessedSoftwareStatementProfileStore(
-            ISettingsProvider<OpenBankingConnectorSettings> obcSettingsProvider,
+            ISettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>
+                softwareStatementAndCertificateProfileOverridesSettingsProvider,
             ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
             ISettingsProvider<TransportCertificateProfilesSettings> transportCertificateProfilesSettingsProvider,
             ISettingsProvider<SigningCertificateProfilesSettings> signingCertificateProfilesSettingsProvider,
             IInstrumentationClient instrumentationClient)
         {
-            OpenBankingConnectorSettings obcSettings = obcSettingsProvider.GetSettings();
-            obcSettings.ArgNotNull(nameof(obcSettings));
+            SoftwareStatementAndCertificateProfileOverridesSettings softwareStatementAndCertificateProfileOverrides =
+                softwareStatementAndCertificateProfileOverridesSettingsProvider.GetSettings();
+            softwareStatementAndCertificateProfileOverrides.ArgNotNull(
+                nameof(softwareStatementAndCertificateProfileOverrides));
 
             SoftwareStatementProfilesSettings softwareStatementProfilesSettings =
                 softwareStatementProfilesSettingsProvider.GetSettings();
@@ -65,9 +68,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             SigningCertificateProfilesSettings signingCertificateProfilesSettings =
                 signingCertificateProfilesSettingsProvider.GetSettings();
             signingCertificateProfilesSettings.ArgNotNull(nameof(signingCertificateProfilesSettings));
-
-            List<string> softwareStatementAndCertificateOverrideCases =
-                obcSettings.SoftwareStatementAndCertificateOverrideCasesAsList;
 
             foreach ((string id, SoftwareStatementProfileWithOverrideProperties rawProfile) in
                      softwareStatementProfilesSettings)
@@ -96,7 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 
                 // Create and store override profiles
                 foreach (string softwareStatementAndCertificateOverrideCase in
-                         softwareStatementAndCertificateOverrideCases)
+                         softwareStatementAndCertificateProfileOverrides)
                 {
                     ProcessedSoftwareStatementProfile profile =
                         CreateProcessedSoftwareStatementProfile(

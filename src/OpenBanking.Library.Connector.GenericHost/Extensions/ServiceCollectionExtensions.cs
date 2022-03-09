@@ -34,6 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // Add settings groups
             services
                 .AddSettingsGroup<OpenBankingConnectorSettings>(configuration)
+                .AddSettingsGroup<SoftwareStatementAndCertificateProfileOverridesSettings>(configuration)
                 .AddSettingsGroup<DatabaseSettings>(configuration)
                 .AddSettingsGroup<BankProfilesSettings>(configuration)
                 .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)
@@ -86,6 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 throw new ArgumentException(
                     $"No database connection string found for provider {databaseSettings.Provider}.");
             }
+
             switch (databaseSettings.Provider)
             {
                 case DbProvider.Sqlite:
