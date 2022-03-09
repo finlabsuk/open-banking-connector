@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SoftwareStatementAndCertificateProfileOverridesSettings : List<string>,
         ISettings<SoftwareStatementAndCertificateProfileOverridesSettings>
     {
-        public string SettingsGroupName => "SoftwareStatementAndCertificateProfileOverrideCases";
+        public string SettingsGroupName => "OpenBankingConnector:SoftwareStatementAndCertificateProfileOverrideCases";
 
         public SoftwareStatementAndCertificateProfileOverridesSettings Validate()
         {

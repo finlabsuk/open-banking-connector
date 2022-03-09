@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public bool EnsureDbCreated { get; set; } = false;
 
-        public string SettingsGroupName => "Database";
+        public string SettingsGroupName => "OpenBankingConnector:Database";
 
         public DatabaseSettings Validate()
         {

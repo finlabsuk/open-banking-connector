@@ -102,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SoftwareStatementProfilesSettings : Dictionary<string, SoftwareStatementProfileWithOverrideProperties>,
         ISettings<SoftwareStatementProfilesSettings>
     {
-        public string SettingsGroupName => "SoftwareStatementProfiles";
+        public string SettingsGroupName => "OpenBankingConnector:SoftwareStatementProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="SoftwareStatementProfile" /> entries

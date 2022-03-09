@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
         /// </summary>
         public bool Active { get; set; } = true;
-        
+
         /// <summary>
         ///     Type of certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
@@ -160,7 +160,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         Dictionary<string, TransportCertificateProfileWithOverrideProperties>,
         ISettings<TransportCertificateProfilesSettings>
     {
-        public string SettingsGroupName => "TransportCertificateProfiles";
+        public string SettingsGroupName => "OpenBankingConnector:TransportCertificateProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="TransportCertificateProfile" /> entries

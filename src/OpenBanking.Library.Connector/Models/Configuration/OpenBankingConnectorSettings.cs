@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public KeySecretOptions? KeySecrets { get; set; }
 
-        public string SettingsGroupName => "Database";
+        public string SettingsGroupName => "OpenBankingConnector:Database";
 
         public OpenBankingConnectorSettings Validate()
         {

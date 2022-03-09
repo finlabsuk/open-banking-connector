@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
         /// </summary>
         public bool Active { get; set; } = true;
-        
+
         /// <summary>
         ///     Type of certificate used - see <see cref="SigningCertificateType" />
         /// </summary>
@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SigningCertificateProfilesSettings : Dictionary<string, SigningCertificateProfile>,
         ISettings<SigningCertificateProfilesSettings>
     {
-        public string SettingsGroupName => "SigningCertificateProfiles";
+        public string SettingsGroupName => "OpenBankingConnector:SigningCertificateProfiles";
 
         /// <summary>
         ///     Placeholder. Validation is performed only on individual <see cref="TransportCertificateProfile" /> entries
