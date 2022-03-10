@@ -67,8 +67,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             // Add web host static files
             app.UseWebHostStaticFiles();
 
+            // Add controller endpoints
             app.UseRouting();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

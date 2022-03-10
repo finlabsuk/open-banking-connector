@@ -30,7 +30,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             Directory.CreateDirectory(DataFolder); // Create if doesn't exist
 
             // Create and start .NET Generic Host
-            Host = CreateHostBuilder(new string[0]).Build();
+            Host =
+                CreateHostBuilder(new string[0])
+                    .Build();
             Host.Start();
         }
 

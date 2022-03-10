@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
@@ -36,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 .AddSettingsGroup<OpenBankingConnectorSettings>(configuration)
                 .AddSettingsGroup<SoftwareStatementAndCertificateProfileOverridesSettings>(configuration)
                 .AddSettingsGroup<DatabaseSettings>(configuration)
-                .AddSettingsGroup<BankProfilesSettings>(configuration)
+                .AddSettingsGroup<BankProfilesSettings>(configuration, false)
                 .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)
                 .AddSettingsGroup<TransportCertificateProfilesSettings>(configuration)
                 .AddSettingsGroup<SigningCertificateProfilesSettings>(configuration);
@@ -125,11 +126,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 
         public static IServiceCollection AddSettingsGroup<TSettings>(
             this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            bool validateOnStart = true)
             where TSettings : class, ISettings<TSettings>, new()
         {
             // Get settings group from configuration and validate
-            services
+            OptionsBuilder<TSettings>? optionsBuilder = services
                 .AddOptions<TSettings>()
                 .Bind(configuration.GetSection(new TSettings().SettingsGroupName))
                 .ValidateDataAnnotations()
@@ -138,8 +140,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     {
                         settings.Validate();
                         return true;
-                    })
-                .ValidateOnStart();
+                    });
+
+            if (validateOnStart)
+            {
+                optionsBuilder.ValidateOnStart();
+            }
 
             // Convert to ISettingsProvider which is independent of .NET Generic Host
             services

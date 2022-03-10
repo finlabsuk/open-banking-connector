@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
@@ -38,7 +39,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
             if (_hostEnvironment.IsDevelopment())
             {
                 // Log configuration
-                _logger.LogInformation("Configuration:\n" + _configurationRoot.GetDebugView());
+                string configString;
+                if (!OperatingSystem.IsLinux())
+                {
+                    // Create string with embedded \n removed from certs etc as not handled well by logger
+                    var regexPattern =
+                        @"(?<!\r)\n"; // Catches \n when not \r\n
+                    configString = Regex.Replace(_configurationRoot.GetDebugView(), regexPattern, string.Empty);
+                }
+                else
+                {
+                    configString = _configurationRoot.GetDebugView();
+                }
+
+                _logger.LogInformation("Configuration Found:" + Environment.NewLine + configString);
 
                 // Log application parts found
                 IEnumerable<string> partNames = _applicationPartManager.ApplicationParts.Select(x => x.Name);

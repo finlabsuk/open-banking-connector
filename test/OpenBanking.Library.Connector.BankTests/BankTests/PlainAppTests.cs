@@ -75,26 +75,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;
             // see comment in next section).
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", false, true)
-                .AddUserSecrets(typeof(PlainAppTests).GetTypeInfo().Assembly)
-                .AddEnvironmentVariables()
-                .Build();
-            var openBankingConnectorSettings = configuration
-                .GetSection(new OpenBankingConnectorSettings().SettingsGroupName)
-                .Get<OpenBankingConnectorSettings>();
-            var softwareStatementAndCertificateProfileOverridesSettings = configuration
-                .GetSection(new SoftwareStatementAndCertificateProfileOverridesSettings().SettingsGroupName)
-                .Get<SoftwareStatementAndCertificateProfileOverridesSettings>();
-            var softwareStatementProfilesSettings = configuration
-                .GetSection(new SoftwareStatementProfilesSettings().SettingsGroupName)
-                .Get<SoftwareStatementProfilesSettings>();
-            var obTransportCertificateProfilesSettings = configuration
-                .GetSection(new TransportCertificateProfilesSettings().SettingsGroupName)
-                .Get<TransportCertificateProfilesSettings>();
-            var obSigningCertificateProfilesSettings = configuration
-                .GetSection(new SigningCertificateProfilesSettings().SettingsGroupName)
-                .Get<SigningCertificateProfilesSettings>();
+            var openBankingConnectorSettings =
+                AppConfiguration.GetSettings<OpenBankingConnectorSettings>();
+            var softwareStatementAndCertificateProfileOverridesSettings =
+                AppConfiguration.GetSettings<SoftwareStatementAndCertificateProfileOverridesSettings>();
+            var softwareStatementProfilesSettings =
+                AppConfiguration.GetSettings<SoftwareStatementProfilesSettings>();
+            var obTransportCertificateProfilesSettings =
+                AppConfiguration.GetSettings<TransportCertificateProfilesSettings>();
+            var obSigningCertificateProfilesSettings =
+                AppConfiguration.GetSettings<SigningCertificateProfilesSettings>();
 
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
