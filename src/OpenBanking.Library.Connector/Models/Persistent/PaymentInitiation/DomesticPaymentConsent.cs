@@ -291,6 +291,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 IInstrumentationClient instrumentationClient)
             => paymentInitiationApi?.PaymentInitiationApiVersion switch
             {
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
+                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
+                    PaymentInitiationModelsV3p1p4.OBWriteFundsConfirmationResponse1>(
+                    new PaymentInitiationGetRequestProcessor(
+                        bankFinancialId,
+                        tokenEndpointResponse)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(

@@ -10,7 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.M
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-
+    
+    [SourceApiEquivalent(typeof(V3p1p4.Pisp.Models.OBWriteFundsConfirmationResponse1Data))]
     public partial class OBWriteFundsConfirmationResponse1Data
     {
         /// <summary>

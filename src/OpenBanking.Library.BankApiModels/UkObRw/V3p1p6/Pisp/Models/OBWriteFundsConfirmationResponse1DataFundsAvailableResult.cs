@@ -12,6 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.M
     /// <summary>
     /// Result of a funds availability check.
     /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p4.Pisp.Models.OBWriteFundsConfirmationResponse1DataFundsAvailableResult))]
     public partial class OBWriteFundsConfirmationResponse1DataFundsAvailableResult
     {
         /// <summary>
