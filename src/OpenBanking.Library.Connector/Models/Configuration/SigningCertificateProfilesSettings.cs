@@ -32,26 +32,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SigningCertificateProfile
     {
         /// <summary>
-        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        ///     Whether profile is active or inactive (ignored by Open Banking Connector). This allows profiles to be "switched on
+        ///     and off" for testing etc.
         /// </summary>
         public bool Active { get; set; } = true;
 
         /// <summary>
-        ///     Type of certificate used - see <see cref="SigningCertificateType" />
+        ///     Type of UK Open Banking Directory certificate used - see <see cref="SigningCertificateType" />
         /// </summary>
         public SigningCertificateType CertificateType { get; set; } = SigningCertificateType.OBSeal;
 
-        /// Signing Key ID as string, e.g. "ABC"
+        /// Signing Key ID (from UK Open Banking Directory) as string. This is not the same as the user-definied profile ID for this signing certificate profile.
         public string AssociatedKeyId { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Signing key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
-        ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        ///     Signing key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
+        ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
         /// </summary>
         public string AssociatedKey { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Signing certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
+        ///     Signing certificate (X.509) as "stringified" PEM file with escaped newline characters ("\n") and "CERTIFICATE"
+        ///     label.
         ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         /// </summary>
         public string Certificate { get; set; } = string.Empty;

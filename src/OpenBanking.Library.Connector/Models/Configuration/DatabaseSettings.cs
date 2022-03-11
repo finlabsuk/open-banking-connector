@@ -16,15 +16,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class DatabaseSettings : ISettings<DatabaseSettings>
     {
         /// <summary>
-        ///     Database provider to be used by Open Banking Connector.
+        ///     Determines which database provider Open Banking Connector uses.
         /// </summary>
         public DbProvider Provider { get; set; } = DbProvider.Sqlite;
 
         /// <summary>
-        ///     Connection string to use to connect to database.
+        ///     Connection strings for each database provider. Open Banking Connector only reads the one for the provider specified
+        ///     by OpenBankingConnector.Database.Provider. The BankTests project, however, may use multiple connection strings to
+        ///     test with multiple databases.
         /// </summary>
         public Dictionary<DbProvider, string> ConnectionStrings { get; set; } =
-            new Dictionary<DbProvider, string>();
+            new Dictionary<DbProvider, string>
+            {
+                [DbProvider.Sqlite] = string.Empty,
+                [DbProvider.Postgres] = string.Empty
+            };
 
         /// <summary>
         ///     Ensures DB is created if does not exist. Intended for use in Development environment only.

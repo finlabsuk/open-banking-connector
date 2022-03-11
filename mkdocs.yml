@@ -14,27 +14,29 @@ markdown_extensions:
   - attr_list
   - md_in_html
 plugins:
-  - section-index
   - search:
        lang: en
        separator: '[\s\-\.]'
-       indexing: 'full'
   - git-revision-date
-
 
 nav:
   - Overview:
-      - overview/README.md
+      - README.md
       - Supported Open Banking API's: supported-open-banking-apis.md
       - Definitions: definitions.md
       - Open Banking Basics: open-banking-basics.md
-
   - Get Started:
       - get-started/README.md
       - Dev Environment: 
           - Install OB Root Cerftificate: get-started/dev-environment/install-ob-root-cert.md
       - Configure Secrets: get-started/configure-secrets.md
       - Configure Settings: get-started/configure-settings.md
+  - Configuration:
+      - configuration/README.md
+      - Database settings: configuration/database-settings.md
+      - Software statement profiles settings: configuration/software-statement-profiles-settings.md
+      - Transport certificate profiles settings: configuration/transport-certificate-profiles-settings.md
+      - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
   - How to:
       - how-to/set-up-software-statement-profiles.md
   - Interface:
@@ -42,7 +44,7 @@ nav:
       - Bank Configuration:
               - interface/bank-configuration/README.md
               - Setting up a bank: interface/bank-configuration/set-up-a-bank.md
-      - Payment Intiation:
+      - Payment Initiation:
             - interface/payment-initiation/README.md
             - Domestic Payments: interface/payment-initiation/domestic-payments.md
             - Create and authorise Domestic Payment Consent: interface/payment-initiation/create-and-authorise-domestic-payment-consent.md

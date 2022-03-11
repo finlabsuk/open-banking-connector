@@ -1,0 +1,23 @@
+# Transport certificate profiles settings
+
+Transport certificate profiles settings are used to configure transport certificate profiles used by Open Banking Connector.
+
+A *transport certificate profile* is a set of settings comprising a transport key and certificate pair and related information. It is identified by a user-defined profile ID. It is referenced by one or more [software statement profiles](./software-statement-profiles-settings.md). A transport key-certificate pair is used for mutual TLS when commuinicating with banks.
+
+No transport certificate profiles are configured by default and you will require at least one in order to create a bank registration.
+
+Transport certificate profiles settings are defined in the [TransportCertificateProfilesSettings](../../src/OpenBanking.Library.Connector/Models/Configuration/TransportCertificateProfilesSettings.cs#L165) class.
+
+
+## Settings
+
+Name | Valid Values | Default Value(s) | Description
+--- | --- | --- | ---
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:Active <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | {`"true"`, `"false"`} | `"true"` | Whether profile is active or inactive (ignored by Open Banking Connector). This allows profiles to be "switched on and off" for testing etc.
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:TransportCertificateType <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | {`"OBLegacy"`, `"OBWac"`} | `"OBWac"` | Type of UK Open Banking Directory certificate used.
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:DisableTlsCertificateVerification <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | {`"true"`, `"false"`} | `"false"` | Disable verification of external bank TLS certificates when using mutual TLS with this certificate profile. Not intended for production use but sometimes helpful for diagnosing issues with bank sandboxes (e.g. if they use self-signed certificates).
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:CertificateDnWithHexDottedDecimalAttributeValues <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | string | - | Transport certificate DN to use for bank registration (DCR) with hex values for dotted-decimal attributes (as specified by             <https://datatracker.ietf.org/doc/html/rfc4514#section-2.4>). Whether             CertificateDnWithHexDottedDecimalAttributeValues setting or             CertificateDnWithStringDottedDecimalAttributeValues setting is used in bank registration is             determined by bank registration request property             UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues.             . This setting is ignored when TransportCertificateType = `"OBLegacy"`.
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:CertificateDnWithStringDottedDecimalAttributeValues <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | string | - |  Alternative transport certificate DN to use for bank registration (DCR) with string (not hex) values for dotted-decimal attributes             (required by some banks). Whether ertificateDnWithHexDottedDecimalAttributeValues setting or       CertificateDnWithStringDottedDecimalAttributeValues setting is used in bank registration is             determined by bank registration request property          UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues. This setting is ignored when TransportCertificateType = `"OBLegacy"`.
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:AssociatedKey <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | string | - | Transport key (PKCS #8) as "stringified" PEM file with escaped newline characters (`"\n"`) and PRIVATE KEY label.             Example: `"-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"`.
+OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:Certificate <p style="margin-top: 10px;"> *where string Id is user-defined profile ID*  </p> | string | - | Transport certificate (X.509) as "stringified" PEM file with escaped newline characters (`"\n"`) and CERTIFICATE label.             Example: `"-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"`.
+ 

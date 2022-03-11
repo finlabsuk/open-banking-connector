@@ -11,27 +11,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class SoftwareStatementProfile
     {
         /// <summary>
-        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        ///     Whether profile is active or inactive (ignored by Open Banking Connector). This allows profiles to be "switched on
+        ///     and off" for testing etc.
         /// </summary>
         public bool Active { get; set; } = true;
 
         /// <summary>
-        ///     Software statement as string, e.g. "A.B.C"
+        ///     Software statement assertion (SSA) as string, i.e. "FirstPart.SecondPart.ThirdPart".
         /// </summary>
         public string SoftwareStatement { get; set; } = string.Empty;
 
         /// <summary>
-        ///     ID of <see cref="TransportCertificateProfile" /> to use with this software statement profile
+        ///     ID of <see cref="TransportCertificateProfile" /> to use for mutual TLS with this software statement profile.
         /// </summary>
         public string TransportCertificateProfileId { get; set; } = string.Empty;
 
         /// <summary>
-        ///     ID of <see cref="SigningCertificateProfile" /> to use with this software statement profile
+        ///     ID of <see cref="SigningCertificateProfile" /> to use for signing JWTs etc with this software statement profile.
         /// </summary>
         public string SigningCertificateProfileId { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Default redirect URL for OAuth clients with response_mode == fragment.
+        ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
         /// </summary>
         public string DefaultFragmentRedirectUrl { get; set; } = string.Empty;
     }

@@ -1,4 +1,4 @@
-#Update documentation
+# Update documentation
 
 Here are the steps required to:
 
@@ -6,7 +6,8 @@ Here are the steps required to:
 
 - add new documentation
 
-##Update documentation
+## Update documentation
+
 To update the current documentation:
 
 - edit the required files in the `/docs` repo folder
@@ -21,7 +22,7 @@ To update the current documentation:
 
 - The next step is to [generate docs website and deploy documentation.](./deploy-documentation.md)
 
-##Add new documentation
+## Add new documentation
 
 To add new documentation:
 

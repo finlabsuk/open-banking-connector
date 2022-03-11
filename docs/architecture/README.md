@@ -1,4 +1,3 @@
-
 # OpenBanking.Library.Connector architecture
 
 [Suggested API](Suggested_API_endpoints.md)

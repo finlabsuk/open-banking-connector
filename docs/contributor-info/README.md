@@ -1,4 +1,4 @@
-#Contributor info
+# Contributor info
 
 Open Banking Connector is an open-source project and welcomes contributions.
 

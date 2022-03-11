@@ -32,52 +32,58 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     public class TransportCertificateProfile
     {
         /// <summary>
-        ///     Determines whether profile is active or inactive (ignored by Open Banking Connector)
+        ///     Whether profile is active or inactive (ignored by Open Banking Connector). This allows profiles to be "switched on
+        ///     and off" for testing etc.
         /// </summary>
         public bool Active { get; set; } = true;
 
         /// <summary>
-        ///     Type of certificate used - see <see cref="TransportCertificateType" />
+        ///     Type of UK Open Banking Directory certificate used - see <see cref="TransportCertificateType" />
         /// </summary>
         public TransportCertificateType CertificateType { get; set; } = TransportCertificateType.OBWac;
 
         /// <summary>
-        ///     Disable verification of external bank TLS certificates. Not for production use but
-        ///     helpful when testing against sandboxes using self-signed certificates.
+        ///     Disable verification of external bank TLS certificates when using mutual TLS with this certificate profile. Not
+        ///     intended for
+        ///     production use but
+        ///     sometimes helpful for diagnosing issues with bank sandboxes (e.g. if they use self-signed certificates).
         /// </summary>
         public bool DisableTlsCertificateVerification { get; set; }
 
         /// <summary>
-        ///     Transport certificate DN to use for DCR with hex values for dotted-decimal attributes (as specified by
+        ///     Transport certificate DN to use for bank registration (DCR) with hex values for dotted-decimal attributes (as
+        ///     specified by
         ///     https://datatracker.ietf.org/doc/html/rfc4514#section-2.4). Whether
         ///     <see cref="CertificateDnWithHexDottedDecimalAttributeValues" /> or
-        ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used is
-        ///     determined by
+        ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
+        ///     determined by bank registration request property
         ///     <see
         ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
-        ///     . Neither is used for DCR with <see cref="TransportCertificateType.OBLegacy" /> certificates.
+        ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Alternative transport certificate DN to use for DCR with string (not hex) values for dotted-decimal attributes
+        ///     Alternative transport certificate DN to use for bank registration (DCR) with string (not hex) values for
+        ///     dotted-decimal attributes
         ///     (required by some banks). Whether <see cref="CertificateDnWithHexDottedDecimalAttributeValues" /> or
-        ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used is
-        ///     determined by
+        ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
+        ///     determined by bank registration request property
         ///     <see
         ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
-        ///     . Neither is used for DCR with <see cref="TransportCertificateType.OBLegacy" /> certificates.
+        ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Transport key (PKCS #8) as "stringified" PEM file with "PRIVATE KEY" label.
-        ///     Example: "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+        ///     Transport key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
+        ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
         /// </summary>
         public string AssociatedKey { get; set; } = string.Empty;
 
         /// <summary>
-        ///     Transport certificate (X.509) as "stringified" PEM file with "CERTIFICATE" label.
+        ///     Transport certificate (X.509) as "stringified" PEM file with escaped newline characters ("\n") and "CERTIFICATE"
+        ///     label.
         ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         /// </summary>
         public string Certificate { get; set; } = string.Empty;

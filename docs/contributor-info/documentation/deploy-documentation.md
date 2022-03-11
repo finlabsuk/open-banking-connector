@@ -1,4 +1,4 @@
-#Deploy documentation
+# Deploy documentation
 
 Here are the steps required to:
 
@@ -13,13 +13,15 @@ To publish documentation to the website, you will need to have permission to pus
 You will need to install Python 3 and Material for MkDocs (mkdocs-material).
 
 Assuming you have installed Python, you can install Material for MkDocs as follows:
+
 ```powershell
 pip install mkdocs-material # if mkdocs-material not installed
+pip install mkdocs-git-revision-date-plugin
 ```
 
-##Prepare for deployment
+## Prepare for deployment
 
-###Preview website
+### Preview website
 
 To deploy the website locally for inspection and testing, please `cd` to the OBC repo root and run the following command:
 ```
@@ -81,7 +83,7 @@ https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.0/src
 
 *Please do not commit these changes to links.*
 
-##Deploy to website 
+## Deploy to website 
 
 Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:
 ```powershell
