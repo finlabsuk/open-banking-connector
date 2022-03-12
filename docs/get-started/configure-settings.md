@@ -7,8 +7,8 @@ Two groups of settings are currently defined:
 
 Group | C# class | Description
 --- | --- | ---
-Open Banking Connector | [OpenBankingConnectorSettings](./.././../src/OpenBanking.Library.Connector/Models/Configuration/OpenBankingConnectorSettings.cs#L54) | settings related to Core Open Banking functionality including the database connection string
-Bank Profile Settings | [BankProfilesSettings](./.././../src/OpenBanking.Library.Connector/Models/Configuration/BankProfilesSettings.cs#L30)| settings related to Bank Profiles which is an optional feature of Open Bnaking Connector providing configuration for UK bank sandboxes
+Open Banking Connector | [OpenBankingConnectorSettings](.././../src/OpenBanking.Library.Connector/Models/Configuration/OpenBankingConnectorSettings.cs#L54) | settings related to Core Open Banking functionality including the database connection string
+Bank Profile Settings | [BankProfilesSettings](.././../src/OpenBanking.Library.Connector/Models/Configuration/BankProfilesSettings.cs#L30)| settings related to Bank Profiles which is an optional feature of Open Bnaking Connector providing configuration for UK bank sandboxes
 
 ## Available Settings
 

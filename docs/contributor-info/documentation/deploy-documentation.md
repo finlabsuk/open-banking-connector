@@ -73,12 +73,12 @@ Here is a regular expression search and replace that may help to speed this conv
 
 Search:
 ```
-\(./.*?/src
+\(\.\.\/[\.\/]*?src
 ```
 
 Replace:
 ```
-https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.0/src
+(https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src
 ```
 
 *Please do not commit these changes to links.*
