@@ -50,13 +50,6 @@ git push publicRemote docs_v1.0
 
 Github tags are used to create a version number for a new release. This separates different versions of code and links depending on the version. 
 
-### Create overview page (temporary change - do not commit)
-
-For the overview page on the website, an overview folder with a `README.md` was created for the website heading feature. This is not compatible with Github so this folder was added to `.gitignore` to stop it from being committed.
-
-There is a separate project `/docs/README.md` file which is visible on github.
-
-
 ### Convert code links to absolute paths (temporary change - do not commit)
 
 Relative paths are normally used for links to code in the docs. Example:
@@ -87,7 +80,7 @@ Replace:
 
 Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:
 ```powershell
-mkdocs gh-deploy -m "Deploy Docs using Tag v1.4" -r publicRemote --ignore-version # adjust commit message and remote as required 
+mkdocs gh-deploy -m "Deploy docs using tag docs_v1.5" -r publicRemote --ignore-version # adjust commit message and remote as required 
 ```
 
 N.B. The ```--ignore-version```

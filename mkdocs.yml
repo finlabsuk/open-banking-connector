@@ -19,6 +19,9 @@ plugins:
        separator: '[\s\-\.]'
   - git-revision-date
 
+extra_css:
+  - stylesheets/style.css
+
 nav:
   - Overview:
       - README.md
