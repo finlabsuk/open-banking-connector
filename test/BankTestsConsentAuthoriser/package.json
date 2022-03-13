@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/finlabsuk/open-banking-connector-csharp#readme",
   "dependencies": {
-    "@types/node": "^16.11.7",
-    "puppeteer": "^11.0.0"
+    "@types/node": "^17.0.0",
+    "puppeteer": "^13.0.0"
   }
 }
