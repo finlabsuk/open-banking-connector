@@ -5,7 +5,7 @@
 
 #nullable disable
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Fee/Charge Type. </summary>
     internal enum OBFeeType1CodeEnum

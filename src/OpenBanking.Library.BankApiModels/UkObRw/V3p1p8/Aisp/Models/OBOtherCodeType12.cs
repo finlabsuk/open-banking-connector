@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Other calculation frequency which is not available in the standard code set. </summary>
     internal partial class OBOtherCodeType12

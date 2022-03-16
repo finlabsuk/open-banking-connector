@@ -5,7 +5,7 @@
 
 #nullable disable
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Period e.g. day, week, month etc. for which the fee/charge is capped. </summary>
     internal enum OBPeriod1CodeEnum

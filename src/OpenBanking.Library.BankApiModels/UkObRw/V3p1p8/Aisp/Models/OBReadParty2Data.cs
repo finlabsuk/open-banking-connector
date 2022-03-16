@@ -5,7 +5,7 @@
 
 #nullable disable
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> The OBReadParty2Data. </summary>
     public partial class OBReadParty2Data

@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Provides the details to identify the beneficiary account. </summary>
     public partial class OBCashAccount51

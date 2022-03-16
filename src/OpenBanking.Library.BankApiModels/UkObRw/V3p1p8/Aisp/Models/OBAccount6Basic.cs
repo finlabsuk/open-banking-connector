@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Unambiguous identification of the account to which credit and debit entries are made. </summary>
     internal partial class OBAccount6Basic

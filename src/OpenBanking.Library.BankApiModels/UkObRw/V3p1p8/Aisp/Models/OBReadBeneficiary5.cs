@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> The OBReadBeneficiary5. </summary>
     public partial class OBReadBeneficiary5

@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements to fully identify a proprietary bank transaction code. </summary>
     public partial class ProprietaryBankTransactionCodeStructure1

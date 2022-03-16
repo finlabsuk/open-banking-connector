@@ -5,7 +5,7 @@
 
 #nullable disable
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the credit line. </summary>
     public partial class OBReadBalance1DataBalancePropertiesItemsItem

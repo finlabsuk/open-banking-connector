@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements used to define the balance as a numerical representation of the net increases and decreases in an account after a transaction entry is applied to the account. </summary>
     public partial class OBTransactionCashBalance

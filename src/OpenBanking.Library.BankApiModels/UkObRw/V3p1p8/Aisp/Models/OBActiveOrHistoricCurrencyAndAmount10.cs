@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Transaction charges to be paid by the charge bearer. </summary>
     public partial class OBActiveOrHistoricCurrencyAndAmount10

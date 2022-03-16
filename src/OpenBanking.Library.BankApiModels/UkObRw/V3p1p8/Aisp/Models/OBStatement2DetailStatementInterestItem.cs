@@ -7,7 +7,7 @@
 
 using System;
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a generic interest amount related to the statement resource. </summary>
     internal partial class OBStatement2DetailStatementInterestItem

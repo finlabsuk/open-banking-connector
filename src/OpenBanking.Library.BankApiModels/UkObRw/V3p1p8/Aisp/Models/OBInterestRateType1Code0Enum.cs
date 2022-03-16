@@ -5,7 +5,7 @@
 
 #nullable disable
 
-namespace AccountAndTransactionAPISpecification.Models
+namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Rate type for overdraft fee/charge (where it is charged in terms of a rate rather than an amount). </summary>
     internal enum OBInterestRateType1Code0Enum

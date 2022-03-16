@@ -4,11 +4,11 @@ This file contains configuration for generating bank API models using AutoRest.
 
 > see https://aka.ms/autorest
 
-Please install AutoRest v3 and run command `autorest` in this directory to generate model files.
+Please install AutoRest v3 and run `autorest --reset` then `autorest --latest` in this directory to generate model files.
 
 ``` yaml
 input-file:
-  - ./account-info-openapi.yaml
+  - ./account-info-openapi-modified.yaml # modified AISP v3.1.8r5 spec
 csharp:
   namespace: FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp
   use-datetimeoffset: true
