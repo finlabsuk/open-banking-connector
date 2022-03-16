@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>annotations</Nullable>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.BankApiModels</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.Library.BankApiModels</RootNamespace>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
@@ -22,15 +23,17 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="11.0.1" />
+        <PackageReference Include="Azure.Core" Version="1.22.0" />
+        <PackageReference Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20210604.3" PrivateAssets="All" />
         <PackageReference Include="FluentValidation" Version="10.3.6" />
         <PackageReference Include="jose-jwt" Version="3.2.0" />
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.23" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="UkObRw\V3p1p8\Pisp\Models" />
-    </ItemGroup>
-
+    
+    <PropertyGroup>
+        <IncludeGeneratorSharedCode>true</IncludeGeneratorSharedCode>
+    </PropertyGroup>
+    
 </Project>
