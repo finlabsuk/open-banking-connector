@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
     public partial class OBReadDirectDebit2Data
     {
         /// <summary> Initializes a new instance of OBReadDirectDebit2Data. </summary>
-        internal OBReadDirectDebit2Data()
+        public OBReadDirectDebit2Data()
         {
             DirectDebit = new ChangeTrackingList<OBReadDirectDebit2DataDirectDebitItem>();
         }
 
         /// <summary> Initializes a new instance of OBReadDirectDebit2Data. </summary>
         /// <param name="directDebit"></param>
-        internal OBReadDirectDebit2Data(IReadOnlyList<OBReadDirectDebit2DataDirectDebitItem> directDebit)
+        public OBReadDirectDebit2Data(IReadOnlyList<OBReadDirectDebit2DataDirectDebitItem> directDebit)
         {
             DirectDebit = directDebit;
         }

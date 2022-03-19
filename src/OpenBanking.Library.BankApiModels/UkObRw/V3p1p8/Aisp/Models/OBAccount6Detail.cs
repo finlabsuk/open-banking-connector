@@ -12,7 +12,7 @@ using System.Linq;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Unambiguous identification of the account to which credit and debit entries are made. </summary>
-    internal partial class OBAccount6Detail
+    public partial class OBAccount6Detail
     {
         /// <summary> Initializes a new instance of OBAccount6Detail. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="accountSubType"> Specifies the sub type of account (product family group). </param>
         /// <param name="account"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/>, <paramref name="currency"/> or <paramref name="account"/> is null. </exception>
-        internal OBAccount6Detail(string accountId, string currency, OBExternalAccountType1CodeEnum accountType, OBExternalAccountSubType1CodeEnum accountSubType, IEnumerable<OBAccount6DetailAccountItem> account)
+        public OBAccount6Detail(string accountId, string currency, OBExternalAccountType1CodeEnum accountType, OBExternalAccountSubType1CodeEnum accountSubType, IEnumerable<OBAccount6DetailAccountItem> account)
         {
             if (accountId == null)
             {

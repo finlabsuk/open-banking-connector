@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Provides the details to identify an account. </summary>
-    internal partial class OBAccount4AccountItem
+    public partial class OBAccount4AccountItem
     {
         /// <summary> Initializes a new instance of OBAccount4AccountItem. </summary>
         /// <param name="schemeName"> Name of the identification scheme, in a coded form as published in an external list. </param>
         /// <param name="identification"> Identification assigned by an institution to identify an account. This identification is known by the account owner. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="schemeName"/> or <paramref name="identification"/> is null. </exception>
-        internal OBAccount4AccountItem(string schemeName, string identification)
+        public OBAccount4AccountItem(string schemeName, string identification)
         {
             if (schemeName == null)
             {

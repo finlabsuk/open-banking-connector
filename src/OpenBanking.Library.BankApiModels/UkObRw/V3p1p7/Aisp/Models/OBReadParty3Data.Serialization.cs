@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadParty3Data
     {
-        internal static OBReadParty3Data DeserializeOBReadParty3Data(JsonElement element)
+        public static OBReadParty3Data DeserializeOBReadParty3Data(JsonElement element)
         {
             Optional<IReadOnlyList<OBParty2>> party = default;
             foreach (var property in element.EnumerateObject())

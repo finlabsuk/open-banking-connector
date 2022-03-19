@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBStandingOrder6
     {
-        internal static OBStandingOrder6 DeserializeOBStandingOrder6(JsonElement element)
+        public static OBStandingOrder6 DeserializeOBStandingOrder6(JsonElement element)
         {
             string accountId = default;
             Optional<string> standingOrderId = default;

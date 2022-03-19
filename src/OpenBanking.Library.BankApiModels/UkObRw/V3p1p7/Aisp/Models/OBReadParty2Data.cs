@@ -11,13 +11,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBReadParty2Data
     {
         /// <summary> Initializes a new instance of OBReadParty2Data. </summary>
-        internal OBReadParty2Data()
+        public OBReadParty2Data()
         {
         }
 
         /// <summary> Initializes a new instance of OBReadParty2Data. </summary>
         /// <param name="party"></param>
-        internal OBReadParty2Data(OBParty2 party)
+        public OBReadParty2Data(OBParty2 party)
         {
             Party = party;
         }

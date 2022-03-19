@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <summary> Initializes a new instance of ProprietaryBankTransactionCodeStructure1. </summary>
         /// <param name="code"> Proprietary bank transaction code to identify the underlying transaction. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="code"/> is null. </exception>
-        internal ProprietaryBankTransactionCodeStructure1(string code)
+        public ProprietaryBankTransactionCodeStructure1(string code)
         {
             if (code == null)
             {
@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <summary> Initializes a new instance of ProprietaryBankTransactionCodeStructure1. </summary>
         /// <param name="code"> Proprietary bank transaction code to identify the underlying transaction. </param>
         /// <param name="issuer"> Identification of the issuer of the proprietary bank transaction code. </param>
-        internal ProprietaryBankTransactionCodeStructure1(string code, string issuer)
+        public ProprietaryBankTransactionCodeStructure1(string code, string issuer)
         {
             Code = code;
             Issuer = issuer;

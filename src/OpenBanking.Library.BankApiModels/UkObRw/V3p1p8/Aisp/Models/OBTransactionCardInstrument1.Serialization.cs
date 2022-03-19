@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBTransactionCardInstrument1
     {
-        internal static OBTransactionCardInstrument1 DeserializeOBTransactionCardInstrument1(JsonElement element)
+        public static OBTransactionCardInstrument1 DeserializeOBTransactionCardInstrument1(JsonElement element)
         {
             OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName = default;
             Optional<OBTransactionCardInstrument1AuthorisationTypeEnum> authorisationType = default;

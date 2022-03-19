@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="data"></param>
         /// <param name="risk"> Any object. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> or <paramref name="risk"/> is null. </exception>
-        internal OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk)
+        public OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk)
         {
             if (data == null)
             {
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="risk"> Any object. </param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk, Links links, Meta meta)
+        public OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk, Links links, Meta meta)
         {
             Data = data;
             Risk = risk;

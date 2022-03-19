@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBReadConsentResponse1Data
     {
-        internal static OBReadConsentResponse1Data DeserializeOBReadConsentResponse1Data(JsonElement element)
+        public static OBReadConsentResponse1Data DeserializeOBReadConsentResponse1Data(JsonElement element)
         {
             string consentId = default;
             DateTimeOffset creationDateTime = default;

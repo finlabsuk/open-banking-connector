@@ -11,10 +11,10 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> The OBBeneficiary5Basic. </summary>
-    internal partial class OBBeneficiary5Basic
+    public partial class OBBeneficiary5Basic
     {
         /// <summary> Initializes a new instance of OBBeneficiary5Basic. </summary>
-        internal OBBeneficiary5Basic()
+        public OBBeneficiary5Basic()
         {
             SupplementaryData = new ChangeTrackingDictionary<string, object>();
         }

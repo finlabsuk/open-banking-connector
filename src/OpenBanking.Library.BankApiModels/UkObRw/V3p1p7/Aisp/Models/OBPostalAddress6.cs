@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBPostalAddress6
     {
         /// <summary> Initializes a new instance of OBPostalAddress6. </summary>
-        internal OBPostalAddress6()
+        public OBPostalAddress6()
         {
             AddressLine = new ChangeTrackingList<string>();
         }
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="countrySubDivision"> Identifies a subdivision of a country such as state, region, county. </param>
         /// <param name="country"> Nation with its own government. </param>
         /// <param name="addressLine"></param>
-        internal OBPostalAddress6(OBAddressTypeCodeEnum? addressType, string department, string subDepartment, string streetName, string buildingNumber, string postCode, string townName, string countrySubDivision, string country, IReadOnlyList<string> addressLine)
+        public OBPostalAddress6(OBAddressTypeCodeEnum? addressType, string department, string subDepartment, string streetName, string buildingNumber, string postCode, string townName, string countrySubDivision, string country, IReadOnlyList<string> addressLine)
         {
             AddressType = addressType;
             Department = department;

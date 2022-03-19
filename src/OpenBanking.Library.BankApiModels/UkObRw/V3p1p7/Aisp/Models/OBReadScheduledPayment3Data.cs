@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBReadScheduledPayment3Data
     {
         /// <summary> Initializes a new instance of OBReadScheduledPayment3Data. </summary>
-        internal OBReadScheduledPayment3Data()
+        public OBReadScheduledPayment3Data()
         {
             ScheduledPayment = new ChangeTrackingList<OBScheduledPayment3>();
         }
 
         /// <summary> Initializes a new instance of OBReadScheduledPayment3Data. </summary>
         /// <param name="scheduledPayment"></param>
-        internal OBReadScheduledPayment3Data(IReadOnlyList<OBScheduledPayment3> scheduledPayment)
+        public OBReadScheduledPayment3Data(IReadOnlyList<OBScheduledPayment3> scheduledPayment)
         {
             ScheduledPayment = scheduledPayment;
         }

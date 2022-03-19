@@ -10,7 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a generic date time for the statement resource. </summary>
-    internal partial class OBStatement2DetailStatementDateTimeItem
+    public partial class OBStatement2DetailStatementDateTimeItem
     {
         /// <summary> Initializes a new instance of OBStatement2DetailStatementDateTimeItem. </summary>
         /// <param name="dateTime">
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// </param>
         /// <param name="type"> Date time type, in a coded form. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> is null. </exception>
-        internal OBStatement2DetailStatementDateTimeItem(DateTimeOffset dateTime, string type)
+        public OBStatement2DetailStatementDateTimeItem(DateTimeOffset dateTime, string type)
         {
             if (type == null)
             {

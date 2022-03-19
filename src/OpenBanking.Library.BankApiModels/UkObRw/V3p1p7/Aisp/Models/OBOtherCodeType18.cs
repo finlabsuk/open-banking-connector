@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Other fee rate type which is not available in the standard code set. </summary>
-    internal partial class OBOtherCodeType18
+    public partial class OBOtherCodeType18
     {
         /// <summary> Initializes a new instance of OBOtherCodeType18. </summary>
         /// <param name="name"> Long name associated with the code. </param>
         /// <param name="description"> Description to describe the purpose of the code. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="description"/> is null. </exception>
-        internal OBOtherCodeType18(string name, string description)
+        public OBOtherCodeType18(string name, string description)
         {
             if (name == null)
             {

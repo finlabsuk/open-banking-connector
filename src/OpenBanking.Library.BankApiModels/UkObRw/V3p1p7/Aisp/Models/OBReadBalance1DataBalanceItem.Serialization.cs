@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadBalance1DataBalanceItem
     {
-        internal static OBReadBalance1DataBalanceItem DeserializeOBReadBalance1DataBalanceItem(JsonElement element)
+        public static OBReadBalance1DataBalanceItem DeserializeOBReadBalance1DataBalanceItem(JsonElement element)
         {
             string accountId = default;
             OBCreditDebitCode2Enum creditDebitIndicator = default;

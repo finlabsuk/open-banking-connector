@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Min Max type. </summary>
-    internal enum OBMinMaxType1CodeEnum
+    public enum OBMinMaxType1CodeEnum
     {
         /// <summary> FMMN. </summary>
         Fmmn,

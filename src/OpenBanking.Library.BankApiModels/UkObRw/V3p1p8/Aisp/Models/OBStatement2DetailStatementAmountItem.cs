@@ -10,7 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a generic amount for the statement resource. </summary>
-    internal partial class OBStatement2DetailStatementAmountItem
+    public partial class OBStatement2DetailStatementAmountItem
     {
         /// <summary> Initializes a new instance of OBStatement2DetailStatementAmountItem. </summary>
         /// <param name="creditDebitIndicator">
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="type"> Amount type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the amount type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2DetailStatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount8 amount)
+        public OBStatement2DetailStatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount8 amount)
         {
             if (type == null)
             {

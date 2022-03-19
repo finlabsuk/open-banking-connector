@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBActiveOrHistoricCurrencyAndAmount8
     {
-        internal static OBActiveOrHistoricCurrencyAndAmount8 DeserializeOBActiveOrHistoricCurrencyAndAmount8(JsonElement element)
+        public static OBActiveOrHistoricCurrencyAndAmount8 DeserializeOBActiveOrHistoricCurrencyAndAmount8(JsonElement element)
         {
             string amount = default;
             string currency = default;

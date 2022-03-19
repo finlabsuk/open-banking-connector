@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBReadDataTransaction6
     {
-        internal static OBReadDataTransaction6 DeserializeOBReadDataTransaction6(JsonElement element)
+        public static OBReadDataTransaction6 DeserializeOBReadDataTransaction6(JsonElement element)
         {
             Optional<IReadOnlyList<OBTransaction6>> transaction = default;
             foreach (var property in element.EnumerateObject())

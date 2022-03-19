@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// Indicates whether or not the credit line is included in the balance of the account.
         /// Usage: If not present, credit line is not included in the balance amount of the account.
         /// </param>
-        internal OBReadBalance1DataBalancePropertiesItemsItem(bool included)
+        public OBReadBalance1DataBalancePropertiesItemsItem(bool included)
         {
             Included = included;
         }
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// </param>
         /// <param name="type"> Limit type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the credit line. </param>
-        internal OBReadBalance1DataBalancePropertiesItemsItem(bool included, OBReadBalance1DataBalanceCreditLineTypeEnum? type, OBReadBalance1DataBalanceItemCreditLineItemAmount amount)
+        public OBReadBalance1DataBalancePropertiesItemsItem(bool included, OBReadBalance1DataBalanceCreditLineTypeEnum? type, OBReadBalance1DataBalanceItemCreditLineItemAmount amount)
         {
             Included = included;
             Type = type;

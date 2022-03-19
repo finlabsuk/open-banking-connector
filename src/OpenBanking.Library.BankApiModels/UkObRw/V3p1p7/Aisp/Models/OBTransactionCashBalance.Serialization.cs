@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBTransactionCashBalance
     {
-        internal static OBTransactionCashBalance DeserializeOBTransactionCashBalance(JsonElement element)
+        public static OBTransactionCashBalance DeserializeOBTransactionCashBalance(JsonElement element)
         {
             OBCreditDebitCode2Enum creditDebitIndicator = default;
             OBBalanceType1CodeEnum type = default;

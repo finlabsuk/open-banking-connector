@@ -10,14 +10,14 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Other Fee/charge type which is not available in the standard code set. </summary>
-    internal partial class OBOtherFeeChargeDetailType
+    public partial class OBOtherFeeChargeDetailType
     {
         /// <summary> Initializes a new instance of OBOtherFeeChargeDetailType. </summary>
         /// <param name="feeCategory"> Categorisation of fees and charges into standard categories. </param>
         /// <param name="name"> Long name associated with the code. </param>
         /// <param name="description"> Description to describe the purpose of the code. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="description"/> is null. </exception>
-        internal OBOtherFeeChargeDetailType(OBFeeCategory1CodeEnum feeCategory, string name, string description)
+        public OBOtherFeeChargeDetailType(OBFeeCategory1CodeEnum feeCategory, string name, string description)
         {
             if (name == null)
             {

@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBStatement2StatementAmountItem
     {
-        internal static OBStatement2StatementAmountItem DeserializeOBStatement2StatementAmountItem(JsonElement element)
+        public static OBStatement2StatementAmountItem DeserializeOBStatement2StatementAmountItem(JsonElement element)
         {
             OBCreditDebitCode0Enum creditDebitIndicator = default;
             string type = default;

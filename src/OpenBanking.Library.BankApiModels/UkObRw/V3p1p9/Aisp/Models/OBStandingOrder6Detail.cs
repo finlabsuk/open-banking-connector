@@ -12,7 +12,7 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> The OBStandingOrder6Detail. </summary>
-    internal partial class OBStandingOrder6Detail
+    public partial class OBStandingOrder6Detail
     {
         /// <summary> Initializes a new instance of OBStandingOrder6Detail. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/>, <paramref name="frequency"/> or <paramref name="creditorAccount"/> is null. </exception>
-        internal OBStandingOrder6Detail(string accountId, string frequency, OBCashAccount51 creditorAccount)
+        public OBStandingOrder6Detail(string accountId, string frequency, OBCashAccount51 creditorAccount)
         {
             if (accountId == null)
             {

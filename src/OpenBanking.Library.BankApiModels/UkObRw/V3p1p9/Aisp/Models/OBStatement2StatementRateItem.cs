@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="rate"> Rate associated with the statement rate type. </param>
         /// <param name="type"> Statement rate type, in a coded form. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="rate"/> or <paramref name="type"/> is null. </exception>
-        internal OBStatement2StatementRateItem(string rate, string type)
+        public OBStatement2StatementRateItem(string rate, string type)
         {
             if (rate == null)
             {

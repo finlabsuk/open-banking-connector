@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="type"> Balance type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the cash balance after a transaction entry is applied to the account.. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="amount"/> is null. </exception>
-        internal OBTransactionCashBalance(OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, OBTransactionCashBalanceAmount amount)
+        public OBTransactionCashBalance(OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, OBTransactionCashBalanceAmount amount)
         {
             if (amount == null)
             {

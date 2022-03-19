@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <summary> Initializes a new instance of OBParty2AddressItem. </summary>
         /// <param name="country"> Nation with its own government, occupying a particular territory. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="country"/> is null. </exception>
-        internal OBParty2AddressItem(string country)
+        public OBParty2AddressItem(string country)
         {
             if (country == null)
             {
@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="townName"> Name of a built-up area, with defined boundaries, and a local government. </param>
         /// <param name="countrySubDivision"> Identifies a subdivision of a country eg, state, region, county. </param>
         /// <param name="country"> Nation with its own government, occupying a particular territory. </param>
-        internal OBParty2AddressItem(OBAddressTypeCodeEnum? addressType, IReadOnlyList<string> addressLine, string streetName, string buildingNumber, string postCode, string townName, string countrySubDivision, string country)
+        public OBParty2AddressItem(OBAddressTypeCodeEnum? addressType, IReadOnlyList<string> addressLine, string streetName, string buildingNumber, string postCode, string townName, string countrySubDivision, string country)
         {
             AddressType = addressType;
             AddressLine = addressLine;

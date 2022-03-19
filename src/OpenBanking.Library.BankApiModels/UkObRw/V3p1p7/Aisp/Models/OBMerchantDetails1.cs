@@ -11,14 +11,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBMerchantDetails1
     {
         /// <summary> Initializes a new instance of OBMerchantDetails1. </summary>
-        internal OBMerchantDetails1()
+        public OBMerchantDetails1()
         {
         }
 
         /// <summary> Initializes a new instance of OBMerchantDetails1. </summary>
         /// <param name="merchantName"> Name by which the merchant is known. </param>
         /// <param name="merchantCategoryCode"> Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction. </param>
-        internal OBMerchantDetails1(string merchantName, string merchantCategoryCode)
+        public OBMerchantDetails1(string merchantName, string merchantCategoryCode)
         {
             MerchantName = merchantName;
             MerchantCategoryCode = merchantCategoryCode;

@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="related"> Absolute URI to the related resource. </param>
         /// <param name="id"> Unique identification as assigned by the ASPSP to uniquely identify the related resource. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="related"/> or <paramref name="id"/> is null. </exception>
-        internal OBPartyRelationships1Account(string related, string id)
+        public OBPartyRelationships1Account(string related, string id)
         {
             if (related == null)
             {

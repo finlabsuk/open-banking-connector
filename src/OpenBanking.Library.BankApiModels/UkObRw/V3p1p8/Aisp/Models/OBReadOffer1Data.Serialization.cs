@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBReadOffer1Data
     {
-        internal static OBReadOffer1Data DeserializeOBReadOffer1Data(JsonElement element)
+        public static OBReadOffer1Data DeserializeOBReadOffer1Data(JsonElement element)
         {
             Optional<IReadOnlyList<OBReadOffer1DataOfferItem>> offer = default;
             foreach (var property in element.EnumerateObject())

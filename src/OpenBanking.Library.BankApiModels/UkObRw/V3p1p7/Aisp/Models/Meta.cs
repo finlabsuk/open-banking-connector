@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class Meta
     {
         /// <summary> Initializes a new instance of Meta. </summary>
-        internal Meta()
+        public Meta()
         {
         }
 
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </param>
-        internal Meta(int? totalPages, DateTimeOffset? firstAvailableDateTime, DateTimeOffset? lastAvailableDateTime)
+        public Meta(int? totalPages, DateTimeOffset? firstAvailableDateTime, DateTimeOffset? lastAvailableDateTime)
         {
             TotalPages = totalPages;
             FirstAvailableDateTime = firstAvailableDateTime;

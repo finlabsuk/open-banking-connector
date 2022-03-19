@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Frequency at which the overdraft charge is applied to the account. </summary>
-    internal enum OBFeeFrequency1Code0Enum
+    public enum OBFeeFrequency1Code0Enum
     {
         /// <summary> FEAC. </summary>
         Feac,

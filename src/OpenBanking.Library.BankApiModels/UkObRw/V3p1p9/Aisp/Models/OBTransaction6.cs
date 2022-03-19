@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="amount"> Amount of money in the cash transaction entry. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="amount"/> is null. </exception>
-        internal OBTransaction6(string accountId, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, DateTimeOffset bookingDateTime, OBActiveOrHistoricCurrencyAndAmount9 amount)
+        public OBTransaction6(string accountId, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, DateTimeOffset bookingDateTime, OBActiveOrHistoricCurrencyAndAmount9 amount)
         {
             if (accountId == null)
             {
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="debtorAccount"> Unambiguous identification of the account of the debtor, in the case of a crebit transaction. </param>
         /// <param name="cardInstrument"> Set of elements to describe the card instrument used in the transaction. </param>
         /// <param name="supplementaryData"> Additional information that can not be captured in the structured fields and/or any other specific block. </param>
-        internal OBTransaction6(string accountId, string transactionId, string transactionReference, IReadOnlyList<string> statementReference, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, OBTransactionMutability1CodeEnum? transactionMutability, DateTimeOffset bookingDateTime, DateTimeOffset? valueDateTime, string transactionInformation, string addressLine, OBActiveOrHistoricCurrencyAndAmount9 amount, OBActiveOrHistoricCurrencyAndAmount10 chargeAmount, OBCurrencyExchange5 currencyExchange, OBBankTransactionCodeStructure1 bankTransactionCode, ProprietaryBankTransactionCodeStructure1 proprietaryBankTransactionCode, OBTransactionCashBalance balance, OBMerchantDetails1 merchantDetails, OBBranchAndFinancialInstitutionIdentification61 creditorAgent, OBCashAccount60 creditorAccount, OBBranchAndFinancialInstitutionIdentification62 debtorAgent, OBCashAccount61 debtorAccount, OBTransactionCardInstrument1 cardInstrument, IReadOnlyDictionary<string, object> supplementaryData)
+        public OBTransaction6(string accountId, string transactionId, string transactionReference, IReadOnlyList<string> statementReference, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, OBTransactionMutability1CodeEnum? transactionMutability, DateTimeOffset bookingDateTime, DateTimeOffset? valueDateTime, string transactionInformation, string addressLine, OBActiveOrHistoricCurrencyAndAmount9 amount, OBActiveOrHistoricCurrencyAndAmount10 chargeAmount, OBCurrencyExchange5 currencyExchange, OBBankTransactionCodeStructure1 bankTransactionCode, ProprietaryBankTransactionCodeStructure1 proprietaryBankTransactionCode, OBTransactionCashBalance balance, OBMerchantDetails1 merchantDetails, OBBranchAndFinancialInstitutionIdentification61 creditorAgent, OBCashAccount60 creditorAccount, OBBranchAndFinancialInstitutionIdentification62 debtorAgent, OBCashAccount61 debtorAccount, OBTransactionCardInstrument1 cardInstrument, IReadOnlyDictionary<string, object> supplementaryData)
         {
             AccountId = accountId;
             TransactionId = transactionId;

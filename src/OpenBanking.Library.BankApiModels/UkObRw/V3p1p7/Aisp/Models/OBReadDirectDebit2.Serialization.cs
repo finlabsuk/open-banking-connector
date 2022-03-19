@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadDirectDebit2
     {
-        internal static OBReadDirectDebit2 DeserializeOBReadDirectDebit2(JsonElement element)
+        public static OBReadDirectDebit2 DeserializeOBReadDirectDebit2(JsonElement element)
         {
             OBReadDirectDebit2Data data = default;
             Optional<Links> links = default;

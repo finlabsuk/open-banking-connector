@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <summary> Initializes a new instance of OBReadParty2. </summary>
         /// <param name="data"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null. </exception>
-        internal OBReadParty2(OBReadParty2Data data)
+        public OBReadParty2(OBReadParty2Data data)
         {
             if (data == null)
             {
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadParty2(OBReadParty2Data data, Links links, Meta meta)
+        public OBReadParty2(OBReadParty2Data data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Overdraft fee type. </summary>
-    internal enum OBOverdraftFeeType1CodeEnum
+    public enum OBOverdraftFeeType1CodeEnum
     {
         /// <summary> FBAO. </summary>
         Fbao,

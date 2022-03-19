@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBReadOffer1Data
     {
         /// <summary> Initializes a new instance of OBReadOffer1Data. </summary>
-        internal OBReadOffer1Data()
+        public OBReadOffer1Data()
         {
             Offer = new ChangeTrackingList<OBReadOffer1DataOfferItem>();
         }
 
         /// <summary> Initializes a new instance of OBReadOffer1Data. </summary>
         /// <param name="offer"></param>
-        internal OBReadOffer1Data(IReadOnlyList<OBReadOffer1DataOfferItem> offer)
+        public OBReadOffer1Data(IReadOnlyList<OBReadOffer1DataOfferItem> offer)
         {
             Offer = offer;
         }

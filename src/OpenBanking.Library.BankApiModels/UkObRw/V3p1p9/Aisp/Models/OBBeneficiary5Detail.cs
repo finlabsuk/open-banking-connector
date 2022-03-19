@@ -12,12 +12,12 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> The OBBeneficiary5Detail. </summary>
-    internal partial class OBBeneficiary5Detail
+    public partial class OBBeneficiary5Detail
     {
         /// <summary> Initializes a new instance of OBBeneficiary5Detail. </summary>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="creditorAccount"/> is null. </exception>
-        internal OBBeneficiary5Detail(OBCashAccount50 creditorAccount)
+        public OBBeneficiary5Detail(OBCashAccount50 creditorAccount)
         {
             if (creditorAccount == null)
             {

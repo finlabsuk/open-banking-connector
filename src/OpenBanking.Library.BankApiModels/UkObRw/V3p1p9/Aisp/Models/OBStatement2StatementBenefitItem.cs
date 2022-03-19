@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="type"> Benefit type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the statement benefit type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2StatementBenefitItem(string type, OBActiveOrHistoricCurrencyAndAmount5 amount)
+        public OBStatement2StatementBenefitItem(string type, OBActiveOrHistoricCurrencyAndAmount5 amount)
         {
             if (type == null)
             {

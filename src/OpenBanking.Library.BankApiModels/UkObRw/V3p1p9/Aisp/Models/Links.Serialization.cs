@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class Links
     {
-        internal static Links DeserializeLinks(JsonElement element)
+        public static Links DeserializeLinks(JsonElement element)
         {
             string self = default;
             Optional<string> first = default;

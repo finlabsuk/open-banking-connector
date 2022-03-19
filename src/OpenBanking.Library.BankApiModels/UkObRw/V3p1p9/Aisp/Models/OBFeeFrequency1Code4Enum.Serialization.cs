@@ -9,7 +9,7 @@ using System;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
-    internal static partial class OBFeeFrequency1Code4EnumExtensions
+    public static partial class OBFeeFrequency1Code4EnumExtensions
     {
         public static string ToSerialString(this OBFeeFrequency1Code4Enum value) => value switch
         {

@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// ^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="frequency"/> is null. </exception>
-        internal OBStandingOrder6(string accountId, string frequency)
+        public OBStandingOrder6(string accountId, string frequency)
         {
             if (accountId == null)
             {
@@ -141,7 +141,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
         /// <param name="supplementaryData"> Additional information that can not be captured in the structured fields and/or any other specific block. </param>
-        internal OBStandingOrder6(string accountId, string standingOrderId, string frequency, string reference, DateTimeOffset? firstPaymentDateTime, DateTimeOffset? nextPaymentDateTime, DateTimeOffset? lastPaymentDateTime, DateTimeOffset? finalPaymentDateTime, string numberOfPayments, OBExternalStandingOrderStatus1CodeEnum? standingOrderStatusCode, OBActiveOrHistoricCurrencyAndAmount2 firstPaymentAmount, OBActiveOrHistoricCurrencyAndAmount3 nextPaymentAmount, OBActiveOrHistoricCurrencyAndAmount11 lastPaymentAmount, OBActiveOrHistoricCurrencyAndAmount4 finalPaymentAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount, IReadOnlyDictionary<string, object> supplementaryData)
+        public OBStandingOrder6(string accountId, string standingOrderId, string frequency, string reference, DateTimeOffset? firstPaymentDateTime, DateTimeOffset? nextPaymentDateTime, DateTimeOffset? lastPaymentDateTime, DateTimeOffset? finalPaymentDateTime, string numberOfPayments, OBExternalStandingOrderStatus1CodeEnum? standingOrderStatusCode, OBActiveOrHistoricCurrencyAndAmount2 firstPaymentAmount, OBActiveOrHistoricCurrencyAndAmount3 nextPaymentAmount, OBActiveOrHistoricCurrencyAndAmount11 lastPaymentAmount, OBActiveOrHistoricCurrencyAndAmount4 finalPaymentAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount, IReadOnlyDictionary<string, object> supplementaryData)
         {
             AccountId = accountId;
             StandingOrderId = standingOrderId;

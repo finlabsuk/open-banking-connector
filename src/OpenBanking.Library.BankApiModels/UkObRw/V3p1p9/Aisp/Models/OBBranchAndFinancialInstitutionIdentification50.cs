@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="schemeName"> Name of the identification scheme, in a coded form as published in an external list. </param>
         /// <param name="identification"> Unique and unambiguous identification of the servicing institution. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="schemeName"/> or <paramref name="identification"/> is null. </exception>
-        internal OBBranchAndFinancialInstitutionIdentification50(string schemeName, string identification)
+        public OBBranchAndFinancialInstitutionIdentification50(string schemeName, string identification)
         {
             if (schemeName == null)
             {

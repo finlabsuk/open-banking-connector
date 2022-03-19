@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadScheduledPayment3Data
     {
-        internal static OBReadScheduledPayment3Data DeserializeOBReadScheduledPayment3Data(JsonElement element)
+        public static OBReadScheduledPayment3Data DeserializeOBReadScheduledPayment3Data(JsonElement element)
         {
             Optional<IReadOnlyList<OBScheduledPayment3>> scheduledPayment = default;
             foreach (var property in element.EnumerateObject())

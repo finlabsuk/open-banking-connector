@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBMerchantDetails1
     {
-        internal static OBMerchantDetails1 DeserializeOBMerchantDetails1(JsonElement element)
+        public static OBMerchantDetails1 DeserializeOBMerchantDetails1(JsonElement element)
         {
             Optional<string> merchantName = default;
             Optional<string> merchantCategoryCode = default;

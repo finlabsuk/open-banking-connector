@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> How frequently the fee/charge is applied to the account. </summary>
-    internal enum OBFeeFrequency1Code2Enum
+    public enum OBFeeFrequency1Code2Enum
     {
         /// <summary> FEAC. </summary>
         Feac,

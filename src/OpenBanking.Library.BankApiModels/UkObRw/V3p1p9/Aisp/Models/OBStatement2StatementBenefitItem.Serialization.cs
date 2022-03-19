@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBStatement2StatementBenefitItem
     {
-        internal static OBStatement2StatementBenefitItem DeserializeOBStatement2StatementBenefitItem(JsonElement element)
+        public static OBStatement2StatementBenefitItem DeserializeOBStatement2StatementBenefitItem(JsonElement element)
         {
             string type = default;
             OBActiveOrHistoricCurrencyAndAmount5 amount = default;

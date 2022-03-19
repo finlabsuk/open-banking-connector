@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="amount"> A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217. </param>
         /// <param name="currency"> A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 &quot;Codes for the representation of currencies and funds&quot;. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="amount"/> or <paramref name="currency"/> is null. </exception>
-        internal OBReadOffer1DataOfferItemFee(string amount, string currency)
+        public OBReadOffer1DataOfferItemFee(string amount, string currency)
         {
             if (amount == null)
             {

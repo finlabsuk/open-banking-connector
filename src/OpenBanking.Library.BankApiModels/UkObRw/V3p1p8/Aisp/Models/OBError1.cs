@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// OBIE doesn&apos;t standardise this field
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="errorCode"/> or <paramref name="message"/> is null. </exception>
-        internal OBError1(string errorCode, string message)
+        public OBError1(string errorCode, string message)
         {
             if (errorCode == null)
             {
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// </param>
         /// <param name="path"> Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency. </param>
         /// <param name="url"> URL to help remediate the problem, or provide more information, or to API Reference, or help etc. </param>
-        internal OBError1(string errorCode, string message, string path, string url)
+        public OBError1(string errorCode, string message, string path, string url)
         {
             ErrorCode = errorCode;
             Message = message;

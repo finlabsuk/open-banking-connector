@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBTransactionCashBalanceAmount
     {
-        internal static OBTransactionCashBalanceAmount DeserializeOBTransactionCashBalanceAmount(JsonElement element)
+        public static OBTransactionCashBalanceAmount DeserializeOBTransactionCashBalanceAmount(JsonElement element)
         {
             string amount = default;
             string currency = default;

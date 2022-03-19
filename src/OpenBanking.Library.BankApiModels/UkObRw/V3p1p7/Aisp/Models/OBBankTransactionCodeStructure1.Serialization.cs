@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBBankTransactionCodeStructure1
     {
-        internal static OBBankTransactionCodeStructure1 DeserializeOBBankTransactionCodeStructure1(JsonElement element)
+        public static OBBankTransactionCodeStructure1 DeserializeOBBankTransactionCodeStructure1(JsonElement element)
         {
             string code = default;
             string subCode = default;

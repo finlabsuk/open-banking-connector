@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Other calculation frequency which is not available in standard code set. </summary>
-    internal partial class OBOtherCodeType17
+    public partial class OBOtherCodeType17
     {
         /// <summary> Initializes a new instance of OBOtherCodeType17. </summary>
         /// <param name="name"> Long name associated with the code. </param>
         /// <param name="description"> Description to describe the purpose of the code. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="description"/> is null. </exception>
-        internal OBOtherCodeType17(string name, string description)
+        public OBOtherCodeType17(string name, string description)
         {
             if (name == null)
             {

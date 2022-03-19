@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBPostalAddress6
     {
-        internal static OBPostalAddress6 DeserializeOBPostalAddress6(JsonElement element)
+        public static OBPostalAddress6 DeserializeOBPostalAddress6(JsonElement element)
         {
             Optional<OBAddressTypeCodeEnum> addressType = default;
             Optional<string> department = default;

@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadBalance1Data
     {
-        internal static OBReadBalance1Data DeserializeOBReadBalance1Data(JsonElement element)
+        public static OBReadBalance1Data DeserializeOBReadBalance1Data(JsonElement element)
         {
             IReadOnlyList<OBReadBalance1DataBalanceItem> balance = default;
             foreach (var property in element.EnumerateObject())

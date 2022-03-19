@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <summary> Initializes a new instance of OBParty2. </summary>
         /// <param name="partyId"> A unique and immutable identifier used to identify the customer resource. This identifier has no meaning to the account owner. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="partyId"/> is null. </exception>
-        internal OBParty2(string partyId)
+        public OBParty2(string partyId)
         {
             if (partyId == null)
             {
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="mobile"> Collection of information that identifies a mobile phone number, as defined by telecom services. </param>
         /// <param name="relationships"> The Party&apos;s relationships with other resources. </param>
         /// <param name="address"></param>
-        internal OBParty2(string partyId, string partyNumber, OBExternalPartyType1CodeEnum? partyType, string name, string fullLegalName, string legalStructure, bool? beneficialOwnership, string accountRole, string emailAddress, string phone, string mobile, OBPartyRelationships1 relationships, IReadOnlyList<OBParty2AddressItem> address)
+        public OBParty2(string partyId, string partyNumber, OBExternalPartyType1CodeEnum? partyType, string name, string fullLegalName, string legalStructure, bool? beneficialOwnership, string accountRole, string emailAddress, string phone, string mobile, OBPartyRelationships1 relationships, IReadOnlyList<OBParty2AddressItem> address)
         {
             PartyId = partyId;
             PartyNumber = partyNumber;

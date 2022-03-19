@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadConsentResponse1
     {
-        internal static OBReadConsentResponse1 DeserializeOBReadConsentResponse1(JsonElement element)
+        public static OBReadConsentResponse1 DeserializeOBReadConsentResponse1(JsonElement element)
         {
             OBReadConsentResponse1Data data = default;
             object risk = default;

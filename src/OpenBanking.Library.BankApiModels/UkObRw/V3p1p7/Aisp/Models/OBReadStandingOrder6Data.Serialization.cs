@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadStandingOrder6Data
     {
-        internal static OBReadStandingOrder6Data DeserializeOBReadStandingOrder6Data(JsonElement element)
+        public static OBReadStandingOrder6Data DeserializeOBReadStandingOrder6Data(JsonElement element)
         {
             Optional<IReadOnlyList<OBStandingOrder6>> standingOrder = default;
             foreach (var property in element.EnumerateObject())

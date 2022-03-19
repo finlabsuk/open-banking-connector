@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
     public partial class OBBeneficiary5
     {
         /// <summary> Initializes a new instance of OBBeneficiary5. </summary>
-        internal OBBeneficiary5()
+        public OBBeneficiary5()
         {
             SupplementaryData = new ChangeTrackingDictionary<string, object>();
         }
@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// This is the servicer of the beneficiary account.
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
-        internal OBBeneficiary5(string accountId, string beneficiaryId, OBBeneficiaryType1CodeEnum? beneficiaryType, string reference, IReadOnlyDictionary<string, object> supplementaryData, OBBranchAndFinancialInstitutionIdentification60 creditorAgent, OBCashAccount50 creditorAccount)
+        public OBBeneficiary5(string accountId, string beneficiaryId, OBBeneficiaryType1CodeEnum? beneficiaryType, string reference, IReadOnlyDictionary<string, object> supplementaryData, OBBranchAndFinancialInstitutionIdentification60 creditorAgent, OBCashAccount50 creditorAccount)
         {
             AccountId = accountId;
             BeneficiaryId = beneficiaryId;

@@ -11,13 +11,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
     public partial class OBPartyRelationships1
     {
         /// <summary> Initializes a new instance of OBPartyRelationships1. </summary>
-        internal OBPartyRelationships1()
+        public OBPartyRelationships1()
         {
         }
 
         /// <summary> Initializes a new instance of OBPartyRelationships1. </summary>
         /// <param name="account"> Relationship to the Account resource. </param>
-        internal OBPartyRelationships1(OBPartyRelationships1Account account)
+        public OBPartyRelationships1(OBPartyRelationships1Account account)
         {
             Account = account;
         }

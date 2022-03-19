@@ -12,7 +12,7 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Unambiguous identification of the account to which credit and debit entries are made. </summary>
-    internal partial class OBAccount4
+    public partial class OBAccount4
     {
         /// <summary> Initializes a new instance of OBAccount4. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="accountType"> Specifies the type of account (personal or business). </param>
         /// <param name="accountSubType"> Specifies the sub type of account (product family group). </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="currency"/> is null. </exception>
-        internal OBAccount4(string accountId, string currency, OBExternalAccountType1CodeEnum accountType, OBExternalAccountSubType1CodeEnum accountSubType)
+        public OBAccount4(string accountId, string currency, OBExternalAccountType1CodeEnum accountType, OBExternalAccountSubType1CodeEnum accountSubType)
         {
             if (accountId == null)
             {

@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Period e.g. day, week, month etc. for which the fee/charge is capped. </summary>
-    internal enum OBPeriod1CodeEnum
+    public enum OBPeriod1CodeEnum
     {
         /// <summary> PACT. </summary>
         Pact,

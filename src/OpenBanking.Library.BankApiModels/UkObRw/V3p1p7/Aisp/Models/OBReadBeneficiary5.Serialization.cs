@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBReadBeneficiary5
     {
-        internal static OBReadBeneficiary5 DeserializeOBReadBeneficiary5(JsonElement element)
+        public static OBReadBeneficiary5 DeserializeOBReadBeneficiary5(JsonElement element)
         {
             OBReadBeneficiary5Data data = default;
             Optional<Links> links = default;

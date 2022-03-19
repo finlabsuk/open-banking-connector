@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBBeneficiary5
     {
-        internal static OBBeneficiary5 DeserializeOBBeneficiary5(JsonElement element)
+        public static OBBeneficiary5 DeserializeOBBeneficiary5(JsonElement element)
         {
             Optional<string> accountId = default;
             Optional<string> beneficiaryId = default;

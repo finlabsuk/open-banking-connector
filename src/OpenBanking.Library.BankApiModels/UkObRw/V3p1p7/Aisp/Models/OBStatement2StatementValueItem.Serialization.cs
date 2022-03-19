@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBStatement2StatementValueItem
     {
-        internal static OBStatement2StatementValueItem DeserializeOBStatement2StatementValueItem(JsonElement element)
+        public static OBStatement2StatementValueItem DeserializeOBStatement2StatementValueItem(JsonElement element)
         {
             string value = default;
             string type = default;

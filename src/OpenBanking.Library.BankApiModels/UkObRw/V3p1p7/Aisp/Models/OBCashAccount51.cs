@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="schemeName"> Name of the identification scheme, in a coded form as published in an external list. </param>
         /// <param name="identification"> Beneficiary account identification. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="schemeName"/> or <paramref name="identification"/> is null. </exception>
-        internal OBCashAccount51(string schemeName, string identification)
+        public OBCashAccount51(string schemeName, string identification)
         {
             if (schemeName == null)
             {
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// This is secondary identification of the account, as assigned by the account servicing institution. 
         /// This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
         /// </param>
-        internal OBCashAccount51(string schemeName, string identification, string name, string secondaryIdentification)
+        public OBCashAccount51(string schemeName, string identification, string name, string secondaryIdentification)
         {
             SchemeName = schemeName;
             Identification = identification;

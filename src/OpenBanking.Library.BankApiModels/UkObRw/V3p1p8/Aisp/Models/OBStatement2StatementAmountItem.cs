@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="type"> Amount type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the amount type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount8 amount)
+        public OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount8 amount)
         {
             if (type == null)
             {

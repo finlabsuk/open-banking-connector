@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
     public partial class OBCashAccount61
     {
         /// <summary> Initializes a new instance of OBCashAccount61. </summary>
-        internal OBCashAccount61()
+        public OBCashAccount61()
         {
         }
 
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// This is secondary identification of the account, as assigned by the account servicing institution. 
         /// This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
         /// </param>
-        internal OBCashAccount61(string schemeName, string identification, string name, string secondaryIdentification)
+        public OBCashAccount61(string schemeName, string identification, string name, string secondaryIdentification)
         {
             SchemeName = schemeName;
             Identification = identification;

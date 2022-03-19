@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// <param name="mandateIdentification"> Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference. </param>
         /// <param name="name"> Name of Service User. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/>, <paramref name="mandateIdentification"/> or <paramref name="name"/> is null. </exception>
-        internal OBReadDirectDebit2DataDirectDebitItem(string accountId, string mandateIdentification, string name)
+        public OBReadDirectDebit2DataDirectDebitItem(string accountId, string mandateIdentification, string name)
         {
             if (accountId == null)
             {
@@ -50,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// </param>
         /// <param name="frequency"> Regularity with which direct debit instructions are to be created and processed. </param>
         /// <param name="previousPaymentAmount"> The amount of the most recent direct debit collection. </param>
-        internal OBReadDirectDebit2DataDirectDebitItem(string accountId, string directDebitId, string mandateIdentification, OBExternalDirectDebitStatus1CodeEnum? directDebitStatusCode, string name, DateTimeOffset? previousPaymentDateTime, string frequency, OBActiveOrHistoricCurrencyAndAmount0 previousPaymentAmount)
+        public OBReadDirectDebit2DataDirectDebitItem(string accountId, string directDebitId, string mandateIdentification, OBExternalDirectDebitStatus1CodeEnum? directDebitStatusCode, string name, DateTimeOffset? previousPaymentDateTime, string frequency, OBActiveOrHistoricCurrencyAndAmount0 previousPaymentAmount)
         {
             AccountId = accountId;
             DirectDebitId = directDebitId;

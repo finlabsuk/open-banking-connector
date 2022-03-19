@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <summary> Initializes a new instance of OBReadOffer1DataOfferItem. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> is null. </exception>
-        internal OBReadOffer1DataOfferItem(string accountId)
+        public OBReadOffer1DataOfferItem(string accountId)
         {
             if (accountId == null)
             {
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="url"> URL (Uniform Resource Locator) where documentation on the offer can be found. </param>
         /// <param name="amount"> Amount of money associated with the offer type. </param>
         /// <param name="fee"> Fee associated with the offer type. </param>
-        internal OBReadOffer1DataOfferItem(string accountId, string offerId, OBReadOffer1DataOfferTypeEnum? offerType, string description, DateTimeOffset? startDateTime, DateTimeOffset? endDateTime, string rate, int? value, string term, string url, OBReadOffer1DataOfferItemAmount amount, OBReadOffer1DataOfferItemFee fee)
+        public OBReadOffer1DataOfferItem(string accountId, string offerId, OBReadOffer1DataOfferTypeEnum? offerType, string description, DateTimeOffset? startDateTime, DateTimeOffset? endDateTime, string rate, int? value, string term, string url, OBReadOffer1DataOfferItemAmount amount, OBReadOffer1DataOfferItemFee fee)
         {
             AccountId = accountId;
             OfferId = offerId;

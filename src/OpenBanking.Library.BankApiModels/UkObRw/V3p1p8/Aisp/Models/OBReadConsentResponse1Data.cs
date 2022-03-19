@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// </param>
         /// <param name="permissions"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="consentId"/> or <paramref name="permissions"/> is null. </exception>
-        internal OBReadConsentResponse1Data(string consentId, DateTimeOffset creationDateTime, OBReadConsentResponse1DataStatusEnum status, DateTimeOffset statusUpdateDateTime, IEnumerable<OBReadConsentResponse1DataPermissionsEnum> permissions)
+        public OBReadConsentResponse1Data(string consentId, DateTimeOffset creationDateTime, OBReadConsentResponse1DataStatusEnum status, DateTimeOffset statusUpdateDateTime, IEnumerable<OBReadConsentResponse1DataPermissionsEnum> permissions)
         {
             if (consentId == null)
             {
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </param>
-        internal OBReadConsentResponse1Data(string consentId, DateTimeOffset creationDateTime, OBReadConsentResponse1DataStatusEnum status, DateTimeOffset statusUpdateDateTime, IReadOnlyList<OBReadConsentResponse1DataPermissionsEnum> permissions, DateTimeOffset? expirationDateTime, DateTimeOffset? transactionFromDateTime, DateTimeOffset? transactionToDateTime)
+        public OBReadConsentResponse1Data(string consentId, DateTimeOffset creationDateTime, OBReadConsentResponse1DataStatusEnum status, DateTimeOffset statusUpdateDateTime, IReadOnlyList<OBReadConsentResponse1DataPermissionsEnum> permissions, DateTimeOffset? expirationDateTime, DateTimeOffset? transactionFromDateTime, DateTimeOffset? transactionToDateTime)
         {
             ConsentId = consentId;
             CreationDateTime = creationDateTime;

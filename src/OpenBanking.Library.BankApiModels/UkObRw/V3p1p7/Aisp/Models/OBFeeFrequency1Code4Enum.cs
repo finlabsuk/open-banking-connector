@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Period e.g. day, week, month etc. for which the fee/charge is capped. </summary>
-    internal enum OBFeeFrequency1Code4Enum
+    public enum OBFeeFrequency1Code4Enum
     {
         /// <summary> FEAC. </summary>
         Feac,

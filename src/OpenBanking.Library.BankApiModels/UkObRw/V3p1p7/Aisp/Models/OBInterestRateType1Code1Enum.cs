@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Rate type for Fee/Charge (where it is charged in terms of a rate rather than an amount). </summary>
-    internal enum OBInterestRateType1Code1Enum
+    public enum OBInterestRateType1Code1Enum
     {
         /// <summary> INBB. </summary>
         Inbb,

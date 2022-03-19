@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBReadOffer1DataOfferItemAmount
     {
-        internal static OBReadOffer1DataOfferItemAmount DeserializeOBReadOffer1DataOfferItemAmount(JsonElement element)
+        public static OBReadOffer1DataOfferItemAmount DeserializeOBReadOffer1DataOfferItemAmount(JsonElement element)
         {
             string amount = default;
             string currency = default;

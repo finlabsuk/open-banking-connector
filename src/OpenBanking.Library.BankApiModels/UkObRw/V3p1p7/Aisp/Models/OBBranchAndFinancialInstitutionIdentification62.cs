@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBBranchAndFinancialInstitutionIdentification62
     {
         /// <summary> Initializes a new instance of OBBranchAndFinancialInstitutionIdentification62. </summary>
-        internal OBBranchAndFinancialInstitutionIdentification62()
+        public OBBranchAndFinancialInstitutionIdentification62()
         {
         }
 
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="identification"> Unique and unambiguous identification of a financial institution or a branch of a financial institution. </param>
         /// <param name="name"> Name by which an agent is known and which is usually used to identify that agent. </param>
         /// <param name="postalAddress"> Information that locates and identifies a specific address, as defined by postal services. </param>
-        internal OBBranchAndFinancialInstitutionIdentification62(string schemeName, string identification, string name, OBPostalAddress6 postalAddress)
+        public OBBranchAndFinancialInstitutionIdentification62(string schemeName, string identification, string name, OBPostalAddress6 postalAddress)
         {
             SchemeName = schemeName;
             Identification = identification;

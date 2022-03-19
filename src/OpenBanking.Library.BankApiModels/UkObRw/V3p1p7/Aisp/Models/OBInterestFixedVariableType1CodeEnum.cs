@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Type of interest rate, Fixed or Variable. </summary>
-    internal enum OBInterestFixedVariableType1CodeEnum
+    public enum OBInterestFixedVariableType1CodeEnum
     {
         /// <summary> INFI. </summary>
         Infi,

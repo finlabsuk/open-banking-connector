@@ -10,7 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a fee for the statement resource. </summary>
-    internal partial class OBStatement2BasicStatementFeeItem
+    public partial class OBStatement2BasicStatementFeeItem
     {
         /// <summary> Initializes a new instance of OBStatement2BasicStatementFeeItem. </summary>
         /// <param name="creditDebitIndicator">
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="type"> Fee type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the statement fee type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2BasicStatementFeeItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount6 amount)
+        public OBStatement2BasicStatementFeeItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount6 amount)
         {
             if (type == null)
             {

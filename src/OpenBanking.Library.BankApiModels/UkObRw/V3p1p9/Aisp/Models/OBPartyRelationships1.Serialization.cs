@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBPartyRelationships1
     {
-        internal static OBPartyRelationships1 DeserializeOBPartyRelationships1(JsonElement element)
+        public static OBPartyRelationships1 DeserializeOBPartyRelationships1(JsonElement element)
         {
             Optional<OBPartyRelationships1Account> account = default;
             foreach (var property in element.EnumerateObject())

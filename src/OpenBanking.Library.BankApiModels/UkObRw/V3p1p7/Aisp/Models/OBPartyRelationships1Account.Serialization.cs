@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBPartyRelationships1Account
     {
-        internal static OBPartyRelationships1Account DeserializeOBPartyRelationships1Account(JsonElement element)
+        public static OBPartyRelationships1Account DeserializeOBPartyRelationships1Account(JsonElement element)
         {
             string related = default;
             string id = default;

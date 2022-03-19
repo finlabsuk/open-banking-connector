@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <summary> Initializes a new instance of OBReadAccount6. </summary>
         /// <param name="data"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null. </exception>
-        internal OBReadAccount6(OBReadAccount6Data data)
+        public OBReadAccount6(OBReadAccount6Data data)
         {
             if (data == null)
             {
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadAccount6(OBReadAccount6Data data, Links links, Meta meta)
+        public OBReadAccount6(OBReadAccount6Data data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

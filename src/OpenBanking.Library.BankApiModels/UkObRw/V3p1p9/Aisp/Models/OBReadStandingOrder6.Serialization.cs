@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBReadStandingOrder6
     {
-        internal static OBReadStandingOrder6 DeserializeOBReadStandingOrder6(JsonElement element)
+        public static OBReadStandingOrder6 DeserializeOBReadStandingOrder6(JsonElement element)
         {
             OBReadStandingOrder6Data data = default;
             Optional<Links> links = default;

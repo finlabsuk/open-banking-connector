@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a benefit or reward amount for the statement resource. </summary>
-    internal partial class OBStatement2BasicStatementBenefitItem
+    public partial class OBStatement2BasicStatementBenefitItem
     {
         /// <summary> Initializes a new instance of OBStatement2BasicStatementBenefitItem. </summary>
         /// <param name="type"> Benefit type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the statement benefit type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2BasicStatementBenefitItem(string type, OBActiveOrHistoricCurrencyAndAmount5 amount)
+        public OBStatement2BasicStatementBenefitItem(string type, OBActiveOrHistoricCurrencyAndAmount5 amount)
         {
             if (type == null)
             {

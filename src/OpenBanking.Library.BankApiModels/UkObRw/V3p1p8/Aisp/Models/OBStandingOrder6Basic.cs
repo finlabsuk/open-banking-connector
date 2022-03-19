@@ -12,7 +12,7 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.Models
 {
     /// <summary> The OBStandingOrder6Basic. </summary>
-    internal partial class OBStandingOrder6Basic
+    public partial class OBStandingOrder6Basic
     {
         /// <summary> Initializes a new instance of OBStandingOrder6Basic. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
         /// ^(NotKnown)$|^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlDay:((0[2-9])|([1-2][0-9])|3[0-1]))$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="frequency"/> is null. </exception>
-        internal OBStandingOrder6Basic(string accountId, string frequency)
+        public OBStandingOrder6Basic(string accountId, string frequency)
         {
             if (accountId == null)
             {

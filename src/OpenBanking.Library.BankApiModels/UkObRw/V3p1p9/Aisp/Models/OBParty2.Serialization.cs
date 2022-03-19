@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 {
     public partial class OBParty2
     {
-        internal static OBParty2 DeserializeOBParty2(JsonElement element)
+        public static OBParty2 DeserializeOBParty2(JsonElement element)
         {
             string partyId = default;
             Optional<string> partyNumber = default;

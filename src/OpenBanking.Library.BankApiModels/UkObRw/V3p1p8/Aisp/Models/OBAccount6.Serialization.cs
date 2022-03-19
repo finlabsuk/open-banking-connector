@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBAccount6
     {
-        internal static OBAccount6 DeserializeOBAccount6(JsonElement element)
+        public static OBAccount6 DeserializeOBAccount6(JsonElement element)
         {
             string accountId = default;
             Optional<OBAccountStatus1CodeEnum> status = default;

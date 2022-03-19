@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <summary> Initializes a new instance of Links. </summary>
         /// <param name="self"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="self"/> is null. </exception>
-        internal Links(string self)
+        public Links(string self)
         {
             if (self == null)
             {
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="prev"></param>
         /// <param name="next"></param>
         /// <param name="last"></param>
-        internal Links(string self, string first, string prev, string next, string last)
+        public Links(string self, string first, string prev, string next, string last)
         {
             Self = self;
             First = first;

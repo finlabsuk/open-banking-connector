@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBReadStandingOrder6Data
     {
         /// <summary> Initializes a new instance of OBReadStandingOrder6Data. </summary>
-        internal OBReadStandingOrder6Data()
+        public OBReadStandingOrder6Data()
         {
             StandingOrder = new ChangeTrackingList<OBStandingOrder6>();
         }
 
         /// <summary> Initializes a new instance of OBReadStandingOrder6Data. </summary>
         /// <param name="standingOrder"></param>
-        internal OBReadStandingOrder6Data(IReadOnlyList<OBStandingOrder6> standingOrder)
+        public OBReadStandingOrder6Data(IReadOnlyList<OBStandingOrder6> standingOrder)
         {
             StandingOrder = standingOrder;
         }

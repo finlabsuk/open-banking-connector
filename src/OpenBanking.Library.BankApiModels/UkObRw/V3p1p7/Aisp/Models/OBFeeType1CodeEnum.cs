@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Fee/Charge Type. </summary>
-    internal enum OBFeeType1CodeEnum
+    public enum OBFeeType1CodeEnum
     {
         /// <summary> FEPF. </summary>
         Fepf,

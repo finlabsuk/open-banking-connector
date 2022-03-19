@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public partial class OBReadBeneficiary5Data
     {
         /// <summary> Initializes a new instance of OBReadBeneficiary5Data. </summary>
-        internal OBReadBeneficiary5Data()
+        public OBReadBeneficiary5Data()
         {
             Beneficiary = new ChangeTrackingList<OBBeneficiary5>();
         }
 
         /// <summary> Initializes a new instance of OBReadBeneficiary5Data. </summary>
         /// <param name="beneficiary"></param>
-        internal OBReadBeneficiary5Data(IReadOnlyList<OBBeneficiary5> beneficiary)
+        public OBReadBeneficiary5Data(IReadOnlyList<OBBeneficiary5> beneficiary)
         {
             Beneficiary = beneficiary;
         }

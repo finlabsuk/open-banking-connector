@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
 {
     public partial class OBCurrencyExchange5
     {
-        internal static OBCurrencyExchange5 DeserializeOBCurrencyExchange5(JsonElement element)
+        public static OBCurrencyExchange5 DeserializeOBCurrencyExchange5(JsonElement element)
         {
             string sourceCurrency = default;
             Optional<string> targetCurrency = default;

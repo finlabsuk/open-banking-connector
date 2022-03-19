@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="amount"/> is null. </exception>
-        internal OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount)
+        public OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount)
         {
             if (accountId == null)
             {
@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <param name="creditLine"></param>
-        internal OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount, IReadOnlyList<OBReadBalance1DataBalancePropertiesItemsItem> creditLine)
+        public OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount, IReadOnlyList<OBReadBalance1DataBalancePropertiesItemsItem> creditLine)
         {
             AccountId = accountId;
             CreditDebitIndicator = creditDebitIndicator;

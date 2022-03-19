@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
     public partial class OBReadDataTransaction6
     {
         /// <summary> Initializes a new instance of OBReadDataTransaction6. </summary>
-        internal OBReadDataTransaction6()
+        public OBReadDataTransaction6()
         {
             Transaction = new ChangeTrackingList<OBTransaction6>();
         }
 
         /// <summary> Initializes a new instance of OBReadDataTransaction6. </summary>
         /// <param name="transaction"></param>
-        internal OBReadDataTransaction6(IReadOnlyList<OBTransaction6> transaction)
+        public OBReadDataTransaction6(IReadOnlyList<OBTransaction6> transaction)
         {
             Transaction = transaction;
         }

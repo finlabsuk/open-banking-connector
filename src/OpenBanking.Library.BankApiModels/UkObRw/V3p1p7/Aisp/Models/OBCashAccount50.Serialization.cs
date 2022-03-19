@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 {
     public partial class OBCashAccount50
     {
-        internal static OBCashAccount50 DeserializeOBCashAccount50(JsonElement element)
+        public static OBCashAccount50 DeserializeOBCashAccount50(JsonElement element)
         {
             string schemeName = default;
             string identification = default;

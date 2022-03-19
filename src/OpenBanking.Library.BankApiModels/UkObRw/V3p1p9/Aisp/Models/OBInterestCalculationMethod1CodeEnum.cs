@@ -8,7 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Methods of calculating interest. </summary>
-    internal enum OBInterestCalculationMethod1CodeEnum
+    public enum OBInterestCalculationMethod1CodeEnum
     {
         /// <summary> ITCO. </summary>
         Itco,

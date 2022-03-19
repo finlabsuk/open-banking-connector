@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="code"> Specifies the family within a domain. </param>
         /// <param name="subCode"> Specifies the sub-product family within a specific family. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="code"/> or <paramref name="subCode"/> is null. </exception>
-        internal OBBankTransactionCodeStructure1(string code, string subCode)
+        public OBBankTransactionCodeStructure1(string code, string subCode)
         {
             if (code == null)
             {

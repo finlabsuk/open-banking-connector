@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Aisp.M
     public partial class OBReadParty3Data
     {
         /// <summary> Initializes a new instance of OBReadParty3Data. </summary>
-        internal OBReadParty3Data()
+        public OBReadParty3Data()
         {
             Party = new ChangeTrackingList<OBParty2>();
         }
 
         /// <summary> Initializes a new instance of OBReadParty3Data. </summary>
         /// <param name="party"></param>
-        internal OBReadParty3Data(IReadOnlyList<OBParty2> party)
+        public OBReadParty3Data(IReadOnlyList<OBParty2> party)
         {
             Party = party;
         }
