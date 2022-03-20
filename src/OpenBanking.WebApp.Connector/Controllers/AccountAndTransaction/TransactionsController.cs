@@ -11,6 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
 
+/// <summary>
+///     HTTP response object used when reading Transactions objects. Includes messages and data from
+///     Open Banking Connector.
+/// </summary>
+public class TransactionsHttpResponse : HttpResponse<TransactionsResponse>
+{
+    public TransactionsHttpResponse(HttpResponseMessages? messages, TransactionsResponse? data) :
+        base(messages, data) { }
+}
+
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 public class TransactionsController : ControllerBase
@@ -25,19 +35,19 @@ public class TransactionsController : ControllerBase
     /// <summary>
     ///     Get Transactions
     /// </summary>
-    /// <param name="accountAccessConsentId">ID for AccountAccessConsent returned by Open Banking Connector</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/transactions")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<TransactionsResponse>),
+        typeof(TransactionsHttpResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(HttpResponse<TransactionsResponse>),
+        typeof(TransactionsHttpResponse),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<TransactionsResponse>),
+        typeof(TransactionsHttpResponse),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] string accountAccessConsentId)
@@ -46,7 +56,7 @@ public class TransactionsController : ControllerBase
         IFluentResponse<TransactionsResponse> fluentResponse = null!;
 
         // HTTP response
-        HttpResponse<TransactionsResponse> httpResponse = fluentResponse.ToHttpResponse();
+        var httpResponse = (TransactionsHttpResponse) fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
             FluentSuccessResponse<TransactionsResponse> _ => StatusCodes.Status200OK,

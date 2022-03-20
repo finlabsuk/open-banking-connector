@@ -31,24 +31,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         }
 
         /// <summary>
-        ///     Unique OBC ID
+        ///     Unique Open Banking Connector ID (used in local database).
         /// </summary>
         public Guid Id { get; }
 
         /// <summary>
-        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
-        ///     This is optional.
+        ///     Optional friendly name for object in local database to support debugging etc. The name must be unique (i.e. not
+        ///     already in use).
         /// </summary>
         public string? Name { get; }
 
         /// <summary>
-        ///     Created timestamp
+        ///     Created timestamp in local database.
         /// </summary>
         public DateTimeOffset Created { get; }
 
         /// <summary>
-        ///     "Created by" string. Similarly to "modified by" for mutable fields, this field
-        ///     cna be used to denote authorship.
+        ///     Optional "created by" string in local database. Similar to "modified by" for mutable fields in local database, this
+        ///     field
+        ///     can be used to denote authorship.
         /// </summary>
         public string? CreatedBy { get; }
     }

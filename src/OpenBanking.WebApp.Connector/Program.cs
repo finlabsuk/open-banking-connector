@@ -13,6 +13,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+using ServiceCollectionExtensionsWeb =
+    FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
+using ServiceCollectionExtensionsGenericHost =
+    FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions.ServiceCollectionExtensions;
 
 // Create builder
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -67,11 +71,21 @@ builder.Services
                     Version = "code-generated",
                     Description = "Auth Contexts API for Open Banking Connector Web App"
                 });
+            // Add XML from this assembly
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            // Add XML from OpenBankingLibrary.Connector
             xmlFilename = $"{typeof(BaseDbContext).GetTypeInfo().Assembly.GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            // Add XML from OpenBankingLibrary.BankApiModels
             xmlFilename = $"{typeof(AccountAndTransactionModelsPublic.Meta).GetTypeInfo().Assembly.GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            // Add XML from OpenBankingLibrary.GenericHost
+            xmlFilename = $"{typeof(ServiceCollectionExtensionsGenericHost).GetTypeInfo().Assembly.GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            // Add XML from OpenBankingLibrary.Web
+            xmlFilename =
+                $"{typeof(ServiceCollectionExtensionsWeb).GetTypeInfo().Assembly.GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         })
     .AddSwaggerGenNewtonsoftSupport()

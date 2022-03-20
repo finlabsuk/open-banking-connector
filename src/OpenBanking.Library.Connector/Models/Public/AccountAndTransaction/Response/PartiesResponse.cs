@@ -7,6 +7,13 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
 {
+    /// <summary>
+    ///     Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     <a
+    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+    ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
     public class PartiesResponse : AccountAndTransactionModelsPublic.OBReadParty3
     {
         internal PartiesResponse(

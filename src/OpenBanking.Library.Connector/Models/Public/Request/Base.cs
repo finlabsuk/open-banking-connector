@@ -5,14 +5,21 @@
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     /// <summary>
-    ///     Base response for any entity.
+    ///     Base request for any entity.
     /// </summary>
     public abstract class Base
     {
         /// <summary>
-        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
-        ///     This is optional.
+        ///     Optional friendly name for object in local database to support debugging etc. The name must be unique (i.e. not
+        ///     already in use).
         /// </summary>
         public string? Name { get; set; }
+
+        /// <summary>
+        ///     Optional "created by" string in local database. Similar to "modified by" for mutable fields in local database, this
+        ///     field
+        ///     can be used to denote authorship.
+        /// </summary>
+        public string? CreatedBy { get; set; }
     }
 }

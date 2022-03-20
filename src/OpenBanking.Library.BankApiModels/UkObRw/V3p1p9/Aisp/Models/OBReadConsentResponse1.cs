@@ -9,7 +9,13 @@ using System;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
-    /// <summary> The OBReadConsentResponse1. </summary>
+    /// <summary>
+    ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     <a
+    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+    ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
     public partial class OBReadConsentResponse1
     {
         /// <summary> Initializes a new instance of OBReadConsentResponse1. </summary>

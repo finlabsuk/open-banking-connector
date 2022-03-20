@@ -11,6 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
 
+/// <summary>
+///     HTTP response object used when reading Parties objects. Includes messages and data from
+///     Open Banking Connector.
+/// </summary>
+public class PartiesHttpResponse : HttpResponse<PartiesResponse>
+{
+    public PartiesHttpResponse(HttpResponseMessages? messages, PartiesResponse? data) :
+        base(messages, data) { }
+}
+
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 public class PartiesController : ControllerBase
@@ -25,19 +35,19 @@ public class PartiesController : ControllerBase
     /// <summary>
     ///     Get Parties
     /// </summary>
-    /// <param name="accountAccessConsentId">ID for AccountAccessConsent returned by Open Banking Connector</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/parties")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<PartiesResponse>),
+        typeof(PartiesHttpResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(HttpResponse<PartiesResponse>),
+        typeof(PartiesHttpResponse),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<PartiesResponse>),
+        typeof(PartiesHttpResponse),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] string accountAccessConsentId)
@@ -46,7 +56,7 @@ public class PartiesController : ControllerBase
         IFluentResponse<PartiesResponse> fluentResponse = null!;
 
         // HTTP response
-        HttpResponse<PartiesResponse> httpResponse = fluentResponse.ToHttpResponse();
+        var httpResponse = (PartiesHttpResponse) fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
             FluentSuccessResponse<PartiesResponse> _ => StatusCodes.Status200OK,
