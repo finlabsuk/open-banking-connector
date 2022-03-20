@@ -2,6 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ClientRegistrationModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     public class BankApiResponseFile

@@ -24,20 +24,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.3" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.3"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.GenericHost\OpenBanking.Library.Connector.GenericHost.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="wwwroot\**" />
+        <EmbeddedResource Include="wwwroot\**"/>
     </ItemGroup>
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
 
 </Project>

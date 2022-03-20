@@ -22,18 +22,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="11.0.1" />
-        <PackageReference Include="Azure.Core" Version="1.22.0" />
-        <PackageReference Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20210604.3" PrivateAssets="All" />
-        <PackageReference Include="FluentValidation" Version="10.4.0" />
-        <PackageReference Include="jose-jwt" Version="3.2.0" />
-        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.23" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+        <PackageReference Include="AutoMapper" Version="11.0.1"/>
+        <PackageReference Include="Azure.Core" Version="1.22.0"/>
+        <PackageReference Include="Microsoft.Azure.AutoRest.CSharp" Version="3.0.0-beta.20210604.3" PrivateAssets="All"/>
+        <PackageReference Include="FluentValidation" Version="10.4.0"/>
+        <PackageReference Include="jose-jwt" Version="3.2.0"/>
+        <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.23"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0"/>
     </ItemGroup>
-    
+
     <PropertyGroup>
         <IncludeGeneratorSharedCode>true</IncludeGeneratorSharedCode>
     </PropertyGroup>
-    
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+        <NoWarn>$(NoWarn);1573</NoWarn>
+    </PropertyGroup>
+
 </Project>

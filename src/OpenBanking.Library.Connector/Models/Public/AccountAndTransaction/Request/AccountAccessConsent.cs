@@ -9,6 +9,9 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request
 {
+    /// <summary>
+    ///     Test
+    /// </summary>
     public class AccountAccessConsent : Base
     {
         /// <summary>

@@ -9,12 +9,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     ///     public queries).
     /// </summary>
     /// <typeparam name="TSelf">Entity (persisted) type, must conform to public query interface</typeparam>
-    /// <typeparam name="TPublicRequest">Public request type</typeparam>
-    /// <typeparam name="TPublicResponse">Public response type, must conform to public query interface</typeparam>
-    /// <typeparam name="TPublicQuery">
-    ///     Public query type which should be set to public query interface. IMPORTANT: set this
-    ///     correctly to control public queries.
-    /// </typeparam>
     internal interface ISupportsFluentDeleteLocal<TSelf> :
         IEntity
         where TSelf : class, ISupportsFluentDeleteLocal<TSelf> { }

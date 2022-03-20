@@ -44,11 +44,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         /// <param name="responseJsonSerializerSettings"></param>
         /// <param name="apiClient"></param>
         /// <param name="mapper"></param>
-        /// <param name="requestProcessor"></param>
-        /// <param name="softwareStatementProfile"></param>
-        /// <typeparam name="TVariantApiRequest"></typeparam>
-        /// <typeparam name="TVariantApiResponse"></typeparam>
-        /// B
         /// <returns></returns>
         public async Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             PostAsync(

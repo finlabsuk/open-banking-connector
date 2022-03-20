@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     /// <summary>
     ///     "Post-only" type with public interface. Post-only types are similar to entity types with public interface (
-    ///     <see cref="ISupportsFluentDeleteLocal{TSelf,TPublicRequest,TPublicResponse,TPublicQuery}" />) but are
+    ///     <see cref="ISupportsFluentDeleteLocal{TSelf}" />) but are
     ///     not directly persisted to DB and can only be POSTed.
     /// </summary>
     internal interface ISupportsFluentLocalEntityPost<in TPublicRequest, out TPublicResponse, TEntity>

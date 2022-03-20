@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
     ///     a group of related settings at the same level of nesting e.g.
     ///     section in appSettings.json or user secrets. For flexibility, these classes do not depend on .NET Generic Host
     ///     options pattern features.
-    ///     In the case of settings provided by key secrets, all properties in <see cref="TSelf" /> should use a type
+    ///     In the case of settings provided by key secrets, all properties in <typeparamref name="TSelf" /> should use a type
     ///     representable by string values (e.g. bool, string, etc).
     /// </summary>
     /// <typeparam name="TSelf"></typeparam>

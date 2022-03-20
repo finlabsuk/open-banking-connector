@@ -12,7 +12,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
     ///     (<see cref="TransportCertificateProfile" />) and signing certificate (<see cref="SigningCertificateProfile" />)
     ///     profiles to be extracted from key secrets. Each override case should be separated by spaces.
     ///     Override cases are keys in dictionary properties of those profiles with end in "Overrides". For example
-    ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileIdOverrides" /> allows override cases for
+    ///     <see cref="SoftwareStatementProfileWithOverrideProperties.TransportCertificateProfileIdOverrides" /> allows
+    ///     override cases for
     ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileId" />.
     ///     They are typically bank names allowing profiles to customised for a particular bank.
     ///     Only override cases listed here will be extracted from key secrets by Open Banking Connector.

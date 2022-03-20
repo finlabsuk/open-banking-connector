@@ -34,4 +34,9 @@
         <ProjectReference Include="..\OpenBanking.Library.Connector\OpenBanking.Library.Connector.csproj"/>
     </ItemGroup>
 
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+
 </Project>

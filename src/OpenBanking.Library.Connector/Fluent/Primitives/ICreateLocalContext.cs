@@ -20,6 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="publicRequest">Request object</param>
         /// <param name="createdBy">Optional user name or comment for DB record(s).</param>
+        /// <param name="apiRequestWriteFile"></param>
+        /// <param name="apiResponseWriteFile"></param>
+        /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicPostResponse>> CreateLocalAsync(
             TPublicRequest publicRequest,

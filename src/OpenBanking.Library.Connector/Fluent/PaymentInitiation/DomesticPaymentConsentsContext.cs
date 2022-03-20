@@ -28,6 +28,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         ///     READ funds confirmation by ID (includes GETing object from bank API).
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="modifiedBy"></param>
+        /// <param name="apiResponseWriteFile"></param>
+        /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
         Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
             Guid id,

@@ -9,7 +9,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuratio
 {
     /// <summary>
     ///     Settings provider that gets settings via ISettings from .NET Generic Host configuration
-    ///     <typeparam name="TSettings"></typeparam>
+    /// </summary>
+    /// <typeparam name="TSettings"></typeparam>
     public class ConfigurationSettingsProvider<TSettings> : ISettingsProvider<TSettings>
         where TSettings : class, ISettings<TSettings>, new()
     {

@@ -23,8 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 
         /// <summary>
         ///     ID of software statement profile used to create bank registration. Only
-        ///     IDs which have been specified at OBC startup via
-        ///     <see cref="OpenBankingConnectorSettings.SoftwareStatementProfileIds" />
+        ///     IDs which have been specified via configuration
         ///     will be accepted.
         /// </summary>
         public string SoftwareStatementProfileId { get; set; } = null!;
@@ -75,13 +74,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
 
         public BankRegistrationClaimsOverrides? BankRegistrationClaimsOverrides { get; set; }
-        
+
         public BankRegistrationClaimsJsonOptions? BankRegistrationClaimsJsonOptions { get; set; }
-        
+
         public BankRegistrationResponseOverrides? BankRegistrationResponseOverrides { get; set; }
 
         public BankRegistrationResponseJsonOptions? BankRegistrationResponseJsonOptions { get; set; }
-        
+
         public OAuth2RequestObjectClaimsOverrides? OAuth2RequestObjectClaimsOverrides { get; set; }
 
         /// <summary>

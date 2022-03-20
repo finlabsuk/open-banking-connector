@@ -4,12 +4,15 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.KeySecrets;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using AccountAndTransactionModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 
 // Create builder
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -65,6 +68,10 @@ builder.Services
                     Description = "Auth Contexts API for Open Banking Connector Web App"
                 });
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            xmlFilename = $"{typeof(BaseDbContext).GetTypeInfo().Assembly.GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            xmlFilename = $"{typeof(AccountAndTransactionModelsPublic.Meta).GetTypeInfo().Assembly.GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         })
     .AddSwaggerGenNewtonsoftSupport()

@@ -22,6 +22,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="modifiedBy"></param>
+        /// <param name="apiResponseWriteFile"></param>
+        /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid id,
