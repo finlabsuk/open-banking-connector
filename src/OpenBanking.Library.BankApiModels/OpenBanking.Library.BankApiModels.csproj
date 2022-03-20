@@ -34,6 +34,7 @@
 
     <PropertyGroup>
         <IncludeGeneratorSharedCode>true</IncludeGeneratorSharedCode>
+        <RestoreAdditionalProjectSources>https://azuresdkartifacts.blob.core.windows.net/azure-sdk-tools/index.json</RestoreAdditionalProjectSources>
     </PropertyGroup>
 
     <PropertyGroup>
