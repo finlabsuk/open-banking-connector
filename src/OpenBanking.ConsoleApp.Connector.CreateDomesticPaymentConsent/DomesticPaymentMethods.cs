@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -33,13 +31,13 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         {
             // Create domestic payment request
             requestBuilder.Utility.Map(
-                domesticPaymentConsentRequest.OBWriteDomesticConsent,
+                domesticPaymentConsentRequest.ExternalApiRequest,
                 out PaymentInitiationModelsPublic.OBWriteDomestic2
                     obWriteDomestic); // maps Open Banking request objects
             var domesticPaymentRequest =
                 new DomesticPayment
                 {
-                    OBWriteDomestic = obWriteDomestic,
+                    ExternalApiRequest = obWriteDomestic,
                     DomesticPaymentConsentId = domesticPaymentConsentId,
                     Name = testNameUnique
                 };
@@ -66,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentResponse =
+            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents

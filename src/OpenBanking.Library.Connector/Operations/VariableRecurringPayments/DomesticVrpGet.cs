@@ -11,8 +11,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -27,9 +30,7 @@ using VariableRecurringPaymentsModelsPublic =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpGet : ReadWriteGet<DomesticVrpPersisted,
-            IDomesticVrpPublicQuery,
-            DomesticVrpResponse,
+        DomesticVrpGet : ReadWriteGet<DomesticVrpPersisted, DomesticVrpResponse,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
         public DomesticVrpGet(
@@ -48,9 +49,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
         protected override string RelativePathBeforeId => "/domestic-vrps";
 
-        protected override async Task<(string bankApiId, DomesticVrpPersisted
-            persistedObject, BankApiSet bankApiInformation, BankRegistration bankRegistration,
-            string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
+        protected override string ClientCredentialsGrantScope => "payments";
+
+
+        protected override IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiRequests(
+            BankApiSet bankApiSet,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            IInstrumentationClient instrumentationClient)
+            =>
+                bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
+                {
+                    VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
+                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
+                        new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                        new PaymentInitiationPostRequestProcessor<
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
+                            bankFinancialId,
+                            tokenEndpointResponse,
+                            instrumentationClient,
+                            false,
+                            processedSoftwareStatementProfile)),
+                    null => throw new NullReferenceException("No VRP API specified for this bank."),
+
+                    _ => throw new ArgumentOutOfRangeException(
+                        $"VRP API version {bankApiSet.VariableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion} not supported.")
+                };
+
+        protected override async Task<(
+            string bankApiId,
+            Uri endpointUrl,
+            DomesticVrpPersisted persistedObject,
+            BankApiSet bankApiInformation,
+            BankRegistration bankRegistration,
+            string bankFinancialId,
+            TokenEndpointResponse? userTokenEndpointResponse,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
             // Create non-error list
@@ -76,8 +113,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             string bankApiId = persistedObject.ExternalApiId;
 
-            return (bankApiId, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
+            string baseUrl =
+                bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??
+                throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API.");
+            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
+
+            return (bankApiId, endpointUrl, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
                 null, nonErrorMessages);
+        }
+
+        protected override DomesticVrpResponse GetReadResponse(
+            DomesticVrpPersisted persistedObject,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse)
+        {
+            return new DomesticVrpResponse(persistedObject.Id, apiResponse);
         }
     }
 }

@@ -28,7 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             {
                 new HttpHeader("x-fapi-financial-id", _orgId),
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
-                new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
             };
 
             return (headers, "application/json");

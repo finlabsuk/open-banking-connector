@@ -2,10 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -24,7 +27,7 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentAuthContext : LocalEntityPost<
+        DomesticVrpConsentAuthContext : LocalEntityPostBase<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
             DomesticVrpConsentAuthContextCreateLocalResponse>
@@ -46,6 +49,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             instrumentationClient)
         {
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        }
+
+        protected override DomesticVrpConsentAuthContextPersisted Create(
+            DomesticVrpConsentAuthContextRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                null,
+                timeProvider,
+                createdBy);
+
+            var output = new DomesticVrpConsentAuthContextPersisted(
+                Guid.NewGuid(),
+                request.Name,
+                tokenEndpointResponse,
+                request.DomesticVrpConsentId,
+                createdBy,
+                timeProvider);
+
+            return output;
         }
 
         protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> CreateResponse(
@@ -70,14 +94,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             // Create auth URL
             var state = persistedObject.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
-                domesticPaymentConsent.BankApiResponse.Data.Data.ConsentId,
+                domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
                 domesticPaymentConsent.BankRegistrationNavigation,
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
+                "payments",
                 _instrumentationClient);
-            DomesticVrpConsentAuthContextCreateLocalResponse response =
-                persistedObject.PublicPostResponseCustomised(authUrl);
+            var response =
+                new DomesticVrpConsentAuthContextCreateLocalResponse(
+                    persistedObject.Id,
+                    persistedObject.Name,
+                    persistedObject.Created,
+                    persistedObject.CreatedBy,
+                    persistedObject.DomesticVrpConsentId,
+                    authUrl);
 
             return response;
         }

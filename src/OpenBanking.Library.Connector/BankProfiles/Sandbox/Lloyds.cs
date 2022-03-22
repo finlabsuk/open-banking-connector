@@ -4,7 +4,6 @@
 
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -28,6 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 "https://as.aspsp.sandbox.lloydsbanking.com/oauth2", // from API discovery endpoint
                 "0015800000jf9GgAAI", // from API discovery endpoint
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                null,
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion =

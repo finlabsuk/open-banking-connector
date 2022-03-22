@@ -23,10 +23,9 @@ using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal abstract class
-        ReadWriteGet<TEntity, TPublicQuery, TPublicResponse, TApiResponse> : EntityGet<
-            TEntity, TPublicQuery, TPublicResponse, TApiResponse>
+        ReadWriteGet<TEntity, TPublicResponse, TApiResponse> : EntityGet<TEntity, TPublicResponse, TApiResponse>
         where TEntity : class, IEntity,
-        ISupportsFluentReadWriteGet<TPublicResponse, TApiResponse>, new()
+        new()
         where TApiResponse : class, ISupportsValidation
     {
         public ReadWriteGet(
@@ -47,6 +46,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected virtual string RelativePathAfterId => "";
 
+        protected abstract string ClientCredentialsGrantScope { get; }
+
+        protected abstract IApiGetRequests<TApiResponse> ApiRequests(
+            BankApiSetPersisted bankApiSet,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            IInstrumentationClient instrumentationClient);
+
         protected override async Task<(
             TEntity persistedObject,
             IApiGetRequests<TApiResponse> apiRequests,
@@ -55,23 +63,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             JsonSerializerSettings? jsonSerializerSettings,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id)
         {
-            (string bankApiId, TEntity persistedObject, BankApiSetPersisted bankApiInformation,
+            (string bankApiId,
+                    Uri endpointUrl,
+                    TEntity persistedObject,
+                    BankApiSetPersisted bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
-                    string bankFinancialId, TokenEndpointResponse? userTokenEndpointResponse,
+                    string bankFinancialId,
+                    TokenEndpointResponse? userTokenEndpointResponse,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiGetRequestData(id);
-
-            // Check API specified and get base URL
-            string baseUrl = new TEntity().GetReadWriteApiType() switch
-            {
-                ReadWriteApiType.PaymentInitiation =>
-                    bankApiInformation.PaymentInitiationApi?.BaseUrl ??
-                    throw new NullReferenceException("Bank API Set has null Payment Initiation API."),
-                ReadWriteApiType.VariableRecurringPayments =>
-                    bankApiInformation.VariableRecurringPaymentsApi?.BaseUrl ??
-                    throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API."),
-                _ => throw new ArgumentOutOfRangeException()
-            };
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TokenEndpointResponse tokenEndpointResponse =
                 userTokenEndpointResponse ??
                 await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    "payments",
+                    ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
                     null,
@@ -92,23 +92,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     _instrumentationClient);
 
             // Create new Open Banking object by posting JWT
-            var uri = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
             JsonSerializerSettings? jsonSerializerSettings = null;
 
-            IApiGetRequests<TApiResponse> apiRequests = new TEntity().ApiGetRequests(
-                bankApiInformation.PaymentInitiationApi,
-                bankApiInformation.VariableRecurringPaymentsApi,
+            IApiGetRequests<TApiResponse> apiRequests = ApiRequests(
+                bankApiInformation,
                 bankFinancialId,
                 tokenEndpointResponse,
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
-            return (persistedObject, apiRequests, apiClient, uri, jsonSerializerSettings,
+            return (persistedObject, apiRequests, apiClient, endpointUrl, jsonSerializerSettings,
                 nonErrorMessages);
         }
 
         protected abstract Task<(
                 string bankApiId,
+                Uri endpointUrl,
                 TEntity persistedObject,
                 BankApiSetPersisted bankApiInformation,
                 BankRegistrationPersisted bankRegistration,

@@ -9,7 +9,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -18,15 +17,13 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     /// <summary>
-    /// Read operations on local entities (objects stored in local database only).
+    ///     Read operations on local entities (objects stored in local database only).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
-    internal class LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> :
-        IObjectReadLocal<TPublicQuery, TPublicResponse>,
+    internal abstract class GetBase<TEntity, TPublicResponse> :
         IObjectRead<TPublicResponse>
-        where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity,
+        where TEntity : class, IEntity,
         new()
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
@@ -36,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected readonly ITimeProvider _timeProvider;
 
 
-        public LocalEntityGet(
+        public GetBase(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
@@ -64,73 +61,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // GET from bank API
-            (TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await ApiGet(requestInfo);
             nonErrorMessages.AddRange(newNonErrorMessages);
-
-            // Create response (may involve additional processing based on entity)
-            TPublicResponse response1 = await CreateResponse(persistedObject);
-
-            // Persist updates (this happens last so as not to happen if there are any previous errors)
-            await _dbSaveChangesMethod.SaveChangesAsync();
-            TPublicResponse response = response1;
 
             return (response, nonErrorMessages);
         }
 
-        public async
-            Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
-                )>
-            ReadAsync(Expression<Func<TPublicQuery, bool>> predicate)
-        {
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
-
-            // Convert expression tree type
-            ParameterExpression entityInput = Expression.Parameter(typeof(TEntity), "entity");
-            InvocationExpression main = Expression.Invoke(predicate, entityInput);
-            Expression<Func<TEntity, bool>> predicateWithUpdatedType =
-                Expression.Lambda<Func<TEntity, bool>>(main, entityInput);
-
-            // Run query
-            IQueryable<TEntity> resultEntity = await _entityMethods.GetNoTrackingAsync(predicateWithUpdatedType);
-
-            // Process results
-            IQueryable<TPublicResponse> resultResponse = resultEntity.Select(b => b.PublicGetResponse);
-
-            // Return success response (thrown exceptions produce error response)
-            return (resultResponse, nonErrorMessages);
-        }
-
-
-        protected virtual Task<TPublicResponse> CreateResponse(TEntity persistedObject)
-        {
-            TPublicResponse response = persistedObject.PublicGetResponse;
-
-            return Task.FromResult(response);
-        }
 
         /// <summary>
         ///     Empty function as by definition POST local does not include POST to bank API.
         /// </summary>
         /// <returns></returns>
-        protected virtual async
-            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiGet(GetRequestInfo requestInfo)
-        {
-            // Create non-error list
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
-
-            // Create persisted entity
-            TEntity persistedObject =
-                await _entityMethods
-                    .DbSetNoTracking
-                    .SingleOrDefaultAsync(x => x.Id == requestInfo.Id) ??
-                throw new KeyNotFoundException($"No record found for entity with ID {requestInfo.Id}.");
-
-            return (persistedObject, nonErrorMessages);
-        }
+        protected abstract
+            Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            ApiGet(GetRequestInfo requestInfo);
 
         public class GetRequestInfo
         {
@@ -150,6 +95,69 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             public string? ModifiedBy { get; }
             public string? ApiResponseWriteFile { get; }
             public string? ApiResponseOverrideFile { get; }
+        }
+    }
+
+    internal class
+        LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> : GetBase<TEntity, TPublicResponse>,
+            IObjectReadLocal<TPublicQuery, TPublicResponse>
+        where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity, new()
+    {
+        public LocalEntityGet(
+            IDbReadWriteEntityMethods<TEntity> entityMethods,
+            IDbSaveChangesMethod dbSaveChangesMethod,
+            ITimeProvider timeProvider,
+            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+            IInstrumentationClient instrumentationClient) : base(
+            entityMethods,
+            dbSaveChangesMethod,
+            timeProvider,
+            softwareStatementProfileRepo,
+            instrumentationClient) { }
+
+        public async
+            Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+                )>
+            ReadAsync(Expression<Func<TPublicQuery, bool>> predicate)
+        {
+            var nonErrorMessages =
+                new List<IFluentResponseInfoOrWarningMessage>();
+
+            // Convert expression tree type
+            ParameterExpression entityInput = Expression.Parameter(typeof(TEntity), "entity");
+            InvocationExpression main = Expression.Invoke(predicate, entityInput);
+            Expression<Func<TEntity, bool>> predicateWithUpdatedType =
+                Expression.Lambda<Func<TEntity, bool>>(main, entityInput);
+
+            // Run query
+            IQueryable<TEntity> resultEntity = await _entityMethods.GetNoTrackingAsync(predicateWithUpdatedType);
+
+            // Process results
+            IQueryable<TPublicResponse> resultResponse = resultEntity.Select(b => b.PublicGetLocalResponse);
+
+            // Return success response (thrown exceptions produce error response)
+            return (resultResponse, nonErrorMessages);
+        }
+
+        protected override async
+            Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGet(
+                GetRequestInfo requestInfo)
+        {
+            // Create non-error list
+            var nonErrorMessages =
+                new List<IFluentResponseInfoOrWarningMessage>();
+
+            // Create persisted entity
+            TEntity persistedObject =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .SingleOrDefaultAsync(x => x.Id == requestInfo.Id) ??
+                throw new KeyNotFoundException($"No record found for entity with ID {requestInfo.Id}.");
+
+            // Create response
+            TPublicResponse response = persistedObject.PublicGetLocalResponse;
+
+            return (response, nonErrorMessages);
         }
     }
 }

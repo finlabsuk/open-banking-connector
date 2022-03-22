@@ -20,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 "https://token.sandbox.barclays.com", //from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                null,
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties

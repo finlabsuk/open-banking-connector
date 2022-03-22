@@ -15,9 +15,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             ObjectContextBase<TEntity>,
             ILocalEntityContextInternal<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
                 TPublicReadLocalResponse>
-        where TEntity : class, ISupportsFluentDeleteLocal<TEntity>,
+        where TEntity : class, IEntity,
         ISupportsFluentLocalEntityGet<TPublicReadLocalResponse>,
-        ISupportsFluentLocalEntityPost<TPublicRequest, TPublicCreateLocalResponse, TEntity>, new()
+        new()
         where TPublicCreateLocalResponse : class
         where TPublicReadLocalResponse : class
         where TPublicRequest : Base, ISupportsValidation

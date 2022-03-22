@@ -32,7 +32,7 @@ builder.Services
         options =>
         {
             options.SwaggerDoc(
-                "bank-config",
+                "config",
                 new OpenApiInfo
                 {
                     Title = "Bank Configuration API",
@@ -95,8 +95,7 @@ builder.Services
     .AddNewtonsoftJson(
         options =>
         {
-            options.SerializerSettings.ContractResolver =
-                new CamelCasePropertyNamesContractResolver();
+            options.SerializerSettings.ContractResolver = new DefaultContractResolver(); // no to CamelCase
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         });
 
@@ -127,7 +126,7 @@ app.UseSwagger();
 app.UseSwaggerUI(
     c =>
     {
-        c.SwaggerEndpoint("/swagger/bank-config/swagger.json", "Bank Configuration API");
+        c.SwaggerEndpoint("/swagger/config/swagger.json", "Bank Configuration API");
         c.SwaggerEndpoint("/swagger/aisp/swagger.json", "Account and Transaction API");
         c.SwaggerEndpoint("/swagger/pisp/swagger.json", "Payment Initiation API");
         c.SwaggerEndpoint("/swagger/vrp/swagger.json", "Variable Recurring Payments API");

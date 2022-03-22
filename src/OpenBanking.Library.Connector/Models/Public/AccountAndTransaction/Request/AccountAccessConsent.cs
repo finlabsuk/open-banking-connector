@@ -4,9 +4,13 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request
 {
@@ -14,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     ///     Request object used when creating an AccountAccessConsent object. Includes a UK Open Banking request object
     ///     plus information on the bank registration and bank functional API to associate with the consent.
     /// </summary>
-    public class AccountAccessConsent : Base
+    public class AccountAccessConsent : Base, ISupportsValidation
     {
         /// <summary>
         ///     Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
@@ -24,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
         /// </summary>
         [Required]
-        public AccountAndTransactionModelsPublic.OBReadConsent1 OBReadConsent { get; set; } = null!;
+        public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
 
         /// <summary>
         ///     Specifies BankApiSet object (bank functional API info) to use when creating the consent.
@@ -41,5 +45,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         /// </summary>
         [Required]
         public Guid BankRegistrationId { get; set; }
+
+        public async Task<ValidationResult> ValidateAsync() =>
+            await new AccountAccessConsentValidator()
+                .ValidateAsync(this)!;
     }
 }

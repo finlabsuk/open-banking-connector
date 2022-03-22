@@ -25,8 +25,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     public interface IDomesticVrpConsentsContext :
         IEntityContext<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentResponse>,
-        IReadFundsConfirmationContext<DomesticVrpConsentResponse>
+            DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
+        IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -43,8 +43,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         IDomesticVrpConsentsContext,
         IEntityContextInternal<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentResponse>,
-        IReadFundsConfirmationContextInternal<DomesticVrpConsentResponse> { }
+            DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
+        IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse> { }
 
     internal class DomesticVrpConsentsContext :
         ObjectContextBase<DomesticVrpConsentPersisted>, IDomesticVrpConsentsContextInternal
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.ApiVariantMapper);
             ReadLocalObject =
                 new LocalEntityGet<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
-                    DomesticVrpConsentResponse>(
+                    DomesticVrpConsentReadLocalResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
@@ -87,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     sharedContext.Instrumentation);
         }
 
-        public IObjectRead<DomesticVrpConsentResponse> ReadObject { get; }
+        public IObjectRead<DomesticVrpConsentReadResponse> ReadObject { get; }
 
         public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
             IDomesticVrpConsentAuthContextPublicQuery,
@@ -107,9 +107,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectReadLocal<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse> ReadLocalObject { get; }
+        public IObjectReadLocal<IDomesticVrpConsentPublicQuery, DomesticVrpConsentReadLocalResponse> ReadLocalObject
+        {
+            get;
+        }
 
-        public IObjectPost<DomesticVrpConsentRequest, DomesticVrpConsentResponse> PostObject { get; }
-        public IObjectRead<DomesticVrpConsentResponse> ReadFundsConfirmationObject { get; }
+        public IObjectPost<DomesticVrpConsentRequest, DomesticVrpConsentReadResponse> PostObject { get; }
+        public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
     }
 }

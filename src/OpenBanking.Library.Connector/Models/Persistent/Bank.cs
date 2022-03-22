@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using BankRequest = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.Bank;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
@@ -16,31 +15,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type for Bank.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    [Index(nameof(Name), IsUnique = true)]
     internal partial class Bank :
         EntityBase,
-        ISupportsFluentDeleteLocal<Bank>,
         IBankPublicQuery
-    {
-        public List<BankRegistration> BankRegistrationsNavigation { get; set; } = null!;
-
-        public List<BankApiSet> BankApiSetsNavigation { get; set; } = null!;
-
-        public string IssuerUrl { get; set; } = null!;
-
-        public string FinancialId { get; set; } = null!;
-
-        public BankResponse PublicGetResponse => new BankResponse(
-            Id,
-            Name,
-            Created,
-            CreatedBy,
-            IssuerUrl,
-            FinancialId);
-    }
-
-    internal partial class Bank :
-        ISupportsFluentLocalEntityPost<BankRequest, BankResponse, Bank>
     {
         /// <summary>
         ///     Constructor (to be removed) that doesn't initialise anything
@@ -72,7 +49,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             FinancialId = financialId;
         }
 
-        public BankResponse PublicPostResponse => PublicGetResponse;
+        public IList<BankRegistration> BankRegistrationsNavigation { get; set; } = null!;
+
+        public IList<BankApiSet> BankApiSetsNavigation { get; set; } = null!;
+
+        public string IssuerUrl { get; set; } = null!;
+
+        public string FinancialId { get; set; } = null!;
+
+        public BankResponse PublicGetLocalResponse => new BankResponse(
+            Id,
+            Name,
+            Created,
+            CreatedBy,
+            IssuerUrl,
+            FinancialId);
+    }
+
+    internal partial class Bank :
+        ISupportsFluentLocalEntityPost<BankRequest, BankResponse, Bank>
+    {
+        public BankResponse PublicPostLocalResponse => PublicGetLocalResponse;
 
         public Bank Create(
             BankRequest request,
@@ -86,8 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                 request.Name,
                 createdBy,
                 timeProvider);
-            // Temporarily use initialise for unconverted properties
-            //output.Initialise(request, createdBy, timeProvider);
+
             return output;
         }
     }

@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal abstract class
         EntityDelete<TEntity> :
             LocalEntityDelete<TEntity>
-        where TEntity : class, ISupportsFluentDeleteLocal<TEntity>, new()
+        where TEntity : class, IEntity, new()
     {
         protected EntityDelete(
             IDbReadWriteEntityMethods<TEntity> entityMethods,

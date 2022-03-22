@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                     options =>
                     {
                         options.SerializerSettings.ContractResolver =
-                            new CamelCasePropertyNamesContractResolver();
+                            new DefaultContractResolver(); // no to CamelCase
                         options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     });
         }

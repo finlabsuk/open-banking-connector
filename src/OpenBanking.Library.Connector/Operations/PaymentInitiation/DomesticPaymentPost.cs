@@ -11,8 +11,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -27,6 +30,8 @@ using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
 using DomesticPaymentConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
+using PaymentInitiationModelsV3p1p4 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
@@ -58,9 +63,84 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         protected override string RelativePath => "/domestic-payments";
 
-        protected override async Task<(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest, BankApiSet
-            bankApiInformation, BankRegistration bankRegistration, string bankFinancialId,
-            TokenEndpointResponse? userTokenEndpointResponse, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+        protected override string ClientCredentialsGrantScope => "payments";
+
+        protected override async Task<DomesticPaymentResponse> CreateLocalEntity(
+            DomesticPaymentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var persistedObject = new DomesticPaymentPersisted(
+                Guid.NewGuid(),
+                request.Name,
+                request,
+                apiRequest,
+                apiResponse,
+                createdBy,
+                timeProvider);
+
+            // Save entity
+            await _entityMethods.AddAsync(persistedObject);
+
+            // Create response (may involve additional processing based on entity)
+            var response = new DomesticPaymentResponse(apiResponse, persistedObject.Id);
+
+            return response;
+        }
+
+        protected override
+            IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
+                PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
+                BankApiSet bankApiSet,
+                string bankFinancialId,
+                TokenEndpointResponse tokenEndpointResponse,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+                IInstrumentationClient instrumentationClient) =>
+            bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
+            {
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                    PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
+                    PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationPostRequestProcessor<
+                        PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
+                        bankFinancialId,
+                        tokenEndpointResponse,
+                        instrumentationClient,
+                        bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
+                        PaymentInitiationApiVersion.Version3p1p4,
+                        processedSoftwareStatementProfile)),
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
+                    PaymentInitiationModelsPublic.OBWriteDomestic2,
+                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationPostRequestProcessor<
+                        PaymentInitiationModelsPublic.OBWriteDomestic2>(
+                        bankFinancialId,
+                        tokenEndpointResponse,
+                        instrumentationClient,
+                        bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
+                        PaymentInitiationApiVersion.Version3p1p4,
+                        processedSoftwareStatementProfile)),
+                null => throw new NullReferenceException("No PISP API specified for this bank."),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"PISP API version {bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion} not supported.")
+            };
+
+        protected override async Task<(
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
+            Uri endpointUrl,
+            BankApiSet bankApiInformation,
+            BankRegistration bankRegistration,
+            string bankFinancialId,
+            TokenEndpointResponse? userTokenEndpointResponse,
+            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages
             )> ApiPostRequestData(DomesticPaymentRequest request)
         {
             // Create non-error list
@@ -84,8 +164,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string bankFinancialId = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             // Create request
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest = request.OBWriteDomestic;
-            if (request.OBWriteDomestic.Data.ConsentId is null)
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest = request.ExternalApiRequest;
+            if (request.ExternalApiRequest.Data.ConsentId is null)
             {
                 apiRequest.Data.ConsentId = domesticPaymentConsent.ExternalApiId;
             }
@@ -109,7 +189,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         .First()! // We already filtered out null entries above
                     : throw new InvalidOperationException("No token is available for Domestic Payment Consent.");
 
-            return (apiRequest, bankApiSet, bankRegistration, bankFinancialId,
+            // Determine endpoint URL
+            string baseUrl =
+                bankApiSet.PaymentInitiationApi?.BaseUrl ??
+                throw new NullReferenceException("Bank API Set has null Payment Initiation API.");
+            var endpointUrl = new Uri(baseUrl + RelativePath);
+
+            return (apiRequest, endpointUrl, bankApiSet, bankRegistration, bankFinancialId,
                 userTokenEndpointResponse, nonErrorMessages);
         }
     }

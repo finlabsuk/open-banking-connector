@@ -3,35 +3,27 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
 {
-    public interface IDomesticPaymentPublicQuery : IBaseQuery
+    /// <summary>
+    ///     Response to Read and Create requests
+    /// </summary>
+    public class DomesticPaymentResponse
     {
-        ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
-    }
+        public Guid Id { get; }
 
-    public class DomesticPaymentResponse : BaseResponse, IDomesticPaymentPublicQuery
-    {
         public DomesticPaymentResponse(
-            Guid id,
-            string? name,
-            DateTimeOffset created,
-            string? createdBy,
-            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> bankApiResponse) : base(
-            id,
-            name,
-            created,
-            createdBy)
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
+            Guid id)
         {
-            BankApiResponse = bankApiResponse;
+            ExternalApiResponse = externalApiResponse;
+            Id = id;
         }
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; }
+        public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
     }
 }

@@ -23,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 "0015800000jf9VgAAI", //from https://developer.aibgb.co.uk/sandbox-for-api-testing-gb
                 ClientRegistrationApiVersion
                     .Version3p2, //from https://developer.aibgb.co.uk/dynamic-client-registration-api-v3-2-gb/apis
+                null, 
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
@@ -39,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                         registration.OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
                         {
                             //well-known endpoint response does not provide one
-                            ResponseModesSupported = new List<string>() { "fragment" }
+                            ResponseModesSupported = new List<string> { "fragment" }
                         };
                         return registration;
                     },

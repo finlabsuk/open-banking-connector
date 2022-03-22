@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     internal abstract class ObjectContextBase<TEntity> :
         IDeleteLocalContextInternal
         where TEntity : class,
-        ISupportsFluentDeleteLocal<TEntity>, new()
+        IEntity, new()
     {
         protected ObjectContextBase(ISharedContext sharedContext)
         {

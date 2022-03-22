@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         public Guid DomesticPaymentConsentId { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
-            await new AuthContextValidator()
+            await new DomesticPaymentConsentAuthContextValidator()
                 .ValidateAsync(this)!;
     }
 }

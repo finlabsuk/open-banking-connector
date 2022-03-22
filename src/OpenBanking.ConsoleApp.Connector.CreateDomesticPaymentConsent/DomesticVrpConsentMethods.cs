@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     testNameUnique);
 
             // POST domestic payment consent
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResponse =
+            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents
@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpConsentId)
         {
             // GET domestic VRP consent
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResponse =
+            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents
@@ -80,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResponse =
+            IFluentResponse<DomesticVrpConsentReadFundsConfirmationResponse> domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents

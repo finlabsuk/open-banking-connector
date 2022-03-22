@@ -3,35 +3,28 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response
 {
-    public interface IDomesticVrpPublicQuery : IBaseQuery
+    /// <summary>
+    ///     Response to Read and Create requests
+    /// </summary>
+    public class DomesticVrpResponse
     {
-        ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> BankApiResponse { get; }
-    }
+        public Guid Id { get; }
 
-    public class DomesticVrpResponse : BaseResponse, IDomesticVrpPublicQuery
-    {
         public DomesticVrpResponse(
             Guid id,
-            string? name,
-            DateTimeOffset created,
-            string? createdBy,
-            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> bankApiResponse) : base(
-            id,
-            name,
-            created,
-            createdBy)
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse)
         {
-            BankApiResponse = bankApiResponse;
+            Id = id;
+            ExternalApiResponse = externalApiResponse;
         }
 
-        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> BankApiResponse { get; }
+
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse ExternalApiResponse { get; }
     }
 }

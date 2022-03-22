@@ -9,10 +9,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers;
+namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.Configuration;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "bank-config")]
+[ApiExplorerSettings(GroupName = "config")]
 public class BankApiSetsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -28,7 +28,7 @@ public class BankApiSetsController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("bank-api-sets")]
+    [Route("config/bank-api-sets")]
     [HttpPost]
     [ProducesResponseType(
         typeof(HttpResponse<BankApiSetResponse>),
@@ -65,7 +65,7 @@ public class BankApiSetsController : ControllerBase
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("bank-api-sets")]
+    [Route("config/bank-api-sets")]
     [HttpGet]
     [ProducesResponseType(
         typeof(HttpResponse<IList<BankApiSetResponse>>),

@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -49,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     testNameUnique);
 
             // POST domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
+            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
@@ -70,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
+            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
@@ -87,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResponse =
+            IFluentResponse<DomesticPaymentConsentReadFundsConfirmationResponse> domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents

@@ -28,14 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
                 .Must(ValidationRules.IsNotNullOrEmpty)
                 .WithMessage($"Missing or invalid {nameof(BankRegistration.SoftwareStatementProfileId)}.");
 
-            // RuleFor(x => x.IssuerUrl)
-            //     .Must(ValidationRules.IsUrl)
-            //     .WithMessage($"Missing or invalid {nameof(BankRegistration.IssuerUrl)}.");
-            //
-            // RuleFor(x => x.XFapiFinancialId)
-            //     .Must(ValidationRules.IsNotNullOrEmpty)
-            //     .WithMessage($"Missing or invalid {nameof(BankRegistration.XFapiFinancialId)}.");
-
             RuleFor(x => x.OpenIdConfigurationOverrides)
                 .SetValidator(
                     new NullableValidator<OpenIdConfigurationOverrides>(new OpenIdConfigurationOverridesValidator()))

@@ -20,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 null,
+                null,
                 new VariableRecurringPaymentsApi
                 {
                     VariableRecurringPaymentsApiVersion = bankProfileHiddenProperties

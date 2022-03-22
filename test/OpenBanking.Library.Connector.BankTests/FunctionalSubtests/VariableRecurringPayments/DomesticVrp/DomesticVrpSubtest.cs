@@ -77,32 +77,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Basic request object for domestic payment
             requestBuilder.Utility.Map(
-                domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
+                domesticVrpConsentRequest.ExternalApiRequest,
                 out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest);
             var domesticVrpRequest =
                 new DomesticVrpRequest
                 {
                     Name = null,
-                    OBDomesticVRPRequest = obDomesticVrpRequest,
+                    ExternalApiRequest = obDomesticVrpRequest,
                     DomesticVrpConsentId = default
                 };
 
             // POST domestic payment consent
             DomesticVrpAccountIndexPair domesticVrpAccountIndexPair = bankUser.DomesticVrpAccountIndexPairs[0];
             Account creditorAccount = bankUser.Accounts[domesticVrpAccountIndexPair.Dest];
-            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.SchemeName =
+            domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.SchemeName =
                 creditorAccount.SchemeName;
-            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.Identification =
+            domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Identification =
                 creditorAccount.Identification;
-            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount.Name =
+            domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount.Name =
                 creditorAccount.Name;
-            domesticVrpConsentRequest.OBDomesticVRPConsentRequest.Data.Initiation.CreditorAccount
+            domesticVrpConsentRequest.ExternalApiRequest.Data.Initiation.CreditorAccount
                     .SecondaryIdentification =
                 creditorAccount.SecondaryIdentification;
             domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticVrpConsentRequest.BankApiSetId = bankApiSetId;
             domesticVrpConsentRequest.Name = testNameUnique;
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp =
+            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResp =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .CreateAsync(domesticVrpConsentRequest);
 
@@ -113,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid domesticVrpConsentId = domesticVrpConsentResp.Data!.Id;
 
             // GET domestic payment consent
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpConsentResp2 =
+            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResp2 =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .ReadAsync(domesticVrpConsentId);
 
@@ -182,7 +182,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 if (variableRecurringPaymentsApiSettings.UseConsentGetFundsConfirmationEndpoint)
                 {
                     // GET consent funds confirmation
-                    IFluentResponse<DomesticVrpConsentResponse> domesticPaymentConsentResp4 =
+                    IFluentResponse<DomesticVrpConsentReadFundsConfirmationResponse> domesticPaymentConsentResp4 =
                         await requestBuilderNew.VariableRecurringPayments.DomesticVrpConsents
                             .ReadFundsConfirmationAsync(domesticVrpConsentId);
 

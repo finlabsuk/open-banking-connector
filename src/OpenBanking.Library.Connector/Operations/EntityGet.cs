@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -22,16 +21,15 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     /// <summary>
-    /// Read operations on entities (objects stored in external (i.e. bank) database and local database).
+    ///     Read operations on entities (objects stored in external (i.e. bank) database and local database).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
     /// <typeparam name="TApiResponse"></typeparam>
     internal abstract class
-        EntityGet<TEntity, TPublicQuery, TPublicResponse, TApiResponse> :
-            LocalEntityGet<TEntity, TPublicQuery, TPublicResponse>
-        where TEntity : class, IEntity, ISupportsFluentEntityGet<TPublicResponse, TApiResponse>,
+        EntityGet<TEntity, TPublicResponse, TApiResponse> :
+            GetBase<TEntity, TPublicResponse>
+        where TEntity : class, IEntity,
         new()
         where TApiResponse : class, ISupportsValidation
     {
@@ -74,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         protected override async
-            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiGet(GetRequestInfo requestInfo)
         {
             // Create persisted entity
@@ -108,9 +106,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 }
             }
 
-            // Create and store persistent object
-            persistedObject.UpdateAfterApiGet(apiResponse, "", _timeProvider);
-            return (persistedObject, nonErrorMessages);
+            // Create response
+            TPublicResponse response = GetReadResponse(persistedObject, apiResponse);
+
+            return (response, nonErrorMessages);
         }
 
         protected abstract Task<(
@@ -120,5 +119,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             Uri uri,
             JsonSerializerSettings? jsonSerializerSettings,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id);
+
+        protected abstract TPublicResponse GetReadResponse(
+            TEntity persistedObject,
+            TApiResponse apiResponse);
     }
 }

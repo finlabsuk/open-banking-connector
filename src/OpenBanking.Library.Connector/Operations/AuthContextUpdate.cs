@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -72,6 +73,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 _authContextMethods
                     .DbSet
                     .Include(
+                        o => ((AccountAccessConsentAuthContext) o).AccountAccessConsentNavigation
+                            .BankRegistrationNavigation)
+                    .Include(
                         o => ((DomesticPaymentConsentAuthContext) o).DomesticPaymentConsentNavigation
                             .BankRegistrationNavigation)
                     .Include(
@@ -88,6 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             BankRegistration bankRegistration = authContext switch
             {
+                AccountAccessConsentAuthContext ac => ac.AccountAccessConsentNavigation.BankRegistrationNavigation,
                 DomesticPaymentConsentAuthContext ac => ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
                 DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
                 _ => throw new ArgumentOutOfRangeException()

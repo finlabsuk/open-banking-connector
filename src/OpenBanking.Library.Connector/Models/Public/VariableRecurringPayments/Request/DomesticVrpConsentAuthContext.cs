@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         public Guid DomesticVrpConsentId { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
-            await new AuthContextValidator2()
+            await new DomesticVrpConsentAuthContextValidator()
                 .ValidateAsync(this)!;
     }
 }

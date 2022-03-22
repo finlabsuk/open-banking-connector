@@ -31,28 +31,28 @@ public class DomesticVrpConsentsController : ControllerBase
     [Route("vrp/domestic-vrp-consents")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticVrpConsentResponse>),
+        typeof(HttpResponse<DomesticVrpConsentReadResponse>),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticVrpConsentResponse>),
+        typeof(HttpResponse<DomesticVrpConsentReadResponse>),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticVrpConsentResponse>),
+        typeof(HttpResponse<DomesticVrpConsentReadResponse>),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostAsync([FromBody] DomesticVrpConsent request)
     {
-        IFluentResponse<DomesticVrpConsentResponse> fluentResponse = await _requestBuilder
+        IFluentResponse<DomesticVrpConsentReadResponse> fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
             .CreateAsync(request);
 
         // HTTP response
-        HttpResponse<DomesticVrpConsentResponse> httpResponse = fluentResponse.ToHttpResponse();
+        HttpResponse<DomesticVrpConsentReadResponse> httpResponse = fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
-            FluentSuccessResponse<DomesticVrpConsentResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<DomesticVrpConsentResponse> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<DomesticVrpConsentResponse> _ => StatusCodes.Status500InternalServerError,
+            FluentSuccessResponse<DomesticVrpConsentReadResponse> _ => StatusCodes.Status201Created,
+            FluentBadRequestErrorResponse<DomesticVrpConsentReadResponse> _ => StatusCodes.Status400BadRequest,
+            FluentOtherErrorResponse<DomesticVrpConsentReadResponse> _ => StatusCodes.Status500InternalServerError,
             _ => throw new ArgumentOutOfRangeException()
         };
         return new ObjectResult(httpResponse)
@@ -67,30 +67,30 @@ public class DomesticVrpConsentsController : ControllerBase
     [Route("vrp/domestic-vrp-consents")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticVrpConsentReadLocalResponse>>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticVrpConsentReadLocalResponse>>),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticVrpConsentReadLocalResponse>>),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<DomesticVrpConsentResponse>> fluentResponse = await _requestBuilder
+        IFluentResponse<IQueryable<DomesticVrpConsentReadLocalResponse>> fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
             .ReadLocalAsync(query => true);
 
         // HTTP response
-        HttpResponse<IQueryable<DomesticVrpConsentResponse>> httpResponse = fluentResponse.ToHttpResponse();
+        HttpResponse<IQueryable<DomesticVrpConsentReadLocalResponse>> httpResponse = fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
-            FluentSuccessResponse<IQueryable<DomesticVrpConsentResponse>> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ =>
+            FluentSuccessResponse<IQueryable<DomesticVrpConsentReadResponse>> _ => StatusCodes.Status200OK,
+            FluentBadRequestErrorResponse<IQueryable<DomesticVrpConsentReadResponse>> _ =>
                 StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<IQueryable<DomesticVrpConsentResponse>> _ =>
+            FluentOtherErrorResponse<IQueryable<DomesticVrpConsentReadResponse>> _ =>
                 StatusCodes.Status500InternalServerError,
             _ => throw new ArgumentOutOfRangeException()
         };

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.BankId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.AccountAndTransactionApi)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
+                    v =>
+                        JsonConvert.DeserializeObject<AccountAndTransactionApi>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.PaymentInitiationApi)
                 .HasConversion(

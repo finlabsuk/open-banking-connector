@@ -20,11 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     configured
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
-        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest OBDomesticVRPConsentRequest
-        {
-            get;
-            set;
-        } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest ExternalApiRequest { get; set; } =
+            null!;
 
         /// <summary>
         ///     Specifies Bank API Set to use when creating consent.

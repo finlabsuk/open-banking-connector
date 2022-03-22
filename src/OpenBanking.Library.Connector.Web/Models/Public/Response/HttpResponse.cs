@@ -19,7 +19,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Respon
         /// <summary>
         ///     Messages from Open Banking Connector.
         /// </summary>
-        [JsonProperty("messages")]
         public HttpResponseMessages? Messages { get; }
     }
 
@@ -38,13 +37,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Respon
         /// <summary>
         ///     Messages from Open Banking Connector.
         /// </summary>
-        [JsonProperty("messages")]
         public HttpResponseMessages? Messages { get; }
 
         /// <summary>
         ///     Data from Open Banking Connector.
         /// </summary>
-        [JsonProperty("data")]
         public TData? Data { get; }
     }
 }

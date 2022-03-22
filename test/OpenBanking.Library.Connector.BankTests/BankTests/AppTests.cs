@@ -2,15 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
+    AccountAccessConsent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.DomesticVrp;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -155,9 +152,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             bool genericNotPlainAppTest)
         {
             // Test name
-            var testName =
+            string testName =
                 $"{bank}_{softwareStatementProfile.SoftwareStatementProfileId}_{registrationScope.AbbreviatedName()}";
-            var testNameUnique = $"{testName}_{Guid.NewGuid()}";
+            string testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
             // Get bank test settings
             BankTestSettings bankTestSettings =
@@ -236,7 +233,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     testDataProcessorApiOverrides
                         .AppendToPath("clientReg"));
 
-            // Run domestic payment subtests
+            // Run account access consent subtests
+            foreach (AccountAccessConsentSubtestEnum subTest in
+                     AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
+            {
+                await AccountAccessConsentSubtest.RunTest(
+                    subTest,
+                    bankProfile,
+                    bankRegistrationId,
+                    bankApiSetId,
+                    bankProfile.AccountAndTransactionApiSettings,
+                    requestBuilder,
+                    requestBuilderGenerator,
+                    testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("aisp")
+                        .AppendToPath($"{subTest.ToString()}"),
+                    genericNotPlainAppTest,
+                    nodeJsService,
+                    puppeteerLaunchOptions,
+                    bankUserList,
+                    apiClient);
+            }
+
+            // Run domestic payment consent subtests
             foreach (DomesticPaymentSubtestEnum subTest in
                      DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
             {
@@ -259,7 +279,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     apiClient);
             }
 
-            // Run domestic VRP subtests
+            // Run domestic VRP consent subtests
             foreach (DomesticVrpSubtestEnum subTest in
                      DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
             {

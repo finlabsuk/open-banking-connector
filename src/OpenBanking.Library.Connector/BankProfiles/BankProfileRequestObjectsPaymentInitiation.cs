@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         {
             var domesticPaymentConsentRequest = new DomesticPaymentConsent
             {
-                OBWriteDomesticConsent =
+                ExternalApiRequest =
                     domesticPaymentType switch
                     {
                         DomesticPaymentTypeEnum.PersonToPerson => new

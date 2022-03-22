@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -21,9 +20,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     /// </summary>
     internal partial class DomesticPaymentConsentAuthContext :
         AuthContext,
-        ISupportsFluentDeleteLocal<DomesticPaymentConsentAuthContext>,
         IDomesticPaymentConsentAuthContextPublicQuery
     {
+        public DomesticPaymentConsentAuthContext() { }
+
+        public DomesticPaymentConsentAuthContext(
+            Guid id,
+            string? name,
+            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+            Guid domesticPaymentConsentId,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, tokenEndpointResponse, createdBy, timeProvider)
+        {
+            DomesticPaymentConsentId = domesticPaymentConsentId;
+        }
+
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticPaymentConsentId")]
         public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
@@ -32,67 +43,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     }
 
     internal partial class DomesticPaymentConsentAuthContext :
-        ISupportsFluentLocalEntityPost<DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextCreateLocalResponse, DomesticPaymentConsentAuthContext>
-    {
-        
-        public DomesticPaymentConsentAuthContext () {}
-
-        private DomesticPaymentConsentAuthContext( 
-            Guid domesticPaymentConsentId,
-            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base (
-            id,
-            name,
-            createdBy,
-            timeProvider)
-        {
-            DomesticPaymentConsentId = domesticPaymentConsentId;
-            TokenEndpointResponse = tokenEndpointResponse;
-        }
-
-        public DomesticPaymentConsentAuthContext Create(
-            DomesticPaymentConsentAuthContextRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-
-            var output = new DomesticPaymentConsentAuthContext(
-                request.DomesticPaymentConsentId,
-                tokenEndpointResponse,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider);
-
-            return output;
-        }
-
-
-        public DomesticPaymentConsentAuthContextCreateLocalResponse PublicPostResponse =>
-            throw new NotImplementedException("Do not use; use customised version instead.");
-
-        public DomesticPaymentConsentAuthContextCreateLocalResponse PublicPostResponseCustomised(string authUrl) =>
-            new DomesticPaymentConsentAuthContextCreateLocalResponse(
-                Id,
-                Name,
-                Created,
-                CreatedBy,
-                DomesticPaymentConsentId,
-                authUrl);
-    }
-
-    internal partial class DomesticPaymentConsentAuthContext :
         ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextReadLocalResponse>
     {
-        public DomesticPaymentConsentAuthContextReadLocalResponse PublicGetResponse =>
+        public DomesticPaymentConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
             new DomesticPaymentConsentAuthContextReadLocalResponse(
                 Id,
                 Name,

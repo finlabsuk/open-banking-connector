@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -29,6 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 
         /// <summary> Initializes a new instance of OBReadBalance1Data. </summary>
         /// <param name="balance"></param>
+        [JsonConstructor]
         public OBReadBalance1Data(IReadOnlyList<OBReadBalance1DataBalanceItem> balance)
         {
             Balance = balance;

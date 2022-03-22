@@ -5,20 +5,30 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Limit type, in a coded form. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBReadBalance1DataBalanceCreditLineTypeEnum
     {
         /// <summary> Available. </summary>
+        [EnumMember(Value = "Available")]
         Available,
         /// <summary> Credit. </summary>
+        [EnumMember(Value = "Credit")]
         Credit,
         /// <summary> Emergency. </summary>
+        [EnumMember(Value = "Emergency")]
         Emergency,
         /// <summary> Pre-Agreed. </summary>
+        [EnumMember(Value = "Pre-Agreed")]
         PreAgreed,
         /// <summary> Temporary. </summary>
+        [EnumMember(Value = "Temporary")]
         Temporary
     }
 }

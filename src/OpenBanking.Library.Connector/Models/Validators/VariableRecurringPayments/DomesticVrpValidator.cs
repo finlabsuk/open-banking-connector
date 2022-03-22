@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
                 .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
 
             // WriteDomestic
-            RuleFor(x => x.OBDomesticVRPRequest)
+            RuleFor(x => x.ExternalApiRequest)
                 .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator());
 
             // RuleFor(x => x.RedirectUrl)

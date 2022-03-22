@@ -36,9 +36,11 @@ public class PartiesController : ControllerBase
     ///     Get Parties
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
+    /// <param name="externalAccountId"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/parties")]
+    [Route("aisp/party")]
+    [Route("aisp/party/{ExternalAccountId}")]
     [HttpGet]
     [ProducesResponseType(
         typeof(PartiesHttpResponse),
@@ -50,13 +52,18 @@ public class PartiesController : ControllerBase
         typeof(PartiesHttpResponse),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] string accountAccessConsentId)
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
+        string? externalAccountId)
     {
         // Operation
-        IFluentResponse<PartiesResponse> fluentResponse = null!;
+        IFluentResponse<PartiesResponse> fluentResponse = await _requestBuilder
+            .AccountAndTransaction
+            .Parties
+            .ReadAsync(accountAccessConsentId, externalAccountId);
 
         // HTTP response
-        var httpResponse = (PartiesHttpResponse) fluentResponse.ToHttpResponse();
+        HttpResponse<PartiesResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
+        var httpResponse = new PartiesHttpResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
         int statusCode = fluentResponse switch
         {
             FluentSuccessResponse<PartiesResponse> _ => StatusCodes.Status200OK,

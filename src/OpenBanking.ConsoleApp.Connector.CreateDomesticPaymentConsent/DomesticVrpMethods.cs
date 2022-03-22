@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -33,13 +31,13 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         {
             // Create domestic VRP request
             requestBuilder.Utility.Map(
-                domesticVrpConsentRequest.OBDomesticVRPConsentRequest,
+                domesticVrpConsentRequest.ExternalApiRequest,
                 out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
                     obDomesticVrpRequest); // maps Open Banking request objects
             var domesticVrpRequest =
                 new DomesticVrp
                 {
-                    OBDomesticVRPRequest = obDomesticVrpRequest,
+                    ExternalApiRequest = obDomesticVrpRequest,
                     Name = testNameUnique,
                     DomesticVrpConsentId = domesticVrpConsentId,
                 };
@@ -66,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticVrpConsentResponse> domesticVrpResponse =
+            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents

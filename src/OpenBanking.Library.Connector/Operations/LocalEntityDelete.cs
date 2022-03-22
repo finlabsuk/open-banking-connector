@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TEntity"></typeparam>
     internal class LocalEntityDelete<TEntity> :
         IObjectDelete
-        where TEntity : class, ISupportsFluentDeleteLocal<TEntity>
+        where TEntity : class, IEntity
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;

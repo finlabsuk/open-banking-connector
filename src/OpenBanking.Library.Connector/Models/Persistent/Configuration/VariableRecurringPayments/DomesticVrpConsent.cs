@@ -28,53 +28,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BankApiSetId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankApiRequest)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                    v =>
-                        JsonConvert
-                            .DeserializeObject<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(v)!)
+            builder.Property(e => e.ExternalApiId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-            // Second-level property info
-            builder.OwnsOne(
-                p => p.BankApiResponse,
-                od =>
-                {
-                    od.Property(e => e.Data)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                            v =>
-                                JsonConvert
-                                    .DeserializeObject<
-                                        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(v)
-                                !)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.Modified)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.ModifiedBy)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                });
-            builder.Navigation(p => p.BankApiResponse).IsRequired();
-            builder.OwnsOne(
-                p => p.BankApiFundsConfirmationResponse,
-                od =>
-                {
-                    od.Property(e => e.Data)
-                        .IsRequired(false)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                            v =>
-                                JsonConvert
-                                    .DeserializeObject<
-                                        VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(v)!)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.Modified)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.ModifiedBy)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                });
-            builder.Navigation(p => p.BankApiFundsConfirmationResponse).IsRequired();
         }
     }
 }

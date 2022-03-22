@@ -20,9 +20,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     /// </summary>
     internal partial class DomesticVrpConsentAuthContext :
         AuthContext,
-        ISupportsFluentDeleteLocal<DomesticVrpConsentAuthContext>,
         IDomesticVrpConsentAuthContextPublicQuery
     {
+        public DomesticVrpConsentAuthContext() { }
+
+        public DomesticVrpConsentAuthContext(
+            Guid id,
+            string? name,
+            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+            Guid domesticVrpConsentId,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, tokenEndpointResponse, createdBy, timeProvider)
+        {
+            DomesticVrpConsentId = domesticVrpConsentId;
+        }
+
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticVrpConsentId")]
         public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
@@ -31,66 +43,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityPost<DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextCreateLocalResponse, DomesticVrpConsentAuthContext>
-    {
-        public DomesticVrpConsentAuthContext() { }
-
-        private DomesticVrpConsentAuthContext(
-            Guid domesticVrpConsentId,
-            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
-            name,
-            createdBy,
-            timeProvider)
-        {
-            DomesticVrpConsentId = domesticVrpConsentId;
-            TokenEndpointResponse = tokenEndpointResponse;
-        }
-
-        public DomesticVrpConsentAuthContext Create(
-            DomesticVrpConsentAuthContextRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-
-            var output = new DomesticVrpConsentAuthContext(
-                request.DomesticVrpConsentId,
-                tokenEndpointResponse,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider);
-
-            return output;
-        }
-
-
-        public DomesticVrpConsentAuthContextCreateLocalResponse PublicPostResponse =>
-            throw new NotImplementedException("Do not use; use customised version instead.");
-
-        public DomesticVrpConsentAuthContextCreateLocalResponse PublicPostResponseCustomised(string authUrl) =>
-            new DomesticVrpConsentAuthContextCreateLocalResponse(
-                Id,
-                Name,
-                Created,
-                CreatedBy,
-                DomesticVrpConsentId,
-                authUrl);
-    }
-
-    internal partial class DomesticVrpConsentAuthContext :
         ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadLocalResponse>
     {
-        public DomesticVrpConsentAuthContextReadLocalResponse PublicGetResponse =>
+        public DomesticVrpConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
             new DomesticVrpConsentAuthContextReadLocalResponse(
                 Id,
                 Name,

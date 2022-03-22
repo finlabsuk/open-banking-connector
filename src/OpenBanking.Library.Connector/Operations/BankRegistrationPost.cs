@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         protected override async
-            Task<(BankRegistration persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create non-error list
@@ -278,7 +278,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 requestInfo.ModifiedBy,
                 _timeProvider);
 
-            return (persistedObject, nonErrorMessages2);
+
+            // Save entity
+            await _entityMethods.AddAsync(persistedObject);
+
+            // Persist updates (this happens last so as not to happen if there are any previous errors)
+            await _dbSaveChangesMethod.SaveChangesAsync();
+
+            // Create response (may involve additional processing based on entity)
+            var response =
+                new BankRegistrationResponse(
+                    persistedObject.Id,
+                    persistedObject.Name,
+                    persistedObject.Created,
+                    persistedObject.CreatedBy,
+                    new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                        apiResponse,
+                        _timeProvider,
+                        null),
+                    persistedObject.BankId);
+
+            return (response, nonErrorMessages2);
         }
     }
 }

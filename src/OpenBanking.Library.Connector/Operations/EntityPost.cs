@@ -25,7 +25,7 @@ using PaymentInitiationModelsPublic =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     /// <summary>
-    /// Create operations on entities (objects stored in external (i.e. bank) database and local database).
+    ///     Create operations on entities (objects stored in external (i.e. bank) database and local database).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPublicRequest"></typeparam>
@@ -34,14 +34,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TApiResponse"></typeparam>
     internal abstract class
         EntityPost<TEntity, TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse> :
-            LocalEntityPost<TEntity, TPublicRequest, TPublicPostResponse>
+            PostBase<TPublicRequest, TPublicPostResponse>
         where TEntity : class, IEntity,
-        ISupportsFluentEntityPost<TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse, TEntity>,
         new()
         where TPublicRequest : Base
         where TApiResponse : class, ISupportsValidation
         where TApiRequest : class, ISupportsValidation
     {
+        protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         protected readonly IApiVariantMapper _mapper;
 
         public EntityPost(
@@ -51,13 +51,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper) : base(
-            entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient)
         {
             _mapper = mapper;
+            _entityMethods = entityMethods;
         }
 
         protected async

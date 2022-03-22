@@ -7,18 +7,22 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
 {
-    /// <summary>
-    ///     Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec
-    ///     <a
-    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
-    ///     v3.1.9r5 <a />. Open Banking Connector will automatically
-    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
-    /// </summary>
-    public class BalancesResponse : AccountAndTransactionModelsPublic.OBReadBalance1
+    public class BalancesResponse
     {
-        internal BalancesResponse(
-            AccountAndTransactionModelsPublic.OBReadBalance1Data data,
-            AccountAndTransactionModelsPublic.Links links,
-            AccountAndTransactionModelsPublic.Meta meta) : base(data, links, meta) { }
+        public BalancesResponse(AccountAndTransactionModelsPublic.OBReadBalance1 externalApiResponse)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+
+        /// <summary>
+        ///     Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     <a
+        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+        /// </summary>
+        public AccountAndTransactionModelsPublic.OBReadBalance1 ExternalApiResponse { get; }
+
     }
 }

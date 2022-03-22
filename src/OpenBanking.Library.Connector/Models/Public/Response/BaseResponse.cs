@@ -15,6 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         public DateTimeOffset Created { get; }
 
         public string? CreatedBy { get; }
+        
+        public string? Reference { get; }
     }
 
     /// <summary>
@@ -52,5 +54,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         ///     can be used to denote authorship.
         /// </summary>
         public string? CreatedBy { get; }
+        
+        /// <summary>
+        ///     Optional reference for linking object to something else - e.g. a user ID in the client
+        ///     application. This field is not used by Open Banking Connector.
+        /// </summary>
+        public string? Reference { get; }
+
     }
 }

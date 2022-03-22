@@ -4,6 +4,8 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -18,6 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         RegistrationScope registrationScope);
 
     public delegate bool UseRegistrationScope(RegistrationScope registrationScope);
+
+    public delegate AccountAccessConsent AccountAccessConsentAdjustments(AccountAccessConsent domesticPaymentConsent);
 
     public delegate DomesticPaymentConsent DomesticPaymentConsentAdjustments(
         DomesticPaymentConsent domesticPaymentConsent);
@@ -46,6 +50,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public bool UseRegistrationAccessToken { get; set; } = false;
     }
 
+    public class AccountAndTransactionApiSettings
+    {
+        public AccountAccessConsentAdjustments
+            AccountAccessConsentAdjustments { get; set; } = x => x;
+    }
+
     public class PaymentInitiationApiSettings
     {
         public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
@@ -62,7 +72,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             DomesticVrpConsentAdjustments { get; set; } = x => x;
     }
 
-
     /// <summary>
     ///     A Bank Profile describes configuration and settings used when testing with a particular bank.
     ///     It also provides convenient functions for generating request objects to use with Open Banking Connector.
@@ -74,12 +83,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             string issuerUrl,
             string financialId,
             ClientRegistrationApiVersion clientRegistrationApiVersion,
+            AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi)
         {
             BankProfileEnum = bankProfileEnum;
             IssuerUrl = issuerUrl ?? throw new ArgumentNullException(nameof(issuerUrl));
             FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
+            AccountAndTransactionApi = accountAndTransactionApi;
             PaymentInitiationApi = paymentInitiationApi;
             VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
             ClientRegistrationApiVersion = clientRegistrationApiVersion;
@@ -106,6 +117,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public ClientRegistrationApiVersion ClientRegistrationApiVersion { get; }
 
         /// <summary>
+        ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
+        /// </summary>
+        public AccountAndTransactionApi? AccountAndTransactionApi { get; }
+
+        /// <summary>
         ///     Payment Initiation (PISP) API version. May be null where API not supported or used/tested.
         /// </summary>
         public PaymentInitiationApi? PaymentInitiationApi { get; }
@@ -120,6 +136,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// </summary>
         public ClientRegistrationApiSettings ClientRegistrationApiSettings { get; set; } =
             new ClientRegistrationApiSettings();
+
+        /// <summary>
+        ///     Settings used when testing Account and Transaction API.
+        /// </summary>
+        public AccountAndTransactionApiSettings AccountAndTransactionApiSettings { get; set; } =
+            new AccountAndTransactionApiSettings();
 
         /// <summary>
         ///     Settings used when testing Payment Initiation API.

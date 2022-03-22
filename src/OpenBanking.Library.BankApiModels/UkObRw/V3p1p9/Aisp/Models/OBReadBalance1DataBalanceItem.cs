@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -61,6 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <param name="creditLine"></param>
+        [JsonConstructor]
         public OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount, IReadOnlyList<OBReadBalance1DataBalancePropertiesItemsItem> creditLine)
         {
             AccountId = accountId;

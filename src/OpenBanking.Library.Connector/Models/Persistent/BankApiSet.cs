@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using BankApiSetRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankApiSet;
 
@@ -21,16 +21,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type for Bank API Set
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    [Index(nameof(Name), IsUnique = true)]
     internal partial class BankApiSet :
         EntityBase,
-        ISupportsFluentDeleteLocal<BankApiSet>,
         IBankApiSetPublicQuery
     {
+        public BankApiSet() { }
+
+        private BankApiSet(
+            Guid id,
+            string? name,
+            BankApiSetRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            AccountAndTransactionApi = request.AccountAndTransactionApi;
+            PaymentInitiationApi = request.PaymentInitiationApi;
+            VariableRecurringPaymentsApi = request.VariableRecurringPaymentsApi;
+            BankId = request.BankId;
+        }
+
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
-        public List<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
+        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
+
+        public AccountAndTransactionApi? AccountAndTransactionApi { get; set; }
 
         public PaymentInitiationApi? PaymentInitiationApi { get; set; }
 
@@ -42,37 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     internal partial class BankApiSet :
         ISupportsFluentLocalEntityPost<BankApiSetRequest, BankApiSetResponse, BankApiSet>
     {
-        public BankApiSet() { }
-
-        private BankApiSet(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            Guid bankId,
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
-            name,
-            createdBy,
-            timeProvider)
-        {
-            PaymentInitiationApi = paymentInitiationApi;
-            VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
-            BankId = bankId;
-        }
-
-        public BankApiSetResponse PublicGetResponse => new BankApiSetResponse(
-            Id,
-            Name,
-            Created,
-            CreatedBy,
-            PaymentInitiationApi,
-            VariableRecurringPaymentsApi,
-            BankId);
-
-
-        public BankApiSetResponse PublicPostResponse => PublicGetResponse;
+        public BankApiSetResponse PublicPostLocalResponse => PublicGetLocalResponse;
 
         public BankApiSet Create(
             BankApiSetRequest request,
@@ -80,11 +69,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             ITimeProvider timeProvider)
         {
             var output = new BankApiSet(
-                request.PaymentInitiationApi,
-                request.VariableRecurringPaymentsApi,
-                request.BankId,
                 Guid.NewGuid(),
                 request.Name,
+                request,
                 createdBy,
                 timeProvider);
 
@@ -93,5 +80,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     }
 
     internal partial class BankApiSet :
-        ISupportsFluentLocalEntityGet<BankApiSetResponse> { }
+        ISupportsFluentLocalEntityGet<BankApiSetResponse>
+    {
+        public BankApiSetResponse PublicGetLocalResponse => new BankApiSetResponse(
+            Id,
+            Name,
+            Created,
+            CreatedBy,
+            AccountAndTransactionApi,
+            PaymentInitiationApi,
+            VariableRecurringPaymentsApi,
+            BankId);
+    }
 }

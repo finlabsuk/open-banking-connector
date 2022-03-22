@@ -4,6 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -28,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TEntity,
             TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
         where TEntity : class, IEntity,
-        ISupportsFluentReadWritePost<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse, TEntity>, new()
+        new()
         where TPublicRequest : Base
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
@@ -49,30 +52,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected abstract string RelativePath { get; }
 
+        protected abstract string ClientCredentialsGrantScope { get; }
+
+        protected abstract Task<TPublicResponse> CreateLocalEntity(
+            TPublicRequest request,
+            TApiRequest apiRequest,
+            TApiResponse apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider);
+
+        protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
+            BankApiSetPersisted bankApiSet,
+            string bankFinancialId,
+            TokenEndpointResponse tokenEndpointResponse,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            IInstrumentationClient instrumentationClient);
+
+        // protected virtual void WriteObject(Utf8JsonWriter jsonWriter, TApiRequest apiRequest) { }
+        //
+        // protected virtual void WriteObject(Utf8JsonWriter jsonWriter, TApiResponse apiResponse) { }
+        //
+        //
+        // protected virtual TApiResponse ReadObject(JsonDocument jsonDocument)
+        // {
+        //     throw new NotImplementedException();
+        // }
+
         protected override async
-            Task<(TEntity persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPost(PostRequestInfo requestInfo)
         {
             (
                     TApiRequest apiRequest,
+                    Uri endpointUrl,
                     BankApiSetPersisted bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
                     TokenEndpointResponse? userTokenEndpointResponse,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiPostRequestData(requestInfo.Request);
-
-            // Check API specified and get base URL
-            string baseUrl = new TEntity().GetReadWriteApiType() switch
-            {
-                ReadWriteApiType.PaymentInitiation =>
-                    bankApiInformation.PaymentInitiationApi?.BaseUrl ??
-                    throw new NullReferenceException("Bank API Set has null Payment Initiation API."),
-                ReadWriteApiType.VariableRecurringPayments =>
-                    bankApiInformation.VariableRecurringPaymentsApi?.BaseUrl ??
-                    throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API."),
-                _ => throw new ArgumentOutOfRangeException()
-            };
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -85,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TokenEndpointResponse tokenEndpointResponse =
                 userTokenEndpointResponse ??
                 await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    "payments",
+                    ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
                     null,
@@ -93,17 +111,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     _instrumentationClient);
 
             // Create new Open Banking object by posting JWT
-            var uri = new Uri(baseUrl + RelativePath);
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
 
-            IApiPostRequests<TApiRequest, TApiResponse> apiRequests = new TEntity().ApiPostRequests(
-                bankApiInformation.PaymentInitiationApi,
-                bankApiInformation.VariableRecurringPaymentsApi,
-                bankFinancialId,
-                tokenEndpointResponse,
-                processedSoftwareStatementProfile,
-                _instrumentationClient);
+            IApiPostRequests<TApiRequest, TApiResponse> apiRequests =
+                ApiRequests(
+                    bankApiInformation,
+                    bankFinancialId,
+                    tokenEndpointResponse,
+                    processedSoftwareStatementProfile,
+                    _instrumentationClient);
+
+
+            // // JSON write
+            // string json;
+            // {
+            //     var options = new JsonWriterOptions
+            //     {
+            //         Indented = true
+            //     };
+            //     using var stream = new MemoryStream();
+            //     using var writer = new Utf8JsonWriter(stream, options);
+            //     WriteObject(writer, apiRequest);
+            //     writer.Flush();
+            //     json = Encoding.UTF8.GetString(stream.ToArray());
+            //     Console.WriteLine("JSON 1");
+            //     Console.WriteLine(json);
+            // }
+            //
+            // // JSON read
+            // var documentOptions = new JsonDocumentOptions
+            // {
+            //     CommentHandling = JsonCommentHandling.Skip
+            // };
+            //
+            // using JsonDocument document = JsonDocument.Parse(json, documentOptions);
+            // TApiResponse apiResponse1 = ReadObject(document);
+            //
+            // Console.WriteLine("Done");
+            //
+            // throw new Exception("Stop");
 
 
             (TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
@@ -112,26 +159,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     apiRequest,
                     apiRequests,
                     apiClient,
-                    uri,
+                    endpointUrl,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     nonErrorMessages);
 
             // Create persisted entity
-            var persistedObjectTmp = new TEntity();
-            var persistedObject = persistedObjectTmp.Create(
+            TPublicResponse response = await CreateLocalEntity(
                 requestInfo.Request,
                 apiRequest,
                 apiResponse,
                 requestInfo.ModifiedBy,
                 _timeProvider);
 
-            return (persistedObject, nonErrorMessages2);
+            // Persist updates (this happens last so as not to happen if there are any previous errors)
+            await _dbSaveChangesMethod.SaveChangesAsync();
+
+            return (response, nonErrorMessages2);
         }
 
         protected abstract
             Task<(
                 TApiRequest apiRequest,
+                Uri endpointUrl,
                 BankApiSetPersisted bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,

@@ -4,21 +4,9 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Xml;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 using DomesticPaymentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
 
@@ -29,10 +17,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticPayment :
-        EntityBase,
-        ISupportsFluentDeleteLocal<DomesticPayment>,
-        IDomesticPaymentPublicQuery
+        EntityBase
     {
+        public DomesticPayment() { }
+
+        public DomesticPayment(
+            Guid id,
+            string? name,
+            DomesticPaymentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
+            BankApiRequest = apiRequest;
+            BankApiResponse =
+                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
+                    apiResponse,
+                    timeProvider,
+                    createdBy);
+            ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
+        }
+
         public Guid DomesticPaymentConsentId { get; set; }
 
         [ForeignKey("DomesticPaymentConsentId")]
@@ -48,161 +59,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
         public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> BankApiResponse { get; set; } =
             null!;
-    }
-
-    internal partial class DomesticPayment :
-        ISupportsFluentReadWritePost<DomesticPaymentRequest, DomesticPaymentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5, DomesticPayment>
-    {
-        public DomesticPaymentResponse PublicGetResponse => new DomesticPaymentResponse(
-            Id,
-            Name,
-            Created,
-            CreatedBy,
-            BankApiResponse);
-
-        
-        public DomesticPayment () {}
-
-        private DomesticPayment(
-            Guid id,
-            string? name,
-            DomesticPaymentRequest request,
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
-            string? createdBy,
-            ITimeProvider timeProvider) : base (
-            id,
-            name,
-            createdBy,
-            timeProvider )
-        {
-            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
-            BankApiRequest = apiRequest;
-            BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                    apiResponse,
-                    timeProvider,
-                    createdBy);
-            ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
-        }
-
-        public DomesticPayment Create(
-            DomesticPaymentRequest request,
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            var output = new DomesticPayment(
-                Guid.NewGuid(),
-                request.Name,
-                request,
-                apiRequest,
-                apiResponse,
-                createdBy,
-                timeProvider);
-
-            return output;
-        }
-
-        public DomesticPayment Create(DomesticPaymentRequest request, string? createdBy, ITimeProvider timeProvider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DomesticPaymentResponse PublicPostResponse => PublicGetResponse;
-
-        public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiPostRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
-            ApiRequests(
-                paymentInitiationApi,
-                variableRecurringPaymentsApi,
-                bankFinancialId,
-                tokenEndpointResponse,
-                processedSoftwareStatementProfile,
-                instrumentationClient);
-
-
-        public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
-            paymentInitiationApi?.PaymentInitiationApiVersion switch
-            {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
-                    new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
-                        bankFinancialId,
-                        tokenEndpointResponse,
-                        instrumentationClient,
-                        paymentInitiationApi.PaymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
-                        processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
-                    PaymentInitiationModelsPublic.OBWriteDomestic2,
-                    PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
-                    new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsPublic.OBWriteDomestic2>(
-                        bankFinancialId,
-                        tokenEndpointResponse,
-                        instrumentationClient,
-                        paymentInitiationApi.PaymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
-                        processedSoftwareStatementProfile)),
-                null => throw new NullReferenceException("No PISP API specified for this bank."),
-                _ => throw new ArgumentOutOfRangeException(
-                    $"PISP API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")
-            };
-    }
-
-    internal partial class DomesticPayment :
-        ISupportsFluentReadWriteGet<DomesticPaymentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
-    {
-        public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
-            BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                    apiResponse,
-                    timeProvider,
-                    modifiedBy);
-        }
-
-        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.PaymentInitiation;
-
-        public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiGetRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
-            ApiRequests(
-                paymentInitiationApi,
-                variableRecurringPaymentsApi,
-                bankFinancialId,
-                tokenEndpointResponse,
-                processedSoftwareStatementProfile,
-                instrumentationClient);
     }
 }

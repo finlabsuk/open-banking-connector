@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         where TPublicResponse : class
         where TPublicRequest : class, ISupportsValidation { }
 
-    internal class ExternalEntityContextInternal<TPublicRequest, TPublicResponse, TPublicQuery> :
+    internal class ExternalEntityContextInternal<TPublicRequest, TPublicResponse> :
         IExternalEntityContextInternal<TPublicRequest, TPublicResponse>
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class

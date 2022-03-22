@@ -39,8 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
             new DomesticPaymentConsentsConsentContext(_sharedContext);
 
         public IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments =>
-            new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse,
-                IDomesticPaymentPublicQuery>(
+            new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
                 _sharedContext,
                 new DomesticPaymentPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPayment>(),

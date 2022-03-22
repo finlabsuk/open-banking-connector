@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -79,7 +80,16 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </param>
-        public OBReadConsentResponse1Data(string consentId, DateTimeOffset creationDateTime, OBReadConsentResponse1DataStatusEnum status, DateTimeOffset statusUpdateDateTime, IReadOnlyList<OBReadConsentResponse1DataPermissionsEnum> permissions, DateTimeOffset? expirationDateTime, DateTimeOffset? transactionFromDateTime, DateTimeOffset? transactionToDateTime)
+        [JsonConstructor]
+        public OBReadConsentResponse1Data(
+            string consentId,
+            DateTimeOffset creationDateTime,
+            OBReadConsentResponse1DataStatusEnum status,
+            DateTimeOffset statusUpdateDateTime,
+            IReadOnlyList<OBReadConsentResponse1DataPermissionsEnum> permissions,
+            DateTimeOffset? expirationDateTime,
+            DateTimeOffset? transactionFromDateTime,
+            DateTimeOffset? transactionToDateTime)
         {
             ConsentId = consentId;
             CreationDateTime = creationDateTime;

@@ -46,6 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             new BankApiSet
             {
                 BankId = bankId,
+                AccountAndTransactionApi = AccountAndTransactionApi,
                 PaymentInitiationApi = PaymentInitiationApi,
                 VariableRecurringPaymentsApi = VariableRecurringPaymentsApi,
                 Name = name

@@ -14,19 +14,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Respon
         /// <summary>
         ///     Information messages.
         /// </summary>
-        [JsonProperty("info", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("Info", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public IList<string>? InformationMessages { get; set; }
 
         /// <summary>
         ///     Warning messages.
         /// </summary>
-        [JsonProperty("warnings", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("Warnings", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public IList<string>? WarningMessages { get; set; }
 
         /// <summary>
         ///     Error messages.
         /// </summary>
-        [JsonProperty("errors", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("Errors", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public IList<string>? ErrorMessages { get; set; }
     }
 }

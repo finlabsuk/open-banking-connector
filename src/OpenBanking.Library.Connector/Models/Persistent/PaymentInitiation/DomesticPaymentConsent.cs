@@ -5,23 +5,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using PaymentInitiationModelsV3p1p4 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
 {
@@ -31,16 +21,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     /// </summary>
     internal partial class DomesticPaymentConsent :
         EntityBase,
-        ISupportsFluentDeleteLocal<DomesticPaymentConsent>,
         IDomesticPaymentConsentPublicQuery
     {
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 BankApiRequest { get; set; } = null!;
+        public DomesticPaymentConsent() { }
 
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; set; } = null!;
+        public DomesticPaymentConsent(
+            Guid id,
+            string? name,
+            DomesticPaymentConsentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            BankRegistrationId = request.BankRegistrationId;
+            BankApiSetId = request.BankApiSetId;
+            ExternalApiId = apiResponse.Data.ConsentId;
+        }
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -48,232 +49,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         [ForeignKey("BankApiSetId")]
         public BankApiSet BankApiSetNavigation { get; set; } = null!;
 
-        public List<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
+        public IList<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
 
-        public List<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; set; } =
+        public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; set; } =
             null!;
 
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>
-            BankApiFundsConfirmationResponse { get; set; } = null!;
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        public string ExternalApiId { get; set; } = null!;
 
         public Guid BankRegistrationId { get; set; }
 
         public Guid BankApiSetId { get; set; }
-
-        public ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> BankApiResponse
-        {
-            get;
-            set;
-        } = null!;
     }
 
     internal partial class DomesticPaymentConsent :
-        ISupportsFluentReadWritePost<DomesticPaymentConsentRequest,
-            DomesticPaymentConsentResponse, PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5, DomesticPaymentConsent>
+        ISupportsFluentLocalEntityGet<DomesticPaymentConsentReadLocalResponse>
     {
-        public DomesticPaymentConsentResponse PublicGetResponse =>
-            new DomesticPaymentConsentResponse(
+        public DomesticPaymentConsentReadLocalResponse PublicGetLocalResponse =>
+            new DomesticPaymentConsentReadLocalResponse(
                 Id,
                 Name,
                 Created,
                 CreatedBy,
-                BankApiResponse,
                 BankRegistrationId,
-                BankApiSetId);
-
-        public DomesticPaymentConsent ( ) { }
-
-        private DomesticPaymentConsent ( 
-            Guid id,
-            string? name,
-            DomesticPaymentConsentRequest request,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
-            string? createdBy,
-            ITimeProvider timeProvider) : base (
-                id,
-                name,
-                createdBy,
-                timeProvider )
-        {
-            BankRegistrationId = request.BankRegistrationId;
-            BankApiSetId = request.BankApiSetId;
-            BankApiFundsConfirmationResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
-                    null,
-                    timeProvider,
-                    createdBy);
-            BankApiRequest = apiRequest;
-            BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                    apiResponse,
-                    timeProvider,
-                    createdBy);
-            ExternalApiId = BankApiResponse.Data.Data.ConsentId;
-        }
-
-        public DomesticPaymentConsent Create(
-            DomesticPaymentConsentRequest request,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-
-            var output = new DomesticPaymentConsent(
-                Guid.NewGuid(),
-                request.Name,
-                request,
-                apiRequest,
-                apiResponse,
-                createdBy,
-                timeProvider);
-
-            return output;
-        }
-
-        public DomesticPaymentConsent Create(DomesticPaymentConsentRequest request, string? createdBy, ITimeProvider timeProvider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DomesticPaymentConsentResponse PublicPostResponse => PublicGetResponse;
-
-        public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiPostRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
-            ApiRequests(
-                paymentInitiationApi,
-                variableRecurringPaymentsApi,
-                bankFinancialId,
-                tokenEndpointResponse,
-                processedSoftwareStatementProfile,
-                instrumentationClient);
-
-        public IApiRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient)
-            => paymentInitiationApi?.PaymentInitiationApiVersion switch
-            {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsV3p1p4.OBWriteDomesticConsentResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
-                    new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4>(
-                        bankFinancialId,
-                        tokenEndpointResponse,
-                        instrumentationClient,
-                        paymentInitiationApi.PaymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
-                        processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
-                    PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
-                    new PaymentInitiationPostRequestProcessor<
-                        PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
-                        bankFinancialId,
-                        tokenEndpointResponse,
-                        instrumentationClient,
-                        paymentInitiationApi.PaymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
-                        processedSoftwareStatementProfile)),
-                null => throw new NullReferenceException("No PISP API specified for this bank."),
-                _ => throw new ArgumentOutOfRangeException(
-                    $"PISP API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")
-            };
-    }
-
-    internal partial class DomesticPaymentConsent :
-        ISupportsFluentReadWriteGet<DomesticPaymentConsentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
-    {
-        public IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiGetRequests(
-            PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-            string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            IInstrumentationClient instrumentationClient) =>
-            ApiRequests(
-                paymentInitiationApi,
-                variableRecurringPaymentsApi,
-                bankFinancialId,
-                tokenEndpointResponse,
-                processedSoftwareStatementProfile,
-                instrumentationClient);
-
-        public ReadWriteApiType GetReadWriteApiType() => ReadWriteApiType.PaymentInitiation;
-    }
-
-    internal partial class DomesticPaymentConsent :
-        ISupportsFluentReadWriteGet<DomesticPaymentConsentResponse,
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
-    {
-        public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
-            BankApiResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                    apiResponse,
-                    timeProvider,
-                    modifiedBy);
-        }
-
-        public void UpdateAfterApiGet(
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
-            BankApiFundsConfirmationResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
-                    apiResponse,
-                    timeProvider,
-                    modifiedBy);
-        }
-
-        IApiGetRequests<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
-            ISupportsFluentReadWriteGet<DomesticPaymentConsentResponse,
-                PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>.ApiGetRequests(
-                PaymentInitiationApi? paymentInitiationApi,
-                VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-                string bankFinancialId,
-                TokenEndpointResponse tokenEndpointResponse,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-                IInstrumentationClient instrumentationClient)
-            => paymentInitiationApi?.PaymentInitiationApiVersion switch
-            {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
-                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
-                    PaymentInitiationModelsV3p1p4.OBWriteFundsConfirmationResponse1>(
-                    new PaymentInitiationGetRequestProcessor(
-                        bankFinancialId,
-                        tokenEndpointResponse)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
-                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
-                    PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
-                    new PaymentInitiationGetRequestProcessor(
-                        bankFinancialId,
-                        tokenEndpointResponse)),
-                null => throw new NullReferenceException("No PISP API specified for this bank."),
-                _ => throw new ArgumentOutOfRangeException(
-                    $"PISP API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")
-            };
+                BankApiSetId,
+                ExternalApiId);
     }
 }

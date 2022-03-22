@@ -31,28 +31,28 @@ public class DomesticPaymentConsentsController : ControllerBase
     [Route("pisp/domestic-payment-consents")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentResponse>),
+        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentResponse>),
+        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentResponse>),
+        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
     {
-        IFluentResponse<DomesticPaymentConsentResponse> fluentResponse = await _requestBuilder
+        IFluentResponse<DomesticPaymentConsentReadResponse> fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .CreateAsync(request);
 
         // HTTP response
-        HttpResponse<DomesticPaymentConsentResponse> httpResponse = fluentResponse.ToHttpResponse();
+        HttpResponse<DomesticPaymentConsentReadResponse> httpResponse = fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
-            FluentSuccessResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<DomesticPaymentConsentResponse> _ => StatusCodes.Status500InternalServerError,
+            FluentSuccessResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status201Created,
+            FluentBadRequestErrorResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status400BadRequest,
+            FluentOtherErrorResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status500InternalServerError,
             _ => throw new ArgumentOutOfRangeException()
         };
         return new ObjectResult(httpResponse)
@@ -67,30 +67,31 @@ public class DomesticPaymentConsentsController : ControllerBase
     [Route("pisp/domestic-payment-consents")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentResponse>>),
+        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<DomesticPaymentConsentResponse>> fluentResponse = await _requestBuilder
+        IFluentResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .ReadLocalAsync(query => true);
 
         // HTTP response
-        HttpResponse<IQueryable<DomesticPaymentConsentResponse>> httpResponse = fluentResponse.ToHttpResponse();
+        HttpResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>>
+            httpResponse = fluentResponse.ToHttpResponse();
         int statusCode = fluentResponse switch
         {
-            FluentSuccessResponse<IQueryable<DomesticPaymentConsentResponse>> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ =>
+            FluentSuccessResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ => StatusCodes.Status200OK,
+            FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ =>
                 StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentResponse>> _ =>
+            FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ =>
                 StatusCodes.Status500InternalServerError,
             _ => throw new ArgumentOutOfRangeException()
         };

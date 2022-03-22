@@ -5,6 +5,7 @@
 using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
@@ -21,6 +22,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         ///     Bank with which this API set is associated.
         /// </summary>
         public Guid BankId { get; set; }
+
+        /// <summary>
+        ///     Specifies UK Open Banking Account and Transaction API.
+        ///     Null means no such API in this API set.
+        /// </summary>
+        public AccountAndTransactionApi? AccountAndTransactionApi { get; set; }
 
         /// <summary>
         ///     Specifies UK Open Banking Payment Initiation API.

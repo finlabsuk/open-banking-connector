@@ -6,10 +6,17 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
-    /// <summary> The OBReadParty2. </summary>
+    /// <summary>
+    ///     Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     <a
+    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+    ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
     public partial class OBReadParty2
     {
         /// <summary> Initializes a new instance of OBReadParty2. </summary>
@@ -29,6 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
+        [JsonConstructor]
         public OBReadParty2(OBReadParty2Data data, Links links, Meta meta)
         {
             Data = data;

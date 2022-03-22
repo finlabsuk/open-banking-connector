@@ -5,11 +5,11 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation
 {
-    public class AuthContextValidator : AbstractValidator<DomesticPaymentConsentAuthContext>
+    public class DomesticPaymentConsentAuthContextValidator : AbstractValidator<DomesticPaymentConsentAuthContext>
     {
-        public AuthContextValidator()
+        public DomesticPaymentConsentAuthContextValidator()
         {
             CascadeMode = CascadeMode.Continue;
             CreateRules();

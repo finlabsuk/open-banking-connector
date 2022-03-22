@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -24,6 +25,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 "0015800001041RHAAY", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
                 ClientRegistrationApiVersion
                     .Version3p2, // inferred from registration_endpoint in : https://ob19-auth1-ui.o3bank.co.uk/.well-known/openid-configuration
+                new AccountAndTransactionApi
+                {
+                    AccountAndTransactionApiVersion = AccountAndTransactionApiVersion.Version3p1p9,
+                    BaseUrl =
+                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
+                },
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties

@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -82,12 +79,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Basic request object for domestic payment
             requestBuilder.Utility.Map(
-                domesticPaymentConsentRequest.OBWriteDomesticConsent,
+                domesticPaymentConsentRequest.ExternalApiRequest,
                 out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
             var domesticPaymentRequest =
                 new DomesticPaymentRequest
                 {
-                    OBWriteDomestic = obWriteDomestic,
+                    ExternalApiRequest = obWriteDomestic,
                     DomesticPaymentConsentId = default,
                     Name = null
                 };
@@ -95,12 +92,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // POST domestic payment consent
             domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticPaymentConsentRequest.BankApiSetId = bankApiSetId;
-            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification =
+            domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
                 Guid.NewGuid().ToString("N");
-            domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification =
+            domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.Name = testNameUnique;
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp =
+            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .CreateAsync(domesticPaymentConsentRequest);
 
@@ -111,7 +108,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Data!.Id;
 
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp2 =
+            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResp2 =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .ReadAsync(domesticPaymentConsentId);
 
@@ -180,7 +177,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 if (paymentInitiationApiSettings.UseConsentGetFundsConfirmationEndpoint)
                 {
                     // GET consent funds confirmation
-                    IFluentResponse<DomesticPaymentConsentResponse> domesticPaymentConsentResp4 =
+                    IFluentResponse<DomesticPaymentConsentReadFundsConfirmationResponse> domesticPaymentConsentResp4 =
                         await requestBuilderNew.PaymentInitiation.DomesticPaymentConsents
                             .ReadFundsConfirmationAsync(domesticPaymentConsentId);
 
@@ -196,10 +193,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .AppendToPath("postRequest")
                     .WriteFile(domesticPaymentRequest);
                 domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
-                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.InstructionIdentification =
-                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.InstructionIdentification;
-                domesticPaymentRequest.OBWriteDomestic.Data.Initiation.EndToEndIdentification =
-                    domesticPaymentConsentRequest.OBWriteDomesticConsent.Data.Initiation.EndToEndIdentification;
+                domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
+                    domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification;
+                domesticPaymentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
+                    domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification;
                 domesticPaymentRequest.Name = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
@@ -220,7 +217,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticPaymentResp2.Should().NotBeNull();
                 domesticPaymentResp2.Messages.Should().BeEmpty();
                 domesticPaymentResp2.Data.Should().NotBeNull();
-
             }
 
             // DELETE auth context

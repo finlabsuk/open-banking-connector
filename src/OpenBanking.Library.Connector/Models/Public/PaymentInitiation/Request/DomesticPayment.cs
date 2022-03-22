@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     to translate this for banks supporting an earlier spec version.
         ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
         /// </summary>
-        public PaymentInitiationModelsPublic.OBWriteDomestic2 OBWriteDomestic { get; set; } = null!;
+        public PaymentInitiationModelsPublic.OBWriteDomestic2 ExternalApiRequest { get; set; } = null!;
 
         /// <summary>
         ///     Specifies Domestic Payment Consent to use when creating payment.

@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             new DomesticVrpConsentsContext(_sharedContext);
 
         public IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps =>
-            new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse, IDomesticVrpPublicQuery>(
+            new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
                 _sharedContext,
                 new DomesticVrpPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpPersisted>(),

@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 "https://api.s101.nonprod-ffs.io/open-banking/", //from https://docs.monzo.com/#well-known-endpoints
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 ClientRegistrationApiVersion.Version3p2, // from https://docs.monzo.com/#dynamic-client-registration60
+                null,
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties
@@ -34,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     DomesticPaymentConsentAdjustments = consent =>
                     {
-                        consent.OBWriteDomesticConsent.Data.Initiation.SupplementaryData =
+                        consent.ExternalApiRequest.Data.Initiation.SupplementaryData =
                             new Dictionary<string, object>
                             {
                                 ["DesiredStatus"] = "Authorised",

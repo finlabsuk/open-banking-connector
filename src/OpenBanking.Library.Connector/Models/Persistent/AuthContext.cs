@@ -4,7 +4,6 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
@@ -14,26 +13,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class AuthContext :
-        EntityBase,
-        ISupportsFluentDeleteLocal<AuthContext>
+        EntityBase
     {
+        public AuthContext() { }
+
+        public AuthContext(
+            Guid id,
+            string? name,
+            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
+        {
+            TokenEndpointResponse = tokenEndpointResponse;
+        }
+
         /// <summary>
         ///     Token endpoint response. If null, indicates auth not successfully completed.
         /// </summary>
         public ReadWriteProperty<TokenEndpointResponse?> TokenEndpointResponse { get; set; } = null!;
-
-        public AuthContext () { }
-        
-        public AuthContext(
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider) : base (
-            id,
-            name,
-            createdBy,
-            timeProvider)
-        { }
-        
     }
 }

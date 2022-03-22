@@ -6,6 +6,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
     internal interface ISupportsFluentLocalEntityGet<out TPublicResponse>
     {
-        TPublicResponse PublicGetResponse { get; }
+        TPublicResponse PublicGetLocalResponse { get; }
     }
 }

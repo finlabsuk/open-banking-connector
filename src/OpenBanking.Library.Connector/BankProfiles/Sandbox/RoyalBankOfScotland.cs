@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
+                null,
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion = bankProfileHiddenProperties

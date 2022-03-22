@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     to translate this for banks supporting an earlier spec version.
         ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
         /// </summary>
-        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest OBDomesticVRPRequest { get; set; } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest ExternalApiRequest { get; set; } = null!;
 
         /// <summary>
         ///     Specifies Variable Recurring Payment to use when creating payment.

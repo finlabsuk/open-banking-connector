@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
@@ -32,12 +31,58 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    [Index(nameof(Name), IsUnique = true)]
     internal partial class BankRegistration :
         EntityBase,
-        ISupportsFluentDeleteLocal<BankRegistration>,
         IBankRegistrationPublicQuery
     {
+        public BankRegistration() { }
+
+        private BankRegistration(
+            Guid id,
+            string? name,
+            BankRegistrationRequest request,
+            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
+            RegistrationScope registrationScope,
+            OpenIdConfiguration openIdConfigurationResponse,
+            string tokenEndpoint,
+            string authorizationEndpoint,
+            string registrationEndpoint,
+            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider)
+        {
+            ClientRegistrationApi = request.ClientRegistrationApi;
+            SoftwareStatementProfileId = request.SoftwareStatementProfileId;
+            SoftwareStatementAndCertificateProfileOverrideCase =
+                request.SoftwareStatementAndCertificateProfileOverrideCase;
+            OAuth2RequestObjectClaimsOverrides = request.OAuth2RequestObjectClaimsOverrides;
+            BankId = request.BankId;
+
+            BankApiRequest = apiRequest;
+
+            RegistrationScope = registrationScope;
+            OpenIdConfigurationResponse = openIdConfigurationResponse;
+            TokenEndpoint = tokenEndpoint;
+            AuthorizationEndpoint = authorizationEndpoint;
+            RegistrationEndpoint = registrationEndpoint;
+            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
+
+            BankApiResponse =
+                new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                    apiResponse,
+                    timeProvider,
+                    createdBy);
+            ExternalApiId = BankApiResponse.Data.ClientId;
+            ExternalApiSecret = BankApiResponse.Data.ClientSecret;
+            RegistrationAccessToken = BankApiResponse.Data.RegistrationAccessToken;
+            RedirectUris = BankApiResponse.Data.RedirectUris;
+        }
+
         public string SoftwareStatementProfileId { get; set; } = null!;
 
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
@@ -87,7 +132,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
-        public List<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
+        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
@@ -115,75 +160,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Bank this registration is with.
         /// </summary>
         public Guid BankId { get; set; }
-    }
 
-    internal partial class BankRegistration :
-        ISupportsFluentEntityPost<BankRegistrationRequest, BankRegistrationResponse,
-            ClientRegistrationModelsPublic.OBClientRegistration1,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response, BankRegistration>
-    {
-        public BankRegistrationResponse PublicGetResponse => new BankRegistrationResponse(
-            Id,
-            Name,
-            Created,
-            CreatedBy,
-            BankApiResponse,
-            BankId);
-        
-        public BankRegistration ( ) { }
-
-        private BankRegistration(
-            Guid id,
-            string? name,
-            BankRegistrationRequest request,
-            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
-            RegistrationScope registrationScope,
-            OpenIdConfiguration openIdConfigurationResponse,
-            string tokenEndpoint,
-            string authorizationEndpoint,
-            string registrationEndpoint,
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
-            string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
-            name,
-            createdBy,
-            timeProvider )
-        {
-            ClientRegistrationApi = request.ClientRegistrationApi;
-            SoftwareStatementProfileId = request.SoftwareStatementProfileId;
-            SoftwareStatementAndCertificateProfileOverrideCase =
-                request.SoftwareStatementAndCertificateProfileOverrideCase;
-            OAuth2RequestObjectClaimsOverrides = request.OAuth2RequestObjectClaimsOverrides;
-            BankId = request.BankId;
-            
-            BankApiRequest = apiRequest;
-            
-            RegistrationScope = registrationScope;
-            OpenIdConfigurationResponse = openIdConfigurationResponse;
-            TokenEndpoint = tokenEndpoint;
-            AuthorizationEndpoint = authorizationEndpoint;
-            RegistrationEndpoint = registrationEndpoint;
-            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-            
-            BankApiResponse =
-                new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                    apiResponse,
-                    timeProvider,
-                    createdBy);
-            ExternalApiId = BankApiResponse.Data.ClientId;
-            ExternalApiSecret = BankApiResponse.Data.ClientSecret;
-            RegistrationAccessToken = BankApiResponse.Data.RegistrationAccessToken;
-            RedirectUris = BankApiResponse.Data.RedirectUris;
-        }
-
-        public BankRegistrationResponse PublicPostResponse => PublicGetResponse;
-        public BankRegistration Create(BankRegistrationRequest request, string? createdBy, ITimeProvider timeProvider)
-        {
-            throw new NotImplementedException();
-        }
-        
         public BankRegistration Create(
             BankRegistrationRequest request,
             ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest,
@@ -211,9 +188,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                 tokenEndpointAuthMethod,
                 createdBy,
                 timeProvider);
-                
-                return output;
-                
+
+            return output;
         }
 
         public IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
@@ -268,32 +244,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                     clientRegistrationApiVersion,
                     null)
             };
-
-        public BankRegistration Create(
-            BankRegistrationRequest request,
-            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     internal partial class BankRegistration :
-        ISupportsFluentEntityGet<BankRegistrationResponse,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response>
+        ISupportsFluentLocalEntityGet<BankRegistrationResponse>
     {
-        public void UpdateAfterApiGet(
-            ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
-            BankApiResponse =
-                new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                    apiResponse,
-                    timeProvider,
-                    modifiedBy);
-        }
+        public BankRegistrationResponse PublicGetLocalResponse => new BankRegistrationResponse(
+            Id,
+            Name,
+            Created,
+            CreatedBy,
+            BankApiResponse,
+            BankId);
     }
 }

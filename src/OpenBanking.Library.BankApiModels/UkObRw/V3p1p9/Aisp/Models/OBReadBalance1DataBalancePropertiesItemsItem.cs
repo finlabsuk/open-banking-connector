@@ -5,6 +5,8 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the credit line. </summary>
@@ -27,6 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// </param>
         /// <param name="type"> Limit type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the credit line. </param>
+        [JsonConstructor]
         public OBReadBalance1DataBalancePropertiesItemsItem(bool included, OBReadBalance1DataBalanceCreditLineTypeEnum? type, OBReadBalance1DataBalanceItemCreditLineItemAmount amount)
         {
             Included = included;

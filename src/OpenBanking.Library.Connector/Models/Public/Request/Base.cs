@@ -21,5 +21,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         ///     can be used to denote authorship.
         /// </summary>
         public string? CreatedBy { get; set; }
+        
+        /// <summary>
+        ///     Optional reference for linking object to something else - e.g. a user ID in the client
+        ///     application. This field is not used by Open Banking Connector.
+        /// </summary>
+        public string? Reference { get; set; }
+
     }
 }

@@ -36,9 +36,11 @@ public class TransactionsController : ControllerBase
     ///     Get Transactions
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
+    /// <param name="externalAccountId"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/transactions")]
+    [Route("aisp/transactions/{ExternalAccountId}")]
     [HttpGet]
     [ProducesResponseType(
         typeof(TransactionsHttpResponse),
@@ -50,13 +52,18 @@ public class TransactionsController : ControllerBase
         typeof(TransactionsHttpResponse),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] string accountAccessConsentId)
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
+        string? externalAccountId)
     {
         // Operation
-        IFluentResponse<TransactionsResponse> fluentResponse = null!;
+        IFluentResponse<TransactionsResponse> fluentResponse = await _requestBuilder
+            .AccountAndTransaction
+            .Transactions
+            .ReadAsync(accountAccessConsentId, externalAccountId);
 
         // HTTP response
-        var httpResponse = (TransactionsHttpResponse) fluentResponse.ToHttpResponse();
+        HttpResponse<TransactionsResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
+        var httpResponse = new TransactionsHttpResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
         int statusCode = fluentResponse switch
         {
             FluentSuccessResponse<TransactionsResponse> _ => StatusCodes.Status200OK,

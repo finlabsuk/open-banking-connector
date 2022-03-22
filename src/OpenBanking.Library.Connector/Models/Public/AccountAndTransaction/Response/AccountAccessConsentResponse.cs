@@ -11,42 +11,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 {
     public interface IAccountAccessConsentPublicQuery : IBaseQuery
     {
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1 OBReadConsentResponse { get; }
-
         Guid BankRegistrationId { get; }
 
         Guid BankApiSetId { get; }
+
+        public string ExternalApiId { get; }
     }
 
     /// <summary>
-    ///     Response object used when creating or reading an AccountAccessConsent object. Includes a UK Open Banking response
-    ///     object
-    ///     plus local database fields.
+    ///     Response to ReadLocal requests
     /// </summary>
-    public class AccountAccessConsentResponse : BaseResponse, IAccountAccessConsentPublicQuery
+    public class AccountAccessConsentReadLocalResponse : BaseResponse, IAccountAccessConsentPublicQuery
     {
-        public AccountAccessConsentResponse(
+        public AccountAccessConsentReadLocalResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1 obReadConsentResponse,
             Guid bankRegistrationId,
-            Guid bankApiSetId) : base(id, name, created, createdBy)
+            Guid bankApiSetId,
+            string externalApiId) : base(id, name, created, createdBy)
         {
-            OBReadConsentResponse = obReadConsentResponse;
             BankRegistrationId = bankRegistrationId;
             BankApiSetId = bankApiSetId;
+            ExternalApiId = externalApiId;
         }
-
-        /// <summary>
-        ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
-        ///     <a
-        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
-        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
-        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
-        /// </summary>
-        public AccountAndTransactionModelsPublic.OBReadConsentResponse1 OBReadConsentResponse { get; }
 
         /// <summary>
         ///     ID of associated BankRegistration object
@@ -57,5 +46,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     ID of associated BankApiSet object
         /// </summary>
         public Guid BankApiSetId { get; }
+
+        /// <summary>
+        ///     External (bank) API ID for this object
+        /// </summary>
+        public string ExternalApiId { get; }
+    }
+
+    /// <summary>
+    ///     Response to Read and Create requests
+    /// </summary>
+    public class AccountAccessConsentReadResponse : AccountAccessConsentReadLocalResponse
+    {
+        public AccountAccessConsentReadResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            Guid bankRegistrationId,
+            Guid bankApiSetId,
+            string externalApiId,
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1 externalApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy,
+            bankRegistrationId,
+            bankApiSetId,
+            externalApiId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+
+        /// <summary>
+        ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     <a
+        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+        /// </summary>
+        public AccountAndTransactionModelsPublic.OBReadConsentResponse1 ExternalApiResponse { get; }
     }
 }

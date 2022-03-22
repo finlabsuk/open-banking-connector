@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -12,38 +11,105 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 {
     public interface IDomesticVrpConsentPublicQuery : IBaseQuery
     {
-        ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> BankApiResponse { get; }
-
         Guid BankRegistrationId { get; }
 
         Guid BankApiSetId { get; }
+
+        public string ExternalApiId { get; }
     }
 
+
     /// <summary>
-    ///     Respnose to GetLocal
+    ///     Response to ReadLocal requests
     /// </summary>
-    public class DomesticVrpConsentResponse : BaseResponse, IDomesticVrpConsentPublicQuery
+    public class DomesticVrpConsentReadLocalResponse : BaseResponse, IDomesticVrpConsentPublicQuery
     {
-        public DomesticVrpConsentResponse(
+        public DomesticVrpConsentReadLocalResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> bankApiResponse,
             Guid bankRegistrationId,
-            Guid bankApiSetId) : base(id, name, created, createdBy)
+            Guid bankApiSetId,
+            string externalApiId) : base(id, name, created, createdBy)
         {
-            BankApiResponse = bankApiResponse;
             BankRegistrationId = bankRegistrationId;
             BankApiSetId = bankApiSetId;
+            ExternalApiId = externalApiId;
         }
 
-        public ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> BankApiResponse
-        {
-            get;
-        }
-
+        /// <summary>
+        ///     ID of associated BankRegistration object
+        /// </summary>
         public Guid BankRegistrationId { get; }
+
+
+        /// <summary>
+        ///     ID of associated BankApiSet object
+        /// </summary>
         public Guid BankApiSetId { get; }
+
+        /// <summary>
+        ///     External (bank) API ID for this object
+        /// </summary>
+        public string ExternalApiId { get; }
+    }
+
+
+    /// <summary>
+    ///     Response to Read and Create requests
+    /// </summary>
+    public class DomesticVrpConsentReadResponse : DomesticVrpConsentReadLocalResponse
+    {
+        public DomesticVrpConsentReadResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            Guid bankRegistrationId,
+            Guid bankApiSetId,
+            string externalApiId,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy,
+            bankRegistrationId,
+            bankApiSetId,
+            externalApiId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse ExternalApiResponse { get; }
+    }
+
+    /// <summary>
+    ///     Response to ReadFundsConfirmation requests
+    /// </summary>
+    public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsentReadLocalResponse
+
+    {
+        public DomesticVrpConsentReadFundsConfirmationResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            Guid bankRegistrationId,
+            Guid bankApiSetId,
+            string externalApiId,
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy,
+            bankRegistrationId,
+            bankApiSetId,
+            externalApiId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+        public VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse { get; }
     }
 }

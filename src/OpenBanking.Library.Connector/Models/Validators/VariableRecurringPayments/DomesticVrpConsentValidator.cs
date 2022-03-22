@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
         private void CreateRules()
         {
             // WriteDomesticConsent
-            RuleFor(x => x.OBDomesticVRPConsentRequest)
+            RuleFor(x => x.ExternalApiRequest)
                 .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPConsentRequestValidator());
         }
     }

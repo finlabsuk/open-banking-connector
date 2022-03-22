@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         {
             var domesticVrpConsentRequest = new DomesticVrpConsent
             {
-                OBDomesticVRPConsentRequest =
+                ExternalApiRequest =
                     domesticVrpType switch
                     {
                         DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedByPisp => new

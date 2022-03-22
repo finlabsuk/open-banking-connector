@@ -22,6 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             BankRegistration bankRegistration,
             string issuerUrl,
             string state,
+            string scopeString,
             IInstrumentationClient instrumentationClient)
         {
             string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
@@ -34,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
                     bankRegistration,
                     redirectUrl,
-                    new[] { "openid", "payments" },
+                    new[] { "openid", scopeString },
                     consentId,
                     issuerUrl,
                     state);
@@ -62,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string queryString = keyValuePairs.ToUrlEncoded();
             string authUrl = bankRegistration.AuthorizationEndpoint + "?" + queryString;
             StringBuilder authUrlTraceSb = new StringBuilder()
-                .AppendLine("#### Auth URL (Domestic Consent)")
+                .AppendLine("#### Auth URL (Consent)")
                 .Append(authUrl);
             instrumentationClient.Info(authUrlTraceSb.ToString());
             return authUrl;

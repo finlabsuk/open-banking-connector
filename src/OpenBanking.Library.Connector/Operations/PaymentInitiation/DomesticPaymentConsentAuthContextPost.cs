@@ -2,10 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -23,14 +26,14 @@ using DomesticPaymentConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentAuthContext : LocalEntityPost<
+        DomesticPaymentConsentAuthContextPost : LocalEntityPostBase<
             DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
             DomesticPaymentConsentAuthContextCreateLocalResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
-        public DomesticPaymentConsentAuthContext(
+        public DomesticPaymentConsentAuthContextPost(
             IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
                 entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -45,6 +48,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient)
         {
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        }
+
+        protected override DomesticPaymentConsentAuthContextPersisted Create(
+            DomesticPaymentConsentAuthContextRequest request,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
+                null,
+                timeProvider,
+                createdBy);
+
+            var output = new DomesticPaymentConsentAuthContextPersisted(
+                Guid.NewGuid(),
+                request.Name,
+                tokenEndpointResponse,
+                request.DomesticPaymentConsentId,
+                createdBy,
+                timeProvider);
+
+            return output;
         }
 
         protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> CreateResponse(
@@ -69,14 +93,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Create auth URL
             var state = persistedObject.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
-                domesticPaymentConsent.BankApiResponse.Data.Data.ConsentId,
+                domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
                 domesticPaymentConsent.BankRegistrationNavigation,
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
+                "payments",
                 _instrumentationClient);
-            DomesticPaymentConsentAuthContextCreateLocalResponse response =
-                persistedObject.PublicPostResponseCustomised(authUrl);
+            var response =
+                new DomesticPaymentConsentAuthContextCreateLocalResponse(
+                    persistedObject.Id,
+                    persistedObject.Name,
+                    persistedObject.Created,
+                    persistedObject.CreatedBy,
+                    persistedObject.DomesticPaymentConsentId,
+                    authUrl);
 
             return response;
         }

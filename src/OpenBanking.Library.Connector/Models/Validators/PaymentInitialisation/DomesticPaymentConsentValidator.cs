@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Paymen
         private void CreateRules()
         {
             // WriteDomesticConsent
-            RuleFor(x => x.OBWriteDomesticConsent)
+            RuleFor(x => x.ExternalApiRequest)
                 .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator());
         }
     }

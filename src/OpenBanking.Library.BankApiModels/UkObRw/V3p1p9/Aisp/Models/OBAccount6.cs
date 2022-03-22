@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -66,6 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="switchStatus"> Specifies the switch status for the account, in a coded form. </param>
         /// <param name="account"></param>
         /// <param name="servicer"> Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. </param>
+        [JsonConstructor]
         public OBAccount6(string accountId, OBAccountStatus1CodeEnum? status, DateTimeOffset? statusUpdateDateTime, string currency, OBExternalAccountType1CodeEnum? accountType, OBExternalAccountSubType1CodeEnum? accountSubType, string description, string nickname, DateTimeOffset? openingDate, DateTimeOffset? maturityDate, string switchStatus, IReadOnlyList<OBAccount6AccountItem> account, OBBranchAndFinancialInstitutionIdentification50 servicer)
         {
             AccountId = accountId;

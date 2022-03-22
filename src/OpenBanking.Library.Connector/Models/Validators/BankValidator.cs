@@ -18,10 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
         private void CreateRules()
         {
-            RuleFor(x => x.Name)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(Bank.Name)}.");
-
             RuleFor(x => x.IssuerUrl)
                 .Must(ValidationRules.IsUrl)
                 .WithMessage($"Missing or invalid {nameof(Bank.IssuerUrl)}.");
