@@ -22,16 +22,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="11.0.1"/>
-        <PackageReference Include="FluentValidation" Version="10.4.0"/>
-        <PackageReference Include="jose-jwt" Version="3.2.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.15"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.16.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="AutoMapper" Version="11.0.1" />
+        <PackageReference Include="FluentValidation" Version="10.4.0" />
+        <PackageReference Include="jose-jwt" Version="3.2.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.15" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.16.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj"/>
+        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

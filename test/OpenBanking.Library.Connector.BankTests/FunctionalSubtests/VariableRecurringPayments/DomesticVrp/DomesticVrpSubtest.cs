@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -131,7 +128,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 DomesticVrpConsentId = domesticVrpConsentId,
                 Name = testNameUnique
             };
-            IFluentResponse<DomesticVrpConsentAuthContextPostResponse> authContextResponse =
+            IFluentResponse<DomesticVrpConsentAuthContextCreateLocalResponse> authContextResponse =
                 await requestBuilder.VariableRecurringPayments
                     .DomesticVrpConsents
                     .AuthContexts
@@ -146,10 +143,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string authUrl = authContextResponse.Data!.AuthUrl!;
 
             // GET auth context
-            IFluentResponse<DomesticVrpConsentAuthContextResponse> authContextResponse2 =
+            IFluentResponse<DomesticVrpConsentAuthContextReadLocalResponse> authContextResponse2 =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .AuthContexts
-                    .GetLocalAsync(authContextId);
+                    .ReadLocalAsync(authContextId);
             // Checks
             authContextResponse2.Should().NotBeNull();
             authContextResponse2.Messages.Should().BeEmpty();
@@ -221,15 +218,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticVrpResp2.Should().NotBeNull();
                 domesticVrpResp2.Messages.Should().BeEmpty();
                 domesticVrpResp2.Data.Should().NotBeNull();
-
-                // DELETE domestic payment
-                IFluentResponse domesticVrpResp3 = await requestBuilderNew.VariableRecurringPayments
-                    .DomesticVrps
-                    .DeleteLocalAsync(domesticVrpId);
-
-                // Checks
-                domesticVrpResp3.Should().NotBeNull();
-                domesticVrpResp3.Messages.Should().BeEmpty();
             }
 
             // DELETE auth context

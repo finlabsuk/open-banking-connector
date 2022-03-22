@@ -14,31 +14,33 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     internal class
-        LocalEntityContext<TEntity, TPublicRequest, TPublicQuery, TPublicResponse> :
+        LocalEntityContext<TEntity, TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+            TPublicReadLocalResponse> :
             ObjectContextBase<TEntity>,
-            ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicResponse>
+            ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>
         where TEntity : class, ISupportsFluentDeleteLocal<TEntity>,
-        ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>,
-        ISupportsFluentLocalEntityGet<TPublicResponse>, new()
-        where TPublicResponse : class
+        ISupportsFluentLocalEntityGet<TPublicReadLocalResponse>,
+        ISupportsFluentLocalEntityPost<TPublicRequest, TPublicCreateLocalResponse, TEntity>, new()
+        where TPublicCreateLocalResponse : class
+        where TPublicReadLocalResponse : class
         where TPublicRequest : Base, ISupportsValidation
     {
-        private readonly LocalEntityRead<TEntity, TPublicQuery, TPublicResponse> _localEntityRead;
-        private readonly LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse> _localEntityCreate;
+        private readonly CreateBase<TPublicRequest, TPublicCreateLocalResponse> _localEntityCreate;
+        private readonly LocalEntityRead<TEntity, TPublicQuery, TPublicReadLocalResponse> _localEntityRead;
 
-        public LocalEntityContext(ISharedContext sharedContext) : base(sharedContext)
+        public LocalEntityContext(ISharedContext sharedContext, CreateBase<TPublicRequest, TPublicCreateLocalResponse> entityCreate) : base(sharedContext)
         {
-            _localEntityRead = new LocalEntityRead<TEntity, TPublicQuery, TPublicResponse>(sharedContext);
-            _localEntityCreate =
-                new LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse>(sharedContext);
+            _localEntityRead = new LocalEntityRead<TEntity, TPublicQuery, TPublicReadLocalResponse>(sharedContext);
+            _localEntityCreate = entityCreate;
         }
 
-        Task<IFluentResponse<TPublicResponse>> ICreateLocalContext<TPublicRequest, TPublicResponse>.CreateLocalAsync(
-            TPublicRequest publicRequest,
-            string? createdBy,
-            string? apiRequestWriteFile,
-            string? apiResponseWriteFile,
-            string? apiResponseOverrideFile) =>
+        Task<IFluentResponse<TPublicCreateLocalResponse>>
+            ICreateLocalContext<TPublicRequest, TPublicCreateLocalResponse>.CreateLocalAsync(
+                TPublicRequest publicRequest,
+                string? createdBy,
+                string? apiRequestWriteFile,
+                string? apiResponseWriteFile,
+                string? apiResponseOverrideFile) =>
             _localEntityCreate.CreateAsync(
                 publicRequest,
                 createdBy,
@@ -46,10 +48,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
-        public Task<IFluentResponse<TPublicResponse>> GetLocalAsync(Guid id) =>
+        public Task<IFluentResponse<TPublicReadLocalResponse>> ReadLocalAsync(Guid id) =>
             _localEntityRead.ReadAsync(id, null);
 
-        public Task<IFluentResponse<IQueryable<TPublicResponse>>> GetLocalAsync(
+        public Task<IFluentResponse<IQueryable<TPublicReadLocalResponse>>> ReadLocalAsync(
             Expression<Func<TPublicQuery, bool>> predicate) =>
             _localEntityRead.ReadAsync(predicate);
     }

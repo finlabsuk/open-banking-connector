@@ -17,6 +17,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
+    /// <summary>
+    /// Read operations on local entities (objects stored in local database only).
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TPublicQuery"></typeparam>
+    /// <typeparam name="TPublicResponse"></typeparam>
     internal class LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> :
         IObjectGet<TPublicQuery, TPublicResponse>
         where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity,

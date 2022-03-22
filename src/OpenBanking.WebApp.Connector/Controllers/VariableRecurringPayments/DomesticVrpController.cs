@@ -57,41 +57,4 @@ public class DomesticVrpController : ControllerBase
         return new ObjectResult(httpResponse)
             { StatusCode = statusCode };
     }
-
-    /// <summary>
-    ///     Return all DomesticVrp objects
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("vrp/domestic-vrps")]
-    [HttpGet]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpResponse>>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticVrpResponse>>),
-        StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IFluentResponse<IQueryable<DomesticVrpResponse>> fluentResponse = await _requestBuilder
-            .VariableRecurringPayments
-            .DomesticVrps
-            .ReadLocalAsync(query => true);
-
-        // HTTP response
-        HttpResponse<IQueryable<DomesticVrpResponse>> httpResponse = fluentResponse.ToHttpResponse();
-        int statusCode = fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<DomesticVrpResponse>> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<IQueryable<DomesticVrpResponse>> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<IQueryable<DomesticVrpResponse>> _ => StatusCodes.Status500InternalServerError,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
-    }
 }

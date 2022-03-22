@@ -21,6 +21,13 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
+    /// <summary>
+    /// Read operations on entities (objects stored in external (i.e. bank) database and local database).
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TPublicQuery"></typeparam>
+    /// <typeparam name="TPublicResponse"></typeparam>
+    /// <typeparam name="TApiResponse"></typeparam>
     internal abstract class
         EntityGet<TEntity, TPublicQuery, TPublicResponse, TApiResponse> :
             LocalEntityGet<TEntity, TPublicQuery, TPublicResponse>

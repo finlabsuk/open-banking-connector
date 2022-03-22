@@ -144,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         internal LocalEntityCreate(ISharedContext context) : base(
             context,
-            new Operations.LocalEntityPost<TEntity, TPublicRequest, TPublicResponse>(
+            new LocalEntityPost<TEntity, TPublicRequest, TPublicResponse>(
                 context.DbService.GetDbEntityMethodsClass<TEntity>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
@@ -154,7 +154,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal class DomesticPaymentConsentAuthCreate :
         CreateBase<DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextPostResponse>
+            DomesticPaymentConsentAuthContextCreateLocalResponse>
     {
         internal DomesticPaymentConsentAuthCreate(ISharedContext context) : base(
             context,
@@ -203,7 +203,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         internal DomesticVrpConsentCreate(ISharedContext context) : base(
             context,
-            new Operations.VariableRecurringPayments.DomesticVrpConsentPost(
+            new DomesticVrpConsentPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,
@@ -216,7 +216,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal class DomesticVrpConsentAuthCreate :
         CreateBase<DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextPostResponse>
+            DomesticVrpConsentAuthContextCreateLocalResponse>
     {
         internal DomesticVrpConsentAuthCreate(ISharedContext context) : base(
             context,
@@ -234,7 +234,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         internal DomesticVrpCreate(ISharedContext context) : base(
             context,
-            new Operations.VariableRecurringPayments.DomesticVrpPost(
+            new DomesticVrpPost(
                 context.DbService.GetDbEntityMethodsClass<DomesticVrpPersisted>(),
                 context.DbService.GetDbSaveChangesMethodClass(),
                 context.TimeProvider,

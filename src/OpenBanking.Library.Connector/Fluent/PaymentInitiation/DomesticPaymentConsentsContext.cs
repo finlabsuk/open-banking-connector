@@ -11,6 +11,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
+using DomesticPaymentConsentAuthContextRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
+    DomesticPaymentConsentAuthContext;
+using DomesticPaymentConsentAuthContextPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
@@ -22,7 +27,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
         ///     authorisation of consent.
         /// </summary>
-        IDomesticPaymentConsentAuthContextsContext AuthContexts { get; }
+        ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
+                IDomesticPaymentConsentAuthContextPublicQuery,
+                DomesticPaymentConsentAuthContextCreateLocalResponse,
+                DomesticPaymentConsentAuthContextReadLocalResponse>
+            AuthContexts { get; }
 
         /// <summary>
         ///     READ funds confirmation by ID (includes GETing object from bank API).
@@ -60,8 +69,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
             _domesticPaymentConsentsCreate = new DomesticPaymentConsentsCreate(sharedContext);
         }
 
-        public IDomesticPaymentConsentAuthContextsContext AuthContexts =>
-            new DomesticPaymentConsentAuthContextsContext(_sharedContext);
+        public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
+            IDomesticPaymentConsentAuthContextPublicQuery,
+            DomesticPaymentConsentAuthContextCreateLocalResponse,
+            DomesticPaymentConsentAuthContextReadLocalResponse> AuthContexts =>
+            new LocalEntityContext<DomesticPaymentConsentAuthContextPersisted,
+                DomesticPaymentConsentAuthContextRequest,
+                IDomesticPaymentConsentAuthContextPublicQuery,
+                DomesticPaymentConsentAuthContextCreateLocalResponse,
+                DomesticPaymentConsentAuthContextReadLocalResponse>(
+                _sharedContext,
+                new DomesticPaymentConsentAuthCreate(_sharedContext));
 
         public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
             Guid id,
@@ -94,11 +112,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
 
+        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadLocalAsync(Guid id)
+            => ReadAsync(id);
+
         public Task<IFluentResponse<IQueryable<DomesticPaymentConsentResponse>>> ReadLocalAsync(
             Expression<Func<IDomesticPaymentConsentPublicQuery, bool>> predicate) =>
             _domesticPaymentConsentsRead.ReadAsync(predicate);
-
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> GetLocalAsync(Guid id)
-            => ReadAsync(id);
     }
 }

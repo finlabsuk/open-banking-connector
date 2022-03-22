@@ -38,12 +38,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
             _bankRegistrationDelete = new BankRegistrationDelete(sharedContext);
         }
 
-        public Task<IFluentResponse<IQueryable<BankRegistrationResponse>>> GetLocalAsync(
+        public Task<IFluentResponse<IQueryable<BankRegistrationResponse>>> ReadLocalAsync(
             Expression<Func<IBankRegistrationPublicQuery, bool>> predicate) =>
             _localEntityRead.ReadAsync(predicate);
 
         public Task<IFluentResponse<BankRegistrationResponse>>
-            GetLocalAsync(Guid id) =>
+            ReadLocalAsync(Guid id) =>
             _localEntityRead.ReadAsync(id, null);
 
         public Task<IFluentResponse<BankRegistrationResponse>> CreateAsync(

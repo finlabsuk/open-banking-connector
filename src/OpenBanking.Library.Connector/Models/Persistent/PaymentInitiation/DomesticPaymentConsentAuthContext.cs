@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
     internal partial class DomesticPaymentConsentAuthContext :
         ISupportsFluentLocalEntityPost<DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextPostResponse, DomesticPaymentConsentAuthContext>
+            DomesticPaymentConsentAuthContextCreateLocalResponse, DomesticPaymentConsentAuthContext>
     {
         
         public DomesticPaymentConsentAuthContext () {}
@@ -89,11 +89,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 createdBy);
         }
 
-        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponse =>
+        public DomesticPaymentConsentAuthContextCreateLocalResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");
 
-        public DomesticPaymentConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
-            new DomesticPaymentConsentAuthContextPostResponse(
+        public DomesticPaymentConsentAuthContextCreateLocalResponse PublicPostResponseCustomised(string authUrl) =>
+            new DomesticPaymentConsentAuthContextCreateLocalResponse(
                 Id,
                 Name,
                 Created,
@@ -103,10 +103,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     }
 
     internal partial class DomesticPaymentConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextResponse>
+        ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextReadLocalResponse>
     {
-        public DomesticPaymentConsentAuthContextResponse PublicGetResponse =>
-            new DomesticPaymentConsentAuthContextResponse(
+        public DomesticPaymentConsentAuthContextReadLocalResponse PublicGetResponse =>
+            new DomesticPaymentConsentAuthContextReadLocalResponse(
                 Id,
                 Name,
                 Created,

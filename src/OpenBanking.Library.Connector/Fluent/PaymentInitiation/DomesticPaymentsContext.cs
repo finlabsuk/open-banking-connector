@@ -15,12 +15,12 @@ using DomesticPaymentRequest =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
     public interface IDomesticPaymentsContext :
-        IEntityContext<DomesticPaymentRequest, IDomesticPaymentPublicQuery, DomesticPaymentResponse> { }
+        IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> { }
 
     internal class DomesticPaymentsContext : ObjectContextBase<DomesticPayment>, IDomesticPaymentsContext
     {
-        private readonly DomesticPaymentsRead _domesticPaymentsRead;
         private readonly DomesticPaymentsCreate _domesticPaymentsCreate;
+        private readonly DomesticPaymentsRead _domesticPaymentsRead;
 
         public DomesticPaymentsContext(ISharedContext sharedContext) : base(sharedContext)
         {

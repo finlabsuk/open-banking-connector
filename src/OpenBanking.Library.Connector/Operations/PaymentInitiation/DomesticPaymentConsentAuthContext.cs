@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         DomesticPaymentConsentAuthContext : LocalEntityPost<
             DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextPostResponse>
+            DomesticPaymentConsentAuthContextCreateLocalResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override async Task<DomesticPaymentConsentAuthContextPostResponse> CreateResponse(
+        protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> CreateResponse(
             DomesticPaymentConsentAuthContextPersisted persistedObject)
         {
             // Load relevant data objects
@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
                 _instrumentationClient);
-            DomesticPaymentConsentAuthContextPostResponse response =
+            DomesticPaymentConsentAuthContextCreateLocalResponse response =
                 persistedObject.PublicPostResponseCustomised(authUrl);
 
             return response;

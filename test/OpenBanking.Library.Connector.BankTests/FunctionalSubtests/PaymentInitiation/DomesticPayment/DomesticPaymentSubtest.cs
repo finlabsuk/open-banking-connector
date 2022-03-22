@@ -126,7 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 DomesticPaymentConsentId = domesticPaymentConsentId,
                 Name = testNameUnique
             };
-            IFluentResponse<DomesticPaymentConsentAuthContextPostResponse> authContextResponse =
+            IFluentResponse<DomesticPaymentConsentAuthContextCreateLocalResponse> authContextResponse =
                 await requestBuilder.PaymentInitiation
                     .DomesticPaymentConsents
                     .AuthContexts
@@ -141,10 +141,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string authUrl = authContextResponse.Data!.AuthUrl!;
 
             // GET auth context
-            IFluentResponse<DomesticPaymentConsentAuthContextResponse> authContextResponse2 =
+            IFluentResponse<DomesticPaymentConsentAuthContextReadLocalResponse> authContextResponse2 =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .AuthContexts
-                    .GetLocalAsync(authContextId);
+                    .ReadLocalAsync(authContextId);
             // Checks
             authContextResponse2.Should().NotBeNull();
             authContextResponse2.Messages.Should().BeEmpty();
@@ -221,14 +221,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticPaymentResp2.Messages.Should().BeEmpty();
                 domesticPaymentResp2.Data.Should().NotBeNull();
 
-                // DELETE domestic payment
-                IFluentResponse domesticPaymentResp3 = await requestBuilderNew.PaymentInitiation
-                    .DomesticPayments
-                    .DeleteLocalAsync(domesticPaymentId);
-
-                // Checks
-                domesticPaymentResp3.Should().NotBeNull();
-                domesticPaymentResp3.Messages.Should().BeEmpty();
             }
 
             // DELETE auth context

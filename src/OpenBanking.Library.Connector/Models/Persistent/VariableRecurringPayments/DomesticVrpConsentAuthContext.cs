@@ -32,18 +32,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
     internal partial class DomesticVrpConsentAuthContext :
         ISupportsFluentLocalEntityPost<DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextPostResponse, DomesticVrpConsentAuthContext>
+            DomesticVrpConsentAuthContextCreateLocalResponse, DomesticVrpConsentAuthContext>
     {
-        
-        public DomesticVrpConsentAuthContext () {}
+        public DomesticVrpConsentAuthContext() { }
 
         private DomesticVrpConsentAuthContext(
-             Guid domesticVrpConsentId,
-             ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
-             Guid id,
-             string? name,
-             string? createdBy,
-             ITimeProvider timeProvider) : base(
+            Guid domesticVrpConsentId,
+            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
+            Guid id,
+            string? name,
+            string? createdBy,
+            ITimeProvider timeProvider) : base(
             id,
             name,
             createdBy,
@@ -73,8 +72,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 
             return output;
         }
-        
-        
+
+
         public void Initialise(
             DomesticVrpConsentAuthContextRequest request,
             string? createdBy,
@@ -88,11 +87,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 createdBy);
         }
 
-        public DomesticVrpConsentAuthContextPostResponse PublicPostResponse =>
+        public DomesticVrpConsentAuthContextCreateLocalResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");
 
-        public DomesticVrpConsentAuthContextPostResponse PublicPostResponseCustomised(string authUrl) =>
-            new DomesticVrpConsentAuthContextPostResponse(
+        public DomesticVrpConsentAuthContextCreateLocalResponse PublicPostResponseCustomised(string authUrl) =>
+            new DomesticVrpConsentAuthContextCreateLocalResponse(
                 Id,
                 Name,
                 Created,
@@ -102,10 +101,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextResponse>
+        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadLocalResponse>
     {
-        public DomesticVrpConsentAuthContextResponse PublicGetResponse =>
-            new DomesticVrpConsentAuthContextResponse(
+        public DomesticVrpConsentAuthContextReadLocalResponse PublicGetResponse =>
+            new DomesticVrpConsentAuthContextReadLocalResponse(
                 Id,
                 Name,
                 Created,

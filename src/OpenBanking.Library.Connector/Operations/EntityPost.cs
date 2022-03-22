@@ -24,6 +24,14 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
+    /// <summary>
+    /// Create operations on entities (objects stored in external (i.e. bank) database and local database).
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TPublicRequest"></typeparam>
+    /// <typeparam name="TPublicPostResponse"></typeparam>
+    /// <typeparam name="TApiRequest"></typeparam>
+    /// <typeparam name="TApiResponse"></typeparam>
     internal abstract class
         EntityPost<TEntity, TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse> :
             LocalEntityPost<TEntity, TPublicRequest, TPublicPostResponse>

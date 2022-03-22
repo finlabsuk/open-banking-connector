@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // GET bank (example: NatWest)
             IFluentResponse<IQueryable<BankResponse>> bankResp = await requestBuilder.BankConfiguration
                 .Banks
-                .GetLocalAsync(x => x.FinancialId == bankProfileDefinitions.NatWest.FinancialId);
+                .ReadLocalAsync(x => x.FinancialId == bankProfileDefinitions.NatWest.FinancialId);
             bankResp.Messages.Should().BeEmpty();
             bankResp.Data.Should().NotBeNull();
             BankResponse bank = bankResp.Data!.Single();
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             IFluentResponse<IQueryable<BankRegistrationResponse>> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .GetLocalAsync(x => x.BankId == bank.Id);
+                .ReadLocalAsync(x => x.BankId == bank.Id);
             registrationResp.Messages.Should().BeEmpty();
             registrationResp.Data.Should().NotBeNull();
             BankRegistrationResponse bankRegistration = registrationResp.Data!.Single();

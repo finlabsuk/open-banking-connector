@@ -6,9 +6,18 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
-    public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicResponse> :
-        ICreateLocalContext<TPublicRequest, TPublicResponse>,
-        IReadLocalContext<TPublicQuery, TPublicResponse>,
+    /// <summary>
+    ///     Fluent context for entity created in local database only.
+    /// </summary>
+    /// <typeparam name="TPublicRequest"></typeparam>
+    /// <typeparam name="TPublicQuery"></typeparam>
+    /// <typeparam name="TPublicCreateLocalResponse"></typeparam>
+    /// <typeparam name="TPublicReadLocalResponse"></typeparam>
+    public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+        TPublicReadLocalResponse> :
+        ICreateLocalContext<TPublicRequest, TPublicCreateLocalResponse>,
+        IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>,
         IDeleteLocalContext
-        where TPublicResponse : class { }
+        where TPublicCreateLocalResponse : class
+        where TPublicReadLocalResponse : class { }
 }

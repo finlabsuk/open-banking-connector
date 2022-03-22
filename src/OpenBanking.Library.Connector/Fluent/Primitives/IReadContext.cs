@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -12,9 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     /// <summary>
     ///     Fluent interface methods for Read.
     /// </summary>
-    /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadContext<TPublicQuery, TPublicResponse>
+    public interface IReadContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
@@ -31,14 +28,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null);
-
-        /// <summary>
-        ///     READ objects by query (includes GETing object from bank API).
-        ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        Task<IFluentResponse<IQueryable<TPublicResponse>>> ReadLocalAsync(
-            Expression<Func<TPublicQuery, bool>> predicate);
     }
 }

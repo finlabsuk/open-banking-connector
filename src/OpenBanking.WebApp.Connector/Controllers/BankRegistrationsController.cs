@@ -82,7 +82,7 @@ public class BankRegistrationsController : ControllerBase
         IFluentResponse<IQueryable<BankRegistrationResponse>> fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankRegistrations
-            .GetLocalAsync(query => true);
+            .ReadLocalAsync(query => true);
 
         // HTTP response
         HttpResponse<IQueryable<BankRegistrationResponse>> httpResponse = fluentResponse.ToHttpResponse();

@@ -7,15 +7,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     /// <summary>
-    ///     Fluent context for entity created both in local and external (i.e. bank) database.
+    ///     Fluent context for entity created in external (i.e. bank) database only.
     /// </summary>
     /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IEntityContext<in TPublicRequest, TPublicQuery, TPublicResponse> :
+    public interface IExternalEntityContext<in TPublicRequest, TPublicResponse> :
         ICreateContext<TPublicRequest, TPublicResponse>,
-        IReadContext<TPublicResponse>,
-        IReadLocalContext<TPublicQuery, TPublicResponse>,
-        IDeleteLocalContext
+        IReadContext<TPublicResponse>
         where TPublicResponse : class { }
 }

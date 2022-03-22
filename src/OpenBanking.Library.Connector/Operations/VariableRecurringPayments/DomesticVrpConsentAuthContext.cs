@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -28,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         DomesticVrpConsentAuthContext : LocalEntityPost<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextPostResponse>
+            DomesticVrpConsentAuthContextCreateLocalResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
 
@@ -49,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override async Task<DomesticVrpConsentAuthContextPostResponse> CreateResponse(
+        protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> CreateResponse(
             DomesticVrpConsentAuthContextPersisted persistedObject)
         {
             // Load relevant data objects
@@ -77,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
                 _instrumentationClient);
-            DomesticVrpConsentAuthContextPostResponse response =
+            DomesticVrpConsentAuthContextCreateLocalResponse response =
                 persistedObject.PublicPostResponseCustomised(authUrl);
 
             return response;

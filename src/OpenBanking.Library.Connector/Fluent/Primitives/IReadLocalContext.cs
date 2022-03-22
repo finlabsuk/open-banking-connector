@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> GetLocalAsync(Guid id);
+        Task<IFluentResponse<TPublicResponse>> ReadLocalAsync(Guid id);
 
         /// <summary>
         ///     READ local object(s) by query (does not include GETing object(s) from bank API).
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        Task<IFluentResponse<IQueryable<TPublicResponse>>> GetLocalAsync(
+        Task<IFluentResponse<IQueryable<TPublicResponse>>> ReadLocalAsync(
             Expression<Func<TPublicQuery, bool>> predicate);
     }
 }

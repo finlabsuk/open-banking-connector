@@ -15,13 +15,13 @@ using DomesticVrpRequest =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments
 {
     public interface IDomesticVrpsContext :
-        IEntityContext<DomesticVrpRequest, IDomesticVrpPublicQuery, DomesticVrpResponse> { }
+        IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> { }
 
     internal class DomesticVrpsContext :
         ObjectContextBase<DomesticVrp>, IDomesticVrpsContext
     {
-        private readonly DomesticVrpRead _domesticVrpRead;
         private readonly DomesticVrpCreate _domesticVrpCreate;
+        private readonly DomesticVrpRead _domesticVrpRead;
 
         public DomesticVrpsContext(ISharedContext sharedContext) : base(sharedContext)
         {

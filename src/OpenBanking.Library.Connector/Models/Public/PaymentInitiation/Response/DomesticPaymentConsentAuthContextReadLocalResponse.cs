@@ -15,10 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class DomesticPaymentConsentAuthContextResponse : BaseResponse,
+    public class DomesticPaymentConsentAuthContextReadLocalResponse : BaseResponse,
         IDomesticPaymentConsentAuthContextPublicQuery
     {
-        internal DomesticPaymentConsentAuthContextResponse(
+        internal DomesticPaymentConsentAuthContextReadLocalResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
@@ -34,9 +34,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Response to Get, Post
     /// </summary>
-    public class DomesticPaymentConsentAuthContextPostResponse : DomesticPaymentConsentAuthContextResponse
+    public class DomesticPaymentConsentAuthContextCreateLocalResponse : DomesticPaymentConsentAuthContextReadLocalResponse
     {
-        internal DomesticPaymentConsentAuthContextPostResponse(
+        internal DomesticPaymentConsentAuthContextCreateLocalResponse(
             Guid id,
             string? name,
             DateTimeOffset created,

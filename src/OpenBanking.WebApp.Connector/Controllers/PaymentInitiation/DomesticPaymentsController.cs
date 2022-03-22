@@ -58,43 +58,4 @@ public class DomesticPaymentsController : ControllerBase
         return new ObjectResult(httpResponse)
             { StatusCode = statusCode };
     }
-
-    /// <summary>
-    ///     Read all DomesticPayment objects
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("pisp/domestic-payments")]
-    [HttpGet]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentResponse>>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentResponse>>),
-        StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IFluentResponse<IQueryable<DomesticPaymentResponse>> fluentResponse = await _requestBuilder
-            .PaymentInitiation
-            .DomesticPayments
-            .ReadLocalAsync(query => true);
-
-        // HTTP response
-        HttpResponse<IQueryable<DomesticPaymentResponse>> httpResponse = fluentResponse.ToHttpResponse();
-        int statusCode = fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<DomesticPaymentResponse>> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<IQueryable<DomesticPaymentResponse>> _ =>
-                StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<IQueryable<DomesticPaymentResponse>> _ =>
-                StatusCodes.Status500InternalServerError,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
-    }
 }

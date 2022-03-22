@@ -13,6 +13,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
+    
+    /// <summary>
+    /// Create operations on local entities (objects stored in local database only).
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TPublicRequest"></typeparam>
+    /// <typeparam name="TPublicResponse"></typeparam>
     internal class LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> :
         IObjectPost<TPublicRequest, TPublicResponse>
         where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>,

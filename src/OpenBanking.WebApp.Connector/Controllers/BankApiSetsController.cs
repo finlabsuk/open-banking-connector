@@ -82,7 +82,7 @@ public class BankApiSetsController : ControllerBase
         IFluentResponse<IQueryable<BankApiSetResponse>> fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankApiSets
-            .GetLocalAsync(query => true);
+            .ReadLocalAsync(query => true);
 
         // HTTP response
         HttpResponse<IQueryable<BankApiSetResponse>> httpResponse = fluentResponse.ToHttpResponse();
