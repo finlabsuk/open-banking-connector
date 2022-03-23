@@ -184,7 +184,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     // GET consent funds confirmation
                     IFluentResponse<DomesticVrpConsentResponse> domesticPaymentConsentResp4 =
                         await requestBuilderNew.VariableRecurringPayments.DomesticVrpConsents
-                            .GetFundsConfirmationAsync(domesticVrpConsentId);
+                            .ReadFundsConfirmationAsync(domesticVrpConsentId);
 
                     // Checks
                     domesticPaymentConsentResp4.Should().NotBeNull();

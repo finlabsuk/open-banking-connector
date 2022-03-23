@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using AuthContextPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
@@ -22,14 +25,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null);
     }
-
-    internal class AuthContextsContext : IAuthContextsContext
+    
+    internal class AuthContextsContext : IAuthContextsContext, ICreateContextInternal<AuthResult, AuthContextResponse>
     {
-        private readonly AuthResultUpdate _authResultUpdate;
-
         public AuthContextsContext(ISharedContext sharedContext)
         {
-            _authResultUpdate = new AuthResultUpdate(sharedContext);
+            PostObject = new AuthContextUpdate(
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation);
+            Context = sharedContext;
         }
 
         public Task<IFluentResponse<AuthContextResponse>> UpdateAuthResultLocalAsync(
@@ -38,11 +45,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            _authResultUpdate.CreateAsync(
+            ((ICreateContextInternal<AuthResult, AuthContextResponse>) this).CreateAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
+
+        public ISharedContext Context { get; }
+        public IObjectPost<AuthResult, AuthContextResponse> PostObject { get; }
     }
 }

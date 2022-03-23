@@ -15,19 +15,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadContext<TPublicResponse>
+    public interface IReadFundsConfirmationContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
-        ///     READ object by ID (includes GETing object from bank API).
-        ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
+        ///     READ funds confirmation by ID (includes GETing object from bank API).
         /// </summary>
         /// <param name="id"></param>
         /// <param name="modifiedBy"></param>
         /// <param name="apiResponseWriteFile"></param>
         /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> ReadAsync(
+        Task<IFluentResponse<TPublicResponse>> ReadFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
@@ -35,17 +34,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal interface
-        IReadContextInternal<TPublicResponse> : IReadContext<TPublicResponse>,
+        IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>,
             IBaseContextInternal
         where TPublicResponse : class
     {
-        IObjectRead<TPublicResponse> ReadObject { get; }
+        IObjectRead<TPublicResponse> ReadFundsConfirmationObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> IReadContext<TPublicResponse>.ReadAsync(
-            Guid id,
-            string? modifiedBy,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null)
+        async Task<IFluentResponse<TPublicResponse>> IReadFundsConfirmationContext<TPublicResponse>.
+            ReadFundsConfirmationAsync(
+                Guid id,
+                string? modifiedBy,
+                string? apiResponseWriteFile = null,
+                string? apiResponseOverrideFile = null)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             try
             {
                 (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await ReadObject.ReadAsync(
+                    await ReadFundsConfirmationObject.ReadAsync(
                         id,
                         modifiedBy,
                         apiResponseWriteFile,

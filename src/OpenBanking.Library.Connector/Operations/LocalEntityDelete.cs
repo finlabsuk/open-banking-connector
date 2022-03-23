@@ -15,9 +15,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    
     /// <summary>
-    /// Delete operations on local entities (objects stored in local database only).
+    ///     Delete operations on local entities (objects stored in local database only).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     internal class LocalEntityDelete<TEntity> :

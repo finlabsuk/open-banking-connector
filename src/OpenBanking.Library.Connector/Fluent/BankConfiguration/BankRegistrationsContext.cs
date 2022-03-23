@@ -2,14 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
@@ -19,47 +18,47 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         IDeleteLocalContext,
         IDeleteContext { }
 
-    internal class BankRegistrationsContext :
+    internal interface IBankRegistrationsContextInternal :
+        IBankRegistrationsContext,
+        ICreateContextInternal<BankRegistration, BankRegistrationResponse>,
+        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        IDeleteContextInternal { }
+
+    internal class BankRegistrationsContextInternal :
         ObjectContextBase<BankRegistrationPersisted>,
-        IBankRegistrationsContext
+        IBankRegistrationsContextInternal
     {
-        private readonly BankRegistrationDelete _bankRegistrationDelete;
-        private readonly BankRegistrationsCreate _bankRegistrationsCreate;
-
-        private readonly LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-            BankRegistrationResponse> _localEntityRead;
-
-        public BankRegistrationsContext(ISharedContext sharedContext) : base(sharedContext)
+        public BankRegistrationsContextInternal(ISharedContext sharedContext) : base(sharedContext)
         {
-            _bankRegistrationsCreate = new BankRegistrationsCreate(sharedContext);
-            _localEntityRead =
-                new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-                    BankRegistrationResponse>(sharedContext);
-            _bankRegistrationDelete = new BankRegistrationDelete(sharedContext);
+            ReadLocalObject =
+                new LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery, BankRegistrationResponse>(
+                    sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    sharedContext.TimeProvider,
+                    sharedContext.SoftwareStatementProfileCachedRepo,
+                    sharedContext.Instrumentation);
+            DeleteObject = new BankRegistrationDelete(
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation);
+            PostObject = new BankRegistrationPost(
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper,
+                sharedContext.ApiClient,
+                sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>());
         }
 
-        public Task<IFluentResponse<IQueryable<BankRegistrationResponse>>> ReadLocalAsync(
-            Expression<Func<IBankRegistrationPublicQuery, bool>> predicate) =>
-            _localEntityRead.ReadAsync(predicate);
+        public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationResponse> ReadLocalObject { get; }
 
-        public Task<IFluentResponse<BankRegistrationResponse>>
-            ReadLocalAsync(Guid id) =>
-            _localEntityRead.ReadAsync(id, null);
+        public IObjectPost<BankRegistration, BankRegistrationResponse> PostObject { get; }
 
-        public Task<IFluentResponse<BankRegistrationResponse>> CreateAsync(
-            BankRegistration publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _bankRegistrationsCreate.CreateAsync(
-                publicRequest,
-                createdBy,
-                apiRequestWriteFile,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
-
-        public Task<IFluentResponse> DeleteAsync(Guid id, string? modifiedBy, bool useRegistrationAccessToken) =>
-            _bankRegistrationDelete.DeleteAsync(id, modifiedBy, useRegistrationAccessToken);
+        public IObjectDelete DeleteObject { get; }
     }
 }

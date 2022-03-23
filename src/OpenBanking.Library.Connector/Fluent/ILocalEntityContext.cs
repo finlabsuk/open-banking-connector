@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
@@ -20,4 +21,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         IDeleteLocalContext
         where TPublicCreateLocalResponse : class
         where TPublicReadLocalResponse : class { }
+
+    internal interface ILocalEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+        TPublicReadLocalResponse> :
+        ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>,
+        ICreateContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
+        IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
+        where TPublicCreateLocalResponse : class
+        where TPublicReadLocalResponse : class
+        where TPublicRequest : class, ISupportsValidation { }
 }

@@ -2,9 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
 using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
 
@@ -46,21 +46,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         }
 
         public ILocalEntityContext<Bank, IBankPublicQuery, BankResponse, BankResponse> Banks =>
-            new LocalEntityContext<BankPersisted, Bank, IBankPublicQuery,
+            new LocalEntityContextInternal<BankPersisted, Bank, IBankPublicQuery,
                 BankResponse, BankResponse>(
                 _sharedContext,
-                new LocalEntityCreate<BankPersisted, Bank, BankResponse>(_sharedContext));
+                new LocalEntityPost<BankPersisted, Bank, BankResponse>(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.Instrumentation));
 
         public IBankRegistrationsContext
             BankRegistrations =>
-            new BankRegistrationsContext(_sharedContext);
+            new BankRegistrationsContextInternal(_sharedContext);
 
         public ILocalEntityContext<BankApiSet, IBankApiSetPublicQuery,
                 BankApiSetResponse, BankApiSetResponse>
             BankApiSets =>
-            new LocalEntityContext<BankApiSetPersisted, BankApiSet,
+            new LocalEntityContextInternal<BankApiSetPersisted, BankApiSet,
                 IBankApiSetPublicQuery, BankApiSetResponse, BankApiSetResponse>(
                 _sharedContext,
-                new LocalEntityCreate<BankApiSetPersisted, BankApiSet, BankApiSetResponse>(_sharedContext));
+                new LocalEntityPost<BankApiSetPersisted, BankApiSet, BankApiSetResponse>(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.Instrumentation));
     }
 }

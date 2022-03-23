@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         public async
             Task<(AuthContextResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)> PostAsync(
+                nonErrorMessages)> CreateAsync(
                 AuthResult request,
                 string? createdBy = null,
                 string? apiRequestWriteFile = null,

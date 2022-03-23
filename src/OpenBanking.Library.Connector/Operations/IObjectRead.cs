@@ -2,18 +2,18 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal interface IObjectPost<in TPublicRequest, TPublicResponse>
+    internal interface IObjectRead<TPublicResponse>
     {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
-            TPublicRequest request,
-            string? createdBy,
-            string? apiRequestWriteFile,
+        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
+            Guid id,
+            string? modifiedBy,
             string? apiResponseWriteFile,
             string? apiResponseOverrideFile);
     }

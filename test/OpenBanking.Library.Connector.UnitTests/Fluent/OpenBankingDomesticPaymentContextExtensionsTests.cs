@@ -2,8 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
@@ -13,8 +14,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
         [Fact]
         public void ConsentId_NullData_ValueSet()
         {
-            var ctx =
-                new LocalEntityDelete<DomesticPayment>(TestDataFactory.CreateMockOpenBankingContext());
+            SharedContext ctx =
+                TestDataFactory.CreateMockOpenBankingContext();
+
+            var x = new LocalEntityDelete<DomesticPayment>(
+                ctx.DbService.GetDbEntityMethodsClass<DomesticPayment>(),
+                ctx.DbService.GetDbSaveChangesMethodClass(),
+                ctx.TimeProvider,
+                ctx.SoftwareStatementProfileCachedRepo,
+                ctx.Instrumentation);
 
             // var consentIdValue = "abc";
             //

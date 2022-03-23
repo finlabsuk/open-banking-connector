@@ -2,13 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using DomesticPaymentConsentAuthContextRequest =
@@ -16,12 +14,18 @@ using DomesticPaymentConsentAuthContextRequest =
     DomesticPaymentConsentAuthContext;
 using DomesticPaymentConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
+using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using DomesticPaymentConsentAuthContext =
+    FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
     public interface IDomesticPaymentConsentsContext :
-        IEntityContext<DomesticPaymentConsentRequest, IDomesticPaymentConsentPublicQuery,
-            DomesticPaymentConsentResponse>
+        IEntityContext<DomesticPaymentConsentRequest,
+            IDomesticPaymentConsentPublicQuery,
+            DomesticPaymentConsentResponse>,
+        IReadFundsConfirmationContext<DomesticPaymentConsentResponse>
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -32,91 +36,84 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 DomesticPaymentConsentAuthContextCreateLocalResponse,
                 DomesticPaymentConsentAuthContextReadLocalResponse>
             AuthContexts { get; }
-
-        /// <summary>
-        ///     READ funds confirmation by ID (includes GETing object from bank API).
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifiedBy"></param>
-        /// <param name="apiResponseWriteFile"></param>
-        /// <param name="apiResponseOverrideFile"></param>
-        /// <returns></returns>
-        Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
     }
+
+    internal interface IDomesticPaymentConsentsContextInternal :
+        IDomesticPaymentConsentsContext,
+        IEntityContextInternal<DomesticPaymentConsentRequest,
+            IDomesticPaymentConsentPublicQuery,
+            DomesticPaymentConsentResponse>,
+        IReadFundsConfirmationContextInternal<DomesticPaymentConsentResponse> { }
 
     internal class DomesticPaymentConsentsConsentContext :
         ObjectContextBase<DomesticPaymentConsent>,
-        IDomesticPaymentConsentsContext
+        IDomesticPaymentConsentsContextInternal
     {
-        private readonly DomesticPaymentConsentFundsConfirmationRead
-            _domesticPaymentConsentFundsConfirmationRead;
-
-        private readonly DomesticPaymentConsentsCreate _domesticPaymentConsentsCreate;
-
-        private readonly DomesticPaymentConsentsRead _domesticPaymentConsentsRead;
         private readonly ISharedContext _sharedContext;
 
         public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            _domesticPaymentConsentsRead = new DomesticPaymentConsentsRead(sharedContext);
-            _domesticPaymentConsentFundsConfirmationRead =
-                new DomesticPaymentConsentFundsConfirmationRead(sharedContext);
-            _domesticPaymentConsentsCreate = new DomesticPaymentConsentsCreate(sharedContext);
+            PostObject = new DomesticPaymentConsentPost(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper,
+                sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+            ReadObject = new DomesticPaymentConsentGet(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper);
+            ReadFundsConfirmationObject = new DomesticPaymentConsentGetFundsConfirmation(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper);
+            ReadLocalObject =
+                new LocalEntityGet<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
+                    DomesticPaymentConsentResponse>(
+                    sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    sharedContext.TimeProvider,
+                    sharedContext.SoftwareStatementProfileCachedRepo,
+                    sharedContext.Instrumentation);
         }
 
         public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
             IDomesticPaymentConsentAuthContextPublicQuery,
             DomesticPaymentConsentAuthContextCreateLocalResponse,
             DomesticPaymentConsentAuthContextReadLocalResponse> AuthContexts =>
-            new LocalEntityContext<DomesticPaymentConsentAuthContextPersisted,
+            new LocalEntityContextInternal<DomesticPaymentConsentAuthContextPersisted,
                 DomesticPaymentConsentAuthContextRequest,
                 IDomesticPaymentConsentAuthContextPublicQuery,
                 DomesticPaymentConsentAuthContextCreateLocalResponse,
                 DomesticPaymentConsentAuthContextReadLocalResponse>(
                 _sharedContext,
-                new DomesticPaymentConsentAuthCreate(_sharedContext));
+                new DomesticPaymentConsentAuthContext(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.Instrumentation));
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadFundsConfirmationAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentFundsConfirmationRead.ReadAsync(
-                id,
-                modifiedBy,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
+        public IObjectRead<DomesticPaymentConsentResponse> ReadObject { get; }
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentsRead.ReadAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
+        public IObjectRead<DomesticPaymentConsentResponse> ReadFundsConfirmationObject { get; }
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> CreateAsync(
-            DomesticPaymentConsentRequest publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticPaymentConsentsCreate.CreateAsync(
-                publicRequest,
-                createdBy,
-                apiRequestWriteFile,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
+        public IObjectPost<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse> PostObject { get; }
 
-        public Task<IFluentResponse<DomesticPaymentConsentResponse>> ReadLocalAsync(Guid id)
-            => ReadAsync(id);
-
-        public Task<IFluentResponse<IQueryable<DomesticPaymentConsentResponse>>> ReadLocalAsync(
-            Expression<Func<IDomesticPaymentConsentPublicQuery, bool>> predicate) =>
-            _domesticPaymentConsentsRead.ReadAsync(predicate);
+        public IObjectReadLocal<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentResponse> ReadLocalObject
+        {
+            get;
+        }
     }
 }

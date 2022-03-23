@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -86,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents
-                    .GetFundsConfirmationAsync(domesticVrpConsentId);
+                    .ReadFundsConfirmationAsync(domesticVrpConsentId);
         }
     }
 }

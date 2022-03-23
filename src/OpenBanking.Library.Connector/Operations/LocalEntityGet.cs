@@ -24,7 +24,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
     internal class LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> :
-        IObjectGet<TPublicQuery, TPublicResponse>
+        IObjectReadLocal<TPublicQuery, TPublicResponse>,
+        IObjectRead<TPublicResponse>
         where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity,
         new()
     {
@@ -50,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            GetAsync(
+            ReadAsync(
                 Guid id,
                 string? modifiedBy = null,
                 string? apiResponseWriteFile = null,
@@ -80,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public async
             Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
                 )>
-            GetAsync(Expression<Func<TPublicQuery, bool>> predicate)
+            ReadAsync(Expression<Func<TPublicQuery, bool>> predicate)
         {
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();

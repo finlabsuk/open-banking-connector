@@ -2,13 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using DomesticVrpConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 using DomesticVrpConsentAuthContextRequest =
@@ -17,11 +14,19 @@ using DomesticVrpConsentAuthContextRequest =
 using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
+using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using DomesticVrpConsentPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
+
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments
 {
     public interface IDomesticVrpConsentsContext :
-        IEntityContext<DomesticVrpConsentRequest, IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse>
+        IEntityContext<DomesticVrpConsentRequest,
+            IDomesticVrpConsentPublicQuery,
+            DomesticVrpConsentResponse>,
+        IReadFundsConfirmationContext<DomesticVrpConsentResponse>
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -32,83 +37,79 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 DomesticVrpConsentAuthContextCreateLocalResponse,
                 DomesticVrpConsentAuthContextReadLocalResponse>
             AuthContexts { get; }
-
-        Task<IFluentResponse<DomesticVrpConsentResponse>> GetFundsConfirmationAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
     }
 
+    internal interface IDomesticVrpConsentsContextInternal :
+        IDomesticVrpConsentsContext,
+        IEntityContextInternal<DomesticVrpConsentRequest,
+            IDomesticVrpConsentPublicQuery,
+            DomesticVrpConsentResponse>,
+        IReadFundsConfirmationContextInternal<DomesticVrpConsentResponse> { }
+
     internal class DomesticVrpConsentsContext :
-        ObjectContextBase<DomesticVrpConsent>, IDomesticVrpConsentsContext
+        ObjectContextBase<DomesticVrpConsentPersisted>, IDomesticVrpConsentsContextInternal
     {
-        private readonly DomesticVrpConsentCreate _domesticVrpConsentCreate;
-
-        private readonly DomesticVrpConsentFundsConfirmationRead
-            _domesticVrpConsentFundsConfirmationRead;
-
-        private readonly DomesticVrpConsentRead _domesticVrpConsentRead;
         private readonly ISharedContext _sharedContext;
 
         public DomesticVrpConsentsContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            _domesticVrpConsentRead = new DomesticVrpConsentRead(sharedContext);
-            _domesticVrpConsentCreate = new DomesticVrpConsentCreate(sharedContext);
-            _domesticVrpConsentFundsConfirmationRead =
-                new DomesticVrpConsentFundsConfirmationRead(sharedContext);
+            PostObject = new DomesticVrpConsentPost(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper,
+                sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+            ReadObject = new DomesticVrpConsentGet(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper);
+            ReadFundsConfirmationObject = new DomesticVrpConsentGetFundsConfirmation(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper);
+            ReadLocalObject =
+                new LocalEntityGet<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
+                    DomesticVrpConsentResponse>(
+                    sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    sharedContext.TimeProvider,
+                    sharedContext.SoftwareStatementProfileCachedRepo,
+                    sharedContext.Instrumentation);
         }
 
-        public Task<IFluentResponse<DomesticVrpConsentResponse>> ReadAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticVrpConsentRead.ReadAsync(id, modifiedBy, apiResponseWriteFile, apiResponseOverrideFile);
-
-        public Task<IFluentResponse<DomesticVrpConsentResponse>> CreateAsync(
-            DomesticVrpConsentRequest publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticVrpConsentCreate.CreateAsync(
-                publicRequest,
-                createdBy,
-                apiRequestWriteFile,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
-
-        public Task<IFluentResponse<DomesticVrpConsentResponse>> GetFundsConfirmationAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            _domesticVrpConsentFundsConfirmationRead.ReadAsync(
-                id,
-                modifiedBy,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
+        public IObjectRead<DomesticVrpConsentResponse> ReadObject { get; }
 
         public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
             IDomesticVrpConsentAuthContextPublicQuery,
             DomesticVrpConsentAuthContextCreateLocalResponse,
             DomesticVrpConsentAuthContextReadLocalResponse> AuthContexts =>
-            new LocalEntityContext<DomesticVrpConsentAuthContextPersisted,
+            new LocalEntityContextInternal<DomesticVrpConsentAuthContextPersisted,
                 DomesticVrpConsentAuthContextRequest,
                 IDomesticVrpConsentAuthContextPublicQuery,
                 DomesticVrpConsentAuthContextCreateLocalResponse,
                 DomesticVrpConsentAuthContextReadLocalResponse>(
                 _sharedContext,
-                new DomesticVrpConsentAuthCreate(_sharedContext));
+                new DomesticVrpConsentAuthContext(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.Instrumentation));
 
-        public Task<IFluentResponse<DomesticVrpConsentResponse>> ReadLocalAsync(Guid id) =>
-            _domesticVrpConsentRead.ReadAsync(id, null);
+        public IObjectReadLocal<IDomesticVrpConsentPublicQuery, DomesticVrpConsentResponse> ReadLocalObject { get; }
 
-
-        public Task<IFluentResponse<IQueryable<DomesticVrpConsentResponse>>> ReadLocalAsync(
-            Expression<Func<IDomesticVrpConsentPublicQuery, bool>> predicate) =>
-            _domesticVrpConsentRead.ReadAsync(predicate);
+        public IObjectPost<DomesticVrpConsentRequest, DomesticVrpConsentResponse> PostObject { get; }
+        public IObjectRead<DomesticVrpConsentResponse> ReadFundsConfirmationObject { get; }
     }
 }

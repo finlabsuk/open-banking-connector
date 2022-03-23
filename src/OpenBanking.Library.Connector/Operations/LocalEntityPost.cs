@@ -13,9 +13,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    
     /// <summary>
-    /// Create operations on local entities (objects stored in local database only).
+    ///     Create operations on local entities (objects stored in local database only).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     /// <typeparam name="TPublicRequest"></typeparam>
@@ -48,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            PostAsync(
+            CreateAsync(
                 TPublicRequest request,
                 string? createdBy = null,
                 string? apiRequestWriteFile = null,
