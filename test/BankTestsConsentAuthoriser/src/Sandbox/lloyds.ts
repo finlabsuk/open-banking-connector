@@ -29,6 +29,10 @@ export const consentUIInteractions: ConsentUIInteractions = async (page, navigat
     await page.waitForSelector('.submit-box > div > .paymentButton > .mat-button > .mat-button-wrapper')
     await page.click('.submit-box > div > .paymentButton > .mat-button > .mat-button-wrapper')
 
+    // Confirm
+    await page.waitForSelector('#confirm-dialog-submit')
+    await page.click('#confirm-dialog-submit')
+    
     await navigationPromise
 }
     
