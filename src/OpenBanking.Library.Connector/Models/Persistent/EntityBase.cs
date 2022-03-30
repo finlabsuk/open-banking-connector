@@ -51,17 +51,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         /// </summary>
         public string? CreatedBy { get; set; }
 
-        public void Initialise(
-            Guid id,
-            string? name,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            Id = id;
-            Name = name;
-            IsDeleted = new ReadWriteProperty<bool>(false, timeProvider, CreatedBy);
-            Created = timeProvider.GetUtcNow();
-            CreatedBy = createdBy;
-        }
     }
 }

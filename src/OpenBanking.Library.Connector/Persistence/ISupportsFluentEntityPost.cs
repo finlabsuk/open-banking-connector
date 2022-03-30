@@ -13,8 +13,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
-        void UpdateBeforeApiPost(TApiRequest apiRequest);
+        public TEntity Create(
+            TPublicRequest request,
+            TApiRequest apiRequest,
+            TApiResponse apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider);
 
-        void UpdateAfterApiPost(TApiResponse apiResponse, string? modifiedBy, ITimeProvider timeProvider);
     }
 }

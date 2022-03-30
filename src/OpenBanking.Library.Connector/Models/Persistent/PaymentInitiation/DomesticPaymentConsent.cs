@@ -85,64 +85,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public DomesticPaymentConsent ( ) { }
 
         private DomesticPaymentConsent ( 
-            Guid bankRegistrationId,
-            Guid bankApiSetId,
-            ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?> bankApiFundsConfirmationResponse, 
             Guid id,
             string? name,
+            DomesticPaymentConsentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
             string? createdBy,
-            ITimeProvider timeProvider,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest) : base (
+            ITimeProvider timeProvider) : base (
                 id,
                 name,
                 createdBy,
                 timeProvider )
         {
-            BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
-            BankApiFundsConfirmationResponse = bankApiFundsConfirmationResponse;
-            BankApiRequest = apiRequest;
-        }
-
-        public DomesticPaymentConsent Create(
-            DomesticPaymentConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider,    
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest)
-        {
-            var bankApiFundsConfirmationResponse =
-                new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1?>(
-                    null,
-                    timeProvider,
-                    createdBy);
-            
-            var output = new DomesticPaymentConsent(
-                request.BankRegistrationId,
-                request.BankApiSetId,
-                bankApiFundsConfirmationResponse,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider,
-                apiRequest);
-
-            return output;
-        }
-
-        public DomesticPaymentConsent Create(
-            DomesticPaymentConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            return null;
-        }
-        
-        public void Initialise(
-            DomesticPaymentConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             BankRegistrationId = request.BankRegistrationId;
             BankApiSetId = request.BankApiSetId;
             BankApiFundsConfirmationResponse =
@@ -150,24 +104,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     null,
                     timeProvider,
                     createdBy);
-        }
-
-        public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest)
-        {
             BankApiRequest = apiRequest;
-        }
-
-        public void UpdateAfterApiPost(
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
             BankApiResponse =
                 new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                     apiResponse,
                     timeProvider,
-                    modifiedBy);
+                    createdBy);
             ExternalApiId = BankApiResponse.Data.Data.ConsentId;
+        }
+
+        public DomesticPaymentConsent Create(
+            DomesticPaymentConsentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+
+            var output = new DomesticPaymentConsent(
+                Guid.NewGuid(),
+                request.Name,
+                request,
+                apiRequest,
+                apiResponse,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
+
+        public DomesticPaymentConsent Create(DomesticPaymentConsentRequest request, string? createdBy, ITimeProvider timeProvider)
+        {
+            throw new NotImplementedException();
         }
 
         public DomesticPaymentConsentResponse PublicPostResponse => PublicGetResponse;

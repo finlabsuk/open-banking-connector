@@ -15,17 +15,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     {
         TPublicResponse PublicPostResponse { get; }
 
-        /// <summary>
-        ///     Initialise entity based on request object
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="createdBy"></param>
-        /// <param name="timeProvider"></param>
-        void Initialise(
-            TPublicRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider);
-
         TEntity Create(
             TPublicRequest request,
             string? createdBy,

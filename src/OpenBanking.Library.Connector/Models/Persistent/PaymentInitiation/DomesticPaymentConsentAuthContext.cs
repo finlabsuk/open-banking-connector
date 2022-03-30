@@ -74,20 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 
             return output;
         }
-        
-        
-        public void Initialise(
-            DomesticPaymentConsentAuthContextRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
-            TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-        }
+
 
         public DomesticPaymentConsentAuthContextCreateLocalResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");

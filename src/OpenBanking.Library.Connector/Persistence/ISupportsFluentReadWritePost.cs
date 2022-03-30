@@ -21,11 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     {
         public ReadWriteApiType GetReadWriteApiType();
 
-        public TEntity Create(
-            TPublicRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider,
-            TApiRequest apiRequest);
         
 
         public IApiPostRequests<TApiRequest, TApiResponse> ApiPostRequests(

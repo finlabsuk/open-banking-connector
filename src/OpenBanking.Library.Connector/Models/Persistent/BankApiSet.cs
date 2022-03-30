@@ -72,17 +72,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             BankId);
 
 
-        public void Initialise(
-            BankApiSetRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            PaymentInitiationApi = request.PaymentInitiationApi;
-            VariableRecurringPaymentsApi = request.VariableRecurringPaymentsApi;
-            BankId = request.BankId;
-        }
-
         public BankApiSetResponse PublicPostResponse => PublicGetResponse;
 
         public BankApiSet Create(
@@ -93,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             var output = new BankApiSet(
                 request.PaymentInitiationApi,
                 request.VariableRecurringPaymentsApi,
-                Guid.NewGuid(),
+                request.BankId,
                 Guid.NewGuid(),
                 request.Name,
                 createdBy,

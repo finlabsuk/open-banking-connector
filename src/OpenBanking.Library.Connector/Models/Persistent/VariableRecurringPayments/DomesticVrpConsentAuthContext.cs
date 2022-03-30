@@ -74,19 +74,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         }
 
 
-        public void Initialise(
-            DomesticVrpConsentAuthContextRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            DomesticVrpConsentId = request.DomesticVrpConsentId;
-            TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-        }
-
         public DomesticVrpConsentAuthContextCreateLocalResponse PublicPostResponse =>
             throw new NotImplementedException("Do not use; use customised version instead.");
 

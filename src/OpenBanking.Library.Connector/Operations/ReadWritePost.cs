@@ -118,22 +118,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     nonErrorMessages);
 
             // Create persisted entity
-            var persistedObject = new TEntity();
-            persistedObject.Initialise(
+            var persistedObjectTmp = new TEntity();
+            var persistedObject = persistedObjectTmp.Create(
                 requestInfo.Request,
+                apiRequest,
+                apiResponse,
                 requestInfo.ModifiedBy,
                 _timeProvider);
-
-            persistedObject.Create(
-                requestInfo.Request,
-                requestInfo.ModifiedBy,
-                _timeProvider,
-                apiRequest);
-            
-            persistedObject.UpdateBeforeApiPost(apiRequest);
-            
-            // Update with results of POST
-            persistedObject.UpdateAfterApiPost(apiResponse, "", _timeProvider);
 
             return (persistedObject, nonErrorMessages2);
         }

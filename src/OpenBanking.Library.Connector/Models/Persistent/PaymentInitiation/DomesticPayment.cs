@@ -65,74 +65,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public DomesticPayment () {}
 
         private DomesticPayment(
-            Guid domesticPaymentConsentId,
             Guid id,
             string? name,
+            DomesticPaymentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
             string? createdBy,
-            ITimeProvider timeProvider,
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest) : base (
+            ITimeProvider timeProvider) : base (
             id,
             name,
             createdBy,
             timeProvider )
         {
-            DomesticPaymentConsentId = domesticPaymentConsentId;
-            BankApiRequest = apiRequest;
-        }
-
-        public DomesticPayment Create(
-            DomesticPaymentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider,
-            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
-        {
-            var output = new DomesticPayment(
-                request.DomesticPaymentConsentId,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider,
-                apiRequest);
-
-            return output;
-        }
-
-        public DomesticPayment Create(
-            DomesticPaymentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            return null;
-        }
-        
-        public void Initialise(
-            DomesticPaymentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             DomesticPaymentConsentId = request.DomesticPaymentConsentId;
-        }
-
-        public DomesticPaymentResponse PublicPostResponse => PublicGetResponse;
-
-        public void UpdateBeforeApiPost(PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest)
-        {
             BankApiRequest = apiRequest;
-        }
-
-        public void UpdateAfterApiPost(
-            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
             BankApiResponse =
                 new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
                     apiResponse,
                     timeProvider,
-                    modifiedBy);
+                    createdBy);
             ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
         }
+
+        public DomesticPayment Create(
+            DomesticPaymentRequest request,
+            PaymentInitiationModelsPublic.OBWriteDomestic2 apiRequest,
+            PaymentInitiationModelsPublic.OBWriteDomesticResponse5 apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var output = new DomesticPayment(
+                Guid.NewGuid(),
+                request.Name,
+                request,
+                apiRequest,
+                apiResponse,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
+
+        public DomesticPayment Create(DomesticPaymentRequest request, string? createdBy, ITimeProvider timeProvider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DomesticPaymentResponse PublicPostResponse => PublicGetResponse;
 
         public IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomestic2,
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5> ApiPostRequests(

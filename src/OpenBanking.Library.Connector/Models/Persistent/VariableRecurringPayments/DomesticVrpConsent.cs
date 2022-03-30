@@ -83,64 +83,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public DomesticVrpConsent() {}
 
         private DomesticVrpConsent(
-            Guid bankRegistrationId,
-            Guid bankApiSetId,
-            ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?> bankApiFundsConfirmationResponse, 
             Guid id,
             string? name,
+            DomesticVrpConsentRequest request,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
             string? createdBy,
-            ITimeProvider timeProvider,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest) : base(
+            ITimeProvider timeProvider) : base(
             id,
             name,
             createdBy,
             timeProvider)
         {
-            BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
-            BankApiFundsConfirmationResponse = bankApiFundsConfirmationResponse;
-            BankApiRequest = apiRequest;
-        }
-
-        public DomesticVrpConsent Create(
-            DomesticVrpConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest)
-        {
-            var bankApiFundsConfirmationResponse = new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-
-            var output = new DomesticVrpConsent(
-                request.BankRegistrationId,
-                request.BankApiSetId,
-                bankApiFundsConfirmationResponse,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider,
-                apiRequest);
-
-            return output;
-
-        }
-
-        public DomesticVrpConsent Create(
-            DomesticVrpConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            return null;
-        }
-        
-        public void Initialise(
-            DomesticVrpConsentRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             BankRegistrationId = request.BankRegistrationId;
             BankApiSetId = request.BankApiSetId;
             BankApiFundsConfirmationResponse =
@@ -148,24 +102,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                     null,
                     timeProvider,
                     createdBy);
-        }
-
-        public void UpdateBeforeApiPost(VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest)
-        {
             BankApiRequest = apiRequest;
-        }
-
-        public void UpdateAfterApiPost(
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
             BankApiResponse =
                 new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                     apiResponse,
                     timeProvider,
-                    modifiedBy);
+                    createdBy);
             ExternalApiId = BankApiResponse.Data.Data.ConsentId;
+        }
+
+        public DomesticVrpConsent Create(
+            DomesticVrpConsentRequest request,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var output = new DomesticVrpConsent(
+                Guid.NewGuid(),
+                request.Name,
+                request,
+                apiRequest,
+                apiResponse,
+                createdBy,
+                timeProvider);
+            return output;
+        }
+
+        public DomesticVrpConsent Create(DomesticVrpConsentRequest request, string? createdBy, ITimeProvider timeProvider)
+        {
+            throw new NotImplementedException();
         }
 
         public DomesticVrpConsentResponse PublicPostResponse => PublicGetResponse;

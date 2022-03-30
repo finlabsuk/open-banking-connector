@@ -66,75 +66,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public DomesticVrp() {}
 
         private DomesticVrp(
-            Guid domesticVrpConsentId,
             Guid id,
             string? name,
+            DomesticVrpRequest request,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse,
             string? createdBy,
-            ITimeProvider timeProvider,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest) : base(
+            ITimeProvider timeProvider) : base(
             id,
             name,
             createdBy,
             timeProvider)
         {
-            DomesticVrpConsentId = domesticVrpConsentId;
-            BankApiRequest = apiRequest;
-        }
-        
-        
-        public DomesticVrp Create(
-            DomesticVrpRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest)
-        {
-            var output = new DomesticVrp(
-                request.DomesticVrpConsentId,
-                Guid.NewGuid(),
-                request.Name,
-                createdBy,
-                timeProvider,
-                apiRequest);
-
-            return output;
-        }
-
-        public DomesticVrp Create(
-            DomesticVrpRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            return null;
-        }
-        
-        public void Initialise(
-            DomesticVrpRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
             DomesticVrpConsentId = request.DomesticVrpConsentId;
-        }
-
-        public DomesticVrpResponse PublicPostResponse => PublicGetResponse;
-
-        public void UpdateBeforeApiPost(VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest)
-        {
             BankApiRequest = apiRequest;
-        }
-
-        public void UpdateAfterApiPost(
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse,
-            string? modifiedBy,
-            ITimeProvider timeProvider)
-        {
             BankApiResponse =
                 new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     apiResponse,
                     timeProvider,
-                    modifiedBy);
+                    createdBy);
             ExternalApiId = BankApiResponse.Data.Data.DomesticVRPId;
         }
+        
+        public DomesticVrp Create(
+            DomesticVrpRequest request,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest apiRequest,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse,
+            string? createdBy,
+            ITimeProvider timeProvider)
+        {
+            var output = new DomesticVrp(
+                Guid.NewGuid(),
+                request.Name,
+                request,
+                apiRequest,
+                apiResponse,
+                createdBy,
+                timeProvider);
+
+            return output;
+        }
+
+        public DomesticVrp Create(DomesticVrpRequest request, string? createdBy, ITimeProvider timeProvider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DomesticVrpResponse PublicPostResponse => PublicGetResponse;
 
         public IApiPostRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiPostRequests(

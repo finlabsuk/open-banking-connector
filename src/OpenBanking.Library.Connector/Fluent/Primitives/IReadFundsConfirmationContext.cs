@@ -44,8 +44,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             ReadFundsConfirmationAsync(
                 Guid id,
                 string? modifiedBy,
-                string? apiResponseWriteFile = null,
-                string? apiResponseOverrideFile = null)
+                string? apiResponseWriteFile,
+                string? apiResponseOverrideFile)
         {
             // Create non-error list
             var nonErrorMessages =

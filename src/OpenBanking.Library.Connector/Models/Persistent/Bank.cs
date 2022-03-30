@@ -72,16 +72,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             FinancialId = financialId;
         }
 
-        public void Initialise(
-            BankRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            base.Initialise(Guid.NewGuid(), request.Name, createdBy, timeProvider);
-            IssuerUrl = request.IssuerUrl;
-            FinancialId = request.FinancialId;
-        }
-
         public BankResponse PublicPostResponse => PublicGetResponse;
 
         public Bank Create(

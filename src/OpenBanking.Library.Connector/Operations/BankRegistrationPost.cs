@@ -265,35 +265,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     nonErrorMessages);
 
             // Create persisted entity
-            var persistedObject = new BankRegistration();
-            persistedObject.Initialise(
+            BankRegistration persistedObject = new BankRegistration().Create(
                 requestInfo.Request,
-                requestInfo.ModifiedBy,
-                _timeProvider);
-
-            persistedObject.Create(
-                requestInfo.Request,
-                requestInfo.ModifiedBy,
-                _timeProvider,
+                apiRequest,
+                apiResponse,
                 registrationScope,
                 openIdConfiguration, // TODO: update to store raw response
                 openIdConfiguration.TokenEndpoint,
                 openIdConfiguration.AuthorizationEndpoint,
                 openIdConfiguration.RegistrationEndpoint,
                 tokenEndpointAuthMethod,
-                apiRequest);
-            
-            persistedObject.UpdateOpenIdGet(
-                registrationScope,
-                openIdConfiguration, // TODO: update to store raw response
-                openIdConfiguration.TokenEndpoint,
-                openIdConfiguration.AuthorizationEndpoint,
-                openIdConfiguration.RegistrationEndpoint,
-                tokenEndpointAuthMethod);
-            persistedObject.UpdateBeforeApiPost(apiRequest);
-            
-            // Update with results of POST
-            persistedObject.UpdateAfterApiPost(apiResponse, "", _timeProvider);
+                requestInfo.ModifiedBy,
+                _timeProvider);
 
             return (persistedObject, nonErrorMessages2);
         }
