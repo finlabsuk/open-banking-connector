@@ -3,8 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 {
@@ -12,7 +14,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
     {
         public static void ImportPrivateKey(string privateKey, ref RSA rsaContainer)
         {
-            string[] privateKeyBlocks = privateKey.Split(
+            string cleanedPrivateKey;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                cleanedPrivateKey = Regex.Replace(privateKey, @"\\n", Environment.NewLine);
+            }
+            else
+            {
+                cleanedPrivateKey = privateKey;
+            }
+
+            string[] privateKeyBlocks = cleanedPrivateKey.Split(
                 "-",
                 StringSplitOptions.RemoveEmptyEntries);
             byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
@@ -29,17 +41,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
 
         public static X509Certificate2? GetCertificate2FromPem(string privateKey, string pem)
         {
-            /*
-            string cleanedPem = Regex
-                    .Replace(pem, @"\r\n|\n\r|\n|\r", Environment.NewLine);
-            
-            string cleanedPrivateKey =  Regex
-                .Replace(privateKey, @"\r\n|\n\r|\n|\r", Environment.NewLine);
-                */
+            string cleanedPrivateKey;
+            string cleanedPem;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                cleanedPrivateKey = Regex.Replace(privateKey, @"\\n", Environment.NewLine);
+                cleanedPem = Regex.Replace(pem, @"\\n", Environment.NewLine);
+            }
+            else
+            {
+                cleanedPrivateKey = privateKey;
+                cleanedPem = pem;
+            }
+            //instrumentationClient.Info(cleanedPrivateKey);
+            //instrumentationClient.Info(cleanedPem);
 
-            string[] privateKeyBlocks = privateKey.Split(
+            string[] privateKeyBlocks = cleanedPrivateKey.Split(
                 "-",
                 StringSplitOptions.RemoveEmptyEntries);
+            
             byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
             using var rsa = RSA.Create();
 
@@ -52,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
                 rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
             }
 
-            using X509Certificate2? publicKey = GetCertificate2FromPem(pem);
+            using X509Certificate2? publicKey = GetCertificate2FromPem(cleanedPem);
             using X509Certificate2? certWithKey = publicKey?.CopyWithPrivateKey(rsa);
 
             return certWithKey is null
