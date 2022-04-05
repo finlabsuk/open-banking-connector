@@ -97,7 +97,7 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read a AccountAccessConsent
+    ///     Read an AccountAccessConsent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <returns></returns>
@@ -122,7 +122,9 @@ public class AccountAccessConsentsController : ControllerBase
             .ReadAsync(accountAccessConsentId);
 
         // HTTP response
-        var httpResponse = (AccountAccessConsentHttpReadResponse) fluentResponse.ToHttpResponse();
+        HttpResponse<AccountAccessConsentReadResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
+        var httpResponse =
+            new AccountAccessConsentHttpReadResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
         int statusCode = fluentResponse switch
         {
             FluentSuccessResponse<AccountAccessConsentReadResponse> _ => StatusCodes.Status200OK,
@@ -162,13 +164,15 @@ public class AccountAccessConsentsController : ControllerBase
             .DeleteAsync(accountAccessConsentId);
 
         // HTTP response
-        var httpResponse = (AccountAccessConsentHttpDeleteResponse) fluentResponse.ToHttpResponse();
+        var httpResponseTmp = fluentResponse.ToHttpResponse();
+        var httpResponse =
+            new AccountAccessConsentHttpDeleteResponse(httpResponseTmp.Messages);
         int statusCode = fluentResponse switch
         {
-            FluentSuccessResponse<AccountAccessConsentHttpDeleteResponse> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<AccountAccessConsentHttpDeleteResponse> _ =>
+            FluentSuccessResponse => StatusCodes.Status200OK,
+            FluentBadRequestErrorResponse =>
                 StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<AccountAccessConsentHttpDeleteResponse> _ =>
+            FluentOtherErrorResponse =>
                 StatusCodes.Status500InternalServerError,
             _ => throw new ArgumentOutOfRangeException()
         };
