@@ -82,8 +82,8 @@ public class AccountAccessConsentsController : ControllerBase
             .CreateAsync(request);
 
         // HTTP response
-        var httpResponseTmp = fluentResponse.ToHttpResponse();
-        AccountAccessConsentHttpReadResponse httpResponse =
+        HttpResponse<AccountAccessConsentReadResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
+        var httpResponse =
             new AccountAccessConsentHttpReadResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
         int statusCode = fluentResponse switch
         {
@@ -159,7 +159,7 @@ public class AccountAccessConsentsController : ControllerBase
         IFluentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteLocalAsync(Id);
+            .DeleteAsync(Id);
 
         // HTTP response
         var httpResponse = (AccountAccessConsentHttpDeleteResponse) fluentResponse.ToHttpResponse();

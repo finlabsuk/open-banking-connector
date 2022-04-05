@@ -10,11 +10,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
     public class ApiDeleteRequestProcessor : IDeleteRequestProcessor
     {
+        private readonly string? _financialId;
         private readonly TokenEndpointResponse _tokenEndpointResponse;
 
-        public ApiDeleteRequestProcessor(TokenEndpointResponse tokenEndpointResponse)
+        public ApiDeleteRequestProcessor(TokenEndpointResponse tokenEndpointResponse, string? financialId)
         {
             _tokenEndpointResponse = tokenEndpointResponse;
+            _financialId = financialId;
         }
 
         List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(string requestDescription)
@@ -24,6 +26,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             {
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
             };
+
+            if (!(_financialId is null))
+            {
+                headers.Add(new HttpHeader("x-fapi-financial-id", _financialId));
+            }
 
             return headers;
         }

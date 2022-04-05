@@ -26,7 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         IEntityContext<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
             DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
-        IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>
+        IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>,
+        IDeleteContext
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -44,7 +45,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         IEntityContextInternal<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
             DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
-        IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse> { }
+        IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse>,
+        IDeleteContextInternal { }
 
     internal class DomesticVrpConsentsContext :
         ObjectContextBase<DomesticVrpConsentPersisted>, IDomesticVrpConsentsContextInternal
@@ -85,6 +87,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation);
+            DeleteObject =
+                new DomesticVrpConsentDelete(
+                    sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    sharedContext.TimeProvider,
+                    sharedContext.SoftwareStatementProfileCachedRepo,
+                    sharedContext.Instrumentation);
         }
 
         public IObjectRead<DomesticVrpConsentReadResponse> ReadObject { get; }
@@ -114,5 +123,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
         public IObjectPost<DomesticVrpConsentRequest, DomesticVrpConsentReadResponse> PostObject { get; }
         public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
+        public IObjectDelete DeleteObject { get; }
     }
 }

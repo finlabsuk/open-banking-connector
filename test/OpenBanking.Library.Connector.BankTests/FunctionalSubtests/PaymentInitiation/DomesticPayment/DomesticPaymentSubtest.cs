@@ -219,17 +219,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticPaymentResp2.Data.Should().NotBeNull();
             }
 
-            // DELETE auth context
-
-
             // DELETE domestic payment consent
-            IFluentResponse domesticPaymentConsentResp3 = await requestBuilder.PaymentInitiation
+            IFluentResponse domesticPaymentConsentResp3 = await requestBuilder
+                .PaymentInitiation
                 .DomesticPaymentConsents
                 .DeleteLocalAsync(domesticPaymentConsentId);
 
             // Checks
             domesticPaymentConsentResp3.Should().NotBeNull();
             domesticPaymentConsentResp3.Messages.Should().BeEmpty();
+
+            // DELETE auth context
+            IFluentResponse authContextResponse3 = await requestBuilder
+                .PaymentInitiation
+                .DomesticPaymentConsents
+                .AuthContexts
+                .DeleteLocalAsync(authContextId);
+
+            // Checks
+            authContextResponse3.Should().NotBeNull();
+            authContextResponse3.Messages.Should().BeEmpty();
+
         }
     }
 }

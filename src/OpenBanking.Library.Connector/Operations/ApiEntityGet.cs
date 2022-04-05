@@ -91,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .Where(x => x.TokenEndpointResponse.Data != null)
                     .ToList();
 
-            TokenEndpointResponse userTokenEndpointResponse =
+            TokenEndpointResponse tokenEndpointResponse =
                 authContextsWithToken.Any()
                     ? authContextsWithToken
                         .OrderByDescending(x => x.TokenEndpointResponse.Modified)
@@ -105,17 +105,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.SoftwareStatementProfileId,
                     bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
-
-            // Get client credentials grant token if necessary
-            TokenEndpointResponse tokenEndpointResponse =
-                userTokenEndpointResponse ??
-                await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    "payments",
-                    processedSoftwareStatementProfile,
-                    bankRegistration,
-                    null,
-                    apiClient,
-                    _instrumentationClient);
 
             // Determine endpoint URL
             string baseUrl =

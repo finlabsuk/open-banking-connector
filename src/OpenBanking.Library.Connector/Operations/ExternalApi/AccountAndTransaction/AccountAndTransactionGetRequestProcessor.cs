@@ -10,13 +10,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.A
 {
     internal class AccountAndTransactionGetRequestProcessor : IGetRequestProcessor
     {
-        private readonly string _orgId;
+        private readonly string _financialId;
         private readonly TokenEndpointResponse _tokenEndpointResponse;
 
 
-        public AccountAndTransactionGetRequestProcessor(string orgId, TokenEndpointResponse tokenEndpointResponse)
+        public AccountAndTransactionGetRequestProcessor(string financialId, TokenEndpointResponse tokenEndpointResponse)
         {
-            _orgId = orgId;
+            _financialId = financialId;
             _tokenEndpointResponse = tokenEndpointResponse;
         }
 
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.A
             // Assemble headers and body
             var headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", _orgId),
+                new HttpHeader("x-fapi-financial-id", _financialId),
                 new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
             };
 
