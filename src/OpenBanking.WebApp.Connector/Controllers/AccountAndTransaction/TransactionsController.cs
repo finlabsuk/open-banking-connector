@@ -23,6 +23,7 @@ public class TransactionsHttpResponse : HttpResponse<TransactionsResponse>
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
+[Tags("Transactions")]
 public class TransactionsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -33,14 +34,16 @@ public class TransactionsController : ControllerBase
     }
 
     /// <summary>
-    ///     Get Transactions
+    ///     Read Transactions
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="externalAccountId"></param>
+    /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="externalApiStatementId">External (bank) API ID of Statement</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/transactions")]
-    [Route("aisp/transactions/{ExternalAccountId}")]
+    [Route("aisp/accounts/{externalApiAccountId}/transactions")]
+    [Route("aisp/accounts/{externalApiAccountId}/statements/{externalApiStatementId}/transactions")]
     [HttpGet]
     [ProducesResponseType(
         typeof(TransactionsHttpResponse),
@@ -53,13 +56,14 @@ public class TransactionsController : ControllerBase
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalAccountId)
+        string? externalApiAccountId,
+        string? externalApiStatementId)
     {
         // Operation
         IFluentResponse<TransactionsResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Transactions
-            .ReadAsync(accountAccessConsentId, externalAccountId);
+            .ReadAsync(accountAccessConsentId, externalApiAccountId, externalApiStatementId);
 
         // HTTP response
         HttpResponse<TransactionsResponse> httpResponseTmp = fluentResponse.ToHttpResponse();

@@ -58,7 +58,7 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an AccountAccessConsent object
+    ///     Create an AccountAccessConsent
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -97,12 +97,12 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read an AccountAccessConsent object
+    ///     Read a AccountAccessConsent
     /// </summary>
-    /// <param name="Id">ID of AccountAccessConsent object</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/account-access-consents/{Id}")]
+    [Route("aisp/account-access-consents/{accountAccessConsentId}")]
     [HttpGet]
     [ProducesResponseType(
         typeof(AccountAccessConsentHttpReadResponse),
@@ -113,13 +113,13 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(
         typeof(AccountAccessConsentHttpReadResponse),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync(Guid Id)
+    public async Task<IActionResult> GetAsync(Guid accountAccessConsentId)
     {
         // Operation
         IFluentResponse<AccountAccessConsentReadResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .ReadAsync(Id);
+            .ReadAsync(accountAccessConsentId);
 
         // HTTP response
         var httpResponse = (AccountAccessConsentHttpReadResponse) fluentResponse.ToHttpResponse();
@@ -137,12 +137,12 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Soft-delete an AccountAccessConsent object
+    ///     Delete an AccountAccessConsent
     /// </summary>
-    /// <param name="Id">ID of AccountAccessConsent object</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/account-access-consents/{Id}")]
+    [Route("aisp/account-access-consents/{accountAccessConsentId}")]
     [HttpDelete]
     [ProducesResponseType(
         typeof(AccountAccessConsentHttpDeleteResponse),
@@ -153,13 +153,13 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(
         typeof(AccountAccessConsentHttpDeleteResponse),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteAsync(Guid Id)
+    public async Task<IActionResult> DeleteAsync(Guid accountAccessConsentId)
     {
         // Operation
         IFluentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(Id);
+            .DeleteAsync(accountAccessConsentId);
 
         // HTTP response
         var httpResponse = (AccountAccessConsentHttpDeleteResponse) fluentResponse.ToHttpResponse();

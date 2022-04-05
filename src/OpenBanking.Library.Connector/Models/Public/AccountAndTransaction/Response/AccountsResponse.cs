@@ -7,6 +7,9 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
 {
+    /// <summary>
+    ///     Response to Account read requests
+    /// </summary>
     public class AccountsResponse
     {
         public AccountsResponse(AccountAndTransactionModelsPublic.OBReadAccount6 externalApiResponse)

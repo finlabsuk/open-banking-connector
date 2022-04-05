@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -29,6 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </param>
+        [JsonConstructor]
         public Meta(int? totalPages, DateTimeOffset? firstAvailableDateTime, DateTimeOffset? lastAvailableDateTime)
         {
             TotalPages = totalPages;

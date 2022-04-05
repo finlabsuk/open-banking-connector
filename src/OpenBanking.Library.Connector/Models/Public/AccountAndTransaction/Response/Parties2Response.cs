@@ -8,22 +8,22 @@ using AccountAndTransactionModelsPublic =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
 {
     /// <summary>
-    ///     Response to Transaction read requests
+    ///     Response to Parties read requests
     /// </summary>
-    public class TransactionsResponse
+    public class Parties2Response
     {
-        public TransactionsResponse(AccountAndTransactionModelsPublic.OBReadTransaction6 externalApiResponse)
+        public Parties2Response(AccountAndTransactionModelsPublic.OBReadParty3 externalApiResponse)
         {
             ExternalApiResponse = externalApiResponse;
         }
 
         /// <summary>
-        ///     Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec
         ///     <a
         ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
         ///     v3.1.9r5 <a />. Open Banking Connector will automatically
         ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
         /// </summary>
-        public AccountAndTransactionModelsPublic.OBReadTransaction6 ExternalApiResponse { get; }
+        public AccountAndTransactionModelsPublic.OBReadParty3 ExternalApiResponse { get; }
     }
 }

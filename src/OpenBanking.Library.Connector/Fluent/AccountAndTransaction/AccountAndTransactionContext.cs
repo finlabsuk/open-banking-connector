@@ -36,6 +36,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         IReadOnlyExternalEntityContext<PartiesResponse> Parties { get; }
 
         /// <summary>
+        ///     API for Party objects.
+        /// </summary>
+        IReadOnlyExternalEntityContext<Parties2Response> Parties2 { get; }
+
+        /// <summary>
         ///     API for Transaction objects.
         /// </summary>
         IReadOnlyExternalEntityContext<TransactionsResponse> Transactions { get; }
@@ -75,6 +80,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
             new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
                 _sharedContext,
                 new PartyGet(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.ApiVariantMapper));
+
+        public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
+            new ReadOnlyExternalEntityContextInternal<Parties2Response>(
+                _sharedContext,
+                new Party2Get(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,

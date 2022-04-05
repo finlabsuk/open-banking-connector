@@ -37,7 +37,7 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an AccountAccessConsentAuthContext object
+    ///     Create an AccountAccessConsent AuthContext
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

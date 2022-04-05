@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     }
 
     /// <summary>
-    ///     Response to ReadLocal requests
+    ///     Response to AccountAccessConsent ReadLocal requests
     /// </summary>
     public class AccountAccessConsentReadLocalResponse : BaseResponse, IAccountAccessConsentPublicQuery
     {
@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     }
 
     /// <summary>
-    ///     Response to Read and Create requests
+    ///     Response to AccountAccessConsent Read and Create requests
     /// </summary>
     public class AccountAccessConsentReadResponse : AccountAccessConsentReadLocalResponse
     {

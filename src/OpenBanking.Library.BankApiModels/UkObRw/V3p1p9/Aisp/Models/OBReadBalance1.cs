@@ -10,7 +10,13 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
-    /// <summary> The OBReadBalance1. </summary>
+    /// <summary>
+    ///     Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     <a
+    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+    ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
     public partial class OBReadBalance1
     {
         /// <summary> Initializes a new instance of OBReadBalance1. </summary>

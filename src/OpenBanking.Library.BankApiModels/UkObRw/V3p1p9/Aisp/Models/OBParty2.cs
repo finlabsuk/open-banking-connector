@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -42,6 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="mobile"> Collection of information that identifies a mobile phone number, as defined by telecom services. </param>
         /// <param name="relationships"> The Party&apos;s relationships with other resources. </param>
         /// <param name="address"></param>
+        [JsonConstructor]
         public OBParty2(string partyId, string partyNumber, OBExternalPartyType1CodeEnum? partyType, string name, string fullLegalName, string legalStructure, bool? beneficialOwnership, string accountRole, string emailAddress, string phone, string mobile, OBPartyRelationships1 relationships, IReadOnlyList<OBParty2AddressItem> address)
         {
             PartyId = partyId;

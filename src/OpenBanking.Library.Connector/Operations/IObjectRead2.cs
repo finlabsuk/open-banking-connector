@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
             Guid consentId,
-            string? externalAccountId,
-            string? externalStatementId);
+            string? externalApiAccountId,
+            string? externalApiStatementId);
     }
 }

@@ -5,6 +5,9 @@
 
 #nullable disable
 
+
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> The OBReadParty2Data. </summary>
@@ -17,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 
         /// <summary> Initializes a new instance of OBReadParty2Data. </summary>
         /// <param name="party"></param>
+        [JsonConstructor]
         public OBReadParty2Data(OBParty2 party)
         {
             Party = party;

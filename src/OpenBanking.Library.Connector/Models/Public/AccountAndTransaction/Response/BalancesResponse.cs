@@ -7,6 +7,9 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
 {
+    /// <summary>
+    ///     Response to Balance read requests
+    /// </summary>
     public class BalancesResponse
     {
         public BalancesResponse(AccountAndTransactionModelsPublic.OBReadBalance1 externalApiResponse)
@@ -23,6 +26,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
         /// </summary>
         public AccountAndTransactionModelsPublic.OBReadBalance1 ExternalApiResponse { get; }
-
     }
 }

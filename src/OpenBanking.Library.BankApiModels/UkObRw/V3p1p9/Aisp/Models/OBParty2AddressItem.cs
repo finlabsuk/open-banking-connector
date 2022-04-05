@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -37,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="townName"> Name of a built-up area, with defined boundaries, and a local government. </param>
         /// <param name="countrySubDivision"> Identifies a subdivision of a country eg, state, region, county. </param>
         /// <param name="country"> Nation with its own government, occupying a particular territory. </param>
+        [JsonConstructor]
         public OBParty2AddressItem(OBAddressTypeCodeEnum? addressType, IReadOnlyList<string> addressLine, string streetName, string buildingNumber, string postCode, string townName, string countrySubDivision, string country)
         {
             AddressType = addressType;

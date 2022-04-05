@@ -61,8 +61,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ReadAsync(
                 Guid consentId,
-                string? externalAccountId,
-                string? externalStatementId)
+                string? externalApiAccountId,
+                string? externalApiStatementId)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -110,14 +110,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string baseUrl =
                 bankApiSet.AccountAndTransactionApi?.BaseUrl ??
                 throw new NullReferenceException("Bank API Set has null Account and Transaction API.");
-            Uri endpointUrl = (externalAccountId, externalStatementId) switch
-            {
-                (null, null) => new Uri(baseUrl + RelativePath),
-                ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
-                ({ } extAccountId, { } extStatementId) => new Uri(
-                    baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            Uri endpointUrl =
+                (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
+                {
+                    (null, null) => new Uri(baseUrl + RelativePath),
+                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
+                    ({ } extAccountId, { } extStatementId) => new Uri(
+                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
 
             // Create new Open Banking object by posting JWT
             JsonSerializerSettings? jsonSerializerSettings = null;

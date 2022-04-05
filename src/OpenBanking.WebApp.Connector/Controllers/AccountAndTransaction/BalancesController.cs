@@ -23,6 +23,7 @@ public class BalancesHttpResponse : HttpResponse<BalancesResponse>
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
+[Tags("Balances")]
 public class BalancesController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -33,14 +34,14 @@ public class BalancesController : ControllerBase
     }
 
     /// <summary>
-    ///     Get Balances
+    ///     Read Balances
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="externalAccountId"></param>
+    /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/balances")]
-    [Route("aisp/balances/{ExternalAccountId}")]
+    [Route("aisp/accounts/{externalApiAccountId}/balances")]
     [HttpGet]
     [ProducesResponseType(
         typeof(BalancesHttpResponse),
@@ -53,13 +54,13 @@ public class BalancesController : ControllerBase
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalAccountId)
+        string? externalApiAccountId)
     {
         // Operation
         IFluentResponse<BalancesResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Balances
-            .ReadAsync(accountAccessConsentId, externalAccountId);
+            .ReadAsync(accountAccessConsentId, externalApiAccountId);
 
         // HTTP response
         HttpResponse<BalancesResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
