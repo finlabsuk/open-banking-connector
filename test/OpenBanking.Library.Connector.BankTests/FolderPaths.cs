@@ -2,14 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.IO;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
     public static class FolderPaths
     {
-        private static readonly Lazy<string> ProjectRootField = new Lazy<string>(
+        private static readonly Lazy<string> ProjectRootField = new(
             () =>
             {
                 string assemblyLocation = typeof(FolderPaths).Assembly.Location;
@@ -25,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 return projectRoot;
             });
 
-        private static readonly Lazy<string> ConsentAuthoriserFolderField = new Lazy<string>(
+        private static readonly Lazy<string> ConsentAuthoriserFolderField = new(
             () =>
             {
                 string consentAuthoriserFolder =
@@ -40,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 return consentAuthoriserFolder;
             });
 
-        private static readonly Lazy<string> ConsentAuthoriserBuildFolderField = new Lazy<string>(
+        private static readonly Lazy<string> ConsentAuthoriserBuildFolderField = new(
             () =>
             {
                 string consentAuthoriserBuildFolder =

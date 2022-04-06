@@ -16,7 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     /// <summary>
-    /// Delete operations on entities (objects stored in external (i.e. bank) database and local database).
+    ///     Delete operations on entities (objects stored in external (i.e. bank) database and local database).
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     internal abstract class

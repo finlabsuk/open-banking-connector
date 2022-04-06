@@ -239,7 +239,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks
             authContextResponse3.Should().NotBeNull();
             authContextResponse3.Messages.Should().BeEmpty();
-
         }
     }
 }

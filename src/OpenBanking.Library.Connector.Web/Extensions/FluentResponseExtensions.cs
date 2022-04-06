@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 
@@ -12,11 +10,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
     public static class FluentResponseExtensions
     {
         public static HttpResponse ToHttpResponse(this IFluentResponse value) =>
-            new HttpResponse(messages: value.GetHttpResponseMessages());
+            new(messages: value.GetHttpResponseMessages());
 
         public static HttpResponse<TData> ToHttpResponse<TData>(this IFluentResponse<TData> value)
-            where TData : class =>
-            new HttpResponse<TData>(value.GetHttpResponseMessages(), value.Data);
+            where TData : class => new(value.GetHttpResponseMessages(), value.Data);
 
         private static HttpResponseMessages? GetHttpResponseMessages(this IFluentResponse value)
         {

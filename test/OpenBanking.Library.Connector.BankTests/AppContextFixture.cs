@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.IO;
-using System.Threading;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using MartinCostello.Logging.XUnit;
@@ -18,8 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
     public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
     {
-        private readonly AsyncLocal<ITestOutputHelper?> _asyncLocalOutputHelper =
-            new AsyncLocal<ITestOutputHelper?>(); // to debug, can replace with "private ITestOutputHelper? _outputHelper" 
+        private readonly AsyncLocal<ITestOutputHelper?>
+            _asyncLocalOutputHelper = new(); // to debug, can replace with "private ITestOutputHelper? _outputHelper" 
 
         public AppContextFixture()
         {

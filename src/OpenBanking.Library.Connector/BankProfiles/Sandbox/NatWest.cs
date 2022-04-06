@@ -21,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.NatWest,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 "0015800000jfwxXAAQ", // from https://bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                ClientRegistrationApiVersion.Version3p2, // from https://www.bankofapis.com/products/natwest-group-open-banking/dynamic-client-registration/documentation/nwb/1.0
+                ClientRegistrationApiVersion
+                    .Version3p2, // from https://www.bankofapis.com/products/natwest-group-open-banking/dynamic-client-registration/documentation/nwb/1.0
                 null,
                 new PaymentInitiationApi
                 {

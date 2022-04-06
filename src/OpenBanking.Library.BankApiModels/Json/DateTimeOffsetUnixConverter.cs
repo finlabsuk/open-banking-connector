@@ -2,11 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable enable
+
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-#nullable enable
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {

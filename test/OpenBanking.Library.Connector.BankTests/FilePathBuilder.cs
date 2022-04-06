@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.IO;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 
@@ -37,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
         }
 
         public FilePathBuilder AppendToFileName(string text) =>
-            new FilePathBuilder(
+            new(
                 _filePath,
                 _fileNameWithoutExtension + text,
                 _fileNameExtension);

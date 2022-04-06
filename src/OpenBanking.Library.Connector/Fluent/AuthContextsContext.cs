@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null);
     }
-    
+
     internal class AuthContextsContext : IAuthContextsContext, ICreateContextInternal<AuthResult, AuthContextResponse>
     {
         public AuthContextsContext(ISharedContext sharedContext)

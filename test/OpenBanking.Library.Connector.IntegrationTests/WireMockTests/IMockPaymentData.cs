@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;

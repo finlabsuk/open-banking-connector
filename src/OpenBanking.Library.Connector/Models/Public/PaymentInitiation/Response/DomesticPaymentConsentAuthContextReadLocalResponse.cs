@@ -34,7 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Response to Get, Post
     /// </summary>
-    public class DomesticPaymentConsentAuthContextCreateLocalResponse : DomesticPaymentConsentAuthContextReadLocalResponse
+    public class
+        DomesticPaymentConsentAuthContextCreateLocalResponse : DomesticPaymentConsentAuthContextReadLocalResponse
     {
         internal DomesticPaymentConsentAuthContextCreateLocalResponse(
             Guid id,

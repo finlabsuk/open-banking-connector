@@ -59,7 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         ///     Associated BankApiSet object
         /// </summary>
         public Guid BankApiSetId { get; set; }
-
     }
 
     internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentReadLocalResponse>

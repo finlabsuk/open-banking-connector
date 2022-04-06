@@ -32,7 +32,7 @@ export const consentUIInteractions: ConsentUIInteractions = async (page, navigat
     // Confirm
     await page.waitForSelector('#confirm-dialog-submit')
     await page.click('#confirm-dialog-submit')
-    
+
     await navigationPromise
 }
     

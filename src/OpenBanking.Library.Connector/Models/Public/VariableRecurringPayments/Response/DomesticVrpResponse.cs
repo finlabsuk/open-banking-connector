@@ -14,8 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// </summary>
     public class DomesticVrpResponse
     {
-        public Guid Id { get; }
-
         public DomesticVrpResponse(
             Guid id,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse)
@@ -23,6 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Id = id;
             ExternalApiResponse = externalApiResponse;
         }
+
+        public Guid Id { get; }
 
 
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse ExternalApiResponse { get; }

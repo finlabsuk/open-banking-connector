@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
@@ -20,7 +19,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NSubstitute;
 using RichardSzalay.MockHttp;

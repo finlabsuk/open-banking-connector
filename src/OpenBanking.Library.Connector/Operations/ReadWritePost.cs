@@ -4,9 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;

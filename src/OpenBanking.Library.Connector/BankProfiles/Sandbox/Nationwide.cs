@@ -21,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Nationwide,
                 "https://apionline.obtpp.nationwideinterfaces.io/open-banking", // from https://developer.nationwide.co.uk/open-banking/faqs
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                ClientRegistrationApiVersion.Version3p3, // from https://developer.nationwide.co.uk/dcr-33-tech-implementation-guidance
+                ClientRegistrationApiVersion
+                    .Version3p3, // from https://developer.nationwide.co.uk/dcr-33-tech-implementation-guidance
                 null,
                 new PaymentInitiationApi
                 {

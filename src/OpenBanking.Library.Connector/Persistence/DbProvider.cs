@@ -23,6 +23,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         }
 
         public static IEnumerable<DbProvider> AllDbProviders { get; }
-
     }
 }

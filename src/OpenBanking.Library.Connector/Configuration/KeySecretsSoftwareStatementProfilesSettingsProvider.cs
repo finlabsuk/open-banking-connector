@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 

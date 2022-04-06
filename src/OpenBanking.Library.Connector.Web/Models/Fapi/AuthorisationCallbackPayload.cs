@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi
     public static class AuthorisationCallbackPayloadExtensions
     {
         public static AuthResult ToLibraryVersion(this AuthorisationCallbackPayload payload) =>
-            new AuthResult(
+            new(
                 payload.IdToken,
                 payload.Code,
                 payload.State,

@@ -14,8 +14,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// </summary>
     public class DomesticPaymentResponse
     {
-        public Guid Id { get; }
-
         public DomesticPaymentResponse(
             PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
             Guid id)
@@ -23,6 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             ExternalApiResponse = externalApiResponse;
             Id = id;
         }
+
+        public Guid Id { get; }
 
         public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
     }

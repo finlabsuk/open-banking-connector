@@ -2,13 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FsCheck;
-using FsCheck.Xunit;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Configuration
 {
     public class EnvironmentVariablesConfigurationProviderTests
