@@ -13,18 +13,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="FluentAssertions" Version="6.5.1"/>
-        <PackageReference Include="Jering.Javascript.NodeJS" Version="5.4.4"/>
-        <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.2.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0"/>
-        <PackageReference Include="NSubstitute" Version="4.3.0"/>
-        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.15"/>
-        <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0"/>
-        <PackageReference Include="TestStack.BDDfy.Xunit" Version="1.2.0"/>
-        <PackageReference Include="xunit" Version="2.4.1"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="FluentAssertions" Version="6.6.0" />
+        <PackageReference Include="Jering.Javascript.NodeJS" Version="5.4.4" />
+        <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="NSubstitute" Version="4.3.0" />
+        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.15" />
+        <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
+        <PackageReference Include="TestStack.BDDfy.Xunit" Version="1.2.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -33,12 +33,12 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj"/>
-        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj"/>
+        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.GenericHost.Azure\OpenBanking.Library.Connector.GenericHost.Azure.csproj" />
+        <ProjectReference Include="..\..\src\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
     </ItemGroup>
 
     <ItemGroup>
