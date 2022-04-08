@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -100,7 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> ApiRequests(
                 BankApiSet bankApiSet,
                 string bankFinancialId,
-                TokenEndpointResponse tokenEndpointResponse,
+                string accessToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
@@ -110,11 +109,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
                         bankFinancialId,
-                        tokenEndpointResponse,
+                        accessToken,
                         instrumentationClient,
                         false,
                         processedSoftwareStatementProfile)),
@@ -130,7 +129,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 BankApiSet bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
-                TokenEndpointResponse? userTokenEndpointResponse,
+                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> ApiPostRequestData(DomesticVrpConsent request)
         {

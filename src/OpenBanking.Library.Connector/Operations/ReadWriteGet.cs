@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -51,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
             BankApiSetPersisted bankApiSet,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
 
@@ -69,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     BankApiSetPersisted bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
-                    TokenEndpointResponse? userTokenEndpointResponse,
+                    string? accessToken,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiGetRequestData(id);
 
@@ -81,15 +80,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get client credentials grant token if necessary
-            TokenEndpointResponse tokenEndpointResponse =
-                userTokenEndpointResponse ??
-                await PostTokenRequest.PostClientCredentialsGrantAsync(
+            string accessTokenNew =
+                accessToken ??
+                (await PostTokenRequest.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
                     null,
                     apiClient,
-                    _instrumentationClient);
+                    _instrumentationClient))
+                .AccessToken;
 
             // Create new Open Banking object by posting JWT
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -97,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiGetRequests<TApiResponse> apiRequests = ApiRequests(
                 bankApiInformation,
                 bankFinancialId,
-                tokenEndpointResponse,
+                accessTokenNew,
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
@@ -112,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 BankApiSetPersisted bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
-                TokenEndpointResponse? userTokenEndpointResponse,
+                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiGetRequestData(Guid id);
     }

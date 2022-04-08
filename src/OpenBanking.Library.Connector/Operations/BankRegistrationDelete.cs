@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -63,30 +62,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var uri = new Uri(persistedObject.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
             // Get appropriate token
-            TokenEndpointResponse tokenEndpointResponse;
-            if (useRegistrationAccessToken)
-            {
-                string accessToken =
-                    persistedObject.RegistrationAccessToken ??
-                    throw new InvalidOperationException("No registration access token available");
-                tokenEndpointResponse = new TokenEndpointResponse
-                {
-                    AccessToken = accessToken,
-                };
-            }
-            else
-            {
-                tokenEndpointResponse =
-                    await PostTokenRequest.PostClientCredentialsGrantAsync(
-                        null, // no scope - not clear this is correct yet...
-                        processedSoftwareStatementProfile,
-                        persistedObject,
-                        null,
-                        apiClient,
-                        _instrumentationClient);
-            }
+            string accessToken = useRegistrationAccessToken
+                ? persistedObject.RegistrationAccessToken ??
+                  throw new InvalidOperationException("No registration access token available")
+                : (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                    null, // no scope - not clear this is correct yet...
+                    processedSoftwareStatementProfile,
+                    persistedObject,
+                    null,
+                    apiClient,
+                    _instrumentationClient))
+                .AccessToken;
 
-            IDeleteRequestProcessor deleteRequestProcessor = new ApiDeleteRequestProcessor(tokenEndpointResponse, null);
+            IDeleteRequestProcessor deleteRequestProcessor =
+                new ApiDeleteRequestProcessor(accessToken, null);
 
             return (persistedObject, apiClient, uri, deleteRequestProcessor, nonErrorMessages);
         }

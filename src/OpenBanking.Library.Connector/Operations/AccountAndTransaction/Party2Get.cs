@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override IApiGetRequests<AccountAndTransactionModelsPublic.OBReadParty3> ApiRequests(
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             accountAndTransactionApi?.AccountAndTransactionApiVersion switch
@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadParty3,
                     AccountAndTransactionModelsPublic.OBReadParty3
-                >(new AccountAndTransactionGetRequestProcessor(bankFinancialId, tokenEndpointResponse)),
+                >(new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 null => throw new NullReferenceException("No AISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")

@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -23,10 +22,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public AccountAccessConsentAuthContext(
             Guid id,
             string? name,
-            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
-            Guid accountAccessConsentId,
             string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, tokenEndpointResponse, createdBy, timeProvider)
+            ITimeProvider timeProvider,
+            string? accessToken,
+            int accessTokenExpiresIn,
+            string? refreshToken,
+            Guid accountAccessConsentId) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider,
+            accessToken,
+            accessTokenExpiresIn,
+            refreshToken)
         {
             AccountAccessConsentId = accountAccessConsentId;
         }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction
@@ -15,18 +14,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.A
         AccountAndTransactionPostRequestProcessor<TVariantApiRequest> : IPostRequestProcessor<TVariantApiRequest>
         where TVariantApiRequest : class
     {
+        private readonly string _accessToken;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly string _orgId;
-        private readonly TokenEndpointResponse _tokenEndpointResponse;
 
         public AccountAndTransactionPostRequestProcessor(
             string orgId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             IInstrumentationClient instrumentationClient)
         {
             _instrumentationClient = instrumentationClient;
             _orgId = orgId;
-            _tokenEndpointResponse = tokenEndpointResponse;
+            _accessToken = accessToken;
         }
 
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
@@ -39,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.A
             var headers = new List<HttpHeader>
             {
                 new HttpHeader("x-fapi-financial-id", _orgId),
-                new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
+                new HttpHeader("Authorization", "Bearer " + _accessToken),
                 new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
             };
             JsonSerializerSettings jsonSerializerSettings =

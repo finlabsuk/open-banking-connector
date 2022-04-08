@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -27,10 +26,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public DomesticVrpConsentAuthContext(
             Guid id,
             string? name,
-            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
-            Guid domesticVrpConsentId,
             string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, tokenEndpointResponse, createdBy, timeProvider)
+            ITimeProvider timeProvider,
+            string? accessToken,
+            int accessTokenExpiresIn,
+            string? refreshToken,
+            Guid domesticVrpConsentId) : base(
+            id,
+            name,
+            createdBy,
+            timeProvider,
+            accessToken,
+            accessTokenExpiresIn,
+            refreshToken)
         {
             DomesticVrpConsentId = domesticVrpConsentId;
         }

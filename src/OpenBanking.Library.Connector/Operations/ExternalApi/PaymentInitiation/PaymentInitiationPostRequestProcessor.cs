@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
@@ -17,15 +16,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
     internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPostRequestProcessor<TVariantApiRequest>
         where TVariantApiRequest : class
     {
+        private readonly string _accessToken;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly string _orgId;
         private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
-        private readonly TokenEndpointResponse _tokenEndpointResponse;
         private readonly bool _useB64;
 
         public PaymentInitiationPostRequestProcessor(
             string orgId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             IInstrumentationClient instrumentationClient,
             bool useB64,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
@@ -34,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             _orgId = orgId;
             _useB64 = useB64;
             _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
-            _tokenEndpointResponse = tokenEndpointResponse;
+            _accessToken = accessToken;
         }
 
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.
@@ -62,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             var headers = new List<HttpHeader>
             {
                 new HttpHeader("x-fapi-financial-id", _orgId),
-                new HttpHeader("Authorization", "Bearer " + _tokenEndpointResponse.AccessToken),
+                new HttpHeader("Authorization", "Bearer " + _accessToken),
                 new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
             };
             headers.Add(CreateJwsSignatureHeader(jwt));

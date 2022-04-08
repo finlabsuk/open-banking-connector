@@ -4,16 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -80,24 +77,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-            string bankApiId = persistedObject.ExternalApiId;
             BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
-            // Get token
-            List<AccountAccessConsentAuthContext> authContextsWithToken =
-                persistedObject.AccountAccessConsentAuthContextsNavigation
-                    .Where(x => x.TokenEndpointResponse.Value != null)
-                    .ToList();
-
-            TokenEndpointResponse tokenEndpointResponse =
-                authContextsWithToken.Any()
-                    ? authContextsWithToken
-                        .OrderByDescending(x => x.TokenEndpointResponse.Modified)
-                        .Select(x => x.TokenEndpointResponse.Value)
-                        .First()! // We already filtered out null entries above
-                    : throw new InvalidOperationException("No token is available for Account Access Consent.");
+            // Get access token
+            string accessToken =
+                AuthContextAccessTokenGet.GetAccessToken(persistedObject.AccountAccessConsentAuthContextsNavigation);
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -125,7 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiGetRequests<TApiResponse> apiRequests = ApiRequests(
                 bankApiSet.AccountAndTransactionApi,
                 bankFinancialId,
-                tokenEndpointResponse,
+                accessToken,
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
@@ -151,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
     }

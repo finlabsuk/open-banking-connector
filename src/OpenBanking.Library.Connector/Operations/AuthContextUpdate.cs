@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -85,9 +86,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
             // Checks
-            if (!(authContext.TokenEndpointResponse.Value is null))
+            if (!(authContext.AccessToken.Value1 is null))
             {
-                throw new InvalidOperationException("Auth context already has token so aborting.");
+                throw new InvalidOperationException("Token already supplied for auth context so aborting.");
             }
 
             BankRegistration bankRegistration = authContext switch
@@ -113,9 +114,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient);
 
+            // Check token endpoint response
+            bool isBearerTokenType = string.Equals(
+                tokenEndpointResponse.TokenType,
+                "bearer",
+                StringComparison.OrdinalIgnoreCase);
+            if (!isBearerTokenType)
+            {
+                throw new InvalidDataException(
+                    "Access token received does not have token type equal to Bearer or bearer.");
+            }
+
             // Update auth context with token
-            authContext.TokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                tokenEndpointResponse,
+            authContext.AccessToken = new ReadWritePropertyGroup<string?, int>(
+                tokenEndpointResponse.AccessToken,
+                tokenEndpointResponse.ExpiresIn,
+                _timeProvider,
+                createdBy);
+            authContext.RefreshToken = new ReadWriteProperty<string?>(
+                tokenEndpointResponse.RefreshToken,
                 _timeProvider,
                 createdBy);
 

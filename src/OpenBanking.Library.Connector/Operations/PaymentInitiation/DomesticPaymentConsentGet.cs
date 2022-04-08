@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -54,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         protected override IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiRequests(
             BankApiSet bankApiSet,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
@@ -64,11 +63,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsentResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4>(
                         bankFinancialId,
-                        tokenEndpointResponse,
+                        accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
                         PaymentInitiationApiVersion.Version3p1p4,
@@ -78,11 +77,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
                         bankFinancialId,
-                        tokenEndpointResponse,
+                        accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
                         PaymentInitiationApiVersion.Version3p1p4,
@@ -99,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             BankApiSet bankApiInformation,
             BankRegistration bankRegistration,
             string bankFinancialId,
-            TokenEndpointResponse? userTokenEndpointResponse,
+            string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
             // Create non-error list

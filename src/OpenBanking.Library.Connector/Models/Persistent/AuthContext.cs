@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
@@ -20,16 +19,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public AuthContext(
             Guid id,
             string? name,
-            ReadWriteProperty<TokenEndpointResponse?> tokenEndpointResponse,
             string? createdBy,
-            ITimeProvider timeProvider) : base(id, name, createdBy, timeProvider)
+            ITimeProvider timeProvider,
+            string? accessToken,
+            int accessTokenExpiresIn,
+            string? refreshToken) : base(id, name, createdBy, timeProvider)
         {
-            TokenEndpointResponse = tokenEndpointResponse;
+            AccessToken = new ReadWritePropertyGroup<string?, int>(
+                accessToken,
+                accessTokenExpiresIn,
+                timeProvider,
+                createdBy);
+            RefreshToken = new ReadWriteProperty<string?>(refreshToken, timeProvider, createdBy);
         }
 
         /// <summary>
-        ///     Token endpoint response. If null, indicates auth not successfully completed.
+        ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
+        ///     not successfully completed.
         /// </summary>
-        public ReadWriteProperty<TokenEndpointResponse?> TokenEndpointResponse { get; set; } = null!;
+        public ReadWritePropertyGroup<string?, int> AccessToken { get; set; } = null!;
+
+
+        /// <summary>
+        ///     Refresh token. If null, indicates no refresh token received.
+        /// </summary>
+        public ReadWriteProperty<string?> RefreshToken { get; set; } = null!;
     }
 }

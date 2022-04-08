@@ -86,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     apiClient,
                     _instrumentationClient);
             IDeleteRequestProcessor deleteRequestProcessor =
-                new ApiDeleteRequestProcessor(tokenEndpointResponse, bankFinancialId);
+                new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
 
             return (persistedObject, apiClient, endpointUrl, deleteRequestProcessor, nonErrorMessages);
         }

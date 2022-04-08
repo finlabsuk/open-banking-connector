@@ -4,12 +4,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -60,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             ApiRequests(
                 BankApiSet bankApiSet,
                 string bankFinancialId,
-                TokenEndpointResponse tokenEndpointResponse,
+                string accessToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
@@ -70,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
-                        tokenEndpointResponse)),
+                        accessToken)),
                 null => throw new NullReferenceException("No VRP API specified for this bank."),
 
                 _ => throw new ArgumentOutOfRangeException(
@@ -84,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             BankApiSet bankApiInformation,
             BankRegistration bankRegistration,
             string bankFinancialId,
-            TokenEndpointResponse? userTokenEndpointResponse,
+            string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
             // Create non-error list
@@ -106,19 +104,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
-            // Get token
-            List<DomesticVrpConsentAuthContextPersisted> authContextsWithToken =
-                persistedObject.DomesticVrpConsentAuthContextsNavigation
-                    .Where(x => x.TokenEndpointResponse.Value != null)
-                    .ToList();
-
-            TokenEndpointResponse userTokenEndpointResponse =
-                authContextsWithToken.Any()
-                    ? authContextsWithToken
-                        .OrderByDescending(x => x.TokenEndpointResponse.Modified)
-                        .Select(x => x.TokenEndpointResponse.Value)
-                        .First()! // We already filtered out null entries above
-                    : throw new InvalidOperationException("No token is available for Domestic Payment Consent.");
+            // Get access token
+            string accessToken =
+                AuthContextAccessTokenGet.GetAccessToken(persistedObject.DomesticVrpConsentAuthContextsNavigation);
 
             string baseUrl =
                 bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??
@@ -126,7 +114,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             return (bankApiId, endpointUrl, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
-                userTokenEndpointResponse, nonErrorMessages);
+                accessToken, nonErrorMessages);
         }
 
         protected override DomesticVrpConsentReadFundsConfirmationResponse GetReadResponse(

@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -56,18 +54,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-
             var output = new AccountAccessConsentAuthContextPersisted(
                 Guid.NewGuid(),
                 request.Name,
-                tokenEndpointResponse,
-                request.AccountAccessConsentId,
                 createdBy,
-                timeProvider);
+                timeProvider,
+                null,
+                0,
+                null,
+                request.AccountAccessConsentId);
 
             return output;
         }

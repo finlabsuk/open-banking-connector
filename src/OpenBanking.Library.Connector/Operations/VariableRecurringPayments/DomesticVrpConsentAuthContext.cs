@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -56,18 +54,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            var tokenEndpointResponse = new ReadWriteProperty<TokenEndpointResponse?>(
-                null,
-                timeProvider,
-                createdBy);
-
             var output = new DomesticVrpConsentAuthContextPersisted(
                 Guid.NewGuid(),
                 request.Name,
-                tokenEndpointResponse,
-                request.DomesticVrpConsentId,
                 createdBy,
-                timeProvider);
+                timeProvider,
+                null,
+                0,
+                null,
+                request.DomesticVrpConsentId);
 
             return output;
         }

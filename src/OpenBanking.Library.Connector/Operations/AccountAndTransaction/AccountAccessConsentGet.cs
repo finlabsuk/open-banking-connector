@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -51,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
             BankApiSet bankApiSet,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
@@ -61,11 +60,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, tokenEndpointResponse),
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
                     new AccountAndTransactionPostRequestProcessor<
                         AccountAndTransactionModelsPublic.OBReadConsent1>(
                         bankFinancialId,
-                        tokenEndpointResponse,
+                        accessToken,
                         instrumentationClient)),
                 null => throw new NullReferenceException("No AISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
@@ -79,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             BankApiSet bankApiInformation,
             BankRegistration bankRegistration,
             string bankFinancialId,
-            TokenEndpointResponse? userTokenEndpointResponse,
+            string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
         {
             // Create non-error list
@@ -110,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             return (bankApiId, endpointUrl, persistedObject, bankApiInformation: bankApiSet, bankRegistration,
                 bankFinancialId,
-                userTokenEndpointResponse: null,
+                null,
                 nonErrorMessages);
         }
 

@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -61,19 +60,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
             BankApiSetPersisted bankApiSet,
             string bankFinancialId,
-            TokenEndpointResponse tokenEndpointResponse,
+            string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
-
-        // protected virtual void WriteObject(Utf8JsonWriter jsonWriter, TApiRequest apiRequest) { }
-        //
-        // protected virtual void WriteObject(Utf8JsonWriter jsonWriter, TApiResponse apiResponse) { }
-        //
-        //
-        // protected virtual TApiResponse ReadObject(JsonDocument jsonDocument)
-        // {
-        //     throw new NotImplementedException();
-        // }
 
         protected override async
             Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -85,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     BankApiSetPersisted bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
-                    TokenEndpointResponse? userTokenEndpointResponse,
+                    string? accessToken,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiPostRequestData(requestInfo.Request);
 
@@ -97,15 +86,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get client credentials grant token if necessary
-            TokenEndpointResponse tokenEndpointResponse =
-                userTokenEndpointResponse ??
-                await PostTokenRequest.PostClientCredentialsGrantAsync(
+            string accessTokenNew =
+                accessToken ??
+                (await PostTokenRequest.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
                     null,
                     apiClient,
-                    _instrumentationClient);
+                    _instrumentationClient))
+                .AccessToken;
 
             // Create new Open Banking object by posting JWT
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -115,40 +105,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 ApiRequests(
                     bankApiInformation,
                     bankFinancialId,
-                    tokenEndpointResponse,
+                    accessTokenNew,
                     processedSoftwareStatementProfile,
                     _instrumentationClient);
-
-
-            // // JSON write
-            // string json;
-            // {
-            //     var options = new JsonWriterOptions
-            //     {
-            //         Indented = true
-            //     };
-            //     using var stream = new MemoryStream();
-            //     using var writer = new Utf8JsonWriter(stream, options);
-            //     WriteObject(writer, apiRequest);
-            //     writer.Flush();
-            //     json = Encoding.UTF8.GetString(stream.ToArray());
-            //     Console.WriteLine("JSON 1");
-            //     Console.WriteLine(json);
-            // }
-            //
-            // // JSON read
-            // var documentOptions = new JsonDocumentOptions
-            // {
-            //     CommentHandling = JsonCommentHandling.Skip
-            // };
-            //
-            // using JsonDocument document = JsonDocument.Parse(json, documentOptions);
-            // TApiResponse apiResponse1 = ReadObject(document);
-            //
-            // Console.WriteLine("Done");
-            //
-            // throw new Exception("Stop");
-
 
             (TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
                 await EntityPostCommon(
@@ -182,7 +141,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 BankApiSetPersisted bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
-                TokenEndpointResponse? userTokenEndpointResponse,
+                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPostRequestData(TPublicRequest request);
     }
