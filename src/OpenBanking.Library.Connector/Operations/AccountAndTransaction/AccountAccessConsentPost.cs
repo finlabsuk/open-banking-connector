@@ -61,23 +61,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
         protected override string ClientCredentialsGrantScope => "accounts";
 
-        // protected override void WriteObject(
-        //     Utf8JsonWriter jsonWriter,
-        //     AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest)
-        // {
-        //     apiRequest.WriteObject(jsonWriter);
-        // }
-        //
-        // protected override AccountAndTransactionModelsPublic.OBReadConsentResponse1 ReadObject(JsonDocument jsonDocument)
-        // {
-        //     return AccountAndTransactionModelsPublic.OBReadConsentResponse1.DeserializeOBReadConsentResponse1(jsonDocument.RootElement);
-        // }
-        //
-        // protected override void WriteObject(Utf8JsonWriter jsonWriter, AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse)
-        // {
-        //     apiResponse.WriteObject(jsonWriter);
-        // }
-
         protected override async Task<AccountAccessConsentReadResponse> CreateLocalEntity(
             AccountAccessConsent request,
             AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest,

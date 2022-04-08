@@ -5,24 +5,36 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Period e.g. day, week, month etc. for which the fee/charge is capped. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBPeriod1CodeEnum
     {
         /// <summary> PACT. </summary>
+        [EnumMember(Value = "Pact")]
         Pact,
         /// <summary> PDAY. </summary>
+        [EnumMember(Value = "Pday")]
         Pday,
         /// <summary> PHYR. </summary>
+        [EnumMember(Value = "Phyr")]
         Phyr,
         /// <summary> PMTH. </summary>
+        [EnumMember(Value = "Pmth")]
         Pmth,
         /// <summary> PQTR. </summary>
+        [EnumMember(Value = "Pqtr")]
         Pqtr,
         /// <summary> PWEK. </summary>
+        [EnumMember(Value = "Pwek")]
         Pwek,
         /// <summary> PYER. </summary>
+        [EnumMember(Value = "Pyer")]
         Pyer
     }
 }

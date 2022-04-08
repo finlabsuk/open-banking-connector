@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -34,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// This is the servicer of the beneficiary account.
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
+        [JsonConstructor]
         public OBBeneficiary5(string accountId, string beneficiaryId, OBBeneficiaryType1CodeEnum? beneficiaryType, string reference, IReadOnlyDictionary<string, object> supplementaryData, OBBranchAndFinancialInstitutionIdentification60 creditorAgent, OBCashAccount50 creditorAccount)
         {
             AccountId = accountId;

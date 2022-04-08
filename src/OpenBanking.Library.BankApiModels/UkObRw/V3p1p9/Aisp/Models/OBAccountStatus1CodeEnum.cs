@@ -5,20 +5,30 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Specifies the status of account resource in code form. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBAccountStatus1CodeEnum
     {
         /// <summary> Deleted. </summary>
+        [EnumMember(Value = "Deleted")]
         Deleted,
         /// <summary> Disabled. </summary>
+        [EnumMember(Value = "Disabled")]
         Disabled,
         /// <summary> Enabled. </summary>
+        [EnumMember(Value = "Enabled")]
         Enabled,
         /// <summary> Pending. </summary>
+        [EnumMember(Value = "Pending")]
         Pending,
         /// <summary> ProForma. </summary>
+        [EnumMember(Value = "ProForma")]
         ProForma
     }
 }

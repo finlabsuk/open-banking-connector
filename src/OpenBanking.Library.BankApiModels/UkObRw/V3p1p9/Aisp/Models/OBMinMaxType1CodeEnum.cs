@@ -5,14 +5,18 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Min Max type. </summary>
     public enum OBMinMaxType1CodeEnum
     {
         /// <summary> FMMN. </summary>
+        [EnumMember(Value = "Fmmn")]
         Fmmn,
         /// <summary> FMMX. </summary>
+        [EnumMember(Value = "Fmmx")]
         Fmmx
     }
 }

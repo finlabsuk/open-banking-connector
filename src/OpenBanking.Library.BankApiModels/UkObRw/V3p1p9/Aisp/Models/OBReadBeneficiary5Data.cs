@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
@@ -21,6 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
 
         /// <summary> Initializes a new instance of OBReadBeneficiary5Data. </summary>
         /// <param name="beneficiary"></param>
+        [JsonConstructor]
         public OBReadBeneficiary5Data(IReadOnlyList<OBBeneficiary5> beneficiary)
         {
             Beneficiary = beneficiary;

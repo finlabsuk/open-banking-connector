@@ -5,16 +5,24 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Party type, in a coded form. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBExternalPartyType1CodeEnum
     {
         /// <summary> Delegate. </summary>
+        [EnumMember(Value = "Delegate")]
         Delegate,
         /// <summary> Joint. </summary>
+        [EnumMember(Value = "Joint")]
         Joint,
         /// <summary> Sole. </summary>
+        [EnumMember(Value = "Sole")]
         Sole
     }
 }

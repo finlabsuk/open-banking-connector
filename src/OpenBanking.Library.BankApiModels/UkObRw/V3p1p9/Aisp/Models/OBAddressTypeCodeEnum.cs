@@ -5,26 +5,39 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Identifies the nature of the postal address. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBAddressTypeCodeEnum
     {
         /// <summary> Business. </summary>
+        [EnumMember(Value = "Business")]
         Business,
         /// <summary> Correspondence. </summary>
+        [EnumMember(Value = "Correspondence")]
         Correspondence,
         /// <summary> DeliveryTo. </summary>
+        [EnumMember(Value = "DeliveryTo")]
         DeliveryTo,
         /// <summary> MailTo. </summary>
+        [EnumMember(Value = "MailTo")]
         MailTo,
         /// <summary> POBox. </summary>
+        [EnumMember(Value = "POBox")]
         POBox,
         /// <summary> Postal. </summary>
+        [EnumMember(Value = "Postal")]
         Postal,
         /// <summary> Residential. </summary>
+        [EnumMember(Value = "Residential")]
         Residential,
         /// <summary> Statement. </summary>
+        [EnumMember(Value = "Statement")]
         Statement
     }
 }
