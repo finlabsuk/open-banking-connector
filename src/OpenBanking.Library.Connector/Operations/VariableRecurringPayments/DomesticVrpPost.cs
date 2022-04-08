@@ -38,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>
     {
+        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticVrpConsentMethods;
 
 
@@ -58,6 +59,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             mapper)
         {
             _domesticVrpConsentMethods = domesticVrpConsentMethods;
+            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
+                softwareStatementProfileRepo,
+                dbSaveChangesMethod);
         }
 
         protected override string RelativePath => "/domestic-vrps";
@@ -165,8 +169,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             // Get access token
             string accessToken =
-                AuthContextAccessTokenGet.GetAccessToken(
-                    domesticPaymentConsent.DomesticVrpConsentAuthContextsNavigation);
+                await _authContextAccessTokenGet.GetAccessToken(
+                    domesticPaymentConsent.DomesticVrpConsentAuthContextsNavigation,
+                    bankRegistration);
 
             // Determine endpoint URL
             string baseUrl =

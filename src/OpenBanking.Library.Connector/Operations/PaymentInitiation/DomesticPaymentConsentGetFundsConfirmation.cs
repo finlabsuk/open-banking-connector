@@ -34,6 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentConsentReadFundsConfirmationResponse,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>
     {
+        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
+
         public DomesticPaymentConsentGetFundsConfirmation(
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -46,7 +48,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper) { }
+            mapper)
+        {
+            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
+                softwareStatementProfileRepo,
+                dbSaveChangesMethod);
+        }
 
         protected override string RelativePathBeforeId => "/domestic-payment-consents";
         protected override string RelativePathAfterId => "/funds-confirmation";
@@ -110,7 +117,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Get access token
             string accessToken =
-                AuthContextAccessTokenGet.GetAccessToken(persistedObject.DomesticPaymentConsentAuthContextsNavigation);
+                await _authContextAccessTokenGet.GetAccessToken(
+                    persistedObject.DomesticPaymentConsentAuthContextsNavigation,
+                    bankRegistration);
 
             // Determine endpoint URL
             string baseUrl =

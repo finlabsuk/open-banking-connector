@@ -65,7 +65,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper));
+                    _sharedContext.ApiVariantMapper,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass()));
 
         public IReadOnlyExternalEntityContext<BalancesResponse> Balances =>
             new ReadOnlyExternalEntityContextInternal<BalancesResponse>(
@@ -74,7 +75,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper));
+                    _sharedContext.ApiVariantMapper,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass()));
 
         public IReadOnlyExternalEntityContext<PartiesResponse> Parties =>
             new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
@@ -83,7 +85,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper));
+                    _sharedContext.ApiVariantMapper,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass()));
 
         public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
             new ReadOnlyExternalEntityContextInternal<Parties2Response>(
@@ -92,7 +95,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper));
+                    _sharedContext.ApiVariantMapper,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass()));
 
         public IReadOnlyExternalEntityContext<TransactionsResponse> Transactions =>
             new ReadOnlyExternalEntityContextInternal<TransactionsResponse>(
@@ -101,6 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper));
+                    _sharedContext.ApiVariantMapper,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass()));
     }
 }

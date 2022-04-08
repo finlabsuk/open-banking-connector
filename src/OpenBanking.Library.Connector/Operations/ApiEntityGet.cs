@@ -33,22 +33,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IObjectRead2<TPublicResponse>
         where TApiResponse : class, ISupportsValidation
     {
+        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
-
         public ApiEntityGet(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
             IInstrumentationClient instrumentationClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IApiVariantMapper mapper)
+            IApiVariantMapper mapper,
+            IDbSaveChangesMethod dbSaveChangesMethod)
         {
             _entityMethods = entityMethods;
             _instrumentationClient = instrumentationClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _mapper = mapper;
+            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
+                softwareStatementProfileRepo,
+                dbSaveChangesMethod);
         }
 
         protected abstract string RelativePath { get; }
@@ -83,7 +87,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Get access token
             string accessToken =
-                AuthContextAccessTokenGet.GetAccessToken(persistedObject.AccountAccessConsentAuthContextsNavigation);
+                await _authContextAccessTokenGet.GetAccessToken(
+                    persistedObject.AccountAccessConsentAuthContextsNavigation,
+                    bankRegistration);
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =

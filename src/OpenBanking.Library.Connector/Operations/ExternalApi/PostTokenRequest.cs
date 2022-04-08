@@ -94,6 +94,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 apiClient);
         }
 
+        public static async Task<TokenEndpointResponse> PostRefreshTokenGrantAsync(
+            string refreshToken,
+            string redirectUrl,
+            BankRegistration bankRegistration,
+            JsonSerializerSettings? jsonSerializerSettings,
+            IApiClient apiClient)
+        {
+            var keyValuePairs = new Dictionary<string, string>
+            {
+                { "grant_type", "refresh_token" },
+                { "refresh_token", refreshToken },
+                { "redirect_uri", redirectUrl }
+            };
+
+            return await PostGrantAsync(
+                keyValuePairs,
+                bankRegistration,
+                jsonSerializerSettings,
+                apiClient);
+        }
+
+
         private static async Task<TokenEndpointResponse> PostGrantAsync(
             Dictionary<string, string> keyValuePairs,
             BankRegistration bankRegistration,

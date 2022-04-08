@@ -5,7 +5,6 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -26,11 +25,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
             IInstrumentationClient instrumentationClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IApiVariantMapper mapper) : base(
+            IApiVariantMapper mapper,
+            IDbSaveChangesMethod dbSaveChangesMethod) : base(
             entityMethods,
             instrumentationClient,
             softwareStatementProfileRepo,
-            mapper) { }
+            mapper,
+            dbSaveChangesMethod) { }
 
         protected override string RelativePath => "/balances";
         protected override string RelativePath2 => "/balances";

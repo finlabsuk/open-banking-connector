@@ -26,7 +26,6 @@ using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
 
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
@@ -34,6 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             DomesticVrpConsentReadFundsConfirmationResponse,
             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
     {
+        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
+
         public DomesticVrpConsentGetFundsConfirmation(
             IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -46,7 +47,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper) { }
+            mapper)
+        {
+            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
+                softwareStatementProfileRepo,
+                dbSaveChangesMethod);
+        }
 
         protected override string RelativePathBeforeId => "/domestic-vrp-consents";
         protected override string RelativePathAfterId => "/funds-confirmation";
@@ -106,7 +112,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             // Get access token
             string accessToken =
-                AuthContextAccessTokenGet.GetAccessToken(persistedObject.DomesticVrpConsentAuthContextsNavigation);
+                await _authContextAccessTokenGet.GetAccessToken(
+                    persistedObject.DomesticVrpConsentAuthContextsNavigation,
+                    bankRegistration);
 
             string baseUrl =
                 bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??

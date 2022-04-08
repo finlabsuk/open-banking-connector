@@ -38,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentResponse,
             PaymentInitiationModelsPublic.OBWriteDomestic2, PaymentInitiationModelsPublic.OBWriteDomesticResponse5>
     {
+        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
         public DomesticPaymentPost(
@@ -57,6 +58,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             mapper)
         {
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
+                softwareStatementProfileRepo,
+                dbSaveChangesMethod);
         }
 
         protected override string RelativePath => "/domestic-payments";
@@ -175,8 +179,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Get access token
             string accessToken =
-                AuthContextAccessTokenGet.GetAccessToken(
-                    domesticPaymentConsent.DomesticPaymentConsentAuthContextsNavigation);
+                await _authContextAccessTokenGet.GetAccessToken(
+                    domesticPaymentConsent.DomesticPaymentConsentAuthContextsNavigation,
+                    bankRegistration);
 
             // Determine endpoint URL
             string baseUrl =
