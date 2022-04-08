@@ -88,14 +88,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Get token
             List<AccountAccessConsentAuthContext> authContextsWithToken =
                 persistedObject.AccountAccessConsentAuthContextsNavigation
-                    .Where(x => x.TokenEndpointResponse.Data != null)
+                    .Where(x => x.TokenEndpointResponse.Value != null)
                     .ToList();
 
             TokenEndpointResponse tokenEndpointResponse =
                 authContextsWithToken.Any()
                     ? authContextsWithToken
                         .OrderByDescending(x => x.TokenEndpointResponse.Modified)
-                        .Select(x => x.TokenEndpointResponse.Data)
+                        .Select(x => x.TokenEndpointResponse.Value)
                         .First()! // We already filtered out null entries above
                     : throw new InvalidOperationException("No token is available for Account Access Consent.");
 

@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 p => p.TokenEndpointResponse,
                 od =>
                 {
-                    od.Property(e => e.Data)
+                    od.Property(e => e.Value)
                         .IsRequired(false)
                         .HasConversion(
                             v => JsonConvert.SerializeObject(v, _jsonFormatting),

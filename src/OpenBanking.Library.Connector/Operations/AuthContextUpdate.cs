@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
             // Checks
-            if (!(authContext.TokenEndpointResponse.Data is null))
+            if (!(authContext.TokenEndpointResponse.Value is null))
             {
                 throw new InvalidOperationException("Auth context already has token so aborting.");
             }

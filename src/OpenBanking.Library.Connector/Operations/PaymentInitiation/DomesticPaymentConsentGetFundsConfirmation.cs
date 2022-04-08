@@ -112,14 +112,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Get token
             List<DomesticPaymentConsentAuthContextPersisted> authContextsWithToken =
                 persistedObject.DomesticPaymentConsentAuthContextsNavigation
-                    .Where(x => x.TokenEndpointResponse.Data != null)
+                    .Where(x => x.TokenEndpointResponse.Value != null)
                     .ToList();
 
             TokenEndpointResponse userTokenEndpointResponse =
                 authContextsWithToken.Any()
                     ? authContextsWithToken
                         .OrderByDescending(x => x.TokenEndpointResponse.Modified)
-                        .Select(x => x.TokenEndpointResponse.Data)
+                        .Select(x => x.TokenEndpointResponse.Value)
                         .First()! // We already filtered out null entries above
                     : throw new InvalidOperationException("No token is available for Domestic Payment Consent.");
 

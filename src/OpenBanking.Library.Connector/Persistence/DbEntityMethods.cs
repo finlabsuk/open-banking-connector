@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             }
 
             // Check whether deleted
-            if (entity.IsDeleted.Data)
+            if (entity.IsDeleted.Value)
             {
                 throw new InvalidOperationException("Entity marked as deleted so will not add");
             }

@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 p => p.BankApiResponse,
                 od =>
                 {
-                    od.Property(e => e.Data)
+                    od.Property(e => e.Value)
                         .HasConversion(
                             v => JsonConvert.SerializeObject(v, _jsonFormatting),
                             v =>

@@ -9,39 +9,83 @@ using Microsoft.EntityFrameworkCore;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     /// <summary>
-    ///     Mutable property in DB.
+    ///     Mutable single property in DB.
     ///     Please note that properties are read-only so they are created via the
     ///     constructor only when the object is replaced and not adjusted one by one.
     ///     This means they must also be explicitly mapped in OnModelCreating().
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     [Owned]
-    public class ReadWriteProperty<TData>
+    public class ReadWriteProperty<TValue>
     {
         /// <summary>
         ///     Constructor intended for use by EF Core only.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="value"></param>
         /// <param name="modified"></param>
         /// <param name="modifiedBy"></param>
-        private protected ReadWriteProperty(TData data, DateTimeOffset modified, string? modifiedBy)
+        private protected ReadWriteProperty(TValue value, DateTimeOffset modified, string? modifiedBy)
         {
-            Data = data;
+            Value = value;
             Modified = modified;
             ModifiedBy = modifiedBy;
         }
 
-        public ReadWriteProperty(TData data, ITimeProvider timeProvider, string? modifiedBy)
+        public ReadWriteProperty(TValue value, ITimeProvider timeProvider, string? modifiedBy)
         {
-            Data = data;
+            Value = value;
             Modified = timeProvider.GetUtcNow();
             ModifiedBy = modifiedBy;
         }
 
-        public TData Data { get; }
+        public TValue Value { get; }
 
         public DateTimeOffset Modified { get; }
 
         public string? ModifiedBy { get; }
     }
+
+    /// <summary>
+    ///     Mutable property group in DB.
+    ///     Please note that properties are read-only so they are created via the
+    ///     constructor only when the object is replaced and not adjusted one by one.
+    ///     This means they must also be explicitly mapped in OnModelCreating().
+    /// </summary>
+    /// <typeparam name="TValue1"></typeparam>
+    /// <typeparam name="TValue2"></typeparam>
+    [Owned]
+    public class ReadWritePropertyGroup<TValue1, TValue2>
+    {
+        /// <summary>
+        ///     Constructor intended for use by EF Core only.
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <param name="modified"></param>
+        /// <param name="modifiedBy"></param>
+        private protected ReadWritePropertyGroup(TValue1 value1, TValue2 value2, DateTimeOffset modified, string? modifiedBy)
+        {
+            Value1 = value1;
+            Value2 = value2;
+            Modified = modified;
+            ModifiedBy = modifiedBy;
+        }
+
+        public ReadWritePropertyGroup(TValue1 value1, TValue2 value2, ITimeProvider timeProvider, string? modifiedBy)
+        {
+            Value1 = value1;
+            Value2 = value2;
+            Modified = timeProvider.GetUtcNow();
+            ModifiedBy = modifiedBy;
+        }
+
+        public TValue1 Value1 { get; }
+
+        public TValue2 Value2 { get; }
+
+        public DateTimeOffset Modified { get; }
+
+        public string? ModifiedBy { get; }
+    }
+
 }

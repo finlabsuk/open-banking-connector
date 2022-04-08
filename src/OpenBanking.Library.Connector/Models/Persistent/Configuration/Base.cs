@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 e => e.IsDeleted,
                 o =>
                 {
-                    o.Property(e => e.Data)
+                    o.Property(e => e.Value)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
                     o.Property(e => e.Modified)
                         .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Enforce soft delete where supported (global query filters not supported for inherited types in type per hierarchy)
             if (_supportsGlobalQueryFilter)
             {
-                builder.HasQueryFilter(p => !p.IsDeleted.Data);
+                builder.HasQueryFilter(p => !p.IsDeleted.Value);
             }
         }
     }

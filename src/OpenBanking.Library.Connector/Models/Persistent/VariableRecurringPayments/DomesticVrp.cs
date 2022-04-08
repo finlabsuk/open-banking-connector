@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                     apiResponse,
                     timeProvider,
                     createdBy);
-            ExternalApiId = BankApiResponse.Data.Data.DomesticVRPId;
+            ExternalApiId = BankApiResponse.Value.Data.DomesticVRPId;
         }
 
         public Guid DomesticVrpConsentId { get; set; }

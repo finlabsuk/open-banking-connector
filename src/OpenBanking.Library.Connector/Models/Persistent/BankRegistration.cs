@@ -76,10 +76,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                     apiResponse,
                     timeProvider,
                     createdBy);
-            ExternalApiId = BankApiResponse.Data.ClientId;
-            ExternalApiSecret = BankApiResponse.Data.ClientSecret;
-            RegistrationAccessToken = BankApiResponse.Data.RegistrationAccessToken;
-            RedirectUris = BankApiResponse.Data.RedirectUris;
+            ExternalApiId = BankApiResponse.Value.ClientId;
+            ExternalApiSecret = BankApiResponse.Value.ClientSecret;
+            RegistrationAccessToken = BankApiResponse.Value.RegistrationAccessToken;
+            RedirectUris = BankApiResponse.Value.RedirectUris;
         }
 
         public string SoftwareStatementProfileId { get; set; } = null!;

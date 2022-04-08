@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                     apiResponse,
                     timeProvider,
                     createdBy);
-            ExternalApiId = BankApiResponse.Data.Data.DomesticPaymentId;
+            ExternalApiId = BankApiResponse.Value.Data.DomesticPaymentId;
         }
 
         public Guid DomesticPaymentConsentId { get; set; }
