@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -19,7 +18,8 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
-    internal class PartyGet : ApiEntityGet<PartiesResponse, AccountAndTransactionModelsPublic.OBReadParty2>
+    internal class PartyGet : AccountAccessConsentExternalObject<PartiesResponse,
+        AccountAndTransactionModelsPublic.OBReadParty2>
     {
         public PartyGet(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
@@ -33,8 +33,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             mapper,
             dbSaveChangesMethod) { }
 
-        protected override string RelativePath => "/party";
-        protected override string RelativePath2 => "/party";
+        protected string RelativePath => "/party";
+        protected string RelativePath2 => "/party";
+
+        protected override Uri RetrieveGetUrl(
+            string baseUrl,
+            string? externalApiAccountId,
+            string? externalApiStatementId)
+        {
+            Uri endpointUrl =
+                (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
+                {
+                    (null, null) => new Uri(baseUrl + RelativePath),
+                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
+                    ({ } extAccountId, { } extStatementId) => new Uri(
+                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            return endpointUrl;
+        }
 
         protected override PartiesResponse PublicGetResponse(AccountAndTransactionModelsPublic.OBReadParty2 apiResponse)
         {
@@ -48,7 +65,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
             string accessToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             accountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {

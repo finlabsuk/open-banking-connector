@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -19,7 +18,8 @@ using AccountAndTransactionModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
-    internal class BalanceGet : ApiEntityGet<BalancesResponse, AccountAndTransactionModelsPublic.OBReadBalance1>
+    internal class BalanceGet : AccountAccessConsentExternalObject<BalancesResponse,
+        AccountAndTransactionModelsPublic.OBReadBalance1>
     {
         public BalanceGet(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
@@ -33,8 +33,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             mapper,
             dbSaveChangesMethod) { }
 
-        protected override string RelativePath => "/balances";
-        protected override string RelativePath2 => "/balances";
+        protected string RelativePath => "/balances";
+        protected string RelativePath2 => "/balances";
+
+        protected override Uri RetrieveGetUrl(
+            string baseUrl,
+            string? externalApiAccountId,
+            string? externalApiStatementId)
+        {
+            Uri endpointUrl =
+                (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
+                {
+                    (null, null) => new Uri(baseUrl + RelativePath),
+                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
+                    ({ } extAccountId, { } extStatementId) => new Uri(
+                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            return endpointUrl;
+        }
 
         protected override BalancesResponse PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse)
@@ -49,7 +66,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
             string accessToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient) =>
             accountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {

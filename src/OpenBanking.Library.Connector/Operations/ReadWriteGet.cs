@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiClient apiClient,
             Uri uri,
             JsonSerializerSettings? jsonSerializerSettings,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id)
+            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id, string? modifiedBy)
         {
             (string bankApiId,
                     Uri endpointUrl,
@@ -70,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     string bankFinancialId,
                     string? accessToken,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await ApiGetRequestData(id);
+                await ApiGetRequestData(id, modifiedBy);
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -114,6 +114,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 string bankFinancialId,
                 string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiGetRequestData(Guid id);
+            ApiGetRequestData(Guid id, string? modifiedBy);
     }
 }

@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public AuthContextsContext(ISharedContext sharedContext)
         {
-            PostObject = new AuthContextUpdate(
+            CreateObject = new AuthContextUpdate(
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
@@ -53,6 +53,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 apiResponseOverrideFile);
 
         public ISharedContext Context { get; }
-        public IObjectPost<AuthResult, AuthContextResponse> PostObject { get; }
+        public IObjectCreate<AuthResult, AuthContextResponse> CreateObject { get; }
     }
 }

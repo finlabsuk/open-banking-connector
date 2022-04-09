@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     internal interface ILocalEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
         TPublicReadLocalResponse> :
         ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>,
-        ICreateContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
+        ICreateLocalContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
         IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
         where TPublicCreateLocalResponse : class
         where TPublicReadLocalResponse : class

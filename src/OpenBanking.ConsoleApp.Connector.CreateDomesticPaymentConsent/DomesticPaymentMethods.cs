@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// <param name="requestBuilder"></param>
         /// <param name="testNameUnique"></param>
         /// <returns></returns>
-        public static async Task<Guid> Create(
+        public static async Task<string> Create(
             DomesticPaymentConsent domesticPaymentConsentRequest,
             Guid domesticPaymentConsentId,
             IRequestBuilder requestBuilder,
@@ -38,7 +38,6 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 new DomesticPayment
                 {
                     ExternalApiRequest = obWriteDomestic,
-                    DomesticPaymentConsentId = domesticPaymentConsentId,
                     Name = testNameUnique
                 };
 
@@ -47,8 +46,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPayments
-                    .CreateAsync(domesticPaymentRequest);
-            Guid domesticPaymentId = domesticPaymentResponse.Data!.Id;
+                    .CreateAsync(domesticPaymentRequest, domesticPaymentConsentId);
+            string domesticPaymentId = domesticPaymentResponse.Data!.ExternalApiResponse.Data.DomesticPaymentId;
 
             // Return ID of created object
             return domesticPaymentId;

@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         public AccountAccessConsentsConsentContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            PostObject = new AccountAccessConsentPost(
+            CreateObject = new AccountAccessConsentPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -108,7 +108,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
         public IObjectRead<AccountAccessConsentReadResponse> ReadObject { get; }
 
-        public IObjectPost<AccountAccessConsentRequest, AccountAccessConsentReadResponse> PostObject { get; }
+        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentReadResponse> CreateObject { get; }
 
         public IObjectReadLocal<IAccountAccessConsentPublicQuery, AccountAccessConsentReadLocalResponse> ReadLocalObject
         {

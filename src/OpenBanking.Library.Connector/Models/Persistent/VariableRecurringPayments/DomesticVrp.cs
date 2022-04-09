@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             createdBy,
             timeProvider)
         {
-            DomesticVrpConsentId = request.DomesticVrpConsentId;
+            DomesticVrpConsentId = Guid.NewGuid();
             BankApiRequest = apiRequest;
             BankApiResponse =
                 new ReadWriteProperty<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(

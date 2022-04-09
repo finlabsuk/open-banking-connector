@@ -84,7 +84,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 {
                     Name = null,
                     ExternalApiRequest = obDomesticVrpRequest,
-                    DomesticVrpConsentId = default
                 };
 
             // POST domestic payment consent
@@ -197,22 +196,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .AppendToPath("domesticVrp")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticVrpRequest);
-                domesticVrpRequest.DomesticVrpConsentId = domesticVrpConsentId;
                 domesticVrpRequest.Name = testNameUnique;
-                IFluentResponse<DomesticVrpResponse>? domesticVrpResp =
+                IFluentResponse<DomesticVrpResponse> domesticVrpResp =
                     await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                        .CreateAsync(domesticVrpRequest);
+                        .CreateAsync(domesticVrpRequest, domesticVrpConsentId);
 
                 // Checks
                 domesticVrpResp.Should().NotBeNull();
                 domesticVrpResp.Messages.Should().BeEmpty();
                 domesticVrpResp.Data.Should().NotBeNull();
-                Guid domesticVrpId = domesticVrpResp.Data!.Id;
+                string domesticVrpExternalId = domesticVrpResp.Data!.ExternalApiResponse.Data.DomesticVRPId;
 
                 // GET domestic payment
                 IFluentResponse<DomesticVrpResponse> domesticVrpResp2 =
                     await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                        .ReadAsync(domesticVrpId);
+                        .ReadAsync(domesticVrpExternalId, domesticVrpConsentId);
 
                 // Checks
                 domesticVrpResp2.Should().NotBeNull();

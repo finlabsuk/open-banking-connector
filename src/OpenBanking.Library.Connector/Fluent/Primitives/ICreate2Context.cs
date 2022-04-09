@@ -14,55 +14,49 @@ using FluentValidation.Results;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
     /// <summary>
-    ///     Fluent interface methods for CreateLocal.
+    ///     Fluent interface methods for Create.
     /// </summary>
     /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicPostResponse"></typeparam>
-    public interface ICreateLocalContext<in TPublicRequest, TPublicPostResponse>
-        where TPublicPostResponse : class
+    /// <typeparam name="TPublicResponse"></typeparam>
+    public interface ICreate2Context<in TPublicRequest, TPublicResponse>
+        where TPublicResponse : class
     {
+        
         /// <summary>
-        ///     CREATE local object (does not include POSTing object to bank API).
-        ///     Object will be created in local database only.
+        ///     CREATE object (includes POSTing object to bank API).
+        ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
         /// </summary>
-        /// <param name="publicRequest">Request object</param>
-        /// <param name="createdBy">Optional user name or comment for DB record(s).</param>
-        /// <param name="apiRequestWriteFile"></param>
-        /// <param name="apiResponseWriteFile"></param>
-        /// <param name="apiResponseOverrideFile"></param>
+        /// <param name="request"></param>
+        /// <param name="consentId"></param>
+        /// <param name="createdBy"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicPostResponse>> CreateLocalAsync(
-            TPublicRequest publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
+        Task<IFluentResponse<TPublicResponse>> CreateAsync(
+            TPublicRequest request,
+            Guid consentId,
+            string? createdBy = null);
     }
 
     internal interface
-        ICreateLocalContextInternal<in TPublicRequest, TPublicResponse> :
-            ICreateLocalContext<TPublicRequest, TPublicResponse>, IBaseContextInternal
+        ICreate2ContextInternal<in TPublicRequest, TPublicResponse> :
+            ICreate2Context<TPublicRequest, TPublicResponse>, IBaseContextInternal
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {
-        IObjectCreate<TPublicRequest, TPublicResponse> CreateLocalObject { get; }
+        IObjectCreate2<TPublicRequest, TPublicResponse> CreateObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> ICreateLocalContext<TPublicRequest, TPublicResponse>.
-            CreateLocalAsync(
-                TPublicRequest publicRequest,
-                string? createdBy,
-                string? apiRequestWriteFile,
-                string? apiResponseWriteFile,
-                string? apiResponseOverrideFile)
+        async Task<IFluentResponse<TPublicResponse>> ICreate2Context<TPublicRequest, TPublicResponse>.CreateAsync(
+            TPublicRequest request,
+            Guid consentId,
+            string? createdBy)
         {
-            publicRequest.ArgNotNull(nameof(publicRequest));
+            request.ArgNotNull(nameof(request));
 
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Validate request data and convert to messages
-            ValidationResult validationResult = await publicRequest.ValidateAsync();
+            ValidationResult validationResult = await request.ValidateAsync();
             IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
                 validationResult.ProcessValidationResultsAndReturnBadRequestErrorMessages(
                     "prefix",
@@ -86,12 +80,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             try
             {
                 (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await CreateLocalObject.CreateAsync(
-                        publicRequest,
-                        createdBy,
-                        apiRequestWriteFile,
-                        apiResponseWriteFile,
-                        apiResponseOverrideFile);
+                    await CreateObject.CreateAsync(
+                        request,
+                        consentId,
+                        createdBy);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 
                 // Return success response (thrown exceptions produce error response)

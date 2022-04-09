@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             createdBy,
             timeProvider)
         {
-            DomesticPaymentConsentId = request.DomesticPaymentConsentId;
+            DomesticPaymentConsentId = Guid.NewGuid();
             BankApiRequest = apiRequest;
             BankApiResponse =
                 new ReadWriteProperty<PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(

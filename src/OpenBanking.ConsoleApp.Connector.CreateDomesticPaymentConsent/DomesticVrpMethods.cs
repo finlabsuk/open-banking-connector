@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// <param name="requestBuilder"></param>
         /// <param name="testNameUnique"></param>
         /// <returns></returns>
-        public static async Task<Guid> Create(
+        public static async Task<string> Create(
             DomesticVrpConsent domesticVrpConsentRequest,
             Guid domesticVrpConsentId,
             IRequestBuilder requestBuilder,
@@ -39,7 +39,6 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 {
                     ExternalApiRequest = obDomesticVrpRequest,
                     Name = testNameUnique,
-                    DomesticVrpConsentId = domesticVrpConsentId,
                 };
 
             // POST domestic VRP
@@ -47,8 +46,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrps
-                    .CreateAsync(domesticVrpRequest);
-            Guid domesticVrpId = domesticVrpResponse.Data!.Id;
+                    .CreateAsync(domesticVrpRequest, domesticVrpConsentId);
+            string domesticVrpId = domesticVrpResponse.Data!.ExternalApiResponse.Data.DomesticVRPId;
 
             // Return ID of created object
             return domesticVrpId;

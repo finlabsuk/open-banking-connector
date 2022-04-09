@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     /// <typeparam name="TPublicRequest"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
     public interface IExternalEntityContext<in TPublicRequest, TPublicResponse> :
-        ICreateContext<TPublicRequest, TPublicResponse>,
-        IReadContext<TPublicResponse>
+        ICreate2Context<TPublicRequest, TPublicResponse>,
+        IRead3Context<TPublicResponse>
         where TPublicResponse : class { }
 
     internal interface IExternalEntityContextInternal<in TPublicRequest, TPublicResponse> :
         IExternalEntityContext<TPublicRequest, TPublicResponse>,
-        ICreateContextInternal<TPublicRequest, TPublicResponse>,
-        IReadContextInternal<TPublicResponse>
+        ICreate2ContextInternal<TPublicRequest, TPublicResponse>,
+        IRead3ContextInternal<TPublicResponse>
         where TPublicResponse : class
         where TPublicRequest : class, ISupportsValidation { }
 
@@ -32,17 +32,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public ExternalEntityContextInternal(
             ISharedContext context,
-            IObjectPost<TPublicRequest, TPublicResponse> postObject,
-            IObjectRead<TPublicResponse> readObject)
+            IObjectCreate2<TPublicRequest, TPublicResponse> postObject,
+            IObjectRead3<TPublicResponse> readObject)
         {
             ReadObject = readObject;
             Context = context;
-            PostObject = postObject;
+            CreateObject = postObject;
         }
 
-        public IObjectRead<TPublicResponse> ReadObject { get; }
+        public IObjectRead3<TPublicResponse> ReadObject { get; }
 
         public ISharedContext Context { get; }
-        public IObjectPost<TPublicRequest, TPublicResponse> PostObject { get; }
+        public IObjectCreate2<TPublicRequest, TPublicResponse> CreateObject { get; }
     }
 }

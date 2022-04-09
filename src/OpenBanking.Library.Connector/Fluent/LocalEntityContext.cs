@@ -24,9 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public LocalEntityContextInternal(
             ISharedContext sharedContext,
-            IObjectPost<TPublicRequest, TPublicCreateLocalResponse> postObject) : base(sharedContext)
+            IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> postObject) : base(sharedContext)
         {
-            PostObject = postObject;
+            CreateLocalObject = postObject;
             ReadLocalObject =
                 new LocalEntityGet<TEntity, TPublicQuery, TPublicReadLocalResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                     sharedContext.Instrumentation);
         }
 
-        public IObjectPost<TPublicRequest, TPublicCreateLocalResponse> PostObject { get; }
+        public IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> CreateLocalObject { get; }
 
         public IObjectReadLocal<TPublicQuery, TPublicReadLocalResponse> ReadLocalObject { get; }
     }

@@ -85,7 +85,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 new DomesticPaymentRequest
                 {
                     ExternalApiRequest = obWriteDomestic,
-                    DomesticPaymentConsentId = default,
                     Name = null
                 };
 
@@ -192,7 +191,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .AppendToPath("domesticPayment")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticPaymentRequest);
-                domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
                 domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
                     domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification;
                 domesticPaymentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
@@ -200,18 +198,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticPaymentRequest.Name = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .CreateAsync(domesticPaymentRequest);
+                        .CreateAsync(domesticPaymentRequest, domesticPaymentConsentId);
 
                 // Checks
                 domesticPaymentResp.Should().NotBeNull();
                 domesticPaymentResp.Messages.Should().BeEmpty();
                 domesticPaymentResp.Data.Should().NotBeNull();
-                Guid domesticPaymentId = domesticPaymentResp.Data!.Id;
+                string domesticPaymentExternalId = domesticPaymentResp.Data!.ExternalApiResponse.Data.DomesticPaymentId;
 
                 // GET domestic payment
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp2 =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
-                        .ReadAsync(domesticPaymentId);
+                        .ReadAsync(domesticPaymentExternalId, domesticPaymentConsentId);
 
                 // Checks
                 domesticPaymentResp2.Should().NotBeNull();

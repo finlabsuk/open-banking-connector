@@ -41,12 +41,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal interface
         ICreateContextInternal<in TPublicRequest, TPublicResponse> :
-            ICreateContext<TPublicRequest, TPublicResponse>,
-            ICreateLocalContext<TPublicRequest, TPublicResponse>, IBaseContextInternal
+            ICreateContext<TPublicRequest, TPublicResponse>, IBaseContextInternal
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {
-        IObjectPost<TPublicRequest, TPublicResponse> PostObject { get; }
+        IObjectCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
 
         async Task<IFluentResponse<TPublicResponse>> ICreateContext<TPublicRequest, TPublicResponse>.CreateAsync(
             TPublicRequest publicRequest,
@@ -86,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             try
             {
                 (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await PostObject.CreateAsync(
+                    await CreateObject.CreateAsync(
                         publicRequest,
                         createdBy,
                         apiRequestWriteFile,
@@ -115,17 +114,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                     new List<FluentResponseOtherErrorMessage> { ex.CreateOtherErrorMessage() });
             }
         }
-
-        Task<IFluentResponse<TPublicResponse>> ICreateLocalContext<TPublicRequest, TPublicResponse>.CreateLocalAsync(
-            TPublicRequest publicRequest,
-            string? createdBy,
-            string? apiRequestWriteFile,
-            string? apiResponseWriteFile,
-            string? apiResponseOverrideFile) => CreateAsync(
-            publicRequest,
-            createdBy,
-            apiRequestWriteFile,
-            apiResponseWriteFile,
-            apiResponseOverrideFile);
     }
 }

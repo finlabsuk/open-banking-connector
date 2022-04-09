@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -20,8 +19,10 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
+using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
+using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     /// <summary>
     ///     Read operations on entities (objects stored in external (i.e. bank) database and local database).
@@ -29,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TPublicResponse"></typeparam>
     /// <typeparam name="TApiResponse"></typeparam>
     internal abstract class
-        ApiEntityGet<TPublicResponse, TApiResponse> :
+        AccountAccessConsentExternalObject<TPublicResponse, TApiResponse> :
             IObjectRead2<TPublicResponse>
         where TApiResponse : class, ISupportsValidation
     {
@@ -39,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
-        public ApiEntityGet(
+        public AccountAccessConsentExternalObject(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
             IInstrumentationClient instrumentationClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
@@ -55,24 +56,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 dbSaveChangesMethod);
         }
 
-        protected abstract string RelativePath { get; }
-
-        protected abstract string RelativePath2 { get; }
-
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ReadAsync(
                 Guid consentId,
                 string? externalApiAccountId,
-                string? externalApiStatementId)
+                string? externalApiStatementId,
+                string? modifiedBy)
         {
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
-            // READ from bank API
-
-            // Load object
-            AccountAccessConsentPersisted persistedObject =
+            // Get consent and associated data
+            AccountAccessConsentPersisted persistedConsent =
                 await _entityMethods
                     .DbSet
                     .Include(o => o.AccountAccessConsentAuthContextsNavigation)
@@ -81,47 +77,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
-            BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
-            string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
+            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
+            AccountAndTransactionApi accountAndTransactionApi =
+                bankApiSet.AccountAndTransactionApi ??
+                throw new InvalidOperationException("Bank API Set has no Account and Transaction API specified.");
+            BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
+            string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
-            // Get access token
-            string accessToken =
-                await _authContextAccessTokenGet.GetAccessToken(
-                    persistedObject.AccountAccessConsentAuthContextsNavigation,
-                    bankRegistration);
-
-            // Get software statement profile
+            // Get API client
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
                     bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.AccountAndTransactionApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Account and Transaction API.");
-            Uri endpointUrl =
-                (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
-                {
-                    (null, null) => new Uri(baseUrl + RelativePath),
-                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
-                    ({ } extAccountId, { } extStatementId) => new Uri(
-                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
-                    _ => throw new ArgumentOutOfRangeException()
-                };
+            // Get access token
+            string accessToken =
+                await _authContextAccessTokenGet.GetAccessToken(
+                    persistedConsent.AccountAccessConsentAuthContextsNavigation,
+                    bankRegistration,
+                    modifiedBy);
 
-            // Create new Open Banking object by posting JWT
+            // Retrieve endpoint URL
+            Uri endpointUrl = RetrieveGetUrl(
+                accountAndTransactionApi.BaseUrl,
+                externalApiAccountId,
+                externalApiStatementId);
+
+            // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
             IApiGetRequests<TApiResponse> apiRequests = ApiRequests(
                 bankApiSet.AccountAndTransactionApi,
                 bankFinancialId,
                 accessToken,
-                processedSoftwareStatementProfile,
                 _instrumentationClient);
-
-            // L1
             TApiResponse apiResponse;
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             (apiResponse, newNonErrorMessages) =
@@ -132,11 +121,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
 
-            // Create response (may involve additional processing based on entity)
+            // Create response
             TPublicResponse response = PublicGetResponse(apiResponse);
 
             return (response, nonErrorMessages);
         }
+
+        protected abstract Uri RetrieveGetUrl(
+            string baseUrl,
+            string? externalApiAccountId,
+            string? externalApiStatementId);
 
         protected abstract TPublicResponse PublicGetResponse(TApiResponse apiResponse);
 
@@ -144,7 +138,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
             string accessToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
     }
 }

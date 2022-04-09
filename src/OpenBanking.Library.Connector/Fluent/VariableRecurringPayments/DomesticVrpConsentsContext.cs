@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         public DomesticVrpConsentsContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            PostObject = new DomesticVrpConsentPost(
+            CreateObject = new DomesticVrpConsentPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -121,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             get;
         }
 
-        public IObjectPost<DomesticVrpConsentRequest, DomesticVrpConsentReadResponse> PostObject { get; }
+        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentReadResponse> CreateObject { get; }
         public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
         public IObjectDelete DeleteObject { get; }
     }

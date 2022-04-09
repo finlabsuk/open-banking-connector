@@ -26,7 +26,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class AuthContextUpdate :
-        IObjectPost<AuthResult, AuthContextResponse>
+        IObjectCreate<AuthResult, AuthContextResponse>
     {
         private readonly
             IDbReadWriteEntityMethods<AuthContext>

@@ -15,36 +15,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IRead2Context<TPublicResponse>
+    public interface IRead3Context<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
         ///     READ objects using consent ID (includes GETing objects from bank API).
         ///     Objects will be read from bank database only.
         /// </summary>
+        /// <param name="externalId"></param>
         /// <param name="consentId"></param>
-        /// <param name="externalAccountId"></param>
-        /// <param name="externalStatementId"></param>
         /// <param name="modifiedBy"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> ReadAsync(
+            string externalId,
             Guid consentId,
-            string? externalAccountId = null,
-            string? externalStatementId = null,
             string? modifiedBy = null);
     }
 
     internal interface
-        IRead2ContextInternal<TPublicResponse> : IRead2Context<TPublicResponse>,
+        IRead3ContextInternal<TPublicResponse> : IRead3Context<TPublicResponse>,
             IBaseContextInternal
         where TPublicResponse : class
     {
-        IObjectRead2<TPublicResponse> ReadObject { get; }
+        IObjectRead3<TPublicResponse> ReadObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> IRead2Context<TPublicResponse>.ReadAsync(
+        async Task<IFluentResponse<TPublicResponse>> IRead3Context<TPublicResponse>.ReadAsync(
+            string externalId,
             Guid consentId,
-            string? externalAccountId,
-            string? externalStatementId,
             string? modifiedBy)
         {
             // Create non-error list
@@ -55,9 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             {
                 (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                     await ReadObject.ReadAsync(
+                        externalId,
                         consentId,
-                        externalAccountId,
-                        externalStatementId,
                         modifiedBy);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 

@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TPublicRequest"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
     internal abstract class PostBase<TPublicRequest, TPublicResponse> :
-        IObjectPost<TPublicRequest, TPublicResponse>
+        IObjectCreate<TPublicRequest, TPublicResponse>
         where TPublicRequest : Base
     {
         protected readonly IDbSaveChangesMethod _dbSaveChangesMethod;

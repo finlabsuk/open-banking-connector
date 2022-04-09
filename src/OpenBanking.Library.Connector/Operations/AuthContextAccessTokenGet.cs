@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class AuthContextAccessTokenGet
     {
-        protected readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+        private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
         public AuthContextAccessTokenGet(
@@ -33,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         public async Task<string> GetAccessToken<TAuthContext>(
             IList<TAuthContext> input,
-            BankRegistration bankRegistration)
+            BankRegistration bankRegistration,
+            string? modifiedBy)
             where TAuthContext : AuthContext
         {
             // Get token
@@ -94,11 +95,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         tokenEndpointResponse.AccessToken,
                         tokenEndpointResponse.ExpiresIn,
                         new TimeProvider(),
-                        null); // TODO: update to support modified by
+                        modifiedBy);
                     authContext.RefreshToken = new ReadWriteProperty<string?>(
                         tokenEndpointResponse.RefreshToken,
                         new TimeProvider(),
-                        null); // TODO: update to support modified by
+                        modifiedBy);
 
                     // Persist updates (this happens last so as not to happen if there are any previous errors)
                     await _dbSaveChangesMethod.SaveChangesAsync();

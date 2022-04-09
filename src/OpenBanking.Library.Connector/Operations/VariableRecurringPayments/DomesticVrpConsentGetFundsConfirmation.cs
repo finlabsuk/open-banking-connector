@@ -89,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             BankRegistration bankRegistration,
             string bankFinancialId,
             string? accessToken,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
+            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id, string? modifiedBy)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -114,7 +114,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessToken(
                     persistedObject.DomesticVrpConsentAuthContextsNavigation,
-                    bankRegistration);
+                    bankRegistration,
+                    modifiedBy);
 
             string baseUrl =
                 bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??

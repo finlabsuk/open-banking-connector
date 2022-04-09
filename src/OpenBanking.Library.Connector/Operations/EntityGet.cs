@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             (TEntity persistedObject, IApiGetRequests<TApiResponse> apiRequests, IApiClient apiClient, Uri uri,
                     JsonSerializerSettings? jsonSerializerSettings,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await ApiGetData(requestInfo.Id);
+                await ApiGetData(requestInfo.Id, requestInfo.ModifiedBy);
 
             string? readResponseFile = requestInfo.ApiResponseOverrideFile;
             string? writeResponseFile = requestInfo.ApiResponseWriteFile;
@@ -118,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IApiClient apiClient,
             Uri uri,
             JsonSerializerSettings? jsonSerializerSettings,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id);
+            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id, string? modifiedBy);
 
         protected abstract TPublicResponse GetReadResponse(
             TEntity persistedObject,

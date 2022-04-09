@@ -52,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext) : base(sharedContext)
         {
             _sharedContext = sharedContext;
-            PostObject = new DomesticPaymentConsentPost(
+            CreateObject = new DomesticPaymentConsentPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -107,7 +107,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
         public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
 
-        public IObjectPost<DomesticPaymentConsentRequest, DomesticPaymentConsentReadResponse> PostObject { get; }
+        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentReadResponse> CreateObject { get; }
 
         public IObjectReadLocal<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentReadLocalResponse>
             ReadLocalObject { get; }

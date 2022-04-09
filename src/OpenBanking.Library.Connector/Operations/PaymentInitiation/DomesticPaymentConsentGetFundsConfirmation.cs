@@ -94,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             BankRegistration bankRegistration,
             string bankFinancialId,
             string? accessToken,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id)
+            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id, string? modifiedBy)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -119,7 +119,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessToken(
                     persistedObject.DomesticPaymentConsentAuthContextsNavigation,
-                    bankRegistration);
+                    bankRegistration,
+                    modifiedBy);
 
             // Determine endpoint URL
             string baseUrl =

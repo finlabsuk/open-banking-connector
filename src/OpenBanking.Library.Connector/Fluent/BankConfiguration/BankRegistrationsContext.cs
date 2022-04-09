@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation);
-            PostObject = new BankRegistrationPost(
+            CreateObject = new BankRegistrationPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 
         public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationResponse> ReadLocalObject { get; }
 
-        public IObjectPost<BankRegistration, BankRegistrationResponse> PostObject { get; }
+        public IObjectCreate<BankRegistration, BankRegistrationResponse> CreateObject { get; }
 
         public IObjectDelete DeleteObject { get; }
     }

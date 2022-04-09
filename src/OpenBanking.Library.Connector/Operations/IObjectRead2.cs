@@ -14,6 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
             Guid consentId,
             string? externalApiAccountId,
-            string? externalApiStatementId);
+            string? externalApiStatementId,
+            string? modifiedBy);
     }
 }

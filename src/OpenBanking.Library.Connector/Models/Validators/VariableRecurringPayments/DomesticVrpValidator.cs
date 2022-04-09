@@ -19,9 +19,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
 
         private void CreateRules()
         {
-            RuleFor(x => x.DomesticVrpConsentId)
-                .NotEmpty()
-                .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
+            // RuleFor(x => x.DomesticVrpConsentId)
+            //     .NotEmpty()
+            //     .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
 
             // WriteDomestic
             RuleFor(x => x.ExternalApiRequest)

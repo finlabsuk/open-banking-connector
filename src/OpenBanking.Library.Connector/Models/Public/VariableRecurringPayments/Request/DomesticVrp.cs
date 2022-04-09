@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -19,16 +18,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
         ///     to translate this for banks supporting an earlier spec version.
         ///     This request object can also be generated from the Open Banking consent request object via a type mapping.
+        ///     The value of "Data.ConsentId" should be consistent with the external API ID (bank ID) for the supplied
+        ///     DomesticVrpConsent or simply
+        ///     left set to null in which case the correct value will be substituted.
         /// </summary>
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest ExternalApiRequest { get; set; } = null!;
-
-        /// <summary>
-        ///     Specifies Variable Recurring Payment to use when creating payment.
-        ///     If Variable Recurring Payment consent has been successfully authorised, a token will be associated with the consent
-        ///     which can
-        ///     be used to create the payment.
-        /// </summary>
-        public Guid DomesticVrpConsentId { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new DomesticVrpValidator()
