@@ -61,9 +61,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Local soft delete
-            persistedObject.IsDeleted = new ReadWriteProperty<bool>(
+            persistedObject.UpdateIsDeleted(
                 true,
-                _timeProvider,
+                _timeProvider.GetUtcNow(),
                 requestInfo.ModifiedBy);
 
             await _dbSaveChangesMethod.SaveChangesAsync();

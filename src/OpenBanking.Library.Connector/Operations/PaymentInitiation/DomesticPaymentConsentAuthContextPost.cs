@@ -24,7 +24,7 @@ using DomesticPaymentConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentAuthContextPost : LocalEntityPostBase<
+        DomesticPaymentConsentAuthContextPost : LocalEntityPost<
             DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
             DomesticPaymentConsentAuthContextCreateLocalResponse>
@@ -48,36 +48,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override DomesticPaymentConsentAuthContextPersisted Create(
+        protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> AddEntity(
             DomesticPaymentConsentAuthContextRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            var output = new DomesticPaymentConsentAuthContextPersisted(
-                Guid.NewGuid(),
+            // Create persisted entity
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var entity = new DomesticPaymentConsentAuthContextPersisted(
                 request.Name,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
                 createdBy,
-                timeProvider,
+                utcNow,
+                createdBy,
                 null,
                 0,
                 null,
+                utcNow,
+                createdBy,
                 request.DomesticPaymentConsentId);
 
-            return output;
-        }
+            // Add entity
+            await _entityMethods.AddAsync(entity);
 
-        protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> CreateResponse(
-            DomesticPaymentConsentAuthContextPersisted persistedObject)
-        {
             // Load relevant data objects
             DomesticPaymentConsentPersisted domesticPaymentConsent =
                 _domesticPaymentConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == persistedObject.DomesticPaymentConsentId) ??
+                    .SingleOrDefault(x => x.Id == entity.DomesticPaymentConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {persistedObject.DomesticPaymentConsentId}.");
+                    $"No record found for Domestic Payment Consent with ID {entity.DomesticPaymentConsentId}.");
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
@@ -86,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         .SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Create auth URL
-            var state = persistedObject.Id.ToString();
+            var state = entity.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
@@ -97,11 +102,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 _instrumentationClient);
             var response =
                 new DomesticPaymentConsentAuthContextCreateLocalResponse(
-                    persistedObject.Id,
-                    persistedObject.Name,
-                    persistedObject.Created,
-                    persistedObject.CreatedBy,
-                    persistedObject.DomesticPaymentConsentId,
+                    entity.Id,
+                    entity.Name,
+                    entity.Created,
+                    entity.CreatedBy,
+                    entity.DomesticPaymentConsentId,
                     authUrl);
 
             return response;

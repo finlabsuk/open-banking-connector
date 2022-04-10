@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using DomesticVrpConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 using VariableRecurringPaymentsModelsPublic =
@@ -20,28 +19,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticVrpConsent :
-        EntityBase,
+        BaseEntity,
         IDomesticVrpConsentPublicQuery
     {
-        public DomesticVrpConsent() { }
-
         public DomesticVrpConsent(
-            Guid id,
             string? name,
-            DomesticVrpConsentRequest request,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
+            string? reference,
+            Guid id,
+            bool isDeleted,
+            DateTimeOffset isDeletedModified,
+            string? isDeletedModifiedBy,
+            DateTimeOffset created,
             string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
+            string externalApiId,
+            Guid bankRegistrationId,
+            Guid bankApiSetId) : base(
             name,
-            createdBy,
-            timeProvider)
+            reference,
+            id,
+            isDeleted,
+            isDeletedModified,
+            isDeletedModifiedBy,
+            created,
+            createdBy)
         {
-            BankRegistrationId = request.BankRegistrationId;
-            BankApiSetId = request.BankApiSetId;
-            ExternalApiId = apiResponse.Data.ConsentId;
+            ExternalApiId = externalApiId;
+            BankRegistrationId = bankRegistrationId;
+            BankApiSetId = bankApiSetId;
         }
+
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -49,20 +55,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         [ForeignKey("BankApiSetId")]
         public BankApiSet BankApiSetNavigation { get; set; } = null!;
 
-        public IList<DomesticVrp> DomesticVrpsNavigation { get; set; } = null!;
-
-        public IList<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; set; } =
-            null!;
+        public IList<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; } =
+            new List<DomesticVrpConsentAuthContext>();
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
         ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
         /// </summary>
-        public string ExternalApiId { get; set; } = null!;
+        public string ExternalApiId { get; }
 
-        public Guid BankRegistrationId { get; set; }
+        public Guid BankRegistrationId { get; }
 
-        public Guid BankApiSetId { get; set; }
+        public Guid BankApiSetId { get; }
     }
 
     internal partial class DomesticVrpConsent :

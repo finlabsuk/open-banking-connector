@@ -60,23 +60,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
         protected override string ClientCredentialsGrantScope => "accounts";
 
-        protected override async Task<AccountAccessConsentReadResponse> CreateLocalEntity(
+        protected override async Task<AccountAccessConsentReadResponse> AddEntity(
             AccountAccessConsent request,
             AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse,
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            //string externalApiRequest = JsonSerializer.Serialize(apiRequest);
-            //string externalApiResponse = JsonSerializer.Serialize(apiResponse);
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(
-                Guid.NewGuid(),
                 request.Name,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
+                createdBy,
+                utcNow,
+                createdBy,
                 apiResponse.Data.ConsentId,
                 request.BankRegistrationId,
-                request.BankApiSetId,
-                createdBy,
-                timeProvider);
+                request.BankApiSetId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -106,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
+                AccountAndTransactionApiVersionEnum.Version3p1p9 => new ApiRequests<
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsent1,

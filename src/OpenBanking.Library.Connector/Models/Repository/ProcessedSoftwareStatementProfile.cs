@@ -18,12 +18,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
     /// Payload of Open Banking Software Statement type. Fields can be added as required
     public class SoftwareStatementPayload
     {
-        private static readonly Dictionary<string, RegistrationScope> SoftwareRoleToApiType =
-            new Dictionary<string, RegistrationScope>
+        private static readonly Dictionary<string, RegistrationScopeEnum> SoftwareRoleToApiType =
+            new Dictionary<string, RegistrationScopeEnum>
             {
-                ["AISP"] = RegistrationScope.AccountAndTransaction,
-                ["PISP"] = RegistrationScope.PaymentInitiation,
-                ["CBPII"] = RegistrationScope.FundsConfirmation
+                ["AISP"] = RegistrationScopeEnum.AccountAndTransaction,
+                ["PISP"] = RegistrationScopeEnum.PaymentInitiation,
+                ["CBPII"] = RegistrationScopeEnum.FundsConfirmation
             };
 
         [JsonProperty("software_on_behalf_of_org")]
@@ -59,9 +59,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         [JsonProperty("org_name")]
         public string OrgName { get; set; } = null!;
 
-        public RegistrationScope RegistrationScope =>
+        public RegistrationScopeEnum RegistrationScope =>
             SoftwareRoles.Select(role => SoftwareRoleToApiType[role]).Aggregate(
-                RegistrationScope.None,
+                RegistrationScopeEnum.None,
                 (current, next) => current | next);
     }
 

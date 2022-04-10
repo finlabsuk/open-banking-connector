@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         ///     Functional APIs used for bank registration.
         ///     If not supplied, registration scope implied by software statement profile will be used.
         /// </summary>
-        public RegistrationScope? RegistrationScope { get; set; }
+        public RegistrationScopeEnum? RegistrationScope { get; set; }
 
         /// <summary>
         ///     Version of Open Banking Dynamic Client Registration API to use

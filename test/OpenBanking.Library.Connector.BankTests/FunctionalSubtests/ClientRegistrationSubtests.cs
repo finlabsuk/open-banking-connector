@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> PostAndGetObjects(
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScope registrationScope,
+            RegistrationScopeEnum registrationScope,
             IRequestBuilder requestBuilder,
             BankProfile bankProfile,
             string testNameUnique,

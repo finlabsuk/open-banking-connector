@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -29,8 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal abstract class
         EntityGet<TEntity, TPublicResponse, TApiResponse> :
             GetBase<TEntity, TPublicResponse>
-        where TEntity : class, IEntity,
-        new()
+        where TEntity : class, IEntity
         where TApiResponse : class, ISupportsValidation
     {
         protected readonly IApiVariantMapper _mapper;

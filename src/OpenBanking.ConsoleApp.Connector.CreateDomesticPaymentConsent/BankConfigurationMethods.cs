@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> Create(
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScope registrationScope,
+            RegistrationScopeEnum registrationScope,
             IRequestBuilder requestBuilder,
             BankProfile bankProfile,
             string testNameUnique)

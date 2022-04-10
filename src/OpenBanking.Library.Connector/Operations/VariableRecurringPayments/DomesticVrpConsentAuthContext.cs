@@ -25,7 +25,7 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentAuthContext : LocalEntityPostBase<
+        DomesticVrpConsentAuthContext : LocalEntityPost<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
             DomesticVrpConsentAuthContextCreateLocalResponse>
@@ -49,36 +49,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override DomesticVrpConsentAuthContextPersisted Create(
+        protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> AddEntity(
             DomesticVrpConsentAuthContextRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            var output = new DomesticVrpConsentAuthContextPersisted(
-                Guid.NewGuid(),
+            // Create persisted entity
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var entity = new DomesticVrpConsentAuthContextPersisted(
                 request.Name,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
                 createdBy,
-                timeProvider,
+                utcNow,
+                createdBy,
                 null,
                 0,
                 null,
+                utcNow,
+                createdBy,
                 request.DomesticVrpConsentId);
 
-            return output;
-        }
+            // Add entity
+            await _entityMethods.AddAsync(entity);
 
-        protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> CreateResponse(
-            DomesticVrpConsentAuthContextPersisted persistedObject)
-        {
             // Load relevant data objects
             DomesticVrpConsentPersisted domesticPaymentConsent =
                 _domesticPaymentConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == persistedObject.DomesticVrpConsentId) ??
+                    .SingleOrDefault(x => x.Id == entity.DomesticVrpConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {persistedObject.DomesticVrpConsentId}.");
+                    $"No record found for Domestic Payment Consent with ID {entity.DomesticVrpConsentId}.");
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
@@ -87,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                         .SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Create auth URL
-            var state = persistedObject.Id.ToString();
+            var state = entity.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
@@ -98,11 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 _instrumentationClient);
             var response =
                 new DomesticVrpConsentAuthContextCreateLocalResponse(
-                    persistedObject.Id,
-                    persistedObject.Name,
-                    persistedObject.Created,
-                    persistedObject.CreatedBy,
-                    persistedObject.DomesticVrpConsentId,
+                    entity.Id,
+                    entity.Name,
+                    entity.Created,
+                    entity.CreatedBy,
+                    entity.DomesticVrpConsentId,
                     authUrl);
 
             return response;

@@ -51,7 +51,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         {
             _authContextAccessTokenGet = new AuthContextAccessTokenGet(
                 softwareStatementProfileRepo,
-                dbSaveChangesMethod);
+                dbSaveChangesMethod,
+                timeProvider);
         }
 
         protected override string RelativePathBeforeId => "/domestic-vrp-consents";
@@ -69,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiGetRequests<
+                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiGetRequests<
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse,
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(
                     new PaymentInitiationGetRequestProcessor(

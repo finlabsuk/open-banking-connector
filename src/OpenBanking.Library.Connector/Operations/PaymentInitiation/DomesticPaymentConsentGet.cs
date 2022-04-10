@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
@@ -70,9 +70,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersion.Version3p1p4,
+                        PaymentInitiationApiVersionEnum.Version3p1p4,
                         processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersion.Version3p1p4,
+                        PaymentInitiationApiVersionEnum.Version3p1p4,
                         processedSoftwareStatementProfile)),
                 null => throw new NullReferenceException("No PISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(

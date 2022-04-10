@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion =
-                        PaymentInitiationApiVersion
+                        PaymentInitiationApiVersionEnum
                             .Version3p1p6, // from https://developer.nationwide.co.uk/open-banking/payment-initiation-apis
                     BaseUrl =
                         "https://api.obtpp.nationwideinterfaces.io/open-banking/v3.1/pisp" //from https://developer.nationwide.co.uk/open-banking/payment-initiation-apis#operation/CreateDomesticPaymentConsents

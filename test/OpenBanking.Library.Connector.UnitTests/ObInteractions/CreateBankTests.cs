@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             // (new Bank(Arg.Any<Models.Public.Request.Bank>())).Returns(resultProfile);
 
             var interaction =
-                new LocalEntityPost<Bank, Models.Public.Request.Bank, BankResponse>(
+                new BankPost(
                     Substitute.For<IDbEntityMethods<Bank>>(),
                     Substitute.For<IDbSaveChangesMethod>(),
                     Substitute.For<ITimeProvider>(),

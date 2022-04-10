@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
+                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,

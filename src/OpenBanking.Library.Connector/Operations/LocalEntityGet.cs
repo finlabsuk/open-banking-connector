@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -23,8 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TPublicResponse"></typeparam>
     internal abstract class GetBase<TEntity, TPublicResponse> :
         IObjectRead<TPublicResponse>
-        where TEntity : class, IEntity,
-        new()
+        where TEntity : class, IEntity
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal class
         LocalEntityGet<TEntity, TPublicQuery, TPublicResponse> : GetBase<TEntity, TPublicResponse>,
             IObjectReadLocal<TPublicQuery, TPublicResponse>
-        where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity, new()
+        where TEntity : class, ISupportsFluentLocalEntityGet<TPublicResponse>, IEntity
     {
         public LocalEntityGet(
             IDbReadWriteEntityMethods<TEntity> entityMethods,

@@ -11,25 +11,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
 {
     /// <summary>
     ///     Registration scope used when creating a bank client.
-    ///     Set of <see cref="RegistrationScopeElement" />.
+    ///     Set of <see cref="RegistrationScopeElementEnum" />.
     /// </summary>
     [Flags]
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum RegistrationScope
+    public enum RegistrationScopeEnum
     {
-        [EnumMember(Value = "none")]
+        [EnumMember(Value = "None")]
         None = 0,
 
-        [EnumMember(Value = "accountAndTransaction")]
+        [EnumMember(Value = "AccountAndTransaction")]
         AccountAndTransaction = 1,
 
-        [EnumMember(Value = "paymentInitiation")]
+        [EnumMember(Value = "PaymentInitiation")]
         PaymentInitiation = 2,
 
-        [EnumMember(Value = "fundsConfirmation")]
+        [EnumMember(Value = "FundsConfirmation")]
         FundsConfirmation = 4,
 
-        [EnumMember(Value = "all")]
+        [EnumMember(Value = "All")]
         All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
     }
 
@@ -41,15 +41,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         /// <param name="registrationScope"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static string AbbreviatedName(this RegistrationScope registrationScope)
+        public static string AbbreviatedName(this RegistrationScopeEnum registrationScope)
         {
             return registrationScope switch
             {
                 // RegistrationScope.None: invalid
-                RegistrationScope.AccountAndTransaction => "AT",
-                RegistrationScope.PaymentInitiation => "PI",
-                RegistrationScope.FundsConfirmation => "FC",
-                RegistrationScope.All => "All",
+                RegistrationScopeEnum.AccountAndTransaction => "AT",
+                RegistrationScopeEnum.PaymentInitiation => "PI",
+                RegistrationScopeEnum.FundsConfirmation => "FC",
+                RegistrationScopeEnum.All => "All",
                 _ => throw new ArgumentOutOfRangeException(nameof(registrationScope), registrationScope, null)
             };
         }

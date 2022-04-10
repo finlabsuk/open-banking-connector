@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScope registrationScope,
+            RegistrationScopeEnum registrationScope,
             string? openIdConfigurationReplacement)
         {
             var bankRegistration = new BankRegistration

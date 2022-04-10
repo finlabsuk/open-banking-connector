@@ -61,7 +61,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             _timeProvider = timeProvider;
             _authContextAccessTokenGet = new AuthContextAccessTokenGet(
                 softwareStatementProfileRepo,
-                dbSaveChangesMethod);
+                dbSaveChangesMethod,
+                timeProvider);
         }
 
         protected abstract string ClientCredentialsGrantScope { get; }

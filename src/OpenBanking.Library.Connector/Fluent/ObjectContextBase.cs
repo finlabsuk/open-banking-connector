@@ -3,15 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 {
     internal abstract class ObjectContextBase<TEntity> :
         IDeleteLocalContextInternal
         where TEntity : class,
-        IEntity, new()
+        IEntity
     {
         protected ObjectContextBase(ISharedContext sharedContext)
         {

@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
         /// </summary>
         /// <param name="registrationScope"></param>
         /// <returns></returns>
-        private static string ApiTypesToScope(RegistrationScope registrationScope)
+        private static string ApiTypesToScope(RegistrationScopeEnum registrationScope)
         {
             // Combine scope words for individual API types prepending "openid"
             IEnumerable<string> scopeWordsIEnumerable = RegistrationScopeApiHelper.AllApiTypes
@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ClientRegistr
         public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
             TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
             ProcessedSoftwareStatementProfile sProfile,
-            RegistrationScope registrationScope,
+            RegistrationScopeEnum registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
             string bankXFapiFinancialId,
             bool useTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues)

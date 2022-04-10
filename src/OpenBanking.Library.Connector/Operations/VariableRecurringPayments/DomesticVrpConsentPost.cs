@@ -60,21 +60,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
         protected override string ClientCredentialsGrantScope => "payments";
 
-        protected override async Task<DomesticVrpConsentReadResponse> CreateLocalEntity(
+        protected override async Task<DomesticVrpConsentReadResponse> AddEntity(
             DomesticVrpConsent request,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
             string? createdBy,
             ITimeProvider timeProvider)
         {
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new DomesticVrpConsentPersisted(
-                Guid.NewGuid(),
                 request.Name,
-                request,
-                apiRequest,
-                apiResponse,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
                 createdBy,
-                timeProvider);
+                utcNow,
+                createdBy,
+                apiResponse.Data.ConsentId,
+                request.BankRegistrationId,
+                request.BankApiSetId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -104,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
+                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,

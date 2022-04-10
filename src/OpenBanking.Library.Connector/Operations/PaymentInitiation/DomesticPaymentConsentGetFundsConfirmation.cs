@@ -52,7 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         {
             _authContextAccessTokenGet = new AuthContextAccessTokenGet(
                 softwareStatementProfileRepo,
-                dbSaveChangesMethod);
+                dbSaveChangesMethod,
+                timeProvider);
         }
 
         protected override string RelativePathBeforeId => "/domestic-payment-consents";
@@ -69,13 +70,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IInstrumentationClient instrumentationClient)
             => bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsV3p1p4.OBWriteFundsConfirmationResponse1>(
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
                         accessToken)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
                     new PaymentInitiationGetRequestProcessor(

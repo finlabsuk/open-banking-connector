@@ -118,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 ClientRegistrationApi = ClientRegistrationApiVersion.Version3p3,
                 BankId = bankId,
-                RegistrationScope = RegistrationScope.PaymentInitiation,
+                RegistrationScope = RegistrationScopeEnum.PaymentInitiation,
                 AllowMultipleRegistrations = false
             };
             IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.BankConfiguration
@@ -137,7 +137,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 BankId = bankId,
                 PaymentInitiationApi = new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion = PaymentInitiationApiVersion.Version3p1p6,
+                    PaymentInitiationApiVersion = PaymentInitiationApiVersionEnum.Version3p1p6,
                     BaseUrl = MockRoutes.Url
                 }
             };

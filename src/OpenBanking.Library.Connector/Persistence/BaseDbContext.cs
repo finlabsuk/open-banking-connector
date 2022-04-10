@@ -19,8 +19,6 @@ using DomesticPaymentConsentConfig =
 using DomesticPaymentConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsentAuthContext;
-using DomesticPaymentConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.DomesticPayment;
 using DomesticVrpConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsent;
@@ -29,8 +27,6 @@ using AuthContextConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.P
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
-using DomesticVrpConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.DomesticVrp;
 using AccountAccessConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction.
     AccountAccessConsent;
@@ -66,16 +62,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContexts =>
             Set<DomesticVrpConsentAuthContext>();
 
-        // Account access consents
+        // Consents
         internal DbSet<AccountAccessConsent> AccountAccessConsents => Set<AccountAccessConsent>();
-
-        // Domestic payments
         internal DbSet<DomesticPaymentConsent> DomesticPaymentConsents => Set<DomesticPaymentConsent>();
-        internal DbSet<DomesticPayment> DomesticPayments => Set<DomesticPayment>();
-
-        // Domestic VRPs
         internal DbSet<DomesticVrpConsent> DomesticVrpConsents => Set<DomesticVrpConsent>();
-        internal DbSet<DomesticVrp> DomesticVrps => Set<DomesticVrp>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -90,16 +80,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(false, JsonFormatting));
             modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(false, JsonFormatting));
 
-            // Account access consents
+            // Consents
             modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(true, JsonFormatting));
-
-            // Domestic payments
             modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConfig(true, JsonFormatting));
-
-            // Domestic VRPs
             modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConfig(true, JsonFormatting));
         }
     }
 }

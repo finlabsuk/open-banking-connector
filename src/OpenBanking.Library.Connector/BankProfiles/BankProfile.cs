@@ -17,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     public delegate BankRegistration BankRegistrationAdjustments(
         BankRegistration bankRegistration,
-        RegistrationScope registrationScope);
+        RegistrationScopeEnum registrationScope);
 
-    public delegate bool UseRegistrationScope(RegistrationScope registrationScope);
+    public delegate bool UseRegistrationScope(RegistrationScopeEnum registrationScope);
 
     public delegate AccountAccessConsent AccountAccessConsentAdjustments(AccountAccessConsent domesticPaymentConsent);
 

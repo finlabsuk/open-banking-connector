@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -34,31 +35,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.SoftwareStatementAndCertificateProfileOverrideCase)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RegistrationScope)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => Enum.Parse<RegistrationScope>(v))
+                .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            // TODO: check how this conversion handles invalid data
             builder.Property(e => e.ClientRegistrationApi)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => Enum.Parse<ClientRegistrationApiVersion>(v))
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.OAuth2RequestObjectClaimsOverrides)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                    v =>
-                        JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankApiRequest)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                    v =>
-                        JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.Name)
+                .HasConversion(new EnumToStringConverter<ClientRegistrationApiVersion>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OpenIdConfigurationResponse)
                 .HasConversion(
@@ -72,11 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RegistrationEndpoint)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.TokenEndpointAuthMethod)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => Enum.Parse<TokenEndpointAuthMethodEnum>(v))
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RedirectUris)
                 .HasConversion(
                     v => string.Join(' ', v),
@@ -86,30 +61,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                         c => (IList<string>) c.ToList())) // NB: cast is required to avoid error and not redundant
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.TokenEndpointAuthMethod)
+                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethodEnum>())
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.BankApiRequest)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
+                    v =>
+                        JsonConvert.DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1>(v)!)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.OAuth2RequestObjectClaimsOverrides)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
+                    v =>
+                        JsonConvert.DeserializeObject<OAuth2RequestObjectClaimsOverrides>(v))
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.ExternalApiId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ExternalApiSecret)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RegistrationAccessToken)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-            // Second-level property info
-            builder.OwnsOne(
-                p => p.BankApiResponse,
-                od =>
-                {
-                    od.Property(e => e.Value)
-                        .HasConversion(
-                            v => JsonConvert.SerializeObject(v, _jsonFormatting),
-                            v =>
-                                JsonConvert
-                                    .DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                                        v)!)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.Modified)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                    od.Property(e => e.ModifiedBy)
-                        .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-                });
-            builder.Navigation(p => p.BankApiResponse).IsRequired();
+            builder.Property(e => e.BankApiResponse)
+                .HasConversion(
+                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
+                    v =>
+                        JsonConvert
+                            .DeserializeObject<ClientRegistrationModelsPublic.OBClientRegistration1Response>(v)!)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.BankId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }
     }
 }

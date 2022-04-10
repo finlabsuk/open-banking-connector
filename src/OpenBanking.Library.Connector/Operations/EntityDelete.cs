@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -22,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal abstract class
         EntityDelete<TEntity> :
             LocalEntityDelete<TEntity>
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity
     {
         protected EntityDelete(
             IDbReadWriteEntityMethods<TEntity> entityMethods,

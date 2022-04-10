@@ -25,8 +25,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.FinancialId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.Name)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }
     }
 }

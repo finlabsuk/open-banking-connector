@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
         private void CreateRules()
         {
             RuleFor(x => x.RegistrationScope)
-                .Must(x => (x & RegistrationScope.All) != RegistrationScope.None)
+                .Must(x => (x & RegistrationScopeEnum.All) != RegistrationScopeEnum.None)
                 .WithMessage(
                     $"{nameof(BankRegistration.RegistrationScope)} did not include one or more valid API types.");
 

@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -26,8 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         ReadWritePost<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> : EntityPost<
             TEntity,
             TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
-        where TEntity : class, IEntity,
-        new()
+        where TEntity : class, IEntity
         where TPublicRequest : Base
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
@@ -50,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected abstract string ClientCredentialsGrantScope { get; }
 
-        protected abstract Task<TPublicResponse> CreateLocalEntity(
+        protected abstract Task<TPublicResponse> AddEntity(
             TPublicRequest request,
             TApiRequest apiRequest,
             TApiResponse apiResponse,
@@ -120,8 +120,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     responseJsonSerializerSettings,
                     nonErrorMessages);
 
-            // Create persisted entity
-            TPublicResponse response = await CreateLocalEntity(
+            // Create persisted entity and return response
+            TPublicResponse response = await AddEntity(
                 requestInfo.Request,
                 apiRequest,
                 apiResponse,

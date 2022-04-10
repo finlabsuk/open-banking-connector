@@ -17,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
@@ -32,6 +33,10 @@ using OAuth2RequestObjectClaimsOverridesRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
+using ClientRegistrationModelsV3p2 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p2.Models;
+using ClientRegistrationModelsV3p1 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p1.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -111,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Determine registration scope
-            RegistrationScope registrationScope =
+            RegistrationScopeEnum registrationScope =
                 requestInfo.Request.RegistrationScope ??
                 processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
 
@@ -245,12 +250,52 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Create new Open Banking registration by processing override or posting JWT
             IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                 ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
-                new BankRegistration()
-                    .ApiPostRequests(
+                requestInfo.Request.ClientRegistrationApi switch
+                {
+                    ClientRegistrationApiVersion.Version3p1 =>
+                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                            ClientRegistrationModelsV3p1.OBClientRegistration1,
+                            ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                            new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
+                            new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                    ClientRegistrationApiVersion.Version3p2 =>
+                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                            ClientRegistrationModelsV3p2.OBClientRegistration1,
+                            ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                            new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
+                            new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                    ClientRegistrationApiVersion.Version3p3 =>
+                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                            ClientRegistrationModelsPublic.OBClientRegistration1,
+                            ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                            new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
+                            new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                                processedSoftwareStatementProfile,
+                                _instrumentationClient,
+                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                    _ => throw new ArgumentOutOfRangeException(
+                        nameof(requestInfo.Request.ClientRegistrationApi),
                         requestInfo.Request.ClientRegistrationApi,
-                        processedSoftwareStatementProfile,
-                        _instrumentationClient,
-                        requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader);
+                        null)
+                };
 
             (ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
                     IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
@@ -265,18 +310,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     nonErrorMessages);
 
             // Create persisted entity
-            BankRegistration persistedObject = new BankRegistration().Create(
-                requestInfo.Request,
-                apiRequest,
-                apiResponse,
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var persistedObject = new BankRegistration(
+                requestInfo.Request.Name,
+                requestInfo.Request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
+                requestInfo.ModifiedBy,
+                utcNow,
+                requestInfo.ModifiedBy,
+                requestInfo.Request.SoftwareStatementProfileId,
+                requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
-                openIdConfiguration, // TODO: update to store raw response
+                requestInfo.Request.ClientRegistrationApi,
+                openIdConfiguration,
                 openIdConfiguration.TokenEndpoint,
                 openIdConfiguration.AuthorizationEndpoint,
                 openIdConfiguration.RegistrationEndpoint,
+                apiResponse.RedirectUris,
                 tokenEndpointAuthMethod,
-                requestInfo.ModifiedBy,
-                _timeProvider);
+                apiRequest,
+                requestInfo.Request.OAuth2RequestObjectClaimsOverrides,
+                apiResponse.ClientId,
+                apiResponse.ClientSecret,
+                apiResponse.RegistrationAccessToken,
+                apiResponse,
+                requestInfo.Request.BankId);
 
 
             // Save entity
@@ -292,10 +352,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     persistedObject.Name,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
-                    new ReadWriteProperty<ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                        apiResponse,
-                        _timeProvider,
-                        null),
+                    apiResponse,
                     persistedObject.BankId);
 
             return (response, nonErrorMessages2);

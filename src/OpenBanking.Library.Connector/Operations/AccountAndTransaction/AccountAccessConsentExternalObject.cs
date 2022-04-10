@@ -15,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
@@ -39,21 +40,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
+        private readonly ITimeProvider _timeProvider;
 
         public AccountAccessConsentExternalObject(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
             IInstrumentationClient instrumentationClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
-            IDbSaveChangesMethod dbSaveChangesMethod)
+            IDbSaveChangesMethod dbSaveChangesMethod,
+            ITimeProvider timeProvider)
         {
             _entityMethods = entityMethods;
             _instrumentationClient = instrumentationClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _mapper = mapper;
+            _timeProvider = timeProvider;
             _authContextAccessTokenGet = new AuthContextAccessTokenGet(
                 softwareStatementProfileRepo,
-                dbSaveChangesMethod);
+                dbSaveChangesMethod,
+                timeProvider);
         }
 
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>

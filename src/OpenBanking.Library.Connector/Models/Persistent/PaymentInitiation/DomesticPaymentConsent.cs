@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
 using PaymentInitiationModelsPublic =
@@ -20,28 +19,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticPaymentConsent :
-        EntityBase,
+        BaseEntity,
         IDomesticPaymentConsentPublicQuery
     {
-        public DomesticPaymentConsent() { }
-
         public DomesticPaymentConsent(
-            Guid id,
             string? name,
-            DomesticPaymentConsentRequest request,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            string? reference,
+            Guid id,
+            bool isDeleted,
+            DateTimeOffset isDeletedModified,
+            string? isDeletedModifiedBy,
+            DateTimeOffset created,
             string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
+            string externalApiId,
+            Guid bankRegistrationId,
+            Guid bankApiSetId) : base(
             name,
-            createdBy,
-            timeProvider)
+            reference,
+            id,
+            isDeleted,
+            isDeletedModified,
+            isDeletedModifiedBy,
+            created,
+            createdBy)
         {
-            BankRegistrationId = request.BankRegistrationId;
-            BankApiSetId = request.BankApiSetId;
-            ExternalApiId = apiResponse.Data.ConsentId;
+            ExternalApiId = externalApiId;
+            BankRegistrationId = bankRegistrationId;
+            BankApiSetId = bankApiSetId;
         }
+
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -49,20 +55,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         [ForeignKey("BankApiSetId")]
         public BankApiSet BankApiSetNavigation { get; set; } = null!;
 
-        public IList<DomesticPayment> DomesticPaymentsNavigation { get; set; } = null!;
-
-        public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; set; } =
-            null!;
+        public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; } =
+            new List<DomesticPaymentConsentAuthContext>();
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
         ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
         /// </summary>
-        public string ExternalApiId { get; set; } = null!;
+        public string ExternalApiId { get; }
 
-        public Guid BankRegistrationId { get; set; }
+        public Guid BankRegistrationId { get; }
 
-        public Guid BankApiSetId { get; set; }
+        public Guid BankApiSetId { get; }
     }
 
     internal partial class DomesticPaymentConsent :

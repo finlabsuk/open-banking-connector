@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -101,14 +102,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     }
 
     internal abstract class
-        LocalEntityPostBase<TEntity, TPublicRequest, TPublicResponse> : PostBase<TPublicRequest,
+        LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> : PostBase<TPublicRequest,
             TPublicResponse>
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity
         where TPublicRequest : Base
     {
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
 
-        public LocalEntityPostBase(
+        public LocalEntityPost(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
@@ -130,67 +131,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
-            // Create persisted entity
-            TEntity persistedObject = Create(
+            // Add entity
+            TPublicResponse response = await AddEntity(
                 requestInfo.Request,
                 requestInfo.ModifiedBy,
                 _timeProvider);
 
-            // Save entity
-            await _entityMethods.AddAsync(persistedObject);
-
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();
-
-            // Create response (may involve additional processing based on entity)
-            TPublicResponse response = await CreateResponse(persistedObject);
 
             return (response, nonErrorMessages);
         }
 
-        protected abstract TEntity Create(
+        protected abstract Task<TPublicResponse> AddEntity(
             TPublicRequest request,
             string? createdBy,
             ITimeProvider timeProvider);
-
-        protected abstract Task<TPublicResponse> CreateResponse(TEntity persistedObject);
-    }
-
-    internal class
-        LocalEntityPost<TEntity, TPublicRequest, TPublicResponse> : LocalEntityPostBase<TEntity, TPublicRequest,
-            TPublicResponse>
-        where TEntity : class, IEntity, ISupportsFluentLocalEntityPost<TPublicRequest, TPublicResponse, TEntity>, new()
-        where TPublicRequest : Base
-    {
-        public LocalEntityPost(
-            IDbReadWriteEntityMethods<TEntity> entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
-            entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient) { }
-
-        protected override TEntity Create(TPublicRequest request, string? createdBy, ITimeProvider timeProvider)
-        {
-            var persistedObjectTmp = new TEntity();
-
-            TEntity persistedObject = persistedObjectTmp.Create(
-                request,
-                createdBy,
-                _timeProvider);
-
-            return persistedObject;
-        }
-
-        protected override Task<TPublicResponse> CreateResponse(TEntity persistedObject)
-        {
-            TPublicResponse response = persistedObject.PublicPostLocalResponse;
-
-            return Task.FromResult(response);
-        }
     }
 }

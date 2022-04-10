@@ -46,15 +46,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             _serviceProvider = appContextFixture.Host.Services;
         }
 
-        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScope>
+        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScopeEnum>
             TestedSkippedBanksById(bool genericAppNotPlainAppTest) =>
             TestedBanksById(true, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScope>
+        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScopeEnum>
             TestedUnskippedBanksById(bool genericAppNotPlainAppTest) =>
             TestedBanksById(false, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScope> TestedBanksById(
+        public static TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScopeEnum> TestedBanksById(
             bool skippedNotUnskipped,
             bool genericAppNotPlainAppTest)
         {
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 new BankProfileDefinitions(bankProfileHiddenProperties);
 
             var data =
-                new TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScope>();
+                new TheoryData<BankProfileEnum, SoftwareStatementProfileData, RegistrationScopeEnum>();
 
             // Assemble bank list including override cases
             Dictionary<BankProfileEnum, string> overridesDict = bankTestSettings
@@ -147,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         protected async Task TestAllInner(
             BankProfileEnum bank,
             SoftwareStatementProfileData softwareStatementProfile,
-            RegistrationScope registrationScope,
+            RegistrationScopeEnum registrationScope,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             bool genericNotPlainAppTest)
         {

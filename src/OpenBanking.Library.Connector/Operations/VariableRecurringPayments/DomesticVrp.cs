@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IInstrumentationClient instrumentationClient) =>
             variableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiGetRequests<
+                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiGetRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
@@ -97,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 IInstrumentationClient instrumentationClient) =>
             variableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
+                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,

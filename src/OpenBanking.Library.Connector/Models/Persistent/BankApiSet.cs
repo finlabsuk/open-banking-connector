@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using BankApiSetRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request.BankApiSet;
 
@@ -22,61 +21,101 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class BankApiSet :
-        EntityBase,
+        BaseEntity,
         IBankApiSetPublicQuery
     {
-        public BankApiSet() { }
-
-        private BankApiSet(
-            Guid id,
+        public BankApiSet(
             string? name,
-            BankApiSetRequest request,
+            string? reference,
+            Guid id,
+            bool isDeleted,
+            DateTimeOffset isDeletedModified,
+            string? isDeletedModifiedBy,
+            DateTimeOffset created,
             string? createdBy,
-            ITimeProvider timeProvider) : base(
-            id,
+            VariableRecurringPaymentsApiVersionEnum? variableRecurringPaymentsApiVersion,
+            string variableRecurringPaymentsApiBaseUrl,
+            PaymentInitiationApiVersionEnum? paymentInitiationApiVersion,
+            string paymentInitiationApiBaseUrl,
+            AccountAndTransactionApiVersionEnum? accountAndTransactionApiVersion,
+            string accountAndTransactionBaseUrl,
+            Guid bankId) : base(
             name,
-            createdBy,
-            timeProvider)
+            reference,
+            id,
+            isDeleted,
+            isDeletedModified,
+            isDeletedModifiedBy,
+            created,
+            createdBy)
         {
-            AccountAndTransactionApi = request.AccountAndTransactionApi;
-            PaymentInitiationApi = request.PaymentInitiationApi;
-            VariableRecurringPaymentsApi = request.VariableRecurringPaymentsApi;
-            BankId = request.BankId;
+            VariableRecurringPaymentsApiVersion = variableRecurringPaymentsApiVersion;
+            VariableRecurringPaymentsApiBaseUrl = variableRecurringPaymentsApiBaseUrl;
+            PaymentInitiationApiVersion = paymentInitiationApiVersion;
+            PaymentInitiationApiBaseUrl = paymentInitiationApiBaseUrl;
+            AccountAndTransactionApiVersion = accountAndTransactionApiVersion;
+            AccountAndTransactionBaseUrl = accountAndTransactionBaseUrl;
+            BankId = bankId;
         }
 
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
-        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; set; } = null!;
+        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; } =
+            new List<DomesticPaymentConsent>();
 
-        public AccountAndTransactionApi? AccountAndTransactionApi { get; set; }
+        public VariableRecurringPaymentsApiVersionEnum? VariableRecurringPaymentsApiVersion { get; }
 
-        public PaymentInitiationApi? PaymentInitiationApi { get; set; }
+        public string VariableRecurringPaymentsApiBaseUrl { get; }
 
-        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; set; }
+        public PaymentInitiationApiVersionEnum? PaymentInitiationApiVersion { get; }
 
-        public Guid BankId { get; set; }
-    }
+        public string PaymentInitiationApiBaseUrl { get; }
 
-    internal partial class BankApiSet :
-        ISupportsFluentLocalEntityPost<BankApiSetRequest, BankApiSetResponse, BankApiSet>
-    {
-        public BankApiSetResponse PublicPostLocalResponse => PublicGetLocalResponse;
+        public AccountAndTransactionApiVersionEnum? AccountAndTransactionApiVersion { get; }
 
-        public BankApiSet Create(
-            BankApiSetRequest request,
-            string? createdBy,
-            ITimeProvider timeProvider)
-        {
-            var output = new BankApiSet(
-                Guid.NewGuid(),
-                request.Name,
-                request,
-                createdBy,
-                timeProvider);
+        public string AccountAndTransactionBaseUrl { get; }
 
-            return output;
-        }
+
+        public AccountAndTransactionApi? AccountAndTransactionApi =>
+            AccountAndTransactionApiVersion switch
+            {
+                null => null,
+                { } apiVersion =>
+                    new AccountAndTransactionApi
+                    {
+                        AccountAndTransactionApiVersion =
+                            apiVersion,
+                        BaseUrl = AccountAndTransactionBaseUrl
+                    }
+            };
+
+        public PaymentInitiationApi? PaymentInitiationApi =>
+            PaymentInitiationApiVersion switch
+            {
+                null => null,
+                { } apiVersion =>
+                    new PaymentInitiationApi
+                    {
+                        PaymentInitiationApiVersion = apiVersion,
+                        BaseUrl = PaymentInitiationApiBaseUrl
+                    }
+            };
+
+
+        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi =>
+            VariableRecurringPaymentsApiVersion switch
+            {
+                null => null,
+                { } apiVersion =>
+                    new VariableRecurringPaymentsApi
+                    {
+                        VariableRecurringPaymentsApiVersion = apiVersion,
+                        BaseUrl = VariableRecurringPaymentsApiBaseUrl
+                    }
+            };
+
+        public Guid BankId { get; }
     }
 
     internal partial class BankApiSet :

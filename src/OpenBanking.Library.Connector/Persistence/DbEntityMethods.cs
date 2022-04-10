@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
@@ -51,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
             }
 
             // Check whether deleted
-            if (entity.IsDeleted.Value)
+            if (entity.IsDeleted)
             {
                 throw new InvalidOperationException("Entity marked as deleted so will not add");
             }

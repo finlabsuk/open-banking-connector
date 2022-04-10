@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         public async Task TestAll(
             BankProfileEnum bank,
             SoftwareStatementProfileData softwareStatementProfile,
-            RegistrationScope registrationScope)
+            RegistrationScopeEnum registrationScope)
         {
             // Connect output to logging
             SetTestLogging();

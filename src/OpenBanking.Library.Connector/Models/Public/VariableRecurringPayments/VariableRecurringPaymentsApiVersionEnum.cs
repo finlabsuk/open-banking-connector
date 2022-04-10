@@ -9,9 +9,9 @@ using Newtonsoft.Json.Converters;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum VariableRecurringPaymentsApiVersion
+    public enum VariableRecurringPaymentsApiVersionEnum
     {
-        [EnumMember(Value = "v3p1p8")]
-        Version3p1p8,
+        [EnumMember(Value = "Version3p1p8")]
+        Version3p1p8
     }
 }

@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using DomesticPaymentConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
     DomesticPaymentConsentAuthContext;
@@ -21,33 +20,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         AuthContext,
         IDomesticPaymentConsentAuthContextPublicQuery
     {
-        public DomesticPaymentConsentAuthContext() { }
-
         public DomesticPaymentConsentAuthContext(
-            Guid id,
             string? name,
+            string? reference,
+            Guid id,
+            bool isDeleted,
+            DateTimeOffset isDeletedModified,
+            string? isDeletedModifiedBy,
+            DateTimeOffset created,
             string? createdBy,
-            ITimeProvider timeProvider,
-            string? accessToken,
+            string? accessTokenValue,
             int accessTokenExpiresIn,
-            string? refreshToken,
+            string? accessTokenRefreshToken,
+            DateTimeOffset accessTokenModified,
+            string? accessTokenModifiedBy,
             Guid domesticPaymentConsentId) : base(
-            id,
             name,
+            reference,
+            id,
+            isDeleted,
+            isDeletedModified,
+            isDeletedModifiedBy,
+            created,
             createdBy,
-            timeProvider,
-            accessToken,
+            accessTokenValue,
             accessTokenExpiresIn,
-            refreshToken)
+            accessTokenRefreshToken,
+            accessTokenModified,
+            accessTokenModifiedBy)
         {
             DomesticPaymentConsentId = domesticPaymentConsentId;
         }
+
 
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticPaymentConsentId")]
         public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
 
-        public Guid DomesticPaymentConsentId { get; set; }
+        public Guid DomesticPaymentConsentId { get; }
     }
 
     internal partial class DomesticPaymentConsentAuthContext :

@@ -22,13 +22,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
+        protected readonly ITimeProvider _timeProvider;
+
 
         public AuthContextAccessTokenGet(
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IDbSaveChangesMethod dbSaveChangesMethod)
+            IDbSaveChangesMethod dbSaveChangesMethod,
+            ITimeProvider timeProvider)
         {
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _dbSaveChangesMethod = dbSaveChangesMethod;
+            _timeProvider = timeProvider;
         }
 
         public async Task<string> GetAccessToken<TAuthContext>(
@@ -38,30 +42,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             where TAuthContext : AuthContext
         {
             // Get token
-            List<TAuthContext> authContextsWithToken =
+            TAuthContext authContextWithToken =
                 input
-                    .Where(x => x.AccessToken.Value1 != null)
-                    .ToList();
-
-            if (!authContextsWithToken.Any())
-            {
+                    .Where(x => x.AccessToken != null)
+                    .OrderByDescending(x => x.AccessTokenModified)
+                    .FirstOrDefault() ??
                 throw new InvalidOperationException("No token is available for Consent.");
-            }
-
-            TAuthContext authContext = authContextsWithToken
-                .OrderByDescending(x => x.AccessToken.Modified)
-                .First();
+            AccessToken
+                accessToken = authContextWithToken.AccessToken!; // NB have already checked AccessToken not null above
 
             const int tokenEarlyExpiryIntervalInSeconds = 10;
-            DateTimeOffset tokenExpiryTime = authContext.AccessToken.Modified // time when token stored
-                .AddSeconds(authContext.AccessToken.Value2) // plus token duration ("expires_in")
+            DateTimeOffset tokenExpiryTime = accessToken.Modified // time when token stored
+                .AddSeconds(accessToken.ExpiresIn) // plus token duration ("expires_in")
                 .AddSeconds(
                     -tokenEarlyExpiryIntervalInSeconds); // less margin to allow for time required to obtain token and to re-use token
 
             // If token expired, attempt to get a new one 
             if (tokenExpiryTime <= DateTimeOffset.UtcNow)
             {
-                if (!(authContext.RefreshToken.Value is null))
+                if (!(accessToken.RefreshToken is null))
                 {
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                         await _softwareStatementProfileRepo.GetAsync(
@@ -73,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     JsonSerializerSettings? jsonSerializerSettings = null;
                     TokenEndpointResponse tokenEndpointResponse =
                         await PostTokenRequest.PostRefreshTokenGrantAsync(
-                            authContext.RefreshToken.Value,
+                            accessToken.RefreshToken,
                             redirectUrl,
                             bankRegistration,
                             jsonSerializerSettings,
@@ -91,14 +90,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     }
 
                     // Update auth context with token
-                    authContext.AccessToken = new ReadWritePropertyGroup<string?, int>(
+                    authContextWithToken.UpdateAccessToken(
                         tokenEndpointResponse.AccessToken,
                         tokenEndpointResponse.ExpiresIn,
-                        new TimeProvider(),
-                        modifiedBy);
-                    authContext.RefreshToken = new ReadWriteProperty<string?>(
                         tokenEndpointResponse.RefreshToken,
-                        new TimeProvider(),
+                        _timeProvider.GetUtcNow(),
                         modifiedBy);
 
                     // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -110,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 }
             }
 
-            return authContext.AccessToken.Value1!; // We already filtered out null entries above
+            return accessToken.Value;
         }
     }
 }

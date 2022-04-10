@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
+                AccountAndTransactionApiVersionEnum.Version3p1p9 => new ApiRequests<
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsent1,

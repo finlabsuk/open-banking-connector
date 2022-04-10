@@ -12,15 +12,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     /// <summary>
     ///     UK Open Banking API configured in bank registration scope
     /// </summary>
-    public enum RegistrationScopeElement
+    public enum RegistrationScopeElementEnum
     {
-        [EnumMember(Value = "accountAndTransaction")]
+        [EnumMember(Value = "AccountAndTransaction")]
         AccountAndTransaction,
 
-        [EnumMember(Value = "paymentInitiation")]
+        [EnumMember(Value = "PaymentInitiation")]
         PaymentInitiation,
 
-        [EnumMember(Value = "fundsConfirmation")]
+        [EnumMember(Value = "FundsConfirmation")]
         FundsConfirmation,
     }
 
@@ -28,19 +28,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
     {
         static RegistrationScopeApiHelper()
         {
-            AllApiTypes = Enum.GetValues(typeof(RegistrationScopeElement))
-                .Cast<RegistrationScopeElement>();
+            AllApiTypes = Enum.GetValues(typeof(RegistrationScopeElementEnum))
+                .Cast<RegistrationScopeElementEnum>();
         }
 
-        public static IEnumerable<RegistrationScopeElement> AllApiTypes { get; }
+        public static IEnumerable<RegistrationScopeElementEnum> AllApiTypes { get; }
 
-        public static RegistrationScope ApiTypeSetWithSingleApiType(
-            RegistrationScopeElement registrationScopeElement) =>
+        public static RegistrationScopeEnum ApiTypeSetWithSingleApiType(
+            RegistrationScopeElementEnum registrationScopeElement) =>
             registrationScopeElement switch
             {
-                RegistrationScopeElement.AccountAndTransaction => RegistrationScope.AccountAndTransaction,
-                RegistrationScopeElement.PaymentInitiation => RegistrationScope.PaymentInitiation,
-                RegistrationScopeElement.FundsConfirmation => RegistrationScope.FundsConfirmation,
+                RegistrationScopeElementEnum.AccountAndTransaction => RegistrationScopeEnum.AccountAndTransaction,
+                RegistrationScopeElementEnum.PaymentInitiation => RegistrationScopeEnum.PaymentInitiation,
+                RegistrationScopeElementEnum.FundsConfirmation => RegistrationScopeEnum.FundsConfirmation,
                 _ => throw new ArgumentException(
                     $"{nameof(registrationScopeElement)} is not valid ApiType or needs to be added to this switch statement.")
             };
@@ -48,12 +48,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
         /// <summary>
         ///     Mapping from individual API type to scope word
         /// </summary>
-        public static string ScopeWord(RegistrationScopeElement registrationScopeElement) =>
+        public static string ScopeWord(RegistrationScopeElementEnum registrationScopeElement) =>
             registrationScopeElement switch
             {
-                RegistrationScopeElement.AccountAndTransaction => "accounts",
-                RegistrationScopeElement.PaymentInitiation => "payments",
-                RegistrationScopeElement.FundsConfirmation => "fundsconfirmations",
+                RegistrationScopeElementEnum.AccountAndTransaction => "accounts",
+                RegistrationScopeElementEnum.PaymentInitiation => "payments",
+                RegistrationScopeElementEnum.FundsConfirmation => "fundsconfirmations",
                 _ => throw new ArgumentException(
                     $"{nameof(registrationScopeElement)} is not valid ApiType or needs to be added to this switch statement.")
             };

@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         public async Task TestAllNoConsentAuth(
             BankProfileEnum bank,
             SoftwareStatementProfileData softwareStatementProfile,
-            RegistrationScope registrationScope)
+            RegistrationScopeEnum registrationScope)
         {
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;

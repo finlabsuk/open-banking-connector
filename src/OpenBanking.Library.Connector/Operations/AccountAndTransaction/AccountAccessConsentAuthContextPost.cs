@@ -25,7 +25,7 @@ using AccountAccessConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class
-        AccountAccessConsentAuthContextPost : LocalEntityPostBase<
+        AccountAccessConsentAuthContextPost : LocalEntityPost<
             AccountAccessConsentAuthContextPersisted,
             AccountAccessConsentAuthContextRequest,
             AccountAccessConsentAuthContextCreateLocalResponse>
@@ -49,36 +49,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             _accountAccessConsentMethods = accountAccessConsentMethods;
         }
 
-        protected override AccountAccessConsentAuthContextPersisted Create(
+        protected override async Task<AccountAccessConsentAuthContextCreateLocalResponse> AddEntity(
             AccountAccessConsentAuthContextRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            var output = new AccountAccessConsentAuthContextPersisted(
-                Guid.NewGuid(),
+            // Create persisted entity
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var entity = new AccountAccessConsentAuthContextPersisted(
                 request.Name,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
                 createdBy,
-                timeProvider,
+                utcNow,
+                createdBy,
                 null,
                 0,
                 null,
+                utcNow,
+                createdBy,
                 request.AccountAccessConsentId);
 
-            return output;
-        }
+            // Add entity
+            await _entityMethods.AddAsync(entity);
 
-        protected override async Task<AccountAccessConsentAuthContextCreateLocalResponse> CreateResponse(
-            AccountAccessConsentAuthContextPersisted persistedObject)
-        {
             // Load relevant data objects
             AccountAccessConsentPersisted accountAccessConsent =
                 _accountAccessConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == persistedObject.AccountAccessConsentId) ??
+                    .SingleOrDefault(x => x.Id == entity.AccountAccessConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Account Access Consent with ID {persistedObject.AccountAccessConsentId}.");
+                    $"No record found for Account Access Consent with ID {entity.AccountAccessConsentId}.");
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
@@ -87,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                         .SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Create auth URL
-            var state = persistedObject.Id.ToString();
+            var state = entity.Id.ToString();
             string authUrl = CreateAuthUrl.Create(
                 accountAccessConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
@@ -98,11 +103,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 _instrumentationClient);
             var response =
                 new AccountAccessConsentAuthContextCreateLocalResponse(
-                    persistedObject.Id,
-                    persistedObject.Name,
-                    persistedObject.Created,
-                    persistedObject.CreatedBy,
-                    persistedObject.AccountAccessConsentId,
+                    entity.Id,
+                    entity.Name,
+                    entity.Created,
+                    entity.CreatedBy,
+                    entity.AccountAccessConsentId,
                     authUrl);
 
             return response;

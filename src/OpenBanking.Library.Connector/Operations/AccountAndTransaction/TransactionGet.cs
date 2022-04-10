@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 
@@ -27,12 +28,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
-            IDbSaveChangesMethod dbSaveChangesMethod) : base(
+            IDbSaveChangesMethod dbSaveChangesMethod,
+            ITimeProvider timeProvider) : base(
             entityMethods,
             instrumentationClient,
             softwareStatementProfileRepo,
             mapper,
-            dbSaveChangesMethod) { }
+            dbSaveChangesMethod,
+            timeProvider) { }
 
         protected string RelativePath => "/transactions";
 
@@ -71,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient) =>
             accountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
+                AccountAndTransactionApiVersionEnum.Version3p1p9 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadTransaction6,
                     AccountAndTransactionModelsPublic.OBReadTransaction6
                 >(new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),

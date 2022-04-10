@@ -134,7 +134,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// <summary>
         ///     Bank registration scope to sue for this group of test cases
         /// </summary>
-        public RegistrationScope RegistrationScope { get; set; }
+        public RegistrationScopeEnum RegistrationScope { get; set; }
 
         /// <summary>
         ///     Banks to exclude for this group of test cases.

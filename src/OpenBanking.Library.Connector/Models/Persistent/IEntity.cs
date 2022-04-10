@@ -3,15 +3,26 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public interface IEntity
     {
+        string? Name { get; }
+
+        string? Reference { get; }
+
         Guid Id { get; }
-        ReadWriteProperty<bool> IsDeleted { get; set; }
+
+        bool IsDeleted { get; }
+
+        DateTimeOffset IsDeletedModified { get; }
+
+        string? IsDeletedModifiedBy { get; }
+
         DateTimeOffset Created { get; }
         string? CreatedBy { get; }
+
+        void UpdateIsDeleted(bool isDeleted, DateTimeOffset isDeletedModified, string? modifiedBy);
     }
 }

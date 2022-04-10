@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -23,8 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal abstract class
         ReadWriteGet<TEntity, TPublicResponse, TApiResponse> : EntityGet<TEntity, TPublicResponse, TApiResponse>
-        where TEntity : class, IEntity,
-        new()
+        where TEntity : class, IEntity
         where TApiResponse : class, ISupportsValidation
     {
         public ReadWriteGet(

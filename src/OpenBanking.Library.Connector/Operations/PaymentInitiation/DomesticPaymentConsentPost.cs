@@ -62,21 +62,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         protected override string ClientCredentialsGrantScope => "payments";
 
-        protected override async Task<DomesticPaymentConsentReadResponse> CreateLocalEntity(
+        protected override async Task<DomesticPaymentConsentReadResponse> AddEntity(
             DomesticPaymentConsent request,
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
             string? createdBy,
             ITimeProvider timeProvider)
         {
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new DomesticPaymentConsentPersisted(
-                Guid.NewGuid(),
                 request.Name,
-                request,
-                apiRequest,
-                apiResponse,
+                request.Reference,
+                Guid.NewGuid(),
+                false,
+                utcNow,
                 createdBy,
-                timeProvider);
+                utcNow,
+                createdBy,
+                apiResponse.Data.ConsentId,
+                request.BankRegistrationId,
+                request.BankApiSetId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -105,7 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
@@ -117,9 +122,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersion.Version3p1p4,
+                        PaymentInitiationApiVersionEnum.Version3p1p4,
                         processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
@@ -131,7 +136,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersion.Version3p1p4,
+                        PaymentInitiationApiVersionEnum.Version3p1p4,
                         processedSoftwareStatementProfile)),
                 null => throw new NullReferenceException("No PISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(

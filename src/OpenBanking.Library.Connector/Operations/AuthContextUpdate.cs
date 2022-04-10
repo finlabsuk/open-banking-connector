@@ -86,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
             // Checks
-            if (!(authContext.AccessToken.Value1 is null))
+            if (!(authContext.AccessToken is null))
             {
                 throw new InvalidOperationException("Token already supplied for auth context so aborting.");
             }
@@ -126,14 +126,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Update auth context with token
-            authContext.AccessToken = new ReadWritePropertyGroup<string?, int>(
+            authContext.UpdateAccessToken(
                 tokenEndpointResponse.AccessToken,
                 tokenEndpointResponse.ExpiresIn,
-                _timeProvider,
-                createdBy);
-            authContext.RefreshToken = new ReadWriteProperty<string?>(
                 tokenEndpointResponse.RefreshToken,
-                _timeProvider,
+                _timeProvider.GetUtcNow(),
                 createdBy);
 
             // Create response (may involve additional processing based on entity)

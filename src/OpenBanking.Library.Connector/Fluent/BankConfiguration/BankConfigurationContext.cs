@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
             new LocalEntityContextInternal<BankPersisted, Bank, IBankPublicQuery,
                 BankResponse, BankResponse>(
                 _sharedContext,
-                new LocalEntityPost<BankPersisted, Bank, BankResponse>(
+                new BankPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
@@ -66,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
             new LocalEntityContextInternal<BankApiSetPersisted, BankApiSet,
                 IBankApiSetPublicQuery, BankApiSetResponse, BankApiSetResponse>(
                 _sharedContext,
-                new LocalEntityPost<BankApiSetPersisted, BankApiSet, BankApiSetResponse>(
+                new BankApiSetPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,

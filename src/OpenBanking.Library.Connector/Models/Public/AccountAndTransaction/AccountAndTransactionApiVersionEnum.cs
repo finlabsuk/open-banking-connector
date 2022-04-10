@@ -9,15 +9,15 @@ using Newtonsoft.Json.Converters;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AccountAndTransactionApiVersion
+    public enum AccountAndTransactionApiVersionEnum
     {
-        [EnumMember(Value = "v3p1p7")]
+        [EnumMember(Value = "Version3p1p7")]
         Version3p1p7,
 
-        [EnumMember(Value = "v3p1p8")]
+        [EnumMember(Value = "Version3p1p8")]
         Version3p1p8,
 
-        [EnumMember(Value = "v3p1p9")]
+        [EnumMember(Value = "Version3p1p9")]
         Version3p1p9
     }
 }
