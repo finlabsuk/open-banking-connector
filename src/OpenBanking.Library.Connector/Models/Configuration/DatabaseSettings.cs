@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             new Dictionary<DbProvider, string>
             {
                 [DbProvider.Sqlite] = string.Empty,
-                [DbProvider.Postgres] = string.Empty
+                [DbProvider.PostgreSql] = string.Empty
             };
 
         /// <summary>

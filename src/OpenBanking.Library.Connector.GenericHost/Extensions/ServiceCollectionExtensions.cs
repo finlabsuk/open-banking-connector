@@ -108,6 +108,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                                                     .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
                             });
                     break;
+                case DbProvider.PostgreSql:
+                    services.AddDbContext<BaseDbContext, PostgreSqlDbContext>(
+                        options =>
+                        {
+                            options.UseNpgsql(connectionString)
+                                .ConfigureWarnings(
+                                    warnings =>
+                                        // Suppress warnings relating to non-root auth context entities since can manually apply
+                                        // unsupported global query filter to entity queries
+                                        warnings.Ignore(
+                                            CoreEventId
+                                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+                        });
+                    break;
                 default:
                     throw new ArgumentException("Unsupported DB provider", configuration["DbProvider"]);
             }
