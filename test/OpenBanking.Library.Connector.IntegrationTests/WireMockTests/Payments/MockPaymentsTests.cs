@@ -8,7 +8,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -116,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             var registrationRequest = new BankRegistration
             {
                 SoftwareStatementProfileId = softwareStatementProfileId,
-                ClientRegistrationApi = ClientRegistrationApiVersion.Version3p3,
+                ClientRegistrationApi = DynamicClientRegistrationApiVersion.Version3p3,
                 BankId = bankId,
                 RegistrationScope = RegistrationScopeEnum.PaymentInitiation,
                 AllowMultipleRegistrations = false

@@ -5,7 +5,7 @@
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
 {

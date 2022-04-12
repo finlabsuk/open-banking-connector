@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -16,8 +17,10 @@ using AccountAccessConsentPersisted =
 using AccountAccessConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
     AccountAccessConsentAuthContext;
-using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
-using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using BankApiSetPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
+using BankRegistrationPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using AccountAccessConsentAuthContext =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction.AccountAccessConsentAuthContextPost;
 
@@ -62,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
-                sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             ReadObject = new AccountAccessConsentGet(
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),

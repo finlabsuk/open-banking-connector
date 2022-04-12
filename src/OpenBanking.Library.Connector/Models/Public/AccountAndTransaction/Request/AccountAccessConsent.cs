@@ -31,12 +31,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
 
         /// <summary>
-        ///     Specifies BankApiSet object (bank functional API info) to use when creating the consent.
-        ///     Both BankApiSetId (JSON: "bankApiSetId") and BankRegistrationId (JSON: "bankRegistrationId") properties must refer
+        ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
+        ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
-        public Guid BankApiSetId { get; set; }
+        public Guid AccountAndTransactionApiId { get; set; }
 
         /// <summary>
         ///     Specifies BankRegistration object (bank registration info) to use when creating the consent.

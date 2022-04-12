@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -20,8 +21,10 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
-using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using BankApiSetPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
+using BankRegistrationPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
@@ -77,15 +80,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 await _entityMethods
                     .DbSet
                     .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.AccountAndTransactionApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
-            AccountAndTransactionApi accountAndTransactionApi =
-                bankApiSet.AccountAndTransactionApi ??
-                throw new InvalidOperationException("Bank API Set has no Account and Transaction API specified.");
+            AccountAndTransactionApiEntity accountAndTransactionApiEntity =
+                persistedConsent.AccountAndTransactionApiNavigation;
+            var accountAndTransactionApi = new AccountAndTransactionApi
+            {
+                AccountAndTransactionApiVersion = accountAndTransactionApiEntity.ApiVersion,
+                BaseUrl = accountAndTransactionApiEntity.BaseUrl
+            };
             BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
@@ -112,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
             IApiGetRequests<TApiResponse> apiRequests = ApiRequests(
-                bankApiSet.AccountAndTransactionApi,
+                accountAndTransactionApi,
                 bankFinancialId,
                 accessToken,
                 _instrumentationClient);

@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public string? FinancialId { get; set; }
 
-        public ClientRegistrationApiVersion? DefaultClientRegistrationApiVersion { get; set; }
+        public DynamicClientRegistrationApiVersion? DefaultClientRegistrationApiVersion { get; set; }
 
         public PaymentInitiationApiHiddenProperties? DefaultPaymentInitiationApi { get; set; }
 
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public string GetRequiredFinancialId() =>
             FinancialId ?? throw new Exception("No financial ID");
 
-        public ClientRegistrationApiVersion GetRequiredClientRegistrationApiVersion() =>
+        public DynamicClientRegistrationApiVersion GetRequiredClientRegistrationApiVersion() =>
             DefaultClientRegistrationApiVersion ?? throw new Exception("No ClientRegistrationApiVersion");
 
         public PaymentInitiationApiVersionEnum GetRequiredPaymentInitiationApiVersion() =>

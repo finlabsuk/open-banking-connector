@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -20,7 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Monzo,
                 "https://api.s101.nonprod-ffs.io/open-banking/", //from https://docs.monzo.com/#well-known-endpoints
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                ClientRegistrationApiVersion.Version3p2, // from https://docs.monzo.com/#dynamic-client-registration60
+                DynamicClientRegistrationApiVersion
+                    .Version3p2, // from https://docs.monzo.com/#dynamic-client-registration60
                 null,
                 new PaymentInitiationApi
                 {

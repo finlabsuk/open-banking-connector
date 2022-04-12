@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAndTransactionModelsPublic.OBReadConsent1,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1>
     {
-        private readonly IDbReadOnlyEntityMethods<BankApiSet> _bankApiSetMethods;
+        private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
 
         public AccountAccessConsentPost(
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IDbReadOnlyEntityMethods<BankApiSet> bankApiSetMethods,
+            IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> bankApiSetMethods,
             IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -79,7 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 createdBy,
                 apiResponse.Data.ConsentId,
                 request.BankRegistrationId,
-                request.BankApiSetId);
+                request.AccountAndTransactionApiId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -92,7 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     persistedObject.Created,
                     persistedObject.CreatedBy,
                     persistedObject.BankRegistrationId,
-                    persistedObject.BankApiSetId,
+                    persistedObject.AccountAndTransactionApiId,
                     persistedObject.ExternalApiId,
                     apiResponse);
 
@@ -102,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override
             IApiPostRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
                 AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
-                BankApiSet bankApiSet,
+                BankApiSet2 bankApiSet,
                 string bankFinancialId,
                 string accessToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -129,7 +129,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             Task<(
                 AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest,
                 Uri endpointUrl,
-                BankApiSet bankApiInformation,
+                BankApiSet2 bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
                 string? accessToken,
@@ -149,16 +149,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-            Guid bankApiInformationId = request.BankApiSetId;
-            BankApiSet bankApiSet =
+            Guid accountAndTransactionApiId = request.AccountAndTransactionApiId;
+            AccountAndTransactionApiEntity accountAndTransactionApiEntity =
                 await _bankApiSetMethods
                     .DbSetNoTracking
-                    .SingleOrDefaultAsync(x => x.Id == bankApiInformationId) ??
+                    .SingleOrDefaultAsync(x => x.Id == accountAndTransactionApiId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for BankApiInformation {bankApiInformationId} specified by request.");
-            if (bankApiSet.BankId != bankRegistration.BankId)
+                    $"No record found for AccountAndTransactionApi {accountAndTransactionApiId} specified by request.");
+            var bankApiSet2 = new BankApiSet2
             {
-                throw new ArgumentException("BankRegistrationId and BankProfileId objects do not share same BankId.");
+                AccountAndTransactionApi = new AccountAndTransactionApi
+                {
+                    AccountAndTransactionApiVersion = accountAndTransactionApiEntity.ApiVersion,
+                    BaseUrl = accountAndTransactionApiEntity.BaseUrl
+                }
+            };
+
+            if (accountAndTransactionApiEntity.BankId != bankRegistration.BankId)
+            {
+                throw new ArgumentException(
+                    "Specified AccountAndTransactionApi and BankRegistration objects do not share same BankId.");
             }
 
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
@@ -167,12 +177,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest = request.ExternalApiRequest;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.AccountAndTransactionApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Account and Transaction API.");
+            string baseUrl = accountAndTransactionApiEntity.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePath);
 
-            return (apiRequest, endpointUrl, bankApiSet, bankRegistration, bankFinancialId, null,
+            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,
                 nonErrorMessages);
         }
     }

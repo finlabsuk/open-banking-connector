@@ -18,8 +18,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
-using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using BankApiSetPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
+using BankRegistrationPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -58,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ITimeProvider timeProvider);
 
         protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
-            BankApiSetPersisted bankApiSet,
+            BankApiSet2 bankApiSet,
             string bankFinancialId,
             string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -71,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             (
                     TApiRequest apiRequest,
                     Uri endpointUrl,
-                    BankApiSetPersisted bankApiInformation,
+                    BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
                     string? accessToken,
@@ -138,7 +140,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             Task<(
                 TApiRequest apiRequest,
                 Uri endpointUrl,
-                BankApiSetPersisted bankApiInformation,
+                BankApiSet2 bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
                 string? accessToken,

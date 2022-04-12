@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -103,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         protected override
             IApiPostRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> ApiRequests(
-                BankApiSet bankApiSet,
+                BankApiSet2 bankApiSet,
                 string bankFinancialId,
                 string accessToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -147,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             Task<(
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
                 Uri endpointUrl,
-                BankApiSet bankApiInformation,
+                BankApiSet2 bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
                 string? accessToken,
@@ -174,6 +174,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     .SingleOrDefaultAsync(x => x.Id == bankApiInformationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankApiInformation {bankApiInformationId} specified by request.");
+            var bankApiSet2 = new BankApiSet2
+            {
+                PaymentInitiationApi = new PaymentInitiationApi
+                {
+                    PaymentInitiationApiVersion =
+                        bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion ??
+                        throw new InvalidOperationException(),
+                    BaseUrl = bankApiSet.PaymentInitiationApi.BaseUrl
+                }
+            };
+
             if (bankApiSet.BankId != bankRegistration.BankId)
             {
                 throw new ArgumentException("BankRegistrationId and BankProfileId objects do not share same BankId.");
@@ -190,7 +201,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Create request
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest = request.ExternalApiRequest;
 
-            return (apiRequest, endpointUrl, bankApiSet, bankRegistration, bankFinancialId, null,
+            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,
                 nonErrorMessages);
         }
     }

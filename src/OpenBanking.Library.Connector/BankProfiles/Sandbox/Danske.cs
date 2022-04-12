@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -23,7 +23,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Danske,
                 "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
                 "0015800000jf7AeAAI", //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
-                ClientRegistrationApiVersion.Version3p2, // from https://developers.danskebank.com/documentation
+                DynamicClientRegistrationApiVersion
+                    .Version3p2, // from https://developers.danskebank.com/documentation
                 null,
                 new PaymentInitiationApi
                 {

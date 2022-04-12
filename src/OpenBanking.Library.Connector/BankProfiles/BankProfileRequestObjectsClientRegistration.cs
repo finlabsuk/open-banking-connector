@@ -4,7 +4,7 @@
 
 using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
@@ -46,10 +46,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             new BankApiSet
             {
                 BankId = bankId,
-                AccountAndTransactionApi = AccountAndTransactionApi,
                 PaymentInitiationApi = PaymentInitiationApi,
                 VariableRecurringPaymentsApi = VariableRecurringPaymentsApi,
                 Name = name
+            };
+
+        public AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(string name, Guid bankId) =>
+            new AccountAndTransactionApiRequest
+            {
+                BankId = bankId,
+                ApiVersion =
+                    AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
+                    throw new InvalidOperationException(),
+                BaseUrl = AccountAndTransactionApi.BaseUrl,
+                Name = name,
             };
     }
 }

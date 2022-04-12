@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
         protected override IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
             ApiRequests(
-                BankApiSet bankApiSet,
+                BankApiSet2 bankApiSet,
                 string bankFinancialId,
                 string accessToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -86,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             string bankApiId,
             Uri endpointUrl,
             DomesticVrpConsentPersisted persistedObject,
-            BankApiSet bankApiInformation,
+            BankApiSet2 bankApiInformation,
             BankRegistration bankRegistration,
             string bankFinancialId,
             string? accessToken,
@@ -108,6 +108,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {id}.");
             string bankApiId = persistedObject.ExternalApiId;
             BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            var bankApiSet2 = new BankApiSet2
+            {
+                VariableRecurringPaymentsApi = new VariableRecurringPaymentsApi
+                {
+                    VariableRecurringPaymentsApiVersion =
+                        bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+                        throw new InvalidOperationException(),
+                    BaseUrl = bankApiSet.VariableRecurringPaymentsApi.BaseUrl
+                }
+            };
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
@@ -123,7 +133,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API.");
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
-            return (bankApiId, endpointUrl, persistedObject, bankApiSet, bankRegistration, bankFinancialId,
+            return (bankApiId, endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId,
                 accessToken, nonErrorMessages);
         }
 

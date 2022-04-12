@@ -17,8 +17,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
-using BankRegistrationPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankRegistration;
+using BankApiSetPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
+using BankRegistrationPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -48,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract string ClientCredentialsGrantScope { get; }
 
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
-            BankApiSetPersisted bankApiSet,
+            BankApiSet2 bankApiSet,
             string bankFinancialId,
             string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -65,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             (string bankApiId,
                     Uri endpointUrl,
                     TEntity persistedObject,
-                    BankApiSetPersisted bankApiInformation,
+                    BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
                     string? accessToken,
@@ -109,7 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 string bankApiId,
                 Uri endpointUrl,
                 TEntity persistedObject,
-                BankApiSetPersisted bankApiInformation,
+                BankApiSet2 bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
                 string? accessToken,

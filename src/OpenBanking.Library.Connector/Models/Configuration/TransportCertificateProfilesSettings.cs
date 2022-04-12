@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
@@ -58,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
         ///     determined by bank registration request property
         ///     <see
-        ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
+        ///         cref="BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = string.Empty;
@@ -70,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
         ///     determined by bank registration request property
         ///     <see
-        ///         cref="Models.Public.Request.BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
+        ///         cref="BankRegistration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = string.Empty;

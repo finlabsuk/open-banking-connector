@@ -5,9 +5,9 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.DomesticVrp;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -219,7 +219,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
-                await ClientRegistrationSubtests.PostAndGetObjects(
+                await BankConfigurationSubtests.PostAndGetObjects(
                     softwareStatementProfile.SoftwareStatementProfileId,
                     softwareStatementProfile.OverrideCase,
                     registrationScope,
@@ -241,7 +241,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     subTest,
                     bankProfile,
                     bankRegistrationId,
-                    bankApiSetId,
+                    bankId,
                     bankProfile.AccountAndTransactionApiSettings,
                     requestBuilder,
                     requestBuilderGenerator,
@@ -302,7 +302,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             }
 
             // Delete bank configuration objects
-            await ClientRegistrationSubtests.DeleteObjects(
+            await BankConfigurationSubtests.DeleteObjects(
                 requestBuilder,
                 bankApiSetId,
                 bankRegistrationId,

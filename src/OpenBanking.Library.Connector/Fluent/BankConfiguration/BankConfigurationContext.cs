@@ -2,11 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Bank;
-using BankApiSetPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankApiSet;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.Bank;
+using BankApiSet = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankApiSet;
+using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
+using BankApiSetPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
@@ -27,6 +31,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         ILocalEntityContext<BankApiSet, IBankApiSetPublicQuery, BankApiSetResponse, BankApiSetResponse>
             BankApiSets { get; }
 
+        /// <summary>
+        ///     API for AccountAndTransactionApi objects.
+        ///     A AccountAndTransactionApi specifies a functional Account and Transaction API supported by a Bank. Multiple
+        ///     AccountAndTransactionApis may be
+        ///     created for the same bank.
+        /// </summary>
+        ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
+                AccountAndTransactionApiResponse, AccountAndTransactionApiResponse>
+            AccountAndTransactionApis { get; }
+        
         /// <summary>
         ///     API for BankRegistration objects.
         ///     A BankRegistration corresponds to an OAuth2 client registration with a Bank. Multiple BankRegistrations may be
@@ -51,6 +65,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 _sharedContext,
                 new BankPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.Instrumentation));
+
+        public ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
+            AccountAndTransactionApiResponse, AccountAndTransactionApiResponse> AccountAndTransactionApis =>
+            new LocalEntityContextInternal<AccountAndTransactionApiEntity, AccountAndTransactionApiRequest,
+                IAccountAndTransactionApiQuery,
+                AccountAndTransactionApiResponse, AccountAndTransactionApiResponse>(
+                _sharedContext,
+                new AccountAndTransactionApiPost(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,

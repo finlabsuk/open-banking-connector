@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override string ClientCredentialsGrantScope => "accounts";
 
         protected override IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
-            BankApiSet bankApiSet,
+            BankApiSet2 bankApiSet,
             string bankFinancialId,
             string accessToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string bankApiId,
             Uri endpointUrl,
             AccountAccessConsentPersisted persistedObject,
-            BankApiSet bankApiInformation,
+            BankApiSet2 bankApiInformation,
             BankRegistration bankRegistration,
             string bankFinancialId,
             string? accessToken,
@@ -90,24 +90,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 await _entityMethods
                     .DbSet
                     .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.AccountAndTransactionApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {id}.");
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            AccountAndTransactionApiEntity accountAndTransactionApi =
+                persistedObject.AccountAndTransactionApiNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             string bankApiId = persistedObject.ExternalApiId;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.AccountAndTransactionApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Account and Transaction API.");
+            string baseUrl = accountAndTransactionApi.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
-            return (bankApiId, endpointUrl, persistedObject, bankApiInformation: bankApiSet, bankRegistration,
+            var bankApiSet2 = new BankApiSet2
+            {
+                AccountAndTransactionApi = new AccountAndTransactionApi
+                {
+                    AccountAndTransactionApiVersion = accountAndTransactionApi.ApiVersion,
+                    BaseUrl = accountAndTransactionApi.BaseUrl
+                }
+            };
+
+
+            return (bankApiId, endpointUrl, persistedObject, bankApiInformation: bankApiSet2, bankRegistration,
                 bankFinancialId,
                 null,
                 nonErrorMessages);
@@ -123,7 +132,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,
-                persistedObject.BankApiSetId,
+                persistedObject.AccountAndTransactionApiId,
                 persistedObject.ExternalApiId,
                 apiResponse);
         }

@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     {
         Guid BankRegistrationId { get; }
 
-        Guid BankApiSetId { get; }
+        Guid AccountAndTransactionApiId { get; }
 
         public string ExternalApiId { get; }
     }
@@ -29,11 +29,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid accountAndTransactionApiId,
             string externalApiId) : base(id, name, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
+            AccountAndTransactionApiId = accountAndTransactionApiId;
             ExternalApiId = externalApiId;
         }
 
@@ -43,9 +43,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         public Guid BankRegistrationId { get; }
 
         /// <summary>
-        ///     ID of associated BankApiSet object
+        ///     ID of associated AccountAndTransactionApiEntity object
         /// </summary>
-        public Guid BankApiSetId { get; }
+        public Guid AccountAndTransactionApiId { get; }
 
         /// <summary>
         ///     External (bank) API ID for this object
@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid accountAndTransactionApiId,
             string externalApiId,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1 externalApiResponse) : base(
             id,
@@ -72,12 +72,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             created,
             createdBy,
             bankRegistrationId,
-            bankApiSetId,
+            accountAndTransactionApiId,
             externalApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
-
 
         /// <summary>
         ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec

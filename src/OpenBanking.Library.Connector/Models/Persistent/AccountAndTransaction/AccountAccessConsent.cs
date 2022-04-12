@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using AccountAccessConsentRequest =
@@ -30,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? createdBy,
             string externalApiId,
             Guid bankRegistrationId,
-            Guid bankApiSetId) : base(
+            Guid accountAndTransactionApiId) : base(
             name,
             reference,
             id,
@@ -42,9 +43,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         {
             ExternalApiId = externalApiId;
             BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
+            AccountAndTransactionApiId = accountAndTransactionApiId;
         }
-
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
@@ -55,8 +55,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
 
-        [ForeignKey("BankApiSetId")]
-        public BankApiSet BankApiSetNavigation { get; set; } = null!;
+        [ForeignKey("AccountAndTransactionApiId")]
+        public AccountAndTransactionApiEntity AccountAndTransactionApiNavigation { get; set; } = null!;
 
         public IList<AccountAccessConsentAuthContext> AccountAccessConsentAuthContextsNavigation { get; } =
             new List<AccountAccessConsentAuthContext>();
@@ -67,9 +67,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public Guid BankRegistrationId { get; }
 
         /// <summary>
-        ///     Associated BankApiSet object
+        ///     Associated AccountAndTransactionApiEntity object
         /// </summary>
-        public Guid BankApiSetId { get; }
+        public Guid AccountAndTransactionApiId { get; }
     }
 
     internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentReadLocalResponse>
@@ -81,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
                 Created,
                 CreatedBy,
                 BankRegistrationId,
-                BankApiSetId,
+                AccountAndTransactionApiId,
                 ExternalApiId);
     }
 }

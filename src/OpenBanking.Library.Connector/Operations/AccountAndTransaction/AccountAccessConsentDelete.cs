@@ -9,8 +9,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -54,11 +54,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .DbSet
                     .Include(o => o.AccountAccessConsentAuthContextsNavigation)
                     .Include(o => o.BankRegistrationNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.AccountAndTransactionApiNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {id}.");
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            AccountAndTransactionApiEntity accountAndTransactionApiEntity =
+                persistedObject.AccountAndTransactionApiNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
@@ -71,9 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.AccountAndTransactionApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Account and Transaction API.");
+            string baseUrl = accountAndTransactionApiEntity.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             // Get client credentials grant token

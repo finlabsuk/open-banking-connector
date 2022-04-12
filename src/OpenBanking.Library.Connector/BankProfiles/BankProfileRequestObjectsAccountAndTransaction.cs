@@ -20,8 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         public AccountAccessConsent AccountAccessConsentRequest(
             Guid bankRegistrationId,
-            Guid bankApiSetId,
-            AccountAccessConsentTypeEnum accountAccessConsentType,
+            Guid accountAndTransactionApiId,
             string? name,
             string? createdBy)
         {
@@ -60,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                     },
                     new Dictionary<string, string>()),
                 CreatedBy = createdBy,
-                BankApiSetId = bankApiSetId,
+                AccountAndTransactionApiId = accountAndTransactionApiId,
                 BankRegistrationId = bankRegistrationId,
                 Name = name
             };

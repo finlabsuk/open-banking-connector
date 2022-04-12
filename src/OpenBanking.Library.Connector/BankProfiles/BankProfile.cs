@@ -6,7 +6,8 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.ClientRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -82,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             BankProfileEnum bankProfileEnum,
             string issuerUrl,
             string financialId,
-            ClientRegistrationApiVersion clientRegistrationApiVersion,
+            DynamicClientRegistrationApiVersion clientRegistrationApiVersion,
             AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi)
@@ -114,7 +115,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Client Registration (DCR) API version.
         /// </summary>
-        public ClientRegistrationApiVersion ClientRegistrationApiVersion { get; }
+        public DynamicClientRegistrationApiVersion ClientRegistrationApiVersion { get; }
 
         /// <summary>
         ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.

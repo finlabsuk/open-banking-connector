@@ -9,6 +9,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FluentAssertions;
 using Jering.Javascript.NodeJS;
 
@@ -27,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             AccountAccessConsentSubtestEnum subtestEnum,
             BankProfile bankProfile,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid bankId,
             AccountAndTransactionApiSettings accountAndTransactionApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -45,12 +47,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
+            // Create AccountAndTransactionApi
+            AccountAndTransactionApiRequest accountAndTransactionApiRequest =
+                bankProfile.GetAccountAndTransactionApiRequest(
+                    "placeholder: dynamically generated based on unused names",
+                    default);
+            await testDataProcessorFluentRequestLogging
+                .AppendToPath("accountAndTransactionApi")
+                .AppendToPath("postRequest")
+                .WriteFile(accountAndTransactionApiRequest);
+
+            accountAndTransactionApiRequest.Name = testNameUnique;
+            accountAndTransactionApiRequest.BankId = bankId;
+            IFluentResponse<AccountAndTransactionApiResponse> accountAndTransactionApiResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .AccountAndTransactionApis
+                    .CreateLocalAsync(accountAndTransactionApiRequest);
+
+            accountAndTransactionApiResponse.Should().NotBeNull();
+            accountAndTransactionApiResponse.Messages.Should().BeEmpty();
+            accountAndTransactionApiResponse.Data.Should().NotBeNull();
+            Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Data!.Id;
+
             // Basic request object for account access consent
             Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
                 bankProfile.AccountAccessConsentRequest(
                     Guid.Empty, // set below
-                    Guid.Empty, // set below
-                    AccountAccessConsentTypeEnum.MaximumPermissions,
+                    Guid.Empty,
                     null, // set below
                     "Automated bank tests");
             await testDataProcessorFluentRequestLogging
@@ -60,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // POST account access consent
             accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
-            accountAccessConsentRequest.BankApiSetId = bankApiSetId;
+            accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
             accountAccessConsentRequest.Name = testNameUnique;
             IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp =
                 await requestBuilder
@@ -146,17 +170,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
                 IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
 
-                // GET accounts
-                IFluentResponse<AccountsResponse> accountsResp =
-                    await requestBuilderNew
-                        .AccountAndTransaction
-                        .Accounts
-                        .ReadAsync(accountAccessConsentId);
-
-                // Checks
-                accountsResp.Should().NotBeNull();
-                accountsResp.Messages.Should().BeEmpty();
-                accountsResp.Data.Should().NotBeNull();
+                // // GET accounts
+                // IFluentResponse<AccountsResponse> accountsResp =
+                //     await requestBuilderNew
+                //         .AccountAndTransaction
+                //         .Accounts
+                //         .ReadAsync(accountAccessConsentId);
+                //
+                // // Checks
+                // accountsResp.Should().NotBeNull();
+                // accountsResp.Messages.Should().BeEmpty();
+                // accountsResp.Data.Should().NotBeNull();
 
                 // GET transactions
                 IFluentResponse<TransactionsResponse> transactionsResp =

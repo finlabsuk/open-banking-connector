@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             // Top-level property info: read-only, JSON conversion, etc
             builder.Property(e => e.BankRegistrationId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankApiSetId)
+            builder.Property(e => e.AccountAndTransactionApiId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ExternalApiId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
