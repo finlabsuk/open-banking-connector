@@ -75,6 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 bankProfile.AccountAccessConsentRequest(
                     Guid.Empty, // set below
                     Guid.Empty,
+                    AccountAccessConsentSubtestHelper.AccountAccessConsentType(subtestEnum),
                     null, // set below
                     "Automated bank tests");
             await testDataProcessorFluentRequestLogging

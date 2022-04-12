@@ -11,16 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
 
-/// <summary>
-///     HTTP response object used when reading Balances objects. Includes messages and data from
-///     Open Banking Connector.
-/// </summary>
-public class BalancesHttpResponse : HttpResponse<BalancesResponse>
-{
-    public BalancesHttpResponse(HttpResponseMessages? messages, BalancesResponse? data) :
-        base(messages, data) { }
-}
-
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 [Tags("Balances")]
@@ -44,13 +34,13 @@ public class BalancesController : ControllerBase
     [Route("aisp/accounts/{externalApiAccountId}/balances")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(BalancesHttpResponse),
+        typeof(BalancesResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(BalancesHttpResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(BalancesHttpResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
@@ -63,18 +53,18 @@ public class BalancesController : ControllerBase
             .ReadAsync(accountAccessConsentId, externalApiAccountId);
 
         // HTTP response
-        HttpResponse<BalancesResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
-        var httpResponse = new BalancesHttpResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse<BalancesResponse> _ => StatusCodes.Status200OK,
+            FluentSuccessResponse<BalancesResponse> _ =>
+                new ObjectResult(fluentResponse.Data!)
+                    { StatusCode = StatusCodes.Status200OK },
             FluentBadRequestErrorResponse<BalancesResponse> _ =>
-                StatusCodes.Status400BadRequest,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
             FluentOtherErrorResponse<BalancesResponse> _ =>
-                StatusCodes.Status500InternalServerError,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 }

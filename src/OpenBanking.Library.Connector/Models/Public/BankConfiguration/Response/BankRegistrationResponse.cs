@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 {
     public interface IBankRegistrationPublicQuery : IBaseQuery
     {
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response BankApiResponse { get; }
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
 
         Guid BankId { get; }
     }
@@ -29,11 +29,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             ClientRegistrationModelsPublic.OBClientRegistration1Response bankApiResponse,
             Guid bankId) : base(id, name, created, createdBy)
         {
-            BankApiResponse = bankApiResponse;
+            ExternalApiResponse = bankApiResponse;
             BankId = bankId;
         }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response BankApiResponse { get; }
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
         public Guid BankId { get; }
     }
 }

@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using OAuth2RequestObjectClaimsOverridesRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
@@ -45,12 +44,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string registrationEndpoint,
             IList<string> redirectUris,
             TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
-            ClientRegistrationModelsPublic.OBClientRegistration1 bankApiRequest,
+            ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest,
             OAuth2RequestObjectClaimsOverrides? oAuth2RequestObjectClaimsOverrides,
             string externalApiId,
             string? externalApiSecret,
             string? registrationAccessToken,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response bankApiResponse,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse,
             Guid bankId) : base(
             name,
             reference,
@@ -71,12 +70,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             RegistrationEndpoint = registrationEndpoint;
             RedirectUris = redirectUris;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-            BankApiRequest = bankApiRequest;
+            ExternalApiRequest = externalApiRequest;
             OAuth2RequestObjectClaimsOverrides = oAuth2RequestObjectClaimsOverrides;
             ExternalApiId = externalApiId;
             ExternalApiSecret = externalApiSecret;
             RegistrationAccessToken = registrationAccessToken;
-            BankApiResponse = bankApiResponse;
+            ExternalApiResponse = externalApiResponse;
             BankId = bankId;
         }
 
@@ -123,7 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1 BankApiRequest { get; }
+        public ClientRegistrationModelsPublic.OBClientRegistration1 ExternalApiRequest { get; }
 
         public OAuth2RequestObjectClaimsOverridesRequest? OAuth2RequestObjectClaimsOverrides { get; }
 
@@ -149,7 +148,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public string? RegistrationAccessToken { get; }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response BankApiResponse { get; }
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
 
         /// <summary>
         ///     Bank this registration is with.
@@ -165,7 +164,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             Name,
             Created,
             CreatedBy,
-            BankApiResponse,
+            ExternalApiResponse,
             BankId);
     }
 }

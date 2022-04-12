@@ -6,6 +6,7 @@ using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+using FinnovationLabs.OpenBanking.WebApp.Connector;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector.KeySecrets;
 using Microsoft.OpenApi.Models;
@@ -90,8 +91,12 @@ builder.Services
         })
     .AddSwaggerGenNewtonsoftSupport()
     // Add controllers
-    .AddControllers()
-    // Add JSON support
+    .AddControllers(options =>
+        {
+            // Add filter
+            options.Filters.Add<GlobalExceptionFilter>();
+        })
+        // Add JSON support
     .AddNewtonsoftJson(
         options =>
         {

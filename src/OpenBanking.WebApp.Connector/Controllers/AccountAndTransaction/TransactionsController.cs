@@ -11,16 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
 
-/// <summary>
-///     HTTP response object used when reading Transactions objects. Includes messages and data from
-///     Open Banking Connector.
-/// </summary>
-public class TransactionsHttpResponse : HttpResponse<TransactionsResponse>
-{
-    public TransactionsHttpResponse(HttpResponseMessages? messages, TransactionsResponse? data) :
-        base(messages, data) { }
-}
-
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 [Tags("Transactions")]
@@ -39,6 +29,14 @@ public class TransactionsController : ControllerBase
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="externalApiStatementId">External (bank) API ID of Statement</param>
+    /// <param name="fromBookingDateTime">
+    ///     Start date and time for filtering of the Transaction records on the
+    ///     Transaction/BookingDateTime field
+    /// </param>
+    /// <param name="toBookingDateTime">
+    ///     End date and time for filtering of the Transaction records on the
+    ///     Transaction/BookingDateTime field
+    /// </param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/transactions")]
@@ -46,16 +44,20 @@ public class TransactionsController : ControllerBase
     [Route("aisp/accounts/{externalApiAccountId}/statements/{externalApiStatementId}/transactions")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(TransactionsHttpResponse),
+        typeof(TransactionsResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(TransactionsHttpResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(TransactionsHttpResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
+        [FromQuery]
+        string? fromBookingDateTime,
+        [FromQuery]
+        string? toBookingDateTime,
         string? externalApiAccountId,
         string? externalApiStatementId)
     {
@@ -63,21 +65,26 @@ public class TransactionsController : ControllerBase
         IFluentResponse<TransactionsResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Transactions
-            .ReadAsync(accountAccessConsentId, externalApiAccountId, externalApiStatementId);
+            .ReadAsync(
+                accountAccessConsentId,
+                externalApiAccountId,
+                externalApiStatementId,
+                fromBookingDateTime,
+                toBookingDateTime);
 
         // HTTP response
-        HttpResponse<TransactionsResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
-        var httpResponse = new TransactionsHttpResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse<TransactionsResponse> _ => StatusCodes.Status200OK,
+            FluentSuccessResponse<TransactionsResponse> _ =>
+                new ObjectResult(fluentResponse.Data!)
+                    { StatusCode = StatusCodes.Status200OK },
             FluentBadRequestErrorResponse<TransactionsResponse> _ =>
-                StatusCodes.Status400BadRequest,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
             FluentOtherErrorResponse<TransactionsResponse> _ =>
-                StatusCodes.Status500InternalServerError,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 }

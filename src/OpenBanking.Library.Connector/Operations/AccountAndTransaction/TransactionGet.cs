@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Specialized;
+using System.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -37,25 +39,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             dbSaveChangesMethod,
             timeProvider) { }
 
-        protected string RelativePath => "/transactions";
-
-        protected string RelativePath2 => "/transactions";
-
         protected override Uri RetrieveGetUrl(
             string baseUrl,
             string? externalApiAccountId,
-            string? externalApiStatementId)
+            string? externalApiStatementId,
+            string? fromBookingDateTime,
+            string? toBookingDateTime)
         {
-            Uri endpointUrl =
+            string endpointUrlBase =
                 (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
                 {
-                    (null, null) => new Uri(baseUrl + RelativePath),
-                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
-                    ({ } extAccountId, { } extStatementId) => new Uri(
-                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
+                    (null, null) => baseUrl + "/transactions",
+                    ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + "/transactions",
+                    ({ } extAccountId, { } extStatementId) =>
+                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + "/transactions",
                     _ => throw new ArgumentOutOfRangeException()
                 };
-            return endpointUrl;
+            var uriBuilder = new UriBuilder(endpointUrlBase);
+            NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            if (fromBookingDateTime != null)
+            {
+                query["fromBookingDateTime"] = fromBookingDateTime;
+            }
+
+            if (toBookingDateTime != null)
+            {
+                query["toBookingDateTime"] = toBookingDateTime;
+            }
+
+            uriBuilder.Query = query.ToString();
+            return uriBuilder.Uri;
         }
 
         protected override TransactionsResponse PublicGetResponse(

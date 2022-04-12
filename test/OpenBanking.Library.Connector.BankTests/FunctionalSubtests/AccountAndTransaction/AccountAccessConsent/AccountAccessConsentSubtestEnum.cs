@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent
 {
@@ -10,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     /// </summary>
     public enum AccountAccessConsentSubtestEnum
     {
-        DefaultPermissionsSubtest
+        MaximumPermissionsSubtest
     }
 
     public static class AccountAccessConsentSubtestHelper
@@ -22,5 +24,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         }
 
         public static ISet<AccountAccessConsentSubtestEnum> AllAccountAccessConsentSubtests { get; }
+
+        public static AccountAccessConsentType AccountAccessConsentType(AccountAccessConsentSubtestEnum subtestEnum) =>
+            subtestEnum switch
+            {
+                AccountAccessConsentSubtestEnum.MaximumPermissionsSubtest => BankProfiles.AccountAccessConsentType
+                    .MaximumPermissions,
+                _ => throw new ArgumentException(
+                    $"{nameof(subtestEnum)} is not valid {nameof(AccountAccessConsentSubtestEnum)} or needs to be added to this switch statement.")
+            };
     }
 }

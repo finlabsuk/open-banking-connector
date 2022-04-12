@@ -8,42 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
-using HttpResponse = FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response.HttpResponse;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
-
-/// <summary>
-///     HTTP response object used when creating or reading an AccountAccessConsent object. Includes messages and data from
-///     Open Banking Connector.
-/// </summary>
-public class AccountAccessConsentHttpReadResponse : HttpResponse<AccountAccessConsentReadResponse>
-{
-    public AccountAccessConsentHttpReadResponse(
-        HttpResponseMessages? messages,
-        AccountAccessConsentReadResponse? data) :
-        base(messages, data) { }
-}
-
-/// <summary>
-///     HTTP response object used when local-reading an AccountAccessConsent object. Includes messages and data from
-///     Open Banking Connector.
-/// </summary>
-public class AccountAccessConsentHttpReadLocalResponse : HttpResponse<IList<AccountAccessConsentReadLocalResponse>>
-{
-    public AccountAccessConsentHttpReadLocalResponse(
-        HttpResponseMessages? messages,
-        IList<AccountAccessConsentReadLocalResponse>? data) :
-        base(messages, data) { }
-}
-
-/// <summary>
-///     HTTP response object used when deleting an AccountAccessConsent object. Includes messages from
-///     Open Banking Connector.
-/// </summary>
-public class AccountAccessConsentHttpDeleteResponse : HttpResponse
-{
-    public AccountAccessConsentHttpDeleteResponse(HttpResponseMessages? messages) : base(messages) { }
-}
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
@@ -66,13 +32,13 @@ public class AccountAccessConsentsController : ControllerBase
     [Route("aisp/account-access-consents")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(AccountAccessConsentReadResponse),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsent request)
     {
@@ -82,18 +48,19 @@ public class AccountAccessConsentsController : ControllerBase
             .CreateAsync(request);
 
         // HTTP response
-        HttpResponse<AccountAccessConsentReadResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
-        var httpResponse =
-            new AccountAccessConsentHttpReadResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse<AccountAccessConsentReadResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<AccountAccessConsentReadResponse> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<AccountAccessConsentReadResponse> _ => StatusCodes.Status500InternalServerError,
+            FluentSuccessResponse<AccountAccessConsentReadResponse> _ =>
+                new ObjectResult(fluentResponse.Data!)
+                    { StatusCode = StatusCodes.Status200OK },
+            FluentBadRequestErrorResponse<AccountAccessConsentReadResponse> _ =>
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
+            FluentOtherErrorResponse<AccountAccessConsentReadResponse> _ =>
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 
     /// <summary>
@@ -105,13 +72,13 @@ public class AccountAccessConsentsController : ControllerBase
     [Route("aisp/account-access-consents/{accountAccessConsentId}")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(AccountAccessConsentReadResponse),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(Guid accountAccessConsentId)
     {
@@ -122,20 +89,19 @@ public class AccountAccessConsentsController : ControllerBase
             .ReadAsync(accountAccessConsentId);
 
         // HTTP response
-        HttpResponse<AccountAccessConsentReadResponse> httpResponseTmp = fluentResponse.ToHttpResponse();
-        var httpResponse =
-            new AccountAccessConsentHttpReadResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse<AccountAccessConsentReadResponse> _ => StatusCodes.Status200OK,
+            FluentSuccessResponse<AccountAccessConsentReadResponse> _ =>
+                new ObjectResult(fluentResponse.Data!)
+                    { StatusCode = StatusCodes.Status200OK },
             FluentBadRequestErrorResponse<AccountAccessConsentReadResponse> _ =>
-                StatusCodes.Status400BadRequest,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
             FluentOtherErrorResponse<AccountAccessConsentReadResponse> _ =>
-                StatusCodes.Status500InternalServerError,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 
     /// <summary>
@@ -147,13 +113,13 @@ public class AccountAccessConsentsController : ControllerBase
     [Route("aisp/account-access-consents/{accountAccessConsentId}")]
     [HttpDelete]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpDeleteResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpDeleteResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentHttpDeleteResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteAsync(Guid accountAccessConsentId)
     {
@@ -164,19 +130,18 @@ public class AccountAccessConsentsController : ControllerBase
             .DeleteAsync(accountAccessConsentId);
 
         // HTTP response
-        var httpResponseTmp = fluentResponse.ToHttpResponse();
-        var httpResponse =
-            new AccountAccessConsentHttpDeleteResponse(httpResponseTmp.Messages);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse => StatusCodes.Status200OK,
+            FluentSuccessResponse =>
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status200OK },
             FluentBadRequestErrorResponse =>
-                StatusCodes.Status400BadRequest,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
             FluentOtherErrorResponse =>
-                StatusCodes.Status500InternalServerError,
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 }

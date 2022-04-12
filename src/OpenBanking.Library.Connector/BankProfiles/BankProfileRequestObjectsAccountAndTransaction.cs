@@ -11,7 +11,7 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
-    public enum AccountAccessConsentTypeEnum
+    public enum AccountAccessConsentType
     {
         MaximumPermissions
     }
@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public AccountAccessConsent AccountAccessConsentRequest(
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
+            AccountAccessConsentType accountAccessConsentType,
             string? name,
             string? createdBy)
         {

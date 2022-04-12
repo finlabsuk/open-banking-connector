@@ -69,6 +69,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 Guid consentId,
                 string? externalApiAccountId,
                 string? externalApiStatementId,
+                string? fromBookingDateTime,
+                string? toBookingDateTime,
                 string? modifiedBy)
         {
             // Create non-error list
@@ -113,7 +115,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             Uri endpointUrl = RetrieveGetUrl(
                 accountAndTransactionApi.BaseUrl,
                 externalApiAccountId,
-                externalApiStatementId);
+                externalApiStatementId,
+                fromBookingDateTime,
+                toBookingDateTime);
 
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -141,7 +145,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected abstract Uri RetrieveGetUrl(
             string baseUrl,
             string? externalApiAccountId,
-            string? externalApiStatementId);
+            string? externalApiStatementId,
+            string? fromBookingDateTime,
+            string? toBookingDateTime);
 
         protected abstract TPublicResponse PublicGetResponse(TApiResponse apiResponse);
 

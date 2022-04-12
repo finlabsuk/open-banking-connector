@@ -42,7 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override Uri RetrieveGetUrl(
             string baseUrl,
             string? externalApiAccountId,
-            string? externalApiStatementId)
+            string? externalApiStatementId,
+            string? fromBookingDateTime,
+            string? toBookingDateTime)
         {
             Uri endpointUrl =
                 (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch

@@ -25,12 +25,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="consentId"></param>
         /// <param name="externalAccountId"></param>
         /// <param name="externalStatementId"></param>
+        /// <param name="fromBookingDateTime"></param>
+        /// <param name="toBookingDateTime"></param>
         /// <param name="modifiedBy"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid consentId,
             string? externalAccountId = null,
             string? externalStatementId = null,
+            string? fromBookingDateTime = null,
+            string? toBookingDateTime = null,
             string? modifiedBy = null);
     }
 
@@ -45,6 +49,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             Guid consentId,
             string? externalAccountId,
             string? externalStatementId,
+            string? fromBookingDateTime,
+            string? toBookingDateTime,
             string? modifiedBy)
         {
             // Create non-error list
@@ -58,6 +64,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                         consentId,
                         externalAccountId,
                         externalStatementId,
+                        fromBookingDateTime,
+                        toBookingDateTime,
                         modifiedBy);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 

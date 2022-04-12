@@ -15,6 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             Guid consentId,
             string? externalApiAccountId,
             string? externalApiStatementId,
+            string? fromBookingDateTime,
+            string? toBookingDateTime,
             string? modifiedBy);
     }
 }

@@ -2,66 +2,60 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfiguration;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "aisp")]
-[Tags("Parties")]
-public class PartiesController : ControllerBase
+[ApiExplorerSettings(GroupName = "config")]
+public class AccountAndTransactionApisController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public PartiesController(IRequestBuilder requestBuilder)
+    public AccountAndTransactionApisController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
 
     /// <summary>
-    ///     Read Party
+    ///     Create an AccountAndTransactionApi object
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/party")]
-    [Route("aisp/accounts/{externalApiAccountId}/party")]
-    [HttpGet]
+    [Route("config/account-and-transaction-apis")]
+    [HttpPost]
     [ProducesResponseType(
-        typeof(PartiesResponse),
-        StatusCodes.Status200OK)]
+        typeof(AccountAndTransactionApiResponse),
+        StatusCodes.Status201Created)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalApiAccountId)
+    public async Task<IActionResult> PostAsync([FromBody] AccountAndTransactionApiRequest request)
     {
-        // Operation
-        IFluentResponse<PartiesResponse> fluentResponse = await _requestBuilder
-            .AccountAndTransaction
-            .Parties
-            .ReadAsync(accountAccessConsentId, externalApiAccountId);
+        IFluentResponse<AccountAndTransactionApiResponse> fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .AccountAndTransactionApis
+            .CreateLocalAsync(request);
 
         // HTTP response
         return fluentResponse switch
         {
-            FluentSuccessResponse<PartiesResponse> _ =>
+            FluentSuccessResponse<AccountAndTransactionApiResponse> _ =>
                 new ObjectResult(fluentResponse.Data!)
                     { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<PartiesResponse> _ =>
+            FluentBadRequestErrorResponse<AccountAndTransactionApiResponse> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<PartiesResponse> _ =>
+            FluentOtherErrorResponse<AccountAndTransactionApiResponse> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
@@ -69,16 +63,14 @@ public class PartiesController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Parties
+    ///     Read all AccountAndTransactionApi objects (temporary endpoint)
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
-    /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/accounts/{externalApiAccountId}/parties")]
+    [Route("config/account-and-transaction-apis")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(Parties2Response),
+        typeof(HttpResponse<IList<AccountAndTransactionApiResponse>>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
@@ -86,26 +78,24 @@ public class PartiesController : ControllerBase
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Get2Async(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalApiAccountId)
+    public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<Parties2Response> fluentResponse = await _requestBuilder
-            .AccountAndTransaction
-            .Parties2
-            .ReadAsync(accountAccessConsentId, externalApiAccountId);
+        IFluentResponse<IQueryable<AccountAndTransactionApiResponse>> fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .AccountAndTransactionApis
+            .ReadLocalAsync(query => true);
 
         // HTTP response
         return fluentResponse switch
         {
-            FluentSuccessResponse<Parties2Response> _ =>
+            FluentSuccessResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
                 new ObjectResult(fluentResponse.Data!)
                     { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<Parties2Response> _ =>
+            FluentBadRequestErrorResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<Parties2Response> _ =>
+            FluentOtherErrorResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()

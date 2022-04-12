@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.TokenEndpointAuthMethod)
                 .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethodEnum>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankApiRequest)
+            builder.Property(e => e.ExternalApiRequest)
                 .HasConversion(
                     v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>
@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.RegistrationAccessToken)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankApiResponse)
+            builder.Property(e => e.ExternalApiResponse)
                 .HasConversion(
                     v => JsonConvert.SerializeObject(v, _jsonFormatting),
                     v =>

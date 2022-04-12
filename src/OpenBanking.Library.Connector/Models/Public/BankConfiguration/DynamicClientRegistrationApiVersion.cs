@@ -11,13 +11,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DynamicClientRegistrationApiVersion
     {
-        [EnumMember(Value = "v3p1")]
+        [EnumMember(Value = "Version3p1")]
         Version3p1,
 
-        [EnumMember(Value = "v3p2")]
+        [EnumMember(Value = "Version3p2")]
         Version3p2,
 
-        [EnumMember(Value = "v3p3")]
+        [EnumMember(Value = "Version3p3")]
         Version3p3
     }
 }

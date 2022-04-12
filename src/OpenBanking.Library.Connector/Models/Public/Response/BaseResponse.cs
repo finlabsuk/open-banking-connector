@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
@@ -31,6 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
             Created = created;
             CreatedBy = createdBy;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Unique Open Banking Connector ID (used in local database).

@@ -27,13 +27,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         [HttpPost]
         [Route("auth/fragment-redirect-delegate")]
         [ProducesResponseType(
-            typeof(HttpResponse<AuthorisationRedirectObjectResponse>),
+            typeof(HttpResponseMessages),
             StatusCodes.Status201Created)]
         [ProducesResponseType(
-            typeof(HttpResponse<AuthorisationRedirectObjectResponse>),
+            typeof(HttpResponseMessages),
             StatusCodes.Status400BadRequest)]
         [ProducesResponseType(
-            typeof(HttpResponse<AuthorisationRedirectObjectResponse>),
+            typeof(HttpResponseMessages),
             StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<IActionResult> PostAuthorisationCallbackAsync([FromForm] AuthorisationCallbackPayload payload)
@@ -45,20 +45,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
                 .UpdateAuthResultLocalAsync(authResult);
 
             // HTTP response
-            HttpResponse<AuthContextResponse> httpResponse =
-                fluentResponse.ToHttpResponse();
-            int statusCode = fluentResponse switch
+            return fluentResponse switch
             {
-                FluentSuccessResponse<AuthContextResponse> _ => StatusCodes
-                    .Status201Created,
-                FluentBadRequestErrorResponse<AuthContextResponse> _ => StatusCodes
-                    .Status400BadRequest,
-                FluentOtherErrorResponse<AuthContextResponse> _ => StatusCodes
-                    .Status500InternalServerError,
+                FluentSuccessResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status201Created },
+                FluentBadRequestErrorResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status400BadRequest },
+                FluentOtherErrorResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status500InternalServerError },
                 _ => throw new ArgumentOutOfRangeException()
             };
-            return new ObjectResult(httpResponse)
-                { StatusCode = statusCode };
         }
     }
 }

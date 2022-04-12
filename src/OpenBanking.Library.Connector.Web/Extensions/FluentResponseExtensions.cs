@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
         public static HttpResponse<TData> ToHttpResponse<TData>(this IFluentResponse<TData> value)
             where TData : class => new(value.GetHttpResponseMessages(), value.Data);
 
-        private static HttpResponseMessages? GetHttpResponseMessages(this IFluentResponse value)
+        public static HttpResponseMessages? GetHttpResponseMessages(this IFluentResponse value)
         {
             HttpResponseMessages? messages = null;
             if (value.Messages.Any())

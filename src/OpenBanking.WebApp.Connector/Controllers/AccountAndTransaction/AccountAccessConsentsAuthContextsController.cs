@@ -11,19 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
 
-/// <summary>
-///     HTTP response object used when creating or reading an AccountAccessConsent object. Includes messages and data from
-///     Open Banking Connector.
-/// </summary>
-public class
-    AccountAccessConsentAuthContextsHttpReadResponse : HttpResponse<AccountAccessConsentAuthContextCreateLocalResponse>
-{
-    public AccountAccessConsentAuthContextsHttpReadResponse(
-        HttpResponseMessages? messages,
-        AccountAccessConsentAuthContextCreateLocalResponse? data) :
-        base(messages, data) { }
-}
-
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 [Tags("Account Access Consent Auth Contexts")]
@@ -45,13 +32,13 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     [Route("aisp/account-access-consents/auth-contexts")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(AccountAccessConsentAuthContextsHttpReadResponse),
+        typeof(AccountAccessConsentAuthContextCreateLocalResponse),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentAuthContextsHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status400BadRequest)]
     [ProducesResponseType(
-        typeof(AccountAccessConsentAuthContextsHttpReadResponse),
+        typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentAuthContext request)
     {
@@ -62,20 +49,18 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
             .CreateLocalAsync(request);
 
         // HTTP response
-        HttpResponse<AccountAccessConsentAuthContextCreateLocalResponse> httpResponseTmp =
-            fluentResponse.ToHttpResponse();
-        var httpResponse =
-            new AccountAccessConsentAuthContextsHttpReadResponse(httpResponseTmp.Messages, httpResponseTmp.Data);
-        int statusCode = fluentResponse switch
+        return fluentResponse switch
         {
-            FluentSuccessResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ => StatusCodes
-                .Status400BadRequest,
-            FluentOtherErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ => StatusCodes
-                .Status500InternalServerError,
+            FluentSuccessResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
+                new ObjectResult(fluentResponse.Data!)
+                    { StatusCode = StatusCodes.Status200OK },
+            FluentBadRequestErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status400BadRequest },
+            FluentOtherErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
+                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                    { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
         };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
     }
 }
