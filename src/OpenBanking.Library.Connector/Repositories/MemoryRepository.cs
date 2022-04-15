@@ -2,12 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
@@ -21,13 +17,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
 
     {
         protected readonly ConcurrentDictionary<string, TRepositoryItem> _cache =
-            new ConcurrentDictionary<string, TRepositoryItem>(StringComparer.InvariantCultureIgnoreCase);
+            new(StringComparer.InvariantCultureIgnoreCase);
 
         public Task<TRepositoryItem?> GetAsync(string id)
         {
             id.ArgNotNull(nameof(id));
 
-            if (_cache.TryGetValue(id, out TRepositoryItem value))
+            if (_cache.TryGetValue(id, out TRepositoryItem? value))
             {
                 return ((TRepositoryItem?) value).ToTaskResult();
             }

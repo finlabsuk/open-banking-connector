@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
@@ -49,14 +48,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileId" />
         /// </summary>
         public Dictionary<string, string> TransportCertificateProfileIdOverrides { get; set; } =
-            new Dictionary<string, string>();
+            new();
 
         /// <summary>
         ///     Bank-specific overrides for
         ///     <see cref="SoftwareStatementProfile.SigningCertificateProfileId" />
         /// </summary>
         public Dictionary<string, string> SigningCertificateProfileIdOverrides { get; set; } =
-            new Dictionary<string, string>();
+            new();
 
         /// <summary>
         ///     Returns profile with override substitution based on override case and override properties removed
@@ -80,14 +79,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
             if (TransportCertificateProfileIdOverrides.TryGetValue(
                     overrideCase,
-                    out string transportCertificateProfileId))
+                    out string? transportCertificateProfileId))
             {
                 newObject.TransportCertificateProfileId = transportCertificateProfileId;
             }
 
             if (SigningCertificateProfileIdOverrides.TryGetValue(
                     overrideCase,
-                    out string signingCertificateProfileId))
+                    out string? signingCertificateProfileId))
             {
                 newObject.SigningCertificateProfileId = signingCertificateProfileId;
             }

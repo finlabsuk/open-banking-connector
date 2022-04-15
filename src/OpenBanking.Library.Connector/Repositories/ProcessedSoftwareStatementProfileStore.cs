@@ -121,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
         public Task<ProcessedSoftwareStatementProfile> GetAsync(string id, string? overrideVariant)
         {
             // Load cache value
-            if (!_cache.TryGetValue(id, out CacheValue cacheValue))
+            if (!_cache.TryGetValue(id, out CacheValue? cacheValue))
             {
                 throw new KeyNotFoundException($"Software statement profile with ID {id} not found.");
             }
@@ -135,7 +135,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             // Return override case or throw exception if not available
             if (!cacheValue.OverrideVariants.TryGetValue(
                     overrideVariant,
-                    out ProcessedSoftwareStatementProfile processedSoftwareStatementProfile))
+                    out ProcessedSoftwareStatementProfile? processedSoftwareStatementProfile))
             {
                 throw new KeyNotFoundException(
                     $"Software statement profile with ID {id} found but no override case {overrideVariant} found for this software statement profile.");
@@ -168,7 +168,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             string transportCertificateProfileId = softwareStatementProfile.TransportCertificateProfileId;
             if (!transportCertificateProfilesSettings.TryGetValue(
                     transportCertificateProfileId,
-                    out TransportCertificateProfileWithOverrideProperties
+                    out TransportCertificateProfileWithOverrideProperties?
                         transportCertificateProfileWithOverrideProperties))
             {
                 throw new ArgumentOutOfRangeException(
@@ -196,7 +196,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             string signingCertificateProfileId = softwareStatementProfile.SigningCertificateProfileId;
             if (!signingCertificateProfilesSettings.TryGetValue(
                     signingCertificateProfileId,
-                    out SigningCertificateProfile signingCertificateProfile))
+                    out SigningCertificateProfile? signingCertificateProfile))
             {
                 throw new ArgumentOutOfRangeException(
                     $"No signing certificate profile with ID {signingCertificateProfileId} supplied in configuration/key secrets.");

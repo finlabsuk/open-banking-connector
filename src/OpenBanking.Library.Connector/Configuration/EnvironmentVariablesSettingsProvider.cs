@@ -2,9 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
@@ -29,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 
         public TSettings GetSettings()
         {
-            Dictionary<string, string> evs = GetEnvironmentVariables(_root);
+            Dictionary<string, string?> evs = GetEnvironmentVariables(_root);
 
             var result = new TSettings();
 
@@ -47,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
 
         private string? GetEnvVarValue(Dictionary<string, string> variables, string name)
         {
-            if (variables.TryGetValue(name, out string value))
+            if (variables.TryGetValue(name, out string? value))
             {
                 return value;
             }
@@ -55,16 +53,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration
             return null;
         }
 
-        private Dictionary<string, string> GetEnvironmentVariables(string root)
+        private Dictionary<string, string?> GetEnvironmentVariables(string root)
         {
             var result =
-                new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+                new Dictionary<string, string?>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (DictionaryEntry ev in _environmentVariables)
             {
-                if (ev.Key.ToString().StartsWith(root))
+                if (ev.Key.ToString()!.StartsWith(root))
                 {
-                    result[ev.Key.ToString()] = ev.Value.ToString();
+                    result[ev.Key.ToString()!] = ev.Value?.ToString();
                 }
             }
 

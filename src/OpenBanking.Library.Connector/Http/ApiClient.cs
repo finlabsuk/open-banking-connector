@@ -2,10 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Newtonsoft.Json;
 
@@ -59,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                _instrumentation.Exception(ex, request.RequestUri!.ToString());
                 throw;
             }
             finally
@@ -92,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                _instrumentation.Exception(ex, request.RequestUri!.ToString());
                 throw;
             }
             finally
@@ -106,19 +103,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             try
             {
-                _instrumentation.StartTrace(new HttpTraceInfo("Starting request", request.RequestUri));
+                _instrumentation.StartTrace(new HttpTraceInfo("Starting request", request.RequestUri!));
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
                 _instrumentation.EndTrace(
                     new HttpTraceInfo(
                         "Ended request",
-                        request.RequestUri,
+                        request.RequestUri!,
                         response.StatusCode));
 
                 return response;
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri.ToString());
+                _instrumentation.Exception(ex, request.RequestUri!.ToString());
 
                 throw;
             }

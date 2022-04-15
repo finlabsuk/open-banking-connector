@@ -2,14 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Security;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -27,8 +22,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             _thirdPartyThumbprints = new Lazy<HashSet<string>>(GetThumbprints(GetServerCertificatesAsync().Result));
         }
 
-        public bool IsOk(HttpRequestMessage msg, X509Certificate2 cert, X509Chain chain, SslPolicyErrors errors)
+        public bool IsOk(HttpRequestMessage msg, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors errors)
         {
+            if (cert is null)
+            {
+                return false;
+            }
+
             string tp = cert.Thumbprint;
 
             return _thirdPartyThumbprints.Value.Contains(tp);

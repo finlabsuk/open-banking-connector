@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
@@ -43,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persist
         {
             Func<bool> rule = () => { return _repo.GetNoTrackingAsync(id).Result == null; };
 
-            return rule.When(id != null);
+            return rule.When(true);
         }
 
         // [Property(Verbose = PropertyTests.VerboseTests, Arbitrary = new[] { typeof(FsCheckCustomArbs) })]

@@ -42,9 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            string? responseContent = await response.Content.ReadAsStringAsync();
+            string responseContent = await response.Content.ReadAsStringAsync();
             responseContent.Should().Be(content);
-            response.Content.Headers.ContentType.ToString().Should().Be(contentType + "; charset=utf-8");
+            response.Content.Headers.ContentType?.ToString().Should().Be(contentType + "; charset=utf-8");
         }
 
         [Theory]

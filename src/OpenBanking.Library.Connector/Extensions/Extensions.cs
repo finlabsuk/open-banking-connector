@@ -2,12 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 
@@ -25,13 +21,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
                 : default;
         }
 
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IEnumerable<T> NullToEmpty<T>(this IEnumerable<T>? values)
         {
             return values ?? Enumerable.Empty<T>();
         }
 
-        public static IEnumerable<T> WalkRecursive<T>(this T value, Func<T, T> selector)
+        public static IEnumerable<T> WalkRecursive<T>(this T value, Func<T, T?> selector)
             where T : class
         {
             return WalkRecursiveInner(value, selector.ArgNotNull(nameof(selector)));
@@ -68,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
         }
 
         // HACK: the repetitive reflection over types will incur performance costs in future - please optimise
-        public static Dictionary<string, object> ToObjectDictionary<T>(this T value)
+        public static Dictionary<string, object?> ToObjectDictionary<T>(this T value)
             where T : class
         {
             value.ArgNotNull(nameof(value));
@@ -77,19 +74,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
                 BindingFlags.Instance | BindingFlags.Public |
                 BindingFlags.FlattenHierarchy);
 
-            var pairs = props.Select(
-                p => new
-                {
-                    Prop = p.GetGetMethod(),
-                    Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
-                }).Where(a => a.Attr?.PropertyName != null && a.Prop != null);
+            var pairs = props
+                .Select(
+                    p => new
+                    {
+                        Prop = p.GetGetMethod(),
+                        Attr = p.GetCustomAttribute<JsonPropertyAttribute>()
+                    })
+                .Where(a => a.Attr?.PropertyName is not null && a.Prop is not null);
 
-            var result = new Dictionary<string, object>(StringComparer.InvariantCulture);
+            var result = new Dictionary<string, object?>(StringComparer.InvariantCulture);
             foreach (var pair in pairs)
             {
-                object propValue = pair.Prop.Invoke(value, null);
+                object? propValue = pair.Prop!.Invoke(value, null);
 
-                result[pair.Attr.PropertyName!] = propValue;
+                result[pair.Attr?.PropertyName!] = propValue;
             }
 
             return result;
@@ -120,14 +119,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
             return result;
         }
 
-        private static IEnumerable<T> WalkRecursiveInner<T>(T value, Func<T, T> selector)
+        private static IEnumerable<T> WalkRecursiveInner<T>(T value, Func<T, T?> selector)
             where T : class
         {
-            while (value != null)
+            yield return value;
+
+            while (selector(value) is not null)
             {
                 yield return value;
-
-                value = selector(value);
             }
         }
     }

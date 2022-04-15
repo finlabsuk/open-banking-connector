@@ -77,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
             }
 
             DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
-            long timeValue = long.Parse(reader.Value.ToString());
+            long timeValue = long.Parse(reader.Value.ToString()!);
             return GetTime(timeValue, options);
         }
     }
@@ -122,7 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
             }
 
             DateTimeOffsetToUnixConverterOptions options = GetOptions(serializer);
-            long timeValue = long.Parse(reader.Value.ToString());
+            long timeValue = long.Parse(reader.Value.ToString()!);
             return GetTime(timeValue, options);
         }
     }

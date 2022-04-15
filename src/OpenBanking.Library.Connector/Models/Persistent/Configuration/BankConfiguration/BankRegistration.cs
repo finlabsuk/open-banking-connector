@@ -2,12 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -57,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v => string.Join(' ', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries),
                     new ValueComparer<IList<string>>(
-                        (c1, c2) => c1.SequenceEqual(c2),
+                        (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
                         c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                         c => (IList<string>) c.ToList())) // NB: cast is required to avoid error and not redundant
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

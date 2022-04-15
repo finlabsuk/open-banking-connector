@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FluentAssertions;
 using Xunit;
@@ -41,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                     ClientId = "some clientId"
                 };
 
-            Dictionary<string, object> result = value.ToObjectDictionary();
+            Dictionary<string, object?> result = value.ToObjectDictionary();
 
             result.Should().NotBeNull();
             result["aud"].Should().Be(value.Aud);

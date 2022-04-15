@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -101,16 +98,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
         {
             PropertyInfo[] props = value.GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.Instance);
-            var pairs = props.Select(
-                p => new
-                {
-                    Prop = p,
-                    Attr = p.GetCustomAttributes<JsonPropertyAttribute>().FirstOrDefault()
-                }).Where(a => a.Attr != null);
+            var pairs = props
+                .Select(
+                    p => new
+                    {
+                        Prop = p,
+                        Attr = p.GetCustomAttributes<JsonPropertyAttribute>().FirstOrDefault()
+                    })
+                .Where(a => a.Attr is not null);
 
             foreach (var pair in pairs)
             {
-                if (pair.Attr.Required == Required.Always ||
+                if (pair.Attr!.Required == Required.Always ||
                     pair.Attr.Required == Required.DisallowNull)
                 {
                     MethodInfo? prop = pair.Prop.GetSetMethod();

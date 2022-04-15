@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -97,21 +96,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="TransportCertificateProfile.DisableTlsCertificateVerification" />
         /// </summary>
         public Dictionary<string, bool> DisableTlsCertificateVerificationOverrides { get; set; } =
-            new Dictionary<string, bool>();
+            new();
 
         /// <summary>
         ///     Bank-specific overrides for
         ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
         /// </summary>
         public Dictionary<string, string> CertificateDnWithHexDottedDecimalAttributeValuesOverrides { get; set; } =
-            new Dictionary<string, string>();
+            new();
 
         /// <summary>
         ///     Bank-specific overrides for
         ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
         /// </summary>
         public Dictionary<string, string> CertificateDnWithStringDottedDecimalAttributeValuesOverrides { get; set; } =
-            new Dictionary<string, string>();
+            new();
 
         /// <summary>
         ///     Returns profile with override substitution based on override case and override properties removed
@@ -145,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
             if (CertificateDnWithHexDottedDecimalAttributeValuesOverrides.TryGetValue(
                     overrideCase,
-                    out string certificateDnWithHexDottedDecimalAttributeValues))
+                    out string? certificateDnWithHexDottedDecimalAttributeValues))
             {
                 newObject.CertificateDnWithHexDottedDecimalAttributeValues =
                     certificateDnWithHexDottedDecimalAttributeValues;
@@ -153,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
             if (CertificateDnWithStringDottedDecimalAttributeValuesOverrides.TryGetValue(
                     overrideCase,
-                    out string certificateDnWithStringDottedDecimalAttributeValues))
+                    out string? certificateDnWithStringDottedDecimalAttributeValues))
             {
                 newObject.CertificateDnWithStringDottedDecimalAttributeValues =
                     certificateDnWithStringDottedDecimalAttributeValues;
