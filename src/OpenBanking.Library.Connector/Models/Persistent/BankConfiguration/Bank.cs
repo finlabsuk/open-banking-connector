@@ -2,10 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
@@ -29,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string? createdBy,
             string issuerUrl,
             string financialId) : base(
+            id,
             name,
             reference,
-            id,
             isDeleted,
             isDeletedModified,
             isDeletedModifiedBy,
@@ -45,7 +42,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 
         public IList<BankRegistration> BankRegistrationsNavigation { get; } = new List<BankRegistration>();
 
-        public IList<BankApiSet> BankApiSetsNavigation { get; } = new List<BankApiSet>();
+        public IList<AccountAndTransactionApiEntity> AccountAndTransactionApisNavigation { get; } =
+            new List<AccountAndTransactionApiEntity>();
+
+        public IList<PaymentInitiationApiEntity> PaymentInitiationApisNavigation { get; } =
+            new List<PaymentInitiationApiEntity>();
+
+        public IList<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApisNavigation { get; } =
+            new List<VariableRecurringPaymentsApiEntity>();
 
         public string IssuerUrl { get; }
 
@@ -55,7 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     internal partial class Bank :
         ISupportsFluentLocalEntityGet<BankResponse>
     {
-        public BankResponse PublicGetLocalResponse => new BankResponse(
+        public BankResponse PublicGetLocalResponse => new(
             Id,
             Name,
             Created,

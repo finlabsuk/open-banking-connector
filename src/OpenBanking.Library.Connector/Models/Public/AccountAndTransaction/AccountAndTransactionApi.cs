@@ -6,7 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 {
     public class AccountAndTransactionApi
     {
-        public AccountAndTransactionApiVersionEnum AccountAndTransactionApiVersion { get; set; }
+        public AccountAndTransactionApiVersion AccountAndTransactionApiVersion { get; set; }
 
         public string BaseUrl { get; set; } = null!;
     }

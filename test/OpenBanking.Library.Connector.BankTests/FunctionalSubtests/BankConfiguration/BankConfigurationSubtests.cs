@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
     public static class BankConfigurationSubtests
     {
         public static async
-            Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)>
+            Task<(Guid bankId, Guid bankRegistrationId)>
             PostAndGetObjects(
                 string softwareStatementProfileId,
                 string? softwareStatementAndCertificateProfileOverrideCase,
@@ -89,45 +89,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             registrationResp.Data.Should().NotBeNull();
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
-            // Create bank API information
-            BankApiSet apiSetRequest = bankProfile.BankApiSetRequest(
-                "placeholder: dynamically generated based on unused names",
-                default);
-            await testDataProcessorFluentRequestLogging
-                .AppendToPath("bankApiInformation")
-                .AppendToPath("postRequest")
-                .WriteFile(apiSetRequest);
-
-            apiSetRequest.Name = testNameUnique;
-            apiSetRequest.BankId = bankId;
-            IFluentResponse<BankApiSetResponse> apiSetResponse = await requestBuilder
-                .BankConfiguration
-                .BankApiSets
-                .CreateLocalAsync(apiSetRequest);
-
-            apiSetResponse.Should().NotBeNull();
-            apiSetResponse.Messages.Should().BeEmpty();
-            apiSetResponse.Data.Should().NotBeNull();
-            Guid bankApiSetId = apiSetResponse.Data!.Id;
-
-            return (bankId, bankRegistrationId, bankApiSetId);
+            return (bankId, bankRegistrationId);
         }
 
         public static async Task DeleteObjects(
             IRequestBuilder requestBuilder,
-            Guid bankApiInformationId,
             Guid bankRegistrationId,
             Guid bankId,
             ClientRegistrationApiSettings clientRegistrationApiSettings)
         {
-            // Delete objects
-            IFluentResponse bankApiInformationResp = await requestBuilder
-                .BankConfiguration
-                .BankApiSets
-                .DeleteLocalAsync(bankApiInformationId);
-            bankApiInformationResp.Should().NotBeNull();
-            bankApiInformationResp.Messages.Should().BeEmpty();
-
             IFluentResponse bankRegistrationResp;
             if (clientRegistrationApiSettings.UseDeleteEndpoint)
             {

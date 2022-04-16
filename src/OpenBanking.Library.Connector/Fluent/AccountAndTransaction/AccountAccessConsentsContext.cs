@@ -17,8 +17,6 @@ using AccountAccessConsentPersisted =
 using AccountAccessConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
     AccountAccessConsentAuthContext;
-using BankApiSetPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using AccountAccessConsentAuthContext =

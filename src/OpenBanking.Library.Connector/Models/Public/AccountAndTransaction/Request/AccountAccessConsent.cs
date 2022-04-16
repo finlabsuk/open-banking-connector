@@ -2,9 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
@@ -21,14 +19,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     public class AccountAccessConsent : Base, ISupportsValidation
     {
         /// <summary>
-        ///     Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
-        ///     <a
-        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
-        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
-        ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
+        ///     Specifies BankRegistration object to use when creating the consent.
+        ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer
+        ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
-        public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
+        public Guid BankRegistrationId { get; set; }
 
         /// <summary>
         ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
@@ -39,12 +35,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         public Guid AccountAndTransactionApiId { get; set; }
 
         /// <summary>
-        ///     Specifies BankRegistration object (bank registration info) to use when creating the consent.
-        ///     Both BankApiSetId (JSON: "bankApiSetId") and BankRegistrationId (JSON: "bankRegistrationId") properties must refer
-        ///     to objects with the same parent Bank object.
+        ///     Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     <a
+        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+        ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
         /// </summary>
         [Required]
-        public Guid BankRegistrationId { get; set; }
+        public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AccountAccessConsentValidator()

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
@@ -11,18 +10,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     internal abstract class BaseEntity : IEntity
     {
         protected BaseEntity(
+            Guid id,
             string? name,
             string? reference,
-            Guid id,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy)
         {
+            Id = id;
             Name = name;
             Reference = reference;
-            Id = id;
             IsDeleted = isDeleted;
             IsDeletedModified = isDeletedModified;
             IsDeletedModifiedBy = isDeletedModifiedBy;
@@ -30,6 +29,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             CreatedBy = createdBy;
         }
 
+        /// <summary>
+        ///     Unique Open Banking Connector ID
+        /// </summary>
+        public Guid Id { get; }
 
         /// <summary>
         ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
@@ -42,11 +45,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     application. This field is not used by Open Banking Connector.
         /// </summary>
         public string? Reference { get; }
-
-        /// <summary>
-        ///     Unique Open Banking Connector ID
-        /// </summary>
-        public Guid Id { get; }
 
         /// <summary>
         ///     Mutable "is deleted" status to support soft delete of record

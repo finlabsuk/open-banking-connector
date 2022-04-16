@@ -9,7 +9,7 @@ using Newtonsoft.Json.Converters;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AccountAndTransactionApiVersionEnum
+    public enum AccountAndTransactionApiVersion
     {
         [EnumMember(Value = "Version3p1p7")]
         Version3p1p7,

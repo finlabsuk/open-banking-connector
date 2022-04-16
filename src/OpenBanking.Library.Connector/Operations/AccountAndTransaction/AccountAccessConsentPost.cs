@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -109,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersionEnum.Version3p1p9 => new ApiRequests<
+                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsent1,
@@ -149,6 +146,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
+            string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
+
             Guid accountAndTransactionApiId = request.AccountAndTransactionApiId;
             AccountAndTransactionApiEntity accountAndTransactionApiEntity =
                 await _bankApiSetMethods
@@ -170,8 +169,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 throw new ArgumentException(
                     "Specified AccountAndTransactionApi and BankRegistration objects do not share same BankId.");
             }
-
-            string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
             // Create request
             AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest = request.ExternalApiRequest;

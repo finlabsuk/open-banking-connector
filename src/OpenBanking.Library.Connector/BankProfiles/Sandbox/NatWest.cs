@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion =
-                        PaymentInitiationApiVersionEnum
+                        PaymentInitiationApiVersion
                             .Version3p1p6, // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.6
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()

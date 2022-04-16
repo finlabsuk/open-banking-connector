@@ -6,6 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FluentAssertions;
@@ -30,8 +32,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task RunTest(
             DomesticVrpSubtestEnum subtestEnum,
             BankProfile bankProfile,
+            Guid bankId,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
             VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -63,11 +65,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
+            // Create PaymentInitiationApi
+            VariableRecurringPaymentsApiRequest variableRecurringPaymentsApiRequest =
+                bankProfile.GetVariableRecurringPaymentsApiRequest(Guid.Empty);
+            await testDataProcessorFluentRequestLogging
+                .AppendToPath("variableRecurringPaymentsApi")
+                .AppendToPath("postRequest")
+                .WriteFile(variableRecurringPaymentsApiRequest);
+            variableRecurringPaymentsApiRequest.Name = testNameUnique;
+            variableRecurringPaymentsApiRequest.BankId = bankId;
+            IFluentResponse<VariableRecurringPaymentsApiResponse> variableRecurringPaymentsApiResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .VariableRecurringPaymentsApis
+                    .CreateLocalAsync(variableRecurringPaymentsApiRequest);
+            variableRecurringPaymentsApiResponse.Should().NotBeNull();
+            variableRecurringPaymentsApiResponse.Messages.Should().BeEmpty();
+            variableRecurringPaymentsApiResponse.Data.Should().NotBeNull();
+            Guid variableRecurringPaymentsApiId = variableRecurringPaymentsApiResponse.Data!.Id;
+
             // Basic request object for domestic payment consent
             DomesticVrpConsentRequest domesticVrpConsentRequest =
                 bankProfile.DomesticVrpConsentRequest(
                     Guid.Empty,
-                    Guid.Empty,
+                    variableRecurringPaymentsApiId,
                     DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum),
                     null);
             await testDataProcessorFluentRequestLogging
@@ -99,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .SecondaryIdentification =
                 creditorAccount.SecondaryIdentification;
             domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
-            domesticVrpConsentRequest.BankApiSetId = bankApiSetId;
+            domesticVrpConsentRequest.VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
             domesticVrpConsentRequest.Name = testNameUnique;
             IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResp =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
@@ -237,6 +258,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks
             authContextResponse3.Should().NotBeNull();
             authContextResponse3.Messages.Should().BeEmpty();
+            
+            // DELETE API object
+            IFluentResponse apiResponse = await requestBuilder
+                .BankConfiguration
+                .VariableRecurringPaymentsApis
+                .DeleteLocalAsync(variableRecurringPaymentsApiId);
+
+            // Checks
+            apiResponse.Should().NotBeNull();
+            apiResponse.Messages.Should().BeEmpty();
+
         }
     }
 }

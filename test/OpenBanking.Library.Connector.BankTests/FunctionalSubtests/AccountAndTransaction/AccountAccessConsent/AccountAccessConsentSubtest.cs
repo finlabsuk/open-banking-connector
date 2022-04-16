@@ -28,8 +28,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task RunTest(
             AccountAccessConsentSubtestEnum subtestEnum,
             BankProfile bankProfile,
-            Guid bankRegistrationId,
             Guid bankId,
+            Guid bankRegistrationId,
             AccountAndTransactionApiSettings accountAndTransactionApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -49,14 +49,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Create AccountAndTransactionApi
             AccountAndTransactionApiRequest accountAndTransactionApiRequest =
-                bankProfile.GetAccountAndTransactionApiRequest(
-                    "placeholder: dynamically generated based on unused names",
-                    default);
+                bankProfile.GetAccountAndTransactionApiRequest(Guid.Empty);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("accountAndTransactionApi")
                 .AppendToPath("postRequest")
                 .WriteFile(accountAndTransactionApiRequest);
-
             accountAndTransactionApiRequest.Name = testNameUnique;
             accountAndTransactionApiRequest.BankId = bankId;
             IFluentResponse<AccountAndTransactionApiResponse> accountAndTransactionApiResponse =
@@ -64,7 +61,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .BankConfiguration
                     .AccountAndTransactionApis
                     .CreateLocalAsync(accountAndTransactionApiRequest);
-
             accountAndTransactionApiResponse.Should().NotBeNull();
             accountAndTransactionApiResponse.Messages.Should().BeEmpty();
             accountAndTransactionApiResponse.Data.Should().NotBeNull();
@@ -236,10 +232,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AccountAccessConsents
                 .AuthContexts
                 .DeleteLocalAsync(authContextId);
-
+            
             // Checks
             authContextResponse3.Should().NotBeNull();
             authContextResponse3.Messages.Should().BeEmpty();
+            
+            // DELETE API object
+            IFluentResponse apiResponse = await requestBuilder
+                .BankConfiguration
+                .AccountAndTransactionApis
+                .DeleteLocalAsync(accountAndTransactionApiId);
+
+            // Checks
+            apiResponse.Should().NotBeNull();
+            apiResponse.Messages.Should().BeEmpty();
         }
     }
 }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
@@ -35,31 +34,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         }
 
         public Bank BankRequest(string name) =>
-            new Bank
+            new()
             {
                 IssuerUrl = IssuerUrl,
                 FinancialId = FinancialId,
                 Name = name
             };
 
-        public BankApiSet BankApiSetRequest(string name, Guid bankId) =>
-            new BankApiSet
-            {
-                BankId = bankId,
-                PaymentInitiationApi = PaymentInitiationApi,
-                VariableRecurringPaymentsApi = VariableRecurringPaymentsApi,
-                Name = name
-            };
-
-        public AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(string name, Guid bankId) =>
-            new AccountAndTransactionApiRequest
+        public AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(Guid bankId) =>
+            new()
             {
                 BankId = bankId,
                 ApiVersion =
                     AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
                     throw new InvalidOperationException(),
                 BaseUrl = AccountAndTransactionApi.BaseUrl,
-                Name = name,
+            };
+
+        public PaymentInitiationApiRequest GetPaymentInitiationApiRequest(Guid bankId) =>
+            new()
+            {
+                BankId = bankId,
+                ApiVersion =
+                    PaymentInitiationApi?.PaymentInitiationApiVersion ??
+                    throw new InvalidOperationException(),
+                BaseUrl = PaymentInitiationApi.BaseUrl,
+            };
+
+        public VariableRecurringPaymentsApiRequest GetVariableRecurringPaymentsApiRequest(Guid bankId) =>
+            new()
+            {
+                BankId = bankId,
+                ApiVersion =
+                    VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+                    throw new InvalidOperationException(),
+                BaseUrl = VariableRecurringPaymentsApi.BaseUrl,
             };
     }
 }

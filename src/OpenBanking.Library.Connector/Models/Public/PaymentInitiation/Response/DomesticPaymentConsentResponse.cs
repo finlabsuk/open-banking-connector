@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
@@ -12,11 +11,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public interface IDomesticPaymentConsentPublicQuery : IBaseQuery
     {
+        /// <summary>
+        ///     Associated BankRegistration object
+        /// </summary>
         Guid BankRegistrationId { get; }
 
-        Guid BankApiSetId { get; }
+        /// <summary>
+        ///     Associated PaymentInitiationApi object
+        /// </summary>
+        Guid PaymentInitiationApiId { get; }
 
-        public string ExternalApiId { get; }
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        string ExternalApiId { get; }
     }
 
     /// <summary>
@@ -30,26 +39,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid paymentInitiationApiId,
             string externalApiId) : base(id, name, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
+            PaymentInitiationApiId = paymentInitiationApiId;
             ExternalApiId = externalApiId;
         }
 
         /// <summary>
-        ///     ID of associated BankRegistration object
+        ///     Associated BankRegistration object
         /// </summary>
         public Guid BankRegistrationId { get; }
 
         /// <summary>
-        ///     ID of associated BankApiSet object
+        ///     Associated PaymentInitiationApi object
         /// </summary>
-        public Guid BankApiSetId { get; }
+        public Guid PaymentInitiationApiId { get; }
 
         /// <summary>
-        ///     External (bank) API ID for this object
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
         /// </summary>
         public string ExternalApiId { get; }
     }
@@ -65,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid paymentInitiationApiId,
             string externalApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
             id,
@@ -73,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             created,
             createdBy,
             bankRegistrationId,
-            bankApiSetId,
+            paymentInitiationApiId,
             externalApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -93,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid paymentInitiationApiId,
             string externalApiId,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
             id,
@@ -101,7 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             created,
             createdBy,
             bankRegistrationId,
-            bankApiSetId,
+            paymentInitiationApiId,
             externalApiId)
         {
             ExternalApiResponse = externalApiResponse;

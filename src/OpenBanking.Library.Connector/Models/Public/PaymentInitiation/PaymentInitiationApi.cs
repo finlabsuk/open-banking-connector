@@ -6,7 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 {
     public class PaymentInitiationApi
     {
-        public PaymentInitiationApiVersionEnum PaymentInitiationApiVersion { get; set; }
+        public PaymentInitiationApiVersion PaymentInitiationApiVersion { get; set; }
 
         public string BaseUrl { get; set; } = null!;
     }

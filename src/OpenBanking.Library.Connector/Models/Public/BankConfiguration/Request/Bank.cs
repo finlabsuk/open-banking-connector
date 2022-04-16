@@ -11,15 +11,11 @@ using FluentValidation.Results;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
 {
     /// <summary>
-    ///     A Bank is the base type used to describe a bank ("ASPSP") in OBC.
+    ///     A Bank is the base type used to describe a bank ("ASPSP") in Open Banking Connector.
     ///     It effectively captures the static data associated with a bank which is then used when
-    ///     creating bank registrations and profiles for that bank.
-    ///     Each <see cref="BankRegistration" /> and <see cref="BankApiSet" /> is
+    ///     creating bank registrations and APIs for that bank.
+    ///     Each <see cref="BankRegistration" /> is
     ///     a child object of a Bank.
-    ///     Such child objects can, when created, update their Bank parent to point to them
-    ///     as e.g. the "default bank registration" or "default bank profile" allowing
-    ///     the Bank name to be used as a shorthand instead of the child object ID in
-    ///     various API calls.
     /// </summary>
     public class Bank : Base, ISupportsValidation
     {

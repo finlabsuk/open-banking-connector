@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -55,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersionEnum.Version3p1p9 => new ApiRequests<
+                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsent1,
@@ -97,15 +94,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 throw new KeyNotFoundException($"No record found for Account Access Consent with ID {id}.");
             AccountAndTransactionApiEntity accountAndTransactionApi =
                 persistedObject.AccountAndTransactionApiNavigation;
-            BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
-            string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
-
-            string bankApiId = persistedObject.ExternalApiId;
-
-            // Determine endpoint URL
-            string baseUrl = accountAndTransactionApi.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
-
             var bankApiSet2 = new BankApiSet2
             {
                 AccountAndTransactionApi = new AccountAndTransactionApi
@@ -114,6 +102,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     BaseUrl = accountAndTransactionApi.BaseUrl
                 }
             };
+            BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
+            string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
+
+            string bankApiId = persistedObject.ExternalApiId;
+
+            // Determine endpoint URL
+            string baseUrl = accountAndTransactionApi.BaseUrl;
+            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
 
             return (bankApiId, endpointUrl, persistedObject, bankApiInformation: bankApiSet2, bankRegistration,

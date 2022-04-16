@@ -6,7 +6,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 {
     public class VariableRecurringPaymentsApi
     {
-        public VariableRecurringPaymentsApiVersionEnum VariableRecurringPaymentsApiVersion { get; set; }
+        public VariableRecurringPaymentsApiVersion VariableRecurringPaymentsApiVersion { get; set; }
 
         public string BaseUrl { get; set; } = null!;
     }

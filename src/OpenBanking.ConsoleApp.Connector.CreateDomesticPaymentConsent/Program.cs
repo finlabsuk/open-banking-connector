@@ -8,6 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -42,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             // Create bank configuration
             BankProfile bankProfile = bankProfileDefinitions.Modelo;
             string demoNameUnique = "Demo" + Guid.NewGuid();
-            (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
+            (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationMethods.Create(
                     "All",
                     null,
@@ -50,6 +52,16 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     requestBuilder,
                     bankProfileDefinitions.Modelo,
                     demoNameUnique);
+
+            // Create bank API information
+            PaymentInitiationApiRequest paymentInitiationApiRequest = bankProfile.GetPaymentInitiationApiRequest(bankId);
+            paymentInitiationApiRequest.Name = demoNameUnique;
+            IFluentResponse<PaymentInitiationApiResponse> response = await requestBuilder
+                .BankConfiguration
+                .PaymentInitiationApis
+                .CreateLocalAsync(paymentInitiationApiRequest);
+            Guid bankApiSetId = response.Data!.Id;
+
 
             // Create domestic payment consent
             Guid domesticPaymentConsentId =

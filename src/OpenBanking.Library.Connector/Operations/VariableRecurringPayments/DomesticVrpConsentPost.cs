@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -33,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
-        private readonly IDbReadOnlyEntityMethods<BankApiSet> _bankApiSetMethods;
+        private readonly IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> _bankApiSetMethods;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
 
         public DomesticVrpConsentPost(
@@ -43,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IDbReadOnlyEntityMethods<BankApiSet> bankApiSetMethods,
+            IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> bankApiSetMethods,
             IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -69,17 +66,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new DomesticVrpConsentPersisted(
+                Guid.NewGuid(),
                 request.Name,
                 request.Reference,
-                Guid.NewGuid(),
                 false,
                 utcNow,
                 createdBy,
                 utcNow,
                 createdBy,
-                apiResponse.Data.ConsentId,
                 request.BankRegistrationId,
-                request.BankApiSetId);
+                request.VariableRecurringPaymentsApiId,
+                apiResponse.Data.ConsentId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -92,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     persistedObject.Created,
                     persistedObject.CreatedBy,
                     persistedObject.BankRegistrationId,
-                    persistedObject.BankApiSetId,
+                    persistedObject.VariableRecurringPaymentsApiId,
                     persistedObject.ExternalApiId,
                     apiResponse);
 
@@ -109,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion switch
             {
-                VariableRecurringPaymentsApiVersionEnum.Version3p1p8 => new ApiRequests<
+                VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
@@ -151,38 +148,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
                 throw new KeyNotFoundException(
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-            Guid bankApiInformationId = request.BankApiSetId;
-            BankApiSet bankApiSet =
+            string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
+
+            Guid variableRecurringPaymentsApiId = request.VariableRecurringPaymentsApiId;
+            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApiEntity =
                 await _bankApiSetMethods
                     .DbSetNoTracking
-                    .SingleOrDefaultAsync(x => x.Id == bankApiInformationId) ??
+                    .SingleOrDefaultAsync(x => x.Id == variableRecurringPaymentsApiId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for BankApiInformation {bankApiInformationId} specified by request.");
+                    $"No record found for VariableRecurringPaymentsApi {variableRecurringPaymentsApiId} specified by request.");
             var bankApiSet2 = new BankApiSet2
             {
                 VariableRecurringPaymentsApi = new VariableRecurringPaymentsApi
                 {
-                    VariableRecurringPaymentsApiVersion =
-                        bankApiSet.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
-                        throw new InvalidOperationException(),
-                    BaseUrl = bankApiSet.VariableRecurringPaymentsApi.BaseUrl
+                    VariableRecurringPaymentsApiVersion = variableRecurringPaymentsApiEntity.ApiVersion,
+                    BaseUrl = variableRecurringPaymentsApiEntity.BaseUrl
                 }
             };
-            if (bankApiSet.BankId != bankRegistration.BankId)
-            {
-                throw new ArgumentException("BankRegistrationId and BankProfileId objects do not share same BankId.");
-            }
 
-            string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
+            if (variableRecurringPaymentsApiEntity.BankId != bankRegistration.BankId)
+            {
+                throw new ArgumentException(
+                    "Specified VariableRecurringPaymentsApi and BankRegistration objects do not share same BankId.");
+            }
 
             // Create request
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest =
                 request.ExternalApiRequest;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API.");
+            string baseUrl = variableRecurringPaymentsApiEntity.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePath);
 
             return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,

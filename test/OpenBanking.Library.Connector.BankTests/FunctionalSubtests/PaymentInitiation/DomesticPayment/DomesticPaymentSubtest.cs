@@ -7,6 +7,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FluentAssertions;
@@ -31,8 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task RunTest(
             DomesticPaymentSubtestEnum subtestEnum,
             BankProfile bankProfile,
+            Guid bankId,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
             PaymentInitiationApiSettings paymentInitiationApiSettings,
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -63,11 +65,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
+            // Create PaymentInitiationApi
+            PaymentInitiationApiRequest paymentInitiationApiRequest =
+                bankProfile.GetPaymentInitiationApiRequest(Guid.Empty);
+            await testDataProcessorFluentRequestLogging
+                .AppendToPath("paymentInitiationApi")
+                .AppendToPath("postRequest")
+                .WriteFile(paymentInitiationApiRequest);
+            paymentInitiationApiRequest.Name = testNameUnique;
+            paymentInitiationApiRequest.BankId = bankId;
+            IFluentResponse<PaymentInitiationApiResponse> paymentInitiationApiResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .PaymentInitiationApis
+                    .CreateLocalAsync(paymentInitiationApiRequest);
+            paymentInitiationApiResponse.Should().NotBeNull();
+            paymentInitiationApiResponse.Messages.Should().BeEmpty();
+            paymentInitiationApiResponse.Data.Should().NotBeNull();
+            Guid paymentInitiationApiId = paymentInitiationApiResponse.Data!.Id;
+
             // Basic request object for domestic payment consent
             DomesticPaymentConsentRequest domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     Guid.Empty,
-                    Guid.Empty,
+                    paymentInitiationApiId,
                     DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(subtestEnum),
                     "placeholder: random GUID",
                     "placeholder: random GUID",
@@ -90,7 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // POST domestic payment consent
             domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
-            domesticPaymentConsentRequest.BankApiSetId = bankApiSetId;
+            domesticPaymentConsentRequest.PaymentInitiationApiId = paymentInitiationApiId;
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
@@ -237,6 +258,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks
             authContextResponse3.Should().NotBeNull();
             authContextResponse3.Messages.Should().BeEmpty();
+            
+            // DELETE API object
+            IFluentResponse apiResponse = await requestBuilder
+                .BankConfiguration
+                .PaymentInitiationApis
+                .DeleteLocalAsync(paymentInitiationApiId);
+
+            // Checks
+            apiResponse.Should().NotBeNull();
+            apiResponse.Messages.Should().BeEmpty();
+
         }
     }
 }

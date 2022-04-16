@@ -4,8 +4,8 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
@@ -14,10 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     ///     Persisted type for Bank API Set
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class AccountAndTransactionApiEntity :
-        BaseEntity, IAccountAndTransactionApiQuery
+    internal partial class VariableRecurringPaymentsApiEntity :
+        BaseEntity, IVariableRecurringPaymentsApiQuery
     {
-        public AccountAndTransactionApiEntity(
+        public VariableRecurringPaymentsApiEntity(
             string? name,
             string? reference,
             Guid id,
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
-            AccountAndTransactionApiVersion apiVersion,
+            VariableRecurringPaymentsApiVersion apiVersion,
             string baseUrl) : base(
             id,
             name,
@@ -50,15 +50,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             new List<AccountAccessConsent>();
 
         public Guid BankId { get; }
-        public AccountAndTransactionApiVersion ApiVersion { get; }
-
+        public VariableRecurringPaymentsApiVersion ApiVersion { get; }
         public string BaseUrl { get; }
     }
 
-    internal partial class AccountAndTransactionApiEntity :
-        ISupportsFluentLocalEntityGet<AccountAndTransactionApiResponse>
+    internal partial class VariableRecurringPaymentsApiEntity :
+        ISupportsFluentLocalEntityGet<VariableRecurringPaymentsApiResponse>
     {
-        public AccountAndTransactionApiResponse PublicGetLocalResponse =>
+        public VariableRecurringPaymentsApiResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Name,

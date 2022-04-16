@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public class AccessToken
@@ -47,9 +45,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy) : base(
+            id,
             name,
             reference,
-            id,
             isDeleted,
             isDeletedModified,
             isDeletedModifiedBy,

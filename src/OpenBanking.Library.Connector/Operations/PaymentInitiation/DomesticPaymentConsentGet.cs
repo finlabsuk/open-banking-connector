@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -58,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiRequests<
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
@@ -70,9 +67,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersionEnum.Version3p1p4,
+                        PaymentInitiationApiVersion.Version3p1p4,
                         processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiRequests<
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
@@ -84,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersionEnum.Version3p1p4,
+                        PaymentInitiationApiVersion.Version3p1p4,
                         processedSoftwareStatementProfile)),
                 null => throw new NullReferenceException("No PISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
@@ -110,32 +107,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSet
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.PaymentInitiationApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {id}.");
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            PaymentInitiationApiEntity paymentInitiationApi =
+                persistedObject.PaymentInitiationApiNavigation;
             var bankApiSet2 = new BankApiSet2
             {
                 PaymentInitiationApi = new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion =
-                        bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion ??
-                        throw new InvalidOperationException(),
-                    BaseUrl = bankApiSet.PaymentInitiationApi.BaseUrl
+                    PaymentInitiationApiVersion = paymentInitiationApi.ApiVersion,
+                    BaseUrl = paymentInitiationApi.BaseUrl
                 }
             };
-
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             string bankApiId = persistedObject.ExternalApiId;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.PaymentInitiationApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Payment Initiation API.");
+            string baseUrl = paymentInitiationApi.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             return (bankApiId, endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId, null,
@@ -152,7 +145,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,
-                persistedObject.BankApiSetId,
+                persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,
                 apiResponse);
         }

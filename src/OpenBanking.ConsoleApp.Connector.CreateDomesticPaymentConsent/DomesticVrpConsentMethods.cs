@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// </summary>
         /// <param name="bankProfile"></param>
         /// <param name="bankRegistrationId"></param>
-        /// <param name="bankApiSetId"></param>
+        /// <param name="variableRecurringPaymentsApi"></param>
         /// <param name="domesticVrpTypeEnum"></param>
         /// <param name="requestBuilder"></param>
         /// <param name="testNameUnique"></param>
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         public static async Task<Guid> Create(
             BankProfile bankProfile,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid variableRecurringPaymentsApi,
             DomesticVrpTypeEnum domesticVrpTypeEnum,
             IRequestBuilder requestBuilder,
             string testNameUnique)
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             DomesticVrpConsent domesticVrpConsentRequest =
                 bankProfile.DomesticVrpConsentRequest(
                     bankRegistrationId,
-                    bankApiSetId,
+                    variableRecurringPaymentsApi,
                     domesticVrpTypeEnum,
                     testNameUnique);
 

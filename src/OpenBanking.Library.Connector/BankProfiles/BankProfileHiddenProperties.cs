@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     /// </summary>
     public class PaymentInitiationApiHiddenProperties
     {
-        public PaymentInitiationApiVersionEnum? PaymentInitiationApiVersion { get; set; }
+        public PaymentInitiationApiVersion? PaymentInitiationApiVersion { get; set; }
 
         public string? BaseUrl { get; set; }
     }
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     /// </summary>
     public class VariableRecurringPaymentsApiHiddenProperties
     {
-        public VariableRecurringPaymentsApiVersionEnum? VariableRecurringPaymentsApiVersion { get; set; }
+        public VariableRecurringPaymentsApiVersion? VariableRecurringPaymentsApiVersion { get; set; }
 
         public string? BaseUrl { get; set; }
     }
@@ -60,14 +60,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public DynamicClientRegistrationApiVersion GetRequiredClientRegistrationApiVersion() =>
             DefaultClientRegistrationApiVersion ?? throw new Exception("No ClientRegistrationApiVersion");
 
-        public PaymentInitiationApiVersionEnum GetRequiredPaymentInitiationApiVersion() =>
+        public PaymentInitiationApiVersion GetRequiredPaymentInitiationApiVersion() =>
             DefaultPaymentInitiationApi?.PaymentInitiationApiVersion ??
             throw new Exception("No PISP API version");
 
         public string GetRequiredPaymentInitiationApiBaseUrl() =>
             DefaultPaymentInitiationApi?.BaseUrl ?? throw new Exception("No PISP base URL");
 
-        public VariableRecurringPaymentsApiVersionEnum GetRequiredVariableRecurringPaymentsApiVersion() =>
+        public VariableRecurringPaymentsApiVersion GetRequiredVariableRecurringPaymentsApiVersion() =>
             DefaultVariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
             throw new Exception("No VRP API version");
 

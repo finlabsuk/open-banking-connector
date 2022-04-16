@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -54,11 +51,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     .DbSet
                     .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
                     .Include(o => o.BankRegistrationNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Vrp Consent with ID {id}.");
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi =
+                persistedObject.VariableRecurringPaymentsApiNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
@@ -71,9 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.VariableRecurringPaymentsApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Variable Recurring Payments API.");
+            string baseUrl = variableRecurringPaymentsApi.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             // Get client credentials grant token

@@ -78,11 +78,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IInstrumentationClient instrumentationClient) =>
             paymentInitiationApi.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiGetRequests<
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
-                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiGetRequests<
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
                     new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 IInstrumentationClient instrumentationClient) =>
             paymentInitiationApi.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiRequests<
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomestic2,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
@@ -112,9 +112,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         paymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersionEnum.Version3p1p4,
+                        PaymentInitiationApiVersion.Version3p1p4,
                         processedSoftwareStatementProfile)),
-                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiRequests<
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
                     PaymentInitiationModelsPublic.OBWriteDomestic2,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomestic2,
@@ -126,7 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                         accessToken,
                         instrumentationClient,
                         paymentInitiationApi.PaymentInitiationApiVersion <
-                        PaymentInitiationApiVersionEnum.Version3p1p4,
+                        PaymentInitiationApiVersion.Version3p1p4,
                         processedSoftwareStatementProfile)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"Payment Initiation API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")

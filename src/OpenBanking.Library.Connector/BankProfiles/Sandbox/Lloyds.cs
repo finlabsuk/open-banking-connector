@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 new PaymentInitiationApi
                 {
                     PaymentInitiationApiVersion =
-                        PaymentInitiationApiVersionEnum.Version3p1p6, // from API discovery endpoint
+                        PaymentInitiationApiVersion.Version3p1p6, // from API discovery endpoint
                     BaseUrl =
                         "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.6/pisp" // from API discovery endpoint
                 },

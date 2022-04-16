@@ -12,11 +12,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class AccountAndTransactionApiPost : LocalEntityPost<AccountAndTransactionApiEntity,
-        AccountAndTransactionApiRequest, AccountAndTransactionApiResponse>
+    internal class VariableRecurringPaymentsApiPost : LocalEntityPost<VariableRecurringPaymentsApiEntity,
+        VariableRecurringPaymentsApiRequest, VariableRecurringPaymentsApiResponse>
     {
-        public AccountAndTransactionApiPost(
-            IDbReadWriteEntityMethods<AccountAndTransactionApiEntity> entityMethods,
+        public VariableRecurringPaymentsApiPost(
+            IDbReadWriteEntityMethods<VariableRecurringPaymentsApiEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
@@ -27,13 +27,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             softwareStatementProfileRepo,
             instrumentationClient) { }
 
-        protected override async Task<AccountAndTransactionApiResponse> AddEntity(
-            AccountAndTransactionApiRequest request,
+        protected override async Task<VariableRecurringPaymentsApiResponse> AddEntity(
+            VariableRecurringPaymentsApiRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new AccountAndTransactionApiEntity(
+            var entity = new VariableRecurringPaymentsApiEntity(
                 request.Name,
                 request.Reference,
                 Guid.NewGuid(),

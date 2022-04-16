@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -11,14 +11,14 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
 {
-    internal class AccountAndTransactionApiConfig : Base<AccountAndTransactionApiEntity>
+    internal class PaymentInitiationApiConfig : Base<PaymentInitiationApiEntity>
     {
-        public AccountAndTransactionApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+        public PaymentInitiationApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(
                 supportsGlobalQueryFilter,
                 jsonFormatting) { }
 
-        public override void Configure(EntityTypeBuilder<AccountAndTransactionApiEntity> builder)
+        public override void Configure(EntityTypeBuilder<PaymentInitiationApiEntity> builder)
         {
             base.Configure(builder);
 
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ApiVersion)
-                .HasConversion(new EnumToStringConverter<AccountAndTransactionApiVersion>())
+                .HasConversion(new EnumToStringConverter<PaymentInitiationApiVersion>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.BaseUrl)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

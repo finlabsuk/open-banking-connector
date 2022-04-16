@@ -3,9 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
@@ -14,10 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     ///     Persisted type for Bank API Set
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class AccountAndTransactionApiEntity :
-        BaseEntity, IAccountAndTransactionApiQuery
+    internal partial class PaymentInitiationApiEntity :
+        BaseEntity, IPaymentInitiationApiQuery
     {
-        public AccountAndTransactionApiEntity(
+        public PaymentInitiationApiEntity(
             string? name,
             string? reference,
             Guid id,
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
-            AccountAndTransactionApiVersion apiVersion,
+            PaymentInitiationApiVersion apiVersion,
             string baseUrl) : base(
             id,
             name,
@@ -46,19 +46,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
-        public IList<AccountAccessConsent> AccountAccessConsentsNavigation { get; } =
-            new List<AccountAccessConsent>();
+        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; } =
+            new List<DomesticPaymentConsent>();
 
         public Guid BankId { get; }
-        public AccountAndTransactionApiVersion ApiVersion { get; }
+        public PaymentInitiationApiVersion ApiVersion { get; }
 
         public string BaseUrl { get; }
     }
 
-    internal partial class AccountAndTransactionApiEntity :
-        ISupportsFluentLocalEntityGet<AccountAndTransactionApiResponse>
+    internal partial class PaymentInitiationApiEntity :
+        ISupportsFluentLocalEntityGet<PaymentInitiationApiResponse>
     {
-        public AccountAndTransactionApiResponse PublicGetLocalResponse =>
+        public PaymentInitiationApiResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Name,

@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
@@ -51,9 +49,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string? registrationAccessToken,
             ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse,
             Guid bankId) : base(
+            id,
             name,
             reference,
-            id,
             isDeleted,
             isDeletedModified,
             isDeletedModifiedBy,
@@ -159,7 +157,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     internal partial class BankRegistration :
         ISupportsFluentLocalEntityGet<BankRegistrationResponse>
     {
-        public BankRegistrationResponse PublicGetLocalResponse => new BankRegistrationResponse(
+        public BankRegistrationResponse PublicGetLocalResponse => new(
             Id,
             Name,
             Created,

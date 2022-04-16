@@ -13,8 +13,6 @@ using Newtonsoft.Json;
 using BankConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.Bank;
 using BankRegistrationConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.BankRegistration;
-using BankApiSetConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.BankApiSet;
 using DomesticPaymentConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsent;
@@ -36,7 +34,6 @@ using AccountAccessConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction.
     AccountAccessConsentAuthContext;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
-using BankApiSet = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 using BankRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
@@ -54,10 +51,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         // Bank configuration
         internal DbSet<Bank> Banks => Set<Bank>();
         internal DbSet<BankRegistration> BankRegistrations => Set<BankRegistration>();
-        internal DbSet<BankApiSet> BankApiSets => Set<BankApiSet>();
 
         internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApis =>
             Set<AccountAndTransactionApiEntity>();
+
+        internal DbSet<PaymentInitiationApiEntity> PaymentInitiationApis =>
+            Set<PaymentInitiationApiEntity>();
+
+        internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApis =>
+            Set<VariableRecurringPaymentsApiEntity>();
 
         // Auth contexts
         internal DbSet<AuthContext> AuthContexts => Set<AuthContext>();
@@ -80,9 +82,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         {
             // Bank configuration
             modelBuilder.ApplyConfiguration(new BankConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new BankApiSetConfig(true, JsonFormatting));
             modelBuilder.ApplyConfiguration(new BankRegistrationConfig(true, JsonFormatting));
             modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(true, JsonFormatting));
 
             // Auth contexts (note global query filter not supported for inherited types)
             modelBuilder.ApplyConfiguration(new AuthContextConfig(true, JsonFormatting));

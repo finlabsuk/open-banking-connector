@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -32,9 +30,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string externalApiId,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId) : base(
+            id,
             name,
             reference,
-            id,
             isDeleted,
             isDeletedModified,
             isDeletedModifiedBy,
@@ -45,12 +43,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
         }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -67,15 +59,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public Guid BankRegistrationId { get; }
 
         /// <summary>
-        ///     Associated AccountAndTransactionApiEntity object
+        ///     Associated AccountAndTransactionApi object
         /// </summary>
         public Guid AccountAndTransactionApiId { get; }
+
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        public string ExternalApiId { get; }
     }
 
     internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentReadLocalResponse>
     {
         public AccountAccessConsentReadLocalResponse PublicGetLocalResponse =>
-            new AccountAccessConsentReadLocalResponse(
+            new(
                 Id,
                 Name,
                 Created,

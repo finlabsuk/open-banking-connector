@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
@@ -20,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         public DomesticPaymentConsent DomesticPaymentConsentRequest(
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid paymentInitiationApiId,
             DomesticPaymentTypeEnum domesticPaymentType,
             string instructionIdentification,
             string endToEndIdentification,
@@ -148,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                         _ => throw new ArgumentException(
                             $"{nameof(DomesticPaymentTypeEnum)} is not valid ${nameof(DomesticPaymentTypeEnum)} or needs to be added to this switch statement.")
                     },
-                BankApiSetId = bankApiSetId,
+                PaymentInitiationApiId = paymentInitiationApiId,
                 BankRegistrationId = bankRegistrationId,
                 Name = name
             };

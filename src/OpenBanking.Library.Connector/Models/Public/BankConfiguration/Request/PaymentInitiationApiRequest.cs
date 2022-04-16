@@ -2,41 +2,43 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using FluentValidation.Results;
+using Newtonsoft.Json;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
 {
     /// <summary>
-    ///     API set which specifies bank functional APIs.
+    ///     UK Open Banking Payment Initiation functional API.
     /// </summary>
-    public class BankApiSet : Base, ISupportsValidation
+    public class PaymentInitiationApiRequest : Base, ISupportsValidation
     {
         /// <summary>
-        ///     Bank with which this API set is associated.
+        ///     Bank with which this API is associated.
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid BankId { get; set; }
 
         /// <summary>
-        ///     Specifies UK Open Banking Payment Initiation API.
-        ///     Null means no such API in this API set.
+        ///     Version of UK Open Banking Payment Initiation API.
         /// </summary>
-        public PaymentInitiationApi? PaymentInitiationApi { get; set; }
+        [Required]
+        [JsonProperty(Required = Required.Always)]
+        public PaymentInitiationApiVersion ApiVersion { get; set; }
 
         /// <summary>
-        ///     Specifies UK Open Banking Variable Recurring Payments API.
-        ///     Null means no such API in this API set.
+        ///     Base URL for UK Open Banking Payment Initiation API.
         /// </summary>
-        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; set; }
+        [Required]
+        public string BaseUrl { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
-            await new BankApiSetValidator()
+            await new PaymentInitiationApiRequestValidator()
                 .ValidateAsync(this)!;
     }
 }

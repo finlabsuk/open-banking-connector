@@ -7,10 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.Bank;
-using BankApiSet = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankApiSet;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
-using BankApiSetPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
@@ -24,30 +21,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         ILocalEntityContext<Bank, IBankPublicQuery, BankResponse, BankResponse> Banks { get; }
 
         /// <summary>
-        ///     API for BankApiSet objects.
-        ///     A BankApiSet specifies functional API(s) supported by a Bank. Multiple BankApiSets may be
-        ///     created for the same bank.
-        /// </summary>
-        ILocalEntityContext<BankApiSet, IBankApiSetPublicQuery, BankApiSetResponse, BankApiSetResponse>
-            BankApiSets { get; }
-
-        /// <summary>
-        ///     API for AccountAndTransactionApi objects.
-        ///     A AccountAndTransactionApi specifies a functional Account and Transaction API supported by a Bank. Multiple
-        ///     AccountAndTransactionApis may be
-        ///     created for the same bank.
-        /// </summary>
-        ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
-                AccountAndTransactionApiResponse, AccountAndTransactionApiResponse>
-            AccountAndTransactionApis { get; }
-        
-        /// <summary>
         ///     API for BankRegistration objects.
         ///     A BankRegistration corresponds to an OAuth2 client registration with a Bank. Multiple BankRegistrations may be
         ///     created for the same bank.
         /// </summary>
-        IBankRegistrationsContext
-            BankRegistrations { get; }
+        IBankRegistrationsContext BankRegistrations { get; }
+
+        /// <summary>
+        ///     API for AccountAndTransactionApi objects.
+        ///     An AccountAndTransactionApi specifies a functional Account and Transaction API supported by a Bank. Multiple
+        ///     AccountAndTransactionApis may be created for the same bank.
+        /// </summary>
+        ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
+                AccountAndTransactionApiResponse, AccountAndTransactionApiResponse>
+            AccountAndTransactionApis { get; }
+
+        /// <summary>
+        ///     API for PaymentInitiationApi objects.
+        ///     A PaymentInitiationApi specifies a functional Payment Initiation API supported by a Bank. Multiple
+        ///     PaymentInitiationApis may be created for the same bank.
+        /// </summary>
+        ILocalEntityContext<PaymentInitiationApiRequest, IPaymentInitiationApiQuery,
+                PaymentInitiationApiResponse, PaymentInitiationApiResponse>
+            PaymentInitiationApis { get; }
+
+        /// <summary>
+        ///     API for VariableRecurringPaymentsApi objects.
+        ///     A VariableRecurringPaymentsApi specifies a functional Variable Recurring Payments API supported by a Bank. Multiple
+        ///     VariableRecurringPaymentsApis may be created for the same bank.
+        /// </summary>
+        ILocalEntityContext<VariableRecurringPaymentsApiRequest, IVariableRecurringPaymentsApiQuery,
+                VariableRecurringPaymentsApiResponse, VariableRecurringPaymentsApiResponse>
+            VariableRecurringPaymentsApis { get; }
     }
 
     internal class BankConfigurationContext : IBankConfigurationContext
@@ -70,6 +75,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
+        public IBankRegistrationsContext
+            BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);
+
         public ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
             AccountAndTransactionApiResponse, AccountAndTransactionApiResponse> AccountAndTransactionApis =>
             new LocalEntityContextInternal<AccountAndTransactionApiEntity, AccountAndTransactionApiRequest,
@@ -83,21 +91,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IBankRegistrationsContext
-            BankRegistrations =>
-            new BankRegistrationsContextInternal(_sharedContext);
-
-        public ILocalEntityContext<BankApiSet, IBankApiSetPublicQuery,
-                BankApiSetResponse, BankApiSetResponse>
-            BankApiSets =>
-            new LocalEntityContextInternal<BankApiSetPersisted, BankApiSet,
-                IBankApiSetPublicQuery, BankApiSetResponse, BankApiSetResponse>(
+        public ILocalEntityContext<PaymentInitiationApiRequest, IPaymentInitiationApiQuery, PaymentInitiationApiResponse
+            , PaymentInitiationApiResponse> PaymentInitiationApis =>
+            new LocalEntityContextInternal<PaymentInitiationApiEntity, PaymentInitiationApiRequest,
+                IPaymentInitiationApiQuery,
+                PaymentInitiationApiResponse, PaymentInitiationApiResponse>(
                 _sharedContext,
-                new BankApiSetPost(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<BankApiSetPersisted>(),
+                new PaymentInitiationApiPost(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
+
+        public ILocalEntityContext<VariableRecurringPaymentsApiRequest, IVariableRecurringPaymentsApiQuery,
+            VariableRecurringPaymentsApiResponse, VariableRecurringPaymentsApiResponse> VariableRecurringPaymentsApis
+            =>
+                new LocalEntityContextInternal<VariableRecurringPaymentsApiEntity, VariableRecurringPaymentsApiRequest,
+                    IVariableRecurringPaymentsApiQuery,
+                    VariableRecurringPaymentsApiResponse, VariableRecurringPaymentsApiResponse>(
+                    _sharedContext,
+                    new VariableRecurringPaymentsApiPost(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<VariableRecurringPaymentsApiEntity>(),
+                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                        _sharedContext.TimeProvider,
+                        _sharedContext.SoftwareStatementProfileCachedRepo,
+                        _sharedContext.Instrumentation));
     }
 }

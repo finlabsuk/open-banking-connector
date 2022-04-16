@@ -2,10 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -13,11 +12,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class BankApiSetPost : LocalEntityPost<BankApiSet, Models.Public.BankConfiguration.Request.BankApiSet,
-        BankApiSetResponse>
+    internal class PaymentInitiationApiPost : LocalEntityPost<PaymentInitiationApiEntity,
+        PaymentInitiationApiRequest, PaymentInitiationApiResponse>
     {
-        public BankApiSetPost(
-            IDbReadWriteEntityMethods<BankApiSet> entityMethods,
+        public PaymentInitiationApiPost(
+            IDbReadWriteEntityMethods<PaymentInitiationApiEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
@@ -28,14 +27,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             softwareStatementProfileRepo,
             instrumentationClient) { }
 
-        protected override async Task<BankApiSetResponse> AddEntity(
-            Models.Public.BankConfiguration.Request.BankApiSet request,
+        protected override async Task<PaymentInitiationApiResponse> AddEntity(
+            PaymentInitiationApiRequest request,
             string? createdBy,
             ITimeProvider timeProvider)
         {
-            // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new BankApiSet(
+            var entity = new PaymentInitiationApiEntity(
                 request.Name,
                 request.Reference,
                 Guid.NewGuid(),
@@ -44,11 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 createdBy,
                 utcNow,
                 createdBy,
-                request.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion,
-                request.VariableRecurringPaymentsApi?.BaseUrl ?? "",
-                request.PaymentInitiationApi?.PaymentInitiationApiVersion,
-                request.PaymentInitiationApi?.BaseUrl ?? "",
-                request.BankId);
+                request.BankId,
+                request.ApiVersion,
+                request.BaseUrl);
 
             // Add entity
             await _entityMethods.AddAsync(entity);

@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     .Version3p2, // inferred from registration_endpoint in : https://ob19-auth1-ui.o3bank.co.uk/.well-known/openid-configuration
                 new AccountAndTransactionApi
                 {
-                    AccountAndTransactionApiVersion = AccountAndTransactionApiVersionEnum.Version3p1p9,
+                    AccountAndTransactionApiVersion = AccountAndTransactionApiVersion.Version3p1p9,
                     BaseUrl =
                         "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
                 },

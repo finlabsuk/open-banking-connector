@@ -2,14 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -20,8 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
-using BankApiSetPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
@@ -82,20 +78,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 await _entityMethods
                     .DbSet
                     .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.VariableRecurringPaymentsApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Domestic Vrp Consent with ID {consentId}.");
-            string externalApiConsentId = persistedConsent.ExternalApiId;
-            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
-            VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-                bankApiSet.VariableRecurringPaymentsApi ??
-                throw new InvalidOperationException("Bank API Set has no Variable Recurring Payments API specified.");
+            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApiEntity =
+                persistedConsent.VariableRecurringPaymentsApiNavigation;
+            var variableRecurringPaymentsApi = new VariableRecurringPaymentsApi
+            {
+                VariableRecurringPaymentsApiVersion = variableRecurringPaymentsApiEntity.ApiVersion,
+                BaseUrl = variableRecurringPaymentsApiEntity.BaseUrl
+            };
             BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
             // Get request
+            string externalApiConsentId = persistedConsent.ExternalApiId;
             TApiRequest apiRequest = GetApiRequest(request, externalApiConsentId);
 
             // Get API client
@@ -158,15 +157,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 await _entityMethods
                     .DbSetNoTracking
                     .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.VariableRecurringPaymentsApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Domestic Vrp Consent with ID {consentId}.");
-            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
-            VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-                bankApiSet.VariableRecurringPaymentsApi ??
-                throw new InvalidOperationException("Bank API Set has no Variable Recurring Payments API specified.");
+            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApiEntity =
+                persistedConsent.VariableRecurringPaymentsApiNavigation;
+            var variableRecurringPaymentsApi = new VariableRecurringPaymentsApi
+            {
+                VariableRecurringPaymentsApiVersion = variableRecurringPaymentsApiEntity.ApiVersion,
+                BaseUrl = variableRecurringPaymentsApiEntity.BaseUrl
+            };
             BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 

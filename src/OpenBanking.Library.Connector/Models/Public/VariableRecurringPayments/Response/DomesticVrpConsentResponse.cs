@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -11,10 +10,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 {
     public interface IDomesticVrpConsentPublicQuery : IBaseQuery
     {
-        Guid BankRegistrationId { get; }
+        /// <summary>
+        ///     Associated BankRegistration object
+        /// </summary>
+        public Guid BankRegistrationId { get; }
 
-        Guid BankApiSetId { get; }
+        /// <summary>
+        ///     Associated VariableRecurringPaymentsApi object
+        /// </summary>
+        public Guid VariableRecurringPaymentsApiId { get; }
 
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
         public string ExternalApiId { get; }
     }
 
@@ -30,27 +39,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid variableRecurringPaymentsApiId,
             string externalApiId) : base(id, name, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
-            BankApiSetId = bankApiSetId;
+            VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
             ExternalApiId = externalApiId;
         }
 
         /// <summary>
-        ///     ID of associated BankRegistration object
+        ///     Associated BankRegistration object
         /// </summary>
         public Guid BankRegistrationId { get; }
 
-
         /// <summary>
-        ///     ID of associated BankApiSet object
+        ///     Associated VariableRecurringPaymentsApi object
         /// </summary>
-        public Guid BankApiSetId { get; }
+        public Guid VariableRecurringPaymentsApiId { get; }
 
         /// <summary>
-        ///     External (bank) API ID for this object
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
         /// </summary>
         public string ExternalApiId { get; }
     }
@@ -67,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid variableRecurringPaymentsApiId,
             string externalApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
             id,
@@ -75,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             created,
             createdBy,
             bankRegistrationId,
-            bankApiSetId,
+            variableRecurringPaymentsApiId,
             externalApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -96,7 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
-            Guid bankApiSetId,
+            Guid variableRecurringPaymentsApiId,
             string externalApiId,
             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
             id,
@@ -104,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             created,
             createdBy,
             bankRegistrationId,
-            bankApiSetId,
+            variableRecurringPaymentsApiId,
             externalApiId)
         {
             ExternalApiResponse = externalApiResponse;

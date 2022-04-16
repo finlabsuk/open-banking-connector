@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -70,13 +67,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IInstrumentationClient instrumentationClient)
             => bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion switch
             {
-                PaymentInitiationApiVersionEnum.Version3p1p4 => new ApiGetRequests<
+                PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsV3p1p4.OBWriteFundsConfirmationResponse1>(
                     new PaymentInitiationGetRequestProcessor(
                         bankFinancialId,
                         accessToken)),
-                PaymentInitiationApiVersionEnum.Version3p1p6 => new ApiGetRequests<
+                PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
                     new PaymentInitiationGetRequestProcessor(
@@ -106,21 +103,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSet
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.PaymentInitiationApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {id}.");
             string bankApiId = persistedObject.ExternalApiId;
-            BankApiSet bankApiSet = persistedObject.BankApiSetNavigation;
+            PaymentInitiationApiEntity paymentInitiationApi =
+                persistedObject.PaymentInitiationApiNavigation;
             var bankApiSet2 = new BankApiSet2
             {
                 PaymentInitiationApi = new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion =
-                        bankApiSet.PaymentInitiationApi?.PaymentInitiationApiVersion ??
-                        throw new InvalidOperationException(),
-                    BaseUrl = bankApiSet.PaymentInitiationApi.BaseUrl
+                    PaymentInitiationApiVersion = paymentInitiationApi.ApiVersion,
+                    BaseUrl = paymentInitiationApi.BaseUrl
                 }
             };
 
@@ -135,9 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     modifiedBy);
 
             // Determine endpoint URL
-            string baseUrl =
-                bankApiSet.PaymentInitiationApi?.BaseUrl ??
-                throw new NullReferenceException("Bank API Set has null Payment Initiation API.");
+            string baseUrl = paymentInitiationApi.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             return (bankApiId, endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId,
@@ -154,7 +148,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,
-                persistedObject.BankApiSetId,
+                persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,
                 apiResponse);
         }

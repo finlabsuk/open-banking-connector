@@ -2,14 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -20,8 +18,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
-using BankApiSetPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankApiSet;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
@@ -82,20 +78,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSet
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.PaymentInitiationApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
-            string externalApiConsentId = persistedConsent.ExternalApiId;
-            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
-            PaymentInitiationApi paymentInitiationApi =
-                bankApiSet.PaymentInitiationApi ??
-                throw new InvalidOperationException("Bank API Set has no Payment Initiation API specified.");
+            PaymentInitiationApiEntity paymentInitiationApiEntity = persistedConsent.PaymentInitiationApiNavigation;
+            var paymentInitiationApi = new PaymentInitiationApi
+            {
+                PaymentInitiationApiVersion = paymentInitiationApiEntity.ApiVersion,
+                BaseUrl = paymentInitiationApiEntity.BaseUrl
+            };
             BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
             // Get request
+            string externalApiConsentId = persistedConsent.ExternalApiId;
             TApiRequest apiRequest = GetApiRequest(request, externalApiConsentId);
 
             // Get API client
@@ -120,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             JsonSerializerSettings? responseJsonSerializerSettings = null;
             IApiPostRequests<TApiRequest, TApiResponse> apiRequests =
                 ApiPostRequests(
-                    bankApiSet.PaymentInitiationApi,
+                    paymentInitiationApi,
                     bankFinancialId,
                     accessToken,
                     processedSoftwareStatementProfile,
@@ -158,15 +156,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _entityMethods
                     .DbSetNoTracking
                     .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                    .Include(o => o.BankApiSetNavigation)
+                    .Include(o => o.PaymentInitiationApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == consentId) ??
                 throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
-            BankApiSetPersisted bankApiSet = persistedConsent.BankApiSetNavigation;
-            PaymentInitiationApi paymentInitiationApi =
-                bankApiSet.PaymentInitiationApi ??
-                throw new InvalidOperationException("Bank API Set has no Payment Initiation API specified.");
+            PaymentInitiationApiEntity paymentInitiationApiEntity = persistedConsent.PaymentInitiationApiNavigation;
+            var paymentInitiationApi = new PaymentInitiationApi
+            {
+                PaymentInitiationApiVersion = paymentInitiationApiEntity.ApiVersion,
+                BaseUrl = paymentInitiationApiEntity.BaseUrl
+            };
             BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
@@ -197,7 +197,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings2 = null;
             IApiGetRequests<TApiResponse> apiRequests = ApiGetRequests(
-                bankApiSet.PaymentInitiationApi,
+                paymentInitiationApi,
                 bankFinancialId,
                 accessToken,
                 _instrumentationClient);

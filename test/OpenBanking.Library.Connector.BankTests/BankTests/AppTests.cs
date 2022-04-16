@@ -218,7 +218,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
 
             // Create bank configuration objects
-            (Guid bankId, Guid bankRegistrationId, Guid bankApiSetId) =
+            (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationSubtests.PostAndGetObjects(
                     softwareStatementProfile.SoftwareStatementProfileId,
                     softwareStatementProfile.OverrideCase,
@@ -240,8 +240,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 await AccountAccessConsentSubtest.RunTest(
                     subTest,
                     bankProfile,
-                    bankRegistrationId,
                     bankId,
+                    bankRegistrationId,
                     bankProfile.AccountAndTransactionApiSettings,
                     requestBuilder,
                     requestBuilderGenerator,
@@ -263,8 +263,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 await DomesticPaymentSubtest.RunTest(
                     subTest,
                     bankProfile,
+                    bankId,
                     bankRegistrationId,
-                    bankApiSetId,
                     bankProfile.PaymentInitiationApiSettings,
                     requestBuilder,
                     requestBuilderGenerator,
@@ -286,8 +286,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 await DomesticVrpSubtest.RunTest(
                     subTest,
                     bankProfile,
+                    bankId,
                     bankRegistrationId,
-                    bankApiSetId,
                     bankProfile.VariableRecurringPaymentsApiSettings,
                     requestBuilder,
                     requestBuilderGenerator,
@@ -304,7 +304,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Delete bank configuration objects
             await BankConfigurationSubtests.DeleteObjects(
                 requestBuilder,
-                bankApiSetId,
                 bankRegistrationId,
                 bankId,
                 bankProfile.ClientRegistrationApiSettings);

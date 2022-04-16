@@ -13,25 +13,25 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfigura
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
-public class BankApiSetsController : ControllerBase
+public class PaymentInitiationApisController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public BankApiSetsController(IRequestBuilder requestBuilder)
+    public PaymentInitiationApisController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
 
     /// <summary>
-    ///     Create a BankApiSet object
+    ///     Create an PaymentInitiationApi object
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/bank-api-sets")]
+    [Route("config/account-and-transaction-apis")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(BankApiSetResponse),
+        typeof(PaymentInitiationApiResponse),
         StatusCodes.Status201Created)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
@@ -39,23 +39,23 @@ public class BankApiSetsController : ControllerBase
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> PostAsync([FromBody] BankApiSet request)
+    public async Task<IActionResult> PostAsync([FromBody] PaymentInitiationApiRequest request)
     {
-        IFluentResponse<BankApiSetResponse> fluentResponse = await _requestBuilder
+        IFluentResponse<PaymentInitiationApiResponse> fluentResponse = await _requestBuilder
             .BankConfiguration
-            .BankApiSets
+            .PaymentInitiationApis
             .CreateLocalAsync(request);
 
         // HTTP response
         return fluentResponse switch
         {
-            FluentSuccessResponse<BankApiSetResponse> _ =>
+            FluentSuccessResponse<PaymentInitiationApiResponse> _ =>
                 new ObjectResult(fluentResponse.Data!)
                     { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<BankApiSetResponse> _ =>
+            FluentBadRequestErrorResponse<PaymentInitiationApiResponse> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<BankApiSetResponse> _ =>
+            FluentOtherErrorResponse<PaymentInitiationApiResponse> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
@@ -63,14 +63,14 @@ public class BankApiSetsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read all BankApiSet objects (temporary endpoint)
+    ///     Read all PaymentInitiationApi objects (temporary endpoint)
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/bank-api-sets")]
+    [Route("config/account-and-transaction-apis")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(IList<BankApiSetResponse>),
+        typeof(HttpResponse<IList<PaymentInitiationApiResponse>>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
@@ -81,21 +81,21 @@ public class BankApiSetsController : ControllerBase
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<BankApiSetResponse>> fluentResponse = await _requestBuilder
+        IFluentResponse<IQueryable<PaymentInitiationApiResponse>> fluentResponse = await _requestBuilder
             .BankConfiguration
-            .BankApiSets
+            .PaymentInitiationApis
             .ReadLocalAsync(query => true);
 
         // HTTP response
         return fluentResponse switch
         {
-            FluentSuccessResponse<IQueryable<BankApiSetResponse>> _ =>
+            FluentSuccessResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
                 new ObjectResult(fluentResponse.Data!)
                     { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<BankApiSetResponse>> _ =>
+            FluentBadRequestErrorResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<BankApiSetResponse>> _ =>
+            FluentOtherErrorResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()

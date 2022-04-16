@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -12,8 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FluentAssertions;
 using PaymentInitiationModelsPublic =
@@ -134,18 +131,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             Guid bankRegistrationId = bankRegistrationResp.Data!.Id;
 
             // Create bank API information
-            var apiSetRequest = new BankApiSet
+            var apiSetRequest = new PaymentInitiationApiRequest
             {
                 BankId = bankId,
-                PaymentInitiationApi = new PaymentInitiationApi
-                {
-                    PaymentInitiationApiVersion = PaymentInitiationApiVersionEnum.Version3p1p6,
-                    BaseUrl = MockRoutes.Url
-                }
+                ApiVersion = PaymentInitiationApiVersion.Version3p1p6,
+                BaseUrl = MockRoutes.Url
             };
-            IFluentResponse<BankApiSetResponse> bankApiInformationResponse = requestBuilder
+            IFluentResponse<PaymentInitiationApiResponse> bankApiInformationResponse = requestBuilder
                 .BankConfiguration
-                .BankApiSets
+                .PaymentInitiationApis
                 .CreateLocalAsync(apiSetRequest)
                 .Result;
 

@@ -7,8 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPaymentConsent
 {
@@ -21,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         ///     Create bank configuration including bank, bank API information and
         ///     bank registration objects
         /// </summary>
-        public static async Task<(Guid bankId, Guid bankRegistrationId, Guid bankApiSetId)> Create(
+        public static async Task<(Guid bankId, Guid bankRegistrationId )> Create(
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScopeEnum registrationScope,
@@ -51,18 +49,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 .CreateAsync(registrationRequest);
             Guid bankRegistrationId = registrationResp.Data!.Id;
 
-            // Create bank API information
-            BankApiSet apiSetRequest = bankProfile.BankApiSetRequest(
-                testNameUnique,
-                bankId);
-            IFluentResponse<BankApiSetResponse> apiInformationResponse = await requestBuilder
-                .BankConfiguration
-                .BankApiSets
-                .CreateLocalAsync(apiSetRequest);
-            Guid bankApiSetId = apiInformationResponse.Data!.Id;
-
             // Return IDs of created objects
-            return (bankId, bankRegistrationId, bankApiSetId);
+            return (bankId, bankRegistrationId);
         }
     }
 }

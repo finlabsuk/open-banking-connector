@@ -2,15 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
 {
-    public interface IAccountAndTransactionApiQuery : IBaseQuery
+    public interface IPaymentInitiationApiQuery : IBaseQuery
     {
         Guid BankId { get; }
-        AccountAndTransactionApiVersion ApiVersion { get; }
+        PaymentInitiationApiVersion ApiVersion { get; }
 
         string BaseUrl { get; }
     }
@@ -18,15 +18,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class AccountAndTransactionApiResponse : BaseResponse, IAccountAndTransactionApiQuery
+    public class PaymentInitiationApiResponse : BaseResponse, IPaymentInitiationApiQuery
     {
-        public AccountAndTransactionApiResponse(
+        public PaymentInitiationApiResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
-            AccountAndTransactionApiVersion apiVersion,
+            PaymentInitiationApiVersion apiVersion,
             string baseUrl) : base(id, name, created, createdBy)
         {
             BankId = bankId;
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Version of UK Open Banking Account and Transaction API.
         /// </summary>
-        public AccountAndTransactionApiVersion ApiVersion { get; set; }
+        public PaymentInitiationApiVersion ApiVersion { get; set; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Account and Transaction API.
