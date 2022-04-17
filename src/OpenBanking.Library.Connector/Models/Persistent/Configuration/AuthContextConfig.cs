@@ -8,10 +8,10 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
-    internal class AuthContext<TEntity> : Base<TEntity>
+    internal class AuthContextConfig<TEntity> : BaseConfig<TEntity>
         where TEntity : AuthContext
     {
-        public AuthContext(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+        public AuthContextConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(
                 supportsGlobalQueryFilter,
                 jsonFormatting) { }

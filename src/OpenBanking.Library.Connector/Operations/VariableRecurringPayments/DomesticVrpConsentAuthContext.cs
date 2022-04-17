@@ -57,17 +57,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new DomesticVrpConsentAuthContextPersisted(
+                Guid.NewGuid(),
                 request.Name,
                 request.Reference,
-                Guid.NewGuid(),
                 false,
                 utcNow,
                 createdBy,
-                utcNow,
-                createdBy,
-                null,
-                0,
-                null,
                 utcNow,
                 createdBy,
                 request.DomesticVrpConsentId);

@@ -119,8 +119,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             // Get access token
             string accessToken =
-                await _authContextAccessTokenGet.GetAccessToken(
-                    persistedObject.DomesticVrpConsentAuthContextsNavigation,
+                await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                    persistedObject,
                     bankRegistration,
                     modifiedBy);
 

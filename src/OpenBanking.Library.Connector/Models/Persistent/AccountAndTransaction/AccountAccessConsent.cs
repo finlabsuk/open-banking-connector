@@ -16,20 +16,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class AccountAccessConsent :
-        BaseEntity
+        BaseConsent
     {
         public AccountAccessConsent(
+            Guid id,
             string? name,
             string? reference,
-            Guid id,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
-            string externalApiId,
+            string? accessToken_AccessToken,
+            int accessToken_ExpiresIn,
+            string? accessToken_RefreshToken,
+            DateTimeOffset accessTokenModified,
+            string? accessTokenModifiedBy,
             Guid bankRegistrationId,
-            Guid accountAndTransactionApiId) : base(
+            Guid accountAndTransactionApiId,
+            string externalApiId) : base(
             id,
             name,
             reference,
@@ -37,12 +42,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy)
+            createdBy,
+            accessToken_AccessToken,
+            accessToken_ExpiresIn,
+            accessToken_RefreshToken,
+            accessTokenModified,
+            accessTokenModifiedBy)
         {
-            ExternalApiId = externalApiId;
             BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
+            ExternalApiId = externalApiId;
         }
+
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;

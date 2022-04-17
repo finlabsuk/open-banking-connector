@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticVrpConsent :
-        BaseEntity,
+        BaseConsent,
         IDomesticVrpConsentPublicQuery
     {
         public DomesticVrpConsent(
@@ -30,6 +30,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string? accessToken_AccessToken,
+            int accessToken_ExpiresIn,
+            string? accessToken_RefreshToken,
+            DateTimeOffset accessTokenModified,
+            string? accessTokenModifiedBy,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId) : base(
@@ -40,13 +45,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy)
+            createdBy,
+            accessToken_AccessToken,
+            accessToken_ExpiresIn,
+            accessToken_RefreshToken,
+            accessTokenModified,
+            accessTokenModifiedBy)
         {
             BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
             ExternalApiId = externalApiId;
         }
-
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;

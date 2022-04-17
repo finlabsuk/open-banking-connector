@@ -14,7 +14,7 @@ using ClientRegistrationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
 {
-    internal class BankRegistration : Base<Persistent.BankConfiguration.BankRegistration>
+    internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRegistration>
     {
         public BankRegistration(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

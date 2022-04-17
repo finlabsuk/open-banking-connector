@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
 {
-    internal class AccountAndTransactionApiConfig : Base<AccountAndTransactionApiEntity>
+    internal class AccountAndTransactionApiConfig : BaseConfig<AccountAndTransactionApiEntity>
     {
         public AccountAndTransactionApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

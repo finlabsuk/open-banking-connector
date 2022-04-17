@@ -101,8 +101,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             // Get access token
             string accessToken =
-                await _authContextAccessTokenGet.GetAccessToken(
-                    persistedConsent.AccountAccessConsentAuthContextsNavigation,
+                await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                    persistedConsent,
                     bankRegistration,
                     modifiedBy);
 

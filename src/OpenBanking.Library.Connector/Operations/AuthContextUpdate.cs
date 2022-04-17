@@ -86,10 +86,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .SingleOrDefault(x => x.Id == authContextId) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
+            // Get consent
+            BaseConsent consent = authContext switch
+            {
+                AccountAccessConsentAuthContext ac => ac.AccountAccessConsentNavigation,
+                DomesticPaymentConsentAuthContext ac => ac.DomesticPaymentConsentNavigation,
+                DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
             // Checks
-            if (!(authContext.AccessToken is null))
+            if (consent.AccessToken is not null)
             {
                 throw new InvalidOperationException("Token already supplied for auth context so aborting.");
+            }
+            const int authContextExpiryIntervalInSeconds = 3600;
+            var authContextExpiryTime = authContext.Created
+                .AddSeconds(authContextExpiryIntervalInSeconds);
+            if (_timeProvider.GetUtcNow() > authContextExpiryTime)
+            {
+                throw new InvalidOperationException("Auth context exists but now expired so will not process redirect.");
             }
 
             BankRegistration bankRegistration = authContext switch
@@ -127,12 +143,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Update auth context with token
-            authContext.UpdateAccessToken(
+            consent.UpdateAccessToken(
                 tokenEndpointResponse.AccessToken,
                 tokenEndpointResponse.ExpiresIn,
                 tokenEndpointResponse.RefreshToken,
                 _timeProvider.GetUtcNow(),
                 createdBy);
+            
+            // Delete auth context
+            authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), createdBy);
 
             // Create response (may involve additional processing based on entity)
             var response =

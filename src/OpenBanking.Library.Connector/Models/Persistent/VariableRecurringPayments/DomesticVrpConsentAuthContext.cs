@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -21,37 +20,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         IDomesticVrpConsentAuthContextPublicQuery
     {
         public DomesticVrpConsentAuthContext(
+            Guid id,
             string? name,
             string? reference,
-            Guid id,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
-            string? accessTokenValue,
-            int accessTokenExpiresIn,
-            string? accessTokenRefreshToken,
-            DateTimeOffset accessTokenModified,
-            string? accessTokenModifiedBy,
             Guid domesticVrpConsentId) : base(
+            id,
             name,
             reference,
-            id,
             isDeleted,
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy,
-            accessTokenValue,
-            accessTokenExpiresIn,
-            accessTokenRefreshToken,
-            accessTokenModified,
-            accessTokenModifiedBy)
+            createdBy)
         {
             DomesticVrpConsentId = domesticVrpConsentId;
         }
-
 
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticVrpConsentId")]
@@ -64,7 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadLocalResponse>
     {
         public DomesticVrpConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
-            new DomesticVrpConsentAuthContextReadLocalResponse(
+            new(
                 Id,
                 Name,
                 Created,

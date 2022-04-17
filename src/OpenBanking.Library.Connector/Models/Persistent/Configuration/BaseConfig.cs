@@ -9,13 +9,13 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration
 {
-    internal abstract class Base<TEntity> : IEntityTypeConfiguration<TEntity>
+    internal abstract class BaseConfig<TEntity> : IEntityTypeConfiguration<TEntity>
         where TEntity : BaseEntity
     {
         protected readonly Formatting _jsonFormatting;
         private readonly bool _supportsGlobalQueryFilter;
 
-        protected Base(bool supportsGlobalQueryFilter, Formatting jsonFormatting)
+        protected BaseConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting)
         {
             _supportsGlobalQueryFilter = supportsGlobalQueryFilter;
             _jsonFormatting = jsonFormatting;
@@ -31,9 +31,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.Id)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Created)
-                // .HasConversion(
-                //     p => p.UtcDateTime,
-                //     f => DateTime.SpecifyKind(f, DateTimeKind.Utc))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.CreatedBy)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

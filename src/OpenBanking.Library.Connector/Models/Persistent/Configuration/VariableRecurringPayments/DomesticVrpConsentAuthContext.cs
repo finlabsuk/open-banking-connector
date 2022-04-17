@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
@@ -12,7 +11,8 @@ using PaymentInitiationModelsPublic =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentAuthContext : AuthContext<Persistent.VariableRecurringPayments.DomesticVrpConsentAuthContext>
+        DomesticVrpConsentAuthContext : AuthContextConfig<
+            Persistent.VariableRecurringPayments.DomesticVrpConsentAuthContext>
     {
         public DomesticVrpConsentAuthContext(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
     internal partial class DomesticPaymentConsent :
-        BaseEntity,
+        BaseConsent,
         IDomesticPaymentConsentPublicQuery
     {
         public DomesticPaymentConsent(
@@ -30,6 +30,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string? accessToken_AccessToken,
+            int accessToken_ExpiresIn,
+            string? accessToken_RefreshToken,
+            DateTimeOffset accessTokenModified,
+            string? accessTokenModifiedBy,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId) : base(
@@ -40,13 +45,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy)
+            createdBy,
+            accessToken_AccessToken,
+            accessToken_ExpiresIn,
+            accessToken_RefreshToken,
+            accessTokenModified,
+            accessTokenModifiedBy)
         {
             BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
             ExternalApiId = externalApiId;
         }
-
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;

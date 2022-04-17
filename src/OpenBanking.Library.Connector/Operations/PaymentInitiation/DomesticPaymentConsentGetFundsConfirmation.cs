@@ -125,8 +125,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Get access token
             string accessToken =
-                await _authContextAccessTokenGet.GetAccessToken(
-                    persistedObject.DomesticPaymentConsentAuthContextsNavigation,
+                await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                    persistedObject,
                     bankRegistration,
                     modifiedBy);
 

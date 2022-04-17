@@ -76,6 +76,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 createdBy,
                 utcNow,
                 createdBy,
+                null,
+                0,
+                null,
+                utcNow,
+                createdBy,
                 request.BankRegistrationId,
                 request.PaymentInitiationApiId,
                 apiResponse.Data.ConsentId);

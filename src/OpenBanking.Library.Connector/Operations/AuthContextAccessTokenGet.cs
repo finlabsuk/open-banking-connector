@@ -36,22 +36,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _timeProvider = timeProvider;
         }
 
-        public async Task<string> GetAccessToken<TAuthContext>(
-            IList<TAuthContext> input,
+        public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
+            TConsentEntity consent,
             BankRegistration bankRegistration,
             string? modifiedBy)
-            where TAuthContext : AuthContext
+        where TConsentEntity : BaseConsent
         {
+            
             // Get token
-            TAuthContext authContextWithToken =
-                input
-                    .Where(x => x.AccessToken != null)
-                    .OrderByDescending(x => x.AccessTokenModified)
-                    .FirstOrDefault() ??
-                throw new InvalidOperationException("No token is available for Consent.");
-            AccessToken
-                accessToken = authContextWithToken.AccessToken!; // NB have already checked AccessToken not null above
-
+            AccessToken accessToken = consent.AccessToken ?? throw new InvalidOperationException("No token is available for Consent.");
+ 
+            // Calculate token expiry time
             const int tokenEarlyExpiryIntervalInSeconds = 10;
             DateTimeOffset tokenExpiryTime = accessToken.Modified // time when token stored
                 .AddSeconds(accessToken.ExpiresIn) // plus token duration ("expires_in")
@@ -59,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     -tokenEarlyExpiryIntervalInSeconds); // less margin to allow for time required to obtain token and to re-use token
 
             // If token expired, attempt to get a new one 
-            if (tokenExpiryTime <= DateTimeOffset.UtcNow)
+            if (_timeProvider.GetUtcNow() > tokenExpiryTime)
             {
                 if (!(accessToken.RefreshToken is null))
                 {
@@ -91,7 +86,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     }
 
                     // Update auth context with token
-                    authContextWithToken.UpdateAccessToken(
+                    consent.UpdateAccessToken(
                         tokenEndpointResponse.AccessToken,
                         tokenEndpointResponse.ExpiresIn,
                         tokenEndpointResponse.RefreshToken,

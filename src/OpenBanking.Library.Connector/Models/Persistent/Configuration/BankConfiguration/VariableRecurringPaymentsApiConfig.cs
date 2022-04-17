@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
 {
-    internal class VariableRecurringPaymentsApiConfig : Base<VariableRecurringPaymentsApiEntity>
+    internal class VariableRecurringPaymentsApiConfig : BaseConfig<VariableRecurringPaymentsApiEntity>
     {
         public VariableRecurringPaymentsApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

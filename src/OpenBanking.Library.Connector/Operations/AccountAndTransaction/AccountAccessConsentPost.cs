@@ -66,17 +66,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(
+                Guid.NewGuid(),
                 request.Name,
                 request.Reference,
-                Guid.NewGuid(),
                 false,
                 utcNow,
                 createdBy,
                 utcNow,
                 createdBy,
-                apiResponse.Data.ConsentId,
+                null,
+                0,
+                null,
+                utcNow,
+                createdBy,
                 request.BankRegistrationId,
-                request.AccountAndTransactionApiId);
+                request.AccountAndTransactionApiId,
+                apiResponse.Data.ConsentId);
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);

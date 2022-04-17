@@ -226,17 +226,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 accountAccessConsentResp3.Messages.Should().BeEmpty();
             }
 
-            // DELETE auth context
-            IFluentResponse authContextResponse3 = await requestBuilder
-                .AccountAndTransaction
-                .AccountAccessConsents
-                .AuthContexts
-                .DeleteLocalAsync(authContextId);
-            
-            // Checks
-            authContextResponse3.Should().NotBeNull();
-            authContextResponse3.Messages.Should().BeEmpty();
-            
             // DELETE API object
             IFluentResponse apiResponse = await requestBuilder
                 .BankConfiguration

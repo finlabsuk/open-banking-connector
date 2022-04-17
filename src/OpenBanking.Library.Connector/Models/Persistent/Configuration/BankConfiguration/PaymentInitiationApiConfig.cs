@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
 {
-    internal class PaymentInitiationApiConfig : Base<PaymentInitiationApiEntity>
+    internal class PaymentInitiationApiConfig : BaseConfig<PaymentInitiationApiEntity>
     {
         public PaymentInitiationApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

@@ -22,7 +22,7 @@ using DomesticPaymentConsentAuthContextConfig =
 using DomesticVrpConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsent;
-using AuthContextConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContext<
+using AuthContextConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContextConfig<
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext>;
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.

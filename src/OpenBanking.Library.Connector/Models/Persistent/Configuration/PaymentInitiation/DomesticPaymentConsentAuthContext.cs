@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
@@ -12,7 +11,8 @@ using PaymentInitiationModelsPublic =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentAuthContext : AuthContext<Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>
+        DomesticPaymentConsentAuthContext : AuthContextConfig<
+            Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>
     {
         public DomesticPaymentConsentAuthContext(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(

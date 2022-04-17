@@ -11,7 +11,7 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction
 {
-    internal class AccountAccessConsent : Base<Persistent.AccountAndTransaction.AccountAccessConsent>
+    internal class AccountAccessConsent : BaseConsentConfig<Persistent.AccountAndTransaction.AccountAccessConsent>
     {
         public AccountAccessConsent(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
             base(
@@ -23,12 +23,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             base.Configure(builder);
 
             // Top-level property info: read-only, JSON conversion, etc
+            builder.Property(e => e.Id)
+                .HasColumnOrder(1);
             builder.Property(e => e.BankRegistrationId)
+                .HasColumnOrder(2)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.AccountAndTransactionApiId)
+                .HasColumnOrder(3)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ExternalApiId)
+                .HasColumnOrder(4)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.AccessToken_AccessToken)
+                .HasColumnOrder(5);
+            builder.Property(e => e.AccessToken_ExpiresIn)
+                .HasColumnOrder(6);
+            builder.Property(e => e.AccessToken_RefreshToken)
+                .HasColumnOrder(7);
+            builder.Property(e => e.AccessTokenModified)
+                .HasColumnOrder(8);
+            builder.Property(e => e.AccessTokenModifiedBy)
+                .HasColumnOrder(9);
         }
     }
 }
