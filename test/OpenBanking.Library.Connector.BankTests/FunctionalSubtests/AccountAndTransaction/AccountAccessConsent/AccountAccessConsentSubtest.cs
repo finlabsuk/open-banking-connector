@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("accountAndTransactionApi")
                 .AppendToPath("postRequest")
                 .WriteFile(accountAndTransactionApiRequest);
-            accountAndTransactionApiRequest.Name = testNameUnique;
+            accountAndTransactionApiRequest.Reference = testNameUnique;
             accountAndTransactionApiRequest.BankId = bankId;
             IFluentResponse<AccountAndTransactionApiResponse> accountAndTransactionApiResponse =
                 await requestBuilder
@@ -72,7 +72,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     Guid.Empty, // set below
                     Guid.Empty,
                     AccountAccessConsentSubtestHelper.AccountAccessConsentType(subtestEnum),
-                    null, // set below
                     "Automated bank tests");
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("accountAccessConsent")
@@ -82,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // POST account access consent
             accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
             accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
-            accountAccessConsentRequest.Name = testNameUnique;
+            accountAccessConsentRequest.Reference = testNameUnique;
             IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp =
                 await requestBuilder
                     .AccountAndTransaction
@@ -111,7 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var authContextRequest = new AccountAccessConsentAuthContext
             {
                 AccountAccessConsentId = accountAccessConsentId,
-                Name = testNameUnique + "_AccountAccessConsent"
+                Reference = testNameUnique + "_AccountAccessConsent"
             };
             IFluentResponse<AccountAccessConsentAuthContextCreateLocalResponse> authContextResponse =
                 await requestBuilder

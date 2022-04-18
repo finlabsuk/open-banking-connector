@@ -72,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("paymentInitiationApi")
                 .AppendToPath("postRequest")
                 .WriteFile(paymentInitiationApiRequest);
-            paymentInitiationApiRequest.Name = testNameUnique;
+            paymentInitiationApiRequest.Reference = testNameUnique;
             paymentInitiationApiRequest.BankId = bankId;
             IFluentResponse<PaymentInitiationApiResponse> paymentInitiationApiResponse =
                 await requestBuilder
@@ -91,8 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     paymentInitiationApiId,
                     DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(subtestEnum),
                     "placeholder: random GUID",
-                    "placeholder: random GUID",
-                    null);
+                    "placeholder: random GUID");
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
@@ -105,8 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var domesticPaymentRequest =
                 new DomesticPaymentRequest
                 {
-                    ExternalApiRequest = obWriteDomestic,
-                    Name = null
+                    ExternalApiRequest = obWriteDomestic
                 };
 
             // POST domestic payment consent
@@ -116,7 +114,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
                 Guid.NewGuid().ToString("N");
-            domesticPaymentConsentRequest.Name = testNameUnique;
+            domesticPaymentConsentRequest.Reference = testNameUnique;
             IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .CreateAsync(domesticPaymentConsentRequest);
@@ -141,7 +139,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var authContextRequest = new DomesticPaymentConsentAuthContext
             {
                 DomesticPaymentConsentId = domesticPaymentConsentId,
-                Name = testNameUnique
+                Reference = testNameUnique
             };
             IFluentResponse<DomesticPaymentConsentAuthContextCreateLocalResponse> authContextResponse =
                 await requestBuilder.PaymentInitiation
@@ -216,7 +214,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification;
                 domesticPaymentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
                     domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification;
-                domesticPaymentRequest.Name = testNameUnique;
+                domesticPaymentRequest.Reference = testNameUnique;
                 IFluentResponse<DomesticPaymentResponse> domesticPaymentResp =
                     await requestBuilderNew.PaymentInitiation.DomesticPayments
                         .CreateAsync(domesticPaymentRequest, domesticPaymentConsentId);

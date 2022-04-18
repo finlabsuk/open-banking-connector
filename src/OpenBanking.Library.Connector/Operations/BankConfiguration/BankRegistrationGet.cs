@@ -165,7 +165,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             // Create response
             BankRegistrationReadResponse response = new(
                 entity.Id,
-                entity.Name,
                 entity.Created,
                 entity.CreatedBy,
                 entity.BankId,

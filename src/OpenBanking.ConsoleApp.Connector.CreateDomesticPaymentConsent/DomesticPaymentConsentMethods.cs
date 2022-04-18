@@ -43,8 +43,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     paymentInitiationApiId,
                     domesticPaymentType,
                     instructionIdentification,
-                    endToEndIdentification,
-                    testNameUnique);
+                    endToEndIdentification);
 
             // POST domestic payment consent
             IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResponse =

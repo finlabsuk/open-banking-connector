@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             // Create bank API information
             PaymentInitiationApiRequest paymentInitiationApiRequest =
                 bankProfile.GetPaymentInitiationApiRequest(bankId);
-            paymentInitiationApiRequest.Name = demoNameUnique;
+            paymentInitiationApiRequest.Reference = demoNameUnique;
             IFluentResponse<PaymentInitiationApiResponse> response = await requestBuilder
                 .BankConfiguration
                 .PaymentInitiationApis

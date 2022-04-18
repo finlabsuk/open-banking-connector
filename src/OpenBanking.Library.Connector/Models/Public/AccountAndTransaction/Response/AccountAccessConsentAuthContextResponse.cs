@@ -20,10 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     {
         internal AccountAccessConsentAuthContextReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
-            Guid accountAccessConsentId) : base(id, name, created, createdBy)
+            Guid accountAccessConsentId) : base(id, created, createdBy)
         {
             AccountAccessConsentId = accountAccessConsentId;
         }
@@ -38,11 +37,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     {
         internal AccountAccessConsentAuthContextCreateLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid AccountAccessConsentId,
-            string authUrl) : base(id, name, created, createdBy, AccountAccessConsentId)
+            string authUrl) : base(id, created, createdBy, AccountAccessConsentId)
         {
             AuthUrl = authUrl;
         }

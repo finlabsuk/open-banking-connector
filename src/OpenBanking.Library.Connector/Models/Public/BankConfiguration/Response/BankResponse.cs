@@ -20,11 +20,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         internal BankResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             string issuerUrl,
-            string financialId) : base(id, name, created, createdBy)
+            string financialId) : base(id, created, createdBy)
         {
             IssuerUrl = issuerUrl;
             FinancialId = financialId;

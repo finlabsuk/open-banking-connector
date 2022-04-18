@@ -21,8 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             Guid paymentInitiationApiId,
             DomesticPaymentTypeEnum domesticPaymentType,
             string instructionIdentification,
-            string endToEndIdentification,
-            string? name)
+            string endToEndIdentification)
         {
             var domesticPaymentConsentRequest = new DomesticPaymentConsent
             {
@@ -148,7 +147,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                     },
                 PaymentInitiationApiId = paymentInitiationApiId,
                 BankRegistrationId = bankRegistrationId,
-                Name = name
             };
 
             return PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(domesticPaymentConsentRequest);

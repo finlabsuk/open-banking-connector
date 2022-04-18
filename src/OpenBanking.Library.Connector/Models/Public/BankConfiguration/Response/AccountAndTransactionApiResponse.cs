@@ -22,12 +22,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public AccountAndTransactionApiResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
             AccountAndTransactionApiVersion apiVersion,
-            string baseUrl) : base(id, name, created, createdBy)
+            string baseUrl) : base(id, created, createdBy)
         {
             BankId = bankId;
             ApiVersion = apiVersion;

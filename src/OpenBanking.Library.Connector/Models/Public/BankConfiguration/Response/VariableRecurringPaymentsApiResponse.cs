@@ -21,12 +21,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public VariableRecurringPaymentsApiResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
             VariableRecurringPaymentsApiVersion apiVersion,
-            string baseUrl) : base(id, name, created, createdBy)
+            string baseUrl) : base(id, created, createdBy)
         {
             BankId = bankId;
             ApiVersion = apiVersion;

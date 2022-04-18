@@ -35,7 +35,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new Bank(
-                request.Name,
                 request.Reference,
                 Guid.NewGuid(),
                 false,

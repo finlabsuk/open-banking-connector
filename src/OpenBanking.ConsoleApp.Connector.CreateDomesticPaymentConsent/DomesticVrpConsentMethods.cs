@@ -37,8 +37,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 bankProfile.DomesticVrpConsentRequest(
                     bankRegistrationId,
                     variableRecurringPaymentsApi,
-                    domesticVrpTypeEnum,
-                    testNameUnique);
+                    domesticVrpTypeEnum);
 
             // POST domestic payment consent
             IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResponse =

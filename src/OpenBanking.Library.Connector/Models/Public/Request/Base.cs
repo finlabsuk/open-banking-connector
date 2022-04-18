@@ -10,11 +10,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
     public abstract class Base
     {
         /// <summary>
-        ///     Optional friendly name for object in local database to support debugging etc. The name must be unique (i.e. not
-        ///     already in use).
+        ///     Optional reference for linking object to something else - e.g. a user ID in the client
+        ///     application. This field is not used by Open Banking Connector.
         /// </summary>
-        public string? Name { get; set; }
+        public string? Reference { get; set; }
 
+        
         /// <summary>
         ///     Optional "created by" string in local database. Similar to "modified by" for mutable fields in local database, this
         ///     field
@@ -22,10 +23,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         public string? CreatedBy { get; set; }
 
-        /// <summary>
-        ///     Optional reference for linking object to something else - e.g. a user ID in the client
-        ///     application. This field is not used by Open Banking Connector.
-        /// </summary>
-        public string? Reference { get; set; }
     }
 }

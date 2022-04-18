@@ -17,7 +17,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
     {
         public AccountAccessConsentAuthContext(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -26,7 +25,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? createdBy,
             Guid accountAccessConsentId) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -50,7 +48,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public AccountAccessConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 AccountAccessConsentId);

@@ -67,7 +67,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new DomesticVrpConsentPersisted(
                 Guid.NewGuid(),
-                request.Name,
                 request.Reference,
                 false,
                 utcNow,
@@ -90,7 +89,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             var response =
                 new DomesticVrpConsentReadResponse(
                     persistedObject.Id,
-                    persistedObject.Name,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
                     persistedObject.BankRegistrationId,

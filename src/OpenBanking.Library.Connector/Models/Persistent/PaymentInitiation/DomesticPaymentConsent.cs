@@ -23,7 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     {
         public DomesticPaymentConsent(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -39,7 +38,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             Guid paymentInitiationApiId,
             string externalApiId) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -89,7 +87,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public DomesticPaymentConsentReadLocalResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 BankRegistrationId,

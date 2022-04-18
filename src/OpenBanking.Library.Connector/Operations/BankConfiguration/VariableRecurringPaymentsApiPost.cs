@@ -34,7 +34,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new VariableRecurringPaymentsApiEntity(
-                request.Name,
                 request.Reference,
                 Guid.NewGuid(),
                 false,

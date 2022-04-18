@@ -144,7 +144,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         {
             return new DomesticPaymentConsentReadFundsConfirmationResponse(
                 persistedObject.Id,
-                persistedObject.Name,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,

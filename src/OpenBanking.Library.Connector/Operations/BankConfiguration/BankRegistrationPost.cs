@@ -307,7 +307,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new BankRegistration(
                 Guid.NewGuid(),
-                requestInfo.Request.Name,
                 requestInfo.Request.Reference,
                 false,
                 utcNow,
@@ -339,7 +338,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             var response =
                 new BankRegistrationReadResponse(
                     persistedObject.Id,
-                    persistedObject.Name,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
                     persistedObject.BankId,

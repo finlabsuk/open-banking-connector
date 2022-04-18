@@ -20,10 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     {
         internal DomesticVrpConsentAuthContextReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
-            Guid domesticVrpConsentId) : base(id, name, created, createdBy)
+            Guid domesticVrpConsentId) : base(id, created, createdBy)
         {
             DomesticVrpConsentId = domesticVrpConsentId;
         }
@@ -38,11 +37,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     {
         internal DomesticVrpConsentAuthContextCreateLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid domesticVrpConsentId,
-            string authUrl) : base(id, name, created, createdBy, domesticVrpConsentId)
+            string authUrl) : base(id, created, createdBy, domesticVrpConsentId)
         {
             AuthUrl = authUrl;
         }

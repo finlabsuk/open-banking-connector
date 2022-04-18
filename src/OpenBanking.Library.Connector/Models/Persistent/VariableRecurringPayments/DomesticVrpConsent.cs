@@ -23,7 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     {
         public DomesticVrpConsent(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -39,7 +38,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             Guid variableRecurringPaymentsApiId,
             string externalApiId) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -89,7 +87,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public DomesticVrpConsentReadLocalResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 BankRegistrationId,

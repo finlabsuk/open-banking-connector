@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 new DomesticPayment
                 {
                     ExternalApiRequest = obWriteDomestic,
-                    Name = testNameUnique
+                    Reference = testNameUnique
                 };
 
             // POST domestic payment

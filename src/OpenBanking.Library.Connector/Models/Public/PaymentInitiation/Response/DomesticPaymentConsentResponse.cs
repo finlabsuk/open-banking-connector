@@ -35,12 +35,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     {
         public DomesticPaymentConsentReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
-            string externalApiId) : base(id, name, created, createdBy)
+            string externalApiId) : base(id, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
@@ -71,7 +70,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     {
         public DomesticPaymentConsentReadResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
@@ -79,7 +77,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string externalApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankRegistrationId,
@@ -99,7 +96,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     {
         public DomesticPaymentConsentReadFundsConfirmationResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
@@ -107,7 +103,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string externalApiId,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankRegistrationId,

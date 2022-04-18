@@ -11,13 +11,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     {
         public Guid Id { get; }
 
-        public string? Name { get; }
 
+        public string? Reference { get; }
         public DateTimeOffset Created { get; }
 
         public string? CreatedBy { get; }
-
-        public string? Reference { get; }
     }
 
     /// <summary>
@@ -25,10 +23,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// </summary>
     public abstract class BaseResponse : IBaseQuery
     {
-        internal BaseResponse(Guid id, string? name, DateTimeOffset created, string? createdBy)
+        internal BaseResponse(Guid id, DateTimeOffset created, string? createdBy)
         {
             Id = id;
-            Name = name;
             Created = created;
             CreatedBy = createdBy;
         }
@@ -42,12 +39,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
         ///     Unique Open Banking Connector ID (used in local database).
         /// </summary>
         public Guid Id { get; }
-
-        /// <summary>
-        ///     Optional friendly name for object in local database to support debugging etc. The name must be unique (i.e. not
-        ///     already in use).
-        /// </summary>
-        public string? Name { get; }
 
         /// <summary>
         ///     Created timestamp in local database.

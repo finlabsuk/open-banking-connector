@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             {
                 IssuerUrl = "a",
                 FinancialId = "b",
-                Name = "c"
+                Reference = "c"
             };
 
             (BankResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =

@@ -33,7 +33,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     {
         public BaseConsent(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -46,7 +45,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,

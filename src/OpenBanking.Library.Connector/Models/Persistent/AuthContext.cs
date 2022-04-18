@@ -12,7 +12,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     {
         public AuthContext(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -20,7 +19,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             DateTimeOffset created,
             string? createdBy) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,

@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
-    [Index(nameof(Name), IsUnique = true)]
     internal abstract class BaseEntity : IEntity
     {
         protected BaseEntity(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -20,7 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? createdBy)
         {
             Id = id;
-            Name = name;
             Reference = reference;
             IsDeleted = isDeleted;
             IsDeletedModified = isDeletedModified;
@@ -33,12 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Unique Open Banking Connector ID
         /// </summary>
         public Guid Id { get; }
-
-        /// <summary>
-        ///     Friendly name to support debugging etc. (must be unique i.e. not already in use).
-        ///     This is optional.
-        /// </summary>
-        public string? Name { get; }
 
         /// <summary>
         ///     Optional reference for linking object to something else - e.g. a user ID in the client

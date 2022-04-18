@@ -23,7 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     {
         public BankRegistration(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -44,7 +43,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string? externalApiSecret,
             string? registrationAccessToken) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -134,7 +132,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     {
         public BankRegistrationReadLocalResponse PublicGetLocalResponse => new(
             Id,
-            Name,
             Created,
             CreatedBy,
             BankId);

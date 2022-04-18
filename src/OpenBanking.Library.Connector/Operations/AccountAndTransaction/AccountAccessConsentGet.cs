@@ -123,7 +123,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         {
             return new AccountAccessConsentReadResponse(
                 persistedObject.Id,
-                persistedObject.Name,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,

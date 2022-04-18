@@ -24,11 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
             // Read-only properties
-            builder.Property(e => e.Name)
+            builder.Property(e => e.Id)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Reference)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.Id)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.Created)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

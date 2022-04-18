@@ -22,7 +22,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
             AccountAccessConsentType accountAccessConsentType,
-            string? name,
             string? createdBy)
         {
             var accountAccessConsentRequest = new AccountAccessConsent
@@ -62,7 +61,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 CreatedBy = createdBy,
                 AccountAndTransactionApiId = accountAndTransactionApiId,
                 BankRegistrationId = bankRegistrationId,
-                Name = name
             };
 
             return AccountAndTransactionApiSettings.AccountAccessConsentAdjustments(accountAccessConsentRequest);

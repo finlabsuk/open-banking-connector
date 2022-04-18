@@ -21,8 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         public DomesticVrpConsent DomesticVrpConsentRequest(
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
-            DomesticVrpTypeEnum domesticVrpType,
-            string? name)
+            DomesticVrpTypeEnum domesticVrpType)
         {
             var domesticVrpConsentRequest = new DomesticVrpConsent
             {
@@ -237,7 +236,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                             },
                         _ => throw new ArgumentOutOfRangeException(nameof(domesticVrpType), domesticVrpType, null)
                     },
-                Name = name,
                 VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId,
                 BankRegistrationId = bankRegistrationId
             };

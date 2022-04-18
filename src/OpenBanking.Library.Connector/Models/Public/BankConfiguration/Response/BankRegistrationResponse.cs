@@ -20,10 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public BankRegistrationReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
-            Guid bankId) : base(id, name, created, createdBy)
+            Guid bankId) : base(id, created, createdBy)
         {
             BankId = bankId;
         }
@@ -39,13 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public BankRegistrationReadResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankId)
@@ -64,13 +61,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public BankRegistrationPostResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankId,
             ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankId)

@@ -18,7 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         BaseEntity, IPaymentInitiationApiQuery
     {
         public PaymentInitiationApiEntity(
-            string? name,
             string? reference,
             Guid id,
             bool isDeleted,
@@ -30,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             PaymentInitiationApiVersion apiVersion,
             string baseUrl) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -61,7 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public PaymentInitiationApiResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 BankId,

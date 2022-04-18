@@ -16,8 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     {
         internal AuthContextResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
-            string? createdBy) : base(id, name, created, createdBy) { }
+            string? createdBy) : base(id, created, createdBy) { }
     }
 }

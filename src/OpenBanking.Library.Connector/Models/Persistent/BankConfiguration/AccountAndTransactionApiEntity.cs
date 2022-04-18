@@ -18,7 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         BaseEntity, IAccountAndTransactionApiQuery
     {
         public AccountAndTransactionApiEntity(
-            string? name,
             string? reference,
             Guid id,
             bool isDeleted,
@@ -30,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             AccountAndTransactionApiVersion apiVersion,
             string baseUrl) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -61,7 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public AccountAndTransactionApiResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 BankId,

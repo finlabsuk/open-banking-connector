@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 new DomesticVrp
                 {
                     ExternalApiRequest = obDomesticVrpRequest,
-                    Name = testNameUnique,
+                    Reference = testNameUnique,
                 };
 
             // POST domestic VRP

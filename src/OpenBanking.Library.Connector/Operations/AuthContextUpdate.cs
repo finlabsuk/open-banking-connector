@@ -157,7 +157,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var response =
                 new AuthContextResponse(
                     authContext.Id,
-                    authContext.Name,
                     authContext.Created,
                     authContext.CreatedBy);
 

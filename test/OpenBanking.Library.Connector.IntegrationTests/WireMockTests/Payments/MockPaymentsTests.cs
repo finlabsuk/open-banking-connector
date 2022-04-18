@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             {
                 IssuerUrl = MockRoutes.Url,
                 FinancialId = _mockData.GetFapiHeader(),
-                Name = "MyBank"
+                Reference = "MyBank"
             };
             IFluentResponse<BankResponse> bankResp = requestBuilder.BankConfiguration
                 .Banks

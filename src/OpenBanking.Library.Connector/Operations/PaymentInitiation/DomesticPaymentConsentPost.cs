@@ -69,7 +69,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new DomesticPaymentConsentPersisted(
                 Guid.NewGuid(),
-                request.Name,
                 request.Reference,
                 false,
                 utcNow,
@@ -91,7 +90,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Create response (may involve additional processing based on entity)
             var response = new DomesticPaymentConsentReadResponse(
                 persistedObject.Id,
-                persistedObject.Name,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,

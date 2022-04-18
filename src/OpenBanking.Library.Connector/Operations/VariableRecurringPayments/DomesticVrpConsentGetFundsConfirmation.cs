@@ -137,7 +137,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         {
             return new DomesticVrpConsentReadFundsConfirmationResponse(
                 persistedObject.Id,
-                persistedObject.Name,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.BankRegistrationId,

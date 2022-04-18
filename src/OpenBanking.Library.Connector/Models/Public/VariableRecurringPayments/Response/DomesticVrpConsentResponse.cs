@@ -35,12 +35,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     {
         public DomesticVrpConsentReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
-            string externalApiId) : base(id, name, created, createdBy)
+            string externalApiId) : base(id, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
@@ -72,7 +71,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     {
         public DomesticVrpConsentReadResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
@@ -80,7 +78,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string externalApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankRegistrationId,
@@ -101,7 +98,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     {
         public DomesticVrpConsentReadFundsConfirmationResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
@@ -109,7 +105,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string externalApiId,
             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankRegistrationId,

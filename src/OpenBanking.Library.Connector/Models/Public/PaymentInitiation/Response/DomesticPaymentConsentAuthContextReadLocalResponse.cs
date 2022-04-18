@@ -20,10 +20,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     {
         internal DomesticPaymentConsentAuthContextReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
-            Guid domesticPaymentConsentId) : base(id, name, created, createdBy)
+            Guid domesticPaymentConsentId) : base(id, created, createdBy)
         {
             DomesticPaymentConsentId = domesticPaymentConsentId;
         }
@@ -39,11 +38,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     {
         internal DomesticPaymentConsentAuthContextCreateLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid domesticPaymentConsentId,
-            string authUrl) : base(id, name, created, createdBy, domesticPaymentConsentId)
+            string authUrl) : base(id, created, createdBy, domesticPaymentConsentId)
         {
             AuthUrl = authUrl;
         }

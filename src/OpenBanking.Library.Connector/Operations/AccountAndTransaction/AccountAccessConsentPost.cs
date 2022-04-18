@@ -67,7 +67,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(
                 Guid.NewGuid(),
-                request.Name,
                 request.Reference,
                 false,
                 utcNow,
@@ -90,7 +89,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             var response =
                 new AccountAccessConsentReadResponse(
                     persistedObject.Id,
-                    persistedObject.Name,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
                     persistedObject.BankRegistrationId,

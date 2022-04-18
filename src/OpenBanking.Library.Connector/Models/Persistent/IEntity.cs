@@ -6,11 +6,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public interface IEntity
     {
-        string? Name { get; }
-
-        string? Reference { get; }
-
         Guid Id { get; }
+        string? Reference { get; }
 
         bool IsDeleted { get; }
 

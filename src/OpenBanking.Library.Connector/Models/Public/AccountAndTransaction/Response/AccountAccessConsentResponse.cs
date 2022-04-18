@@ -25,12 +25,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     {
         public AccountAccessConsentReadLocalResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
-            string externalApiId) : base(id, name, created, createdBy)
+            string externalApiId) : base(id, created, createdBy)
         {
             BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
@@ -60,7 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     {
         public AccountAccessConsentReadResponse(
             Guid id,
-            string? name,
             DateTimeOffset created,
             string? createdBy,
             Guid bankRegistrationId,
@@ -68,7 +66,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             string externalApiId,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1 externalApiResponse) : base(
             id,
-            name,
             created,
             createdBy,
             bankRegistrationId,

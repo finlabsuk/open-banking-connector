@@ -21,7 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     {
         public DomesticPaymentConsentAuthContext(
             Guid id,
-            string? name,
             string? reference,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
@@ -30,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? createdBy,
             Guid domesticPaymentConsentId) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -54,7 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public DomesticPaymentConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
             new(
                 Id,
-                Name,
                 Created,
                 CreatedBy,
                 DomesticPaymentConsentId);

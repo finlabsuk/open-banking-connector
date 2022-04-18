@@ -16,7 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         IBankPublicQuery
     {
         public Bank(
-            string? name,
             string? reference,
             Guid id,
             bool isDeleted,
@@ -27,7 +26,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string issuerUrl,
             string financialId) : base(
             id,
-            name,
             reference,
             isDeleted,
             isDeletedModified,
@@ -61,7 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     {
         public BankResponse PublicGetLocalResponse => new(
             Id,
-            Name,
             Created,
             CreatedBy,
             IssuerUrl,

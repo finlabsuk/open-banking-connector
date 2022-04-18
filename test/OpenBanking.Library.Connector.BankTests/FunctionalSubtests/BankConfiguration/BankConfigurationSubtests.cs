@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
                 .WriteFile(bankRequest);
-            bankRequest.Name = testNameUnique;
+            bankRequest.Reference = testNameUnique;
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postRequest")
                 .WriteFile(registrationRequest);
 
-            registrationRequest.Name = testNameUnique;
+            registrationRequest.Reference = testNameUnique;
             registrationRequest.BankId = bankId;
             IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
                 .BankConfiguration
