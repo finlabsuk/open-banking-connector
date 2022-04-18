@@ -26,9 +26,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
-            string? accessToken_AccessToken,
-            int accessToken_ExpiresIn,
-            string? accessToken_RefreshToken,
+            string? accessTokenAccessToken,
+            int accessTokenExpiresIn,
+            string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy,
             Guid bankRegistrationId,
@@ -41,9 +41,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             isDeletedModifiedBy,
             created,
             createdBy,
-            accessToken_AccessToken,
-            accessToken_ExpiresIn,
-            accessToken_RefreshToken,
+            accessTokenAccessToken,
+            accessTokenExpiresIn,
+            accessTokenRefreshToken,
             accessTokenModified,
             accessTokenModifiedBy)
         {
@@ -51,7 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             AccountAndTransactionApiId = accountAndTransactionApiId;
             ExternalApiId = externalApiId;
         }
-
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;

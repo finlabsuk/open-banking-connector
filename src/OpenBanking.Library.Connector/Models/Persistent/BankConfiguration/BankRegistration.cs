@@ -71,13 +71,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public string SoftwareStatementProfileId { get; }
 
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; }
+        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
 
         /// <summary>
         ///     Functional APIs used for bank registration.
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
 
-        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
+        /// <summary>
+        ///     Registration endpoint (normally supplied from OpenID Configuration)
+        /// </summary>
+        public string RegistrationEndpoint { get; }
 
         /// <summary>
         ///     Token endpoint (normally supplied from OpenID Configuration)
@@ -88,11 +92,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         ///     Authorization endpoint (normally supplied from OpenID Configuration)
         /// </summary>
         public string AuthorizationEndpoint { get; }
-
-        /// <summary>
-        ///     Registration endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string RegistrationEndpoint { get; }
 
         /// <summary>
         ///     Token endpoint authorisation method

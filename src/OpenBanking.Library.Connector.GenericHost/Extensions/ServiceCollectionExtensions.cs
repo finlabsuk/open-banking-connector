@@ -105,7 +105,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                                             // unsupported global query filter to entity queries
                                             warnings.Ignore(
                                                 CoreEventId
-                                                    .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+                                                    .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
+                                    .UseSnakeCaseNamingConvention();
                             });
                     break;
                 case DbProvider.PostgreSql:
@@ -119,7 +120,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                                         // unsupported global query filter to entity queries
                                         warnings.Ignore(
                                             CoreEventId
-                                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+                                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
+                                .UseSnakeCaseNamingConvention();
                         });
                     break;
                 default:
