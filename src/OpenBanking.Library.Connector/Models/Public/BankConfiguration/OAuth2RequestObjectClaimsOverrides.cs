@@ -4,7 +4,7 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
 {
     /// <summary>
     ///     Class used to specify overrides to default settings for request object claims.

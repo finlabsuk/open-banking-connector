@@ -2,12 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -17,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -42,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     internal class
         BankRegistrationPost : EntityPost<
             BankRegistration,
-            BankRegistrationRequest, BankRegistrationResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
+            BankRegistrationRequest, BankRegistrationReadResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
             ClientRegistrationModelsPublic.OBClientRegistration1Response>
     {
         private readonly IApiClient _apiClient;
@@ -82,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         }
 
         protected override async
-            Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(BankRegistrationReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create non-error list
@@ -124,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             // Get OpenID Connect configuration (normally from (well-known endpoint)
             OpenIdConfiguration openIdConfiguration;
-            if (requestInfo.Request.OpenIdConfigurationReplacement is null)
+            if (requestInfo.Request.CustomBehaviour?.OpenIdConfigurationReplacement is null)
             {
                 openIdConfiguration = await GetOpenIdConfigurationAsync(bank.IssuerUrl);
             }
@@ -132,28 +126,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             {
                 openIdConfiguration =
                     JsonConvert.DeserializeObject<OpenIdConfiguration>(
-                        requestInfo.Request.OpenIdConfigurationReplacement,
+                        requestInfo.Request.CustomBehaviour.OpenIdConfigurationReplacement,
                         new JsonSerializerSettings()) ??
                     throw new Exception("Can't de-serialise supplied bank API response");
             }
 
             // Update OpenID Connect configuration based on overrides
             string? registrationEndpointOverride =
-                requestInfo.Request.OpenIdConfigurationOverrides?.RegistrationEndpoint;
+                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.RegistrationEndpoint;
             if (!(registrationEndpointOverride is null))
             {
                 openIdConfiguration.RegistrationEndpoint = registrationEndpointOverride;
             }
 
             IList<string>? responseModesSupportedOverride =
-                requestInfo.Request.OpenIdConfigurationOverrides?.ResponseModesSupported;
+                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.ResponseModesSupported;
             if (!(responseModesSupportedOverride is null))
             {
                 openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
             }
 
             IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-                requestInfo.Request.OpenIdConfigurationOverrides?.TokenEndpointAuthMethodsSupported;
+                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.TokenEndpointAuthMethodsSupported;
             if (!(tokenEndpointAuthMethodsSupportedOverride is null))
             {
                 openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
@@ -197,7 +191,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     tokenEndpointAuthMethod,
                     processedSoftwareStatementProfile,
                     registrationScope,
-                    requestInfo.Request.BankRegistrationClaimsOverrides,
+                    requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsOverrides,
                     bank.FinancialId,
                     requestInfo.Request.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues);
 
@@ -206,13 +200,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             // Create request serialiser settings.
             JsonSerializerSettings? requestJsonSerializerSettings = null;
-            if (!(requestInfo.Request.BankRegistrationClaimsJsonOptions is null))
+            if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsJsonOptions is null))
             {
                 var optionsDict = new Dictionary<JsonConverterLabel, int>
                 {
                     {
                         JsonConverterLabel.DcrRegScope,
-                        (int) requestInfo.Request.BankRegistrationClaimsJsonOptions.ScopeConverterOptions
+                        (int) requestInfo.Request.CustomBehaviour.BankRegistrationClaimsJsonOptions
+                            .ScopeConverterOptions
                     }
                 };
                 requestJsonSerializerSettings = new JsonSerializerSettings
@@ -311,31 +306,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var persistedObject = new BankRegistration(
+                Guid.NewGuid(),
                 requestInfo.Request.Name,
                 requestInfo.Request.Reference,
-                Guid.NewGuid(),
                 false,
                 utcNow,
                 requestInfo.ModifiedBy,
                 utcNow,
                 requestInfo.ModifiedBy,
+                requestInfo.Request.BankId,
                 requestInfo.Request.SoftwareStatementProfileId,
                 requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
                 requestInfo.Request.ClientRegistrationApi,
-                openIdConfiguration,
-                openIdConfiguration.TokenEndpoint,
-                openIdConfiguration.AuthorizationEndpoint,
-                openIdConfiguration.RegistrationEndpoint,
-                apiResponse.RedirectUris,
+                openIdConfiguration.TokenEndpoint.TrimEnd('/'),
+                openIdConfiguration.AuthorizationEndpoint.TrimEnd('/'),
+                openIdConfiguration.RegistrationEndpoint.TrimEnd('/'),
                 tokenEndpointAuthMethod,
-                apiRequest,
-                requestInfo.Request.OAuth2RequestObjectClaimsOverrides,
+                requestInfo.Request.CustomBehaviour,
                 apiResponse.ClientId,
                 apiResponse.ClientSecret,
-                apiResponse.RegistrationAccessToken,
-                apiResponse,
-                requestInfo.Request.BankId);
+                apiResponse.RegistrationAccessToken);
 
 
             // Save entity
@@ -346,13 +337,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             // Create response (may involve additional processing based on entity)
             var response =
-                new BankRegistrationResponse(
+                new BankRegistrationReadResponse(
                     persistedObject.Id,
                     persistedObject.Name,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
-                    apiResponse,
-                    persistedObject.BankId);
+                    persistedObject.BankId,
+                    apiResponse);
 
             return (response, nonErrorMessages2);
         }

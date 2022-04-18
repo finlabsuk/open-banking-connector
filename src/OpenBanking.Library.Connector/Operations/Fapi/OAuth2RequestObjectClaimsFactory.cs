@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -21,12 +20,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = bankRegistration.OAuth2RequestObjectClaimsOverrides?.Issuer ??
+                Iss = bankRegistration.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides?.Issuer ??
                       bankRegistration.ExternalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddHours(1),
-                Aud = bankRegistration.OAuth2RequestObjectClaimsOverrides?.Audience ??
+                Aud = bankRegistration.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides?.Audience ??
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",

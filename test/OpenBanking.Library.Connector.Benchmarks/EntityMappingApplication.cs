@@ -2,17 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using PaymentInitiationModelsV3p1p4 =
@@ -98,7 +94,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 
         private void OnExecute() => BenchmarkRunner.Run<EntityMappingApplication>();
 
-        private PaymentInitiationModelsPublic.OBRisk1 CreateRisk() => new PaymentInitiationModelsPublic.OBRisk1
+        private PaymentInitiationModelsPublic.OBRisk1 CreateRisk() => new()
         {
             DeliveryAddress = new PaymentInitiationModelsPublic.OBRisk1DeliveryAddress
             {
@@ -116,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         };
 
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation CreateDataInitiation() =>
-            new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation
+            new()
             {
                 CreditorAccount = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationCreditorAccount
                 {
@@ -165,7 +161,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 
 
         private PaymentInitiationModelsPublic.OBWriteDomesticConsent4 CreateDomesticConsent() =>
-            new PaymentInitiationModelsPublic.OBWriteDomesticConsent4
+            new()
             {
                 Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
                 {
@@ -190,42 +186,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
             };
 
 
-        private BankRegistration CreateClient() => new BankRegistration
+        private BankRegistration CreateClient() => new()
         {
-            BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
+            CustomBehaviour = new CustomBehaviour
             {
-                GrantTypes = new[]
+                BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
                 {
-                    ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
-                    ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
-                }
-            },
-            BankRegistrationClaimsOverrides = new BankRegistrationClaimsOverrides
-            {
-                GrantTypes = new[]
-                {
-                    ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
-                    ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
+                    GrantTypes = new[]
+                    {
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
+                    }
                 },
-                Audience = "audience",
-                TokenEndpointAuthSigningAlgorithm = "alg"
-            },
-            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
-            {
-                RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com"
+                BankRegistrationClaimsOverrides = new BankRegistrationClaimsOverrides
+                {
+                    GrantTypes = new[]
+                    {
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
+                    },
+                    Audience = "audience",
+                    TokenEndpointAuthSigningAlgorithm = "alg"
+                },
+                OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                {
+                    RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com"
+                }
             },
             SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             //XFapiFinancialId = "xfapi"
         };
 
-        private SoftwareStatementProfile CreateSoftwareStatement() => new SoftwareStatementProfile
+        private SoftwareStatementProfile CreateSoftwareStatement() => new()
         {
             DefaultFragmentRedirectUrl = "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
             SoftwareStatement =
                 "e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30=.e30="
         };
 
-        private TransportCertificateProfile CreateObCertificateProfile() => new TransportCertificateProfile
+        private TransportCertificateProfile CreateObCertificateProfile() => new()
         {
             CertificateType = TransportCertificateType.OBLegacy,
             AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",

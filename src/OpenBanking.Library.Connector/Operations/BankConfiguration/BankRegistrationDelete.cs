@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -59,14 +56,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             string bankApiId = persistedObject.ExternalApiId;
 
-            var uri = new Uri(persistedObject.RegistrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
+            var uri = new Uri(persistedObject.RegistrationEndpoint + $"/{bankApiId}");
 
             // Get appropriate token
             string accessToken = useRegistrationAccessToken
                 ? persistedObject.RegistrationAccessToken ??
                   throw new InvalidOperationException("No registration access token available")
                 : (await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    null, // no scope - not clear this is correct yet...
+                    null,
                     processedSoftwareStatementProfile,
                     persistedObject,
                     null,

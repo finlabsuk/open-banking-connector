@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
@@ -46,10 +44,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public DynamicClientRegistrationApiVersion ClientRegistrationApi { get; set; }
 
         /// <summary>
-        ///     JSON string with Open ID configuration (well-known endpoint) response to be used
-        ///     instead of calling bank API. When null, bank API endpoint provides response.
+        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
+        ///     For a well-behaved bank, normally this object should be null.
         /// </summary>
-        public string? OpenIdConfigurationReplacement { get; set; } = null;
+        public CustomBehaviour? CustomBehaviour { get; set; }
+
+        public BankRegistrationResponseJsonOptions? BankRegistrationResponseJsonOptions { get; set; }
 
         /// <summary>
         ///     Set Content-Type header to "application/jose" rather than "application/jwt" when POSTing to bank
@@ -68,18 +68,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     AttributeValue and thus this setting defaults to false.
         /// </summary>
         public bool UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues { get; set; } = false;
-
-        public OpenIdConfigurationOverrides? OpenIdConfigurationOverrides { get; set; }
-
-        public BankRegistrationClaimsOverrides? BankRegistrationClaimsOverrides { get; set; }
-
-        public BankRegistrationClaimsJsonOptions? BankRegistrationClaimsJsonOptions { get; set; }
-
-        public BankRegistrationResponseOverrides? BankRegistrationResponseOverrides { get; set; }
-
-        public BankRegistrationResponseJsonOptions? BankRegistrationResponseJsonOptions { get; set; }
-
-        public OAuth2RequestObjectClaimsOverrides? OAuth2RequestObjectClaimsOverrides { get; set; }
 
         /// <summary>
         ///     If registration already exists for bank, allow creation of additional one. NB this may

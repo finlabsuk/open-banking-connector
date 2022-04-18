@@ -2,12 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
 {
     /// <summary>
     ///     UK Open Banking API configured in bank registration scope

@@ -2,11 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
 {
     /// <summary>
     ///     Class used to specify overrides to returned OpenID configuration (from

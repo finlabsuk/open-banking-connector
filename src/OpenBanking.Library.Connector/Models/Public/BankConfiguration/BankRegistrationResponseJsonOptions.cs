@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
 {
     /// <summary>
     ///     Class used to specify JSON options for returned registration response

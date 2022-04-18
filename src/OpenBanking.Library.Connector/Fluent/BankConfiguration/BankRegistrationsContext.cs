@@ -6,8 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using BankRegistrationPersisted =
@@ -17,15 +15,17 @@ using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persi
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
-        ICreateContext<BankRegistration, BankRegistrationResponse>,
-        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        ICreateContext<BankRegistration, BankRegistrationReadResponse>,
+        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse>,
+        IReadContext<BankRegistrationReadResponse>,
         IDeleteLocalContext,
         IDeleteContext { }
 
     internal interface IBankRegistrationsContextInternal :
         IBankRegistrationsContext,
-        ICreateContextInternal<BankRegistration, BankRegistrationResponse>,
-        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        ICreateContextInternal<BankRegistration, BankRegistrationReadResponse>,
+        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse>,
+        IReadContextInternal<BankRegistrationReadResponse>,
         IDeleteContextInternal { }
 
     internal class BankRegistrationsContextInternal :
@@ -35,12 +35,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         public BankRegistrationsContextInternal(ISharedContext sharedContext) : base(sharedContext)
         {
             ReadLocalObject =
-                new LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery, BankRegistrationResponse>(
+                new LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery,
+                    BankRegistrationReadLocalResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation);
+            ReadObject = new BankRegistrationGet(
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.ApiVariantMapper);
             DeleteObject = new BankRegistrationDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -59,10 +67,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>());
         }
 
-        public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationResponse> ReadLocalObject { get; }
+        public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse> ReadLocalObject
+        {
+            get;
+        }
 
-        public IObjectCreate<BankRegistration, BankRegistrationResponse> CreateObject { get; }
+        public IObjectCreate<BankRegistration, BankRegistrationReadResponse> CreateObject { get; }
 
         public IObjectDelete DeleteObject { get; }
+        public IObjectRead<BankRegistrationReadResponse> ReadObject { get; }
     }
 }

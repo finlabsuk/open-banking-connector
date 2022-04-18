@@ -7,7 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,7 +54,8 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     demoNameUnique);
 
             // Create bank API information
-            PaymentInitiationApiRequest paymentInitiationApiRequest = bankProfile.GetPaymentInitiationApiRequest(bankId);
+            PaymentInitiationApiRequest paymentInitiationApiRequest =
+                bankProfile.GetPaymentInitiationApiRequest(bankId);
             paymentInitiationApiRequest.Name = demoNameUnique;
             IFluentResponse<PaymentInitiationApiResponse> response = await requestBuilder
                 .BankConfiguration

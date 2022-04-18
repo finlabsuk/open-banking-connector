@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FluentAssertions;
@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 FilePathBuilder testDataProcessorApiOverrides)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankRequest("placeholder: dynamically generated based on unused names");
+            Bank bankRequest = bankProfile.BankRequest();
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
@@ -58,13 +58,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     ? await File.ReadAllTextAsync(openIdConfigurationReplacementPath)
                     : null;
 
+            CustomBehaviour? customBehaviour = null;
+            if (openIdConfigurationReplacement is not null)
+            {
+                customBehaviour = new CustomBehaviour
+                {
+                    OpenIdConfigurationReplacement = openIdConfigurationReplacement
+                };
+            }
+
             BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
-                "placeholder: dynamically generated based on unused names",
                 default,
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
-                openIdConfigurationReplacement);
+                customBehaviour);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postRequest")
@@ -72,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             registrationRequest.Name = testNameUnique;
             registrationRequest.BankId = bankId;
-            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
+            IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .CreateAsync(

@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -41,13 +40,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             BankResponse bank = bankResp.Data!.Single();
 
             // GET bank registration (example: assume single registration for Lloyds)
-            IFluentResponse<IQueryable<BankRegistrationResponse>> registrationResp = await requestBuilder
+            IFluentResponse<IQueryable<BankRegistrationReadLocalResponse>> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .ReadLocalAsync(x => x.BankId == bank.Id);
             registrationResp.Messages.Should().BeEmpty();
             registrationResp.Data.Should().NotBeNull();
-            BankRegistrationResponse bankRegistration = registrationResp.Data!.Single();
+            BankRegistrationReadLocalResponse bankRegistration = registrationResp.Data!.Single();
 
             // DELETE bank registration
             IFluentResponse registrationResp2 = await requestBuilder

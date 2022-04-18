@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -11,29 +10,74 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 {
     public interface IBankRegistrationPublicQuery : IBaseQuery
     {
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
-
         Guid BankId { get; }
     }
 
     /// <summary>
-    ///     Respnose to GetLocal
+    ///     Response to BankRegistration ReadLocal requests.
     /// </summary>
-    public class BankRegistrationResponse : BaseResponse, IBankRegistrationPublicQuery
+    public class BankRegistrationReadLocalResponse : BaseResponse, IBankRegistrationPublicQuery
     {
-        public BankRegistrationResponse(
+        public BankRegistrationReadLocalResponse(
             Guid id,
             string? name,
             DateTimeOffset created,
             string? createdBy,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response bankApiResponse,
             Guid bankId) : base(id, name, created, createdBy)
         {
-            ExternalApiResponse = bankApiResponse;
             BankId = bankId;
         }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
         public Guid BankId { get; }
+    }
+
+
+    /// <summary>
+    ///     Response to BankRegistration Read requests
+    /// </summary>
+    public class BankRegistrationReadResponse : BankRegistrationReadLocalResponse
+    {
+        public BankRegistrationReadResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            Guid bankId,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy,
+            bankId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
+    }
+
+    /// <summary>
+    ///     Response to BankRegistration Post requests
+    /// </summary>
+    public class BankRegistrationPostResponse : BankRegistrationReadLocalResponse
+    {
+        public BankRegistrationPostResponse(
+            Guid id,
+            string? name,
+            DateTimeOffset created,
+            string? createdBy,
+            Guid bankId,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse) : base(
+            id,
+            name,
+            created,
+            createdBy,
+            bankId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+        
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
     }
 }

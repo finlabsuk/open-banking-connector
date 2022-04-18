@@ -120,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 RegistrationScope = RegistrationScopeEnum.PaymentInitiation,
                 AllowMultipleRegistrations = false
             };
-            IFluentResponse<BankRegistrationResponse> bankRegistrationResp = requestBuilder.BankConfiguration
+            IFluentResponse<BankRegistrationReadResponse> bankRegistrationResp = requestBuilder.BankConfiguration
                 .BankRegistrations
                 .CreateAsync(registrationRequest)
                 .Result;

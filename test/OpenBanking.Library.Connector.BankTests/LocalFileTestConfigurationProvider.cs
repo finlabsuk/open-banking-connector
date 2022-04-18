@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             {
                 case "mockhttp":
                     return _configuration.MockHttp != null
-                        ? (bool?) bool.Parse(_configuration.MockHttp)
+                        ? bool.Parse(_configuration.MockHttp)
                         : null;
                 default:
                     return null;

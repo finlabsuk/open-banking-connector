@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -26,10 +25,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IInstrumentationClient instrumentationClient)
         {
             string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
-            if (redirectUrl == "")
-            {
-                redirectUrl = bankRegistration.RedirectUris[0];
-            }
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(

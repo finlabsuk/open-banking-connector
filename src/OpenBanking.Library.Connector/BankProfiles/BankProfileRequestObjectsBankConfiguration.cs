@@ -2,44 +2,41 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
     public partial class BankProfile
     {
+        public Bank BankRequest() =>
+            new()
+            {
+                IssuerUrl = IssuerUrl,
+                FinancialId = FinancialId,
+            };
+
         public BankRegistration BankRegistrationRequest(
-            string name,
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScopeEnum registrationScope,
-            string? openIdConfigurationReplacement)
+            CustomBehaviour? customBehaviour = null)
         {
             var bankRegistration = new BankRegistration
             {
-                Name = name,
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
                 RegistrationScope = registrationScope,
                 ClientRegistrationApi = ClientRegistrationApiVersion,
                 AllowMultipleRegistrations = true,
-                OpenIdConfigurationReplacement = openIdConfigurationReplacement
+                CustomBehaviour = customBehaviour
             };
             return ClientRegistrationApiSettings.BankRegistrationAdjustments.Invoke(
                 bankRegistration,
                 registrationScope);
         }
-
-        public Bank BankRequest(string name) =>
-            new()
-            {
-                IssuerUrl = IssuerUrl,
-                FinancialId = FinancialId,
-                Name = name
-            };
 
         public AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(Guid bankId) =>
             new()

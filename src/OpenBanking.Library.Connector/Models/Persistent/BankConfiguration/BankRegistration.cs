@@ -3,13 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using OAuth2RequestObjectClaimsOverridesRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.OAuth2RequestObjectClaimsOverrides;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.OAuth2RequestObjectClaimsOverrides;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -24,31 +22,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         IBankRegistrationPublicQuery
     {
         public BankRegistration(
+            Guid id,
             string? name,
             string? reference,
-            Guid id,
             bool isDeleted,
             DateTimeOffset isDeletedModified,
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScopeEnum registrationScope,
-            DynamicClientRegistrationApiVersion clientRegistrationApi,
-            OpenIdConfiguration openIdConfigurationResponse,
+            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
             string tokenEndpoint,
             string authorizationEndpoint,
             string registrationEndpoint,
-            IList<string> redirectUris,
             TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
-            ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest,
-            OAuth2RequestObjectClaimsOverrides? oAuth2RequestObjectClaimsOverrides,
+            CustomBehaviour? customBehaviour,
             string externalApiId,
             string? externalApiSecret,
-            string? registrationAccessToken,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse,
-            Guid bankId) : base(
+            string? registrationAccessToken) : base(
             id,
             name,
             reference,
@@ -58,25 +52,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             created,
             createdBy)
         {
+            BankId = bankId;
             SoftwareStatementProfileId = softwareStatementProfileId;
             SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase;
             RegistrationScope = registrationScope;
-            ClientRegistrationApi = clientRegistrationApi;
-            OpenIdConfigurationResponse = openIdConfigurationResponse;
+            DynamicClientRegistrationApiVersion = dynamicClientRegistrationApiVersion;
             TokenEndpoint = tokenEndpoint;
             AuthorizationEndpoint = authorizationEndpoint;
             RegistrationEndpoint = registrationEndpoint;
-            RedirectUris = redirectUris;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-            ExternalApiRequest = externalApiRequest;
-            OAuth2RequestObjectClaimsOverrides = oAuth2RequestObjectClaimsOverrides;
+            CustomBehaviour = customBehaviour;
             ExternalApiId = externalApiId;
             ExternalApiSecret = externalApiSecret;
             RegistrationAccessToken = registrationAccessToken;
-            ExternalApiResponse = externalApiResponse;
-            BankId = bankId;
         }
 
+        [ForeignKey("BankId")]
+        public Bank BankNavigation { get; set; } = null!;
 
         public string SoftwareStatementProfileId { get; }
 
@@ -87,13 +79,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
 
-        public DynamicClientRegistrationApiVersion ClientRegistrationApi { get; }
-
-        /// <summary>
-        ///     Log of OpenID Configuration provided by well-known endpoint. Archived for debugging and should not be accessed by
-        ///     Open Banking Connector.
-        /// </summary>
-        public OpenIdConfiguration OpenIdConfigurationResponse { get; }
+        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
 
         /// <summary>
         ///     Token endpoint (normally supplied from OpenID Configuration)
@@ -111,24 +97,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public string RegistrationEndpoint { get; }
 
         /// <summary>
-        ///     Redirect URIs valid for this registration
-        /// </summary>
-        public IList<string> RedirectUris { get; }
-
-        /// <summary>
         ///     Token endpoint authorisation method
         /// </summary>
         public TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1 ExternalApiRequest { get; }
-
-        public OAuth2RequestObjectClaimsOverridesRequest? OAuth2RequestObjectClaimsOverrides { get; }
-
-        [ForeignKey("BankId")]
-        public Bank BankNavigation { get; set; } = null!;
-
-        public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; } =
-            new List<DomesticPaymentConsent>();
+        /// <summary>
+        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
+        ///     For a well-behaved bank, normally this object should be null.
+        /// </summary>
+        public CustomBehaviour? CustomBehaviour { get; }
 
         /// <summary>
         ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
@@ -146,8 +123,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public string? RegistrationAccessToken { get; }
 
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response ExternalApiResponse { get; }
-
         /// <summary>
         ///     Bank this registration is with.
         /// </summary>
@@ -155,14 +130,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     }
 
     internal partial class BankRegistration :
-        ISupportsFluentLocalEntityGet<BankRegistrationResponse>
+        ISupportsFluentLocalEntityGet<BankRegistrationReadLocalResponse>
     {
-        public BankRegistrationResponse PublicGetLocalResponse => new(
+        public BankRegistrationReadLocalResponse PublicGetLocalResponse => new(
             Id,
             Name,
             Created,
             CreatedBy,
-            ExternalApiResponse,
             BankId);
     }
 }

@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankRequest(testNameUnique);
+            Bank bankRequest = bankProfile.BankRequest();
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -37,13 +37,11 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
 
             // Create bank registration
             BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
-                testNameUnique,
                 bankId,
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,
-                registrationScope,
-                null);
-            IFluentResponse<BankRegistrationResponse> registrationResp = await requestBuilder
+                registrationScope);
+            IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .CreateAsync(registrationRequest);

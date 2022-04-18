@@ -2,13 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -19,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
     public class SoftwareStatementPayload
     {
         private static readonly Dictionary<string, RegistrationScopeEnum> SoftwareRoleToApiType =
-            new Dictionary<string, RegistrationScopeEnum>
+            new()
             {
                 ["AISP"] = RegistrationScopeEnum.AccountAndTransaction,
                 ["PISP"] = RegistrationScopeEnum.PaymentInitiation,
