@@ -28,7 +28,7 @@ public class VariableRecurringPaymentsApisController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
+    [Route("config/variable-recurring-payments-apis")]
     [HttpPost]
     [ProducesResponseType(
         typeof(VariableRecurringPaymentsApiResponse),
@@ -67,7 +67,7 @@ public class VariableRecurringPaymentsApisController : ControllerBase
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
+    [Route("config/variable-recurring-payments-apis")]
     [HttpGet]
     [ProducesResponseType(
         typeof(HttpResponse<IList<VariableRecurringPaymentsApiResponse>>),

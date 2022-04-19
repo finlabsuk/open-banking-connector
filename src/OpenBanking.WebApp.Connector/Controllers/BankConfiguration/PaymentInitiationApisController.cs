@@ -28,7 +28,7 @@ public class PaymentInitiationApisController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
+    [Route("config/payment-initiation-apis")]
     [HttpPost]
     [ProducesResponseType(
         typeof(PaymentInitiationApiResponse),
@@ -67,7 +67,7 @@ public class PaymentInitiationApisController : ControllerBase
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
+    [Route("config/payment-initiation-apis")]
     [HttpGet]
     [ProducesResponseType(
         typeof(HttpResponse<IList<PaymentInitiationApiResponse>>),

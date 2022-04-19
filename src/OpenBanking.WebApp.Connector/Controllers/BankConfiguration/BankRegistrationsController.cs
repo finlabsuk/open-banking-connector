@@ -71,7 +71,7 @@ public class BankRegistrationsController : ControllerBase
     [Route("config/bank-registrations")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(IList<BankRegistrationReadResponse>),
+        typeof(IList<BankRegistrationReadLocalResponse>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(
         typeof(HttpResponseMessages),
@@ -90,13 +90,13 @@ public class BankRegistrationsController : ControllerBase
         // HTTP response
         return fluentResponse switch
         {
-            FluentSuccessResponse<IQueryable<BankRegistrationReadResponse>> _ =>
+            FluentSuccessResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
                 new ObjectResult(fluentResponse.Data!)
                     { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<BankRegistrationReadResponse>> _ =>
+            FluentBadRequestErrorResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<BankRegistrationReadResponse>> _ =>
+            FluentOtherErrorResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
                 new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
                     { StatusCode = StatusCodes.Status500InternalServerError },
             _ => throw new ArgumentOutOfRangeException()
