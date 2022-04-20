@@ -1,8 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-# Remove logging formatting env var (to allow control via appsettings.json files)
-ENV Logging__Console__FormatterName=
 # Get UK Open Banking sandbox root cert 
 WORKDIR /app/certs
 ADD https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&modificationDate=1525354123970&cacheVersion=1&api=v2 open-banking-sandbox-root-ca.cer
