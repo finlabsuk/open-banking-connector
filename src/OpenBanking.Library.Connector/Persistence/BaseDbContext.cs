@@ -49,34 +49,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         protected virtual Formatting JsonFormatting { get; } = Formatting.None;
 
         // Bank configuration
-        internal DbSet<Bank> Banks => Set<Bank>();
-        internal DbSet<BankRegistration> BankRegistrations => Set<BankRegistration>();
+        internal DbSet<Bank> Bank => Set<Bank>();
+        internal DbSet<BankRegistration> BankRegistration => Set<BankRegistration>();
 
-        internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApis =>
+        internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApi =>
             Set<AccountAndTransactionApiEntity>();
 
-        internal DbSet<PaymentInitiationApiEntity> PaymentInitiationApis =>
+        internal DbSet<PaymentInitiationApiEntity> PaymentInitiationApi =>
             Set<PaymentInitiationApiEntity>();
 
-        internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApis =>
+        internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApi =>
             Set<VariableRecurringPaymentsApiEntity>();
 
         // Auth contexts
-        internal DbSet<AuthContext> AuthContexts => Set<AuthContext>();
+        internal DbSet<AuthContext> AuthContext => Set<AuthContext>();
 
-        internal DbSet<AccountAccessConsentAuthContext> AccountAccessConsentAuthContexts =>
+        internal DbSet<AccountAccessConsentAuthContext> AccountAccessConsentAuthContext =>
             Set<AccountAccessConsentAuthContext>();
 
-        internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContexts =>
+        internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContext =>
             Set<DomesticPaymentConsentAuthContext>();
 
-        internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContexts =>
+        internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContext =>
             Set<DomesticVrpConsentAuthContext>();
 
         // Consents
-        internal DbSet<AccountAccessConsent> AccountAccessConsents => Set<AccountAccessConsent>();
-        internal DbSet<DomesticPaymentConsent> DomesticPaymentConsents => Set<DomesticPaymentConsent>();
-        internal DbSet<DomesticVrpConsent> DomesticVrpConsents => Set<DomesticVrpConsent>();
+        internal DbSet<AccountAccessConsent> AccountAccessConsent => Set<AccountAccessConsent>();
+        internal DbSet<DomesticPaymentConsent> DomesticPaymentConsent => Set<DomesticPaymentConsent>();
+        internal DbSet<DomesticVrpConsent> DomesticVrpConsent => Set<DomesticVrpConsent>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -65,16 +65,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
         ///     not successfully completed.
         /// </summary>
-        [Column("access_token__access_token")]
         public string? AccessTokenAccessToken { get; private set; }
 
-        [Column("access_token__expires_in")]
         public int AccessTokenExpiresIn { get; private set; }
 
         /// <summary>
         ///     Refresh token. If null, indicates no refresh token received.
         /// </summary>
-        [Column("access_token__refresh_token")]
         public string? AccessTokenRefreshToken { get; private set; }
 
         public DateTimeOffset AccessTokenModified { get; private set; }

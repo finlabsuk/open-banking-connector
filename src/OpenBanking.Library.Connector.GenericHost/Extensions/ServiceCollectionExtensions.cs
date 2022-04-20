@@ -122,7 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                                             CoreEventId
                                                 .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
                                 .UseSnakeCaseNamingConvention();
-                        });
+                            });
                     break;
                 default:
                     throw new ArgumentException("Unsupported DB provider", configuration["DbProvider"]);
