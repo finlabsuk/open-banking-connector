@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
@@ -110,9 +108,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         internal FluentResponseOtherErrorMessage(string message) : base(message) { }
 
-        internal FluentResponseOtherErrorMessage(Exception exception)
-            : base(
-                exception.WalkRecursive(e => e.InnerException).Select(e => e.Message)
-                    .JoinString(Environment.NewLine)) { }
+        internal FluentResponseOtherErrorMessage(Exception exception) : this(message: CombineMessages(exception)) { }
+
+        public static string CombineMessages(Exception exception)
+        {
+            IEnumerable<string> x = exception
+                .WalkRecursive(e => e.InnerException)
+                .Select(e => e.Message);
+            return x.JoinString(Environment.NewLine);
+        }
     }
 }

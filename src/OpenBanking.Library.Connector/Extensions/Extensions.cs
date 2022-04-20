@@ -126,6 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
 
             while (selector(value) is not null)
             {
+                value = selector(value)!;
                 yield return value;
             }
         }
