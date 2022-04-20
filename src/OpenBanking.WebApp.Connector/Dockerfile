@@ -1,6 +1,16 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
+# Remove logging formatting env var (to allow control via appsettings.json files)
+ENV Logging__Console__FormatterName=
+# Get UK Open Banking sandbox root cert 
+WORKDIR /app/certs
+ADD https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&modificationDate=1525354123970&cacheVersion=1&api=v2 open-banking-sandbox-root-ca.cer
+RUN openssl x509 -inform DER -in ./open-banking-sandbox-root-ca.cer -out ./open-banking-sandbox-root-ca.crt
+RUN mv ./open-banking-sandbox-root-ca.crt /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
+WORKDIR /app
+RUN rm -rf /app/certs
+RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt && update-ca-certificates
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
@@ -17,13 +27,8 @@ RUN dotnet build "OpenBanking.WebApp.Connector.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "OpenBanking.WebApp.Connector.csproj" -c Release -o /app/publish
-WORKDIR /certs
-ADD https://openbanking.atlassian.net/wiki/download/attachments/252018873/OB_SandBox_PP_Root%20CA.cer?version=1&modificationDate=1525354123970&cacheVersion=1&api=v2 open-banking-sandbox-root-ca.cer
-RUN openssl x509 -inform DER -in ./open-banking-sandbox-root-ca.cer -out ./open-banking-sandbox-root-ca.crt
 
 FROM base AS final
-COPY --from=publish /certs/open-banking-sandbox-root-ca.crt /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
-RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt && update-ca-certificates
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "FinnovationLabs.OpenBanking.WebApp.Connector.dll"]
