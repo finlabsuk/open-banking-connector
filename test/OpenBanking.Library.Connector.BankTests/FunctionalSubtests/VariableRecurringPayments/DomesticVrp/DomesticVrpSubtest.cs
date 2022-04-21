@@ -38,7 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
-            FilePathBuilder testDataProcessorFluentRequestLogging,
+            FilePathBuilder configFluentRequestLogging,
+            FilePathBuilder vrpFluentRequestLogging,
             bool includeConsentAuth,
             INodeJSService? nodeJsService,
             PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
@@ -65,10 +66,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
-            // Create PaymentInitiationApi
+            // Create VariableRecurringPaymentsApi
             VariableRecurringPaymentsApiRequest variableRecurringPaymentsApiRequest =
                 bankProfile.GetVariableRecurringPaymentsApiRequest(Guid.Empty);
-            await testDataProcessorFluentRequestLogging
+            await configFluentRequestLogging
                 .AppendToPath("variableRecurringPaymentsApi")
                 .AppendToPath("postRequest")
                 .WriteFile(variableRecurringPaymentsApiRequest);
@@ -88,9 +89,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             DomesticVrpConsentRequest domesticVrpConsentRequest =
                 bankProfile.DomesticVrpConsentRequest(
                     Guid.Empty,
-                    variableRecurringPaymentsApiId,
+                    Guid.Empty,
                     DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum));
-            await testDataProcessorFluentRequestLogging
+            await vrpFluentRequestLogging
                 .AppendToPath("domesticVrpConsent")
                 .AppendToPath("postRequest")
                 .WriteFile(domesticVrpConsentRequest);
@@ -211,7 +212,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // POST domestic payment
-                await testDataProcessorFluentRequestLogging
+                await vrpFluentRequestLogging
                     .AppendToPath("domesticVrp")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticVrpRequest);

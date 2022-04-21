@@ -39,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
-            FilePathBuilder testDataProcessorFluentRequestLogging,
+            FilePathBuilder configFluentRequestLogging,
+            FilePathBuilder pispFluentRequestLogging,
             bool includeConsentAuth,
             INodeJSService? nodeJsService,
             PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
@@ -68,7 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Create PaymentInitiationApi
             PaymentInitiationApiRequest paymentInitiationApiRequest =
                 bankProfile.GetPaymentInitiationApiRequest(Guid.Empty);
-            await testDataProcessorFluentRequestLogging
+            await configFluentRequestLogging
                 .AppendToPath("paymentInitiationApi")
                 .AppendToPath("postRequest")
                 .WriteFile(paymentInitiationApiRequest);
@@ -88,11 +89,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             DomesticPaymentConsentRequest domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(
                     Guid.Empty,
-                    paymentInitiationApiId,
+                    Guid.Empty,
                     DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(subtestEnum),
                     "placeholder: random GUID",
                     "placeholder: random GUID");
-            await testDataProcessorFluentRequestLogging
+            await pispFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
                 .WriteFile(domesticPaymentConsentRequest);
@@ -206,7 +207,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // POST domestic payment
-                await testDataProcessorFluentRequestLogging
+                await pispFluentRequestLogging
                     .AppendToPath("domesticPayment")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticPaymentRequest);

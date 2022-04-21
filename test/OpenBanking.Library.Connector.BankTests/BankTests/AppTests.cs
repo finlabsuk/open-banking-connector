@@ -227,11 +227,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     bankProfile,
                     testNameUnique,
                     testDataProcessorFluentRequestLogging
-                        .AppendToPath("clientReg"),
+                        .AppendToPath("config"),
                     testDataProcessorApiLogging?
-                        .AppendToPath("clientReg"),
+                        .AppendToPath("config"),
                     testDataProcessorApiOverrides
-                        .AppendToPath("clientReg"));
+                        .AppendToPath("config"));
 
             // Run account access consent subtests
             foreach (AccountAccessConsentSubtestEnum subTest in
@@ -246,6 +246,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     requestBuilderGenerator,
                     testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("config"),
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("aisp")
                         .AppendToPath($"{subTest.ToString()}"),
@@ -270,6 +272,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilderGenerator,
                     testNameUnique,
                     testDataProcessorFluentRequestLogging
+                        .AppendToPath("config"),
+                    testDataProcessorFluentRequestLogging
                         .AppendToPath("pisp")
                         .AppendToPath($"{subTest.ToString()}"),
                     genericNotPlainAppTest,
@@ -292,6 +296,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     requestBuilderGenerator,
                     testNameUnique,
+                    testDataProcessorFluentRequestLogging
+                        .AppendToPath("config"),
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("vrp")
                         .AppendToPath($"{subTest.ToString()}"),

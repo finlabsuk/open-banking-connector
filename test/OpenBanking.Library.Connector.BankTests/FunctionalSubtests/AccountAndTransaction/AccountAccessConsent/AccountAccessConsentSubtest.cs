@@ -34,7 +34,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
-            FilePathBuilder testDataProcessorFluentRequestLogging,
+            FilePathBuilder configFluentRequestLogging,
+            FilePathBuilder aispFluentRequestLogging,
             bool includeConsentAuth,
             INodeJSService? nodeJsService,
             PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
@@ -50,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Create AccountAndTransactionApi
             AccountAndTransactionApiRequest accountAndTransactionApiRequest =
                 bankProfile.GetAccountAndTransactionApiRequest(Guid.Empty);
-            await testDataProcessorFluentRequestLogging
+            await configFluentRequestLogging
                 .AppendToPath("accountAndTransactionApi")
                 .AppendToPath("postRequest")
                 .WriteFile(accountAndTransactionApiRequest);
@@ -73,7 +74,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     Guid.Empty,
                     AccountAccessConsentSubtestHelper.AccountAccessConsentType(subtestEnum),
                     "Automated bank tests");
-            await testDataProcessorFluentRequestLogging
+            await aispFluentRequestLogging
                 .AppendToPath("accountAccessConsent")
                 .AppendToPath("postRequest")
                 .WriteFile(accountAccessConsentRequest);
