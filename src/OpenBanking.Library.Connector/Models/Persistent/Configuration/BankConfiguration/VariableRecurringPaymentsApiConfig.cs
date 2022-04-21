@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -13,10 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class VariableRecurringPaymentsApiConfig : BaseConfig<VariableRecurringPaymentsApiEntity>
     {
-        public VariableRecurringPaymentsApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(
-                supportsGlobalQueryFilter,
-                jsonFormatting) { }
+        public VariableRecurringPaymentsApiConfig(
+            DbProvider dbProvider,
+            bool supportsGlobalQueryFilter,
+            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<VariableRecurringPaymentsApiEntity> builder)
         {

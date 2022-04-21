@@ -7,12 +7,14 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 {
-    // SQLite-compatible DB context
+    // PostgreSql DB context
     public class PostgreSqlDbContext : BaseDbContext
     {
         public PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options) : base(options) { }
 
         // Use indenting to aid visualisation
-        protected override Formatting JsonFormatting { get; } = Formatting.Indented;
+        protected override Formatting JsonFormatting => Formatting.None;
+
+        protected override DbProvider DbProvider => DbProvider.PostgreSql;
     }
 }

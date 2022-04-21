@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
 using BankConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.Bank;
 using BankRegistrationConfig =
@@ -22,8 +23,9 @@ using DomesticPaymentConsentAuthContextConfig =
 using DomesticVrpConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsent;
-using AuthContextConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContextConfig<
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext>;
+using AuthContextConfig =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContextConfig<
+        FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext>;
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
@@ -45,8 +47,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
     {
         protected BaseDbContext(DbContextOptions options) : base(options) { }
 
-        // Use no JSON formatting by default.
+        // Formatting choice for JSON fields
         protected virtual Formatting JsonFormatting { get; } = Formatting.None;
+
+        // Set DB Provider
+        protected abstract DbProvider DbProvider { get; }
 
         // Bank configuration
         internal DbSet<Bank> Bank => Set<Bank>();
@@ -81,22 +86,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Bank configuration
-            modelBuilder.ApplyConfiguration(new BankConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new BankRegistrationConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new BankRegistrationConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(DbProvider, true, JsonFormatting));
 
             // Auth contexts (note global query filter not supported for inherited types)
-            modelBuilder.ApplyConfiguration(new AuthContextConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new AccountAccessConsentAuthContextConfig(false, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(false, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(false, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new AuthContextConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(
+                new AccountAccessConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+            modelBuilder.ApplyConfiguration(
+                new DomesticPaymentConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(DbProvider, false, JsonFormatting));
 
             // Consents
-            modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(DbProvider, true, JsonFormatting));
+            modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // Configuration common to all DB contexts. Use*() method for provider selection
+            // requires connection string so is specified in e.g. services.AddDbContext() method rather than
+            // OnConfiguring() override.
+            optionsBuilder
+                .ConfigureWarnings(
+                    warnings =>
+                        // Suppress warnings relating to non-root auth context entities since can manually apply
+                        // unsupported global query filter to entity queries
+                        warnings.Ignore(
+                            CoreEventId
+                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
+                .UseSnakeCaseNamingConvention();
+
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

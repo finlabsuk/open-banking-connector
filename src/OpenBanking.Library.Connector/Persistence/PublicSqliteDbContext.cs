@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
 
         public PublicSqliteDbContext(SqliteConnection connection)
         {
-            DbContextOptions<SqliteDbContext>? dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
+            DbContextOptions<SqliteDbContext> dbContextOptions = new DbContextOptionsBuilder<SqliteDbContext>()
                 .UseSqlite(connection)
                 .Options;
             _dbContext = new SqliteDbContext(dbContextOptions);

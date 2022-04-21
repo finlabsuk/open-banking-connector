@@ -27,10 +27,6 @@
         <PackageReference Include="EFCore.NamingConventions" Version="6.0.0" />
         <PackageReference Include="FluentValidation" Version="10.4.0" />
         <PackageReference Include="jose-jwt" Version="4.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.17.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

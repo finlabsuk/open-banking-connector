@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,13 +13,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
     internal abstract class BaseConfig<TEntity> : IEntityTypeConfiguration<TEntity>
         where TEntity : BaseEntity
     {
+        protected readonly DbProvider _dbProvider;
         protected readonly Formatting _jsonFormatting;
         private readonly bool _supportsGlobalQueryFilter;
 
-        protected BaseConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting)
+        protected BaseConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting)
         {
             _supportsGlobalQueryFilter = supportsGlobalQueryFilter;
             _jsonFormatting = jsonFormatting;
+            _dbProvider = dbProvider;
         }
 
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)

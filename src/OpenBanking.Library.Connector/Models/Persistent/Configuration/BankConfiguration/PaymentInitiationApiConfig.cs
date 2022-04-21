@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -13,10 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class PaymentInitiationApiConfig : BaseConfig<PaymentInitiationApiEntity>
     {
-        public PaymentInitiationApiConfig(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(
-                supportsGlobalQueryFilter,
-                jsonFormatting) { }
+        public PaymentInitiationApiConfig(
+            DbProvider dbProvider,
+            bool supportsGlobalQueryFilter,
+            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<PaymentInitiationApiEntity> builder)
         {

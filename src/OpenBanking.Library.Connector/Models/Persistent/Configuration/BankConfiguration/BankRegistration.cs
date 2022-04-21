@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,10 +16,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRegistration>
     {
-        public BankRegistration(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(
-                supportsGlobalQueryFilter,
-                jsonFormatting) { }
+        public BankRegistration(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+            base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.BankRegistration> builder)
         {

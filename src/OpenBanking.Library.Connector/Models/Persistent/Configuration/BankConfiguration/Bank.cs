@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
@@ -10,10 +11,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 {
     internal class Bank : BaseConfig<Persistent.BankConfiguration.Bank>
     {
-        public Bank(bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(
-                supportsGlobalQueryFilter,
-                jsonFormatting) { }
+        public Bank(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) : base(
+            dbProvider,
+            supportsGlobalQueryFilter,
+            jsonFormatting) { }
 
         public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.Bank> builder)
         {

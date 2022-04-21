@@ -18,7 +18,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -95,34 +94,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     services
                         // See e.g. https://jasonwatmore.com/post/2020/01/03/aspnet-core-ef-core-migrations-for-multiple-databases-sqlite-and-sql-server 
                         .AddDbContext<BaseDbContext, SqliteDbContext>(
-                            options =>
-                            {
-                                options
-                                    .UseSqlite(connectionString)
-                                    .ConfigureWarnings(
-                                        warnings =>
-                                            // Suppress warnings relating to non-root auth context entities since can manually apply
-                                            // unsupported global query filter to entity queries
-                                            warnings.Ignore(
-                                                CoreEventId
-                                                    .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
-                                    .UseSnakeCaseNamingConvention();
-                            });
+                            options => { options.UseSqlite(connectionString); });
                     break;
                 case DbProvider.PostgreSql:
                     services.AddDbContext<BaseDbContext, PostgreSqlDbContext>(
-                        options =>
-                        {
-                            options.UseNpgsql(connectionString)
-                                .ConfigureWarnings(
-                                    warnings =>
-                                        // Suppress warnings relating to non-root auth context entities since can manually apply
-                                        // unsupported global query filter to entity queries
-                                        warnings.Ignore(
-                                            CoreEventId
-                                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
-                                .UseSnakeCaseNamingConvention();
-                            });
+                        options => { options.UseNpgsql(connectionString); });
                     break;
                 default:
                     throw new ArgumentException("Unsupported DB provider", configuration["DbProvider"]);
