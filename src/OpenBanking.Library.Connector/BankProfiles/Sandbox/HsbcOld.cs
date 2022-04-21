@@ -9,14 +9,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
     public partial class BankProfileDefinitions
     {
-        public BankProfile Hsbc { get; }
+        public BankProfile HsbcOld { get; }
 
-        private BankProfile GetHsbc()
+        private BankProfile GetHsbcOld()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Hsbc);
+                GetRequiredBankProfileHiddenProperties(BankProfileEnum.HsbcOld);
             return new BankProfile(
-                BankProfileEnum.Hsbc,
+                BankProfileEnum.HsbcOld,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
@@ -34,12 +34,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = (registration, scope) =>
                     {
-                        registration.CustomBehaviour= new CustomBehaviour{OAuth2RequestObjectClaimsOverrides =
+                        (registration.CustomBehaviour ??= new CustomBehaviour())
+                            .OAuth2RequestObjectClaimsOverrides =
                             new OAuth2RequestObjectClaimsOverrides
                             {
                                 Issuer = bankProfileHiddenProperties.GetAdditionalProperty1(),
                                 Audience = bankProfileHiddenProperties.GetAdditionalProperty2()
-                            }};
+                            };
                         return registration;
                     },
                 },

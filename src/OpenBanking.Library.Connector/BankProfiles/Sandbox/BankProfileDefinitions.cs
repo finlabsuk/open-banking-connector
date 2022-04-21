@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
             RoyalBankOfScotland = GetRoyalBankOfScotland();
             NewDayAmazon = GetNewDayAmazon();
             Nationwide = GetNationwide();
-            Hsbc = GetHsbc();
+            HsbcOld = GetHsbcOld();
             Danske = GetDanske();
             AlliedIrish = GetAlliedIrish();
             Monzo = GetMonzo();
