@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Amount of money in the cash transaction entry. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBActiveOrHistoricCurrencyAndAmount9))]
     public partial class OBActiveOrHistoricCurrencyAndAmount9
     {
         /// <summary> Initializes a new instance of OBActiveOrHistoricCurrencyAndAmount9. </summary>

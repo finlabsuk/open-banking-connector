@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Unambiguous identification of the account of the debtor, in the case of a crebit transaction. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBCashAccount61))]
     public partial class OBCashAccount61
     {
         /// <summary> Initializes a new instance of OBCashAccount61. </summary>

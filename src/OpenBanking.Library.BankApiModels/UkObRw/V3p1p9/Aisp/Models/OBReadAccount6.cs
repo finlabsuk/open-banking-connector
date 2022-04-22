@@ -17,6 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
     ///     v3.1.9r5 <a />. Open Banking Connector will automatically
     ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
     /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadAccount6))]
     public partial class OBReadAccount6
     {
         /// <summary> Initializes a new instance of OBReadAccount6. </summary>

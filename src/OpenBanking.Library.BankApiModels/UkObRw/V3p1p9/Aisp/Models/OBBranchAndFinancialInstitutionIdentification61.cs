@@ -8,6 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Financial institution servicing an account for the creditor. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBBranchAndFinancialInstitutionIdentification61))]
     public partial class OBBranchAndFinancialInstitutionIdentification61
     {
         /// <summary> Initializes a new instance of OBBranchAndFinancialInstitutionIdentification61. </summary>

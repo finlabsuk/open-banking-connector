@@ -16,6 +16,8 @@ using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
+using AccountAndTransactionModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 {
@@ -24,6 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
         private static readonly Type ClientRegistrationModelsRootType =
             typeof(ClientRegistrationModelsPublic.OBClientRegistration1);
 
+        private static readonly Type AccountAndTransactionModelsRootType = typeof(AccountAndTransactionModelsPublic.OBReadConsent1);
+        
         private static readonly Type PaymentInitiationModelsRootType = typeof(PaymentInitiationModelsPublic.Meta);
 
         private static readonly Type VariableRecurringPaymentsModelsRootType =
@@ -34,6 +38,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
             IEnumerable<Type> clientRegistrationTypes = ClientRegistrationModelsRootType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(ClientRegistrationModelsRootType, t));
 
+            IEnumerable<Type> accountAndTransactionTypes = AccountAndTransactionModelsRootType.Assembly.GetTypes()
+                .Where(t => t.IsClass && IsInNamespace(AccountAndTransactionModelsRootType, t));
+            
             IEnumerable<Type> paymentInitiationTypes = PaymentInitiationModelsRootType.Assembly.GetTypes()
                 .Where(t => t.IsClass && IsInNamespace(PaymentInitiationModelsRootType, t));
 
@@ -42,6 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
                 .Where(t => t.IsClass && IsInNamespace(VariableRecurringPaymentsModelsRootType, t));
 
             return clientRegistrationTypes
+                .Concat(accountAndTransactionTypes)
                 .Concat(paymentInitiationTypes)
                 .Concat(variableRecurringPaymentsTypes);
         }

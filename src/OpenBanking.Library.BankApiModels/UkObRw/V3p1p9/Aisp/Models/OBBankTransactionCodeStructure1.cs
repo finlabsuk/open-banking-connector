@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to fully identify the type of underlying transaction resulting in an entry. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBBankTransactionCodeStructure1))]
     public partial class OBBankTransactionCodeStructure1
     {
         /// <summary> Initializes a new instance of OBBankTransactionCodeStructure1. </summary>

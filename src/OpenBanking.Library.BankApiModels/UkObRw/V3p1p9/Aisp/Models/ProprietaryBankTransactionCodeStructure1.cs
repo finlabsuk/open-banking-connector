@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements to fully identify a proprietary bank transaction code. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.ProprietaryBankTransactionCodeStructure1))]
     public partial class ProprietaryBankTransactionCodeStructure1
     {
         /// <summary> Initializes a new instance of ProprietaryBankTransactionCodeStructure1. </summary>

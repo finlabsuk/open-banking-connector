@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBBranchAndFinancialInstitutionIdentification50))]
     public partial class OBBranchAndFinancialInstitutionIdentification50
     {
         /// <summary> Initializes a new instance of OBBranchAndFinancialInstitutionIdentification50. </summary>

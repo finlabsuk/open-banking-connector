@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the credit line. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1DataBalancePropertiesItemsItem))]
     public partial class OBReadBalance1DataBalancePropertiesItemsItem
     {
         /// <summary> Initializes a new instance of OBReadBalance1DataBalancePropertiesItemsItem. </summary>

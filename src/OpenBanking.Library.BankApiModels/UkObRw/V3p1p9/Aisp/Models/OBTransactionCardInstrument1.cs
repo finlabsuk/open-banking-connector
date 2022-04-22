@@ -8,6 +8,7 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements to describe the card instrument used in the transaction. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransactionCardInstrument1))]
     public partial class OBTransactionCardInstrument1
     {
         /// <summary> Initializes a new instance of OBTransactionCardInstrument1. </summary>

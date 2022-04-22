@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Provides the details to identify an account. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBAccount6AccountItem))]
     public partial class OBAccount6AccountItem
     {
         /// <summary> Initializes a new instance of OBAccount6AccountItem. </summary>

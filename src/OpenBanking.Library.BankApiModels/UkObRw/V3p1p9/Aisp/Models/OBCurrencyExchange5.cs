@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the currency exchange. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBCurrencyExchange5))]
     public partial class OBCurrencyExchange5
     {
         /// <summary> Initializes a new instance of OBCurrencyExchange5. </summary>

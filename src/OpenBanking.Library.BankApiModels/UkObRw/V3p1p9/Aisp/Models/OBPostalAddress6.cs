@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Information that locates and identifies a specific address, as defined by postal services. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBPostalAddress6))]
     public partial class OBPostalAddress6
     {
         /// <summary> Initializes a new instance of OBPostalAddress6. </summary>

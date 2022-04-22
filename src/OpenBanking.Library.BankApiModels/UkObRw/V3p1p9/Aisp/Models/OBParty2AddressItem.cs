@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Postal address of a party. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBParty2AddressItem))]
     public partial class OBParty2AddressItem
     {
         /// <summary> Initializes a new instance of OBParty2AddressItem. </summary>

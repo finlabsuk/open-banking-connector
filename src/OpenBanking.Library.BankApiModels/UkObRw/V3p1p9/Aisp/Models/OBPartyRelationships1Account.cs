@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Relationship to the Account resource. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBPartyRelationships1Account))]
     public partial class OBPartyRelationships1Account
     {
         /// <summary> Initializes a new instance of OBPartyRelationships1Account. </summary>

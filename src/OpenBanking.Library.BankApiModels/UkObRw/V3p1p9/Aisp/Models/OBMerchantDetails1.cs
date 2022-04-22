@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Details of the merchant involved in the transaction. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBMerchantDetails1))]
     public partial class OBMerchantDetails1
     {
         /// <summary> Initializes a new instance of OBMerchantDetails1. </summary>

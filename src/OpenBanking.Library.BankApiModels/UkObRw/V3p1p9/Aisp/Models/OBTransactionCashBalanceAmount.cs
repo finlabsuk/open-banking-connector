@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Amount of money of the cash balance after a transaction entry is applied to the account.. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransactionCashBalanceAmount))]
     public partial class OBTransactionCashBalanceAmount
     {
         /// <summary> Initializes a new instance of OBTransactionCashBalanceAmount. </summary>

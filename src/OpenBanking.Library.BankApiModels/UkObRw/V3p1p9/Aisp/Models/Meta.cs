@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Meta Data relevant to the payload. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.Meta))]
     public partial class Meta
     {
         /// <summary> Initializes a new instance of Meta. </summary>

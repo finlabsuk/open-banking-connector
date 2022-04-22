@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Set of elements used to define the balance as a numerical representation of the net increases and decreases in an account after a transaction entry is applied to the account. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransactionCashBalance))]
     public partial class OBTransactionCashBalance
     {
         /// <summary> Initializes a new instance of OBTransactionCashBalance. </summary>

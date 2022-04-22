@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Amount of money of the cash balance. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1DataBalanceItemAmount))]
     public partial class OBReadBalance1DataBalanceItemAmount
     {
         /// <summary> Initializes a new instance of OBReadBalance1DataBalanceItemAmount. </summary>

@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Links relevant to the payload. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.Links))]
     public partial class Links
     {
         /// <summary> Initializes a new instance of Links. </summary>

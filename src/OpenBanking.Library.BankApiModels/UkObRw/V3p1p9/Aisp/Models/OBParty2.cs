@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> The OBParty2. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBParty2))]
     public partial class OBParty2
     {
         /// <summary> Initializes a new instance of OBParty2. </summary>

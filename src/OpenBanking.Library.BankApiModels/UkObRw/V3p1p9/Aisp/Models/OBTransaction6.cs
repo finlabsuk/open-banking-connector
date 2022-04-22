@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Provides further details on an entry in the report. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransaction6))]
     public partial class OBTransaction6
     {
         /// <summary> Initializes a new instance of OBTransaction6. </summary>

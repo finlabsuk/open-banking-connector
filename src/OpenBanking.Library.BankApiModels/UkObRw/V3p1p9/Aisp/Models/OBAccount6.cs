@@ -21,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
     /// 
     /// For all other accounts, the fields must be populated by the ASPSP.
     /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBAccount6))]
     public partial class OBAccount6
     {
         /// <summary> Initializes a new instance of OBAccount6. </summary>

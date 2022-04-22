@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBCurrencyExchange5InstructedAmount))]
     public partial class OBCurrencyExchange5InstructedAmount
     {
         /// <summary> Initializes a new instance of OBCurrencyExchange5InstructedAmount. </summary>
