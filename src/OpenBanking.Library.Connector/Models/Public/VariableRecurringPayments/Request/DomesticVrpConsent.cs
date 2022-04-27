@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
+using Newtonsoft.Json;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -20,6 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid BankRegistrationId { get; set; }
 
         /// <summary>
@@ -28,6 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid VariableRecurringPaymentsApiId { get; set; }
 
         /// <summary>
@@ -36,6 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest ExternalApiRequest { get; set; } =
             null!;
 

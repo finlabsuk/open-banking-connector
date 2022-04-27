@@ -2,11 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
-using FluentValidation.Results;
+using Newtonsoft.Json;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
@@ -22,6 +23,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     DomesticVrpConsent or simply
         ///     left set to null in which case the correct value will be substituted.
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>

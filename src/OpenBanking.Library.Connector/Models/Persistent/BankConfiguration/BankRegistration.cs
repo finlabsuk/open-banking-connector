@@ -68,9 +68,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
+        /// <summary>
+        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
+        /// </summary>
+        public string? ExternalApiSecret { get; }
+
+        /// <summary>
+        ///     External API registration access token. Sometimes used to support registration adjustments etc.
+        /// </summary>
+        public string? RegistrationAccessToken { get; }
+
+        /// <summary>
+        ///     ID of SoftwareStatementProfile to use in association with BankRegistration
+        /// </summary>
         public string SoftwareStatementProfileId { get; }
 
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; }
+
+        /// <summary>
+        ///     API version used for DCR requests (POST, GET etc)
+        /// </summary>
         public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
 
         /// <summary>
@@ -111,17 +128,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public string ExternalApiId { get; }
 
         /// <summary>
-        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-        /// </summary>
-        public string? ExternalApiSecret { get; }
-
-        /// <summary>
-        ///     External API registration access token. Sometimes used to support registration adjustments etc.
-        /// </summary>
-        public string? RegistrationAccessToken { get; }
-
-        /// <summary>
-        ///     Bank this registration is with.
+        ///     Bank with which this BankRegistration is associated.
         /// </summary>
         public Guid BankId { get; }
     }
@@ -133,6 +140,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             Id,
             Created,
             CreatedBy,
-            BankId);
+            BankId,
+            SoftwareStatementProfileId,
+            SoftwareStatementAndCertificateProfileOverrideCase,
+            DynamicClientRegistrationApiVersion,
+            RegistrationScope,
+            RegistrationEndpoint,
+            TokenEndpoint,
+            AuthorizationEndpoint,
+            TokenEndpointAuthMethod,
+            CustomBehaviour,
+            ExternalApiId);
     }
 }

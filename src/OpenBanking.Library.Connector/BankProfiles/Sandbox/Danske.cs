@@ -38,12 +38,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = (registration, set) =>
                     {
-                        registration.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        registration.CustomBehaviour = new CustomBehaviour{OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                        registration.CustomBehaviour = new CustomBehaviour
                         {
-                            //register endpoint response does not provide one
-                            ResponseModesSupported = new List<string> { "fragment" }
-                        }};
+                            UseApplicationJoseNotApplicationJwtContentTypeHeader = true,
+                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                            {
+                                //register endpoint response does not provide one
+                                ResponseModesSupported = new List<string> { "fragment" }
+                            }
+                        };
                         return registration;
                     },
                 }

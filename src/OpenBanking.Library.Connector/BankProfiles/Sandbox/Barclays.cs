@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -34,11 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = (registration, set) =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviour{OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
-                        {
-                            //placeholder value since missing from barclays well-known endpoint (openID configuration) 
-                            RegistrationEndpoint = "https://example.com/register"
-                        }};
+                        //placeholder value since missing from barclays well-known endpoint (openID configuration) 
+                        registration.RegistrationEndpoint = "https://example.com/register";
                         return registration;
                     },
                 }

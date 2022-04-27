@@ -2,11 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FluentValidation.Results;
+using Newtonsoft.Json;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
 {
@@ -15,6 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Bank this registration is with.
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid BankId { get; set; }
 
         /// <summary>
@@ -22,6 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     IDs which have been specified via configuration
         ///     will be accepted.
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public string SoftwareStatementProfileId { get; set; } = null!;
 
         /// <summary>
@@ -29,7 +35,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     can be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.
         ///     When null no override case is specified.
         /// </summary>
-        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; } = null;
+        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
+
+        /// <summary>
+        ///     Version of Open Banking Dynamic Client Registration API to use
+        ///     for bank registration.
+        /// </summary>
+        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; set; } =
+            DynamicClientRegistrationApiVersion.Version3p3;
 
         /// <summary>
         ///     Functional APIs used for bank registration.
@@ -38,10 +51,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public RegistrationScopeEnum? RegistrationScope { get; set; }
 
         /// <summary>
-        ///     Version of Open Banking Dynamic Client Registration API to use
-        ///     for bank registration.
+        ///     Issuer URL to use when creating Bank Registration which indicates the presence of valid
+        ///     OpenID Provider Configuration at the endpoint GET "/{IssuerUrl}/.well-known/openid-configuration".
+        ///     If no such OpenID Provider Configuration is available, please set this value to null.
         /// </summary>
-        public DynamicClientRegistrationApiVersion ClientRegistrationApi { get; set; }
+        public string? IssuerUrl { get; set; } = null!;
+
+        /// <summary>
+        ///     Registration endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        ///     Only used by operations that access bank registration endpoint(s), e.g. DCR. If DCR and optional GET, PUT, DELETE
+        ///     endpoints for bank registration are not supported, this value will not be used.
+        /// </summary>
+        public string? RegistrationEndpoint { get; set; }
+
+        /// <summary>
+        ///     Token endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        /// </summary>
+        public string? TokenEndpoint { get; set; }
+
+        /// <summary>
+        ///     Authorization endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        /// </summary>
+        public string? AuthorizationEndpoint { get; set; }
+
+        /// <summary>
+        ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
+        ///     supported methods in Issuer URL OpenID Provider Configuration.
+        /// </summary>
+        public TokenEndpointAuthMethodEnum? TokenEndpointAuthMethod { get; set; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
@@ -49,31 +86,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public CustomBehaviour? CustomBehaviour { get; set; }
 
-        public BankRegistrationResponseJsonOptions? BankRegistrationResponseJsonOptions { get; set; }
 
         /// <summary>
-        ///     Set Content-Type header to "application/jose" rather than "application/jwt" when POSTing to bank
-        ///     registration endpoint
+        ///     Existing bank registration (OAuth2 client) information. When non-null, this will be used instead of
+        ///     creating a new registration at bank via DCR.
         /// </summary>
-        public bool UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; } = false;
-
-        /// <summary>
-        ///     Use
-        ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
-        ///     rather than
-        ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
-        ///     as transport certificate DN for registration. This setting is irrelevant where the
-        ///     software statement profile specifies a <see cref="TransportCertificateType.OBLegacy" /> transport certificate.
-        ///     https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 specifies hex-encoding for a decimal-dotted
-        ///     AttributeValue and thus this setting defaults to false.
-        /// </summary>
-        public bool UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues { get; set; } = false;
+        public ExternalApiRegistration? ExistingRegistration { get; set; }
 
         /// <summary>
         ///     If registration already exists for bank, allow creation of additional one. NB this may
         ///     disrupt existing registration depending on bank support for multiple registrations.
         /// </summary>
-        public bool AllowMultipleRegistrations { get; set; } = false;
+        public bool AllowMultipleRegistrations { get; set; } = true;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new BankRegistrationValidator()

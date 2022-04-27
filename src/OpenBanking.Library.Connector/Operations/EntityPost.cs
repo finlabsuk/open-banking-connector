@@ -2,10 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -70,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 Uri uri,
                 JsonSerializerSettings? requestJsonSerializerSettings,
                 JsonSerializerSettings? responseJsonSerializerSettings,
-                List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
+                IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
         {
             string? writeRequestFile = requestInfo.ApiRequestWriteFile;
             string? readResponseFile = requestInfo.ApiResponseOverrideFile;

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
+using Newtonsoft.Json;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using ValidationResult = FluentValidation.Results.ValidationResult;
@@ -24,6 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid BankRegistrationId { get; set; }
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid AccountAndTransactionApiId { get; set; }
 
         /// <summary>
@@ -42,6 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>

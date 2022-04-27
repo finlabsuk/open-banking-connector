@@ -2,15 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
@@ -83,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             BankProfileEnum bankProfileEnum,
             string issuerUrl,
             string financialId,
-            DynamicClientRegistrationApiVersion clientRegistrationApiVersion,
+            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
             AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi)
@@ -94,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             AccountAndTransactionApi = accountAndTransactionApi;
             PaymentInitiationApi = paymentInitiationApi;
             VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
-            ClientRegistrationApiVersion = clientRegistrationApiVersion;
+            DynamicClientRegistrationApiVersion = dynamicClientRegistrationApiVersion;
         }
 
         /// <summary>
@@ -115,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Client Registration (DCR) API version.
         /// </summary>
-        public DynamicClientRegistrationApiVersion ClientRegistrationApiVersion { get; }
+        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
 
         /// <summary>
         ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.
@@ -136,24 +133,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         ///     Settings used when testing Client Registration API.
         /// </summary>
         public ClientRegistrationApiSettings ClientRegistrationApiSettings { get; set; } =
-            new ClientRegistrationApiSettings();
+            new();
 
         /// <summary>
         ///     Settings used when testing Account and Transaction API.
         /// </summary>
         public AccountAndTransactionApiSettings AccountAndTransactionApiSettings { get; set; } =
-            new AccountAndTransactionApiSettings();
+            new();
 
         /// <summary>
         ///     Settings used when testing Payment Initiation API.
         /// </summary>
         public PaymentInitiationApiSettings PaymentInitiationApiSettings { get; set; } =
-            new PaymentInitiationApiSettings();
+            new();
 
         /// <summary>
         ///     Settings used when testing Variable Recurring Payments API.
         /// </summary>
         public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; set; } =
-            new VariableRecurringPaymentsApiSettings();
+            new();
     }
 }

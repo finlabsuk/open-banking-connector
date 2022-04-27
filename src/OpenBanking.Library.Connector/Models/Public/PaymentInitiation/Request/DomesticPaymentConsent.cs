@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
+using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using ValidationResult = FluentValidation.Results.ValidationResult;
@@ -21,6 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid BankRegistrationId { get; set; }
 
         /// <summary>
@@ -29,6 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     to objects with the same parent Bank object.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public Guid PaymentInitiationApiId { get; set; }
 
         /// <summary>
@@ -36,6 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>

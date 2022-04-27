@@ -28,9 +28,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
+                IssuerUrl = IssuerUrl,
                 RegistrationScope = registrationScope,
-                ClientRegistrationApi = ClientRegistrationApiVersion,
-                AllowMultipleRegistrations = true,
+                DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion,
                 CustomBehaviour = customBehaviour
             };
             return ClientRegistrationApiSettings.BankRegistrationAdjustments.Invoke(

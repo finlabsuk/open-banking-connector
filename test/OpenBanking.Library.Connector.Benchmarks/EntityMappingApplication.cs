@@ -188,6 +188,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
 
         private BankRegistration CreateClient() => new()
         {
+            RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com",
             CustomBehaviour = new CustomBehaviour
             {
                 BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
@@ -207,10 +208,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                     },
                     Audience = "audience",
                     TokenEndpointAuthSigningAlgorithm = "alg"
-                },
-                OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
-                {
-                    RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com"
                 }
             },
             SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

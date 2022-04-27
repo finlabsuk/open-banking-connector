@@ -40,27 +40,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = (registration, scope) =>
                     {
-                        registration.CustomBehaviour= new CustomBehaviour{BankRegistrationClaimsOverrides =
-                            new BankRegistrationClaimsOverrides
-                            {
-                                GrantTypes =
-                                    new List<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>
-                                    {
-                                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
-                                            .ClientCredentials,
-                                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
-                                            .AuthorizationCode
-                                    },
-                                SubjectType = "pairwise"
-                            },
-                        OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                        registration.CustomBehaviour = new CustomBehaviour
                         {
-                            ResponseModesSupported =
-                                new List<string>
+                            BankRegistrationClaimsOverrides =
+                                new BankRegistrationClaimsOverrides
                                 {
-                                    "fragment", "query", "form_post"
-                                }, // missing from OpenID response
-                        }};
+                                    GrantTypes =
+                                        new List<ClientRegistrationModelsPublic.
+                                            OBRegistrationProperties1grantTypesItemEnum>
+                                        {
+                                            ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                                .ClientCredentials,
+                                            ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                                .AuthorizationCode
+                                        },
+                                    SubjectType = "pairwise"
+                                },
+                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                            {
+                                ResponseModesSupported =
+                                    new List<string>
+                                    {
+                                        "fragment", "query", "form_post"
+                                    } // missing from OpenID response
+                            }
+                        };
 
                         return registration;
                     },

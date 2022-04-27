@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -38,13 +37,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = (registration, set) =>
                     {
-                        registration.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        registration.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true;
-                        registration.BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
-                        {
-                            ClientIdIssuedAtConverterOptions =
-                                DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds
-                        };
+                        (registration.CustomBehaviour ??= new CustomBehaviour())
+                            .BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
+                            {
+                                ClientIdIssuedAtConverterOptions =
+                                    DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds
+                            };
+                        registration.CustomBehaviour.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
+                        registration.CustomBehaviour
+                            .UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true;
+
                         return registration;
                     }
                 }

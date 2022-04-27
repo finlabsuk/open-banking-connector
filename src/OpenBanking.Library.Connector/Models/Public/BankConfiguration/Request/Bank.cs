@@ -2,11 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FluentValidation.Results;
+using Newtonsoft.Json;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
 {
@@ -22,11 +23,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Issuer URL to use when creating Bank Registration
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public string IssuerUrl { get; set; } = null!;
 
         /// <summary>
         ///     FAPI financial ID to use when creating Bank Registration
         /// </summary>
+        [Required]
+        [JsonProperty(Required = Required.Always)]
         public string FinancialId { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>

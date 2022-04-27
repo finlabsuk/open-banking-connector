@@ -63,7 +63,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             _bankMethods = bankMethods;
         }
 
-
         private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
         {
             var uri = new Uri(string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
@@ -80,10 +79,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create non-error list
-            var nonErrorMessages =
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
-            // Load relevant data and checks
+            // Load bank from DB and check for existing bank registrations
             Guid bankId = requestInfo.Request.BankId;
             Bank bank =
                 await _bankMethods
@@ -102,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     "There is already at least one registration for this bank. Set AllowMultipleRegistrations to force creation of an additional registration.");
             }
 
-            // Load relevant objects
+            // Load processed software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     requestInfo.Request.SoftwareStatementProfileId,
@@ -113,199 +112,262 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 requestInfo.Request.RegistrationScope ??
                 processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
 
-            // STEP 1
-            // Compute claims associated with Open Banking client
+            // Determine DCR version
+            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
+                requestInfo.Request.DynamicClientRegistrationApiVersion;
 
-            // Get OpenID Connect configuration (normally from (well-known endpoint)
-            OpenIdConfiguration openIdConfiguration;
-            if (requestInfo.Request.CustomBehaviour?.OpenIdConfigurationReplacement is null)
-            {
-                openIdConfiguration = await GetOpenIdConfigurationAsync(bank.IssuerUrl);
-            }
-            else
-            {
-                openIdConfiguration =
-                    JsonConvert.DeserializeObject<OpenIdConfiguration>(
-                        requestInfo.Request.CustomBehaviour.OpenIdConfigurationReplacement,
-                        new JsonSerializerSettings()) ??
-                    throw new Exception("Can't de-serialise supplied bank API response");
-            }
-
-            // Update OpenID Connect configuration based on overrides
-            string? registrationEndpointOverride =
-                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.RegistrationEndpoint;
-            if (!(registrationEndpointOverride is null))
-            {
-                openIdConfiguration.RegistrationEndpoint = registrationEndpointOverride;
-            }
-
-            IList<string>? responseModesSupportedOverride =
-                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.ResponseModesSupported;
-            if (!(responseModesSupportedOverride is null))
-            {
-                openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
-            }
-
-            IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-                requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.TokenEndpointAuthMethodsSupported;
-            if (!(tokenEndpointAuthMethodsSupportedOverride is null))
-            {
-                openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
-            }
-
-            // Validate OpenID Connect configuration
-            {
-                IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
-                    new OpenBankingOpenIdConfigurationResponseValidator()
-                        .Validate(openIdConfiguration)
-                        .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
-                nonErrorMessages.AddRange(newNonErrorMessages);
-            }
-
-            // Select tokenEndpointAuthMethod based on most preferred
+            // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
+            string? issuerUrl = requestInfo.Request.IssuerUrl;
+            OpenIdConfiguration? openIdConfiguration;
+            string registrationEndpoint;
+            string tokenEndpoint;
+            string authorizationEndpoint;
             TokenEndpointAuthMethodEnum tokenEndpointAuthMethod;
-            if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
-                    OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
+            if (issuerUrl is null)
             {
-                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth;
-            }
-            else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
-                         OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
-            {
-                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.PrivateKeyJwt;
-            }
-            else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
-                         OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic))
-            {
-                tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.ClientSecretBasic;
+                // Determine endpoints
+                registrationEndpoint =
+                    requestInfo.Request.RegistrationEndpoint ??
+                    throw new ArgumentNullException(
+                        "RegistrationEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                tokenEndpoint =
+                    requestInfo.Request.TokenEndpoint ??
+                    throw new ArgumentNullException(
+                        "TokenEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                authorizationEndpoint =
+                    requestInfo.Request.AuthorizationEndpoint ??
+                    throw new ArgumentNullException(
+                        "AuthorizationEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                tokenEndpointAuthMethod =
+                    requestInfo.Request.TokenEndpointAuthMethod ??
+                    throw new ArgumentNullException(
+                        "TokenEndpointAuthMethod specified as null and cannot be obtained using specified IssuerUrl (also null).");
             }
             else
             {
-                throw new ArgumentOutOfRangeException(
-                    $"No supported value in {openIdConfiguration.TokenEndpointAuthMethodsSupported}");
-            }
+                openIdConfiguration = await GetOpenIdConfigurationAsync(issuerUrl);
 
-            // Create claims for client reg
-            ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
-                RegistrationClaimsFactory.CreateRegistrationClaims(
-                    tokenEndpointAuthMethod,
-                    processedSoftwareStatementProfile,
-                    registrationScope,
-                    requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsOverrides,
-                    bank.FinancialId,
-                    requestInfo.Request.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues);
-
-            // STEP 3
-            var uri = new Uri(openIdConfiguration.RegistrationEndpoint);
-
-            // Create request serialiser settings.
-            JsonSerializerSettings? requestJsonSerializerSettings = null;
-            if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsJsonOptions is null))
-            {
-                var optionsDict = new Dictionary<JsonConverterLabel, int>
+                // Update OpenID Provider Configuration based on overrides
+                IList<string>? responseModesSupportedOverride =
+                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.ResponseModesSupported;
+                if (!(responseModesSupportedOverride is null))
                 {
+                    openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
+                }
+
+                IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
+                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides
+                        ?.TokenEndpointAuthMethodsSupported;
+                if (!(tokenEndpointAuthMethodsSupportedOverride is null))
+                {
+                    openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
+                }
+
+                // Validate OpenID Connect configuration
+                {
+                    IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
+                        new OpenBankingOpenIdConfigurationResponseValidator()
+                            .Validate(openIdConfiguration)
+                            .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
+                    nonErrorMessages.AddRange(newNonErrorMessages);
+                }
+
+                // Determine endpoints
+                registrationEndpoint =
+                    requestInfo.Request.RegistrationEndpoint ?? openIdConfiguration.RegistrationEndpoint;
+                tokenEndpoint =
+                    requestInfo.Request.TokenEndpoint ?? openIdConfiguration.TokenEndpoint;
+                authorizationEndpoint =
+                    requestInfo.Request.AuthorizationEndpoint ?? openIdConfiguration.AuthorizationEndpoint;
+
+                // Select tokenEndpointAuthMethod based on most preferred
+                if (requestInfo.Request.TokenEndpointAuthMethod is null)
+                {
+                    if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                            OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
                     {
-                        JsonConverterLabel.DcrRegScope,
-                        (int) requestInfo.Request.CustomBehaviour.BankRegistrationClaimsJsonOptions
-                            .ScopeConverterOptions
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth;
                     }
-                };
-                requestJsonSerializerSettings = new JsonSerializerSettings
-                {
-                    Context = new StreamingContext(
-                        StreamingContextStates.All,
-                        optionsDict)
-                };
-            }
-
-            // Create response serialiser settings.
-            JsonSerializerSettings? responseJsonSerializerSettings = null;
-            if (!(requestInfo.Request.BankRegistrationResponseJsonOptions is null))
-            {
-                var optionsDict = new Dictionary<JsonConverterLabel, int>
-                {
+                    else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                                 OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
                     {
-                        JsonConverterLabel.DcrRegClientIdIssuedAt,
-                        (int) requestInfo.Request.BankRegistrationResponseJsonOptions.ClientIdIssuedAtConverterOptions
-                    },
-                    {
-                        JsonConverterLabel.DcrRegScope,
-                        (int) requestInfo.Request.BankRegistrationResponseJsonOptions.ScopeConverterOptions
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.PrivateKeyJwt;
                     }
-                };
-                responseJsonSerializerSettings = new JsonSerializerSettings
+                    else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
+                                 OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic))
+                    {
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.ClientSecretBasic;
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException(
+                            $"No supported value in {openIdConfiguration.TokenEndpointAuthMethodsSupported}");
+                    }
+                }
+                else
                 {
-                    Context = new StreamingContext(
-                        StreamingContextStates.All,
-                        optionsDict)
-                };
+                    tokenEndpointAuthMethod = requestInfo.Request.TokenEndpointAuthMethod.Value;
+                }
             }
 
-            // Create new Open Banking registration by processing override or posting JWT
-            IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
-                ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
-                requestInfo.Request.ClientRegistrationApi switch
-                {
-                    DynamicClientRegistrationApiVersion.Version3p1 =>
-                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
-                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
-                            ClientRegistrationModelsV3p1.OBClientRegistration1,
-                            ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                            new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
-                            new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
-                    DynamicClientRegistrationApiVersion.Version3p2 =>
-                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
-                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
-                            ClientRegistrationModelsV3p2.OBClientRegistration1,
-                            ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                            new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
-                            new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
-                    DynamicClientRegistrationApiVersion.Version3p3 =>
-                        new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
-                            ClientRegistrationModelsPublic.OBClientRegistration1Response,
-                            ClientRegistrationModelsPublic.OBClientRegistration1,
-                            ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                            new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader),
-                            new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
-                                processedSoftwareStatementProfile,
-                                _instrumentationClient,
-                                requestInfo.Request.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(requestInfo.Request.ClientRegistrationApi),
-                        requestInfo.Request.ClientRegistrationApi,
-                        null)
-                };
+            // Set external (bank) API parameters via DCR or directly
+            string externalApiId;
+            string? externalApiSecret;
+            string? registrationAccessToken;
+            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse = null;
+            if (requestInfo.Request.ExistingRegistration is null)
+            {
+                // Get DCR claims
+                ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
+                    RegistrationClaimsFactory.CreateRegistrationClaims(
+                        tokenEndpointAuthMethod,
+                        processedSoftwareStatementProfile,
+                        registrationScope,
+                        requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsOverrides,
+                        bank.FinancialId,
+                        requestInfo.Request.CustomBehaviour
+                            ?.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues ?? false);
 
-            (ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
-                    IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
-                await EntityPostCommon(
-                    requestInfo,
-                    apiRequest,
-                    apiRequests,
-                    processedSoftwareStatementProfile.ApiClient,
-                    uri,
-                    requestJsonSerializerSettings,
-                    responseJsonSerializerSettings,
-                    nonErrorMessages);
+                // Get DCR URL
+                var uri = new Uri(registrationEndpoint);
+
+                // Create request serialiser settings.
+                JsonSerializerSettings? requestJsonSerializerSettings = null;
+                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsJsonOptions is null))
+                {
+                    var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    {
+                        {
+                            JsonConverterLabel.DcrRegScope,
+                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationClaimsJsonOptions
+                                .ScopeConverterOptions
+                        }
+                    };
+                    requestJsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        Context = new StreamingContext(
+                            StreamingContextStates.All,
+                            optionsDict)
+                    };
+                }
+
+                // Create response serialiser settings.
+                JsonSerializerSettings? responseJsonSerializerSettings = null;
+                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationResponseJsonOptions is null))
+                {
+                    var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    {
+                        {
+                            JsonConverterLabel.DcrRegClientIdIssuedAt,
+                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationResponseJsonOptions
+                                .ClientIdIssuedAtConverterOptions
+                        },
+                        {
+                            JsonConverterLabel.DcrRegScope,
+                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationResponseJsonOptions
+                                .ScopeConverterOptions
+                        }
+                    };
+                    responseJsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        Context = new StreamingContext(
+                            StreamingContextStates.All,
+                            optionsDict)
+                    };
+                }
+
+                // Create new Open Banking registration by processing override or posting JWT
+                bool useApplicationJoseNotApplicationJwtContentTypeHeader =
+                    requestInfo.Request.CustomBehaviour?.UseApplicationJoseNotApplicationJwtContentTypeHeader ?? false;
+                IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                    ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
+                    dynamicClientRegistrationApiVersion switch
+                    {
+                        DynamicClientRegistrationApiVersion.Version3p1 =>
+                            new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                                ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                                ClientRegistrationModelsV3p1.OBClientRegistration1,
+                                ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
+                                new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader)),
+                        DynamicClientRegistrationApiVersion.Version3p2 =>
+                            new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                                ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                                ClientRegistrationModelsV3p2.OBClientRegistration1,
+                                ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
+                                new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader)),
+                        DynamicClientRegistrationApiVersion.Version3p3 =>
+                            new ApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+                                ClientRegistrationModelsPublic.OBClientRegistration1Response,
+                                ClientRegistrationModelsPublic.OBClientRegistration1,
+                                ClientRegistrationModelsPublic.OBClientRegistration1Response>(
+                                new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
+                                new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                                    processedSoftwareStatementProfile,
+                                    _instrumentationClient,
+                                    useApplicationJoseNotApplicationJwtContentTypeHeader)),
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(dynamicClientRegistrationApiVersion),
+                            dynamicClientRegistrationApiVersion,
+                            null)
+                    };
+
+                (ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
+                        IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
+                    await EntityPostCommon(
+                        requestInfo,
+                        apiRequest,
+                        apiRequests,
+                        processedSoftwareStatementProfile.ApiClient,
+                        uri,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        nonErrorMessages);
+                nonErrorMessages = nonErrorMessages2;
+
+                externalApiResponse = apiResponse;
+                externalApiId = externalApiResponse.ClientId;
+                externalApiSecret = externalApiResponse.ClientSecret;
+                registrationAccessToken = externalApiResponse.RegistrationAccessToken;
+            }
+            else
+            {
+                externalApiId = requestInfo.Request.ExistingRegistration.ExternalApiId;
+                externalApiSecret = requestInfo.Request.ExistingRegistration.ExternalApiSecret;
+                registrationAccessToken = requestInfo.Request.ExistingRegistration.RegistrationAccessToken;
+            }
+
+            // Create persisted CustomBehaviour preserving only things actually required for future activities involving this
+            // registration
+            var customBehaviourPersisted = new CustomBehaviour
+            {
+                BankRegistrationResponseJsonOptions =
+                    requestInfo.Request.CustomBehaviour?.BankRegistrationResponseJsonOptions,
+                BankRegistrationResponseOverrides =
+                    requestInfo.Request.CustomBehaviour?.BankRegistrationResponseOverrides,
+                OAuth2RequestObjectClaimsOverrides =
+                    requestInfo.Request.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides,
+            };
 
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var persistedObject = new BankRegistration(
+            var entity = new BankRegistration(
                 Guid.NewGuid(),
                 requestInfo.Request.Reference,
                 false,
@@ -317,33 +379,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 requestInfo.Request.SoftwareStatementProfileId,
                 requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
                 registrationScope,
-                requestInfo.Request.ClientRegistrationApi,
-                openIdConfiguration.TokenEndpoint.TrimEnd('/'),
-                openIdConfiguration.AuthorizationEndpoint.TrimEnd('/'),
-                openIdConfiguration.RegistrationEndpoint.TrimEnd('/'),
+                dynamicClientRegistrationApiVersion,
+                tokenEndpoint,
+                authorizationEndpoint,
+                registrationEndpoint,
                 tokenEndpointAuthMethod,
-                requestInfo.Request.CustomBehaviour,
-                apiResponse.ClientId,
-                apiResponse.ClientSecret,
-                apiResponse.RegistrationAccessToken);
+                customBehaviourPersisted,
+                externalApiId,
+                externalApiSecret,
+                registrationAccessToken);
 
 
             // Save entity
-            await _entityMethods.AddAsync(persistedObject);
+            await _entityMethods.AddAsync(entity);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();
 
             // Create response (may involve additional processing based on entity)
-            var response =
-                new BankRegistrationReadResponse(
-                    persistedObject.Id,
-                    persistedObject.Created,
-                    persistedObject.CreatedBy,
-                    persistedObject.BankId,
-                    apiResponse);
+            if (externalApiResponse is not null)
+            {
+                externalApiResponse.ClientSecret = null;
+                externalApiResponse.RegistrationAccessToken = null;
+            }
 
-            return (response, nonErrorMessages2);
+            BankRegistrationReadResponse response = new(
+                entity.Id,
+                entity.Created,
+                entity.CreatedBy,
+                entity.BankId,
+                entity.SoftwareStatementProfileId,
+                entity.SoftwareStatementAndCertificateProfileOverrideCase,
+                entity.DynamicClientRegistrationApiVersion,
+                entity.RegistrationScope,
+                entity.RegistrationEndpoint,
+                entity.TokenEndpoint,
+                entity.AuthorizationEndpoint,
+                entity.TokenEndpointAuthMethod,
+                entity.CustomBehaviour,
+                entity.ExternalApiId,
+                externalApiResponse);
+
+            return (response, nonErrorMessages);
         }
     }
 }

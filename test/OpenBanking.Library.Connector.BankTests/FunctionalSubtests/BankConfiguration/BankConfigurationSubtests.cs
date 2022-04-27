@@ -49,30 +49,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postResponse")
                 .GetFilePath();
             string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
-            string openIdConfigurationReplacementPath = testDataProcessorApiOverrides
-                .AppendToPath("openIdConfiguration")
-                .AppendToPath("getResponse")
-                .GetFilePath();
-            string? openIdConfigurationReplacement =
-                File.Exists(openIdConfigurationReplacementPath)
-                    ? await File.ReadAllTextAsync(openIdConfigurationReplacementPath)
-                    : null;
-
-            CustomBehaviour? customBehaviour = null;
-            if (openIdConfigurationReplacement is not null)
-            {
-                customBehaviour = new CustomBehaviour
-                {
-                    OpenIdConfigurationReplacement = openIdConfigurationReplacement
-                };
-            }
-
             BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
                 default,
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,
-                registrationScope,
-                customBehaviour);
+                registrationScope);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postRequest")

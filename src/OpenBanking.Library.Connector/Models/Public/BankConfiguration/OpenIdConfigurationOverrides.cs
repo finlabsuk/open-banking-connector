@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
 {
@@ -16,9 +15,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class OpenIdConfigurationOverrides
     {
-        [JsonProperty("registration_endpoint")]
-        public string? RegistrationEndpoint { get; set; }
-
         public IList<string>? ResponseModesSupported { get; set; }
 
         public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupported { get; set; }

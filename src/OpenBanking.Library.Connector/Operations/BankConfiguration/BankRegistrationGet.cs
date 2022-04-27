@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -96,18 +95,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 // Create new Open Banking object by posting JWT
                 JsonSerializerSettings? jsonSerializerSettings = null;
-                var requestInfo2 = new BankRegistration(); // TODO: remove
-                if (!(requestInfo2.BankRegistrationResponseJsonOptions is null))
+                if (!(entity.CustomBehaviour?.BankRegistrationResponseJsonOptions is null))
                 {
                     var optionsDict = new Dictionary<JsonConverterLabel, int>
                     {
                         {
                             JsonConverterLabel.DcrRegClientIdIssuedAt,
-                            (int) requestInfo2.BankRegistrationResponseJsonOptions.ClientIdIssuedAtConverterOptions
+                            (int) entity.CustomBehaviour.BankRegistrationResponseJsonOptions
+                                .ClientIdIssuedAtConverterOptions
                         },
                         {
                             JsonConverterLabel.DcrRegScope,
-                            (int) requestInfo2.BankRegistrationResponseJsonOptions.ScopeConverterOptions
+                            (int) entity.CustomBehaviour.BankRegistrationResponseJsonOptions.ScopeConverterOptions
                         }
                     };
                     jsonSerializerSettings = new JsonSerializerSettings
@@ -118,6 +117,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     };
                 }
 
+                var irrelevantVar = false;
                 IApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                     entity.DynamicClientRegistrationApiVersion
                         switch
@@ -129,21 +129,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                                     new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
                                         processedSoftwareStatementProfile,
                                         _instrumentationClient,
-                                        requestInfo2.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                                        irrelevantVar)),
                             DynamicClientRegistrationApiVersion.Version3p2 =>
                                 new ApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                     ClientRegistrationModelsV3p2.OBClientRegistration1>(
                                     new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
                                         processedSoftwareStatementProfile,
                                         _instrumentationClient,
-                                        requestInfo2.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                                        irrelevantVar)),
                             DynamicClientRegistrationApiVersion.Version3p3 =>
                                 new ApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                     ClientRegistrationModelsPublic.OBClientRegistration1Response>(
                                     new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
                                         processedSoftwareStatementProfile,
                                         _instrumentationClient,
-                                        requestInfo2.UseApplicationJoseNotApplicationJwtContentTypeHeader)),
+                                        irrelevantVar)),
                             _ => throw new ArgumentOutOfRangeException(
                                 nameof(entity.DynamicClientRegistrationApiVersion),
                                 entity.DynamicClientRegistrationApiVersion,
@@ -163,11 +163,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
 
             // Create response
+            if (apiResponse is not null)
+            {
+                apiResponse.ClientSecret = null;
+                apiResponse.RegistrationAccessToken = null;
+            }
+
             BankRegistrationReadResponse response = new(
                 entity.Id,
                 entity.Created,
                 entity.CreatedBy,
                 entity.BankId,
+                entity.SoftwareStatementProfileId,
+                entity.SoftwareStatementAndCertificateProfileOverrideCase,
+                entity.DynamicClientRegistrationApiVersion,
+                entity.RegistrationScope,
+                entity.RegistrationEndpoint,
+                entity.TokenEndpoint,
+                entity.AuthorizationEndpoint,
+                entity.TokenEndpointAuthMethod,
+                entity.CustomBehaviour,
+                entity.ExternalApiId,
                 apiResponse);
 
             return (response, nonErrorMessages);

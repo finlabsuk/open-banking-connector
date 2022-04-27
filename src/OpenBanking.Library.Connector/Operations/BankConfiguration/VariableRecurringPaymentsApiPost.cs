@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 createdBy,
                 request.BankId,
                 request.ApiVersion,
-                request.BaseUrl);
+                request.BaseUrl.TrimEnd('/'));
 
             // Add entity
             await _entityMethods.AddAsync(entity);

@@ -35,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Base URL for UK Open Banking Variable Recurring Payments API.
         /// </summary>
         [Required]
+        [JsonProperty(Required = Required.Always)]
         public string BaseUrl { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
