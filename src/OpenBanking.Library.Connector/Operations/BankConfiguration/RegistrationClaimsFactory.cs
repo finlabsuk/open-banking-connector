@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                         ? sProfile.SoftwareStatementPayload.OrgId
                         : sProfile.SoftwareStatementPayload.SoftwareId,
                     Iat = DateTimeOffset.Now,
-                    Exp = DateTimeOffset.UtcNow.AddHours(1),
+                    Exp = DateTimeOffset.UtcNow.AddMinutes(30),
                     Aud = bankClientRegistrationClaimsOverrides?.Audience ??
                           bankXFapiFinancialId,
                     Jti = Guid.NewGuid().ToString(),

@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
@@ -23,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         NewDayAmazon,
         Nationwide,
         Lloyds,
+        Hsbc,
         HsbcOld,
         Danske,
         AlliedIrish,
@@ -58,6 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.RoyalBankOfScotland => bankProfileDefinitions.RoyalBankOfScotland,
                 BankProfileEnum.NewDayAmazon => bankProfileDefinitions.NewDayAmazon,
                 BankProfileEnum.Nationwide => bankProfileDefinitions.Nationwide,
+                BankProfileEnum.Hsbc => bankProfileDefinitions.Hsbc,
                 BankProfileEnum.HsbcOld => bankProfileDefinitions.HsbcOld,
                 BankProfileEnum.Danske => bankProfileDefinitions.Danske,
                 BankProfileEnum.AlliedIrish => bankProfileDefinitions.AlliedIrish,
