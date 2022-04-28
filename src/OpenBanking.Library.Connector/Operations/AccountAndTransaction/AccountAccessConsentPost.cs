@@ -18,6 +18,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+using AccountAndTransactionModelsV3p1p7 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
 
@@ -117,6 +119,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
                     new AccountAndTransactionPostRequestProcessor<
                         AccountAndTransactionModelsPublic.OBReadConsent1>(
+                        bankFinancialId,
+                        accessToken,
+                        instrumentationClient)),
+                AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
+                    AccountAndTransactionModelsPublic.OBReadConsent1,
+                    AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                    AccountAndTransactionModelsV3p1p7.OBReadConsent1,
+                    AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
+                    new AccountAndTransactionPostRequestProcessor<
+                        AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
                         bankFinancialId,
                         accessToken,
                         instrumentationClient)),
