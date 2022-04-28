@@ -33,15 +33,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.ExternalApiId)
                 .HasColumnOrder(4)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.AccessTokenAccessToken)
+            builder.Property("_accessTokenAccessToken")
                 .HasColumnOrder(5);
-            builder.Property(e => e.AccessTokenExpiresIn)
+            builder.Property("_accessTokenExpiresIn")
                 .HasColumnOrder(6);
-            builder.Property(e => e.AccessTokenRefreshToken)
+            builder.Property("_accessTokenRefreshToken")
                 .HasColumnOrder(7);
-            builder.Property(e => e.AccessTokenModified)
+            builder.Property("_accessTokenModified")
                 .HasColumnOrder(8);
-            builder.Property(e => e.AccessTokenModifiedBy)
+            builder.Property("_accessTokenModifiedBy")
                 .HasColumnOrder(9);
         }
     }

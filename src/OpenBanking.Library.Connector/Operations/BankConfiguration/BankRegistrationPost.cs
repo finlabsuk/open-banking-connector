@@ -10,9 +10,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
@@ -22,6 +22,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using BankRegistrationRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankRegistration;
 using ClientRegistrationModelsPublic =
@@ -122,7 +125,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             string registrationEndpoint;
             string tokenEndpoint;
             string authorizationEndpoint;
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod;
+            TokenEndpointAuthMethod tokenEndpointAuthMethod;
             if (issuerUrl is null)
             {
                 // Determine endpoints
@@ -186,17 +189,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
                             OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
                     {
-                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.TlsClientAuth;
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethod.TlsClientAuth;
                     }
                     else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
                                  OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
                     {
-                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.PrivateKeyJwt;
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt;
                     }
                     else if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
                                  OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic))
                     {
-                        tokenEndpointAuthMethod = TokenEndpointAuthMethodEnum.ClientSecretBasic;
+                        tokenEndpointAuthMethod = TokenEndpointAuthMethod.ClientSecretBasic;
                     }
                     else
                     {
@@ -215,7 +218,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             string? externalApiSecret;
             string? registrationAccessToken;
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse = null;
-            if (requestInfo.Request.ExistingRegistration is null)
+            if (requestInfo.Request.ExternalApiObject is null)
             {
                 // Get DCR claims
                 ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
@@ -348,9 +351,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                externalApiId = requestInfo.Request.ExistingRegistration.ExternalApiId;
-                externalApiSecret = requestInfo.Request.ExistingRegistration.ExternalApiSecret;
-                registrationAccessToken = requestInfo.Request.ExistingRegistration.RegistrationAccessToken;
+                externalApiId = requestInfo.Request.ExternalApiObject.ExternalApiId;
+                externalApiSecret = requestInfo.Request.ExternalApiObject.ExternalApiSecret;
+                registrationAccessToken = requestInfo.Request.ExternalApiObject.RegistrationAccessToken;
             }
 
             // Create persisted CustomBehaviour preserving only things actually required for future activities involving this
@@ -417,7 +420,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.AuthorizationEndpoint,
                 entity.TokenEndpointAuthMethod,
                 entity.CustomBehaviour,
-                entity.ExternalApiId,
+                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 externalApiResponse);
 
             return (response, nonErrorMessages);

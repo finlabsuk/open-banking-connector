@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             if (useExternalApiGet)
             {
                 // Determine endpoint URL
-                string bankApiId = entity.ExternalApiId;
+                string bankApiId = entity.ExternalApiObject.ExternalApiId;
                 var endpointUrl = new Uri(entity.RegistrationEndpoint + $"/{bankApiId}");
 
                 // Get software statement profile
@@ -183,7 +183,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.AuthorizationEndpoint,
                 entity.TokenEndpointAuthMethod,
                 entity.CustomBehaviour,
-                entity.ExternalApiId,
+                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 apiResponse);
 
             return (response, nonErrorMessages);

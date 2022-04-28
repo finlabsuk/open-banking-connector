@@ -4,7 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
-public class ExternalApiRegistration
+public class ExternalApiObject
 {
     /// <summary>
     ///     External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the

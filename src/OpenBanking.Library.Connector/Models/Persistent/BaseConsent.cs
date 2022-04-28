@@ -8,21 +8,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
     public class AccessToken
     {
-        public AccessToken(string value, int expiresIn, string? refreshToken, DateTimeOffset modified)
+        public AccessToken(
+            string token,
+            int expiresIn,
+            string? refreshToken,
+            DateTimeOffset modified,
+            string? modifiedBy)
         {
-            Value = value;
+            Token = token;
             ExpiresIn = expiresIn;
             RefreshToken = refreshToken;
             Modified = modified;
+            ModifiedBy = modifiedBy;
         }
 
-        public string Value { get; }
+        public string Token { get; }
 
         public int ExpiresIn { get; }
 
         public string? RefreshToken { get; }
 
         public DateTimeOffset Modified { get; }
+
+        public string? ModifiedBy { get; }
     }
 
 
@@ -33,6 +41,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     internal partial class BaseConsent :
         BaseEntity
     {
+        /// <summary>
+        ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
+        ///     not successfully completed.
+        /// </summary>
+        [Column("access_token_access_token")]
+        private string? _accessTokenAccessToken;
+
+        [Column("access_token_expires_in")]
+        private int _accessTokenExpiresIn;
+
+        [Column("access_token_modified")]
+        private DateTimeOffset _accessTokenModified;
+
+        [Column("access_token_modified_by")]
+        private string? _accessTokenModifiedBy;
+
+        /// <summary>
+        ///     Refresh token. If null, indicates no refresh token received.
+        /// </summary>
+        [Column("access_token_refresh_token")]
+        private string? _accessTokenRefreshToken;
+
         public BaseConsent(
             Guid id,
             string? reference,
@@ -54,35 +84,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             created,
             createdBy)
         {
-            AccessTokenAccessToken = accessTokenAccessToken;
-            AccessTokenExpiresIn = accessTokenExpiresIn;
-            AccessTokenRefreshToken = accessTokenRefreshToken;
-            AccessTokenModified = accessTokenModified;
-            AccessTokenModifiedBy = accessTokenModifiedBy;
+            _accessTokenAccessToken = accessTokenAccessToken;
+            _accessTokenExpiresIn = accessTokenExpiresIn;
+            _accessTokenRefreshToken = accessTokenRefreshToken;
+            _accessTokenModified = accessTokenModified;
+            _accessTokenModifiedBy = accessTokenModifiedBy;
         }
 
-        /// <summary>
-        ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
-        ///     not successfully completed.
-        /// </summary>
-        public string? AccessTokenAccessToken { get; private set; }
-
-        public int AccessTokenExpiresIn { get; private set; }
-
-        /// <summary>
-        ///     Refresh token. If null, indicates no refresh token received.
-        /// </summary>
-        public string? AccessTokenRefreshToken { get; private set; }
-
-        public DateTimeOffset AccessTokenModified { get; private set; }
-
-        public string? AccessTokenModifiedBy { get; private set; }
-
-        public AccessToken? AccessToken => AccessTokenAccessToken switch
+        public AccessToken? AccessToken => _accessTokenAccessToken switch
         {
             null => null,
             { } value =>
-                new AccessToken(value, AccessTokenExpiresIn, AccessTokenRefreshToken, AccessTokenModified)
+                new AccessToken(
+                    value,
+                    _accessTokenExpiresIn,
+                    _accessTokenRefreshToken,
+                    _accessTokenModified,
+                    _accessTokenModifiedBy)
         };
 
         public void UpdateAccessToken(
@@ -93,11 +111,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? modifiedBy)
 
         {
-            AccessTokenAccessToken = accessTokenValue;
-            AccessTokenExpiresIn = accessTokenExpiresIn;
-            AccessTokenRefreshToken = accessTokenRefreshToken;
-            AccessTokenModified = modified;
-            AccessTokenModifiedBy = modifiedBy;
+            _accessTokenAccessToken = accessTokenValue;
+            _accessTokenExpiresIn = accessTokenExpiresIn;
+            _accessTokenRefreshToken = accessTokenRefreshToken;
+            _accessTokenModified = modified;
+            _accessTokenModifiedBy = modifiedBy;
         }
     }
 }

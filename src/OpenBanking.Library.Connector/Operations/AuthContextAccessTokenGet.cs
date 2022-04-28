@@ -102,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 }
             }
 
-            return accessToken.Value;
+            return accessToken.Token;
         }
     }
 }

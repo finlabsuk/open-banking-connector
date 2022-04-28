@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -46,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.RegistrationEndpoint)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.TokenEndpointAuthMethod)
-                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethodEnum>())
+                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.CustomBehaviour)
                 .HasConversion(
@@ -54,11 +55,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                     v =>
                         JsonConvert.DeserializeObject<CustomBehaviour>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.ExternalApiId)
+            builder.Property("_externalApiId")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.ExternalApiSecret)
+            builder.Property("_externalApiSecret")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.RegistrationAccessToken)
+            builder.Property("_registrationAccessToken")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }
     }

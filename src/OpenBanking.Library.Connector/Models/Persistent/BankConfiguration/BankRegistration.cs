@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using OAuth2RequestObjectClaimsOverridesRequest =
@@ -13,6 +14,22 @@ using ClientRegistrationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
 {
+    internal class ExternalApiObject : IBankRegistrationExternalApiObjectPublicQuery
+    {
+        public ExternalApiObject(string externalApiId, string? externalApiSecret, string? registrationAccessToken)
+        {
+            ExternalApiId = externalApiId;
+            ExternalApiSecret = externalApiSecret;
+            RegistrationAccessToken = registrationAccessToken;
+        }
+
+        public string? ExternalApiSecret { get; }
+
+        public string? RegistrationAccessToken { get; }
+
+        public string ExternalApiId { get; }
+    }
+
     /// <summary>
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
@@ -21,6 +38,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         BaseEntity,
         IBankRegistrationPublicQuery
     {
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        [Column("external_api_id")]
+        private readonly string _externalApiId;
+
+        /// <summary>
+        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
+        /// </summary>
+        [Column("external_api_secret")]
+        private readonly string? _externalApiSecret;
+
+        /// <summary>
+        ///     External API registration access token. Sometimes used to support registration adjustments etc.
+        /// </summary>
+        [Column("registration_access_token")]
+        private readonly string? _registrationAccessToken;
+
         public BankRegistration(
             Guid id,
             string? reference,
@@ -37,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string tokenEndpoint,
             string authorizationEndpoint,
             string registrationEndpoint,
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
             CustomBehaviour? customBehaviour,
             string externalApiId,
             string? externalApiSecret,
@@ -60,23 +96,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             RegistrationEndpoint = registrationEndpoint;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             CustomBehaviour = customBehaviour;
-            ExternalApiId = externalApiId;
-            ExternalApiSecret = externalApiSecret;
-            RegistrationAccessToken = registrationAccessToken;
+            _externalApiId = externalApiId;
+            _externalApiSecret = externalApiSecret;
+            _registrationAccessToken = registrationAccessToken;
         }
 
         [ForeignKey("BankId")]
         public Bank BankNavigation { get; set; } = null!;
 
-        /// <summary>
-        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-        /// </summary>
-        public string? ExternalApiSecret { get; }
-
-        /// <summary>
-        ///     External API registration access token. Sometimes used to support registration adjustments etc.
-        /// </summary>
-        public string? RegistrationAccessToken { get; }
+        public ExternalApiObject ExternalApiObject => new(
+            _externalApiId,
+            _externalApiSecret,
+            _registrationAccessToken);
 
         /// <summary>
         ///     ID of SoftwareStatementProfile to use in association with BankRegistration
@@ -113,7 +144,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// <summary>
         ///     Token endpoint authorisation method
         /// </summary>
-        public TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; }
+        public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
@@ -122,15 +153,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public CustomBehaviour? CustomBehaviour { get; }
 
         /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
-
-        /// <summary>
         ///     Bank with which this BankRegistration is associated.
         /// </summary>
         public Guid BankId { get; }
+
+        IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
+            ExternalApiObject;
     }
 
     internal partial class BankRegistration :
@@ -150,6 +178,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             AuthorizationEndpoint,
             TokenEndpointAuthMethod,
             CustomBehaviour,
-            ExternalApiId);
+            new ExternalApiObjectResponse(_externalApiId));
     }
 }

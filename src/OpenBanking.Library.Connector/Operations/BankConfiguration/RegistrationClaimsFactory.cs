@@ -4,8 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         }
 
         public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScopeEnum registrationScope,
             BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
@@ -58,11 +58,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 tokenEndpointAuthMethodLocal;
             tokenEndpointAuthMethodLocal = tokenEndpointAuthMethod switch
             {
-                TokenEndpointAuthMethodEnum.ClientSecretBasic => ClientRegistrationModelsPublic
+                TokenEndpointAuthMethod.ClientSecretBasic => ClientRegistrationModelsPublic
                     .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic,
-                TokenEndpointAuthMethodEnum.PrivateKeyJwt => ClientRegistrationModelsPublic
+                TokenEndpointAuthMethod.PrivateKeyJwt => ClientRegistrationModelsPublic
                     .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt,
-                TokenEndpointAuthMethodEnum.TlsClientAuth => ClientRegistrationModelsPublic
+                TokenEndpointAuthMethod.TlsClientAuth => ClientRegistrationModelsPublic
                     .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth,
                 _ => throw new ArgumentOutOfRangeException(
                     nameof(tokenEndpointAuthMethod),

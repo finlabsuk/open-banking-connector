@@ -4,7 +4,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
@@ -78,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
         ///     supported methods in Issuer URL OpenID Provider Configuration.
         /// </summary>
-        public TokenEndpointAuthMethodEnum? TokenEndpointAuthMethod { get; set; }
+        public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
@@ -91,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Existing bank registration (OAuth2 client) information. When non-null, this will be used instead of
         ///     creating a new registration at bank via DCR.
         /// </summary>
-        public ExternalApiRegistration? ExistingRegistration { get; set; }
+        public ExternalApiObject? ExternalApiObject { get; set; }
 
         /// <summary>
         ///     If registration already exists for bank, allow creation of additional one. NB this may

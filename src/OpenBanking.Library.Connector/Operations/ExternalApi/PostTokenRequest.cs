@@ -2,18 +2,16 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -40,13 +38,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             }
 
             if (bankRegistration.TokenEndpointAuthMethod is
-                TokenEndpointAuthMethodEnum.PrivateKeyJwt)
+                TokenEndpointAuthMethod.PrivateKeyJwt)
             {
                 // Create JWT
                 var claims = new
                 {
-                    iss = bankRegistration.ExternalApiId,
-                    sub = bankRegistration.ExternalApiId,
+                    iss = bankRegistration.ExternalApiObject.ExternalApiId,
+                    sub = bankRegistration.ExternalApiObject.ExternalApiId,
                     aud = bankRegistration.TokenEndpoint,
                     jti = Guid.NewGuid().ToString(),
                     iat = DateTimeOffset.Now.ToUnixTimeSeconds(),

@@ -54,13 +54,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     persistedObject.SoftwareStatementAndCertificateProfileOverrideCase);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            string bankApiId = persistedObject.ExternalApiId;
+            string bankApiId = persistedObject.ExternalApiObject.ExternalApiId;
 
             var uri = new Uri(persistedObject.RegistrationEndpoint + $"/{bankApiId}");
 
             // Get appropriate token
             string accessToken = useRegistrationAccessToken
-                ? persistedObject.RegistrationAccessToken ??
+                ? persistedObject.ExternalApiObject.RegistrationAccessToken ??
                   throw new InvalidOperationException("No registration access token available")
                 : (await PostTokenRequest.PostClientCredentialsGrantAsync(
                     null,

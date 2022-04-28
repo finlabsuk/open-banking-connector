@@ -2,14 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
@@ -32,21 +31,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             var headers = new List<HttpHeader>();
             switch (_bankRegistration.TokenEndpointAuthMethod)
             {
-                case TokenEndpointAuthMethodEnum.TlsClientAuth:
-                    variantRequest["client_id"] = _bankRegistration.ExternalApiId;
+                case TokenEndpointAuthMethod.TlsClientAuth:
+                    variantRequest["client_id"] = _bankRegistration.ExternalApiObject.ExternalApiId;
                     break;
-                case TokenEndpointAuthMethodEnum.ClientSecretBasic:
+                case TokenEndpointAuthMethod.ClientSecretBasic:
                 {
                     string clientSecret =
-                        _bankRegistration.ExternalApiSecret ??
+                        _bankRegistration.ExternalApiObject.ExternalApiSecret ??
                         throw new InvalidOperationException("No client secret available.");
-                    string authString = _bankRegistration.ExternalApiId + ":" + clientSecret;
+                    string authString = _bankRegistration.ExternalApiObject.ExternalApiId + ":" + clientSecret;
                     byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
                     string authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
                     headers.Add(new HttpHeader("Authorization", authHeader));
                     break;
                 }
-                case TokenEndpointAuthMethodEnum.PrivateKeyJwt:
+                case TokenEndpointAuthMethod.PrivateKeyJwt:
                     break;
                 default:
                     throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");

@@ -4,16 +4,21 @@
 
 #nullable enable
 
-using System;
+using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     [Flags]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum DelimitedStringConverterOptions
     {
+        [EnumMember(Value = "None")]
         None = 0,
+
+        [EnumMember(Value = "JsonIsStringArrayNotString")]
         JsonIsStringArrayNotString = 1
     }
 

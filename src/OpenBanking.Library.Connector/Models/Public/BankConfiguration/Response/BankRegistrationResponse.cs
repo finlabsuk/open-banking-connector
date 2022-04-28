@@ -2,13 +2,32 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
 {
+    public interface IBankRegistrationExternalApiObjectPublicQuery
+    {
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        string ExternalApiId { get; }
+    }
+
+    public class ExternalApiObjectResponse : IBankRegistrationExternalApiObjectPublicQuery
+    {
+        public ExternalApiObjectResponse(string externalApiId)
+        {
+            ExternalApiId = externalApiId;
+        }
+
+        public string ExternalApiId { get; }
+    }
+
     public interface IBankRegistrationPublicQuery : IBaseQuery
     {
         /// <summary>
@@ -51,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Token endpoint authorisation method
         /// </summary>
-        TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; }
+        TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
@@ -59,11 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         CustomBehaviour? CustomBehaviour { get; }
 
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        string ExternalApiId { get; }
+        IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
     }
 
     /// <summary>
@@ -83,9 +98,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string registrationEndpoint,
             string tokenEndpoint,
             string authorizationEndpoint,
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
             CustomBehaviour? customBehaviour,
-            string externalApiId) : base(id, created, createdBy)
+            ExternalApiObjectResponse externalApiObject) : base(id, created, createdBy)
         {
             BankId = bankId;
             SoftwareStatementProfileId = softwareStatementProfileId;
@@ -97,9 +112,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             AuthorizationEndpoint = authorizationEndpoint;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             CustomBehaviour = customBehaviour;
-            ExternalApiId = externalApiId;
+            ExternalApiObject = externalApiObject;
         }
 
+        public ExternalApiObjectResponse ExternalApiObject { get; }
         public Guid BankId { get; }
         public string SoftwareStatementProfileId { get; }
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; }
@@ -108,11 +124,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public string RegistrationEndpoint { get; }
         public string TokenEndpoint { get; }
         public string AuthorizationEndpoint { get; }
-        public TokenEndpointAuthMethodEnum TokenEndpointAuthMethod { get; }
+        public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
         public CustomBehaviour? CustomBehaviour { get; }
-        public string ExternalApiId { get; }
-    }
 
+        IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
+            ExternalApiObject;
+    }
 
     /// <summary>
     ///     Response to BankRegistration Read and Create requests
@@ -131,9 +148,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string registrationEndpoint,
             string tokenEndpoint,
             string authorizationEndpoint,
-            TokenEndpointAuthMethodEnum tokenEndpointAuthMethod,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
             CustomBehaviour? customBehaviour,
-            string externalApiId,
+            ExternalApiObjectResponse externalApiObject,
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
             id,
             created,
@@ -148,7 +165,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             authorizationEndpoint,
             tokenEndpointAuthMethod,
             customBehaviour,
-            externalApiId)
+            externalApiObject)
         {
             ExternalApiResponse = externalApiResponse;
         }

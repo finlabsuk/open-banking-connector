@@ -4,16 +4,21 @@
 
 #nullable enable
 
-using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     [Flags]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum DateTimeOffsetToUnixConverterOptions
     {
+        [EnumMember(Value = "None")]
         None = 0,
+
+        [EnumMember(Value = "JsonUsesMilliSecondsNotSeconds")]
         JsonUsesMilliSecondsNotSeconds = 1
     }
 

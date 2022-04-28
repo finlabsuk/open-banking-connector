@@ -30,16 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         TlsClientAuth
     }
 
-    /// <summary>
-    ///     Token endpoint auth methods supported by Open Banking Connector
-    /// </summary>
-    public enum TokenEndpointAuthMethodEnum
-    {
-        ClientSecretBasic,
-        PrivateKeyJwt,
-        TlsClientAuth
-    }
-
 
     public class OpenIdConfiguration
     {
