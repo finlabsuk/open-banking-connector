@@ -1,10 +1,15 @@
 {
-    "version": 1,
-    "environments": [
-        {
-            "name": "WSL (Ubuntu 20.04)",
-            "type": "wsl",
-            "wslDistribution": "Ubuntu-20.04"
-        }
-    ]
+  "version": "1",
+  "environments": [
+    {
+      "name": "WSL (Ubuntu 20.04)",
+      "type": "wsl",
+      "wslDistribution": "Ubuntu"
+    },
+    {
+      "name": "Docker",
+      "type": "docker",
+      "dockerFile": "src/OpenBanking.WebApp.Connector/Dockerfile"
+    }
+  ]
 }

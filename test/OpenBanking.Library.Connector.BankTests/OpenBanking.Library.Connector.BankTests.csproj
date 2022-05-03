@@ -20,6 +20,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="Microsoft.Playwright" Version="1.21.0" />
         <PackageReference Include="NSubstitute" Version="4.3.0" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.15" />
         <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
@@ -48,13 +49,22 @@
         <None Update="local.test.settings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="appsettings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="appsettings.Development.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="appsettings.json" />
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="appsettings.Development.json" />
+      <Content Include="appsettings.Development.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PlaywrightPlatform>all</PlaywrightPlatform>
+    </PropertyGroup>
+    
 </Project>
              

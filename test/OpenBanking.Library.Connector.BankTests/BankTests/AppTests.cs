@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent;
@@ -22,6 +23,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.Playwright;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -171,12 +174,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Get consent authoriser inputs
             var nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
-            // OutOfProcessNodeJSServiceOptions outOfProcessNodeJSServiceOptions =
-            //     services.GetRequiredService<IOptions<OutOfProcessNodeJSServiceOptions>>().Value;
             // NodeJSProcessOptions nodeJSProcessOptions =
             //     services.GetRequiredService<IOptions<NodeJSProcessOptions>>().Value;
-            PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
-                bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
 
             // Get API client
             var processedSoftwareStatementProfileStore =
@@ -217,6 +216,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Dereference bank
             BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
 
+            // Create consent auth if in use
+            ConsentAuth? consentAuth;
+            if (genericNotPlainAppTest)
+            {
+                PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
+                    bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
+
+                OutOfProcessNodeJSServiceOptions outOfProcessNodeJSServiceOptions =
+                    _serviceProvider.GetRequiredService<IOptions<OutOfProcessNodeJSServiceOptions>>().Value;
+
+                if (puppeteerLaunchOptions is null ||
+                    nodeJsService is null)
+                {
+                    throw new ArgumentNullException($"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
+                }
+
+                var launchOptions = new BrowserTypeLaunchOptions
+                {
+                    Args = puppeteerLaunchOptions.Args,
+                    Devtools = puppeteerLaunchOptions.Devtools,
+                    ExecutablePath = puppeteerLaunchOptions.ExecutablePath,
+                    Headless = puppeteerLaunchOptions.Headless,
+                    SlowMo = (float?) puppeteerLaunchOptions.SlowMo,
+                    Timeout = outOfProcessNodeJSServiceOptions.TimeoutMS
+                };
+                consentAuth = new ConsentAuth(launchOptions);
+            }
+            else
+            {
+                consentAuth = null;
+            }
+
             // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationSubtests.PostAndGetObjects(
@@ -251,9 +282,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("aisp")
                         .AppendToPath($"{subTest.ToString()}"),
-                    genericNotPlainAppTest,
-                    nodeJsService,
-                    puppeteerLaunchOptions,
+                    consentAuth,
                     bankUserList,
                     apiClient);
             }
@@ -276,9 +305,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("pisp")
                         .AppendToPath($"{subTest.ToString()}"),
-                    genericNotPlainAppTest,
-                    nodeJsService,
-                    puppeteerLaunchOptions,
+                    consentAuth,
                     bankUserList,
                     apiClient);
             }
@@ -301,9 +328,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("vrp")
                         .AppendToPath($"{subTest.ToString()}"),
-                    genericNotPlainAppTest,
-                    nodeJsService,
-                    puppeteerLaunchOptions,
+                    consentAuth,
                     bankUserList);
             }
 

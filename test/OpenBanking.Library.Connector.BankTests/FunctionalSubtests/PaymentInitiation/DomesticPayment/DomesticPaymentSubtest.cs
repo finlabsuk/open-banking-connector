@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -41,9 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string testNameUnique,
             FilePathBuilder configFluentRequestLogging,
             FilePathBuilder pispFluentRequestLogging,
-            bool includeConsentAuth,
-            INodeJSService? nodeJsService,
-            PuppeteerLaunchOptionsJavaScript? puppeteerLaunchOptions,
+            ConsentAuth? consentAuth,
             List<BankUser> bankUserList,
             IApiClient apiClient)
         {
@@ -167,27 +166,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             authContextResponse2.Data.Should().NotBeNull();
 
             // Consent authorisation
-            if (includeConsentAuth)
+            if (consentAuth is not null)
             {
-                if (puppeteerLaunchOptions is null ||
-                    nodeJsService is null)
-                {
-                    throw new ArgumentNullException($"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
-                }
-
-                // Call Node JS to authorise consent in UI via Puppeteer
-                object[] args =
-                {
+                // Authorise consent in UI via Playwright
+                await consentAuth.AuthoriseAsync(
                     authUrl,
-                    bankProfile.BankProfileEnum.ToString(),
-                    "DomesticPaymentConsent",
-                    bankUser,
-                    puppeteerLaunchOptions
-                };
-                await nodeJsService.InvokeFromFileAsync(
-                    "authoriseConsent.js",
-                    "authoriseConsent",
-                    args);
+                    bankProfile,
+                    ConsentVariety.DomesticPaymentConsent,
+                    bankUser);
 
                 // Refresh scope to ensure user token acquired following consent is available
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
