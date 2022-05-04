@@ -8,6 +8,7 @@ import * as Danske from './Sandbox/danske'
 import * as Nationwide from './Sandbox/nationwide'
 import * as Monzo from './Sandbox/monzo'
 import * as HsbcOld from './Sandbox/hsbcOld'
+import * as Hsbc from './Sandbox/hsbc'
 
 import {assert} from './utility'
 
@@ -26,7 +27,8 @@ export enum Bank {
     VrpHackathon = "VrpHackathon",
     Danske = "Danske",
     Nationwide = "Nationwide",
-    Monzo = "Monzo"
+    Monzo = "Monzo",
+    Hsbc = "Hsbc"
 }
 
 // Bank user
@@ -52,7 +54,8 @@ const bankConsentUIInteractions: { [index in Bank]: ConsentUIInteractions } = {
     Danske: Danske.consentUIInteractions,
     Nationwide: Nationwide.consentUIInteractions,
     Monzo: Monzo.consentUIInteractions,
-    HsbcOld: HsbcOld.consentUIInteractions
+    HsbcOld: HsbcOld.consentUIInteractions,
+    Hsbc: Hsbc.consentUIInteractions
 }
 
 export async function authoriseConsent(
