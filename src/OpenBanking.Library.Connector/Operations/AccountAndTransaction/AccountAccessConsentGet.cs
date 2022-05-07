@@ -19,6 +19,8 @@ using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
+using AccountAndTransactionModelsV3p1p7 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
@@ -52,17 +54,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
-                    AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                    AccountAndTransactionModelsPublic.OBReadConsent1,
+                    AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
+                AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
+                    AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
-                    new AccountAndTransactionPostRequestProcessor<
-                        AccountAndTransactionModelsPublic.OBReadConsent1>(
-                        bankFinancialId,
-                        accessToken,
-                        instrumentationClient)),
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 null => throw new NullReferenceException("No AISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {bankApiSet.AccountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")

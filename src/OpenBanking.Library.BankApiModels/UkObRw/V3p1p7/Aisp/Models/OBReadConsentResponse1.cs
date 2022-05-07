@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -33,10 +34,11 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 
         /// <summary> Initializes a new instance of OBReadConsentResponse1. </summary>
         /// <param name="data"></param>
-        /// <param name="risk"> Any object. </param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        public OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk, Links links, Meta meta)
+        /// <param name="risk"> Any object. </param>
+        [JsonConstructor]
+        public OBReadConsentResponse1(OBReadConsentResponse1Data data, Links links, Meta meta, object risk)
         {
             Data = data;
             Risk = risk;

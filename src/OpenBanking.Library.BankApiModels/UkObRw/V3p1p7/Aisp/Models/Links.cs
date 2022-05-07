@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -31,6 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="prev"></param>
         /// <param name="next"></param>
         /// <param name="last"></param>
+        [JsonConstructor]
         public Links(string self, string first, string prev, string next, string last)
         {
             Self = self;

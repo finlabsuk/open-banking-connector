@@ -5,16 +5,24 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Methods of calculating interest. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBInterestCalculationMethod1CodeEnum
     {
         /// <summary> ITCO. </summary>
+        [EnumMember(Value = "Itco")]
         Itco,
         /// <summary> ITOT. </summary>
+        [EnumMember(Value = "Itot")]
         Itot,
         /// <summary> ITSI. </summary>
+        [EnumMember(Value = "Itsi")]
         Itsi
     }
 }

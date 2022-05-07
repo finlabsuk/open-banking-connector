@@ -5,18 +5,27 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Specifies the status of consent resource in code form. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBReadConsentResponse1DataStatusEnum
     {
         /// <summary> Authorised. </summary>
+        [EnumMember(Value = "Authorised")]
         Authorised,
         /// <summary> AwaitingAuthorisation. </summary>
+        [EnumMember(Value = "AwaitingAuthorisation")]
         AwaitingAuthorisation,
         /// <summary> Rejected. </summary>
+        [EnumMember(Value = "Rejected")]
         Rejected,
         /// <summary> Revoked. </summary>
+        [EnumMember(Value = "Revoked")]
         Revoked
     }
 }

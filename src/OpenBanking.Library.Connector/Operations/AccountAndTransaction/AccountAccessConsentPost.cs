@@ -111,17 +111,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 IInstrumentationClient instrumentationClient) =>
             bankApiSet.AccountAndTransactionApi?.AccountAndTransactionApiVersion switch
             {
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
-                    AccountAndTransactionModelsPublic.OBReadConsent1,
-                    AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                    AccountAndTransactionModelsPublic.OBReadConsent1,
-                    AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
-                    new AccountAndTransactionPostRequestProcessor<
-                        AccountAndTransactionModelsPublic.OBReadConsent1>(
-                        bankFinancialId,
-                        accessToken,
-                        instrumentationClient)),
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
                     AccountAndTransactionModelsPublic.OBReadConsent1,
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
@@ -130,6 +119,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
                     new AccountAndTransactionPostRequestProcessor<
                         AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
+                        bankFinancialId,
+                        accessToken,
+                        instrumentationClient)),
+                AccountAndTransactionApiVersion.Version3p1p9 => new ApiRequests<
+                    AccountAndTransactionModelsPublic.OBReadConsent1,
+                    AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                    AccountAndTransactionModelsPublic.OBReadConsent1,
+                    AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
+                    new AccountAndTransactionPostRequestProcessor<
+                        AccountAndTransactionModelsPublic.OBReadConsent1>(
                         bankFinancialId,
                         accessToken,
                         instrumentationClient)),

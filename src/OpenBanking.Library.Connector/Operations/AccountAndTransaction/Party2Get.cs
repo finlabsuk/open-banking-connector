@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -15,7 +14,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
-
+using AccountAndTransactionModelsV3p1p7 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
@@ -72,13 +72,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string bankFinancialId,
             string accessToken,
             IInstrumentationClient instrumentationClient) =>
-            accountAndTransactionApi?.AccountAndTransactionApiVersion switch
+            accountAndTransactionApi.AccountAndTransactionApiVersion switch
             {
+                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
+                    AccountAndTransactionModelsPublic.OBReadParty3,
+                    AccountAndTransactionModelsV3p1p7.OBReadParty3>(
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadParty3,
-                    AccountAndTransactionModelsPublic.OBReadParty3
-                >(new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
-                null => throw new NullReferenceException("No AISP API specified for this bank."),
+                    AccountAndTransactionModelsPublic.OBReadParty3>(
+                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")
             };
