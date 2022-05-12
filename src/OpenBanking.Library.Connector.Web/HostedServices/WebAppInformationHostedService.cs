@@ -36,24 +36,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"App launched in environment: {_hostEnvironment.EnvironmentName}");
+
             if (_hostEnvironment.IsDevelopment())
             {
-                // Log configuration
-                string configString;
-                if (!OperatingSystem.IsLinux())
-                {
-                    // Create string with embedded \n removed from certs etc as not handled well by logger
-                    var regexPattern =
-                        @"(?<!\r)\n"; // Catches \n when not \r\n
-                    configString = Regex.Replace(_configurationRoot.GetDebugView(), regexPattern, string.Empty);
-                }
-                else
-                {
-                    configString = _configurationRoot.GetDebugView();
-                }
-
-                _logger.LogInformation("Configuration Found:" + Environment.NewLine + configString);
-
                 // Log application parts found
                 IEnumerable<string> partNames = _applicationPartManager.ApplicationParts.Select(x => x.Name);
                 _logger.LogInformation(string.Join(Environment.NewLine, partNames.Prepend("Application parts found:")));

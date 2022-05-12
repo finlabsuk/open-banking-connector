@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
@@ -72,6 +71,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <returns></returns>
         public SigningCertificateProfilesSettings Validate()
         {
+            foreach ((string key, SigningCertificateProfile value) in this)
+            {
+                if (string.IsNullOrEmpty(value.AssociatedKeyId))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty AssociatedKeyId provided for SigningCertificateProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.AssociatedKey))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty AssociatedKey provided for SigningCertificateProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.Certificate))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty Certificate provided for SigningCertificateProfile {key}.");
+                }
+            }
+
             return this;
         }
     }

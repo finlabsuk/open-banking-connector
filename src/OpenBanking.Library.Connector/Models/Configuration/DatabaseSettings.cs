@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
@@ -26,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     test with multiple databases.
         /// </summary>
         public Dictionary<DbProvider, string> ConnectionStrings { get; set; } =
-            new Dictionary<DbProvider, string>
+            new()
             {
                 [DbProvider.Sqlite] = string.Empty,
                 [DbProvider.PostgreSql] = string.Empty
@@ -41,7 +40,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
         public DatabaseSettings Validate()
         {
-            // Note that all values have defaults
+            // Ensure connection string provided
+            if (string.IsNullOrEmpty(ConnectionStrings[Provider]))
+            {
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    $"No non-empty connection string provided for DB provider {Provider}.");
+            }
+
             return this;
         }
     }

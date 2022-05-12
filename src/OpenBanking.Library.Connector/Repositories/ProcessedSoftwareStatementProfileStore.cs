@@ -2,12 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -35,14 +31,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
         public ProcessedSoftwareStatementProfile DefaultVariant { get; }
 
         public ConcurrentDictionary<string, ProcessedSoftwareStatementProfile> OverrideVariants { get; } =
-            new ConcurrentDictionary<string, ProcessedSoftwareStatementProfile>(
-                StringComparer.InvariantCultureIgnoreCase);
+            new(StringComparer.InvariantCultureIgnoreCase);
     }
 
     public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatementProfileStore
     {
-        private readonly ConcurrentDictionary<string, CacheValue> _cache =
-            new ConcurrentDictionary<string, CacheValue>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly ConcurrentDictionary<string, CacheValue> _cache = new(
+            StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessedSoftwareStatementProfileStore(
             ISettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>
@@ -75,6 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 // Abort if profile inactive
                 if (!rawProfile.Active)
                 {
+                    instrumentationClient.Info($"Ignoring inactive software statement profile with ID {id}.");
                     continue;
                 }
 
@@ -91,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 if (!_cache.TryAdd(id, cacheValue))
                 {
                     throw new InvalidOperationException(
-                        $"Software statement profile with ID {id} already exists. Is this ID duplicated?");
+                        $"Software statement profile with ID {id} already exists. Is ID {id} duplicated?");
                 }
 
                 // Create and store override profiles
@@ -112,7 +108,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                             profile))
                     {
                         throw new InvalidOperationException(
-                            $"Override case {softwareStatementAndCertificateOverrideCase} already exists. Is this case duplicated?");
+                            $"Software statement profile with ID {id} and override case {softwareStatementAndCertificateOverrideCase} already exists. " +
+                            $"Is override case {softwareStatementAndCertificateOverrideCase} duplicated?");
                     }
                 }
             }
@@ -152,6 +149,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             SigningCertificateProfilesSettings signingCertificateProfilesSettings,
             IInstrumentationClient instrumentationClient)
         {
+            // Log output
+            instrumentationClient.Info(
+                $"Processing active software statement profile with ID {id}" +
+                (softwareStatementAndCertificateOverrideCase is null
+                    ? "."
+                    : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                ));
+
             // Apply overrides to software statement profile
             SoftwareStatementProfile softwareStatementProfile =
                 softwareStatementProfileWithOverrideProperties
@@ -162,7 +167,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 .Validate(softwareStatementProfile);
             validationResult.ProcessValidationResultsAndRaiseErrors(
                 "prefix",
-                "Validation failure when checking software statement profile.");
+                $"Validation failure when checking software statement profile with ID {id}" +
+                (softwareStatementAndCertificateOverrideCase is null
+                    ? "."
+                    : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                ));
 
             // Get transport certificate profile and apply overrides
             string transportCertificateProfileId = softwareStatementProfile.TransportCertificateProfileId;
@@ -172,13 +181,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                         transportCertificateProfileWithOverrideProperties))
             {
                 throw new ArgumentOutOfRangeException(
-                    $"No transport certificate profile with ID {transportCertificateProfileId} supplied in configuration/key secrets.");
+                    $"No transport certificate profile with ID {transportCertificateProfileId} found in configuration/key secrets.");
             }
 
             if (!transportCertificateProfileWithOverrideProperties.Active)
             {
                 throw new ArgumentOutOfRangeException(
-                    $"Transport certificate profile with ID {transportCertificateProfileId} is set to be inactive.");
+                    $"Transport certificate profile with ID {transportCertificateProfileId} is inactive yet specified by " +
+                    $"software statement profile with ID {id}" +
+                    (softwareStatementAndCertificateOverrideCase is null
+                        ? "."
+                        : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                    ));
             }
 
             TransportCertificateProfile transportCertificateProfile =
@@ -190,7 +204,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 .Validate(transportCertificateProfile);
             validationResult2.ProcessValidationResultsAndRaiseErrors(
                 "prefix",
-                "Validation failure when checking transport certificate profile.");
+                $"Validation failure when checking transport certificate profile with ID {transportCertificateProfileId}" +
+                (softwareStatementAndCertificateOverrideCase is null
+                    ? "."
+                    : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                ));
 
             // Get and validate OB signing certificate profile
             string signingCertificateProfileId = softwareStatementProfile.SigningCertificateProfileId;
@@ -199,13 +217,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     out SigningCertificateProfile? signingCertificateProfile))
             {
                 throw new ArgumentOutOfRangeException(
-                    $"No signing certificate profile with ID {signingCertificateProfileId} supplied in configuration/key secrets.");
+                    $"No signing certificate profile with ID {signingCertificateProfileId} found in configuration/key secrets.");
             }
 
             if (!signingCertificateProfile.Active)
             {
                 throw new ArgumentOutOfRangeException(
-                    $"Signing certificate profile with ID {signingCertificateProfileId} is set to be inactive.");
+                    $"Signing certificate profile with ID {signingCertificateProfileId} is inactive yet specified by " +
+                    $"software statement profile with ID {id}" +
+                    (softwareStatementAndCertificateOverrideCase is null
+                        ? "."
+                        : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                    ));
             }
 
             // Validate signing certificate profile
@@ -213,7 +236,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 .Validate(signingCertificateProfile);
             validationResult3.ProcessValidationResultsAndRaiseErrors(
                 "prefix",
-                "Validation failure when checking signing certificate profile.");
+                $"Validation failure when checking signing certificate profile with ID {signingCertificateProfileId}.");
 
             // Create HttpMessageHandler with transport certificates
             var transportCerts = new List<X509Certificate2>();
@@ -221,7 +244,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                 CertificateFactories.GetCertificate2FromPem(
                     transportCertificateProfile.AssociatedKey,
                     transportCertificateProfile.Certificate) ??
-                throw new InvalidOperationException();
+                throw new ArgumentException(
+                    $"Encountered problem when processing transport certificate from transport certificate profile with ID {transportCertificateProfileId}" +
+                    (softwareStatementAndCertificateOverrideCase is null
+                        ? "."
+                        : $" and override case {softwareStatementAndCertificateOverrideCase}."
+                    ));
             transportCerts.Add(transportCert);
 
             IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()

@@ -76,10 +76,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             services.AddSingleton<IApiVariantMapper, ApiVariantMapper>();
 
             // Configure DB
-            DatabaseSettings databaseSettings = configuration
-                .GetSection(new DatabaseSettings().SettingsGroupName)
-                .Get<DatabaseSettings>()
-                .Validate();
+            DatabaseSettings databaseSettings =
+                configuration
+                    .GetSection(new DatabaseSettings().SettingsGroupName)
+                    .Get<DatabaseSettings>() ??
+                new DatabaseSettings(); // Use defaults in case of no configuration section
+            databaseSettings.Validate();
             if (!databaseSettings.ConnectionStrings.TryGetValue(
                     databaseSettings.Provider,
                     out string? connectionString))

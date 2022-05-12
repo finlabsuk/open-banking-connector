@@ -112,6 +112,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <returns></returns>
         public SoftwareStatementProfilesSettings Validate()
         {
+            foreach ((string key, SoftwareStatementProfileWithOverrideProperties value) in this)
+            {
+                if (string.IsNullOrEmpty(value.SoftwareStatement))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty SoftwareStatement provided for SoftwareStatementProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.TransportCertificateProfileId))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty TransportCertificateProfileId provided for SoftwareStatementProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.SigningCertificateProfileId))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty SigningCertificateProfileId provided for SoftwareStatementProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.DefaultFragmentRedirectUrl))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty DefaultFragmentRedirectUrl provided for SoftwareStatementProfile {key}.");
+                }
+            }
+
             return this;
         }
     }

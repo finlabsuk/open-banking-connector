@@ -176,6 +176,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <returns></returns>
         public TransportCertificateProfilesSettings Validate()
         {
+            foreach ((string key, TransportCertificateProfileWithOverrideProperties value) in this)
+            {
+                if (string.IsNullOrEmpty(value.AssociatedKey))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty AssociatedKey provided for TransportCertificateProfile {key}.");
+                }
+
+                if (string.IsNullOrEmpty(value.Certificate))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"No non-empty Certificate provided for TransportCertificateProfile {key}.");
+                }
+            }
+
             return this;
         }
     }
