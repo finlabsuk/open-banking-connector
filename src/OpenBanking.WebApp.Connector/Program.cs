@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.WebApp.Connector;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
-using FinnovationLabs.OpenBanking.WebApp.Connector.KeySecrets;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -91,12 +90,13 @@ builder.Services
         })
     .AddSwaggerGenNewtonsoftSupport()
     // Add controllers
-    .AddControllers(options =>
+    .AddControllers(
+        options =>
         {
             // Add filter
             options.Filters.Add<GlobalExceptionFilter>();
         })
-        // Add JSON support
+    // Add JSON support
     .AddNewtonsoftJson(
         options =>
         {
@@ -111,9 +111,6 @@ builder.Services
             //     Console.WriteLine("hi");
             // };
         });
-
-// Add key secrets providers
-builder.Host.ConfigureKeySecrets(KeySecretProviders.Providers);
 
 // Build app
 WebApplication app = builder.Build();

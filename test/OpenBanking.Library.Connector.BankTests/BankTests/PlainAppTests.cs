@@ -73,8 +73,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;
             // see comment in next section).
-            var openBankingConnectorSettings =
-                AppConfiguration.GetSettings<OpenBankingConnectorSettings>();
             var softwareStatementAndCertificateProfileOverridesSettings =
                 AppConfiguration.GetSettings<SoftwareStatementAndCertificateProfileOverridesSettings>();
             var softwareStatementProfilesSettings =
@@ -87,8 +85,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
             // settings as might be done in a "plain app".
-            var obcSettingsProvider =
-                new DefaultSettingsProvider<OpenBankingConnectorSettings>(openBankingConnectorSettings);
             var obcSettingsProvider2 =
                 new DefaultSettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>(
                     softwareStatementAndCertificateProfileOverridesSettings);
