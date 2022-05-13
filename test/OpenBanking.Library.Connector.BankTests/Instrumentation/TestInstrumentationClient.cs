@@ -48,6 +48,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentatio
             _outputHelper.WriteLine($"{message}");
         }
 
+        public void Trace(string message)
+        {
+            _outputHelper.WriteLine($"[{_timeProvider.GetUtcNow().ToString(CultureInfo.InvariantCulture)}] trace:");
+            _outputHelper.WriteLine($"{message}");
+        }
+
         public void Exception(Exception exception) => Exception(exception, exception.Message);
 
         public void Exception(Exception exception, string message)

@@ -26,6 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
         public void Warning(string message) => _logger.LogWarning(message);
 
         public void Error(string message) => _logger.LogError(message);
+        public void Trace(string message) => _logger.LogTrace(message);
 
         public void Exception(Exception exception) =>
             _logger.LogError(exception, exception.Message);
@@ -61,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
                 sb.AppendLine($"{keyValuePair.Key}: {keyValuePair.Value}");
             }
 
-            _logger.LogDebug(sb.ToString());
+            _logger.LogTrace(sb.ToString());
         }
     }
 }

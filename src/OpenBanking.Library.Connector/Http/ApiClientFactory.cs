@@ -4,6 +4,7 @@
 
 using System;
 using System.Net.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 {
@@ -16,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         private static readonly Lazy<HttpClient> HttpClient = CreateHttpClient();
         private static HttpMessageHandler? _handler;
 
-        public static IApiClient CreateApiClient(HttpMessageHandler? handler)
+        public static IApiClient CreateApiClient(IInstrumentationClient instrumentation, HttpMessageHandler? handler)
         {
             if (handler != null)
             {
@@ -26,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 }
             }
 
-            return new ApiClient(HttpClient.Value);
+            return new ApiClient(instrumentation, HttpClient.Value);
         }
 
         private static Lazy<HttpClient> CreateHttpClient()

@@ -252,7 +252,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new TimeProvider(),
                 apiVariantMapper,
                 new ConsoleInstrumentationClient(),
-                new ApiClient(httpClient),
+                new ApiClient(new ConsoleInstrumentationClient(),httpClient),
                 softwareStatementProfilesRepository,
                 new DbService(dB));
 

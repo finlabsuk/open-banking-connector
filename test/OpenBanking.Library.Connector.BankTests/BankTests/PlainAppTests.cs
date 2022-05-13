@@ -152,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .SetClientCertificate(certificate)
                 .CreateMessageHandler();
 
-            return ApiClientFactory.CreateApiClient(handler);
+            return ApiClientFactory.CreateApiClient(new ConsoleInstrumentationClient(), handler);
         }
     }
 }

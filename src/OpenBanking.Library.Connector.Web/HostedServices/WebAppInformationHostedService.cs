@@ -36,8 +36,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"App launched in environment: {_hostEnvironment.EnvironmentName}");
-
             if (_hostEnvironment.IsDevelopment())
             {
                 // Log application parts found

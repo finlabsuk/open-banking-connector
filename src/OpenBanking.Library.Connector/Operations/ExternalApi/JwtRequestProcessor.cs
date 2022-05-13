@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### JWT ({requestDescription})")
                 .Append(jwt);
-            _instrumentationClient.Info(requestTraceSb.ToString());
+            _instrumentationClient.Trace(requestTraceSb.ToString());
 
             return (new List<HttpHeader>(), jwt,
                 _useApplicationJoseNotApplicationJwtContentTypeHeader ? "application/jose" : "application/jwt");

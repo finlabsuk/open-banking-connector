@@ -13,9 +13,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         private readonly HttpClient _httpClient;
         private readonly IInstrumentationClient _instrumentation;
 
-        public ApiClient(HttpClient httpClient)
-            : this(new ConsoleInstrumentationClient(), httpClient) { }
-
         public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
         {
             _instrumentation = instrumentation.ArgNotNull(nameof(instrumentation));
@@ -190,7 +187,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
 
             requestTraceSb.AppendLine("####");
-            _instrumentation.Info(requestTraceSb.ToString());
+            _instrumentation.Trace(requestTraceSb.ToString());
         }
 
         private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)

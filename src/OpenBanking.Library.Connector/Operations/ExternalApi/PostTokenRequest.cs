@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 StringBuilder requestTraceSb = new StringBuilder()
                     .AppendLine("#### JWT (Client Auth)")
                     .Append(jwt);
-                instrumentationClient.Info(requestTraceSb.ToString());
+                instrumentationClient.Trace(requestTraceSb.ToString());
 
                 // Add parameters
                 keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";

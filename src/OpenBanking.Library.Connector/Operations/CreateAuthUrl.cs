@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             StringBuilder authUrlTraceSb = new StringBuilder()
                 .AppendLine("#### Auth URL (Consent)")
                 .Append(authUrl);
-            instrumentationClient.Info(authUrlTraceSb.ToString());
+            instrumentationClient.Trace(authUrlTraceSb.ToString());
             return authUrl;
         }
     }
