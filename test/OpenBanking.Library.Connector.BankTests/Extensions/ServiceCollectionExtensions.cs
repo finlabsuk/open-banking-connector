@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -54,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
                         bankTestSettings.GetDataDirectoryForCurrentOs(),
                         "bankUsers.json");
                     var bankUsers = new BankUserStore(
-                        DataFile.ReadFile<Dictionary<string, Dictionary<string, List<BankUser>>>>(
+                        DataFile.ReadFile<BankUserDictionary>(
                             bankUsersFile,
                             new JsonSerializerSettings()).GetAwaiter().GetResult());
                     return bankUsers;

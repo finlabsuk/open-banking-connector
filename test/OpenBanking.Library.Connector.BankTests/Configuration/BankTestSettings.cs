@@ -138,7 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
         /// <summary>
         ///     Banks to exclude for this group of test cases.
-        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
         ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
         ///     is ignored.
         /// </summary>
@@ -147,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
         /// <summary>
         ///     Banks to include for this group of test cases.
-        ///     List of banks where each bank is specified via its <see cref="BankProfiles.BankProfileEnum" /> as a string.
+        ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
         ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
         ///     is ignored.
         /// </summary>

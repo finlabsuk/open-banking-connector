@@ -31,7 +31,7 @@ public class ConsentAuth
             BankProfileEnum.Modelo => new Modelo(),
             BankProfileEnum.NatWest => new NatWest(),
             BankProfileEnum.RoyalBankOfScotland => new RoyalBankOfScotland(),
-            BankProfileEnum.Hsbc => new Hsbc(),
+            BankProfileEnum.Hsbc_Sandbox => new Hsbc(),
             BankProfileEnum.Danske => new Danske(),
             BankProfileEnum.Monzo => new Monzo(),
             BankProfileEnum.Lloyds => new Lloyds(),
@@ -41,7 +41,7 @@ public class ConsentAuth
 
     public async Task AuthoriseAsync(
         string authUrl,
-        BankProfile bankProfile,
+        BankProfileEnum bankProfileEnum,
         ConsentVariety consentVariety,
         BankUser bankUser)
     {
@@ -49,7 +49,7 @@ public class ConsentAuth
         await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
         IPage page = await browser.NewPageAsync();
         await page.GotoAsync(authUrl);
-        await GetUiMethods(bankProfile.BankProfileEnum).ConsentUiInteractions(page, consentVariety, bankUser);
+        await GetUiMethods(bankProfileEnum).ConsentUiInteractions(page, consentVariety, bankUser);
         // Wait for redirect web page
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForSelectorAsync(
@@ -63,7 +63,7 @@ public class ConsentAuth
         IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
             "window.pageStatus",
             null,
-            new PageWaitForFunctionOptions { Timeout = 5000 });
+            new PageWaitForFunctionOptions { Timeout = 10000 });
 
         var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
         if (pageStatus is not "POST of fragment succeeded")

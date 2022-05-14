@@ -4,21 +4,38 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
-    public partial class BankProfileDefinitions
+    public enum HsbcBank
     {
-        public BankProfile Hsbc { get; }
+        Sandbox,
+        UkPersonal
+    }
 
-        private BankProfile GetHsbc()
+    public class Hsbc
+    {
+        public BankProfile GetBankProfile(
+            HsbcBank bank,
+            BankProfileHiddenPropertiesDictionary hiddenPropertiesDictionary)
         {
+            BankProfileEnum bankProfileEnum = bank switch
+            {
+                HsbcBank.Sandbox => BankProfileEnum.Hsbc_Sandbox,
+                HsbcBank.UkPersonal => BankProfileEnum.Hsbc_UkPersonal,
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            };
+
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Hsbc);
+                hiddenPropertiesDictionary[bankProfileEnum] ??
+                throw new Exception(
+                    $"Hidden properties are required for bank profile {bankProfileEnum} and cannot be found.");
+
             return new BankProfile(
-                BankProfileEnum.Hsbc,
+                bankProfileEnum,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
                 bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),

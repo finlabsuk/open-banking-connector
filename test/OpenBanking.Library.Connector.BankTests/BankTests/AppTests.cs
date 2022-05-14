@@ -69,8 +69,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Get bank profile definitions
             var bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
             bankProfilesSettings.Validate();
-            Dictionary<string, Dictionary<string, BankProfileHiddenProperties>> bankProfileHiddenProperties =
-                DataFile.ReadFile<Dictionary<string, Dictionary<string, BankProfileHiddenProperties>>>(
+            BankProfileHiddenPropertiesDictionary bankProfileHiddenProperties =
+                DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
                         bankProfilesSettings.HiddenPropertiesFile,
                         new JsonSerializerSettings
                         {
@@ -90,12 +90,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             List<BankData> bankList = bankTestSettings
                 .TestedBanks
                 .Select(
-                    x => new BankData
+                    bankProfileEnum => new BankData
                     {
-                        BankProfile = BankProfileEnumHelper.GetBank(
-                            x,
-                            bankProfileDefinitions),
-                        OverrideCase = overridesDict.TryGetValue(x, out string? value) ? value : null
+                        BankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum),
+                        OverrideCase = overridesDict.TryGetValue(bankProfileEnum, out string? value) ? value : null
                     })
                 .ToList();
 
@@ -148,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         }
 
         protected async Task TestAllInner(
-            BankProfileEnum bank,
+            BankProfileEnum bankProfileEnum,
             SoftwareStatementProfileData softwareStatementProfile,
             RegistrationScopeEnum registrationScope,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -156,7 +154,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         {
             // Test name
             string testName =
-                $"{bank}_{softwareStatementProfile.SoftwareStatementProfileId}_{registrationScope.AbbreviatedName()}";
+                $"{bankProfileEnum}_{softwareStatementProfile.SoftwareStatementProfileId}_{registrationScope.AbbreviatedName()}";
             string testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
             // Get bank test settings
@@ -170,7 +168,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Get bank users
             List<BankUser> bankUserList =
                 _serviceProvider.GetRequiredService<BankUserStore>()
-                    .GetRequiredBankUserList(bank);
+                    .GetRequiredBankUserList(bankProfileEnum);
 
             // Get consent authoriser inputs
             var nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
@@ -214,7 +212,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 ".json");
 
             // Dereference bank
-            BankProfile bankProfile = BankProfileEnumHelper.GetBank(bank, bankProfileDefinitions);
+            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
 
             // Create consent auth if in use
             ConsentAuth? consentAuth;

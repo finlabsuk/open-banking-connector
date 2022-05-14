@@ -7,28 +7,24 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories
 {
+    public class BankUserDictionary : Dictionary<BankProfileEnum, List<BankUser>> { }
+
     public partial class BankUserStore
     {
-        private readonly Dictionary<string, Dictionary<string, List<BankUser>>> _bankUserDictionary;
+        private readonly BankUserDictionary _bankUserDictionary;
 
-        public BankUserStore(Dictionary<string, Dictionary<string, List<BankUser>>> bankUserDictionary)
+        public BankUserStore(BankUserDictionary bankUserDictionary)
         {
             _bankUserDictionary = bankUserDictionary;
         }
 
         public List<BankUser> GetRequiredBankUserList(BankProfileEnum bankProfileEnum)
         {
-            // Get "Sandbox" dictionary
-            Dictionary<string, List<BankUser>> innerDict =
-                _bankUserDictionary["Sandbox"] ?? throw new Exception("No Sandbox bank users found.");
-
-            // Get bankProfileEnum list
-            List<BankUser>? bankUserList = innerDict[bankProfileEnum.ToString()];
-
-            if (bankUserList is null ||
-                !bankUserList.Any())
+            if (!_bankUserDictionary.TryGetValue(bankProfileEnum, out List<BankUser>? bankUserList))
             {
-                throw new Exception($"No bank users found for {bankProfileEnum}.");
+                throw new ArgumentNullException(
+                    $"At least one bank user must be defined for bank profile {bankProfileEnum} "
+                    + "and none can be found.");
             }
 
             return bankUserList;
