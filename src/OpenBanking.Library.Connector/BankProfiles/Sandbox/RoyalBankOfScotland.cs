@@ -31,9 +31,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 },
                 null)
             {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
                 {
-                    BankRegistrationAdjustments = (registration, set) =>
+                    BankRegistrationAdjustments = registration =>
                     {
                         (registration.CustomBehaviour ??= new CustomBehaviour())
                             .BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions

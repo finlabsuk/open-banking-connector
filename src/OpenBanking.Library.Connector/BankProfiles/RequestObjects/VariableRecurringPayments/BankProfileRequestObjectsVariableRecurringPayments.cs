@@ -7,7 +7,7 @@ using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.VariableRecurringPayments
 {
     public enum DomesticVrpTypeEnum
     {
@@ -16,9 +16,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
     }
 
-    public partial class BankProfile
+    public static class BankProfileExtensions
     {
-        public DomesticVrpConsent DomesticVrpConsentRequest(
+        public static DomesticVrpConsent DomesticVrpConsentRequest(
+            this BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             DomesticVrpTypeEnum domesticVrpType)
@@ -239,7 +240,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId,
                 BankRegistrationId = bankRegistrationId
             };
-            return VariableRecurringPaymentsApiSettings.DomesticVrpConsentAdjustments(domesticVrpConsentRequest);
+            return bankProfile.VariableRecurringPaymentsApiSettings.DomesticVrpConsentAdjustments(
+                domesticVrpConsentRequest);
         }
     }
 }

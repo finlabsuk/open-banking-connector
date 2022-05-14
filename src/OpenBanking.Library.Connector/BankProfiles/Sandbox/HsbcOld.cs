@@ -31,9 +31,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 },
                 null)
             {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
                 {
-                    BankRegistrationAdjustments = (registration, scope) =>
+                    BankRegistrationAdjustments = registration =>
                     {
                         registration.IssuerUrl = null;
                         registration.RegistrationEndpoint = "unused";

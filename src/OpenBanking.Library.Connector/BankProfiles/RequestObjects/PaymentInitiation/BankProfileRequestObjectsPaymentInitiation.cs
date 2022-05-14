@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation
 {
     public enum DomesticPaymentTypeEnum
     {
@@ -14,9 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         PersonToMerchant
     }
 
-    public partial class BankProfile
+    public static class BankProfileExtensions
     {
-        public DomesticPaymentConsent DomesticPaymentConsentRequest(
+        public static DomesticPaymentConsent DomesticPaymentConsentRequest(
+            this BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             DomesticPaymentTypeEnum domesticPaymentType,
@@ -149,7 +150,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankRegistrationId = bankRegistrationId,
             };
 
-            return PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(domesticPaymentConsentRequest);
+            return bankProfile.PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(
+                domesticPaymentConsentRequest);
         }
     }
 }

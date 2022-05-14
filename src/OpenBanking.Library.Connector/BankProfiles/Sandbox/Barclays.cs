@@ -29,9 +29,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 },
                 null)
             {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
                 {
-                    BankRegistrationAdjustments = (registration, set) =>
+                    BankRegistrationAdjustments = registration =>
                     {
                         //placeholder value since missing from barclays well-known endpoint (openID configuration) 
                         registration.RegistrationEndpoint = "https://example.com/register";

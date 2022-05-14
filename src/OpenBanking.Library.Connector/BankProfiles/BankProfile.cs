@@ -13,9 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
-    public delegate BankRegistration BankRegistrationAdjustments(
-        BankRegistration bankRegistration,
-        RegistrationScopeEnum registrationScope);
+    public delegate BankRegistration BankRegistrationAdjustments(BankRegistration bankRegistration);
 
     public delegate bool UseRegistrationScope(RegistrationScopeEnum registrationScope);
 
@@ -26,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
     public delegate DomesticVrpConsent DomesticVrpConsentAdjustments(DomesticVrpConsent domesticVrpConsent);
 
-    public class ClientRegistrationApiSettings
+    public class BankConfigurationApiSettings
     {
         /// <summary>
         ///     Describes whether a registration scope should be used when testing with this bank.
@@ -38,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         ///     Adjustments to default BankRegistration request object.
         /// </summary>
         public BankRegistrationAdjustments BankRegistrationAdjustments { get; set; } =
-            (x, _) => x;
+            x => x;
 
         /// <summary>
         ///     Describes whether DELETE /register/{ClientId} is used when testing with this bank.
@@ -132,7 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Settings used when testing Client Registration API.
         /// </summary>
-        public ClientRegistrationApiSettings ClientRegistrationApiSettings { get; set; } =
+        public BankConfigurationApiSettings BankConfigurationApiSettings { get; set; } =
             new();
 
         /// <summary>

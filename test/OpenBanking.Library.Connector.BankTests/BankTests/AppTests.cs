@@ -126,7 +126,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
                     // Determine skip status based on registration scope and add to Theory if matches skippedNotUnskipped
                     bool testCaseSkipped =
-                        !bankData.BankProfile.ClientRegistrationApiSettings.UseRegistrationScope(
+                        !bankData.BankProfile.BankConfigurationApiSettings.UseRegistrationScope(
                             testCaseGroup.RegistrationScope);
                     if (testCaseSkipped == skippedNotUnskipped)
                     {
@@ -335,7 +335,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 requestBuilder,
                 bankRegistrationId,
                 bankId,
-                bankProfile.ClientRegistrationApiSettings);
+                bankProfile.BankConfigurationApiSettings);
         }
 
         public class SoftwareStatementProfileData : IXunitSerializable

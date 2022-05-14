@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -27,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 FilePathBuilder testDataProcessorApiOverrides)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankRequest();
+            Bank bankRequest = bankProfile.GetBankRequest();
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
@@ -49,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postResponse")
                 .GetFilePath();
             string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
-            BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
+            BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
                 default,
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,
@@ -85,15 +86,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder,
             Guid bankRegistrationId,
             Guid bankId,
-            ClientRegistrationApiSettings clientRegistrationApiSettings)
+            BankConfigurationApiSettings bankConfigurationApiSettings)
         {
             IFluentResponse bankRegistrationResp;
-            if (clientRegistrationApiSettings.UseDeleteEndpoint)
+            if (bankConfigurationApiSettings.UseDeleteEndpoint)
             {
                 bankRegistrationResp = await requestBuilder
                     .BankConfiguration
                     .BankRegistrations
-                    .DeleteAsync(bankRegistrationId, null, clientRegistrationApiSettings.UseRegistrationAccessToken);
+                    .DeleteAsync(bankRegistrationId, null, bankConfigurationApiSettings.UseRegistrationAccessToken);
             }
             else
             {

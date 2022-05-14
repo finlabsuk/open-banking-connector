@@ -31,15 +31,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 },
                 null)
             {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
                 {
-                    BankRegistrationAdjustments = (registration, set) =>
+                    BankRegistrationAdjustments = registration =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviour{OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                        registration.CustomBehaviour = new CustomBehaviour
                         {
-                            //well-known endpoint response does not provide one
-                            ResponseModesSupported = new List<string> { "fragment" }
-                        }};
+                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                            {
+                                //well-known endpoint response does not provide one
+                                ResponseModesSupported = new List<string> { "fragment" }
+                            }
+                        };
                         return registration;
                     },
                 }

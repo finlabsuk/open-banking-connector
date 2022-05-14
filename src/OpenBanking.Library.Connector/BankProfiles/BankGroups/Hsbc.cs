@@ -49,9 +49,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 null,
                 null)
             {
-                ClientRegistrationApiSettings = new ClientRegistrationApiSettings
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
                 {
-                    BankRegistrationAdjustments = (registration, scope) =>
+                    BankRegistrationAdjustments = registration =>
                     {
                         (registration.CustomBehaviour ??= new CustomBehaviour())
                             .UseApplicationJoseNotApplicationJwtContentTypeHeader = true;

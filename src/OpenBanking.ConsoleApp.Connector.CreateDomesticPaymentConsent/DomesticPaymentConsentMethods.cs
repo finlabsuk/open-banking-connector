@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;

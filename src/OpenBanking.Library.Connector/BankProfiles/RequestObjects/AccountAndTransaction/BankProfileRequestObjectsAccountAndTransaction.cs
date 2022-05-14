@@ -2,23 +2,20 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction
 {
     public enum AccountAccessConsentType
     {
         MaximumPermissions
     }
 
-    public partial class BankProfile
+    public static class BankProfileExtensions
     {
-        public AccountAccessConsent AccountAccessConsentRequest(
+        public static AccountAccessConsent AccountAccessConsentRequest(
+            this BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
             AccountAccessConsentType accountAccessConsentType,
@@ -63,7 +60,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankRegistrationId = bankRegistrationId,
             };
 
-            return AccountAndTransactionApiSettings.AccountAccessConsentAdjustments(accountAccessConsentRequest);
+            return bankProfile.AccountAndTransactionApiSettings.AccountAccessConsentAdjustments(
+                accountAccessConsentRequest);
         }
     }
 }

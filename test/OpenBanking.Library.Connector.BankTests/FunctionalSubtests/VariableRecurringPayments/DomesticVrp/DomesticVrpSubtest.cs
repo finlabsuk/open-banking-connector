@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -28,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // Create bank
-            Bank bankRequest = bankProfile.BankRequest();
+            Bank bankRequest = bankProfile.GetBankRequest();
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -36,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid bankId = bankResp.Data!.Id;
 
             // Create bank registration
-            BankRegistration registrationRequest = bankProfile.BankRegistrationRequest(
+            BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
                 bankId,
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,

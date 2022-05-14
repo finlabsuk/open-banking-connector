@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             nameof(TestedSkippedBanksById),
             true,
             Skip = "Bank skipped due to setting of" +
-                   nameof(BankProfile.ClientRegistrationApiSettings.UseRegistrationScope) + "in bank profile")]
+                   nameof(BankProfile.BankConfigurationApiSettings.UseRegistrationScope) + "in bank profile")]
         [MemberData(
             nameof(TestedUnskippedBanksById),
             true)]
