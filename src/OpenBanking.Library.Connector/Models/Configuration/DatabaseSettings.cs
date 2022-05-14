@@ -32,10 +32,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
             };
 
         /// <summary>
-        ///     Ensures DB is created if does not exist. Intended for use in Development environment only.
+        ///     At application start-up, ensure database is created if does not exist.
         /// </summary>
-        public bool EnsureDbCreated { get; set; } = false;
+        public bool EnsureDatabaseCreated { get; set; } = false;
 
+        /// <summary>
+        ///     At application start-up, apply pending migrations. Only supported
+        /// for database providers with migration support (i.e. only PostgreSql at this time).
+        /// </summary>
+        public bool EnsureDatabaseMigrated { get; set; } = false;
+        
         public string SettingsGroupName => "OpenBankingConnector:Database";
 
         public DatabaseSettings Validate()

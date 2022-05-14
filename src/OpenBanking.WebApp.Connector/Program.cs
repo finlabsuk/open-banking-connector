@@ -102,14 +102,6 @@ builder.Services
         {
             options.SerializerSettings.ContractResolver = new DefaultContractResolver(); // no to CamelCase
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            // options.SerializerSettings.Error = (o, eventArgs) =>
-            // {
-            //     if (eventArgs.ErrorContext.Error is ArgumentNullException x)
-            //     {
-            //         throw new ValidationException(x.Message);
-            //     }
-            //     Console.WriteLine("hi");
-            // };
         });
 
 // Build app
