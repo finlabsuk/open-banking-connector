@@ -51,7 +51,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.CustomBehaviour)
                 .HasConversion(
-                    v => JsonConvert.SerializeObject(v, _jsonFormatting),
+                    v => JsonConvert.SerializeObject(
+                        v,
+                        _jsonFormatting,
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                     v =>
                         JsonConvert.DeserializeObject<CustomBehaviour>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
