@@ -66,9 +66,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             nameof(TestedUnskippedBanksById),
             false)]
         public async Task TestAllNoConsentAuth(
-            BankProfileEnum bank,
-            SoftwareStatementProfileData softwareStatementProfile,
-            RegistrationScopeEnum registrationScope)
+            BankTestData softwareStatementProfile, // name is "softwareStatementProfile" to customise label in test runner
+            BankProfileEnum bankProfile)
         {
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;
@@ -110,9 +109,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var apiVariantMapper = new ApiVariantMapper();
             var apiClient = new ApiClient(instrumentationClient, new HttpClient());
             await TestAllInner(
-                bank,
+                bankProfile,
                 softwareStatementProfile,
-                registrationScope,
                 () => new RequestBuilderContainer(
                     timeProvider,
                     apiVariantMapper,

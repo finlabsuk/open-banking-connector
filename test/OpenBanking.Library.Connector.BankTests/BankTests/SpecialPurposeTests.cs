@@ -14,9 +14,9 @@ using Xunit.Abstractions;
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
     [Collection("App context collection")]
-    public class SpecialOperationTests : AppTests
+    public class SpecialPurposeTests : AppTests
     {
-        public SpecialOperationTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture) : base(
+        public SpecialPurposeTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture) : base(
             outputHelper,
             appContextFixture) { }
 

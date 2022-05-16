@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 
@@ -137,32 +138,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public RegistrationScopeEnum RegistrationScope { get; set; }
 
         /// <summary>
-        ///     Banks to exclude for this group of test cases.
+        ///     Banks to test using GenericHostAppTest.
         ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
-        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
-        ///     is ignored.
         /// </summary>
-        public List<BankProfileEnum> ExcludedBanks { get; set; } =
+        public List<BankProfileEnum> GenericHostAppTests { get; set; } =
             new();
 
         /// <summary>
-        ///     Banks to include for this group of test cases.
+        ///     Banks to test using PlainAppTest.
         ///     List of banks where each bank is specified via its <see cref="BankProfileEnum" /> as a string.
-        ///     If both <see cref="ExcludedBanks" /> and <see cref="IncludedBanks" /> are non-empty, <see cref="ExcludedBanks" />
-        ///     is ignored.
         /// </summary>
-        public List<BankProfileEnum> IncludedBanks { get; set; } =
+        public List<BankProfileEnum> PlainAppTests { get; set; } =
             new();
-    }
 
-    /// <summary>
-    ///     Bank-specific override for software statement and certificate profiles.
-    /// </summary>
-    public class SoftwareStatementAndCertificateProfileOverride
-    {
-        public BankProfileEnum Bank { get; set; }
+        /// <summary>
+        ///     Bank-specific overrides for software statement and certificate profiles.
+        ///     Dictionary whose keys are bankProfileEnums and values are override strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            SoftwareStatementAndCertificateProfileOverrides { get; set; } =
+            new();
 
-        public string OverrideCase { get; set; } = null!;
+        /// <summary>
+        ///     BankRegistration objects to POST instead of POSTing the default request object.
+        ///     Dictionary whose keys are bankProfileEnums and values are BankRegistration objects
+        /// </summary>
+        public Dictionary<BankProfileEnum, BankRegistration>
+            BankRegistrationObjects { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing BankRegistration objects to use instead of using POST to create a new object.
+        ///     Dictionary whose keys are bankProfileEnums and values are GUID IDs
+        /// </summary>
+        public Dictionary<BankProfileEnum, Guid>
+            BankRegistrationIds { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing AccountAccessConsent objects to use instead of using POST to create a new object.
+        ///     Dictionary whose keys are bankProfileEnums and values are GUID IDs
+        /// </summary>
+        public Dictionary<BankProfileEnum, Guid>
+            AccountAccessConsentIds { get; set; } =
+            new();
     }
 
     /// <summary>
@@ -202,31 +221,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 
     public class BankTestSettings : ISettings<BankTestSettings>
     {
-        public List<SoftwareStatementAndCertificateProfileOverride>
-            SoftwareStatementAndCertificateProfileOverrides { get; set; } =
-            new();
-
         /// <summary>
-        ///     List of banks to test
+        ///     Groups of bank tests.
         /// </summary>
-        public List<BankProfileEnum> TestedBanks { get; set; } = new();
-
-
-        /// <summary>
-        ///     Groups of test cases for Generic Host App Test.
-        /// </summary>
-        public List<TestGroup> GenericHostAppTests { get; set; } =
-            new();
-
-        /// <summary>
-        ///     Groups of test cases for Plain App Test.
-        /// </summary>
-        public List<TestGroup> PlainAppTests { get; set; } = new();
-
-        /// <summary>
-        ///     Do not allow use of "API overrides" instead of bank API call for creating bank registrations (POST /register)
-        /// </summary>
-        public bool ForceNewBankRegistration { get; set; } = false;
+        public List<TestGroup> TestGroups { get; set; } = new();
 
         public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new();
 
@@ -240,8 +238,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// </summary>
         public bool LogExternalApiData { get; set; } = false;
 
-        public string SettingsGroupName => "BankTests";
-
+        public string SettingsGroupName => "OpenBankingConnector:BankTests";
 
         public BankTestSettings Validate()
         {

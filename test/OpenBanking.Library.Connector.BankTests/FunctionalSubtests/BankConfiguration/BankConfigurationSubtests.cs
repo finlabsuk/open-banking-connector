@@ -4,8 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FluentAssertions;
@@ -17,9 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async
             Task<(Guid bankId, Guid bankRegistrationId)>
             PostAndGetObjects(
-                string softwareStatementProfileId,
-                string? softwareStatementAndCertificateProfileOverrideCase,
-                RegistrationScopeEnum registrationScope,
+                BankTestData testData,
                 IRequestBuilder requestBuilder,
                 BankProfile bankProfile,
                 string testNameUnique,
@@ -44,40 +42,58 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankResp.Data.Should().NotBeNull();
             Guid bankId = bankResp.Data!.Id;
 
-            // Create bank registration
-            string filePath = testDataProcessorApiOverrides
-                .AppendToPath("bankRegistration")
-                .AppendToPath("postResponse")
-                .GetFilePath();
-            string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
-            BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
-                default,
-                softwareStatementProfileId,
-                softwareStatementAndCertificateProfileOverrideCase,
-                registrationScope);
-            await testDataProcessorFluentRequestLogging
-                .AppendToPath("bankRegistration")
-                .AppendToPath("postRequest")
-                .WriteFile(registrationRequest);
 
-            registrationRequest.Reference = testNameUnique;
-            registrationRequest.BankId = bankId;
-            IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
-                .BankConfiguration
-                .BankRegistrations
-                .CreateAsync(
-                    registrationRequest,
-                    null,
-                    testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postRequest")
-                        .GetFilePath(),
-                    testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postResponse")
-                        .GetFilePath(),
-                    apiResponseOverrideFile);
+            Guid bankRegistrationId;
+            if (testData.BankRegistrationId is null)
+            {
+                // Create bankRegistration
+                string filePath = testDataProcessorApiOverrides
+                    .AppendToPath("bankRegistration")
+                    .AppendToPath("postResponse")
+                    .GetFilePath();
+                string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
+                BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
+                    default,
+                    testData.SoftwareStatementProfileId,
+                    testData.SoftwareStatementAndCertificateProfileOverride,
+                    testData.RegistrationScope);
+                await testDataProcessorFluentRequestLogging
+                    .AppendToPath("bankRegistration")
+                    .AppendToPath("postRequest")
+                    .WriteFile(registrationRequest);
 
-            registrationResp.Should().NotBeNull();
-            registrationResp.Messages.Should().BeEmpty();
-            registrationResp.Data.Should().NotBeNull();
-            Guid bankRegistrationId = registrationResp.Data!.Id;
+                registrationRequest.Reference = testNameUnique;
+                registrationRequest.BankId = bankId;
+                if (testData.BankRegistrationObject is not null)
+                {
+                    registrationRequest = testData.BankRegistrationObject;
+                    registrationRequest.BankId = bankId;
+                    apiResponseOverrideFile = null;
+                }
+
+                registrationRequest.Reference = testNameUnique;
+                registrationRequest.BankId = bankId;
+                IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
+                    .BankConfiguration
+                    .BankRegistrations
+                    .CreateAsync(
+                        registrationRequest,
+                        null,
+                        testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postRequest")
+                            .GetFilePath(),
+                        testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postResponse")
+                            .GetFilePath(),
+                        apiResponseOverrideFile);
+
+                registrationResp.Should().NotBeNull();
+                registrationResp.Messages.Should().BeEmpty();
+                registrationResp.Data.Should().NotBeNull();
+                bankRegistrationId = registrationResp.Data!.Id;
+            }
+            else
+            {
+                bankRegistrationId = testData.BankRegistrationId.Value;
+            }
 
             return (bankId, bankRegistrationId);
         }

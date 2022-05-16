@@ -32,17 +32,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             nameof(TestedUnskippedBanksById),
             true)]
         public async Task TestAll(
-            BankProfileEnum bank,
-            SoftwareStatementProfileData softwareStatementProfile,
-            RegistrationScopeEnum registrationScope)
+            BankTestData softwareStatementProfile, // name is "softwareStatementProfile" to customise label in test runner
+            BankProfileEnum bankProfile)
         {
             // Connect output to logging
             SetTestLogging();
 
             await TestAllInner(
-                bank,
+                bankProfile,
                 softwareStatementProfile,
-                registrationScope,
                 () => new ScopedRequestBuilderContainer(_serviceProvider),
                 true);
 
