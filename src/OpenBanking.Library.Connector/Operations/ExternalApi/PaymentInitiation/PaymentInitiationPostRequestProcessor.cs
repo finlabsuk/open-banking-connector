@@ -118,7 +118,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             dict.Add("cty", "application/json");
             dict.Add("crit", crit);
             dict.Add("http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-            dict.Add("http://openbanking.org.uk/iss", $"{orgId}/{softwareId}");
+            dict.Add("http://openbanking.org.uk/iss", $"{orgId}/{softwareId}"); // TODO: adjust. See HSBC implementation guide
             dict.Add("http://openbanking.org.uk/tan", "openbanking.org.uk");
             if (!(b64 is null))
             {

@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
@@ -40,6 +41,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 processedSoftwareStatementProfile.SigningKey,
                 processedSoftwareStatementProfile.SigningCertificate);
             StringBuilder requestTraceSb = new StringBuilder()
+                .AppendLine("#### Claims (Request Object)")
+                .AppendLine(
+                    JsonConvert.SerializeObject(
+                        oAuth2RequestObjectClaims,
+                        Formatting.Indented,
+                        new JsonSerializerSettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore,
+                        }))
                 .AppendLine("#### JWT (Request Object)")
                 .Append(requestObjectJwt);
             instrumentationClient.Info(requestTraceSb.ToString());

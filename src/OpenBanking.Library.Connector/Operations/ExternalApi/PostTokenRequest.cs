@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     aud = bankRegistration.TokenEndpoint,
                     jti = Guid.NewGuid().ToString(),
                     iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                    exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds()
+                    exp = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds()
                 };
                 string jwt = JwtFactory.CreateJwt(
                     JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),

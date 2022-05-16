@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                       bankRegistration.ExternalApiObject.ExternalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
-                Exp = DateTimeOffset.UtcNow.AddHours(1),
+                Exp = DateTimeOffset.UtcNow.AddMinutes(30),
                 Aud = bankRegistration.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides?.Audience ??
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
