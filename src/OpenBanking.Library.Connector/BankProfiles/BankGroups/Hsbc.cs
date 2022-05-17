@@ -81,6 +81,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                             consent.ExternalApiRequest.Data.Permissions.Remove(element);
                         }
 
+                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
+                        {
+                            consent.ExternalApiRequest.Data.ExpirationDateTime = DateTimeOffset.UtcNow.AddDays(89);
+                        }
+
                         return consent;
                     }
                 }
