@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// <summary>
         ///     Determines which database provider Open Banking Connector uses.
         /// </summary>
-        public DbProvider Provider { get; set; } = DbProvider.Sqlite;
+        public DbProvider Provider { get; set; } = DbProvider.PostgreSql;
 
         /// <summary>
         ///     Connection strings for each database provider. Open Banking Connector only reads the one for the provider specified
