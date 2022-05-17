@@ -26,17 +26,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
 
         [HttpPost]
         [Route("auth/fragment-redirect-delegate")]
-        [ProducesResponseType(
-            typeof(HttpResponseMessages),
-            StatusCodes.Status201Created)]
-        [ProducesResponseType(
-            typeof(HttpResponseMessages),
-            StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(
-            typeof(HttpResponseMessages),
-            StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HttpResponseMessages))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
         [Consumes("application/x-www-form-urlencoded")]
-        public async Task<IActionResult> PostAuthorisationCallbackAsync([FromForm] AuthorisationCallbackPayload payload)
+        public async Task<IActionResult> PostFragmentRedirectDelegateAsync(
+            [FromForm] AuthorisationCallbackPayload payload)
         {
             // Operation
             AuthResult authResult = payload.ToLibraryVersion();

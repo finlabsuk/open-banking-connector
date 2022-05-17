@@ -55,13 +55,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                     {
                         (registration.CustomBehaviour ??= new CustomBehaviour())
                             .UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        (registration.CustomBehaviour.BankRegistrationClaimsOverrides ??=
-                                new BankRegistrationClaimsOverrides())
-                            .Audience = bankProfileHiddenProperties.GetAdditionalProperty2();
                         (registration.CustomBehaviour.BankRegistrationResponseJsonOptions ??=
                                 new BankRegistrationResponseJsonOptions())
                             .ClientIdIssuedAtConverterOptions =
                             DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds;
+                        (registration.CustomBehaviour.BankRegistrationClaimsOverrides ??=
+                                new BankRegistrationClaimsOverrides())
+                            .Audience = bankProfileHiddenProperties.GetAdditionalProperty2();
+                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
+                        {
+                            (registration.CustomBehaviour.OAuth2RequestObjectClaimsOverrides ??=
+                                    new OAuth2RequestObjectClaimsOverrides())
+                                .Audience = bankProfileHiddenProperties.GetAdditionalProperty2();
+                        }
+
                         return registration;
                     },
                 },

@@ -55,6 +55,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         [JsonProperty("response_type")]
         public string ResponseType { get; set; } = null!;
 
+        [JsonProperty("response_mode")]
+        public string ResponseMode { get; set; } = null!;
+
         [JsonProperty("client_id")]
         public string ClientId { get; set; } = null!;
 

@@ -11,12 +11,34 @@ public class Hsbc : IBankProfileUiMethods
 {
     public async Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
     {
-        await page.ClickAsync("#username");
-        await page.FillAsync("#username", bankUser.UserNameOrNumber);
 
-        await page.ClickAsync("#otp");
-        await page.FillAsync("#otp", bankUser.Password);
+        // Click input[name="username"]
+        await page.Locator("input[name=\"username\"]").ClickAsync();
 
-        await page.ClickAsync(".form-inner > .submit-btn > .btn-container > .continuebtn > a");
+        // Fill input[name="username"]
+        await page.Locator("input[name=\"username\"]").FillAsync(bankUser.UserNameOrNumber);
+
+        // Click input[name="otp"]
+        await page.Locator("input[name=\"otp\"]").ClickAsync();
+
+        // Fill input[name="otp"]
+        await page.Locator("input[name=\"otp\"]").FillAsync(bankUser.Password);
+
+        // Click button:has-text("Continue")
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.Locator("button:has-text(\"Continue\")").ClickAsync();
+        });
+
+        // Click .mat-checkbox-inner-container >> nth=0
+        await page.Locator(".mat-checkbox-inner-container").First.ClickAsync();
+
+        // Click button:has-text("Finish")
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.WaitForTimeoutAsync(400); // workaround for click not registering
+            await page.Locator("button:has-text(\"Finish\")").ClickAsync();
+        });
     }
 }
+

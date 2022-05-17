@@ -63,6 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 { "scope", oAuth2RequestObjectClaims.Scope },
                 { "request", requestObjectJwt },
                 { "nonce", oAuth2RequestObjectClaims.Nonce },
+                //{ "response_mode", "fragment"},
                 { "state", oAuth2RequestObjectClaims.State }
             };
             string queryString = keyValuePairs.ToUrlEncoded();

@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         public string SoftwareClientUri { get; set; } = null!;
 
         [JsonProperty("software_redirect_uris")]
-        public string[] SoftwareRedirectUris { get; set; } = null!;
+        public List<string> SoftwareRedirectUris { get; set; } = null!;
 
         [JsonProperty("software_roles")]
         public string[] SoftwareRoles { get; set; } = null!;
@@ -85,7 +85,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
             TransportCertificateDnWithStringDottedDecimalAttributeValues = transportCertificateProfile
                 .CertificateDnWithStringDottedDecimalAttributeValues;
-            DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
             Id = id;
 
             // Break software statement into components
@@ -107,6 +106,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 throw new InvalidOperationException("Can't correctly process software statement");
             }
 
+            if (!SoftwareStatementPayload.SoftwareRedirectUris.Contains(
+                    softwareStatementProfile.DefaultFragmentRedirectUrl))
+            {
+                throw new ArgumentException(
+                    $"Software statement profile with ID {id} contains DefaultFragmentRedirectUrl {softwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                    "which is not included in software statement software_redirect_uris field.");
+            }
+            DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            
             // Api client
             ApiClient = apiClient;
         }

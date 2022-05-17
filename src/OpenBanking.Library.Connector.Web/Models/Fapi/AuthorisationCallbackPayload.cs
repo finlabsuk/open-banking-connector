@@ -9,16 +9,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi
 {
     public class AuthorisationCallbackPayload
     {
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token"
+        /// </summary>
         [FromForm(Name = "id_token")]
+        [FromQuery(Name = "id_token")]
         public string IdToken { get; set; } = null!;
 
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token"
+        /// </summary>
         [FromForm(Name = "code")]
+        [FromQuery(Name = "code")]
         public string Code { get; set; } = null!;
 
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token" and "state" is request parameter
+        /// </summary>
         [FromForm(Name = "state")]
+        [FromQuery(Name = "state")]
         public string State { get; set; } = null!;
 
         [FromForm(Name = "nonce")]
+        [FromQuery(Name = "nonce")]
         public string? Nonce { get; set; }
     }
 

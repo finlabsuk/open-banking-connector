@@ -29,6 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
+                //ResponseMode = "fragment",
                 ClientId = bankRegistration.ExternalApiObject.ExternalApiId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
