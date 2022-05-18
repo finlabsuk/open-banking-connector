@@ -21,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid id,
             DateTimeOffset created,
             string? createdBy,
-            Guid domesticPaymentConsentId) : base(id, created, createdBy)
+            string? reference,
+            Guid domesticPaymentConsentId) : base(id, created, createdBy, reference)
         {
             DomesticPaymentConsentId = domesticPaymentConsentId;
         }
@@ -39,8 +40,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid domesticPaymentConsentId,
-            string authUrl) : base(id, created, createdBy, domesticPaymentConsentId)
+            string authUrl) : base(id, created, createdBy, reference, domesticPaymentConsentId)
         {
             AuthUrl = authUrl;
         }

@@ -139,6 +139,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
+                persistedObject.Reference,
                 persistedObject.BankRegistrationId,
                 persistedObject.VariableRecurringPaymentsApiId,
                 persistedObject.ExternalApiId,

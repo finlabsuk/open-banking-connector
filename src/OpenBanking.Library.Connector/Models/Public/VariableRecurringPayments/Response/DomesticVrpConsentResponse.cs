@@ -33,13 +33,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// </summary>
     public class DomesticVrpConsentReadLocalResponse : BaseResponse, IDomesticVrpConsentPublicQuery
     {
-        public DomesticVrpConsentReadLocalResponse(
+        internal DomesticVrpConsentReadLocalResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
-            string externalApiId) : base(id, created, createdBy)
+            string externalApiId) : base(id, created, createdBy, reference)
         {
             BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
@@ -69,10 +70,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// </summary>
     public class DomesticVrpConsentReadResponse : DomesticVrpConsentReadLocalResponse
     {
-        public DomesticVrpConsentReadResponse(
+        internal DomesticVrpConsentReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId,
@@ -80,6 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             id,
             created,
             createdBy,
+            reference,
             bankRegistrationId,
             variableRecurringPaymentsApiId,
             externalApiId)
@@ -96,10 +99,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsentReadLocalResponse
 
     {
-        public DomesticVrpConsentReadFundsConfirmationResponse(
+        internal DomesticVrpConsentReadFundsConfirmationResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId,
@@ -107,6 +111,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             id,
             created,
             createdBy,
+            reference,
             bankRegistrationId,
             variableRecurringPaymentsApiId,
             externalApiId)

@@ -21,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid id,
             DateTimeOffset created,
             string? createdBy,
-            Guid domesticVrpConsentId) : base(id, created, createdBy)
+            string? reference,
+            Guid domesticVrpConsentId) : base(id, created, createdBy, reference)
         {
             DomesticVrpConsentId = domesticVrpConsentId;
         }
@@ -38,8 +39,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid domesticVrpConsentId,
-            string authUrl) : base(id, created, createdBy, domesticVrpConsentId)
+            string authUrl) : base(id, created, createdBy, reference, domesticVrpConsentId)
         {
             AuthUrl = authUrl;
         }

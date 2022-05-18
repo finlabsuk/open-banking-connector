@@ -143,6 +143,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
+                persistedObject.Reference,
                 persistedObject.BankRegistrationId,
                 persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,

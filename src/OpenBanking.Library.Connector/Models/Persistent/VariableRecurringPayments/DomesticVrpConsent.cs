@@ -89,6 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 Id,
                 Created,
                 CreatedBy,
+                Reference,
                 BankRegistrationId,
                 VariableRecurringPaymentsApiId,
                 ExternalApiId);

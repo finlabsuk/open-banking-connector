@@ -168,6 +168,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             Id,
             Created,
             CreatedBy,
+            Reference,
+            new ExternalApiObjectResponse(_externalApiId),
             BankId,
             SoftwareStatementProfileId,
             SoftwareStatementAndCertificateProfileOverrideCase,
@@ -177,7 +179,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             TokenEndpoint,
             AuthorizationEndpoint,
             TokenEndpointAuthMethod,
-            CustomBehaviour,
-            new ExternalApiObjectResponse(_externalApiId));
+            CustomBehaviour);
     }
 }

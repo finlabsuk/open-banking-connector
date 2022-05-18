@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
     public interface IBaseQuery
@@ -23,11 +20,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// </summary>
     public abstract class BaseResponse : IBaseQuery
     {
-        internal BaseResponse(Guid id, DateTimeOffset created, string? createdBy)
+        internal BaseResponse(Guid id, DateTimeOffset created, string? createdBy, string? reference)
         {
             Id = id;
             Created = created;
             CreatedBy = createdBy;
+            Reference = reference;
         }
 
         /// <summary>

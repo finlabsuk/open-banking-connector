@@ -86,10 +86,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class BankRegistrationReadLocalResponse : BaseResponse, IBankRegistrationPublicQuery
     {
-        public BankRegistrationReadLocalResponse(
+        internal BankRegistrationReadLocalResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
+            ExternalApiObjectResponse externalApiObject,
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
@@ -99,9 +101,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string tokenEndpoint,
             string authorizationEndpoint,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            CustomBehaviour? customBehaviour,
-            ExternalApiObjectResponse externalApiObject) : base(id, created, createdBy)
+            CustomBehaviour? customBehaviour) : base(id, created, createdBy, reference)
         {
+            ExternalApiObject = externalApiObject;
             BankId = bankId;
             SoftwareStatementProfileId = softwareStatementProfileId;
             SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase;
@@ -112,7 +114,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             AuthorizationEndpoint = authorizationEndpoint;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             CustomBehaviour = customBehaviour;
-            ExternalApiObject = externalApiObject;
         }
 
         public ExternalApiObjectResponse ExternalApiObject { get; }
@@ -136,10 +137,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class BankRegistrationReadResponse : BankRegistrationReadLocalResponse
     {
-        public BankRegistrationReadResponse(
+        internal BankRegistrationReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
+            ExternalApiObjectResponse externalApiObject,
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
@@ -150,11 +153,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string authorizationEndpoint,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             CustomBehaviour? customBehaviour,
-            ExternalApiObjectResponse externalApiObject,
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
             id,
             created,
             createdBy,
+            reference,
+            externalApiObject,
             bankId,
             softwareStatementProfileId,
             softwareStatementAndCertificateProfileOverrideCase,
@@ -164,8 +168,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             tokenEndpoint,
             authorizationEndpoint,
             tokenEndpointAuthMethod,
-            customBehaviour,
-            externalApiObject)
+            customBehaviour)
         {
             ExternalApiResponse = externalApiResponse;
         }

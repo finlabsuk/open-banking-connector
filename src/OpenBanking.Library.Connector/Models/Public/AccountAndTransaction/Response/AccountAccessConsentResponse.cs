@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
@@ -23,13 +22,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     /// </summary>
     public class AccountAccessConsentReadLocalResponse : BaseResponse, IAccountAccessConsentPublicQuery
     {
-        public AccountAccessConsentReadLocalResponse(
+        internal AccountAccessConsentReadLocalResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
-            string externalApiId) : base(id, created, createdBy)
+            string externalApiId) : base(id, created, createdBy, reference)
         {
             BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
@@ -57,10 +57,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     /// </summary>
     public class AccountAccessConsentReadResponse : AccountAccessConsentReadLocalResponse
     {
-        public AccountAccessConsentReadResponse(
+        internal AccountAccessConsentReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
             string externalApiId,
@@ -68,6 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             id,
             created,
             createdBy,
+            reference,
             bankRegistrationId,
             accountAndTransactionApiId,
             externalApiId)

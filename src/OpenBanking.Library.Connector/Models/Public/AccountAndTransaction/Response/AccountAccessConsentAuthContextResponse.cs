@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response
@@ -22,7 +21,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             Guid id,
             DateTimeOffset created,
             string? createdBy,
-            Guid accountAccessConsentId) : base(id, created, createdBy)
+            string? reference,
+            Guid accountAccessConsentId) : base(id, created, createdBy, reference)
         {
             AccountAccessConsentId = accountAccessConsentId;
         }
@@ -39,8 +39,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             Guid id,
             DateTimeOffset created,
             string? createdBy,
-            Guid AccountAccessConsentId,
-            string authUrl) : base(id, created, createdBy, AccountAccessConsentId)
+            string? reference,
+            Guid accountAccessConsentId,
+            string authUrl) : base(id, created, createdBy, reference, accountAccessConsentId)
         {
             AuthUrl = authUrl;
         }

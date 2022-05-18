@@ -54,6 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 Id,
                 Created,
                 CreatedBy,
+                Reference,
                 DomesticPaymentConsentId);
     }
 }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
@@ -22,8 +21,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             string issuerUrl,
-            string financialId) : base(id, created, createdBy)
+            string financialId) : base(id, created, createdBy, reference)
         {
             IssuerUrl = issuerUrl;
             FinancialId = financialId;

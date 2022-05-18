@@ -33,13 +33,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// </summary>
     public class DomesticPaymentConsentReadLocalResponse : BaseResponse, IDomesticPaymentConsentPublicQuery
     {
-        public DomesticPaymentConsentReadLocalResponse(
+        internal DomesticPaymentConsentReadLocalResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
-            string externalApiId) : base(id, created, createdBy)
+            string externalApiId) : base(id, created, createdBy, reference)
         {
             BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
@@ -68,10 +69,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// </summary>
     public class DomesticPaymentConsentReadResponse : DomesticPaymentConsentReadLocalResponse
     {
-        public DomesticPaymentConsentReadResponse(
+        internal DomesticPaymentConsentReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId,
@@ -79,6 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             id,
             created,
             createdBy,
+            reference,
             bankRegistrationId,
             paymentInitiationApiId,
             externalApiId)
@@ -94,10 +97,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// </summary>
     public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentReadLocalResponse
     {
-        public DomesticPaymentConsentReadFundsConfirmationResponse(
+        internal DomesticPaymentConsentReadFundsConfirmationResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId,
@@ -105,6 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             id,
             created,
             createdBy,
+            reference,
             bankRegistrationId,
             paymentInitiationApiId,
             externalApiId)

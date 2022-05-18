@@ -20,13 +20,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class PaymentInitiationApiResponse : BaseResponse, IPaymentInitiationApiQuery
     {
-        public PaymentInitiationApiResponse(
+        internal PaymentInitiationApiResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
+            string? reference,
             Guid bankId,
             PaymentInitiationApiVersion apiVersion,
-            string baseUrl) : base(id, created, createdBy)
+            string baseUrl) : base(id, created, createdBy, reference)
         {
             BankId = bankId;
             ApiVersion = apiVersion;

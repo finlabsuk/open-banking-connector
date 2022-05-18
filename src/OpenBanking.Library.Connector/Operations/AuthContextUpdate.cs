@@ -2,11 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -100,12 +95,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             {
                 throw new InvalidOperationException("Token already supplied for auth context so aborting.");
             }
+
             const int authContextExpiryIntervalInSeconds = 3600;
-            var authContextExpiryTime = authContext.Created
+            DateTimeOffset authContextExpiryTime = authContext.Created
                 .AddSeconds(authContextExpiryIntervalInSeconds);
             if (_timeProvider.GetUtcNow() > authContextExpiryTime)
             {
-                throw new InvalidOperationException("Auth context exists but now expired so will not process redirect.");
+                throw new InvalidOperationException(
+                    "Auth context exists but now expired so will not process redirect.");
             }
 
             BankRegistration bankRegistration = authContext switch
@@ -149,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 tokenEndpointResponse.RefreshToken,
                 _timeProvider.GetUtcNow(),
                 createdBy);
-            
+
             // Delete auth context
             authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), createdBy);
 
@@ -158,7 +155,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new AuthContextResponse(
                     authContext.Id,
                     authContext.Created,
-                    authContext.CreatedBy);
+                    authContext.CreatedBy,
+                    authContext.Reference);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();

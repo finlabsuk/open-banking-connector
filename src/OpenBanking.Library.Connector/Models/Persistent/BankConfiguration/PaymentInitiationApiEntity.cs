@@ -61,6 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
                 Id,
                 Created,
                 CreatedBy,
+                Reference,
                 BankId,
                 ApiVersion,
                 BaseUrl);

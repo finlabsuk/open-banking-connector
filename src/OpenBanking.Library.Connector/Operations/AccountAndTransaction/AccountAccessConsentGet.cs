@@ -124,6 +124,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
+                persistedObject.Reference,
                 persistedObject.BankRegistrationId,
                 persistedObject.AccountAndTransactionApiId,
                 persistedObject.ExternalApiId,

@@ -50,6 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
                 Id,
                 Created,
                 CreatedBy,
+                Reference,
                 AccountAccessConsentId);
     }
 }

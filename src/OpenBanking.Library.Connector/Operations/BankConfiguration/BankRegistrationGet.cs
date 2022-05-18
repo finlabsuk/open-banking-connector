@@ -173,6 +173,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.Id,
                 entity.Created,
                 entity.CreatedBy,
+                entity.Reference,
+                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 entity.BankId,
                 entity.SoftwareStatementProfileId,
                 entity.SoftwareStatementAndCertificateProfileOverrideCase,
@@ -183,7 +185,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.AuthorizationEndpoint,
                 entity.TokenEndpointAuthMethod,
                 entity.CustomBehaviour,
-                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 apiResponse);
 
             return (response, nonErrorMessages);
