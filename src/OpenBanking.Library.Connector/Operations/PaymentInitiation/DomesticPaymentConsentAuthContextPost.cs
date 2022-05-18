@@ -50,7 +50,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> AddEntity(
             DomesticPaymentConsentAuthContextRequest request,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             // Create persisted entity
@@ -60,9 +59,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 request.Reference,
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.DomesticPaymentConsentId);
 
             // Add entity

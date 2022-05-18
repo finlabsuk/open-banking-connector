@@ -61,7 +61,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             DomesticVrpConsent request,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
@@ -70,14 +69,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 request.Reference,
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 null,
                 0,
                 null,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.BankRegistrationId,
                 request.VariableRecurringPaymentsApiId,
                 apiResponse.Data.ConsentId);

@@ -51,7 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
         protected override async Task<AccountAccessConsentAuthContextCreateLocalResponse> AddEntity(
             AccountAccessConsentAuthContextRequest request,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             // Create persisted entity
@@ -61,9 +60,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 request.Reference,
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.AccountAccessConsentId
                 );
 

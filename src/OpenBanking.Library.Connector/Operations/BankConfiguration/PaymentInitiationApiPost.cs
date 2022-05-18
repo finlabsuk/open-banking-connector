@@ -29,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
         protected override async Task<PaymentInitiationApiResponse> AddEntity(
             PaymentInitiationApiRequest request,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
@@ -38,9 +37,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 Guid.NewGuid(),
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.BankId,
                 request.ApiVersion,
                 request.BaseUrl.TrimEnd('/'));

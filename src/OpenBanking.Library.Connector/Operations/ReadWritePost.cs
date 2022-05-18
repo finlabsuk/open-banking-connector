@@ -51,7 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TPublicRequest request,
             TApiRequest apiRequest,
             TApiResponse apiResponse,
-            string? createdBy,
             ITimeProvider timeProvider);
 
         protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
@@ -122,7 +121,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 requestInfo.Request,
                 apiRequest,
                 apiResponse,
-                requestInfo.ModifiedBy,
                 _timeProvider);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)

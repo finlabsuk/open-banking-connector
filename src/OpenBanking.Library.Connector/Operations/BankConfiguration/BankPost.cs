@@ -29,7 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
         protected override async Task<BankResponse> AddEntity(
             Models.Public.BankConfiguration.Request.Bank request,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             // Create persisted entity
@@ -39,9 +38,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 Guid.NewGuid(),
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.IssuerUrl,
                 request.FinancialId);
 

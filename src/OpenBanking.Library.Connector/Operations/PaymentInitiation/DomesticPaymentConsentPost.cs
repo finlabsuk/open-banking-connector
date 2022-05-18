@@ -63,7 +63,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             DomesticPaymentConsent request,
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
@@ -72,14 +71,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 request.Reference,
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 null,
                 0,
                 null,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.BankRegistrationId,
                 request.PaymentInitiationApiId,
                 apiResponse.Data.ConsentId);

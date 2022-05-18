@@ -51,7 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         {
             var requestInfo = new PostRequestInfo(
                 request,
-                createdBy,
                 apiRequestWriteFile,
                 apiResponseWriteFile,
                 apiResponseOverrideFile);
@@ -81,20 +80,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         {
             public PostRequestInfo(
                 TPublicRequest request,
-                string? modifiedBy,
                 string? apiRequestWriteFile,
                 string? apiResponseWriteFile,
                 string? apiResponseOverrideFile)
             {
                 Request = request;
-                ModifiedBy = modifiedBy;
                 ApiRequestWriteFile = apiRequestWriteFile;
                 ApiResponseWriteFile = apiResponseWriteFile;
                 ApiResponseOverrideFile = apiResponseOverrideFile;
             }
 
             public TPublicRequest Request { get; }
-            public string? ModifiedBy { get; }
             public string? ApiRequestWriteFile { get; }
             public string? ApiResponseWriteFile { get; }
             public string? ApiResponseOverrideFile { get; }
@@ -134,7 +130,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Add entity
             TPublicResponse response = await AddEntity(
                 requestInfo.Request,
-                requestInfo.ModifiedBy,
                 _timeProvider);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -145,7 +140,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected abstract Task<TPublicResponse> AddEntity(
             TPublicRequest request,
-            string? createdBy,
             ITimeProvider timeProvider);
     }
 }

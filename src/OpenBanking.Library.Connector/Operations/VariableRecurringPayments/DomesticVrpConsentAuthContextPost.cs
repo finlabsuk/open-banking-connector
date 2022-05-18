@@ -25,14 +25,14 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentAuthContext : LocalEntityPost<
+        DomesticVrpConsentAuthContextPost : LocalEntityPost<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
             DomesticVrpConsentAuthContextCreateLocalResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
 
-        public DomesticVrpConsentAuthContext(
+        public DomesticVrpConsentAuthContextPost(
             IDbReadWriteEntityMethods<DomesticVrpConsentAuthContextPersisted>
                 entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -51,7 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
         protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> AddEntity(
             DomesticVrpConsentAuthContextRequest request,
-            string? createdBy,
             ITimeProvider timeProvider)
         {
             // Create persisted entity
@@ -61,9 +60,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 request.Reference,
                 false,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 utcNow,
-                createdBy,
+                request.CreatedBy,
                 request.DomesticVrpConsentId);
 
             // Add entity

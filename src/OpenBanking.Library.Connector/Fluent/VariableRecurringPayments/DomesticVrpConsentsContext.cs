@@ -109,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 DomesticVrpConsentAuthContextCreateLocalResponse,
                 DomesticVrpConsentAuthContextReadLocalResponse>(
                 _sharedContext,
-                new DomesticVrpConsentAuthContext(
+                new DomesticVrpConsentAuthContextPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
