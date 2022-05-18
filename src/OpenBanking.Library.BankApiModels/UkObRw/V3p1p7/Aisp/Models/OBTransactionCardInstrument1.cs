@@ -5,6 +5,8 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Set of elements to describe the card instrument used in the transaction. </summary>
@@ -22,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="authorisationType"> The card authorisation type. </param>
         /// <param name="name"> Name of the cardholder using the card instrument. </param>
         /// <param name="identification"> Identification assigned by an institution to identify the card instrument used in the transaction. This identification is known by the account owner, and may be masked. </param>
-        public OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName, OBTransactionCardInstrument1AuthorisationTypeEnum? authorisationType, string name, string identification)
+        [JsonConstructor] public OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName, OBTransactionCardInstrument1AuthorisationTypeEnum? authorisationType, string name, string identification)
         {
             CardSchemeName = cardSchemeName;
             AuthorisationType = authorisationType;

@@ -47,15 +47,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         public string Self { get; set; }
 
         /// <summary> Gets the first. </summary>
-        public string First { get; }
+        public string First { get; set; }
 
         /// <summary> Gets the prev. </summary>
-        public string Prev { get; }
+        public string Prev { get; set; }
 
         /// <summary> Gets the next. </summary>
-        public string Next { get; }
+        public string Next { get; set; }
 
         /// <summary> Gets the last. </summary>
-        public string Last { get; }
+        public string Last { get; set; }
     }
 }

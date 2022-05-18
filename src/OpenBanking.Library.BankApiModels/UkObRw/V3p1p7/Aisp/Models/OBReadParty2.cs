@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -29,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        public OBReadParty2(OBReadParty2Data data, Links links, Meta meta)
+        [JsonConstructor] public OBReadParty2(OBReadParty2Data data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

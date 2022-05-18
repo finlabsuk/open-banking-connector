@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -28,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// <summary> Initializes a new instance of ProprietaryBankTransactionCodeStructure1. </summary>
         /// <param name="code"> Proprietary bank transaction code to identify the underlying transaction. </param>
         /// <param name="issuer"> Identification of the issuer of the proprietary bank transaction code. </param>
-        public ProprietaryBankTransactionCodeStructure1(string code, string issuer)
+        [JsonConstructor] public ProprietaryBankTransactionCodeStructure1(string code, string issuer)
         {
             Code = code;
             Issuer = issuer;
