@@ -18,8 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
             this BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
-            AccountAccessConsentType accountAccessConsentType,
-            string? createdBy)
+            AccountAccessConsentType accountAccessConsentType)
         {
             var accountAccessConsentRequest = new AccountAccessConsent
             {
@@ -55,7 +54,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
                         TransactionToDateTime = null
                     },
                     new Dictionary<string, string>()),
-                CreatedBy = createdBy,
                 AccountAndTransactionApiId = accountAndTransactionApiId,
                 BankRegistrationId = bankRegistrationId,
             };

@@ -17,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -43,15 +44,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             _serviceProvider = appContextFixture.Host.Services;
         }
 
-        public static TheoryData<BankTestData, BankProfileEnum>
+        public static TheoryData<BankTestData1, BankTestData2>
             TestedSkippedBanksById(bool genericAppNotPlainAppTest) =>
             TestedBanksById(true, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankTestData, BankProfileEnum>
+        public static TheoryData<BankTestData1, BankTestData2>
             TestedUnskippedBanksById(bool genericAppNotPlainAppTest) =>
             TestedBanksById(false, genericAppNotPlainAppTest);
 
-        public static TheoryData<BankTestData, BankProfileEnum> TestedBanksById(
+        public static TheoryData<BankTestData1, BankTestData2> TestedBanksById(
             bool skippedNotUnskipped,
             bool genericAppNotPlainAppTest)
         {
@@ -75,21 +76,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 new BankProfileDefinitions(bankProfileHiddenProperties);
 
             var data =
-                new TheoryData<BankTestData, BankProfileEnum>();
+                new TheoryData<BankTestData1, BankTestData2>();
 
             // Loop through test groups
-            foreach (TestGroup testCaseGroup in bankTestSettings.TestGroups)
+            foreach ((string groupName, TestGroup testGroup) in bankTestSettings.TestGroups)
             {
                 List<BankProfileEnum> testedBanks = genericAppNotPlainAppTest
-                    ? testCaseGroup.GenericHostAppTests
-                    : testCaseGroup.PlainAppTests;
+                    ? testGroup.GenericHostAppTests
+                    : testGroup.PlainAppTests;
 
                 // Loop through tested banks
                 foreach (BankProfileEnum bankProfileEnum in testedBanks)
                 {
                     // Get override for software statement and certificate profiles
                     string? overrideCase =
-                        testCaseGroup
+                        testGroup
                             .SoftwareStatementAndCertificateProfileOverrides
                             .TryGetValue(bankProfileEnum, out string? value1)
                             ? value1
@@ -97,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
                     // Get BankRegistration
                     BankRegistration? bankRegistrationObject =
-                        testCaseGroup
+                        testGroup
                             .BankRegistrationObjects
                             .TryGetValue(bankProfileEnum, out BankRegistration? value2)
                             ? value2
@@ -105,40 +106,52 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
                     // Get BankRegistration ID
                     Guid? bankRegistrationId =
-                        testCaseGroup
+                        testGroup
                             .BankRegistrationIds
                             .TryGetValue(bankProfileEnum, out Guid value3)
                             ? value3
                             : null;
 
+                    // Get AccountAccessConsent
+                    AccountAccessConsent? accountAccessConsentObject =
+                        testGroup
+                            .AccountAccessConsentObjects
+                            .TryGetValue(bankProfileEnum, out AccountAccessConsent? value4)
+                            ? value4
+                            : null;
+
                     // Get AccountAccessConsent ID
                     Guid? accountAccessConsentId =
-                        testCaseGroup
+                        testGroup
                             .AccountAccessConsentIds
-                            .TryGetValue(bankProfileEnum, out Guid value4)
-                            ? value4
+                            .TryGetValue(bankProfileEnum, out Guid value5)
+                            ? value5
                             : null;
 
                     // Determine whether test case should be skipped based on registration scope
                     BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
                     bool registrationScopeValid =
-                        bankProfile.BankConfigurationApiSettings.UseRegistrationScope(testCaseGroup.RegistrationScope);
+                        bankProfile.BankConfigurationApiSettings.UseRegistrationScope(testGroup.RegistrationScope);
                     bool testCaseShouldBeSkipped = !registrationScopeValid;
 
                     // Add test case to theory data if skip status matches that of theory data
                     if (testCaseShouldBeSkipped == skippedNotUnskipped)
                     {
                         data.Add(
-                            new BankTestData
+                            new BankTestData1
                             {
-                                SoftwareStatementProfileId = testCaseGroup.SoftwareStatementProfileId,
+                                TestGroupName = groupName,
+                                SoftwareStatementProfileId = testGroup.SoftwareStatementProfileId,
                                 SoftwareStatementAndCertificateProfileOverride = overrideCase,
-                                RegistrationScope = testCaseGroup.RegistrationScope,
+                                RegistrationScope = testGroup.RegistrationScope,
+                            },
+                            new BankTestData2
+                            {
+                                BankProfileEnum = bankProfileEnum,
                                 BankRegistrationObject = bankRegistrationObject,
                                 BankRegistrationId = bankRegistrationId,
                                 AccountAccessConsentId = accountAccessConsentId
-                            },
-                            bankProfileEnum);
+                            });
                     }
                 }
             }
@@ -147,14 +160,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         }
 
         protected async Task TestAllInner(
-            BankProfileEnum bankProfileEnum,
-            BankTestData testData,
+            BankTestData1 testData1,
+            BankTestData2 testData2,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             bool genericNotPlainAppTest)
         {
             // Test name
             string testName =
-                $"{bankProfileEnum}_{testData.SoftwareStatementProfileId}_{testData.RegistrationScope.AbbreviatedName()}";
+                $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData1.RegistrationScope.AbbreviatedName()}";
             string testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
             // Get bank test settings
@@ -168,7 +181,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Get bank users
             List<BankUser> bankUserList =
                 _serviceProvider.GetRequiredService<BankUserStore>()
-                    .GetRequiredBankUserList(bankProfileEnum);
+                    .GetRequiredBankUserList(testData2.BankProfileEnum);
 
             // Get consent authoriser inputs
             var nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
@@ -180,8 +193,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 _serviceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await processedSoftwareStatementProfileStore.GetAsync(
-                    testData.SoftwareStatementProfileId,
-                    testData.SoftwareStatementAndCertificateProfileOverride);
+                    testData1.SoftwareStatementProfileId,
+                    testData1.SoftwareStatementAndCertificateProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get request builder
@@ -212,7 +225,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 ".json");
 
             // Dereference bank
-            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
+            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
             // Create consent auth if in use
             ConsentAuth? consentAuth;
@@ -249,7 +262,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationSubtests.PostAndGetObjects(
-                    testData,
+                    testData1,
+                    testData2,
                     requestBuilder,
                     bankProfile,
                     testNameUnique,
@@ -267,7 +281,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 await AccountAccessConsentSubtest.RunTest(
                     subTest,
                     bankProfile,
-                    testData,
+                    testData2,
                     bankId,
                     bankRegistrationId,
                     bankProfile.AccountAndTransactionApiSettings,
@@ -331,6 +345,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Delete bank configuration objects
             await BankConfigurationSubtests.DeleteObjects(
+                testData2,
                 requestBuilder,
                 bankRegistrationId,
                 bankId,

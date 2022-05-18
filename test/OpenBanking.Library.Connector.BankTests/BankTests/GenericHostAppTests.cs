@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -32,15 +31,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             nameof(TestedUnskippedBanksById),
             true)]
         public async Task TestAll(
-            BankTestData softwareStatementProfile, // name is "softwareStatementProfile" to customise label in test runner
-            BankProfileEnum bankProfile)
+            BankTestData1 testGroup, // name chosen to customise label in test runner
+            BankTestData2 bankProfile) // name chosen to customise label in test runner
         {
             // Connect output to logging
             SetTestLogging();
 
             await TestAllInner(
+                testGroup,
                 bankProfile,
-                softwareStatementProfile,
                 () => new ScopedRequestBuilderContainer(_serviceProvider),
                 true);
 

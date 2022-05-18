@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
@@ -176,6 +177,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
+        ///     AccountAccessConsent objects to POST instead of POSTing the default request object.
+        ///     Dictionary whose keys are bankProfileEnums and values are AccountAccessConsent objects
+        /// </summary>
+        public Dictionary<BankProfileEnum, AccountAccessConsent>
+            AccountAccessConsentObjects { get; set; } =
+            new();
+
+        /// <summary>
         ///     Existing AccountAccessConsent objects to use instead of using POST to create a new object.
         ///     Dictionary whose keys are bankProfileEnums and values are GUID IDs
         /// </summary>
@@ -222,9 +231,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
     public class BankTestSettings : ISettings<BankTestSettings>
     {
         /// <summary>
-        ///     Groups of bank tests.
+        ///     Named groups of bank tests.
         /// </summary>
-        public List<TestGroup> TestGroups { get; set; } = new();
+        public Dictionary<string, TestGroup> TestGroups { get; set; } = new();
 
         public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new();
 

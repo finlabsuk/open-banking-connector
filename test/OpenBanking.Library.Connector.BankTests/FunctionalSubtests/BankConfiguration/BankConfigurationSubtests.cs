@@ -17,7 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async
             Task<(Guid bankId, Guid bankRegistrationId)>
             PostAndGetObjects(
-                BankTestData testData,
+                BankTestData1 testData1,
+                BankTestData2 testData2,
                 IRequestBuilder requestBuilder,
                 BankProfile bankProfile,
                 string testNameUnique,
@@ -31,6 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
                 .WriteFile(bankRequest);
+            bankRequest.CreatedBy = "Automated bank tests";
             bankRequest.Reference = testNameUnique;
             IFluentResponse<BankResponse> bankResp = await requestBuilder
                 .BankConfiguration
@@ -42,11 +44,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankResp.Data.Should().NotBeNull();
             Guid bankId = bankResp.Data!.Id;
 
-
+            // Create bankRegistration or use existing
             Guid bankRegistrationId;
-            if (testData.BankRegistrationId is null)
+            if (testData2.BankRegistrationId is null)
             {
-                // Create bankRegistration
                 string filePath = testDataProcessorApiOverrides
                     .AppendToPath("bankRegistration")
                     .AppendToPath("postResponse")
@@ -54,25 +55,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
                 BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
                     default,
-                    testData.SoftwareStatementProfileId,
-                    testData.SoftwareStatementAndCertificateProfileOverride,
-                    testData.RegistrationScope);
+                    testData1.SoftwareStatementProfileId,
+                    testData1.SoftwareStatementAndCertificateProfileOverride,
+                    testData1.RegistrationScope);
                 await testDataProcessorFluentRequestLogging
                     .AppendToPath("bankRegistration")
                     .AppendToPath("postRequest")
                     .WriteFile(registrationRequest);
 
-                registrationRequest.Reference = testNameUnique;
-                registrationRequest.BankId = bankId;
-                if (testData.BankRegistrationObject is not null)
+                if (testData2.BankRegistrationObject is not null)
                 {
-                    registrationRequest = testData.BankRegistrationObject;
-                    registrationRequest.BankId = bankId;
+                    registrationRequest = testData2.BankRegistrationObject;
                     apiResponseOverrideFile = null;
                 }
 
-                registrationRequest.Reference = testNameUnique;
                 registrationRequest.BankId = bankId;
+                registrationRequest.CreatedBy = "Automated bank tests";
+                registrationRequest.Reference = testNameUnique;
                 IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
                     .BankConfiguration
                     .BankRegistrations
@@ -92,36 +91,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             }
             else
             {
-                bankRegistrationId = testData.BankRegistrationId.Value;
+                bankRegistrationId = testData2.BankRegistrationId.Value;
             }
 
             return (bankId, bankRegistrationId);
         }
 
         public static async Task DeleteObjects(
+            BankTestData2 testData2,
             IRequestBuilder requestBuilder,
             Guid bankRegistrationId,
             Guid bankId,
             BankConfigurationApiSettings bankConfigurationApiSettings)
         {
-            IFluentResponse bankRegistrationResp;
-            if (bankConfigurationApiSettings.UseDeleteEndpoint)
+            if (testData2.BankRegistrationId is null)
             {
-                bankRegistrationResp = await requestBuilder
-                    .BankConfiguration
-                    .BankRegistrations
-                    .DeleteAsync(bankRegistrationId, null, bankConfigurationApiSettings.UseRegistrationAccessToken);
-            }
-            else
-            {
-                bankRegistrationResp = await requestBuilder
-                    .BankConfiguration
-                    .BankRegistrations
-                    .DeleteLocalAsync(bankRegistrationId);
-            }
+                IFluentResponse bankRegistrationResp;
+                if (bankConfigurationApiSettings.UseDeleteEndpoint)
+                {
+                    bankRegistrationResp = await requestBuilder
+                        .BankConfiguration
+                        .BankRegistrations
+                        .DeleteAsync(bankRegistrationId, null, bankConfigurationApiSettings.UseRegistrationAccessToken);
+                }
+                else
+                {
+                    bankRegistrationResp = await requestBuilder
+                        .BankConfiguration
+                        .BankRegistrations
+                        .DeleteLocalAsync(bankRegistrationId);
+                }
 
-            bankRegistrationResp.Should().NotBeNull();
-            bankRegistrationResp.Messages.Should().BeEmpty();
+
+                bankRegistrationResp.Should().NotBeNull();
+                bankRegistrationResp.Messages.Should().BeEmpty();
+            }
 
             IFluentResponse bankResp = await requestBuilder
                 .BankConfiguration
