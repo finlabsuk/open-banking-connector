@@ -16,19 +16,23 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 [Tags("Transactions")]
 public class TransactionsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public TransactionsController(IRequestBuilder requestBuilder)
+    public TransactionsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
     ///     Read Transactions
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
+    /// <param name="page">Page (if supported by bank)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="externalApiStatementId">External (bank) API ID of Statement</param>
+    /// <param name="modifiedBy"></param>
     /// <param name="fromBookingDateTime">
     ///     Start date and time for filtering of the Transaction records on the
     ///     Transaction/BookingDateTime field
@@ -53,14 +57,23 @@ public class TransactionsController : ControllerBase
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
+        string? externalApiAccountId,
+        string? externalApiStatementId,
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
+        Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy,
         [FromQuery]
         string? fromBookingDateTime,
         [FromQuery]
         string? toBookingDateTime,
-        string? externalApiAccountId,
-        string? externalApiStatementId)
+        [FromQuery]
+        string? page)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         IFluentResponse<TransactionsResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -70,7 +83,10 @@ public class TransactionsController : ControllerBase
                 externalApiAccountId,
                 externalApiStatementId,
                 fromBookingDateTime,
-                toBookingDateTime);
+                toBookingDateTime,
+                page,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         // HTTP response
         return fluentResponse switch

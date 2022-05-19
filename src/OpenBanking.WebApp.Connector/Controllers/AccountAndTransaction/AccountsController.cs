@@ -16,11 +16,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 [Tags("Accounts")]
 public class AccountsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public AccountsController(IRequestBuilder requestBuilder)
+    public AccountsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -28,6 +30,8 @@ public class AccountsController : ControllerBase
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="modifiedBy"></param>
+    /// <param name="page"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/accounts")]
@@ -43,14 +47,31 @@ public class AccountsController : ControllerBase
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalApiAccountId)
+        string? externalApiAccountId,
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
+        Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy,
+        [FromQuery]
+        string? page)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         IFluentResponse<AccountsResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Accounts
-            .ReadAsync(accountAccessConsentId, externalApiAccountId);
+            .ReadAsync(
+                accountAccessConsentId,
+                externalApiAccountId,
+                null,
+                null,
+                null,
+                page,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         // HTTP response
         return fluentResponse switch

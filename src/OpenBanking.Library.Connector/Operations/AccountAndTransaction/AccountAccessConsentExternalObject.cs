@@ -66,7 +66,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 string? externalApiStatementId,
                 string? fromBookingDateTime,
                 string? toBookingDateTime,
-                string? modifiedBy)
+                string? page,
+                string? modifiedBy,
+                string? publicRequestUrlWithoutQuery)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -107,12 +109,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     modifiedBy);
 
             // Retrieve endpoint URL
-            Uri endpointUrl = RetrieveGetUrl(
+            Uri requestUrl = GetRequestUrl(
                 accountAndTransactionApi.BaseUrl,
                 externalApiAccountId,
                 externalApiStatementId,
                 fromBookingDateTime,
-                toBookingDateTime);
+                toBookingDateTime,
+                page);
 
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -125,31 +128,79 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             (apiResponse, newNonErrorMessages) =
                 await apiRequests.GetAsync(
-                    endpointUrl,
+                    requestUrl,
                     jsonSerializerSettings,
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Create response
-            TPublicResponse response = PublicGetResponse(apiResponse);
+            TPublicResponse response = PublicGetResponse(apiResponse, requestUrl, publicRequestUrlWithoutQuery);
 
             return (response, nonErrorMessages);
         }
 
-        protected abstract Uri RetrieveGetUrl(
+        protected abstract Uri GetRequestUrl(
             string baseUrl,
             string? externalApiAccountId,
             string? externalApiStatementId,
             string? fromBookingDateTime,
-            string? toBookingDateTime);
+            string? toBookingDateTime,
+            string? page);
 
-        protected abstract TPublicResponse PublicGetResponse(TApiResponse apiResponse);
+        protected abstract TPublicResponse PublicGetResponse(
+            TApiResponse apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery);
 
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
             AccountAndTransactionApi accountAndTransactionApi,
             string bankFinancialId,
             string accessToken,
             IInstrumentationClient instrumentationClient);
+
+        protected string? GetLinkUrlQuery(
+            string? linkUrlString,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
+        {
+            if (linkUrlString is null)
+            {
+                return null;
+            }
+
+            var linkUrl = new Uri(linkUrlString);
+
+            int urlsMatch = Uri.Compare(
+                linkUrl,
+                apiRequestUrl,
+                UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
+                UriFormat.Unescaped,
+                StringComparison.InvariantCulture);
+
+            if (urlsMatch != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Request URL {apiRequestUrl} and link URL {linkUrl} have different base URLs!");
+            }
+
+            if (!string.IsNullOrEmpty(linkUrl.Fragment))
+            {
+                throw new InvalidOperationException($"Link URL {linkUrl} has unexpected fragment.");
+            }
+
+            if (publicRequestUrlWithoutQuery is null)
+            {
+                return linkUrl.Query;
+            }
+
+            var a = new UriBuilder(publicRequestUrlWithoutQuery);
+            a.Query = linkUrl.Query;
+            Uri fullUri = a.Uri;
+
+            return fullUri.ToString();
+
+            //return requestUrl.MakeRelativeUri(new Uri(linkUrl)).ToString();
+        }
     }
 }

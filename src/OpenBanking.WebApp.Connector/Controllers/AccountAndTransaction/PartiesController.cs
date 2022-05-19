@@ -16,11 +16,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 [Tags("Parties")]
 public class PartiesController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public PartiesController(IRequestBuilder requestBuilder)
+    public PartiesController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -28,6 +30,8 @@ public class PartiesController : ControllerBase
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="modifiedBy"></param>
+    /// <param name="page"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/party")]
@@ -43,14 +47,31 @@ public class PartiesController : ControllerBase
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAsync(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalApiAccountId)
+        string? externalApiAccountId,
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
+        Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy,
+        [FromQuery]
+        string? page)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         IFluentResponse<PartiesResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Parties
-            .ReadAsync(accountAccessConsentId, externalApiAccountId);
+            .ReadAsync(
+                accountAccessConsentId,
+                externalApiAccountId,
+                null,
+                null,
+                null,
+                page,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         // HTTP response
         return fluentResponse switch
@@ -73,6 +94,8 @@ public class PartiesController : ControllerBase
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="modifiedBy"></param>
+    /// <param name="page"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/accounts/{externalApiAccountId}/parties")]
@@ -87,14 +110,31 @@ public class PartiesController : ControllerBase
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Get2Async(
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required] Guid accountAccessConsentId,
-        string? externalApiAccountId)
+        string? externalApiAccountId,
+        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
+        Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy,
+        [FromQuery]
+        string? page)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         IFluentResponse<Parties2Response> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Parties2
-            .ReadAsync(accountAccessConsentId, externalApiAccountId);
+            .ReadAsync(
+                accountAccessConsentId,
+                externalApiAccountId,
+                null,
+                null,
+                null,
+                page,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         // HTTP response
         return fluentResponse switch

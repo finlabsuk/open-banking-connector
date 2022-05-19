@@ -39,12 +39,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected string RelativePath => "/balances";
         protected string RelativePath2 => "/balances";
 
-        protected override Uri RetrieveGetUrl(
+        protected override Uri GetRequestUrl(
             string baseUrl,
             string? externalApiAccountId,
             string? externalApiStatementId,
             string? fromBookingDateTime,
-            string? toBookingDateTime)
+            string? toBookingDateTime,
+            string? page)
         {
             Uri endpointUrl =
                 (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
@@ -59,11 +60,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         }
 
         protected override BalancesResponse PublicGetResponse(
-            AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse)
+            AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse,
+            Uri apiRequestUrl,
+            string? requestUrlWithoutQuery)
         {
-            int index = apiResponse.Links.Self.LastIndexOf("aisp", StringComparison.InvariantCulture);
-            string newString = apiResponse.Links.Self.Substring(index);
-            apiResponse.Links.Self = newString;
+            // Get link queries
+            apiResponse.Links.Self = GetLinkUrlQuery(apiResponse.Links.Self, apiRequestUrl, requestUrlWithoutQuery);
+            apiResponse.Links.First = GetLinkUrlQuery(apiResponse.Links.First, apiRequestUrl, requestUrlWithoutQuery);
+            apiResponse.Links.Prev = GetLinkUrlQuery(apiResponse.Links.Prev, apiRequestUrl, requestUrlWithoutQuery);
+            apiResponse.Links.Next = GetLinkUrlQuery(apiResponse.Links.Next, apiRequestUrl, requestUrlWithoutQuery);
+            apiResponse.Links.Last = GetLinkUrlQuery(apiResponse.Links.Last, apiRequestUrl, requestUrlWithoutQuery);
+
             return new BalancesResponse(apiResponse);
         }
 

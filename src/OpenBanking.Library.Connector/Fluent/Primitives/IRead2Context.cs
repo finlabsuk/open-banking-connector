@@ -2,10 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -23,19 +19,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         ///     Objects will be read from bank database only.
         /// </summary>
         /// <param name="consentId"></param>
-        /// <param name="externalAccountId"></param>
-        /// <param name="externalStatementId"></param>
+        /// <param name="externalApiAccountId"></param>
+        /// <param name="externalApiStatementId"></param>
         /// <param name="fromBookingDateTime"></param>
         /// <param name="toBookingDateTime"></param>
+        /// <param name="page"></param>
         /// <param name="modifiedBy"></param>
+        /// <param name="requestUrlWithoutQuery"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid consentId,
-            string? externalAccountId = null,
-            string? externalStatementId = null,
+            string? externalApiAccountId = null,
+            string? externalApiStatementId = null,
             string? fromBookingDateTime = null,
             string? toBookingDateTime = null,
-            string? modifiedBy = null);
+            string? page = null,
+            string? modifiedBy = null,
+            string? requestUrlWithoutQuery = null);
     }
 
     internal interface
@@ -47,11 +47,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
         async Task<IFluentResponse<TPublicResponse>> IRead2Context<TPublicResponse>.ReadAsync(
             Guid consentId,
-            string? externalAccountId,
-            string? externalStatementId,
+            string? externalApiAccountId,
+            string? externalApiStatementId,
             string? fromBookingDateTime,
             string? toBookingDateTime,
-            string? modifiedBy)
+            string? page,
+            string? modifiedBy,
+            string? requestUrlWithoutQuery)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -62,11 +64,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                     await ReadObject.ReadAsync(
                         consentId,
-                        externalAccountId,
-                        externalStatementId,
+                        externalApiAccountId,
+                        externalApiStatementId,
                         fromBookingDateTime,
                         toBookingDateTime,
-                        modifiedBy);
+                        page,
+                        modifiedBy,
+                        requestUrlWithoutQuery);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 
                 // Return success response (thrown exceptions produce error response)
