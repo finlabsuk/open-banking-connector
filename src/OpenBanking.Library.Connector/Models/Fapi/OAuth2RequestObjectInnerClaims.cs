@@ -8,10 +8,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
     public class OAuth2RequestObjectInnerClaims
     {
-        public OAuth2RequestObjectInnerClaims(string intentId)
+        public OAuth2RequestObjectInnerClaims(string externalApiConsentId, string? consentIdClaimPrefix)
         {
-            UserInfo = new UserInfoClaims(intentId);
-            IdToken = new IdTokenClaims(intentId);
+            string consentIdClaimValue = consentIdClaimPrefix + externalApiConsentId;
+            UserInfo = new UserInfoClaims(consentIdClaimValue);
+            IdToken = new IdTokenClaims(consentIdClaimValue);
         }
 
         [JsonProperty("userinfo")]
@@ -41,9 +42,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         public class UserInfoClaims
         {
-            public UserInfoClaims(string intentId)
+            public UserInfoClaims(string consentIdClaimValue)
             {
-                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
+                OpenbankingIntentId = new IndividualClaim(
+                    true,
+                    consentIdClaimValue,
+                    null);
             }
 
             [JsonProperty("openbanking_intent_id")]
@@ -52,10 +56,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         public class IdTokenClaims
         {
-            public IdTokenClaims(string intentId)
+            public IdTokenClaims(string consentIdClaimValue)
             {
-                OpenbankingIntentId = new IndividualClaim(true, intentId, null);
+                OpenbankingIntentId = new IndividualClaim(
+                    true,
+                    consentIdClaimValue,
+                    null);
                 Acr = new IndividualClaim(true, "urn:openbanking:psd2:ca", null);
+                // Acr = new IndividualClaim(
+                //     true,
+                //     null,
+                //     new[]
+                //     {
+                //         "urn:openbanking:psd2:sca",
+                //         "urn:openbanking:psd2:ca"
+                //     });
             }
 
             [JsonProperty("openbanking_intent_id")]

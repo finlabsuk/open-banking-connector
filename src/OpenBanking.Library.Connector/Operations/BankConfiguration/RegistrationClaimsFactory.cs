@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using ClientRegistrationModelsPublic =
@@ -35,9 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScopeEnum registrationScope,
-            BankRegistrationClaimsOverrides? bankClientRegistrationClaimsOverrides,
-            string bankXFapiFinancialId,
-            bool useTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues)
+            BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
+            string bankXFapiFinancialId)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
@@ -55,23 +55,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             // Convert tokenEndpointAuthMethod to spec type
             ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum
-                tokenEndpointAuthMethodLocal;
-            tokenEndpointAuthMethodLocal = tokenEndpointAuthMethod switch
-            {
-                TokenEndpointAuthMethod.ClientSecretBasic => ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic,
-                TokenEndpointAuthMethod.PrivateKeyJwt => ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt,
-                TokenEndpointAuthMethod.TlsClientAuth => ClientRegistrationModelsPublic
-                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(tokenEndpointAuthMethod),
-                    tokenEndpointAuthMethod,
-                    null)
-            };
+                tokenEndpointAuthMethodLocal = tokenEndpointAuthMethod switch
+                {
+                    TokenEndpointAuthMethod.ClientSecretBasic => ClientRegistrationModelsPublic
+                        .OBRegistrationProperties1tokenEndpointAuthMethodEnum.ClientSecretBasic,
+                    TokenEndpointAuthMethod.PrivateKeyJwt => ClientRegistrationModelsPublic
+                        .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt,
+                    TokenEndpointAuthMethod.TlsClientAuth => ClientRegistrationModelsPublic
+                        .OBRegistrationProperties1tokenEndpointAuthMethodEnum.TlsClientAuth,
+                    _ => throw new ArgumentOutOfRangeException(
+                        nameof(tokenEndpointAuthMethod),
+                        tokenEndpointAuthMethod,
+                        null)
+                };
 
             IList<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum> grantTypes =
-                bankClientRegistrationClaimsOverrides?.GrantTypes ??
+                bankRegistrationPostCustomBehaviour?.GrantTypesClaim ??
                 new[]
                 {
                     ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
@@ -88,7 +87,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                tlsClientAuthSubjectDn = useTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues
+                tlsClientAuthSubjectDn = bankRegistrationPostCustomBehaviour
+                    ?.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues ?? false
                     ? sProfile.TransportCertificateDnWithStringDottedDecimalAttributeValues
                     : sProfile.TransportCertificateDnWithHexDottedDecimalAttributeValues;
             }
@@ -96,12 +96,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             var registrationClaims =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
-                    Iss = bankClientRegistrationClaimsOverrides?.IssuerIsSoftwareStatementXFapiFinancialId ?? false
+                    Iss = bankRegistrationPostCustomBehaviour?.IssClaimIsSoftwareStatementXFapiFinancialId ?? false
                         ? sProfile.SoftwareStatementPayload.OrgId
                         : sProfile.SoftwareStatementPayload.SoftwareId,
                     Iat = DateTimeOffset.Now,
                     Exp = DateTimeOffset.UtcNow.AddMinutes(30),
-                    Aud = bankClientRegistrationClaimsOverrides?.Audience ??
+                    Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
                           bankXFapiFinancialId,
                     Jti = Guid.NewGuid().ToString(),
                     TokenEndpointAuthMethod = tokenEndpointAuthMethodLocal,
@@ -120,9 +120,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     TlsClientAuthSubjectDn = tlsClientAuthSubjectDn
                 };
 
-            if (!(bankClientRegistrationClaimsOverrides?.SubjectType is null))
+            if (!(bankRegistrationPostCustomBehaviour?.SubjectTypeClaim is null))
             {
-                registrationClaims.SubjectType = bankClientRegistrationClaimsOverrides.SubjectType;
+                registrationClaims.SubjectType = bankRegistrationPostCustomBehaviour.SubjectTypeClaim;
             }
 
             return registrationClaims;

@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
         public string PaymentApiUrl { get; set; } = null!;
 
         [JsonProperty("openBankingClientRegistrationClaimsOverrides")]
-        public BankRegistrationClaimsOverrides OpenBankingClientRegistrationClaimsOverrides { get; set; } = null!;
+        public BankRegistrationPostCustomBehaviour OpenBankingClientRegistrationClaimsOverrides { get; set; } = null!;
 
         [JsonProperty("openBankingOpenIdConfiguration")]
         public OpenIdConfiguration OpenIdConfiguration { get; set; } = null!;

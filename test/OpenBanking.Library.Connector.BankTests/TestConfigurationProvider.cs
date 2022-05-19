@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
@@ -48,15 +48,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             return results.FirstOrDefault();
         }
 
-        public BankRegistrationClaimsOverrides GetOpenBankingClientRegistrationClaimsOverrides()
+        public BankRegistrationPostCustomBehaviour GetOpenBankingClientRegistrationClaimsOverrides()
         {
-            IEnumerable<BankRegistrationClaimsOverrides> results = _providers
+            IEnumerable<BankRegistrationPostCustomBehaviour> results = _providers
                 .Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
                 .Where(v => v != null)
                 .Select(v => v!);
 
             // Populate default instance
-            return results.FirstOrDefault() ?? new BankRegistrationClaimsOverrides();
+            return results.FirstOrDefault() ?? new BankRegistrationPostCustomBehaviour();
         }
 
         public OpenIdConfiguration GetOpenBankingOpenIdConfiguration()

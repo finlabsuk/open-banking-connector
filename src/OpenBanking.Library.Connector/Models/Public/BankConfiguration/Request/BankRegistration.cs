@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
@@ -83,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
         ///     For a well-behaved bank, normally this object should be null.
         /// </summary>
-        public CustomBehaviour? CustomBehaviour { get; set; }
+        public CustomBehaviourClass? CustomBehaviour { get; set; }
 
 
         /// <summary>

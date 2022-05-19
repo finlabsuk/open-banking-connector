@@ -4,11 +4,10 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using OAuth2RequestObjectClaimsOverridesRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.OAuth2RequestObjectClaimsOverrides;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -74,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string authorizationEndpoint,
             string registrationEndpoint,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            CustomBehaviour? customBehaviour,
+            CustomBehaviourClass? customBehaviour,
             string externalApiId,
             string? externalApiSecret,
             string? registrationAccessToken) : base(
@@ -150,7 +149,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
         ///     For a well-behaved bank, normally this object should be null.
         /// </summary>
-        public CustomBehaviour? CustomBehaviour { get; }
+        public CustomBehaviourClass? CustomBehaviour { get; }
 
         /// <summary>
         ///     Bank with which this BankRegistration is associated.

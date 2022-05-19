@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -38,15 +39,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviour
-                        {
-                            UseApplicationJoseNotApplicationJwtContentTypeHeader = true,
-                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
-                            {
-                                //register endpoint response does not provide one
-                                ResponseModesSupported = new List<string> { "fragment" }
-                            }
-                        };
+                        BankRegistrationPostCustomBehaviour bankRegistrationPost =
+                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
+                        bankRegistrationPost.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
+                        (registration.CustomBehaviour.OpenIdConfigurationGet ??=
+                                new OpenIdConfigurationGetCustomBehaviour())
+                            //register endpoint response does not provide one
+                            .ResponseModesSupportedResponse = new List<string> { "fragment" };
                         return registration;
                     },
                 }

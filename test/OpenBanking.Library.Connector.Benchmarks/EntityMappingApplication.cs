@@ -7,7 +7,7 @@ using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -189,25 +189,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
         private BankRegistration CreateClient() => new()
         {
             RegistrationEndpoint = "https://ccccccccccccccccccccccccccccccccccccc.com",
-            CustomBehaviour = new CustomBehaviour
+            CustomBehaviour = new CustomBehaviourClass
             {
-                BankRegistrationResponseOverrides = new BankRegistrationResponseOverrides
+                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    GrantTypes = new[]
-                    {
-                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
-                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
-                    }
-                },
-                BankRegistrationClaimsOverrides = new BankRegistrationClaimsOverrides
-                {
-                    GrantTypes = new[]
+                    GrantTypesClaimResponse = new[]
                     {
                         ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
                         ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
                     },
-                    Audience = "audience",
-                    TokenEndpointAuthSigningAlgorithm = "alg"
+
+                    GrantTypesClaim = new[]
+                    {
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.ClientCredentials,
+                        ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.AuthorizationCode,
+                    },
+                    AudClaim = "audience",
+                    TokenEndpointAuthSigningAlgClaim = "alg"
                 }
             },
             SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

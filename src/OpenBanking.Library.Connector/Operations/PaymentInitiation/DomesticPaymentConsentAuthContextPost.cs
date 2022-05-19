@@ -84,7 +84,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
-                domesticPaymentConsent.BankRegistrationNavigation,
+                domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                domesticPaymentConsent.BankRegistrationNavigation.CustomBehaviour?.DomesticPaymentConsentAuthGet,
+                domesticPaymentConsent.BankRegistrationNavigation.AuthorizationEndpoint,
                 domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
                 "payments",

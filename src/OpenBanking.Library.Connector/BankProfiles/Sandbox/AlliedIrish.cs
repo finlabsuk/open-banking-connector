@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -35,12 +36,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviour
+                        registration.CustomBehaviour = new CustomBehaviourClass
                         {
-                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                            OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                             {
                                 //well-known endpoint response does not provide one
-                                ResponseModesSupported = new List<string> { "fragment" }
+                                ResponseModesSupportedResponse = new List<string> { "fragment" }
                             }
                         };
                         return registration;

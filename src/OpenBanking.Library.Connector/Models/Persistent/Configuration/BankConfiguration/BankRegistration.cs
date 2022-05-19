@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         _jsonFormatting,
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                     v =>
-                        JsonConvert.DeserializeObject<CustomBehaviour>(v))
+                        JsonConvert.DeserializeObject<CustomBehaviourClass>(v))
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property("_externalApiId")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -43,12 +44,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        (registration.CustomBehaviour ??= new CustomBehaviour())
-                            .BankRegistrationResponseJsonOptions =
-                            new BankRegistrationResponseJsonOptions
+                        (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .BankRegistrationPost =
+                            new BankRegistrationPostCustomBehaviour
                             {
-                                ClientIdIssuedAtConverterOptions =
-                                    DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds
+                                ClientIdIssuedAtClaimResponseJsonConverter =
+                                    DateTimeOffsetConverter.UnixMilliSecondsJsonFormat
                             };
                         return registration;
                     },

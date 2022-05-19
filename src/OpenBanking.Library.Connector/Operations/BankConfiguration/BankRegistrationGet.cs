@@ -94,22 +94,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     .AccessToken;
 
                 // Create new Open Banking object by posting JWT
-                JsonSerializerSettings? jsonSerializerSettings = null;
-                if (!(entity.CustomBehaviour?.BankRegistrationResponseJsonOptions is null))
+                JsonSerializerSettings? responseJsonSerializerSettings = null;
+                if (!(entity.CustomBehaviour?.BankRegistrationPost is null))
                 {
-                    var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    var optionsDict = new Dictionary<JsonConverterLabel, int>();
+
+                    DateTimeOffsetConverter? clientIdIssuedAtClaimResponseJsonConverter = entity
+                        .CustomBehaviour
+                        .BankRegistrationPost
+                        .ClientIdIssuedAtClaimResponseJsonConverter;
+                    if (clientIdIssuedAtClaimResponseJsonConverter is not null)
                     {
-                        {
+                        optionsDict.Add(
                             JsonConverterLabel.DcrRegClientIdIssuedAt,
-                            (int) entity.CustomBehaviour.BankRegistrationResponseJsonOptions
-                                .ClientIdIssuedAtConverterOptions
-                        },
-                        {
-                            JsonConverterLabel.DcrRegScope,
-                            (int) entity.CustomBehaviour.BankRegistrationResponseJsonOptions.ScopeConverterOptions
-                        }
-                    };
-                    jsonSerializerSettings = new JsonSerializerSettings
+                            (int) clientIdIssuedAtClaimResponseJsonConverter);
+                    }
+
+                    DelimitedStringConverterOptions? scopeClaimJsonConverter = entity.CustomBehaviour
+                        .BankRegistrationPost
+                        .ScopeClaimResponseJsonConverter;
+                    if (scopeClaimJsonConverter is not null)
+                    {
+                        optionsDict.Add(JsonConverterLabel.DcrRegScope, (int) scopeClaimJsonConverter);
+                    }
+
+                    responseJsonSerializerSettings = new JsonSerializerSettings
                     {
                         Context = new StreamingContext(
                             StreamingContextStates.All,
@@ -155,7 +164,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 (apiResponse, newNonErrorMessages) =
                     await apiRequests.GetAsync(
                         endpointUrl,
-                        jsonSerializerSettings,
+                        responseJsonSerializerSettings,
                         apiClient,
                         _mapper);
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration
@@ -22,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
             RegistrationScopeEnum? registrationScope,
-            CustomBehaviour? customBehaviour = null)
+            CustomBehaviourClass? customBehaviour = null)
         {
             var bankRegistration = new BankRegistration
             {

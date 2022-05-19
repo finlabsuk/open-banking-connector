@@ -4,37 +4,40 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
 {
     internal static class OAuth2RequestObjectClaimsFactory
     {
         public static OAuth2RequestObjectClaims CreateOAuth2RequestObjectClaims(
-            BankRegistration bankRegistration,
+            string externalApiId,
+            ConsentAuthGetCustomBehaviour? consentAuthGet,
             string redirectUrl,
             string[] scope,
-            string intentId,
+            string externalApiConsentId,
             string issuerUrl,
             string state)
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = bankRegistration.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides?.Issuer ??
-                      bankRegistration.ExternalApiObject.ExternalApiId,
+                Iss = consentAuthGet?.IssClaim ??
+                      externalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddMinutes(30),
-                Aud = bankRegistration.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides?.Audience ??
+                Aud = consentAuthGet?.AudClaim ??
                       issuerUrl,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
                 //ResponseMode = "fragment",
-                ClientId = bankRegistration.ExternalApiObject.ExternalApiId,
+                ClientId = externalApiId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,
-                Claims = new OAuth2RequestObjectInnerClaims(intentId),
+                Claims = new OAuth2RequestObjectInnerClaims(
+                    externalApiConsentId,
+                    consentAuthGet?.ConsentIdClaimPrefix),
                 State = state
             };
 

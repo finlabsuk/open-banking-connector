@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
         T? GetEnumValue<T>(string key)
             where T : struct;
 
-        BankRegistrationClaimsOverrides? GetOpenBankingClientRegistrationClaimsOverrides();
+        BankRegistrationPostCustomBehaviour? GetOpenBankingClientRegistrationClaimsOverrides();
 
         OpenIdConfiguration? GetOpenBankingOpenIdConfiguration();
     }

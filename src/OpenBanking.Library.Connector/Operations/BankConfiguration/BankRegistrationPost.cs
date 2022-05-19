@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -152,15 +153,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 // Update OpenID Provider Configuration based on overrides
                 IList<string>? responseModesSupportedOverride =
-                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides?.ResponseModesSupported;
+                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationGet?.ResponseModesSupportedResponse;
                 if (!(responseModesSupportedOverride is null))
                 {
                     openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
                 }
 
                 IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationOverrides
-                        ?.TokenEndpointAuthMethodsSupported;
+                    requestInfo.Request.CustomBehaviour?.OpenIdConfigurationGet
+                        ?.TokenEndpointAuthMethodsSupportedResponse;
                 if (!(tokenEndpointAuthMethodsSupportedOverride is null))
                 {
                     openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
@@ -226,26 +227,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                         tokenEndpointAuthMethod,
                         processedSoftwareStatementProfile,
                         registrationScope,
-                        requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsOverrides,
-                        bank.FinancialId,
-                        requestInfo.Request.CustomBehaviour
-                            ?.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues ?? false);
+                        requestInfo.Request.CustomBehaviour?.BankRegistrationPost,
+                        bank.FinancialId);
 
                 // Get DCR URL
                 var uri = new Uri(registrationEndpoint);
 
                 // Create request serialiser settings.
                 JsonSerializerSettings? requestJsonSerializerSettings = null;
-                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationClaimsJsonOptions is null))
+                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationPost is null))
                 {
-                    var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    var optionsDict = new Dictionary<JsonConverterLabel, int>();
+                    DelimitedStringConverterOptions? scopeClaimJsonConverter = requestInfo.Request.CustomBehaviour
+                        .BankRegistrationPost
+                        .ScopeClaimJsonConverter;
+                    if (scopeClaimJsonConverter is not null)
                     {
-                        {
-                            JsonConverterLabel.DcrRegScope,
-                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationClaimsJsonOptions
-                                .ScopeConverterOptions
-                        }
-                    };
+                        optionsDict.Add(JsonConverterLabel.DcrRegScope, (int) scopeClaimJsonConverter);
+                    }
+
                     requestJsonSerializerSettings = new JsonSerializerSettings
                     {
                         Context = new StreamingContext(
@@ -256,21 +256,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 // Create response serialiser settings.
                 JsonSerializerSettings? responseJsonSerializerSettings = null;
-                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationResponseJsonOptions is null))
+                if (!(requestInfo.Request.CustomBehaviour?.BankRegistrationPost is null))
                 {
-                    var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    var optionsDict = new Dictionary<JsonConverterLabel, int>();
+
+                    DateTimeOffsetConverter? clientIdIssuedAtClaimResponseJsonConverter = requestInfo.Request
+                        .CustomBehaviour
+                        .BankRegistrationPost
+                        .ClientIdIssuedAtClaimResponseJsonConverter;
+                    if (clientIdIssuedAtClaimResponseJsonConverter is not null)
                     {
-                        {
+                        optionsDict.Add(
                             JsonConverterLabel.DcrRegClientIdIssuedAt,
-                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationResponseJsonOptions
-                                .ClientIdIssuedAtConverterOptions
-                        },
-                        {
-                            JsonConverterLabel.DcrRegScope,
-                            (int) requestInfo.Request.CustomBehaviour.BankRegistrationResponseJsonOptions
-                                .ScopeConverterOptions
-                        }
-                    };
+                            (int) clientIdIssuedAtClaimResponseJsonConverter);
+                    }
+
+                    DelimitedStringConverterOptions? scopeClaimJsonConverter = requestInfo.Request.CustomBehaviour
+                        .BankRegistrationPost
+                        .ScopeClaimResponseJsonConverter;
+                    if (scopeClaimJsonConverter is not null)
+                    {
+                        optionsDict.Add(JsonConverterLabel.DcrRegScope, (int) scopeClaimJsonConverter);
+                    }
+
                     responseJsonSerializerSettings = new JsonSerializerSettings
                     {
                         Context = new StreamingContext(
@@ -281,7 +289,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 // Create new Open Banking registration by processing override or posting JWT
                 bool useApplicationJoseNotApplicationJwtContentTypeHeader =
-                    requestInfo.Request.CustomBehaviour?.UseApplicationJoseNotApplicationJwtContentTypeHeader ?? false;
+                    requestInfo.Request.CustomBehaviour?.BankRegistrationPost
+                        ?.UseApplicationJoseNotApplicationJwtContentTypeHeader ?? false;
                 IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
                     ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                     dynamicClientRegistrationApiVersion switch
@@ -358,14 +367,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             // Create persisted CustomBehaviour preserving only things actually required for future activities involving this
             // registration
-            var customBehaviourPersisted = new CustomBehaviour
+            var customBehaviourPersisted = new CustomBehaviourClass
             {
-                BankRegistrationResponseJsonOptions =
-                    requestInfo.Request.CustomBehaviour?.BankRegistrationResponseJsonOptions,
-                BankRegistrationResponseOverrides =
-                    requestInfo.Request.CustomBehaviour?.BankRegistrationResponseOverrides,
-                OAuth2RequestObjectClaimsOverrides =
-                    requestInfo.Request.CustomBehaviour?.OAuth2RequestObjectClaimsOverrides,
+                BankRegistrationPost =
+                    requestInfo.Request.CustomBehaviour?.BankRegistrationPost,
+                AccountAccessConsentAuthGet =
+                    requestInfo.Request.CustomBehaviour?.AccountAccessConsentAuthGet,
+                DomesticPaymentConsentAuthGet =
+                    requestInfo.Request.CustomBehaviour?.DomesticPaymentConsentAuthGet,
+                DomesticVrpConsentAuthGet =
+                    requestInfo.Request.CustomBehaviour?.DomesticVrpConsentAuthGet
             };
 
             // Create persisted entity

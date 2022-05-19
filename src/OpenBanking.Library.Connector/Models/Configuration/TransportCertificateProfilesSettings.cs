@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
         ///     determined by bank registration request property
         ///     <see
-        ///         cref="CustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
+        ///         cref="BankRegistrationPostCustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = string.Empty;
@@ -70,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
         ///     determined by bank registration request property
         ///     <see
-        ///         cref="CustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
+        ///         cref="BankRegistrationPostCustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
         ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
         /// </summary>
         public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = string.Empty;

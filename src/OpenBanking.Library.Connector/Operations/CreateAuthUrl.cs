@@ -6,7 +6,7 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -17,9 +17,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     public static class CreateAuthUrl
     {
         internal static string Create(
-            string consentId,
+            string externalApiConsentId,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            BankRegistration bankRegistration,
+            string externalApiId,
+            ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
+            string authorisationEndpoint,
             string issuerUrl,
             string state,
             string scopeString,
@@ -29,10 +31,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
-                    bankRegistration,
+                    externalApiId,
+                    customBehaviourConsentAuthGet,
                     redirectUrl,
                     new[] { "openid", scopeString },
-                    consentId,
+                    externalApiConsentId,
                     issuerUrl,
                     state);
             string requestObjectJwt = JwtFactory.CreateJwt(
@@ -67,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 { "state", oAuth2RequestObjectClaims.State }
             };
             string queryString = keyValuePairs.ToUrlEncoded();
-            string authUrl = bankRegistration.AuthorizationEndpoint + "?" + queryString;
+            string authUrl = authorisationEndpoint + "?" + queryString;
             StringBuilder authUrlTraceSb = new StringBuilder()
                 .AppendLine("#### Auth URL (Consent)")
                 .Append(authUrl);

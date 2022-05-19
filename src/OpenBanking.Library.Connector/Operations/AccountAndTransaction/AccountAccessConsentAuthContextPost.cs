@@ -85,7 +85,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string authUrl = CreateAuthUrl.Create(
                 accountAccessConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
-                accountAccessConsent.BankRegistrationNavigation,
+                accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                accountAccessConsent.BankRegistrationNavigation.CustomBehaviour?.AccountAccessConsentAuthGet,
+                accountAccessConsent.BankRegistrationNavigation.AuthorizationEndpoint,
                 accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
                 state,
                 "accounts",

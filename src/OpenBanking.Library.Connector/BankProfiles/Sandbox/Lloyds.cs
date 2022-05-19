@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -40,32 +40,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviour
-                        {
-                            BankRegistrationClaimsOverrides =
-                                new BankRegistrationClaimsOverrides
-                                {
-                                    GrantTypes =
-                                        new List<ClientRegistrationModelsPublic.
-                                            OBRegistrationProperties1grantTypesItemEnum>
-                                        {
-                                            ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
-                                                .ClientCredentials,
-                                            ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
-                                                .AuthorizationCode
-                                        },
-                                    SubjectType = "pairwise"
-                                },
-                            OpenIdConfigurationOverrides = new OpenIdConfigurationOverrides
+                        BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
+                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
+                        bankRegistrationPostCustomBehaviour.GrantTypesClaim =
+                            new List<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>
                             {
-                                ResponseModesSupported =
-                                    new List<string>
-                                    {
-                                        "fragment", "query", "form_post"
-                                    } // missing from OpenID response
-                            }
-                        };
+                                ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                    .ClientCredentials,
+                                ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                    .AuthorizationCode
+                            };
+                        bankRegistrationPostCustomBehaviour.SubjectTypeClaim = "pairwise";
 
+                        OpenIdConfigurationGetCustomBehaviour openIdConfigurationGetCustomBehaviour =
+                            registration.CustomBehaviour
+                            .OpenIdConfigurationGet ??= new OpenIdConfigurationGetCustomBehaviour();
+
+                        openIdConfigurationGetCustomBehaviour.ResponseModesSupportedResponse =
+                            new List<string>
+                            {
+                                "fragment", "query", "form_post"
+                            }; // missing from OpenID response
+                        
                         return registration;
                     },
                 }

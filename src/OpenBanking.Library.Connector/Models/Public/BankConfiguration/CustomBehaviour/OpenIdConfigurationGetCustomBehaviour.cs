@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour
 {
     /// <summary>
     ///     Class used to specify overrides to returned OpenID configuration (from
@@ -13,10 +13,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     ///     OBC to have necessary information about a bank.
     ///     Default (null) property values do not lead to changes.
     /// </summary>
-    public class OpenIdConfigurationOverrides
+    public class OpenIdConfigurationGetCustomBehaviour
     {
-        public IList<string>? ResponseModesSupported { get; set; }
+        public IList<string>? ResponseModesSupportedResponse { get; set; }
 
-        public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupported { get; set; }
+        public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupportedResponse
+        {
+            get;
+            set;
+        }
     }
 }

@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
@@ -97,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
             }
         }
 
-        public BankRegistrationClaimsOverrides? GetOpenBankingClientRegistrationClaimsOverrides()
+        public BankRegistrationPostCustomBehaviour? GetOpenBankingClientRegistrationClaimsOverrides()
         {
             if (_configuration == null)
             {

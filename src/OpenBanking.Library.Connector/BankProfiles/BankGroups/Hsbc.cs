@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
@@ -53,21 +53,38 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        (registration.CustomBehaviour ??= new CustomBehaviour())
+                        // BankConfiguration POST custom behaviour
+                        BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
+                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
+                        bankRegistrationPostCustomBehaviour
                             .UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        (registration.CustomBehaviour.BankRegistrationResponseJsonOptions ??=
-                                new BankRegistrationResponseJsonOptions())
-                            .ClientIdIssuedAtConverterOptions =
-                            DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds;
-                        (registration.CustomBehaviour.BankRegistrationClaimsOverrides ??=
-                                new BankRegistrationClaimsOverrides())
-                            .Audience = bankProfileHiddenProperties.GetAdditionalProperty2();
+                        bankRegistrationPostCustomBehaviour
+                                .ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat;
                         if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
                         {
-                            (registration.CustomBehaviour.OAuth2RequestObjectClaimsOverrides ??=
-                                    new OAuth2RequestObjectClaimsOverrides())
-                                .Audience = bankProfileHiddenProperties.GetAdditionalProperty2();
+                            bankRegistrationPostCustomBehaviour.AudClaim =
+                                bankProfileHiddenProperties.GetAdditionalProperty1();
                         }
+                        else
+                        {
+                            bankRegistrationPostCustomBehaviour.AudClaim =
+                                bankProfileHiddenProperties.GetRequiredIssuerUrl();
+                        }
+
+                        // AccountAccessConsent GET custom behaviour
+                        ConsentAuthGetCustomBehaviour accountAccessConsentAuthGetCustomBehaviour =
+                            registration.CustomBehaviour.AccountAccessConsentAuthGet ??=
+                                new ConsentAuthGetCustomBehaviour();
+                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
+                        {
+                            accountAccessConsentAuthGetCustomBehaviour.AudClaim =
+                                bankProfileHiddenProperties.GetAdditionalProperty1();
+                        }
+
+                        accountAccessConsentAuthGetCustomBehaviour
+                            .ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2();
 
                         return registration;
                     },

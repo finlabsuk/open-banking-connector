@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
@@ -37,14 +38,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        (registration.CustomBehaviour ??= new CustomBehaviour())
-                            .BankRegistrationResponseJsonOptions = new BankRegistrationResponseJsonOptions
-                            {
-                                ClientIdIssuedAtConverterOptions =
-                                    DateTimeOffsetToUnixConverterOptions.JsonUsesMilliSecondsNotSeconds
-                            };
-                        registration.CustomBehaviour.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        registration.CustomBehaviour
+                        BankRegistrationPostCustomBehaviour bankRegistrationPost =
+                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
+                        bankRegistrationPost.ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat;
+                        bankRegistrationPost.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
+                        bankRegistrationPost
                             .UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true;
 
                         return registration;

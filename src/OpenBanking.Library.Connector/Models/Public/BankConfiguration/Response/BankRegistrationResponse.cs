@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
@@ -76,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
         ///     For a well-behaved bank, normally this object should be null.
         /// </summary>
-        CustomBehaviour? CustomBehaviour { get; }
+        CustomBehaviourClass? CustomBehaviour { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
     }
@@ -101,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string tokenEndpoint,
             string authorizationEndpoint,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            CustomBehaviour? customBehaviour) : base(id, created, createdBy, reference)
+            CustomBehaviourClass? customBehaviour) : base(id, created, createdBy, reference)
         {
             ExternalApiObject = externalApiObject;
             BankId = bankId;
@@ -126,7 +127,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public string TokenEndpoint { get; }
         public string AuthorizationEndpoint { get; }
         public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-        public CustomBehaviour? CustomBehaviour { get; }
+        public CustomBehaviourClass? CustomBehaviour { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;
@@ -152,7 +153,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string tokenEndpoint,
             string authorizationEndpoint,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            CustomBehaviour? customBehaviour,
+            CustomBehaviourClass? customBehaviour,
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
             id,
             created,
