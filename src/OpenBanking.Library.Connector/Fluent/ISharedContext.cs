@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -17,6 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         DateTimeOffset Created { get; set; }
         IApiClient ApiClient { get; }
         IInstrumentationClient Instrumentation { get; }
+
+        IBankProfileDefinitions BankProfileDefinitions { get; }
         IDbService DbService { get; }
         IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
         IApiVariantMapper ApiVariantMapper { get; }

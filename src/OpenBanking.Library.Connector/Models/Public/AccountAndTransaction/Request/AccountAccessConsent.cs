@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
 using Newtonsoft.Json;
@@ -19,6 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     /// </summary>
     public class AccountAccessConsent : Base, ISupportsValidation
     {
+        public BankProfileEnum? BankProfile { get; set; }
+        
         /// <summary>
         ///     Specifies BankRegistration object to use when creating the consent.
         ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer

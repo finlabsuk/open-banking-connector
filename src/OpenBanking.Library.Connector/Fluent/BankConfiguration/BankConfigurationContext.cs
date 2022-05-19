@@ -73,7 +73,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.Instrumentation));
+                    _sharedContext.Instrumentation,
+                    _sharedContext.BankProfileDefinitions));
 
         public IBankRegistrationsContext
             BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);
@@ -89,7 +90,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.Instrumentation));
+                    _sharedContext.Instrumentation,
+                    _sharedContext.BankProfileDefinitions));
 
         public ILocalEntityContext<PaymentInitiationApiRequest, IPaymentInitiationApiQuery, PaymentInitiationApiResponse
             , PaymentInitiationApiResponse> PaymentInitiationApis =>

@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -33,8 +35,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAndTransactionModelsPublic.OBReadConsentResponse1>
     {
         private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
-
+        
         public AccountAccessConsentPost(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -43,7 +46,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
             IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> bankApiSetMethods,
-            IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
+            IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
+            IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -53,6 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         {
             _bankApiSetMethods = bankApiSetMethods;
             _bankRegistrationMethods = bankRegistrationMethods;
+            _bankProfileDefinitions = bankProfileDefinitions;
         }
 
         protected override string RelativePath => "/account-access-consents";
@@ -152,6 +157,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
+
+            if (request.BankProfile is not null)
+            {
+                request = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value)
+                    .AccountAccessConsentRequest(
+                        request.BankRegistrationId,
+                        request.AccountAndTransactionApiId,
+                        AccountAccessConsentType.MaximumPermissions);
+            }
 
             // Load relevant data and checks
             Guid bankRegistrationId = request.BankRegistrationId;

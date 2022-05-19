@@ -9,7 +9,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public partial class BankProfileDefinitions
+    public interface IBankProfileDefinitions
+    {
+        BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
+    }
+
+    public partial class BankProfileDefinitions: IBankProfileDefinitions
     {
         public BankProfile Nationwide { get; }
 

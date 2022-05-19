@@ -4,6 +4,7 @@
 
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -16,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -79,6 +81,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 AppConfiguration.GetSettings<TransportCertificateProfilesSettings>();
             var obSigningCertificateProfilesSettings =
                 AppConfiguration.GetSettings<SigningCertificateProfilesSettings>();
+            var bankProfilesSettings =
+                AppConfiguration.GetSettings<BankProfilesSettings>();
 
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -116,7 +120,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     instrumentationClient,
                     apiClient,
                     processedSoftwareStatementProfileStore,
-                    GetDbContext()),
+                    GetDbContext(),
+                    new BankProfileDefinitions(DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
+                        bankProfilesSettings.HiddenPropertiesFile,
+                        new JsonSerializerSettings()).GetAwaiter().GetResult())),
                 false);
         }
 

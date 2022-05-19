@@ -2,11 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -252,9 +250,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new TimeProvider(),
                 apiVariantMapper,
                 new ConsoleInstrumentationClient(),
-                new ApiClient(new ConsoleInstrumentationClient(),httpClient),
+                new ApiClient(new ConsoleInstrumentationClient(), httpClient),
                 softwareStatementProfilesRepository,
-                new DbService(dB));
+                new DbService(dB),
+                new BankProfileDefinitions(new BankProfileHiddenPropertiesDictionary()));
 
             return requestBuilder;
         }

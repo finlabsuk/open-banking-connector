@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -59,12 +58,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
                 sharedContext.ApiClient,
-                sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>());
+                sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
+                sharedContext.BankProfileDefinitions);
         }
 
         public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse> ReadLocalObject

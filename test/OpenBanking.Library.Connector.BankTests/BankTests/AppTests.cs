@@ -176,7 +176,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Get bank profile definitions
             var bankProfileDefinitions =
-                _serviceProvider.GetRequiredService<BankProfileDefinitions>();
+                _serviceProvider.GetRequiredService<IBankProfileDefinitions>();
 
             // Get bank users
             List<BankUser> bankUserList =

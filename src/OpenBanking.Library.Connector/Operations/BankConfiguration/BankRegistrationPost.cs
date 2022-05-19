@@ -4,13 +4,14 @@
 
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -45,17 +46,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     {
         private readonly IApiClient _apiClient;
         private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
 
         public BankRegistrationPost(
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsent> domesticPaymentConsentMethods,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
             IApiClient apiClient,
-            IDbReadOnlyEntityMethods<Bank> bankMethods) : base(
+            IDbReadOnlyEntityMethods<Bank> bankMethods,
+            IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -65,6 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         {
             _apiClient = apiClient;
             _bankMethods = bankMethods;
+            _bankProfileDefinitions = bankProfileDefinitions;
         }
 
         private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
@@ -85,6 +88,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             // Create non-error list
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
+
+            if (requestInfo.Request.BankProfile is not null)
+            {
+                requestInfo.Request = _bankProfileDefinitions.GetBankProfile(requestInfo.Request.BankProfile.Value)
+                    .GetBankRegistrationRequest(
+                        requestInfo.Request.BankId,
+                        requestInfo.Request.SoftwareStatementProfileId,
+                        requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
+                        requestInfo.Request.RegistrationScope,
+                        requestInfo.Request.CustomBehaviour);
+            }
 
             // Load bank from DB and check for existing bank registrations
             Guid bankId = requestInfo.Request.BankId;

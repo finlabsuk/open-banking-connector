@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 .AddSettingsGroup<SigningCertificateProfilesSettings>(configuration);
 
             // Set up bank profile definitions
-            services.AddSingleton(
+            services.AddSingleton<IBankProfileDefinitions, BankProfileDefinitions>(
                 sp =>
                 {
                     BankProfilesSettings bankProfilesSettings =

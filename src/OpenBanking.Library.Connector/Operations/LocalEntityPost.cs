@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -90,7 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 ApiResponseOverrideFile = apiResponseOverrideFile;
             }
 
-            public TPublicRequest Request { get; }
+            public TPublicRequest Request { get; set; }
             public string? ApiRequestWriteFile { get; }
             public string? ApiResponseWriteFile { get; }
             public string? ApiResponseOverrideFile { get; }

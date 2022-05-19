@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -24,7 +25,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IDbService>(),
                 Substitute
                     .For<IProcessedSoftwareStatementProfileStore>(),
-                Substitute.For<IApiVariantMapper>());
+                Substitute.For<IApiVariantMapper>(),
+                Substitute.For<IBankProfileDefinitions>());
         }
 
 
@@ -36,7 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IInstrumentationClient>(),
                 Substitute.For<IApiClient>(),
                 Substitute.For<IProcessedSoftwareStatementProfileStore>(),
-                Substitute.For<IDbService>());
+                Substitute.For<IDbService>(),
+                Substitute.For<IBankProfileDefinitions>());
         }
     }
 }

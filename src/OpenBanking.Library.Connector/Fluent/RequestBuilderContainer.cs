@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -27,7 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IInstrumentationClient instrumentationClient,
             IApiClient apiClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
-            BaseDbContext dbContext)
+            BaseDbContext dbContext,
+            IBankProfileDefinitions bankProfileDefinitions)
         {
             _dbContext = dbContext;
             RequestBuilder = new RequestBuilder(
@@ -36,7 +37,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 instrumentationClient,
                 apiClient,
                 softwareStatementProfilesRepository,
-                new DbService(dbContext));
+                new DbService(dbContext),
+                bankProfileDefinitions);
         }
 
         public void Dispose()

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
@@ -57,6 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         private readonly IApiClient _apiClient;
         private readonly IApiVariantMapper _apiVariantMapper;
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
         private readonly IDbService _dbService;
         private readonly IInstrumentationClient _logger;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
@@ -68,12 +70,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IInstrumentationClient logger,
             IApiClient apiClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
-            IDbService dbService)
+            IDbService dbService,
+            IBankProfileDefinitions bankProfileDefinitions)
         {
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
             _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
             _softwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
             _dbService = dbService;
+            _bankProfileDefinitions = bankProfileDefinitions;
             _logger = logger.ArgNotNull(nameof(logger));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
@@ -105,7 +109,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 _logger,
                 _dbService,
                 _softwareStatementProfileCachedRepo,
-                _apiVariantMapper)
+                _apiVariantMapper,
+                _bankProfileDefinitions)
             {
                 Created = _timeProvider.GetUtcNow()
             };

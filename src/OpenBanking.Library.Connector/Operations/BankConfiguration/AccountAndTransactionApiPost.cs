@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -15,22 +17,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     internal class AccountAndTransactionApiPost : LocalEntityPost<AccountAndTransactionApiEntity,
         AccountAndTransactionApiRequest, AccountAndTransactionApiResponse>
     {
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+
         public AccountAndTransactionApiPost(
             IDbReadWriteEntityMethods<AccountAndTransactionApiEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
+            IInstrumentationClient instrumentationClient,
+            IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient) { }
+            instrumentationClient)
+        {
+            _bankProfileDefinitions = bankProfileDefinitions;
+        }
 
         protected override async Task<AccountAndTransactionApiResponse> AddEntity(
             AccountAndTransactionApiRequest request,
             ITimeProvider timeProvider)
         {
+            if (request.BankProfile is not null)
+            {
+                request = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value)
+                    .GetAccountAndTransactionApiRequest(request.BankId);
+            }
+
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new AccountAndTransactionApiEntity(
                 request.Reference,

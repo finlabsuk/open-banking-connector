@@ -64,7 +64,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.BankProfileDefinitions);
             ReadObject = new AccountAccessConsentGet(
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
