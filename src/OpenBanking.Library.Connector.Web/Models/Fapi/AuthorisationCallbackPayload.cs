@@ -7,36 +7,41 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi
 {
-    public class AuthorisationCallbackPayload
+    
+    public class AuthorisationCallbackPayloadQuery
     {
         /// <summary>
         ///     Required response when "response_type" = "code id_token"
         /// </summary>
-        [FromForm(Name = "id_token")]
         [FromQuery(Name = "id_token")]
         public string IdToken { get; set; } = null!;
 
         /// <summary>
         ///     Required response when "response_type" = "code id_token"
         /// </summary>
-        [FromForm(Name = "code")]
         [FromQuery(Name = "code")]
         public string Code { get; set; } = null!;
 
         /// <summary>
         ///     Required response when "response_type" = "code id_token" and "state" is request parameter
         /// </summary>
-        [FromForm(Name = "state")]
         [FromQuery(Name = "state")]
         public string State { get; set; } = null!;
 
-        [FromForm(Name = "nonce")]
         [FromQuery(Name = "nonce")]
         public string? Nonce { get; set; }
     }
 
     public static class AuthorisationCallbackPayloadExtensions
     {
+        public static AuthResult ToLibraryVersion(this AuthorisationCallbackPayloadQuery payload) =>
+            new(
+                payload.IdToken,
+                payload.Code,
+                payload.State,
+                payload.Nonce);
+
+        
         public static AuthResult ToLibraryVersion(this AuthorisationCallbackPayload payload) =>
             new(
                 payload.IdToken,
@@ -44,4 +49,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi
                 payload.State,
                 payload.Nonce);
     }
+
+    public class AuthorisationCallbackPayload
+    {
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token"
+        /// </summary>
+        [FromForm(Name = "id_token")]
+        public string IdToken { get; set; } = null!;
+
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token"
+        /// </summary>
+        [FromForm(Name = "code")]
+        public string Code { get; set; } = null!;
+
+        /// <summary>
+        ///     Required response when "response_type" = "code id_token" and "state" is request parameter
+        /// </summary>
+        [FromForm(Name = "state")]
+        public string State { get; set; } = null!;
+
+        [FromForm(Name = "nonce")]
+        public string? Nonce { get; set; }
+    }
+
 }

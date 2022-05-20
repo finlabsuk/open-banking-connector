@@ -23,6 +23,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         {
             _requestBuilder = requestBuilder;
         }
+        
+        [HttpGet]
+        [Route("auth/query-redirect")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HttpResponseMessages))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
+        public async Task<IActionResult> PostFragmentRedirectDelegateAsync(
+            [FromQuery] AuthorisationCallbackPayloadQuery payload)
+        {
+            // Operation
+            AuthResult authResult = payload.ToLibraryVersion();
+            IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
+                .AuthContexts
+                .UpdateAuthResultLocalAsync(authResult);
+
+            // HTTP response
+            return fluentResponse switch
+            {
+                FluentSuccessResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status200OK },
+                FluentBadRequestErrorResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status400BadRequest },
+                FluentOtherErrorResponse<AuthContextResponse> _ =>
+                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
+                        { StatusCode = StatusCodes.Status500InternalServerError },
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
 
         [HttpPost]
         [Route("auth/fragment-redirect-delegate")]
