@@ -14,6 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
         BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
     }
 
+    public class BankProfileDefinitionsStub : IBankProfileDefinitions
+    {
+        public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public partial class BankProfileDefinitions: IBankProfileDefinitions
     {
         public BankProfile Nationwide { get; }
