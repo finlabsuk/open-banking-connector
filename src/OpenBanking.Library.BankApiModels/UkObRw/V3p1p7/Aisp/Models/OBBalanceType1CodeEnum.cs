@@ -53,6 +53,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         OpeningCleared,
         /// <summary> PreviouslyClosedBooked. </summary>
         [EnumMember(Value = "PreviouslyClosedBooked")]
-        PreviouslyClosedBooked
+        PreviouslyClosedBooked,
+        
+        [EnumMember(Value = "FundsTransfer")]
+        FundsTransfer
     }
 }

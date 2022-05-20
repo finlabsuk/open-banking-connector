@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        // BankConfiguration POST custom behaviour
+                        // BankRegistation POST custom behaviour
                         BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
                             (registration.CustomBehaviour ??= new CustomBehaviourClass())
                             .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
