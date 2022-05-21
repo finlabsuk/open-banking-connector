@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -106,7 +105,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 ResponseTypesSupported = new List<string> { "code id_token" },
                 ScopesSupported =
                     new List<string> { "openid", "payments", "accounts", "fundsconfirmations", "profile" },
-                ResponseModesSupported = new List<string> { "fragment", "query", "form_post" },
+                ResponseModesSupported = new List<OAuth2ResponseMode>
+                {
+                    OAuth2ResponseMode.Fragment
+                },
                 TokenEndpoint = $"{MockRoutes.Url}{MockRoutes.Token}",
                 AuthorizationEndpoint = $"{MockRoutes.Url}{MockRoutes.Authorize}",
                 RegistrationEndpoint = $"{MockRoutes.Url}{MockRoutes.Register}",
@@ -164,7 +166,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetAuthtoriseResponse()
         {
-            var model = new AuthResult(
+            var model = new OAuth2RedirectData(
                 "idToken123",
                 "code123",
                 "1ab89221-ca25-4055-9f96-7064fe953c52",

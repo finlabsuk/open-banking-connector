@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -36,14 +37,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 {
                     BankRegistrationAdjustments = registration =>
                     {
-                        registration.CustomBehaviour = new CustomBehaviourClass
-                        {
-                            OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
+                        OpenIdConfigurationGetCustomBehaviour openIdConfigurationGetCustomBehaviour =
+                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
+                            .OpenIdConfigurationGet ??= new OpenIdConfigurationGetCustomBehaviour();
+                        openIdConfigurationGetCustomBehaviour.ResponseModesSupportedResponse =
+                            new List<OAuth2ResponseMode>
                             {
-                                //well-known endpoint response does not provide one
-                                ResponseModesSupportedResponse = new List<string> { "fragment" }
-                            }
-                        };
+                                // missing from OpenID configuration
+                                OAuth2ResponseMode.Fragment
+                            };
+
                         return registration;
                     },
                 }

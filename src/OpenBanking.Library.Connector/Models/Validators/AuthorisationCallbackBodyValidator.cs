@@ -8,7 +8,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 {
-    public class AuthResultValidator : AbstractValidator<AuthResult>
+    public class AuthResultValidator : AbstractValidator<OAuth2RedirectData>
     {
         public AuthResultValidator()
         {
@@ -20,11 +20,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
         {
             RuleFor(x => x.Code)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthResult.Code)}.");
+                .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.Code)}.");
 
             RuleFor(x => x.State)
                 .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(AuthResult.State)}.");
+                .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.State)}.");
         }
     }
 }

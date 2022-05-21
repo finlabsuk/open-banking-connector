@@ -30,6 +30,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         /// </summary>
         public string SigningCertificateProfileId { get; set; } = string.Empty;
 
+        // <summary>
+        // Default OAuth2 response_mode used for consent authorisation.
+        // </summary>
+        // public OpenIdConfigurationResponseMode DefaultAuthResponseMode { get; set; } =
+        //     OpenIdConfigurationResponseMode.Fragment;
+
+        /// <summary>
+        ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+        /// </summary>
+        public string DefaultQueryRedirectUrl { get; set; } = string.Empty;
+
         /// <summary>
         ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
         /// </summary>
@@ -135,11 +146,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
                         $"No non-empty SigningCertificateProfileId provided for SoftwareStatementProfile {key}.");
                 }
 
-                if (string.IsNullOrEmpty(value.DefaultFragmentRedirectUrl))
+                if (string.IsNullOrEmpty(value.DefaultQueryRedirectUrl) &&
+                    string.IsNullOrEmpty(value.DefaultFragmentRedirectUrl))
                 {
                     throw new ArgumentException(
                         "Configuration or key secrets error: " +
-                        $"No non-empty DefaultFragmentRedirectUrl provided for SoftwareStatementProfile {key}.");
+                        "At least one of {DefaultQueryRedirectUrl, DefaultFragmentRedirectUrl} must be non-empty in " +
+                        $"SoftwareStatementProfile {key}.");
                 }
             }
 

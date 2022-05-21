@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
@@ -11,19 +10,23 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
-    public class AuthorisationRedirectObject : ISupportsValidation
+    public class AuthResult : ISupportsValidation
     {
-        public AuthorisationRedirectObject(string responseMode, AuthResult response)
+        public AuthResult(OAuth2ResponseMode responseMode, OAuth2RedirectData redirectData)
         {
             ResponseMode = responseMode;
-            Response = response;
+            RedirectData = redirectData;
         }
 
-        [JsonProperty("responseMode")]
-        public string ResponseMode { get; }
+        /// <summary>
+        ///     OpenID Connect response_mode used by redirect that supplied this result. This is
+        ///     used to check result came by way of correct response_mode as security aspects
+        ///     of response_modes differ.
+        /// </summary>
+        [JsonProperty("response_mode")]
+        public OAuth2ResponseMode ResponseMode { get; }
 
-        [JsonProperty("response")]
-        public AuthResult Response { get; }
+        public OAuth2RedirectData RedirectData { get; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AuthorisationRedirectObjectValidator()

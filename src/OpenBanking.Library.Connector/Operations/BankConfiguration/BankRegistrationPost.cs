@@ -11,7 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -120,9 +120,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
 
             // Load processed software statement profile
+            string softwareStatementProfileId = requestInfo.Request.SoftwareStatementProfileId;
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    requestInfo.Request.SoftwareStatementProfileId,
+                    softwareStatementProfileId,
                     requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Determine registration scope
@@ -166,7 +167,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 openIdConfiguration = await GetOpenIdConfigurationAsync(issuerUrl);
 
                 // Update OpenID Provider Configuration based on overrides
-                IList<string>? responseModesSupportedOverride =
+                IList<OAuth2ResponseMode>? responseModesSupportedOverride =
                     requestInfo.Request.CustomBehaviour?.OpenIdConfigurationGet?.ResponseModesSupportedResponse;
                 if (!(responseModesSupportedOverride is null))
                 {

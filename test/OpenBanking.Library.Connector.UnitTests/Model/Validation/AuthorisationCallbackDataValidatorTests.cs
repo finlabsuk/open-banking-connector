@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
@@ -19,11 +18,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthorisationRedirectObject(null!, null!);
+            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-            results.Should().HaveCount(2);
+            results.Should().HaveCount(1);
         }
 
         [Fact]
@@ -31,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthorisationRedirectObject("a", null!);
+            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -44,9 +43,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthorisationRedirectObject(
-                "a",
-                new AuthResult("", "", "", null));
+            var data = new AuthResult(
+                OAuth2ResponseMode.Fragment,
+                new OAuth2RedirectData("", "", "", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -59,9 +58,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthorisationRedirectObject(
-                "a",
-                new AuthResult("a", "a", "a", null));
+            var data = new AuthResult(
+                OAuth2ResponseMode.Fragment,
+                new OAuth2RedirectData("a", "a", "a", null));
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 

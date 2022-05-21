@@ -4,9 +4,9 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,17 +23,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         {
             _requestBuilder = requestBuilder;
         }
-        
+
         [HttpGet]
         [Route("auth/query-redirect")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HttpResponseMessages))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
-        public async Task<IActionResult> PostFragmentRedirectDelegateAsync(
-            [FromQuery] AuthorisationCallbackPayloadQuery payload)
+        public async Task<IActionResult> GetQueryRedirectDelegateAsync(
+            [FromQuery(Name = "id_token")] string idToken,
+            [FromQuery(Name = "code")]
+            string code,
+            [FromQuery(Name = "state")]
+            string state,
+            [FromQuery(Name = "nonce")]
+            string? nonce)
         {
             // Operation
-            AuthResult authResult = payload.ToLibraryVersion();
+            var authResult =
+                new AuthResult(
+                    OAuth2ResponseMode.Query,
+                    new OAuth2RedirectData(idToken, code, state, nonce));
             IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
                 .AuthContexts
                 .UpdateAuthResultLocalAsync(authResult);
@@ -55,16 +64,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         }
 
         [HttpPost]
-        [Route("auth/fragment-redirect-delegate")]
+        [Route("auth/redirect-delegate")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HttpResponseMessages))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
         [Consumes("application/x-www-form-urlencoded")]
-        public async Task<IActionResult> PostFragmentRedirectDelegateAsync(
-            [FromForm] AuthorisationCallbackPayload payload)
+        public async Task<IActionResult> PostRedirectDelegateAsync(
+            [FromForm(Name = "id_token")] string idToken,
+            [FromForm(Name = "code")]
+            string code,
+            [FromForm(Name = "state")]
+            string state,
+            [FromForm(Name = "response_mode")]
+            string responseMode,
+            [FromForm(Name = "nonce")]
+            string? nonce)
         {
             // Operation
-            AuthResult authResult = payload.ToLibraryVersion();
+            OAuth2ResponseMode oAuth2ResponseMode = responseMode switch
+            {
+                "query" => OAuth2ResponseMode.Query,
+                "fragment" => OAuth2ResponseMode.Fragment,
+                "form_post" => OAuth2ResponseMode.FormPost,
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(responseMode),
+                    responseMode,
+                    "Unknown value for response_mode.")
+            };
+            var authResult =
+                new AuthResult(
+                    oAuth2ResponseMode,
+                    new OAuth2RedirectData(idToken, code, state, nonce));
             IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
                 .AuthContexts
                 .UpdateAuthResultLocalAsync(authResult);

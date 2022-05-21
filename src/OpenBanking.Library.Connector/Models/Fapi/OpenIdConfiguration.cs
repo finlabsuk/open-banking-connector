@@ -2,35 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
-    /// <summary>
-    ///     Valid elements for token_endpoint_auth_methods_supported in OpenID Configuration
-    /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum OpenIdConfigurationTokenEndpointAuthMethodEnum
-    {
-        [EnumMember(Value = "client_secret_basic")]
-        ClientSecretBasic,
-
-        [EnumMember(Value = "client_secret_post")]
-        ClientSecretPost,
-
-        [EnumMember(Value = "client_secret_jwt")]
-        ClientSecretJwt,
-
-        [EnumMember(Value = "private_key_jwt")]
-        PrivateKeyJwt,
-
-        [EnumMember(Value = "tls_client_auth")]
-        TlsClientAuth
-    }
-
-
     public class OpenIdConfiguration
     {
         [JsonProperty("issuer")]
@@ -43,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public IList<string> ScopesSupported { get; set; } = null!;
 
         [JsonProperty("response_modes_supported")]
-        public IList<string> ResponseModesSupported { get; set; } = null!;
+        public IList<OAuth2ResponseMode> ResponseModesSupported { get; set; } = null!;
 
         [JsonProperty("token_endpoint")]
         public string TokenEndpoint { get; set; } = null!;

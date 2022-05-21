@@ -4,8 +4,8 @@ debugger
     if (fragmentParams) {
         console.log('Fragment supplied.');
         const params = new URLSearchParams(fragmentParams);
-        params.append('relayedFromFragment', 'true');
-        const newURL = 'fragment-redirect-delegate'; // relative to current URL
+        params.append('response_mode', 'fragment');
+        const newURL = 'redirect-delegate'; // relative to current URL
         let response
         try {
             response = await fetch(newURL,

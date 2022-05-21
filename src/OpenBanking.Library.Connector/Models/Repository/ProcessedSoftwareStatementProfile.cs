@@ -67,10 +67,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
     ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="TransportCertificateProfile" />, and a
     ///     <see cref="SigningCertificateProfile" />
     /// </summary>
-    public class ProcessedSoftwareStatementProfile : IRepositoryItem
+    public class ProcessedSoftwareStatementProfile
     {
+        private readonly string? _defaultFragmentRedirectUrl;
+        private readonly string? _defaultQueryRedirectUrl;
+
         public ProcessedSoftwareStatementProfile(
-            string id,
+            string softwareStatementProfileId,
             TransportCertificateProfile transportCertificateProfile,
             SigningCertificateProfile signingCertificateProfile,
             SoftwareStatementProfile softwareStatementProfile,
@@ -85,7 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
             TransportCertificateDnWithStringDottedDecimalAttributeValues = transportCertificateProfile
                 .CertificateDnWithStringDottedDecimalAttributeValues;
-            Id = id;
+            SoftwareStatementProfileId = softwareStatementProfileId;
 
             // Break software statement into components
             string[] softwareStatementComponentsBase64 =
@@ -106,15 +109,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 throw new InvalidOperationException("Can't correctly process software statement");
             }
 
-            if (!SoftwareStatementPayload.SoftwareRedirectUris.Contains(
-                    softwareStatementProfile.DefaultFragmentRedirectUrl))
+            if (!string.IsNullOrEmpty(softwareStatementProfile.DefaultQueryRedirectUrl))
             {
-                throw new ArgumentException(
-                    $"Software statement profile with ID {id} contains DefaultFragmentRedirectUrl {softwareStatementProfile.DefaultFragmentRedirectUrl} " +
-                    "which is not included in software statement software_redirect_uris field.");
+                if (!SoftwareStatementPayload.SoftwareRedirectUris.Contains(
+                        softwareStatementProfile.DefaultQueryRedirectUrl))
+                {
+                    throw new ArgumentException(
+                        $"Software statement profile with ID {softwareStatementProfileId} contains DefaultQueryRedirectUrl {softwareStatementProfile.DefaultQueryRedirectUrl} " +
+                        "which is not included in software statement software_redirect_uris field.");
+                }
+
+                _defaultQueryRedirectUrl = softwareStatementProfile.DefaultQueryRedirectUrl;
             }
-            DefaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
-            
+
+            if (!string.IsNullOrEmpty(softwareStatementProfile.DefaultFragmentRedirectUrl))
+            {
+                if (!SoftwareStatementPayload.SoftwareRedirectUris.Contains(
+                        softwareStatementProfile.DefaultFragmentRedirectUrl))
+                {
+                    throw new ArgumentException(
+                        $"Software statement profile with ID {softwareStatementProfileId} contains DefaultFragmentRedirectUrl {softwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                        "which is not included in software statement software_redirect_uris field.");
+                }
+
+                _defaultFragmentRedirectUrl = softwareStatementProfile.DefaultFragmentRedirectUrl;
+            }
+
             // Api client
             ApiClient = apiClient;
         }
@@ -146,8 +166,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
         public string SigningCertificate { get; }
 
-        /// Default redirect URL for OAuth clients with response_mode == fragment.
-        public string DefaultFragmentRedirectUrl { get; }
+        /// <summary>
+        ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
+        /// </summary>
+        public string DefaultQueryRedirectUrl
+        {
+            get
+            {
+                if (_defaultQueryRedirectUrl is null)
+                {
+                    throw new ArgumentException(
+                        $"No non-empty DefaultQueryRedirectUrl provided in software statement profile with ID {SoftwareStatementProfileId}");
+                }
+
+                return _defaultQueryRedirectUrl;
+            }
+        }
+
+        /// <summary>
+        ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
+        /// </summary>
+        public string DefaultFragmentRedirectUrl
+        {
+            get
+            {
+                if (_defaultFragmentRedirectUrl is null)
+                {
+                    throw new ArgumentException(
+                        $"No non-empty DefaultFragmentRedirectUrl provided in software statement profile with ID {SoftwareStatementProfileId}");
+                }
+
+                return _defaultFragmentRedirectUrl;
+            }
+        }
 
         public TransportCertificateType TransportCertificateType { get; }
 
@@ -157,9 +208,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
         public IApiClient ApiClient { get; }
 
-        /// Software statement profile ID as string, e.g. "DevPispSoftwareStatement"
-        /// This is your choice; a meaningful name should help debugging throughout OBC.
-        public string Id { get; }
+        public string SoftwareStatementProfileId { get; }
 
         public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
         {

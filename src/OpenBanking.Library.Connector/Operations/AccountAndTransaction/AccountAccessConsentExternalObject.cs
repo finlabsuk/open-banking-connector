@@ -178,29 +178,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 UriFormat.Unescaped,
                 StringComparison.InvariantCulture);
 
+            // Check URLs without fragment and query parameters match
             if (urlsMatch != 0)
             {
                 throw new InvalidOperationException(
                     $"Request URL {apiRequestUrl} and link URL {linkUrl} have different base URLs!");
             }
 
+            // Check there are no fragment parameters
             if (!string.IsNullOrEmpty(linkUrl.Fragment))
             {
                 throw new InvalidOperationException($"Link URL {linkUrl} has unexpected fragment.");
             }
 
+            // Check query parameters are valid
+            if (!string.IsNullOrEmpty(linkUrl.Query))
+            {
+                var linkUrlQueryParameterPairs = linkUrl.Query.TrimStart('?').Split('&');
+                var valiedQueryParameterNames = new List<string> { "fromBookingDateTime", "toBookingDateTime", "page" };
+                foreach (var queryParameterPair in linkUrlQueryParameterPairs)
+                {
+                    var queryParameterName = queryParameterPair.Split('=')[0];
+                    if (!valiedQueryParameterNames.Contains(queryParameterName))
+                    {
+                        throw new InvalidOperationException(
+                            $"External API returned link URL with query parameter {queryParameterName} which is unexpected.");
+                    }
+
+                }
+            }
+
+            // Return relative URL
             if (publicRequestUrlWithoutQuery is null)
             {
                 return linkUrl.Query;
             }
 
-            var a = new UriBuilder(publicRequestUrlWithoutQuery);
-            a.Query = linkUrl.Query;
-            Uri fullUri = a.Uri;
-
+            // Return absolute URL
+            var uriBuilder = new UriBuilder(publicRequestUrlWithoutQuery);
+            uriBuilder.Query = linkUrl.Query;
+            Uri fullUri = uriBuilder.Uri;
             return fullUri.ToString();
 
-            //return requestUrl.MakeRelativeUri(new Uri(linkUrl)).ToString();
         }
     }
 }

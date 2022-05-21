@@ -39,13 +39,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
                 .Must((x, y, z) => HasDelimiters(x, y, z, '.', 2))
                 .WithMessage($"Please provide a valid {nameof(SoftwareStatementProfile.SoftwareStatement)}.");
 
-            RuleFor(p => p.DefaultFragmentRedirectUrl)
-                .Cascade(CascadeMode.Stop)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.")
-                .Must(ValidationRules.IsUrl)
-                .WithMessage(
-                    $"Please provide a valid URL for {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.");
+            // RuleFor(p => p.DefaultFragmentRedirectUrl)
+            //     .Cascade(CascadeMode.Stop)
+            //     .Must(ValidationRules.IsNonWhitespace)
+            //     .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.")
+            //     .Must(ValidationRules.IsUrl)
+            //     .WithMessage(
+            //         $"Please provide a valid URL for {nameof(SoftwareStatementProfile.DefaultFragmentRedirectUrl)}.");
         }
     }
 }

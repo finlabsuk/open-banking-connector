@@ -11,7 +11,6 @@ public class Hsbc : IBankProfileUiMethods
 {
     public async Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
     {
-
         // Click input[name="username"]
         await page.Locator("input[name=\"username\"]").ClickAsync();
 
@@ -25,20 +24,22 @@ public class Hsbc : IBankProfileUiMethods
         await page.Locator("input[name=\"otp\"]").FillAsync(bankUser.Password);
 
         // Click button:has-text("Continue")
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.Locator("button:has-text(\"Continue\")").ClickAsync();
-        });
+        await page.RunAndWaitForNavigationAsync(
+            async () => { await page.Locator("button:has-text(\"Continue\")").ClickAsync(); });
 
         // Click .mat-checkbox-inner-container >> nth=0
+        await page.WaitForTimeoutAsync(400); // workaround for click not registering and then no navigation occurring when "finish" clicked
         await page.Locator(".mat-checkbox-inner-container").First.ClickAsync();
 
         // Click button:has-text("Finish")
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.WaitForTimeoutAsync(400); // workaround for click not registering
-            await page.Locator("button:has-text(\"Finish\")").ClickAsync();
-        });
+        // await page.WaitForTimeoutAsync(400);
+        // await page.ScreenshotAsync(
+        //     new PageScreenshotOptions
+        //     {
+        //         Path = "screenshot.png",
+        //         FullPage = true
+        //     });
+        await page.RunAndWaitForNavigationAsync(
+            async () => { await page.Locator("button:has-text(\"Finish\")").ClickAsync(); });
     }
 }
-

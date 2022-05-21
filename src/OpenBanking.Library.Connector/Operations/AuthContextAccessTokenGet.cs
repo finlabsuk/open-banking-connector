@@ -2,11 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -40,12 +35,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TConsentEntity consent,
             BankRegistration bankRegistration,
             string? modifiedBy)
-        where TConsentEntity : BaseConsent
+            where TConsentEntity : BaseConsent
         {
-            
             // Get token
-            AccessToken accessToken = consent.AccessToken ?? throw new InvalidOperationException("No token is available for Consent.");
- 
+            AccessToken accessToken =
+                consent.AccessToken ??
+                throw new InvalidOperationException("No token is available for Consent.");
+
             // Calculate token expiry time
             const int tokenEarlyExpiryIntervalInSeconds = 10;
             DateTimeOffset tokenExpiryTime = accessToken.Modified // time when token stored
@@ -64,7 +60,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                             bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
 
                     // Obtain token for consent
-                    string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+                    string redirectUrl =
+                        processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
                     JsonSerializerSettings? jsonSerializerSettings = null;
                     TokenEndpointResponse tokenEndpointResponse =
                         await PostTokenRequest.PostRefreshTokenGrantAsync(

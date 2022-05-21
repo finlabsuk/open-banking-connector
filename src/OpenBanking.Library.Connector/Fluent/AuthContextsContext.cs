@@ -2,9 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using AuthContextPersisted =
@@ -26,7 +25,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiResponseOverrideFile = null);
     }
 
-    internal class AuthContextsContext : IAuthContextsContext, ICreateContextInternal<AuthResult, AuthContextResponse>
+    internal class AuthContextsContext : IAuthContextsContext,
+        ICreateContextInternal<AuthResult, AuthContextResponse>
     {
         public AuthContextsContext(ISharedContext sharedContext)
         {

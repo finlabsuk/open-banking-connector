@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Specialized;
+using System.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -47,16 +49,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string? toBookingDateTime,
             string? page)
         {
-            Uri endpointUrl =
+            string endpointUrlBase =
                 (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
                 {
-                    (null, null) => new Uri(baseUrl + RelativePath),
-                    ({ } extAccountId, null) => new Uri(baseUrl + $"/accounts/{extAccountId}" + RelativePath2),
-                    ({ } extAccountId, { } extStatementId) => new Uri(
-                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2),
+                    (null, null) => baseUrl + RelativePath,
+                    ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + RelativePath2,
+                    ({ } extAccountId, { } extStatementId) =>
+                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2,
                     _ => throw new ArgumentOutOfRangeException()
                 };
-            return endpointUrl;
+            var uriBuilder = new UriBuilder(endpointUrlBase);
+            NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            if (page != null)
+            {
+                query["page"] = page;
+            }
+
+            uriBuilder.Query = query.ToString();
+            return uriBuilder.Uri;
         }
 
         protected override Parties2Response PublicGetResponse(

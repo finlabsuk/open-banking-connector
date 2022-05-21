@@ -68,6 +68,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 query["toBookingDateTime"] = toBookingDateTime;
             }
 
+            if (page != null)
+            {
+                query["page"] = page;
+            }
+
             uriBuilder.Query = query.ToString();
             return uriBuilder.Uri;
         }

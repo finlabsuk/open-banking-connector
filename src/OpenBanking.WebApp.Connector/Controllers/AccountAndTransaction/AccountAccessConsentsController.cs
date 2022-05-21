@@ -67,6 +67,7 @@ public class AccountAccessConsentsController : ControllerBase
     ///     Read an AccountAccessConsent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
+    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/account-access-consents/{accountAccessConsentId}")]
@@ -80,13 +81,15 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync(Guid accountAccessConsentId)
+    public async Task<IActionResult> GetAsync(Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy)
     {
         // Operation
         IFluentResponse<AccountAccessConsentReadResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .ReadAsync(accountAccessConsentId);
+            .ReadAsync(accountAccessConsentId,modifiedBy);
 
         // HTTP response
         return fluentResponse switch
@@ -108,6 +111,7 @@ public class AccountAccessConsentsController : ControllerBase
     ///     Delete an AccountAccessConsent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
+    /// <param name="modifiedBy"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     [Route("aisp/account-access-consents/{accountAccessConsentId}")]
@@ -121,13 +125,15 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(
         typeof(HttpResponseMessages),
         StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteAsync(Guid accountAccessConsentId)
+    public async Task<IActionResult> DeleteAsync(Guid accountAccessConsentId,
+        [FromHeader]
+        string? modifiedBy)
     {
         // Operation
         IFluentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentId);
+            .DeleteAsync(accountAccessConsentId, modifiedBy);
 
         // HTTP response
         return fluentResponse switch

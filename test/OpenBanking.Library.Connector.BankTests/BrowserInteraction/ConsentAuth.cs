@@ -50,28 +50,33 @@ public class ConsentAuth
         IPage page = await browser.NewPageAsync();
         await page.GotoAsync(authUrl);
         await GetUiMethods(bankProfileEnum).ConsentUiInteractions(page, consentVariety, bankUser);
-        // Wait for redirect web page
+        // Wait for redirect to complete
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForSelectorAsync(
-            "auth-fragment-redirect",
-            new PageWaitForSelectorOptions
-            {
-                State = WaitForSelectorState.Hidden,
-            });
 
-        // Wait 5 secs for redirect
-        IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
-            "window.pageStatus",
-            null,
-            new PageWaitForFunctionOptions { Timeout = 10000 });
-
-        var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
-        if (pageStatus is not "POST of fragment succeeded")
+        bool isFragmentRedirect = bankProfileEnum != BankProfileEnum.Hsbc_Sandbox;
+        if (isFragmentRedirect)
         {
-            throw new Exception("Redirect page could not capture and pass on parameters in URL fragment");
+            await page.WaitForSelectorAsync(
+                "auth-fragment-redirect",
+                new PageWaitForSelectorOptions
+                {
+                    State = WaitForSelectorState.Hidden,
+                });
+
+            // Wait 5 secs for redirect
+            IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
+                "window.pageStatus",
+                null,
+                new PageWaitForFunctionOptions { Timeout = 10000 });
+
+            var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
+            if (pageStatus is not "POST of fragment succeeded")
+            {
+                throw new Exception("Redirect page could not capture and pass on parameters in URL fragment");
+            }
         }
 
-        // Wait for token to be available
+        // Delay to ensure token available
         await Task.Delay(250);
     }
 }

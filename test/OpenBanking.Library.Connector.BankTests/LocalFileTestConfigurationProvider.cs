@@ -4,7 +4,7 @@
 
 using System.Reflection;
 using System.Runtime.Serialization;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using Newtonsoft.Json;
 

@@ -27,7 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string scopeString,
             IInstrumentationClient instrumentationClient)
         {
-            string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+            string redirectUrl =
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(

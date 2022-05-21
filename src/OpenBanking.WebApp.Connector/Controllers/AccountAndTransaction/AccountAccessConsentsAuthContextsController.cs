@@ -29,7 +29,7 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/account-access-consents/auth-contexts")]
+    [Route("aisp/account-access-consent-auth-contexts")]
     [HttpPost]
     [ProducesResponseType(
         typeof(AccountAccessConsentAuthContextCreateLocalResponse),

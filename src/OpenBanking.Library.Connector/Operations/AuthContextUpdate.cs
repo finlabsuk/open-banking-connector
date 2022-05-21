@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAnd
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -65,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Load relevant data
-            var authContextId = new Guid(request.State);
+            var authContextId = new Guid(request.RedirectData.State);
             AuthContext authContext =
                 _authContextMethods
                     .DbSet
@@ -118,11 +119,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Obtain token for consent
-            string redirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+            string redirectUrl =
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponse tokenEndpointResponse =
                 await PostTokenRequest.PostAuthCodeGrantAsync(
-                    request.Code,
+                    request.RedirectData.Code,
                     redirectUrl,
                     bankRegistration,
                     jsonSerializerSettings,
