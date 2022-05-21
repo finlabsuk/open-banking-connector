@@ -39,19 +39,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 .AddSettingsGroup<TransportCertificateProfilesSettings>(configuration)
                 .AddSettingsGroup<SigningCertificateProfilesSettings>(configuration);
 
-            // Set up bank profile definitions
-            services.AddSingleton<IBankProfileDefinitions>(
-                sp =>
-                {
-                    // BankProfilesSettings bankProfilesSettings =
-                    //     sp.GetRequiredService<ISettingsProvider<BankProfilesSettings>>().GetSettings();
-                    // return new BankProfileDefinitions(
-                    //     DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
-                    //         bankProfilesSettings.HiddenPropertiesFile,
-                    //         new JsonSerializerSettings()).GetAwaiter().GetResult());
-                    return new BankProfileDefinitionsStub();
-                });
-
             // Set up software statement store
             services
                 .AddSingleton<IProcessedSoftwareStatementProfileStore,

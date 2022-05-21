@@ -36,8 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
                 .AddGenericHostServices(Configuration)
                 // Add .NET web host app services
                 .AddWebHostServices(Configuration)
-                // Add consent authoriser services
-                .AddConsentAuthoriserServices(Configuration)
+                // Add bank testing services
+                .AddBankTestingServices(Configuration)
                 // Add controllers
                 .AddControllers()
                 // Add controllers from web host library (explicit add apparently required since not using Microsoft.NET.Sdk.Web)

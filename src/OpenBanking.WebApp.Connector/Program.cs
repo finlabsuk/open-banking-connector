@@ -27,6 +27,8 @@ builder.Services
     .AddGenericHostServices(builder.Configuration)
     // Add .NET web host app services
     .AddWebHostServices(builder.Configuration)
+    // Add web app services
+    .AddWebAppServices(builder.Configuration)
     // Configure Swagger
     .AddSwaggerGen(
         options =>
