@@ -5,6 +5,8 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models
 {
     /// <summary> Financial institution servicing an account for the creditor. </summary>
@@ -21,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <param name="identification"> Unique and unambiguous identification of a financial institution or a branch of a financial institution. </param>
         /// <param name="name"> Name by which an agent is known and which is usually used to identify that agent. </param>
         /// <param name="postalAddress"> Information that locates and identifies a specific address, as defined by postal services. </param>
+        [JsonConstructor]
         public OBBranchAndFinancialInstitutionIdentification61(string schemeName, string identification, string name, OBPostalAddress6 postalAddress)
         {
             SchemeName = schemeName;

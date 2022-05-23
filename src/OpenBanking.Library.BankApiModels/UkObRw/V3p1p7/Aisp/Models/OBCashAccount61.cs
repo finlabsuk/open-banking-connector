@@ -5,6 +5,8 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
     /// <summary> Unambiguous identification of the account of the debtor, in the case of a crebit transaction. </summary>
@@ -26,6 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// This is secondary identification of the account, as assigned by the account servicing institution. 
         /// This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
         /// </param>
+        [JsonConstructor]
         public OBCashAccount61(string schemeName, string identification, string name, string secondaryIdentification)
         {
             SchemeName = schemeName;

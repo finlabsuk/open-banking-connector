@@ -7,6 +7,7 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -21,6 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
 
         /// <summary> Initializes a new instance of OBReadParty3Data. </summary>
         /// <param name="party"></param>
+        [JsonConstructor]
         public OBReadParty3Data(IReadOnlyList<OBParty2> party)
         {
             Party = party;
