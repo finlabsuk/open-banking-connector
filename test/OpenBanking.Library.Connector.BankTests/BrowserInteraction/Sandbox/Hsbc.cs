@@ -30,7 +30,8 @@ public class Hsbc : IBankProfileUiMethods
         // Click .mat-checkbox-inner-container >> nth=0
         await page.WaitForTimeoutAsync(400); // workaround for click not registering and then no navigation occurring when "finish" clicked
         await page.Locator(".mat-checkbox-inner-container").First.ClickAsync();
-
+        await page.Locator(".mat-checkbox-inner-container").Nth(1).ClickAsync();
+        
         // Click button:has-text("Finish")
         // await page.WaitForTimeoutAsync(400);
         // await page.ScreenshotAsync(
