@@ -25,6 +25,12 @@ public class BankTestData2 : IXunitSerializable
     public AccountAccessConsent? AccountAccessConsentObject { get; set; }
     public Guid? AccountAccessConsentId { get; set; }
 
+    public string? BankRegistrationExternalApiId { get; set; }
+
+    public string? AccountAccessConsentExternalApiId { get; set; }
+
+    public string? AccountAccessConsentRefreshToken { get; set; }
+
     public void Deserialize(IXunitSerializationInfo info)
     {
         BankProfileEnum = info.GetValue<BankProfileEnum>(nameof(BankProfileEnum));
@@ -46,6 +52,11 @@ public class BankTestData2 : IXunitSerializable
         var accountAccessConsentIdString = info.GetValue<string?>(nameof(AccountAccessConsentId));
         AccountAccessConsentId =
             accountAccessConsentIdString is null ? null : Guid.Parse(accountAccessConsentIdString);
+
+        BankRegistrationExternalApiId = info.GetValue<string?>(nameof(BankRegistrationExternalApiId));
+        AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
+        AccountAccessConsentRefreshToken =
+            info.GetValue<string?>(nameof(AccountAccessConsentRefreshToken));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -59,6 +70,10 @@ public class BankTestData2 : IXunitSerializable
             nameof(AccountAccessConsentObject),
             AccountAccessConsentObject is null ? null : JsonConvert.SerializeObject(AccountAccessConsentObject));
         info.AddValue(nameof(AccountAccessConsentId), AccountAccessConsentId?.ToString());
+
+        info.AddValue(nameof(BankRegistrationExternalApiId), BankRegistrationExternalApiId);
+        info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
+        info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
     }
 
     public override string ToString()
@@ -67,7 +82,10 @@ public class BankTestData2 : IXunitSerializable
         if (BankRegistrationObject is not null ||
             BankRegistrationId is not null ||
             AccountAccessConsentObject is not null ||
-            AccountAccessConsentId is not null)
+            AccountAccessConsentId is not null ||
+            BankRegistrationExternalApiId is not null ||
+            AccountAccessConsentExternalApiId is not null ||
+            AccountAccessConsentRefreshToken is not null )
         {
             var elements = new List<string>();
             if (BankRegistrationObject is not null)
@@ -88,6 +106,21 @@ public class BankTestData2 : IXunitSerializable
             if (AccountAccessConsentId is not null)
             {
                 elements.Add($"AccountAccessConsentId: {AccountAccessConsentId}");
+            }
+
+            if (BankRegistrationExternalApiId is not null)
+            {
+                elements.Add($"BankRegApiId: {BankRegistrationExternalApiId}");
+            }
+
+            if (AccountAccessConsentExternalApiId is not null)
+            {
+                elements.Add($"AispConsentApiId: {AccountAccessConsentExternalApiId}");
+            }
+
+            if (AccountAccessConsentRefreshToken is not null)
+            {
+                elements.Add("AccountAccessConsentRefreshToken: <value>");
             }
 
             extraBankProfileInfo = "(" + string.Join(", ", elements) + ")";

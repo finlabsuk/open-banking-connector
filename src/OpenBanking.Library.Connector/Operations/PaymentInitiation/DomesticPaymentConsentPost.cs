@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
@@ -55,17 +56,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _bankRegistrationMethods = bankRegistrationMethods;
         }
 
-        protected override string RelativePath => "/domestic-payment-consents";
-
         protected override string ClientCredentialsGrantScope => "payments";
 
         protected override async Task<DomesticPaymentConsentReadResponse> AddEntity(
             DomesticPaymentConsent request,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 apiRequest,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? apiResponse,
             ITimeProvider timeProvider)
         {
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            string externalApiId =
+                request.ExternalApiObject is null
+                    ? apiResponse!.Data.ConsentId
+                    : request.ExternalApiObject.ExternalApiId;
+
+            DateTimeOffset utcNow = timeProvider.GetUtcNow();
             var persistedObject = new DomesticPaymentConsentPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -81,7 +84,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 request.CreatedBy,
                 request.BankRegistrationId,
                 request.PaymentInitiationApiId,
-                apiResponse.Data.ConsentId);
+                externalApiId);
+            AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
+            if (accessToken is not null)
+            {
+                persistedObject.UpdateAccessToken(
+                    accessToken.Token,
+                    accessToken.ExpiresIn,
+                    accessToken.RefreshToken,
+                    utcNow,
+                    request.CreatedBy);
+            }
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -150,7 +163,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 BankApiSet2 bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
-                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> ApiPostRequestData(DomesticPaymentConsent request)
         {
@@ -196,10 +208,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Determine endpoint URL
             string baseUrl = paymentInitiationApiEntity.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePath);
+            var endpointUrl = new Uri(baseUrl + "/domestic-payment-consents");
 
-            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,
-                nonErrorMessages);
+            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, nonErrorMessages);
         }
     }
 }

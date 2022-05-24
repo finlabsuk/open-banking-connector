@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TEntity,
             TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
         where TEntity : class, IEntity
-        where TPublicRequest : Base
+        where TPublicRequest : ConsentRequestBase
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
@@ -43,14 +43,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             instrumentationClient,
             mapper) { }
 
-        protected abstract string RelativePath { get; }
-
         protected abstract string ClientCredentialsGrantScope { get; }
 
         protected abstract Task<TPublicResponse> AddEntity(
             TPublicRequest request,
-            TApiRequest apiRequest,
-            TApiResponse apiResponse,
+            TApiResponse? apiResponse,
             ITimeProvider timeProvider);
 
         protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
@@ -70,57 +67,63 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
-                    string? accessToken,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await ApiPostRequestData(requestInfo.Request);
 
-            // Get software statement profile
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            TApiResponse? externalApiResponse = null;
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2;
+            if (requestInfo.Request.ExternalApiObject is null)
+            {
+                // Get software statement profile
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                    await _softwareStatementProfileRepo.GetAsync(
+                        bankRegistration.SoftwareStatementProfileId,
+                        bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            // Get client credentials grant token if necessary
-            string accessTokenNew =
-                accessToken ??
-                (await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    ClientCredentialsGrantScope,
-                    processedSoftwareStatementProfile,
-                    bankRegistration,
-                    null,
-                    apiClient,
-                    _instrumentationClient))
-                .AccessToken;
+                // Get client credentials grant token
+                string accessTokenNew =
+                    (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                        ClientCredentialsGrantScope,
+                        processedSoftwareStatementProfile,
+                        bankRegistration,
+                        null,
+                        apiClient,
+                        _instrumentationClient))
+                    .AccessToken;
 
-            // Create new Open Banking object by posting JWT
-            JsonSerializerSettings? requestJsonSerializerSettings = null;
-            JsonSerializerSettings? responseJsonSerializerSettings = null;
+                // Create new Open Banking object by posting JWT
+                JsonSerializerSettings? requestJsonSerializerSettings = null;
+                JsonSerializerSettings? responseJsonSerializerSettings = null;
 
-            IApiPostRequests<TApiRequest, TApiResponse> apiRequests =
-                ApiRequests(
-                    bankApiInformation,
-                    bankFinancialId,
-                    accessTokenNew,
-                    processedSoftwareStatementProfile,
-                    _instrumentationClient);
+                IApiPostRequests<TApiRequest, TApiResponse> apiRequests =
+                    ApiRequests(
+                        bankApiInformation,
+                        bankFinancialId,
+                        accessTokenNew,
+                        processedSoftwareStatementProfile,
+                        _instrumentationClient);
 
-            (TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
-                await EntityPostCommon(
-                    requestInfo,
-                    apiRequest,
-                    apiRequests,
-                    apiClient,
-                    endpointUrl,
-                    requestJsonSerializerSettings,
-                    responseJsonSerializerSettings,
-                    nonErrorMessages);
+                (externalApiResponse, nonErrorMessages2) =
+                    await EntityPostCommon(
+                        requestInfo,
+                        apiRequest,
+                        apiRequests,
+                        apiClient,
+                        endpointUrl,
+                        requestJsonSerializerSettings,
+                        responseJsonSerializerSettings,
+                        nonErrorMessages);
+            }
+            else
+            {
+                nonErrorMessages2 = nonErrorMessages;
+            }
 
             // Create persisted entity and return response
             TPublicResponse response = await AddEntity(
                 requestInfo.Request,
-                apiRequest,
-                apiResponse,
+                externalApiResponse,
                 _timeProvider);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -136,7 +139,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 BankApiSet2 bankApiInformation,
                 BankRegistrationPersisted bankRegistration,
                 string bankFinancialId,
-                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPostRequestData(TPublicRequest request);
     }

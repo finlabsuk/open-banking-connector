@@ -89,12 +89,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public CustomBehaviourClass? CustomBehaviour { get; set; }
 
-
         /// <summary>
-        ///     Existing bank registration (OAuth2 client) information. When non-null, this will be used instead of
-        ///     creating a new registration at bank via DCR.
+        ///     Information about external BankRegistration (OAuth2 client) created using external (bank) API.
+        ///     When non-null, this will be referenced
+        ///     instead of
+        ///     creating a new external BankRegistration object at the external API via DCR.
         /// </summary>
-        public ExternalApiObject? ExternalApiObject { get; set; }
+        public ExternalApiBankRegistration? ExternalApiObject { get; set; }
 
         /// <summary>
         ///     If registration already exists for bank, allow creation of additional one. NB this may

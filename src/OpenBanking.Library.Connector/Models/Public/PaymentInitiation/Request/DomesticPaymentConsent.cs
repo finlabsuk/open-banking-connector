@@ -14,7 +14,7 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
 {
-    public class DomesticPaymentConsent : Base, ISupportsValidation
+    public class DomesticPaymentConsent : ConsentRequestBase, ISupportsValidation
     {
         /// <summary>
         ///     Specifies BankRegistration object to use when creating the consent.

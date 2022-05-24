@@ -77,7 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse) : base(
             id,
             created,
             createdBy,
@@ -89,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             ExternalApiResponse = externalApiResponse;
         }
 
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 ExternalApiResponse { get; }
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
     }
 
     /// <summary>

@@ -40,11 +40,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                         registration.TokenEndpoint = bankProfileHiddenProperties.GetAdditionalProperty1();
                         registration.AuthorizationEndpoint = bankProfileHiddenProperties.GetAdditionalProperty3();
                         registration.TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt;
-                        registration.ExternalApiObject = new ExternalApiObject
+                        registration.ExternalApiObject = new ExternalApiBankRegistration
                         {
-                            ExternalApiId = bankProfileHiddenProperties.GetAdditionalProperty4(),
-                            ExternalApiSecret = null,
-                            RegistrationAccessToken = null
+                            ExternalApiId = bankProfileHiddenProperties.GetAdditionalProperty4()
                         };
                         BankRegistrationPostCustomBehaviour bankRegistrationPost =
                             (registration.CustomBehaviour ??= new CustomBehaviourClass())

@@ -191,6 +191,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public Dictionary<BankProfileEnum, Guid>
             AccountAccessConsentIds { get; set; } =
             new();
+
+        /// <summary>
+        ///     Existing external (bank) API BankRegistration objects to specify when using POST to create a new BankRegistration
+        ///     object.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            ExternalApiBankRegistrationIds { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing external (bank) API AccountAccessConsent objects to specify when using POST to create a new
+        ///     AccountAccessConsent object.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            ExternalApiAccountAccessConsentIds { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing external (bank) API AccountAccessConsent refresh tokens to specify when using POST to create a new
+        ///     AccountAccessConsent object.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            ExternalApiAccountAccessConsentRefreshTokens { get; set; } =
+            new();
     }
 
     /// <summary>

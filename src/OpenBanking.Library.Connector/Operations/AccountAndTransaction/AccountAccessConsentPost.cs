@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
@@ -37,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
         private readonly IDbReadOnlyEntityMethods<BankRegistration> _bankRegistrationMethods;
-        
+
         public AccountAccessConsentPost(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -60,17 +61,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             _bankProfileDefinitions = bankProfileDefinitions;
         }
 
-        protected override string RelativePath => "/account-access-consents";
-
         protected override string ClientCredentialsGrantScope => "accounts";
 
         protected override async Task<AccountAccessConsentReadResponse> AddEntity(
             AccountAccessConsent request,
-            AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse,
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1? apiResponse,
             ITimeProvider timeProvider)
         {
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            string externalApiId =
+                request.ExternalApiObject is null
+                    ? apiResponse!.Data.ConsentId
+                    : request.ExternalApiObject.ExternalApiId;
+
+            DateTimeOffset utcNow = timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -86,7 +89,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 request.CreatedBy,
                 request.BankRegistrationId,
                 request.AccountAndTransactionApiId,
-                apiResponse.Data.ConsentId);
+                externalApiId);
+            AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
+            if (accessToken is not null)
+            {
+                persistedObject.UpdateAccessToken(
+                    accessToken.Token,
+                    accessToken.ExpiresIn,
+                    accessToken.RefreshToken,
+                    utcNow,
+                    request.CreatedBy);
+            }
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -150,7 +163,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 BankApiSet2 bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
-                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> ApiPostRequestData(AccountAccessConsent request)
         {
@@ -205,10 +217,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             // Determine endpoint URL
             string baseUrl = accountAndTransactionApiEntity.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePath);
+            var endpointUrl = new Uri(baseUrl + "/account-access-consents");
 
-            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,
-                nonErrorMessages);
+            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, nonErrorMessages);
         }
     }
 }

@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -53,17 +54,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             _bankRegistrationMethods = bankRegistrationMethods;
         }
 
-        protected override string RelativePath => "/domestic-vrp-consents";
-
         protected override string ClientCredentialsGrantScope => "payments";
 
         protected override async Task<DomesticVrpConsentReadResponse> AddEntity(
             DomesticVrpConsent request,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest apiRequest,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? apiResponse,
             ITimeProvider timeProvider)
         {
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            string externalApiId =
+                request.ExternalApiObject is null
+                    ? apiResponse!.Data.ConsentId
+                    : request.ExternalApiObject.ExternalApiId;
+
+            DateTimeOffset utcNow = timeProvider.GetUtcNow();
             var persistedObject = new DomesticVrpConsentPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -79,7 +82,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 request.CreatedBy,
                 request.BankRegistrationId,
                 request.VariableRecurringPaymentsApiId,
-                apiResponse.Data.ConsentId);
+                externalApiId);
+
+            AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
+            if (accessToken is not null)
+            {
+                persistedObject.UpdateAccessToken(
+                    accessToken.Token,
+                    accessToken.ExpiresIn,
+                    accessToken.RefreshToken,
+                    utcNow,
+                    request.CreatedBy);
+            }
 
             // Save entity
             await _entityMethods.AddAsync(persistedObject);
@@ -134,7 +148,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 BankApiSet2 bankApiInformation,
                 BankRegistration bankRegistration,
                 string bankFinancialId,
-                string? accessToken,
                 List<IFluentResponseInfoOrWarningMessage>
                 nonErrorMessages)> ApiPostRequestData(DomesticVrpConsent request)
         {
@@ -181,10 +194,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             // Determine endpoint URL
             string baseUrl = variableRecurringPaymentsApiEntity.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePath);
+            var endpointUrl = new Uri(baseUrl + "/domestic-vrp-consents");
 
-            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, null,
-                nonErrorMessages);
+            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, nonErrorMessages);
         }
     }
 }

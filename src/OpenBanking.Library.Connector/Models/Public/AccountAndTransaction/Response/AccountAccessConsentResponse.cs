@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
             string externalApiId,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1 externalApiResponse) : base(
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse) : base(
             id,
             created,
             createdBy,
@@ -84,6 +84,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     v3.1.9r5 <a />. Open Banking Connector will automatically
         ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
         /// </summary>
-        public AccountAndTransactionModelsPublic.OBReadConsentResponse1 ExternalApiResponse { get; }
+        public AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; }
     }
 }

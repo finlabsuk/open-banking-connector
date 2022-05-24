@@ -128,6 +128,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                             ? value5
                             : null;
 
+                    // Get external API BankRegistration ID
+                    string? externalApiBankRegistrationId =
+                        testGroup
+                            .ExternalApiBankRegistrationIds
+                            .TryGetValue(bankProfileEnum, out string? value6)
+                            ? value6
+                            : null;
+
+                    // Get external API AccountAccessConsent ID
+                    string? externalApiAccountAccessConsentId =
+                        testGroup
+                            .ExternalApiAccountAccessConsentIds
+                            .TryGetValue(bankProfileEnum, out string? value7)
+                            ? value7
+                            : null;
+
+                    // Get external API AccountAccessConsent refresh token
+                    string? externalApiAccountAccessConsentRefreshToken =
+                        testGroup
+                            .ExternalApiAccountAccessConsentRefreshTokens
+                            .TryGetValue(bankProfileEnum, out string? value8)
+                            ? value8
+                            : null;
+
                     // Determine whether test case should be skipped based on registration scope
                     BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
                     bool registrationScopeValid =
@@ -143,14 +167,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                                 TestGroupName = groupName,
                                 SoftwareStatementProfileId = testGroup.SoftwareStatementProfileId,
                                 SoftwareStatementAndCertificateProfileOverride = overrideCase,
-                                RegistrationScope = testGroup.RegistrationScope,
+                                RegistrationScope = testGroup.RegistrationScope
                             },
                             new BankTestData2
                             {
                                 BankProfileEnum = bankProfileEnum,
                                 BankRegistrationObject = bankRegistrationObject,
                                 BankRegistrationId = bankRegistrationId,
-                                AccountAccessConsentId = accountAccessConsentId
+                                AccountAccessConsentId = accountAccessConsentId,
+                                ExternalApiBankRegistrationId = externalApiBankRegistrationId,
+                                ExternalApiAccountAccessConsentId = externalApiAccountAccessConsentId,
+                                ExternalApiAccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
                             });
                     }
                 }

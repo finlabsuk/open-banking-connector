@@ -13,7 +13,7 @@ using VariableRecurringPaymentsModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
 {
-    public class DomesticVrpConsent : Base, ISupportsValidation
+    public class DomesticVrpConsent : ConsentRequestBase, ISupportsValidation
     {
         /// <summary>
         ///     Specifies BankRegistration object to use when creating the consent.

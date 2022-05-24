@@ -18,10 +18,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     ///     Request object used when creating an AccountAccessConsent object. Includes a UK Open Banking request object
     ///     plus information on the bank registration and bank functional API to associate with the consent.
     /// </summary>
-    public class AccountAccessConsent : Base, ISupportsValidation
+    public class AccountAccessConsent : ConsentRequestBase, ISupportsValidation
     {
         public BankProfileEnum? BankProfile { get; set; }
-        
+
         /// <summary>
         ///     Specifies BankRegistration object to use when creating the consent.
         ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer
