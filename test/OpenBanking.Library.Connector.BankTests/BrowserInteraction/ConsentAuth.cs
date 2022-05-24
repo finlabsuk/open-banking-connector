@@ -32,6 +32,7 @@ public class ConsentAuth
             BankProfileEnum.NatWest => new NatWest(),
             BankProfileEnum.RoyalBankOfScotland => new RoyalBankOfScotland(),
             BankProfileEnum.Hsbc_Sandbox => new Hsbc(),
+            BankProfileEnum.Hsbc_UkPersonal => new Hsbc2(),
             BankProfileEnum.Danske => new Danske(),
             BankProfileEnum.Monzo => new Monzo(),
             BankProfileEnum.Lloyds => new Lloyds(),

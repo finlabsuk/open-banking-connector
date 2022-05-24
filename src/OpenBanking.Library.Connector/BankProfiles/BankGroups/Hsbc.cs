@@ -74,17 +74,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                         }
 
                         // AccountAccessConsent GET custom behaviour
-                        ConsentAuthGetCustomBehaviour accountAccessConsentAuthGetCustomBehaviour =
-                            registration.CustomBehaviour.AccountAccessConsentAuthGet ??=
-                                new ConsentAuthGetCustomBehaviour();
                         if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
                         {
+                            ConsentAuthGetCustomBehaviour accountAccessConsentAuthGetCustomBehaviour =
+                                registration.CustomBehaviour.AccountAccessConsentAuthGet ??=
+                                    new ConsentAuthGetCustomBehaviour();
                             accountAccessConsentAuthGetCustomBehaviour.AudClaim =
                                 bankProfileHiddenProperties.GetAdditionalProperty1();
+                            accountAccessConsentAuthGetCustomBehaviour
+                                .ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2();
                         }
-
-                        accountAccessConsentAuthGetCustomBehaviour
-                            .ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2();
 
                         return registration;
                     },
