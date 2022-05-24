@@ -131,7 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Get external API BankRegistration ID
                     string? externalApiBankRegistrationId =
                         testGroup
-                            .ExternalApiBankRegistrationIds
+                            .BankRegistrationExternalApiIds
                             .TryGetValue(bankProfileEnum, out string? value6)
                             ? value6
                             : null;
@@ -139,7 +139,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Get external API AccountAccessConsent ID
                     string? externalApiAccountAccessConsentId =
                         testGroup
-                            .ExternalApiAccountAccessConsentIds
+                            .AccountAccessConsentExternalApiIds
                             .TryGetValue(bankProfileEnum, out string? value7)
                             ? value7
                             : null;
@@ -147,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Get external API AccountAccessConsent refresh token
                     string? externalApiAccountAccessConsentRefreshToken =
                         testGroup
-                            .ExternalApiAccountAccessConsentRefreshTokens
+                            .AccountAccessConsentRefreshTokens
                             .TryGetValue(bankProfileEnum, out string? value8)
                             ? value8
                             : null;
@@ -175,9 +175,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                                 BankRegistrationObject = bankRegistrationObject,
                                 BankRegistrationId = bankRegistrationId,
                                 AccountAccessConsentId = accountAccessConsentId,
-                                ExternalApiBankRegistrationId = externalApiBankRegistrationId,
-                                ExternalApiAccountAccessConsentId = externalApiAccountAccessConsentId,
-                                ExternalApiAccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
+                                BankRegistrationExternalApiId = externalApiBankRegistrationId,
+                                AccountAccessConsentExternalApiId = externalApiAccountAccessConsentId,
+                                AccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
                             });
                     }
                 }

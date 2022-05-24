@@ -198,7 +198,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
         public Dictionary<BankProfileEnum, string>
-            ExternalApiBankRegistrationIds { get; set; } =
+            BankRegistrationExternalApiIds { get; set; } =
             new();
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
         public Dictionary<BankProfileEnum, string>
-            ExternalApiAccountAccessConsentIds { get; set; } =
+            AccountAccessConsentExternalApiIds { get; set; } =
             new();
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
         public Dictionary<BankProfileEnum, string>
-            ExternalApiAccountAccessConsentRefreshTokens { get; set; } =
+            AccountAccessConsentRefreshTokens { get; set; } =
             new();
     }
 

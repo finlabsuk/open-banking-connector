@@ -15,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
@@ -71,50 +72,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Data!.Id;
 
             // Create account access consent or use existing
-            Guid accountAccessConsentId;
-            if (testData2.AccountAccessConsentId is null)
+            Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
+                bankProfile.AccountAccessConsentRequest(
+                    Guid.Empty, // set below
+                    Guid.Empty,
+                    AccountAccessConsentSubtestHelper.GetAccountAccessConsentType(subtestEnum));
+            await aispFluentRequestLogging
+                .AppendToPath("accountAccessConsent")
+                .AppendToPath("postRequest")
+                .WriteFile(accountAccessConsentRequest);
+
+            if (testData2.AccountAccessConsentExternalApiId is not null)
             {
-                Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
-                    bankProfile.AccountAccessConsentRequest(
-                        Guid.Empty, // set below
-                        Guid.Empty,
-                        AccountAccessConsentSubtestHelper.GetAccountAccessConsentType(subtestEnum));
-                await aispFluentRequestLogging
-                    .AppendToPath("accountAccessConsent")
-                    .AppendToPath("postRequest")
-                    .WriteFile(accountAccessConsentRequest);
-
-
-                if (testData2.AccountAccessConsentObject is not null)
+                accountAccessConsentRequest.ExternalApiObject = new ExternalApiConsent
                 {
-                    accountAccessConsentRequest = testData2.AccountAccessConsentObject;
-                }
-
-                accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
-                accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
-                accountAccessConsentRequest.CreatedBy = "Automated bank tests";
-                accountAccessConsentRequest.Reference = testNameUnique;
-                IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp =
-                    await requestBuilder
-                        .AccountAndTransaction
-                        .AccountAccessConsents
-                        .CreateAsync(accountAccessConsentRequest);
-
-                // Checks
-                accountAccessConsentResp.Should().NotBeNull();
-                accountAccessConsentResp.Messages.Should().BeEmpty();
-                accountAccessConsentResp.Data.Should().NotBeNull();
-                accountAccessConsentId = accountAccessConsentResp.Data!.Id;
-                //Guid accountAccessConsentId = Guid.Parse("07a769cd-07e6-4d58-bcfe-8e12b14f983a");
+                    ExternalApiId = testData2.AccountAccessConsentExternalApiId,
+                    AccessToken = testData2.AccountAccessConsentRefreshToken is null
+                        ? null
+                        : new AccessToken
+                        {
+                            RefreshToken = testData2.AccountAccessConsentRefreshToken,
+                            ModifiedBy = "Automated bank tests"
+                        }
+                };
             }
-            else
-            {
-                accountAccessConsentId = testData2.AccountAccessConsentId.Value;
-            }
-            // var xx = await requestBuilder
-            //     .AccountAndTransaction
-            //     .AccountAccessConsents
-            //     .DeleteAsync(accountAccessConsentId);
+
+            accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
+            accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
+            accountAccessConsentRequest.CreatedBy = "Automated bank tests";
+            accountAccessConsentRequest.Reference = testNameUnique;
+            IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp =
+                await requestBuilder
+                    .AccountAndTransaction
+                    .AccountAccessConsents
+                    .CreateAsync(accountAccessConsentRequest);
+
+            // Checks
+            accountAccessConsentResp.Should().NotBeNull();
+            accountAccessConsentResp.Messages.Should().BeEmpty();
+            accountAccessConsentResp.Data.Should().NotBeNull();
+            Guid accountAccessConsentId = accountAccessConsentResp.Data!.Id;
 
             // GET /account access consents/{consentId}
             IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp2 =
@@ -128,6 +125,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAccessConsentResp2.Messages.Should().BeEmpty();
             accountAccessConsentResp2.Data.Should().NotBeNull();
 
+            // var xx = await requestBuilder
+            //     .AccountAndTransaction
+            //     .AccountAccessConsents
+            //     .DeleteAsync(accountAccessConsentId);
+           
             // POST auth context
             var authContextRequest = new AccountAccessConsentAuthContext
             {
@@ -253,17 +255,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // DELETE account access consent
-                if (testData2.AccountAccessConsentId is null)
-                {
-                    IFluentResponse accountAccessConsentResp3 = await requestBuilderNew
-                        .AccountAndTransaction
-                        .AccountAccessConsents
-                        .DeleteAsync(accountAccessConsentId);
+                IFluentResponse accountAccessConsentResp3 = await requestBuilderNew
+                    .AccountAndTransaction
+                    .AccountAccessConsents
+                    .DeleteAsync(accountAccessConsentId);
 
-                    // Checks
-                    accountAccessConsentResp3.Should().NotBeNull();
-                    accountAccessConsentResp3.Messages.Should().BeEmpty();
-                }
+                // Checks
+                accountAccessConsentResp3.Should().NotBeNull();
+                accountAccessConsentResp3.Messages.Should().BeEmpty();
             }
 
             // DELETE API object
