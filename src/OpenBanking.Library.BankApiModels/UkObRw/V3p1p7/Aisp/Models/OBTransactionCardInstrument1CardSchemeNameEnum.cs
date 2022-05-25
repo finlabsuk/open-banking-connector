@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
     public enum OBTransactionCardInstrument1CardSchemeNameEnum
     {
         /// <summary> AmericanExpress. </summary>
-        [EnumMember(Value = "American Express")]
+        [EnumMember(Value = "AmericanExpress")]
         AmericanExpress,
         /// <summary> Diners. </summary>
         [EnumMember(Value = "Diners")]
@@ -29,9 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         MasterCard,
         /// <summary> VISA. </summary>
         [EnumMember(Value = "Visa")]
-        Visa,
-        
-        [EnumMember(Value = "CRD.SCHM.NM.1")]
-        Unknown
+        Visa
     }
 }

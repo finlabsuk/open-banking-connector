@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         [EnumMember(Value = "CreditCard")]
         CreditCard,
         /// <summary> CurrentAccount. </summary>
-        [EnumMember(Value = "Current Account")]
+        [EnumMember(Value = "CurrentAccount")]
         CurrentAccount,
         /// <summary> EMoney. </summary>
         [EnumMember(Value = "EMoney")]
