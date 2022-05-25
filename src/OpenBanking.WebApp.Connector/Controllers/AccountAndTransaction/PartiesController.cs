@@ -69,7 +69,7 @@ public class PartiesController : ControllerBase
                 null,
                 null,
                 null,
-                page,
+                page ?? string.Empty,
                 modifiedBy,
                 requestUrlWithoutQuery);
 
@@ -132,7 +132,7 @@ public class PartiesController : ControllerBase
                 null,
                 null,
                 null,
-                page,
+                page ?? string.Empty,
                 modifiedBy,
                 requestUrlWithoutQuery);
 

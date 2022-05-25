@@ -69,7 +69,7 @@ public class AccountsController : ControllerBase
                 null,
                 null,
                 null,
-                page,
+                page ?? string.Empty,
                 modifiedBy,
                 requestUrlWithoutQuery);
 

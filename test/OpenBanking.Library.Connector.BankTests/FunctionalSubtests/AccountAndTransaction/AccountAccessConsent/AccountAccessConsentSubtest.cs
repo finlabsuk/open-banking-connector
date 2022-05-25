@@ -187,7 +187,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     await requestBuilderNew
                         .AccountAndTransaction
                         .Accounts
-                        .ReadAsync(accountAccessConsentId);
+                        .ReadAsync(
+                            accountAccessConsentId,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "",
+                            createdBy);
 
                 // Checks
                 accountsResp.Should().NotBeNull();
@@ -203,7 +210,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Accounts
-                            .ReadAsync(accountAccessConsentId, externalAccountId);
+                            .ReadAsync(
+                                accountAccessConsentId,
+                                externalAccountId,
+                                null,
+                                null,
+                                null,
+                                "",
+                                createdBy);
 
                     // Checks
                     accountsResp2.Should().NotBeNull();
@@ -215,7 +229,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Balances
-                            .ReadAsync(accountAccessConsentId, externalAccountId);
+                            .ReadAsync(
+                                accountAccessConsentId,
+                                externalAccountId,
+                                null,
+                                null,
+                                null,
+                                "",
+                                createdBy);
 
                     // Checks
                     balancesResp.Should().NotBeNull();
@@ -223,6 +244,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     balancesResp.Data.Should().NotBeNull();
 
                     // GET /transactions/{accountId}
+                    const int maxPages = 30;
+                    var page = 0;
                     var queryString = "";
                     do
                     {
@@ -248,14 +271,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                         // Update query string based on "Next" link
                         queryString = transactionsResp.Data!.ExternalApiResponse.Links.Next;
-                    } while (queryString is not null);
+                        page++;
+                    } while (queryString is not null && page < maxPages);
 
                     // GET /party/{accountId}
                     IFluentResponse<PartiesResponse> partyResp =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Parties
-                            .ReadAsync(accountAccessConsentId, externalAccountId);
+                            .ReadAsync(
+                                accountAccessConsentId,
+                                externalAccountId,
+                                null,
+                                null,
+                                null,
+                                "",
+                                createdBy);
 
                     // Checks
                     partyResp.Should().NotBeNull();
@@ -267,7 +298,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Parties2
-                            .ReadAsync(accountAccessConsentId, externalAccountId);
+                            .ReadAsync(
+                                accountAccessConsentId,
+                                externalAccountId,
+                                null,
+                                null,
+                                null,
+                                "",
+                                createdBy);
 
                     // Checks
                     partiesResp.Should().NotBeNull();

@@ -74,6 +74,9 @@ public class TransactionsController : ControllerBase
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Support pass-through of all query parameters
+        string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+
         // Operation
         IFluentResponse<TransactionsResponse> fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -82,11 +85,12 @@ public class TransactionsController : ControllerBase
                 accountAccessConsentId,
                 externalApiAccountId,
                 externalApiStatementId,
-                fromBookingDateTime,
-                toBookingDateTime,
-                page,
+                null,
+                null,
+                null,
                 modifiedBy,
-                requestUrlWithoutQuery);
+                requestUrlWithoutQuery,
+                queryString);
 
         // HTTP response
         return fluentResponse switch

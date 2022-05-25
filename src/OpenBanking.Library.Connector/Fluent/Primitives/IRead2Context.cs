@@ -26,6 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="page"></param>
         /// <param name="modifiedBy"></param>
         /// <param name="requestUrlWithoutQuery"></param>
+        /// <param name="queryString"></param>
         /// <returns></returns>
         Task<IFluentResponse<TPublicResponse>> ReadAsync(
             Guid consentId,
@@ -35,7 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? toBookingDateTime = null,
             string? page = null,
             string? modifiedBy = null,
-            string? requestUrlWithoutQuery = null);
+            string? requestUrlWithoutQuery = null,
+            string? queryString = null);
     }
 
     internal interface
@@ -53,7 +55,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? toBookingDateTime,
             string? page,
             string? modifiedBy,
-            string? requestUrlWithoutQuery)
+            string? requestUrlWithoutQuery,
+            string? queryString)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -70,7 +73,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                         toBookingDateTime,
                         page,
                         modifiedBy,
-                        requestUrlWithoutQuery);
+                        requestUrlWithoutQuery,
+                        queryString);
                 nonErrorMessages.AddRange(postEntityNonErrorMessages);
 
                 // Return success response (thrown exceptions produce error response)

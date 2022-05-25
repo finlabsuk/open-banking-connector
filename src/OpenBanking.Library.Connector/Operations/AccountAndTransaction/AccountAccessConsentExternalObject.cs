@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Specialized;
+using System.Web;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -68,7 +70,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 string? toBookingDateTime,
                 string? page,
                 string? modifiedBy,
-                string? publicRequestUrlWithoutQuery)
+                string? publicRequestUrlWithoutQuery,
+                string? queryString)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -109,13 +112,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     modifiedBy);
 
             // Retrieve endpoint URL
-            Uri requestUrl = GetRequestUrl(
+            string apiRequestBaseUrl = GetApiBaseRequestUrl(
                 accountAndTransactionApi.BaseUrl,
                 externalApiAccountId,
-                externalApiStatementId,
+                externalApiStatementId);
+            string apiRequestQueryString = GetQueryString(
                 fromBookingDateTime,
                 toBookingDateTime,
-                page);
+                page,
+                queryString);
+            Uri apiRequestUrl = new UriBuilder(apiRequestBaseUrl)
+            {
+                Query = apiRequestQueryString
+            }.Uri;
 
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -128,30 +137,80 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             (apiResponse, newNonErrorMessages) =
                 await apiRequests.GetAsync(
-                    requestUrl,
+                    apiRequestUrl,
                     jsonSerializerSettings,
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Create response
-            TPublicResponse response = PublicGetResponse(apiResponse, requestUrl, publicRequestUrlWithoutQuery);
+            var validQueryParameters = new List<string>();
+            if (fromBookingDateTime is not null)
+            {
+                validQueryParameters.Add("fromBookingDateTime");
+            }
+
+            if (toBookingDateTime is not null)
+            {
+                validQueryParameters.Add("toBookingDateTime");
+            }
+
+            if (page is not null)
+            {
+                validQueryParameters.Add("page");
+            }
+
+            TPublicResponse response = PublicGetResponse(
+                apiResponse,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                queryString is not null,
+                validQueryParameters);
 
             return (response, nonErrorMessages);
         }
 
-        protected abstract Uri GetRequestUrl(
-            string baseUrl,
-            string? externalApiAccountId,
-            string? externalApiStatementId,
+        private string GetQueryString(
             string? fromBookingDateTime,
             string? toBookingDateTime,
-            string? page);
+            string? page,
+            string? queryString)
+        {
+            NameValueCollection query = HttpUtility.ParseQueryString(new UriBuilder().Query);
+            if (!string.IsNullOrEmpty(fromBookingDateTime))
+            {
+                query["fromBookingDateTime"] = fromBookingDateTime;
+            }
+
+            if (!string.IsNullOrEmpty(toBookingDateTime))
+            {
+                query["toBookingDateTime"] = toBookingDateTime;
+            }
+
+            if (!string.IsNullOrEmpty(page))
+            {
+                query["page"] = page;
+            }
+
+            if (queryString is null)
+            {
+                return query.ToString()!;
+            }
+
+            return queryString!;
+        }
+
+        protected abstract string GetApiBaseRequestUrl(
+            string baseUrl,
+            string? externalApiAccountId,
+            string? externalApiStatementId);
 
         protected abstract TPublicResponse PublicGetResponse(
             TApiResponse apiResponse,
             Uri apiRequestUrl,
-            string? publicRequestUrlWithoutQuery);
+            string? publicRequestUrlWithoutQuery,
+            bool supportAllQueryParameters,
+            IList<string> validQueryParameters);
 
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
             AccountAndTransactionApi accountAndTransactionApi,
@@ -162,7 +221,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected string? GetLinkUrlQuery(
             string? linkUrlString,
             Uri apiRequestUrl,
-            string? publicRequestUrlWithoutQuery)
+            string? publicRequestUrlWithoutQuery,
+            bool supportAllQueryParameters,
+            IList<string> validQueryParameters)
         {
             if (linkUrlString is null)
             {
@@ -192,19 +253,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             }
 
             // Check query parameters are valid
-            if (!string.IsNullOrEmpty(linkUrl.Query))
+            if (!string.IsNullOrEmpty(linkUrl.Query) &&
+                !supportAllQueryParameters)
             {
-                var linkUrlQueryParameterPairs = linkUrl.Query.TrimStart('?').Split('&');
-                var valiedQueryParameterNames = new List<string> { "fromBookingDateTime", "toBookingDateTime", "page" };
-                foreach (var queryParameterPair in linkUrlQueryParameterPairs)
+                string[] linkUrlQueryParameterPairs = linkUrl.Query.TrimStart('?').Split('&');
+                foreach (string queryParameterPair in linkUrlQueryParameterPairs)
                 {
-                    var queryParameterName = queryParameterPair.Split('=')[0];
-                    if (!valiedQueryParameterNames.Contains(queryParameterName))
+                    string queryParameterName = queryParameterPair.Split('=')[0];
+                    if (!validQueryParameters.Contains(queryParameterName))
                     {
                         throw new InvalidOperationException(
                             $"External API returned link URL with query parameter {queryParameterName} which is unexpected.");
                     }
-
                 }
             }
 
@@ -219,7 +279,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             uriBuilder.Query = linkUrl.Query;
             Uri fullUri = uriBuilder.Uri;
             return fullUri.ToString();
-
         }
     }
 }

@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Specialized;
-using System.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -38,48 +36,57 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             dbSaveChangesMethod,
             timeProvider) { }
 
-        protected string RelativePath => "/balances";
-        protected string RelativePath2 => "/balances";
-
-        protected override Uri GetRequestUrl(
+        protected override string GetApiBaseRequestUrl(
             string baseUrl,
             string? externalApiAccountId,
-            string? externalApiStatementId,
-            string? fromBookingDateTime,
-            string? toBookingDateTime,
-            string? page)
-        {
-            string endpointUrlBase =
-                (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
-                {
-                    (null, null) => baseUrl + RelativePath,
-                    ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + RelativePath2,
-                    ({ } extAccountId, { } extStatementId) =>
-                        baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + RelativePath2,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            var uriBuilder = new UriBuilder(endpointUrlBase);
-            NameValueCollection query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            if (page != null)
+            string? externalApiStatementId) =>
+            (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
             {
-                query["page"] = page;
-            }
-
-            uriBuilder.Query = query.ToString();
-            return uriBuilder.Uri;
-        }
+                (null, null) => baseUrl + "/balances",
+                ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + "/balances",
+                ({ } extAccountId, { } extStatementId) =>
+                    baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + "/balances",
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
         protected override BalancesResponse PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse,
             Uri apiRequestUrl,
-            string? requestUrlWithoutQuery)
+            string? requestUrlWithoutQuery,
+            bool supportAllQueryParameters,
+            IList<string> validQueryParameters)
         {
             // Get link queries
-            apiResponse.Links.Self = GetLinkUrlQuery(apiResponse.Links.Self, apiRequestUrl, requestUrlWithoutQuery);
-            apiResponse.Links.First = GetLinkUrlQuery(apiResponse.Links.First, apiRequestUrl, requestUrlWithoutQuery);
-            apiResponse.Links.Prev = GetLinkUrlQuery(apiResponse.Links.Prev, apiRequestUrl, requestUrlWithoutQuery);
-            apiResponse.Links.Next = GetLinkUrlQuery(apiResponse.Links.Next, apiRequestUrl, requestUrlWithoutQuery);
-            apiResponse.Links.Last = GetLinkUrlQuery(apiResponse.Links.Last, apiRequestUrl, requestUrlWithoutQuery);
+            apiResponse.Links.Self = GetLinkUrlQuery(
+                apiResponse.Links.Self,
+                apiRequestUrl,
+                requestUrlWithoutQuery,
+                supportAllQueryParameters,
+                validQueryParameters);
+            apiResponse.Links.First = GetLinkUrlQuery(
+                apiResponse.Links.First,
+                apiRequestUrl,
+                requestUrlWithoutQuery,
+                supportAllQueryParameters,
+                validQueryParameters);
+            apiResponse.Links.Prev = GetLinkUrlQuery(
+                apiResponse.Links.Prev,
+                apiRequestUrl,
+                requestUrlWithoutQuery,
+                supportAllQueryParameters,
+                validQueryParameters);
+            apiResponse.Links.Next = GetLinkUrlQuery(
+                apiResponse.Links.Next,
+                apiRequestUrl,
+                requestUrlWithoutQuery,
+                supportAllQueryParameters,
+                validQueryParameters);
+            apiResponse.Links.Last = GetLinkUrlQuery(
+                apiResponse.Links.Last,
+                apiRequestUrl,
+                requestUrlWithoutQuery,
+                supportAllQueryParameters,
+                validQueryParameters);
 
             return new BalancesResponse(apiResponse);
         }

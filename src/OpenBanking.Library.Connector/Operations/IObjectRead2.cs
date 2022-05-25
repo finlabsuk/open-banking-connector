@@ -16,6 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string? toBookingDateTime,
             string? page,
             string? modifiedBy,
-            string? publicRequestUrlWithoutQuery);
+            string? publicRequestUrlWithoutQuery,
+            string? queryString);
     }
 }
