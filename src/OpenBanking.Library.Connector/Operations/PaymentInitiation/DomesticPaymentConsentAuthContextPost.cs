@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -72,22 +73,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     .SingleOrDefault(x => x.Id == entity.DomesticPaymentConsentId) ??
                 throw new KeyNotFoundException(
                     $"No record found for Domestic Payment Consent with ID {entity.DomesticPaymentConsentId}.");
+            CustomBehaviourClass? customBehaviour =
+                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+            string authorizationEndpoint =
+                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+            string? issuerUrl = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+            bool supportsSca = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
                     domesticPaymentConsent.BankRegistrationNavigation
-                        .SoftwareStatementAndCertificateProfileOverrideCase);
+                        .SoftwareStatementProfileOverride);
 
             // Create auth URL
             var state = entity.Id.ToString();
+            string consentAuthGetAudClaim =
+                customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
+                issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
+            
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
                 domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                domesticPaymentConsent.BankRegistrationNavigation.CustomBehaviour?.DomesticPaymentConsentAuthGet,
-                domesticPaymentConsent.BankRegistrationNavigation.AuthorizationEndpoint,
-                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
+                customBehaviour?.DomesticPaymentConsentAuthGet,
+                authorizationEndpoint,
+                consentAuthGetAudClaim,
+                supportsSca,
                 state,
                 "payments",
                 _instrumentationClient);

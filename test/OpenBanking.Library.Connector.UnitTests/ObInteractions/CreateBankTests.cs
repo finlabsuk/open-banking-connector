@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
@@ -32,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<ITimeProvider>(),
                     Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                     Substitute.For<IInstrumentationClient>(),
-                    Substitute.For<IBankProfileDefinitions>());
+                    Substitute.For<IBankProfileDefinitions>(),
+                    Substitute.For<IApiClient>());
 
             var newBank = new Models.Public.BankConfiguration.Request.Bank
             {

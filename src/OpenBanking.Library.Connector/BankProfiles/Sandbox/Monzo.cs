@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -30,7 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" //from https://docs.monzo.com/#well-known-endpoints58
                 },
-                null)
+                null,
+                false)
             {
                 PaymentInitiationApiSettings = new PaymentInitiationApiSettings
                 {

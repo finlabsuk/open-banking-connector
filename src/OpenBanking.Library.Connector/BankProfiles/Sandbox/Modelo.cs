@@ -38,21 +38,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp" //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost =
-                            new BankRegistrationPostCustomBehaviour
-                            {
-                                ClientIdIssuedAtClaimResponseJsonConverter =
-                                    DateTimeOffsetConverter.UnixMilliSecondsJsonFormat
-                            };
-                        return registration;
-                    },
+                        ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat
+                    }
                 }
             };
         }

@@ -47,46 +47,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                         .GetRequiredAccountAndTransactionApiBaseUrl()
                 },
                 null,
-                null)
+                null,
+                bankProfileEnum is not BankProfileEnum.Hsbc_Sandbox)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        // BankRegistation POST custom behaviour
-                        BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
-                        bankRegistrationPostCustomBehaviour
-                            .UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        bankRegistrationPostCustomBehaviour
-                                .ClientIdIssuedAtClaimResponseJsonConverter =
-                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat;
-                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
-                        {
-                            bankRegistrationPostCustomBehaviour.AudClaim =
-                                bankProfileHiddenProperties.GetAdditionalProperty1();
-                        }
-                        else
-                        {
-                            bankRegistrationPostCustomBehaviour.AudClaim =
-                                bankProfileHiddenProperties.GetRequiredIssuerUrl();
-                        }
-
-                        // AccountAccessConsent GET custom behaviour
-                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
-                        {
-                            ConsentAuthGetCustomBehaviour accountAccessConsentAuthGetCustomBehaviour =
-                                registration.CustomBehaviour.AccountAccessConsentAuthGet ??=
-                                    new ConsentAuthGetCustomBehaviour();
-                            accountAccessConsentAuthGetCustomBehaviour.AudClaim =
-                                bankProfileHiddenProperties.GetAdditionalProperty1();
-                            accountAccessConsentAuthGetCustomBehaviour
-                                .ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2();
-                        }
-
-                        return registration;
+                        ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
+                        AudClaim = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                            ? bankProfileHiddenProperties.GetAdditionalProperty1()
+                            : bankProfileHiddenProperties.GetRequiredIssuerUrl(),
+                        UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                     },
+                    AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                    {
+                        AudClaim = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                            ? bankProfileHiddenProperties.GetAdditionalProperty1()
+                            : null,
+                        ConsentIdClaimPrefix = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                            ? bankProfileHiddenProperties.GetAdditionalProperty2()
+                            : null
+                    }
                 },
                 AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
                 {

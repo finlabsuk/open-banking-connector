@@ -46,17 +46,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     .Include(o => o.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == id) ??
                 throw new KeyNotFoundException($"No record found for Bank Registration with ID {id}.");
+            string registrationEndpoint = persistedObject.BankNavigation.RegistrationEndpoint;
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     persistedObject.SoftwareStatementProfileId,
-                    persistedObject.SoftwareStatementAndCertificateProfileOverrideCase);
+                    persistedObject.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             string bankApiId = persistedObject.ExternalApiObject.ExternalApiId;
 
-            var uri = new Uri(persistedObject.RegistrationEndpoint + $"/{bankApiId}");
+            var uri = new Uri(registrationEndpoint + $"/{bankApiId}");
 
             // Get appropriate token
             string accessToken = useRegistrationAccessToken
@@ -66,6 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     null,
                     processedSoftwareStatementProfile,
                     persistedObject,
+                    persistedObject.BankNavigation.TokenEndpoint,
                     null,
                     apiClient,
                     _instrumentationClient))

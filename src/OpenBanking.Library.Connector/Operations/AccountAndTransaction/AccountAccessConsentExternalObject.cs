@@ -101,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token

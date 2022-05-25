@@ -2,9 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -81,7 +83,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
             AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
-            VariableRecurringPaymentsApi? variableRecurringPaymentsApi)
+            VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
+            bool supportsSca)
         {
             BankProfileEnum = bankProfileEnum;
             IssuerUrl = issuerUrl ?? throw new ArgumentNullException(nameof(issuerUrl));
@@ -89,6 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             AccountAndTransactionApi = accountAndTransactionApi;
             PaymentInitiationApi = paymentInitiationApi;
             VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
+            SupportsSca = supportsSca;
             DynamicClientRegistrationApiVersion = dynamicClientRegistrationApiVersion;
         }
 
@@ -126,6 +130,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         ///     Variable Recurring Payments (VRP) API version. May be null where API not supported or used/tested.
         /// </summary>
         public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; }
+
+        public OAuth2ResponseMode DefaultResponseMode { get; set; } = OAuth2ResponseMode.Fragment;
+
+        public bool SupportsSca { get; }
+
+        public CustomBehaviourClass? CustomBehaviour { get; set; }
 
         /// <summary>
         ///     Settings used when testing Client Registration API.

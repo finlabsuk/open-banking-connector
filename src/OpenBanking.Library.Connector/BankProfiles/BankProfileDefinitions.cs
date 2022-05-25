@@ -36,7 +36,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 new Lazy<BankProfile>(
                     () =>
                         new Hsbc().GetBankProfile(HsbcBank.UkPersonal, _hiddenPropertiesDictionary));
-            HsbcOld = GetHsbcOld();
             Danske = GetDanske();
             AlliedIrish = GetAlliedIrish();
             Monzo = GetMonzo();
@@ -58,7 +57,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Lloyds => Lloyds,
                 BankProfileEnum.Hsbc_Sandbox => _hsbcSandbox.Value,
                 BankProfileEnum.Hsbc_UkPersonal => _hsbcPersonal.Value,
-                BankProfileEnum.HsbcOld => HsbcOld,
                 BankProfileEnum.Danske => Danske,
                 BankProfileEnum.AlliedIrish => AlliedIrish,
                 BankProfileEnum.Monzo => Monzo,

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -65,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             await _entityMethods.AddAsync(entity);
 
             // Load relevant data objects
-            DomesticVrpConsentPersisted domesticPaymentConsent =
+            DomesticVrpConsentPersisted domesticVrpConsent =
                 _domesticPaymentConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
@@ -73,22 +74,33 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     .SingleOrDefault(x => x.Id == entity.DomesticVrpConsentId) ??
                 throw new KeyNotFoundException(
                     $"No record found for Domestic Payment Consent with ID {entity.DomesticVrpConsentId}.");
+            CustomBehaviourClass? customBehaviour =
+                domesticVrpConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+            string authorizationEndpoint =
+                domesticVrpConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+            string? issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+            bool supportsSca = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                    domesticPaymentConsent.BankRegistrationNavigation
-                        .SoftwareStatementAndCertificateProfileOverrideCase);
+                    domesticVrpConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
+                    domesticVrpConsent.BankRegistrationNavigation
+                        .SoftwareStatementProfileOverride);
 
             // Create auth URL
             var state = entity.Id.ToString();
+            string consentAuthGetAudClaim =
+                customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
+                issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
+
             string authUrl = CreateAuthUrl.Create(
-                domesticPaymentConsent.ExternalApiId,
+                domesticVrpConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
-                domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                domesticPaymentConsent.BankRegistrationNavigation.CustomBehaviour?.DomesticVrpConsentAuthGet,
-                domesticPaymentConsent.BankRegistrationNavigation.AuthorizationEndpoint,
-                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
+                domesticVrpConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                customBehaviour?.DomesticVrpConsentAuthGet,
+                authorizationEndpoint,
+                consentAuthGetAudClaim,
+                supportsSca,
                 state,
                 "payments",
                 _instrumentationClient);

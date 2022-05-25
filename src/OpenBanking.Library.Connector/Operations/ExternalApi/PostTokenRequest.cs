@@ -23,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string? scope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
+            string tokenEndpoint,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient,
             IInstrumentationClient instrumentationClient)
@@ -45,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 {
                     iss = bankRegistration.ExternalApiObject.ExternalApiId,
                     sub = bankRegistration.ExternalApiObject.ExternalApiId,
-                    aud = bankRegistration.TokenEndpoint,
+                    aud = tokenEndpoint,
                     jti = Guid.NewGuid().ToString(),
                     iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
                     exp = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds()
@@ -122,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             IApiClient apiClient)
         {
             // POST request
-            var uri = new Uri(bankRegistration.TokenEndpoint);
+            var uri = new Uri(bankRegistration.BankNavigation.TokenEndpoint);
             IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
                 new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
             var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(

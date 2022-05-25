@@ -35,36 +35,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.6/pisp" // from API discovery endpoint
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
-                        bankRegistrationPostCustomBehaviour.GrantTypesClaim =
+                        GrantTypesClaim =
                             new List<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>
                             {
                                 ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
                                     .ClientCredentials,
                                 ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
                                     .AuthorizationCode
-                            };
-                        bankRegistrationPostCustomBehaviour.SubjectTypeClaim = "pairwise";
-
-                        OpenIdConfigurationGetCustomBehaviour openIdConfigurationGetCustomBehaviour =
-                            registration.CustomBehaviour
-                                .OpenIdConfigurationGet ??= new OpenIdConfigurationGetCustomBehaviour();
-                        openIdConfigurationGetCustomBehaviour.ResponseModesSupportedResponse =
-                            new List<OAuth2ResponseMode>
-                            {
-                                // missing from OpenID configuration
-                                OAuth2ResponseMode.Fragment
-                            };
-
-                        return registration;
+                            },
+                        SubjectTypeClaim = "pairwise"
+                    },
+                    OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
+                    {
+                        ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
+                        {
+                            // missing from OpenID configuration
+                            OAuth2ResponseMode.Fragment
+                        }
                     }
                 }
             };

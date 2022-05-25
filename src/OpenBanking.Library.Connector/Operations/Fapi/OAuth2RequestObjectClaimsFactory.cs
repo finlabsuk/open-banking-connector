@@ -16,7 +16,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
             string redirectUrl,
             string[] scope,
             string externalApiConsentId,
-            string issuerUrl,
+            string consentAuthGetAudClaim,
+            bool supportsSca,
             string state)
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
@@ -26,8 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddMinutes(30),
-                Aud = consentAuthGet?.AudClaim ??
-                      issuerUrl,
+                Aud = consentAuthGetAudClaim,
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
                 //ResponseMode = "fragment",
@@ -37,7 +37,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                 MaxAge = 86400,
                 Claims = new OAuth2RequestObjectInnerClaims(
                     externalApiConsentId,
-                    consentAuthGet?.ConsentIdClaimPrefix),
+                    consentAuthGet?.ConsentIdClaimPrefix,
+                    supportsSca),
                 State = state
             };
 

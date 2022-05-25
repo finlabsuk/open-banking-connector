@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                         await _softwareStatementProfileRepo.GetAsync(
                             bankRegistration.SoftwareStatementProfileId,
-                            bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                            bankRegistration.SoftwareStatementProfileOverride);
 
                     // Obtain token for consent
                     string redirectUrl =

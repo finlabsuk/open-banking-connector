@@ -27,7 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                         .GetRequiredVariableRecurringPaymentsApiVersion(),
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredVariableRecurringPaymentsApiBaseUrl()
-                });
+                },
+                false);
         }
     }
 }

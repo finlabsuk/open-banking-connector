@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -31,39 +30,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.BankId)
                 .HasColumnOrder(2)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.SoftwareStatementProfileId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.SoftwareStatementAndCertificateProfileOverrideCase)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.RegistrationScope)
-                .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.DynamicClientRegistrationApiVersion)
-                .HasConversion(new EnumToStringConverter<DynamicClientRegistrationApiVersion>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.TokenEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.AuthorizationEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.RegistrationEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.TokenEndpointAuthMethod)
-                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.CustomBehaviour)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(
-                        v,
-                        _jsonFormatting,
-                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-                    v =>
-                        JsonConvert.DeserializeObject<CustomBehaviourClass>(v))
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property("_externalApiId")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property("_externalApiSecret")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property("_registrationAccessToken")
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.SoftwareStatementProfileId)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.SoftwareStatementProfileOverride)
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.RegistrationScope)
+                .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.TokenEndpointAuthMethod)
+                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }
     }

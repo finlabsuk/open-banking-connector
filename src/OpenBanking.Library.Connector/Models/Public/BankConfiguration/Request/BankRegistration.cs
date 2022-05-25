@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
@@ -41,53 +40,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
 
         /// <summary>
-        ///     Version of Open Banking Dynamic Client Registration API to use
-        ///     for bank registration.
+        ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
+        ///     supported methods in Issuer URL OpenID Provider Configuration.
         /// </summary>
-        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; set; } =
-            DynamicClientRegistrationApiVersion.Version3p3;
+        public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
+
 
         /// <summary>
         ///     Functional APIs used for bank registration.
         ///     If not supplied, registration scope implied by software statement profile will be used.
         /// </summary>
         public RegistrationScopeEnum? RegistrationScope { get; set; }
-
-        /// <summary>
-        ///     Issuer URL to use when creating Bank Registration which indicates the presence of valid
-        ///     OpenID Provider Configuration at the endpoint GET "/{IssuerUrl}/.well-known/openid-configuration".
-        ///     If no such OpenID Provider Configuration is available, please set this value to null.
-        /// </summary>
-        public string? IssuerUrl { get; set; } = null!;
-
-        /// <summary>
-        ///     Registration endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
-        ///     Only used by operations that access bank registration endpoint(s), e.g. DCR. If DCR and optional GET, PUT, DELETE
-        ///     endpoints for bank registration are not supported, this value will not be used.
-        /// </summary>
-        public string? RegistrationEndpoint { get; set; }
-
-        /// <summary>
-        ///     Token endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
-        /// </summary>
-        public string? TokenEndpoint { get; set; }
-
-        /// <summary>
-        ///     Authorization endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
-        /// </summary>
-        public string? AuthorizationEndpoint { get; set; }
-
-        /// <summary>
-        ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
-        ///     supported methods in Issuer URL OpenID Provider Configuration.
-        /// </summary>
-        public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
-
-        /// <summary>
-        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
-        /// </summary>
-        public CustomBehaviourClass? CustomBehaviour { get; set; }
 
         /// <summary>
         ///     Information about external BankRegistration (OAuth2 client) created using external (bank) API.

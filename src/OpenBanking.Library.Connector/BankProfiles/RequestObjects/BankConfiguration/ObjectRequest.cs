@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration
@@ -15,6 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
             {
                 IssuerUrl = bankProfile.IssuerUrl,
                 FinancialId = bankProfile.FinancialId,
+                DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
+                CustomBehaviour = bankProfile.CustomBehaviour,
+                SupportsSca = bankProfile.SupportsSca,
+                DefaultResponseMode = bankProfile.DefaultResponseMode
             };
 
         public static BankRegistration GetBankRegistrationRequest(
@@ -22,18 +25,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScopeEnum? registrationScope,
-            CustomBehaviourClass? customBehaviour = null)
+            RegistrationScopeEnum? registrationScope)
         {
             var bankRegistration = new BankRegistration
             {
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
-                IssuerUrl = bankProfile.IssuerUrl,
                 RegistrationScope = registrationScope,
-                DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
-                CustomBehaviour = customBehaviour
             };
             return bankProfile.BankConfigurationApiSettings.BankRegistrationAdjustments.Invoke(bankRegistration);
         }

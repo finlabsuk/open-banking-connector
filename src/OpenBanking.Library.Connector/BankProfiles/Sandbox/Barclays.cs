@@ -27,17 +27,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
-                {
-                    BankRegistrationAdjustments = registration =>
-                    {
-                        //placeholder value since missing from barclays well-known endpoint (openID configuration) 
-                        registration.RegistrationEndpoint = "https://example.com/register";
-                        return registration;
-                    },
-                }
+                //placeholder value since missing from barclays well-known endpoint (openID configuration) 
+                //registration.RegistrationEndpoint = "https://example.com/register";
             };
         }
     }

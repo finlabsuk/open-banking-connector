@@ -29,19 +29,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://api.newdaycards.com/sandbox/open-banking/v3.1/pisp" // from https://developer.newdaycards.com/docs/services/SandboxOpenBankingPISPAPI/operations/PostDomesticPaymentConsents
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost = new BankRegistrationPostCustomBehaviour
-                            {
-                                ScopeClaimJsonConverter = DelimitedStringConverterOptions.JsonIsStringArrayNotString
-                            };
-                        return registration;
-                    },
+                        ScopeClaimJsonConverter = DelimitedStringConverterOptions.JsonIsStringArrayNotString
+                    }
                 }
             };
         }

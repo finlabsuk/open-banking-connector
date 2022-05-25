@@ -72,13 +72,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .DbSet
                     .Include(
                         o => ((AccountAccessConsentAuthContext) o).AccountAccessConsentNavigation
-                            .BankRegistrationNavigation)
+                            .BankRegistrationNavigation.BankNavigation)
                     .Include(
                         o => ((DomesticPaymentConsentAuthContext) o).DomesticPaymentConsentNavigation
-                            .BankRegistrationNavigation)
+                            .BankRegistrationNavigation.BankNavigation)
                     .Include(
                         o => ((DomesticVrpConsentAuthContext) o).DomesticVrpConsentNavigation
-                            .BankRegistrationNavigation)
+                            .BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefault(x => x.Id == authContextId) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
@@ -116,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
 
             // Obtain token for consent
             string redirectUrl =

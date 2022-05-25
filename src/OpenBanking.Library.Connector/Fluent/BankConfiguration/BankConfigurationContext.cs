@@ -74,7 +74,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation,
-                    _sharedContext.BankProfileDefinitions));
+                    _sharedContext.BankProfileDefinitions,
+                    _sharedContext.ApiClient));
 
         public IBankRegistrationsContext
             BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);

@@ -99,6 +99,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             {
                 IssuerUrl = MockRoutes.Url,
                 FinancialId = _mockData.GetFapiHeader(),
+                DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
                 Reference = "MyBank"
             };
             IFluentResponse<BankResponse> bankResp = requestBuilder.BankConfiguration
@@ -113,9 +114,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             // Create bank registration
             var registrationRequest = new BankRegistration
             {
-                IssuerUrl = MockRoutes.Url,
                 SoftwareStatementProfileId = softwareStatementProfileId,
-                DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
                 BankId = bankId,
                 RegistrationScope = RegistrationScopeEnum.PaymentInitiation,
                 AllowMultipleRegistrations = false

@@ -22,7 +22,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string externalApiId,
             ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
             string authorisationEndpoint,
-            string issuerUrl,
+            string consentAuthGetAudClaim,
+            bool supportsSca,
             string state,
             string scopeString,
             IInstrumentationClient instrumentationClient)
@@ -37,7 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     redirectUrl,
                     new[] { "openid", scopeString },
                     externalApiConsentId,
-                    issuerUrl,
+                    consentAuthGetAudClaim,
+                    supportsSca,
                     state);
             string requestObjectJwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),

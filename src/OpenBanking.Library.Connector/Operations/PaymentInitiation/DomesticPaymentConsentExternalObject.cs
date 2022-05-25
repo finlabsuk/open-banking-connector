@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token
@@ -174,7 +174,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token
@@ -184,6 +184,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     jsonSerializerSettings1,
                     apiClient,
                     _instrumentationClient))

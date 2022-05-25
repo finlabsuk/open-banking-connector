@@ -4,9 +4,14 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -15,6 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 {
     internal class BankPost : LocalEntityPost<Bank, Models.Public.BankConfiguration.Request.Bank, BankResponse>
     {
+        private readonly IApiClient _apiClient;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
 
         public BankPost(
@@ -23,7 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileDefinitions bankProfileDefinitions,
+            IApiClient apiClient) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -31,30 +38,123 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             instrumentationClient)
         {
             _bankProfileDefinitions = bankProfileDefinitions;
+            _apiClient = apiClient;
+        }
+
+        private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
+        {
+            var uri = new Uri(string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
+
+            return await new HttpRequestBuilder()
+                .SetMethod(HttpMethod.Get)
+                .SetUri(uri)
+                .Create()
+                .RequestJsonAsync<OpenIdConfiguration>(_apiClient);
         }
 
         protected override async Task<BankResponse> AddEntity(
             Models.Public.BankConfiguration.Request.Bank request,
             ITimeProvider timeProvider)
         {
+            // Create non-error list
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages =
+                new List<IFluentResponseInfoOrWarningMessage>();
+
             if (request.BankProfile is not null)
             {
                 request = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value)
                     .GetBankRequest();
             }
 
+            // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
+            string registrationEndpoint;
+            string tokenEndpoint;
+            string authorizationEndpoint;
+            string jwksUri;
+            if (request.IssuerUrl is null)
+            {
+                // Determine endpoints
+                registrationEndpoint =
+                    request.RegistrationEndpoint ??
+                    throw new ArgumentNullException(
+                        null,
+                        "RegistrationEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                tokenEndpoint =
+                    request.TokenEndpoint ??
+                    throw new ArgumentNullException(
+                        null,
+                        "TokenEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                authorizationEndpoint =
+                    request.AuthorizationEndpoint ??
+                    throw new ArgumentNullException(
+                        null,
+                        "AuthorizationEndpoint specified as null and cannot be obtained using specified IssuerUrl (also null).");
+                jwksUri =
+                    request.JwksUri ??
+                    throw new ArgumentNullException(
+                        null,
+                        "JwksUri specified as null and cannot be obtained using specified IssuerUrl (also null).");
+            }
+            else
+            {
+                OpenIdConfiguration openIdConfiguration = await GetOpenIdConfigurationAsync(request.IssuerUrl);
+
+                // Update OpenID Provider Configuration based on overrides
+                IList<OAuth2ResponseMode>? responseModesSupportedOverride =
+                    request.CustomBehaviour?.OpenIdConfigurationGet?.ResponseModesSupportedResponse;
+                if (!(responseModesSupportedOverride is null))
+                {
+                    openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
+                }
+
+                IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
+                    request.CustomBehaviour?.OpenIdConfigurationGet
+                        ?.TokenEndpointAuthMethodsSupportedResponse;
+                if (!(tokenEndpointAuthMethodsSupportedOverride is null))
+                {
+                    openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
+                }
+
+                // Validate OpenID Connect configuration
+                {
+                    IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
+                        new OpenBankingOpenIdConfigurationResponseValidator()
+                            .Validate(openIdConfiguration)
+                            .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
+                    nonErrorMessages.AddRange(newNonErrorMessages);
+                }
+
+                // Determine endpoints
+                registrationEndpoint =
+                    request.RegistrationEndpoint ?? openIdConfiguration.RegistrationEndpoint;
+                tokenEndpoint =
+                    request.TokenEndpoint ?? openIdConfiguration.TokenEndpoint;
+                authorizationEndpoint =
+                    request.AuthorizationEndpoint ?? openIdConfiguration.AuthorizationEndpoint;
+                jwksUri =
+                    request.JwksUri ?? openIdConfiguration.JwksUri;
+            }
+
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new Bank(
-                request.Reference,
                 Guid.NewGuid(),
+                request.Reference,
                 false,
                 utcNow,
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy,
                 request.IssuerUrl,
-                request.FinancialId);
+                request.FinancialId,
+                registrationEndpoint,
+                tokenEndpoint,
+                authorizationEndpoint,
+                jwksUri,
+                request.DefaultResponseMode,
+                request.DynamicClientRegistrationApiVersion,
+                request.CustomBehaviour,
+                request.SupportsSca);
 
             // Add entity
             await _entityMethods.AddAsync(entity);

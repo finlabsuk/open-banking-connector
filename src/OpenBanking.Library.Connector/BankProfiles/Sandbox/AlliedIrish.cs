@@ -31,24 +31,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                     {
-                        OpenIdConfigurationGetCustomBehaviour openIdConfigurationGetCustomBehaviour =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .OpenIdConfigurationGet ??= new OpenIdConfigurationGetCustomBehaviour();
-                        openIdConfigurationGetCustomBehaviour.ResponseModesSupportedResponse =
-                            new List<OAuth2ResponseMode>
-                            {
-                                // missing from OpenID configuration
-                                OAuth2ResponseMode.Fragment
-                            };
-
-                        return registration;
-                    },
+                        ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
+                        {
+                            // missing from OpenID configuration
+                            OAuth2ResponseMode.Fragment
+                        }
+                    }
                 }
             };
         }

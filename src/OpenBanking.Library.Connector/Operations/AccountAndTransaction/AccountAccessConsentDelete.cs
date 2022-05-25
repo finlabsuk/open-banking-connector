@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -68,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Determine endpoint URL
@@ -81,6 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     "accounts",
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     null,
                     apiClient,
                     _instrumentationClient);

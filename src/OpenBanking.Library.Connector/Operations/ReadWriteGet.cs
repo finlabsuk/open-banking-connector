@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get client credentials grant token if necessary
@@ -83,6 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    bankRegistration.BankNavigation.TokenEndpoint,
                     null,
                     apiClient,
                     _instrumentationClient))

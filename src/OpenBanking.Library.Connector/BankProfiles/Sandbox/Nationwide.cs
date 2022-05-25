@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
         }
     }
 
-    public partial class BankProfileDefinitions: IBankProfileDefinitions
+    public partial class BankProfileDefinitions : IBankProfileDefinitions
     {
         public BankProfile Nationwide { get; }
 
@@ -45,22 +45,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://api.obtpp.nationwideinterfaces.io/open-banking/v3.1/pisp" //from https://developer.nationwide.co.uk/open-banking/payment-initiation-apis#operation/CreateDomesticPaymentConsents
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        BankRegistrationPostCustomBehaviour bankRegistrationPost =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
-                        bankRegistrationPost.ClientIdIssuedAtClaimResponseJsonConverter =
-                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat;
-                        bankRegistrationPost.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-                        bankRegistrationPost
-                            .UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true;
-
-                        return registration;
+                        ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
+                        UseApplicationJoseNotApplicationJwtContentTypeHeader = true,
+                        UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true
                     }
                 }
             };

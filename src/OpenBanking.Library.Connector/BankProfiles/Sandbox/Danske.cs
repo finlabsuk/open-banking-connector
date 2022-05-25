@@ -34,28 +34,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl =
                         "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        BankRegistrationPostCustomBehaviour bankRegistrationPost =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
-                        bankRegistrationPost.UseApplicationJoseNotApplicationJwtContentTypeHeader = true;
-
-                        OpenIdConfigurationGetCustomBehaviour openIdConfigurationGetCustomBehaviour =
-                            registration.CustomBehaviour
-                                .OpenIdConfigurationGet ??= new OpenIdConfigurationGetCustomBehaviour();
-                        openIdConfigurationGetCustomBehaviour.ResponseModesSupportedResponse =
-                            new List<OAuth2ResponseMode>
-                            {
-                                // missing from OpenID configuration
-                                OAuth2ResponseMode.Fragment
-                            };
-
-                        return registration;
+                        UseApplicationJoseNotApplicationJwtContentTypeHeader = true
+                    },
+                    OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
+                    {
+                        ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
+                        {
+                            // missing from OpenID configuration
+                            OAuth2ResponseMode.Fragment
+                        }
                     }
                 }
             };

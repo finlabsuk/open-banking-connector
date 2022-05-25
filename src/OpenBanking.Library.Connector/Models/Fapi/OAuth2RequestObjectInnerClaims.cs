@@ -8,11 +8,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
     public class OAuth2RequestObjectInnerClaims
     {
-        public OAuth2RequestObjectInnerClaims(string externalApiConsentId, string? consentIdClaimPrefix)
+        public OAuth2RequestObjectInnerClaims(
+            string externalApiConsentId,
+            string? consentIdClaimPrefix,
+            bool supportsSca)
         {
             string consentIdClaimValue = consentIdClaimPrefix + externalApiConsentId;
             UserInfo = new UserInfoClaims(consentIdClaimValue);
-            IdToken = new IdTokenClaims(consentIdClaimValue);
+            IdToken = new IdTokenClaims(consentIdClaimValue, supportsSca);
         }
 
         [JsonProperty("userinfo")]
@@ -56,21 +59,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         public class IdTokenClaims
         {
-            public IdTokenClaims(string consentIdClaimValue)
+            public IdTokenClaims(string consentIdClaimValue, bool supportsSca)
             {
                 OpenbankingIntentId = new IndividualClaim(
                     true,
                     consentIdClaimValue,
                     null);
-                Acr = new IndividualClaim(true, "urn:openbanking:psd2:ca", null);
-                // Acr = new IndividualClaim(
-                //     true,
-                //     null,
-                //     new[]
-                //     {
-                //         "urn:openbanking:psd2:sca",
-                //         "urn:openbanking:psd2:ca"
-                //     });
+                Acr = supportsSca
+                    ? new IndividualClaim(
+                        true,
+                        null,
+                        new[]
+                        {
+                            "urn:openbanking:psd2:sca",
+                            "urn:openbanking:psd2:ca"
+                        })
+                    : new IndividualClaim(true, "urn:openbanking:psd2:ca", null);
             }
 
             [JsonProperty("openbanking_intent_id")]

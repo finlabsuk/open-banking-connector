@@ -4,7 +4,6 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -56,6 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         [Column("registration_access_token")]
         private readonly string? _registrationAccessToken;
 
+
         public BankRegistration(
             Guid id,
             string? reference,
@@ -64,40 +64,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
-            Guid bankId,
-            string softwareStatementProfileId,
-            string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScopeEnum registrationScope,
-            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
-            string tokenEndpoint,
-            string authorizationEndpoint,
-            string registrationEndpoint,
-            TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            CustomBehaviourClass? customBehaviour,
             string externalApiId,
             string? externalApiSecret,
-            string? registrationAccessToken) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy)
+            string? registrationAccessToken,
+            string softwareStatementProfileId,
+            string? softwareStatementProfileOverride,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
+            RegistrationScopeEnum registrationScope,
+            Guid bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
         {
-            BankId = bankId;
-            SoftwareStatementProfileId = softwareStatementProfileId;
-            SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase;
-            RegistrationScope = registrationScope;
-            DynamicClientRegistrationApiVersion = dynamicClientRegistrationApiVersion;
-            TokenEndpoint = tokenEndpoint;
-            AuthorizationEndpoint = authorizationEndpoint;
-            RegistrationEndpoint = registrationEndpoint;
-            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-            CustomBehaviour = customBehaviour;
             _externalApiId = externalApiId;
             _externalApiSecret = externalApiSecret;
             _registrationAccessToken = registrationAccessToken;
+            SoftwareStatementProfileId = softwareStatementProfileId;
+            SoftwareStatementProfileOverride = softwareStatementProfileOverride;
+            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
+            RegistrationScope = registrationScope;
+            BankId = bankId;
         }
 
         [ForeignKey("BankId")]
@@ -113,32 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public string SoftwareStatementProfileId { get; }
 
-        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; }
-
-        /// <summary>
-        ///     API version used for DCR requests (POST, GET etc)
-        /// </summary>
-        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
-
-        /// <summary>
-        ///     Functional APIs used for bank registration.
-        /// </summary>
-        public RegistrationScopeEnum RegistrationScope { get; }
-
-        /// <summary>
-        ///     Registration endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string RegistrationEndpoint { get; }
-
-        /// <summary>
-        ///     Token endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string TokenEndpoint { get; }
-
-        /// <summary>
-        ///     Authorization endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string AuthorizationEndpoint { get; }
+        public string? SoftwareStatementProfileOverride { get; }
 
         /// <summary>
         ///     Token endpoint authorisation method
@@ -146,10 +104,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
 
         /// <summary>
-        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
+        ///     Functional APIs used for bank registration.
         /// </summary>
-        public CustomBehaviourClass? CustomBehaviour { get; }
+        public RegistrationScopeEnum RegistrationScope { get; }
 
         /// <summary>
         ///     Bank with which this BankRegistration is associated.
@@ -168,16 +125,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             Created,
             CreatedBy,
             Reference,
-            new ExternalApiObjectResponse(_externalApiId),
-            BankId,
             SoftwareStatementProfileId,
-            SoftwareStatementAndCertificateProfileOverrideCase,
-            DynamicClientRegistrationApiVersion,
-            RegistrationScope,
-            RegistrationEndpoint,
-            TokenEndpoint,
-            AuthorizationEndpoint,
+            SoftwareStatementProfileOverride,
             TokenEndpointAuthMethod,
-            CustomBehaviour);
+            RegistrationScope,
+            BankId,
+            new ExternalApiObjectResponse(_externalApiId));
     }
 }

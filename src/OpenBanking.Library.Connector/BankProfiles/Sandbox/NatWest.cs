@@ -32,19 +32,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BaseUrl = bankProfileHiddenProperties
                         .GetRequiredPaymentInitiationApiBaseUrl()
                 },
-                null)
+                null,
+                false)
             {
-                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                CustomBehaviour = new CustomBehaviourClass
                 {
-                    BankRegistrationAdjustments = registration =>
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        BankRegistrationPostCustomBehaviour bankRegistrationPostCustomBehaviour =
-                            (registration.CustomBehaviour ??= new CustomBehaviourClass())
-                            .BankRegistrationPost ??= new BankRegistrationPostCustomBehaviour();
-                        bankRegistrationPostCustomBehaviour.ScopeClaimResponseJsonConverter =
-                            DelimitedStringConverterOptions.JsonIsStringArrayNotString;
-                        
-                        return registration;
+                        ScopeClaimResponseJsonConverter =
+                            DelimitedStringConverterOptions.JsonIsStringArrayNotString
                     }
                 }
             };

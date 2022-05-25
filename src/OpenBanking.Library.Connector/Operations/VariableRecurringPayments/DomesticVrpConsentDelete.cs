@@ -65,7 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementAndCertificateProfileOverrideCase);
+                    bankRegistration.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Determine endpoint URL
@@ -78,6 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     "payments",
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     null,
                     apiClient,
                     _instrumentationClient);

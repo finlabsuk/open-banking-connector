@@ -29,6 +29,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         [JsonProperty("registration_endpoint")]
         public string RegistrationEndpoint { get; set; } = null!;
 
+        [JsonProperty("jwks_uri")]
+        public string JwksUri { get; set; } = null!;
+
         [JsonProperty("token_endpoint_auth_methods_supported")]
         public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
             new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>();

@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -73,22 +74,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .SingleOrDefault(x => x.Id == entity.AccountAccessConsentId) ??
                 throw new KeyNotFoundException(
                     $"No record found for Account Access Consent with ID {entity.AccountAccessConsentId}.");
+            CustomBehaviourClass? customBehaviour =
+                accountAccessConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+            string authorizationEndpoint =
+                accountAccessConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+            string? issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+            bool supportsSca = accountAccessConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     accountAccessConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
                     accountAccessConsent.BankRegistrationNavigation
-                        .SoftwareStatementAndCertificateProfileOverrideCase);
+                        .SoftwareStatementProfileOverride);
 
             // Create auth URL
             var state = entity.Id.ToString();
+
+            string consentAuthGetAudClaim =
+                customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
+                issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
+
             string authUrl = CreateAuthUrl.Create(
                 accountAccessConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
                 accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                accountAccessConsent.BankRegistrationNavigation.CustomBehaviour?.AccountAccessConsentAuthGet,
-                accountAccessConsent.BankRegistrationNavigation.AuthorizationEndpoint,
-                accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl,
+                customBehaviour?.AccountAccessConsentAuthGet,
+                authorizationEndpoint,
+                consentAuthGetAudClaim,
+                supportsSca,
                 state,
                 "accounts",
                 _instrumentationClient);
