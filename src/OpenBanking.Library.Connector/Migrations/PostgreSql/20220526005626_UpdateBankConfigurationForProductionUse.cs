@@ -59,14 +59,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                 table: "bank",
                 type: "text",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "Version3p2");
 
             migrationBuilder.AddColumn<string>(
                 name: "default_response_mode",
                 table: "bank",
                 type: "text",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "Fragment");
 
             migrationBuilder.AddColumn<string>(
                 name: "jwks_uri",
