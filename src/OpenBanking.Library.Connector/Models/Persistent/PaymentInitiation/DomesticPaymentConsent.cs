@@ -82,9 +82,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     }
 
     internal partial class DomesticPaymentConsent :
-        ISupportsFluentLocalEntityGet<DomesticPaymentConsentReadLocalResponse>
+        ISupportsFluentLocalEntityGet<DomesticPaymentConsentResponse>
     {
-        public DomesticPaymentConsentReadLocalResponse PublicGetLocalResponse =>
+        public DomesticPaymentConsentResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Created,
@@ -92,6 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
                 Reference,
                 BankRegistrationId,
                 PaymentInitiationApiId,
-                ExternalApiId);
+                ExternalApiId,
+                null);
     }
 }

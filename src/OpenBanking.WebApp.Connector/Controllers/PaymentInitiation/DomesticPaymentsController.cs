@@ -2,18 +2,17 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitiation;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "pisp")]
+[Route("pisp/domestic-payments")]
+[Tags("Domestic Payments")]
 public class DomesticPaymentsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -22,44 +21,55 @@ public class DomesticPaymentsController : ControllerBase
     {
         _requestBuilder = requestBuilder;
     }
-    
+
     /// <summary>
-    ///     Create a DomesticPayment object
+    ///     Create DomesticPayment
     /// </summary>
     /// <param name="domesticPaymentConsentId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("pisp/domestic-payments")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentResponse>),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentResponse>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentResponse>),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentResponse))]
     public async Task<IActionResult> PostAsync(
-        [FromHeader(Name = "x-obc-domestic-payment-consent-id")] [Required] Guid domesticPaymentConsentId,
-        [FromBody] [Required] DomesticPayment request)
+        [FromHeader(Name = "x-obc-domestic-payment-consent-id")] Guid domesticPaymentConsentId,
+        [FromBody]
+        DomesticPayment request)
     {
-        IFluentResponse<DomesticPaymentResponse> fluentResponse = await _requestBuilder
+        DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
             .CreateAsync(request, domesticPaymentConsentId);
 
-        // HTTP response
-        HttpResponse<DomesticPaymentResponse> httpResponse = fluentResponse.ToHttpResponse();
-        int statusCode = fluentResponse switch
-        {
-            FluentSuccessResponse<DomesticPaymentResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<DomesticPaymentResponse> _ => StatusCodes.Status500InternalServerError,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { externalApiId = fluentResponse.ExternalApiResponse.Data.DomesticPaymentId },
+            fluentResponse);
+    }
+
+
+    /// <summary>
+    ///     Read DomesticPayment
+    /// </summary>
+    /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
+    /// <param name="domesticPaymentConsentId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpGet("{externalApiId}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentResponse))]
+    public async Task<IActionResult> GetAsync(
+        string externalApiId,
+        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
+        Guid domesticPaymentConsentId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        DomesticPaymentResponse fluentResponse = await _requestBuilder
+            .PaymentInitiation
+            .DomesticPayments
+            .ReadAsync(externalApiId, domesticPaymentConsentId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 }

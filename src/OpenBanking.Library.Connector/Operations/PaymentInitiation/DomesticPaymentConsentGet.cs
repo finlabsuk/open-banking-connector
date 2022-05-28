@@ -25,7 +25,7 @@ using DomesticPaymentConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentGet : ReadWriteGet<DomesticPaymentConsentPersisted, DomesticPaymentConsentReadResponse,
+        DomesticPaymentConsentGet : ReadWriteGet<DomesticPaymentConsentPersisted, DomesticPaymentConsentResponse,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
     {
         public DomesticPaymentConsentGet(
@@ -135,11 +135,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 nonErrorMessages);
         }
 
-        protected override DomesticPaymentConsentReadResponse GetReadResponse(
+        protected override DomesticPaymentConsentResponse GetReadResponse(
             DomesticPaymentConsentPersisted persistedObject,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse)
         {
-            return new DomesticPaymentConsentReadResponse(
+            return new DomesticPaymentConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,

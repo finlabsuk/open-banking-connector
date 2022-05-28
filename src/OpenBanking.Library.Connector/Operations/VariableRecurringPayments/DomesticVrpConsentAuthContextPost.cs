@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         DomesticVrpConsentAuthContextPost : LocalEntityPost<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextCreateLocalResponse>
+            DomesticVrpConsentAuthContextCreateResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
 
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override async Task<DomesticVrpConsentAuthContextCreateLocalResponse> AddEntity(
+        protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
             DomesticVrpConsentAuthContextRequest request,
             ITimeProvider timeProvider)
         {
@@ -105,7 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 "payments",
                 _instrumentationClient);
             var response =
-                new DomesticVrpConsentAuthContextCreateLocalResponse(
+                new DomesticVrpConsentAuthContextCreateResponse(
                     entity.Id,
                     entity.Created,
                     entity.CreatedBy,

@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
     public interface IDomesticVrpConsentsContext :
         IEntityContext<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
+            DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
         IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>,
         IDeleteContext
     {
@@ -36,8 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         /// </summary>
         ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
                 IDomesticVrpConsentAuthContextPublicQuery,
-                DomesticVrpConsentAuthContextCreateLocalResponse,
-                DomesticVrpConsentAuthContextReadLocalResponse>
+                DomesticVrpConsentAuthContextCreateResponse,
+                DomesticVrpConsentAuthContextReadResponse>
             AuthContexts { get; }
     }
 
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         IDomesticVrpConsentsContext,
         IEntityContextInternal<DomesticVrpConsentRequest,
             IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentReadResponse, DomesticVrpConsentReadLocalResponse>,
+            DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
         IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse>,
         IDeleteContextInternal { }
 
@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.ApiVariantMapper);
             ReadLocalObject =
                 new LocalEntityGet<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
-                    DomesticVrpConsentReadLocalResponse>(
+                    DomesticVrpConsentBaseResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
@@ -97,17 +97,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     sharedContext.Instrumentation);
         }
 
-        public IObjectRead<DomesticVrpConsentReadResponse> ReadObject { get; }
+        public IObjectRead<DomesticVrpConsentResponse> ReadObject { get; }
 
         public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
             IDomesticVrpConsentAuthContextPublicQuery,
-            DomesticVrpConsentAuthContextCreateLocalResponse,
-            DomesticVrpConsentAuthContextReadLocalResponse> AuthContexts =>
+            DomesticVrpConsentAuthContextCreateResponse,
+            DomesticVrpConsentAuthContextReadResponse> AuthContexts =>
             new LocalEntityContextInternal<DomesticVrpConsentAuthContextPersisted,
                 DomesticVrpConsentAuthContextRequest,
                 IDomesticVrpConsentAuthContextPublicQuery,
-                DomesticVrpConsentAuthContextCreateLocalResponse,
-                DomesticVrpConsentAuthContextReadLocalResponse>(
+                DomesticVrpConsentAuthContextCreateResponse,
+                DomesticVrpConsentAuthContextReadResponse>(
                 _sharedContext,
                 new DomesticVrpConsentAuthContextPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentAuthContextPersisted>(),
@@ -117,12 +117,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectReadLocal<IDomesticVrpConsentPublicQuery, DomesticVrpConsentReadLocalResponse> ReadLocalObject
-        {
-            get;
-        }
+        public IObjectReadLocal<IDomesticVrpConsentPublicQuery, DomesticVrpConsentBaseResponse> ReadLocalObject { get; }
 
-        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentReadResponse> CreateObject { get; }
+        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse> CreateObject { get; }
         public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
         public IObjectDelete DeleteObject { get; }
     }

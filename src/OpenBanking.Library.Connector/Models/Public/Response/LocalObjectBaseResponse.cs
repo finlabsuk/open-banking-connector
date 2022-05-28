@@ -7,31 +7,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     public interface IBaseQuery
     {
         public Guid Id { get; }
-
-
         public string? Reference { get; }
         public DateTimeOffset Created { get; }
-
         public string? CreatedBy { get; }
     }
 
     /// <summary>
     ///     Base response for any entity.
     /// </summary>
-    public abstract class BaseResponse : IBaseQuery
+    public abstract class LocalObjectBaseResponse : IBaseQuery
     {
-        internal BaseResponse(Guid id, DateTimeOffset created, string? createdBy, string? reference)
+        internal LocalObjectBaseResponse(Guid id, DateTimeOffset created, string? createdBy, string? reference)
         {
             Id = id;
             Created = created;
             CreatedBy = createdBy;
             Reference = reference;
         }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Unique Open Banking Connector ID (used in local database).

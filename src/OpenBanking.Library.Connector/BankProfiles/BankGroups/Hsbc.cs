@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
@@ -60,15 +61,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                             : bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                         UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                     },
-                    AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
-                    {
-                        AudClaim = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
-                            ? bankProfileHiddenProperties.GetAdditionalProperty1()
-                            : null,
-                        ConsentIdClaimPrefix = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
-                            ? bankProfileHiddenProperties.GetAdditionalProperty2()
-                            : null
-                    }
+                    AccountAccessConsentAuthGet = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                        ? new ConsentAuthGetCustomBehaviour
+                        {
+                            AudClaim = bankProfileHiddenProperties.GetAdditionalProperty1(),
+                            ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2()
+                        }
+                        : null
                 },
                 AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
                 {
@@ -93,7 +92,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 
                         return consent;
                     }
-                }
+                },
+                DefaultResponseMode = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                    ? OAuth2ResponseMode.Query
+                    : OAuth2ResponseMode.Fragment
             };
         }
     }

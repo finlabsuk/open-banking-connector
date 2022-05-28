@@ -31,9 +31,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     /// <summary>
     ///     Response to ReadLocal requests
     /// </summary>
-    public class DomesticVrpConsentReadLocalResponse : BaseResponse, IDomesticVrpConsentPublicQuery
+    public abstract class DomesticVrpConsentBaseResponse : LocalObjectBaseResponse, IDomesticVrpConsentPublicQuery
     {
-        internal DomesticVrpConsentReadLocalResponse(
+        internal DomesticVrpConsentBaseResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -66,11 +66,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 
 
     /// <summary>
-    ///     Response to Read and Create requests
+    ///     Response to DomesticVrpConsent Read and Create requests.
     /// </summary>
-    public class DomesticVrpConsentReadResponse : DomesticVrpConsentReadLocalResponse
+    public class DomesticVrpConsentResponse : DomesticVrpConsentBaseResponse
     {
-        internal DomesticVrpConsentReadResponse(
+        internal DomesticVrpConsentResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -91,12 +91,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 
     /// <summary>
-    ///     Response to ReadFundsConfirmation requests
+    ///     Response to DomesticVrpConsent ReadFundsConfirmation requests.
     /// </summary>
-    public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsentReadLocalResponse
+    public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsentBaseResponse
 
     {
         internal DomesticVrpConsentReadFundsConfirmationResponse(
@@ -120,5 +125,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class AuthContextResponse : BaseResponse,
+    public class AuthContextResponse : LocalObjectBaseResponse,
         IAuthContextPublicQuery
     {
         internal AuthContextResponse(Guid id, DateTimeOffset created, string? createdBy, string? reference) : base(
@@ -17,5 +17,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
             created,
             createdBy,
             reference) { }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; }
     }
 }

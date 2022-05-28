@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     internal class
         BankRegistrationPost : EntityPost<
             BankRegistration,
-            BankRegistrationRequest, BankRegistrationReadResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
+            BankRegistrationRequest, BankRegistrationResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
             ClientRegistrationModelsPublic.OBClientRegistration1Response>
     {
         private readonly IApiClient _apiClient;
@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         }
 
         protected override async
-            Task<(BankRegistrationReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiPost(PostRequestInfo requestInfo)
         {
             // Create non-error list
@@ -110,7 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
                 bank.DcrApiVersion;
             string registrationEndpoint = bank.RegistrationEndpoint;
-            
+
             // Check for existing bank registration
             BankRegistration? existingRegistration =
                 await _entityMethods
@@ -388,18 +388,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 externalApiResponse.RegistrationAccessToken = null;
             }
 
-            BankRegistrationReadResponse response = new(
+            BankRegistrationResponse response = new(
                 entity.Id,
                 entity.Created,
                 entity.CreatedBy,
                 entity.Reference,
+                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 entity.SoftwareStatementProfileId,
                 entity.SoftwareStatementProfileOverride,
                 entity.TokenEndpointAuthMethod,
                 entity.RegistrationScope,
                 entity.BankId,
-                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
-                externalApiResponse);
+                externalApiResponse,
+                null);
 
             return (response, nonErrorMessages);
         }

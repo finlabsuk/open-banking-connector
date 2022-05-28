@@ -12,12 +12,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Response to Read requests.
     /// </summary>
-    public class AccountAccessConsentAuthContextReadLocalResponse : BaseResponse,
+    public class AccountAccessConsentAuthContextReadResponse : LocalObjectBaseResponse,
         IAccountAccessConsentAuthContextPublicQuery
     {
-        internal AccountAccessConsentAuthContextReadLocalResponse(
+        internal AccountAccessConsentAuthContextReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -27,15 +27,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             AccountAccessConsentId = accountAccessConsentId;
         }
 
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
+
         public Guid AccountAccessConsentId { get; }
     }
 
     /// <summary>
-    ///     Response to Get, Post
+    ///     Response to Create requests.
     /// </summary>
-    public class AccountAccessConsentAuthContextCreateLocalResponse : AccountAccessConsentAuthContextReadLocalResponse
+    public class AccountAccessConsentAuthContextCreateResponse : AccountAccessConsentAuthContextReadResponse
     {
-        internal AccountAccessConsentAuthContextCreateLocalResponse(
+        internal AccountAccessConsentAuthContextCreateResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -47,5 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         }
 
         public string AuthUrl { get; }
+
     }
 }

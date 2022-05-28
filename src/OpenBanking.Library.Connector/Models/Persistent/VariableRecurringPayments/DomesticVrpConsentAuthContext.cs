@@ -47,9 +47,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadLocalResponse>
+        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadResponse>
     {
-        public DomesticVrpConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
+        public DomesticVrpConsentAuthContextReadResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Created,

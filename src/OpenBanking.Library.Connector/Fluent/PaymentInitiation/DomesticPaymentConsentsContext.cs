@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
     public interface IDomesticPaymentConsentsContext :
         IEntityContext<DomesticPaymentConsentRequest,
             IDomesticPaymentConsentPublicQuery,
-            DomesticPaymentConsentReadResponse, DomesticPaymentConsentReadLocalResponse>,
+            DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
         IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
     {
         /// <summary>
@@ -32,8 +32,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         /// </summary>
         ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
                 IDomesticPaymentConsentAuthContextPublicQuery,
-                DomesticPaymentConsentAuthContextCreateLocalResponse,
-                DomesticPaymentConsentAuthContextReadLocalResponse>
+                DomesticPaymentConsentAuthContextCreateResponse,
+                DomesticPaymentConsentAuthContextReadResponse>
             AuthContexts { get; }
     }
 
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
         IDomesticPaymentConsentsContext,
         IEntityContextInternal<DomesticPaymentConsentRequest,
             IDomesticPaymentConsentPublicQuery,
-            DomesticPaymentConsentReadResponse, DomesticPaymentConsentReadLocalResponse>,
+            DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
         IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
 
     internal class DomesticPaymentConsentsConsentContext :
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.ApiVariantMapper);
             ReadLocalObject =
                 new LocalEntityGet<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
-                    DomesticPaymentConsentReadLocalResponse>(
+                    DomesticPaymentConsentBaseResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
@@ -88,13 +88,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
         public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
             IDomesticPaymentConsentAuthContextPublicQuery,
-            DomesticPaymentConsentAuthContextCreateLocalResponse,
-            DomesticPaymentConsentAuthContextReadLocalResponse> AuthContexts =>
+            DomesticPaymentConsentAuthContextCreateResponse,
+            DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
             new LocalEntityContextInternal<DomesticPaymentConsentAuthContextPersisted,
                 DomesticPaymentConsentAuthContextRequest,
                 IDomesticPaymentConsentAuthContextPublicQuery,
-                DomesticPaymentConsentAuthContextCreateLocalResponse,
-                DomesticPaymentConsentAuthContextReadLocalResponse>(
+                DomesticPaymentConsentAuthContextCreateResponse,
+                DomesticPaymentConsentAuthContextReadResponse>(
                 _sharedContext,
                 new DomesticPaymentConsentAuthContextPost(
                     _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
@@ -104,13 +104,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<DomesticPaymentConsentReadResponse> ReadObject { get; }
+        public IObjectRead<DomesticPaymentConsentResponse> ReadObject { get; }
 
         public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
 
-        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentReadResponse> CreateObject { get; }
+        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse> CreateObject { get; }
 
-        public IObjectReadLocal<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentReadLocalResponse>
+        public IObjectReadLocal<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentBaseResponse>
             ReadLocalObject { get; }
     }
 }

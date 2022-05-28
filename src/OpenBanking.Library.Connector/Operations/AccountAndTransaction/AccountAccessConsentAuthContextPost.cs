@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         AccountAccessConsentAuthContextPost : LocalEntityPost<
             AccountAccessConsentAuthContextPersisted,
             AccountAccessConsentAuthContextRequest,
-            AccountAccessConsentAuthContextCreateLocalResponse>
+            AccountAccessConsentAuthContextCreateResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> _accountAccessConsentMethods;
 
@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             _accountAccessConsentMethods = accountAccessConsentMethods;
         }
 
-        protected override async Task<AccountAccessConsentAuthContextCreateLocalResponse> AddEntity(
+        protected override async Task<AccountAccessConsentAuthContextCreateResponse> AddEntity(
             AccountAccessConsentAuthContextRequest request,
             ITimeProvider timeProvider)
         {
@@ -106,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 "accounts",
                 _instrumentationClient);
             var response =
-                new AccountAccessConsentAuthContextCreateLocalResponse(
+                new AccountAccessConsentAuthContextCreateResponse(
                     entity.Id,
                     entity.Created,
                     entity.CreatedBy,

@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         DomesticPaymentConsentAuthContextPost : LocalEntityPost<
             DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextCreateLocalResponse>
+            DomesticPaymentConsentAuthContextCreateResponse>
     {
         protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         }
 
-        protected override async Task<DomesticPaymentConsentAuthContextCreateLocalResponse> AddEntity(
+        protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
             DomesticPaymentConsentAuthContextRequest request,
             ITimeProvider timeProvider)
         {
@@ -91,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             string consentAuthGetAudClaim =
                 customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
                 issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
-            
+
             string authUrl = CreateAuthUrl.Create(
                 domesticPaymentConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
@@ -104,7 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 "payments",
                 _instrumentationClient);
             var response =
-                new DomesticPaymentConsentAuthContextCreateLocalResponse(
+                new DomesticPaymentConsentAuthContextCreateResponse(
                     entity.Id,
                     entity.Created,
                     entity.CreatedBy,

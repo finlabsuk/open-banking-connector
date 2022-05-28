@@ -5,8 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -28,39 +26,28 @@ public class PartiesController : ControllerBase
     /// <summary>
     ///     Read Party
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
-    /// <param name="page"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/party")]
     [Route("aisp/accounts/{externalApiAccountId}/party")]
     [HttpGet]
-    [ProducesResponseType(
-        typeof(PartiesResponse),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(PartiesResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAsync(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
         [FromHeader]
-        string? modifiedBy,
-        [FromQuery]
-        string? page)
+        string? modifiedBy)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        IFluentResponse<PartiesResponse> fluentResponse = await _requestBuilder
+        PartiesResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Parties
             .ReadAsync(
@@ -69,61 +56,37 @@ public class PartiesController : ControllerBase
                 null,
                 null,
                 null,
-                page ?? string.Empty,
+                null,
                 modifiedBy,
                 requestUrlWithoutQuery);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<PartiesResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<PartiesResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<PartiesResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
     }
 
     /// <summary>
     ///     Read Parties
     /// </summary>
-    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
+    /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
-    /// <param name="page"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/accounts/{externalApiAccountId}/parties")]
     [HttpGet]
-    [ProducesResponseType(
-        typeof(Parties2Response),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(Parties2Response), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get2Async(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
         [FromHeader]
-        string? modifiedBy,
-        [FromQuery]
-        string? page)
+        string? modifiedBy)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        IFluentResponse<Parties2Response> fluentResponse = await _requestBuilder
+        Parties2Response fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .Parties2
             .ReadAsync(
@@ -132,23 +95,10 @@ public class PartiesController : ControllerBase
                 null,
                 null,
                 null,
-                page ?? string.Empty,
+                null,
                 modifiedBy,
                 requestUrlWithoutQuery);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<Parties2Response> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<Parties2Response> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<Parties2Response> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
     }
 }

@@ -25,5 +25,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
         /// </summary>
         public AccountAndTransactionModelsPublic.OBReadParty3 ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 }

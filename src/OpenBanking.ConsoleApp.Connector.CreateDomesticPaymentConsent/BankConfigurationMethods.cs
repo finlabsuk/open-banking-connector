@@ -30,11 +30,11 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         {
             // Create bank
             Bank bankRequest = bankProfile.GetBankRequest();
-            IFluentResponse<BankResponse> bankResp = await requestBuilder
+            BankResponse bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
                 .CreateLocalAsync(bankRequest);
-            Guid bankId = bankResp.Data!.Id;
+            Guid bankId = bankResp.Id;
 
             // Create bank registration
             BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
@@ -42,11 +42,11 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                 softwareStatementProfileId,
                 softwareStatementAndCertificateProfileOverrideCase,
                 registrationScope);
-            IFluentResponse<BankRegistrationReadResponse> registrationResp = await requestBuilder
+            BankRegistrationResponse registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .CreateAsync(registrationRequest);
-            Guid bankRegistrationId = registrationResp.Data!.Id;
+            Guid bankRegistrationId = registrationResp.Id;
 
             // Return IDs of created objects
             return (bankId, bankRegistrationId);

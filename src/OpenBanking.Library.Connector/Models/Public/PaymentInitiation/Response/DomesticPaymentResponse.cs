@@ -19,5 +19,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 }

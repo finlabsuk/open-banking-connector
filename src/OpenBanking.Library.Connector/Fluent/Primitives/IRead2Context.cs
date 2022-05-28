@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -28,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="requestUrlWithoutQuery"></param>
         /// <param name="queryString"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> ReadAsync(
+        Task<TPublicResponse> ReadAsync(
             Guid consentId,
             string? externalApiAccountId = null,
             string? externalApiStatementId = null,
@@ -47,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         IObjectRead2<TPublicResponse> ReadObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> IRead2Context<TPublicResponse>.ReadAsync(
+        async Task<TPublicResponse> IRead2Context<TPublicResponse>.ReadAsync(
             Guid consentId,
             string? externalApiAccountId,
             string? externalApiStatementId,
@@ -58,45 +57,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? requestUrlWithoutQuery,
             string? queryString)
         {
-            // Create non-error list
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
+            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+                await ReadObject.ReadAsync(
+                    consentId,
+                    externalApiAccountId,
+                    externalApiStatementId,
+                    fromBookingDateTime,
+                    toBookingDateTime,
+                    page,
+                    modifiedBy,
+                    requestUrlWithoutQuery,
+                    queryString);
 
-            try
-            {
-                (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await ReadObject.ReadAsync(
-                        consentId,
-                        externalApiAccountId,
-                        externalApiStatementId,
-                        fromBookingDateTime,
-                        toBookingDateTime,
-                        page,
-                        modifiedBy,
-                        requestUrlWithoutQuery,
-                        queryString);
-                nonErrorMessages.AddRange(postEntityNonErrorMessages);
-
-                // Return success response (thrown exceptions produce error response)
-                return new FluentSuccessResponse<TPublicResponse>(
-                    response,
-                    nonErrorMessages);
-            }
-            catch (AggregateException ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    messages: ex.CreateOtherErrorMessages()
-                        .ToList()); // ToList() is workaround for IList to IReadOnlyList conversion; see https://github.com/dotnet/runtime/issues/31001
-            }
-            catch (Exception ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    new List<FluentResponseOtherErrorMessage> { ex.CreateOtherErrorMessage() });
-            }
+            return response;
         }
     }
 }

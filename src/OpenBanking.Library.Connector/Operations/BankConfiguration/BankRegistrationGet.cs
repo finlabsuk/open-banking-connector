@@ -30,7 +30,7 @@ using ClientRegistrationModelsV3p1 =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class BankRegistrationGet : GetBase<BankRegistrationPersisted, BankRegistrationReadResponse>
+    internal class BankRegistrationGet : GetBase<BankRegistrationPersisted, BankRegistrationResponse>
     {
         protected readonly IApiVariantMapper _mapper;
 
@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
 
         protected override async
-            Task<(BankRegistrationReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiGet(GetRequestInfo requestInfo)
         {
             // Create non-error list
@@ -183,18 +183,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 apiResponse.RegistrationAccessToken = null;
             }
 
-            BankRegistrationReadResponse response = new(
+            BankRegistrationResponse response = new(
                 entity.Id,
                 entity.Created,
                 entity.CreatedBy,
                 entity.Reference,
+                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
                 entity.SoftwareStatementProfileId,
                 entity.SoftwareStatementProfileOverride,
                 entity.TokenEndpointAuthMethod,
                 entity.RegistrationScope,
                 entity.BankId,
-                new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
-                apiResponse);
+                apiResponse,
+                null);
 
             return (response, nonErrorMessages);
         }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FsCheck;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
@@ -12,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
         public static Arbitrary<string> GetArbitrary()
         {
             return Arb.Default.String().Generator
-                .Where(s => s != null && !IsUrl(s))
+                .Where(s => !string.IsNullOrEmpty(s) && !IsUrl(s))
                 .ToArbitrary();
         }
 

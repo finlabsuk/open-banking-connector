@@ -23,7 +23,7 @@ using DomesticVrpConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentGet : ReadWriteGet<DomesticVrpConsentPersisted, DomesticVrpConsentReadResponse,
+        DomesticVrpConsentGet : ReadWriteGet<DomesticVrpConsentPersisted, DomesticVrpConsentResponse,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
         public DomesticVrpConsentGet(
@@ -119,11 +119,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 nonErrorMessages);
         }
 
-        protected override DomesticVrpConsentReadResponse GetReadResponse(
+        protected override DomesticVrpConsentResponse GetReadResponse(
             DomesticVrpConsentPersisted persistedObject,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse)
         {
-            return new DomesticVrpConsentReadResponse(
+            return new DomesticVrpConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,

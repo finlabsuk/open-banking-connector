@@ -5,14 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfiguration;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
+[Route("config/bank-registrations")]
 public class BankRegistrationsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,83 +23,85 @@ public class BankRegistrationsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create a BankRegistration object
+    ///     Create BankRegistration
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/bank-registrations")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(BankRegistrationReadResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(BankRegistrationResponse))]
     public async Task<IActionResult> PostAsync([FromBody] BankRegistration request)
     {
         // Operation
-        IFluentResponse<BankRegistrationReadResponse> fluentResponse = await _requestBuilder
+        BankRegistrationResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankRegistrations
             .CreateAsync(request);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<BankRegistrationReadResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<BankRegistrationReadResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<BankRegistrationReadResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { bankRegistrationId = fluentResponse.Id },
+            fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read BankRegistration
+    /// </summary>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpGet("{bankRegistrationId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BankRegistrationResponse))]
+    public async Task<IActionResult> GetAsync(
+        Guid bankRegistrationId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        BankRegistrationResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .BankRegistrations
+            .ReadAsync(bankRegistrationId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 
     /// <summary>
     ///     Read all BankRegistration objects (temporary endpoint)
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/bank-registrations")]
     [HttpGet]
-    [ProducesResponseType(
-        typeof(IList<BankRegistrationReadLocalResponse>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<BankRegistrationResponse>))]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<BankRegistrationReadLocalResponse>> fluentResponse = await _requestBuilder
+        IQueryable<BankRegistrationResponse> fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankRegistrations
             .ReadLocalAsync(query => true);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<BankRegistrationReadLocalResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Delete BankRegistration
+    /// </summary>
+    /// <param name="bankRegistrationId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpDelete("{bankRegistrationId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
+    public async Task<IActionResult> DeleteAsync(
+        Guid bankRegistrationId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        ObjectDeleteResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .BankRegistrations
+            .DeleteAsync(bankRegistrationId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 }

@@ -16,6 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
@@ -63,15 +64,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAndTransactionApiRequest.BankId = bankId;
             accountAndTransactionApiRequest.CreatedBy = createdBy;
             accountAndTransactionApiRequest.Reference = testNameUnique;
-            IFluentResponse<AccountAndTransactionApiResponse> accountAndTransactionApiResponse =
+            AccountAndTransactionApiResponse accountAndTransactionApiResponse =
                 await requestBuilder
                     .BankConfiguration
                     .AccountAndTransactionApis
                     .CreateLocalAsync(accountAndTransactionApiRequest);
             accountAndTransactionApiResponse.Should().NotBeNull();
-            accountAndTransactionApiResponse.Messages.Should().BeEmpty();
-            accountAndTransactionApiResponse.Data.Should().NotBeNull();
-            Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Data!.Id;
+            accountAndTransactionApiResponse.Warnings.Should().BeNull();
+            Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Id;
 
             // Create account access consent or use existing
             Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
@@ -103,7 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
             accountAccessConsentRequest.CreatedBy = createdBy;
             accountAccessConsentRequest.Reference = testNameUnique;
-            IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp =
+            AccountAccessConsentResponse accountAccessConsentResp =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
@@ -111,12 +111,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Checks
             accountAccessConsentResp.Should().NotBeNull();
-            accountAccessConsentResp.Messages.Should().BeEmpty();
-            accountAccessConsentResp.Data.Should().NotBeNull();
-            Guid accountAccessConsentId = accountAccessConsentResp.Data!.Id;
+            accountAccessConsentResp.Warnings.Should().BeNull();
+            accountAccessConsentResp.ExternalApiResponse.Should().NotBeNull();
+            Guid accountAccessConsentId = accountAccessConsentResp.Id;
 
             // GET /account access consents/{consentId}
-            IFluentResponse<AccountAccessConsentReadResponse> accountAccessConsentResp2 =
+            AccountAccessConsentResponse accountAccessConsentResp2 =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
@@ -124,8 +124,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Checks
             accountAccessConsentResp2.Should().NotBeNull();
-            accountAccessConsentResp2.Messages.Should().BeEmpty();
-            accountAccessConsentResp2.Data.Should().NotBeNull();
+            accountAccessConsentResp2.Warnings.Should().BeNull();
+            accountAccessConsentResp2.ExternalApiResponse.Should().NotBeNull();
 
             // var xx = await requestBuilder
             //     .AccountAndTransaction
@@ -138,7 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 AccountAccessConsentId = accountAccessConsentId,
                 Reference = testNameUnique + "_AccountAccessConsent"
             };
-            IFluentResponse<AccountAccessConsentAuthContextCreateLocalResponse> authContextResponse =
+            AccountAccessConsentAuthContextCreateResponse authContextResponse =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
@@ -147,14 +147,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Checks
             authContextResponse.Should().NotBeNull();
-            authContextResponse.Messages.Should().BeEmpty();
-            authContextResponse.Data.Should().NotBeNull();
-            authContextResponse.Data!.AuthUrl.Should().NotBeNull();
-            Guid authContextId = authContextResponse.Data!.Id;
-            string authUrl = authContextResponse.Data!.AuthUrl!;
+            authContextResponse.Warnings.Should().BeNull();
+            authContextResponse.AuthUrl.Should().NotBeNull();
+            Guid authContextId = authContextResponse.Id;
+            string authUrl = authContextResponse.AuthUrl!;
 
             // GET auth context
-            IFluentResponse<AccountAccessConsentAuthContextReadLocalResponse> authContextResponse2 =
+            AccountAccessConsentAuthContextReadResponse authContextResponse2 =
                 await requestBuilder.AccountAndTransaction
                     .AccountAccessConsents
                     .AuthContexts
@@ -162,8 +161,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Checks
             authContextResponse2.Should().NotBeNull();
-            authContextResponse2.Messages.Should().BeEmpty();
-            authContextResponse2.Data.Should().NotBeNull();
+            authContextResponse2.Warnings.Should().BeNull();
 
             // Consent authorisation
             if (consentAuth is not null)
@@ -183,7 +181,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
 
                 // GET /accounts
-                IFluentResponse<AccountsResponse> accountsResp =
+                AccountsResponse accountsResp =
                     await requestBuilderNew
                         .AccountAndTransaction
                         .Accounts
@@ -198,15 +196,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                 // Checks
                 accountsResp.Should().NotBeNull();
-                accountsResp.Messages.Should().BeEmpty();
-                accountsResp.Data.Should().NotBeNull();
+                accountsResp.Warnings.Should().BeNull();
+                accountsResp.ExternalApiResponse.Should().NotBeNull();
 
-                foreach (OBAccount6 account in accountsResp.Data!.ExternalApiResponse.Data.Account)
+                foreach (OBAccount6 account in accountsResp.ExternalApiResponse.Data.Account)
                 {
                     string externalAccountId = account.AccountId;
 
                     // GET /accounts/{accountId}
-                    IFluentResponse<AccountsResponse> accountsResp2 =
+                    AccountsResponse accountsResp2 =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Accounts
@@ -221,11 +219,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                     // Checks
                     accountsResp2.Should().NotBeNull();
-                    accountsResp2.Messages.Should().BeEmpty();
-                    accountsResp2.Data.Should().NotBeNull();
+                    accountsResp2.Warnings.Should().BeNull();
+                    accountsResp2.ExternalApiResponse.Should().NotBeNull();
 
                     // GET /balances/{accountId}
-                    IFluentResponse<BalancesResponse> balancesResp =
+                    BalancesResponse balancesResp =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Balances
@@ -240,8 +238,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                     // Checks
                     balancesResp.Should().NotBeNull();
-                    balancesResp.Messages.Should().BeEmpty();
-                    balancesResp.Data.Should().NotBeNull();
+                    balancesResp.Warnings.Should().BeNull();
+                    balancesResp.ExternalApiResponse.Should().NotBeNull();
 
                     // GET /transactions/{accountId}
                     const int maxPages = 30;
@@ -249,7 +247,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     var queryString = "";
                     do
                     {
-                        IFluentResponse<TransactionsResponse> transactionsResp =
+                        TransactionsResponse transactionsResp =
                             await requestBuilderNew
                                 .AccountAndTransaction
                                 .Transactions
@@ -266,16 +264,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                         // Checks
                         transactionsResp.Should().NotBeNull();
-                        transactionsResp.Messages.Should().BeEmpty();
-                        transactionsResp.Data.Should().NotBeNull();
+                        transactionsResp.Warnings.Should().BeNull();
+                        transactionsResp.ExternalApiResponse.Should().NotBeNull();
 
                         // Update query string based on "Next" link
-                        queryString = transactionsResp.Data!.ExternalApiResponse.Links.Next;
+                        queryString = transactionsResp.ExternalApiResponse.Links.Next;
                         page++;
                     } while (queryString is not null && page < maxPages);
 
                     // GET /party/{accountId}
-                    IFluentResponse<PartiesResponse> partyResp =
+                    PartiesResponse partyResp =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Parties
@@ -290,11 +288,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                     // Checks
                     partyResp.Should().NotBeNull();
-                    partyResp.Messages.Should().BeEmpty();
-                    partyResp.Data.Should().NotBeNull();
+                    partyResp.Warnings.Should().BeNull();
+                    partyResp.ExternalApiResponse.Should().NotBeNull();
 
                     // GET /parties/{accountId}
-                    IFluentResponse<Parties2Response> partiesResp =
+                    Parties2Response partiesResp =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Parties2
@@ -309,30 +307,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                     // Checks
                     partiesResp.Should().NotBeNull();
-                    partiesResp.Messages.Should().BeEmpty();
-                    partiesResp.Data.Should().NotBeNull();
+                    partiesResp.Warnings.Should().BeNull();
+                    partiesResp.ExternalApiResponse.Should().NotBeNull();
                 }
 
                 // DELETE account access consent
-                IFluentResponse accountAccessConsentResp3 = await requestBuilderNew
+                ObjectDeleteResponse accountAccessConsentResp3 = await requestBuilderNew
                     .AccountAndTransaction
                     .AccountAccessConsents
                     .DeleteAsync(accountAccessConsentId);
 
                 // Checks
                 accountAccessConsentResp3.Should().NotBeNull();
-                accountAccessConsentResp3.Messages.Should().BeEmpty();
+                accountAccessConsentResp3.Warnings.Should().BeNull();
             }
 
             // DELETE API object
-            IFluentResponse apiResponse = await requestBuilder
+            ObjectDeleteResponse apiResponse = await requestBuilder
                 .BankConfiguration
                 .AccountAndTransactionApis
                 .DeleteLocalAsync(accountAndTransactionApiId);
 
             // Checks
             apiResponse.Should().NotBeNull();
-            apiResponse.Messages.Should().BeEmpty();
+            apiResponse.Warnings.Should().BeNull();
         }
     }
 }

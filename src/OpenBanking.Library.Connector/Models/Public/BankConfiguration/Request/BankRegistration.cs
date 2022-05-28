@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     If registration already exists for bank, allow creation of additional one. NB this may
         ///     disrupt existing registration depending on bank support for multiple registrations.
         /// </summary>
-        public bool AllowMultipleRegistrations { get; set; } = true;
+        public bool AllowMultipleRegistrations { get; set; } = false;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new BankRegistrationValidator()

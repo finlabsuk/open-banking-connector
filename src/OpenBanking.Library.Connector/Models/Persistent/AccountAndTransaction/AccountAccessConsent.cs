@@ -78,9 +78,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public string ExternalApiId { get; }
     }
 
-    internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentReadLocalResponse>
+    internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentResponse>
     {
-        public AccountAccessConsentReadLocalResponse PublicGetLocalResponse =>
+        public AccountAccessConsentResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Created,
@@ -88,6 +88,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
                 Reference,
                 BankRegistrationId,
                 AccountAndTransactionApiId,
-                ExternalApiId);
+                ExternalApiId,
+                null,
+                null);
     }
 }

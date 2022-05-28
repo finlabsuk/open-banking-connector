@@ -4,10 +4,11 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
 {
-    /// Used for body of 400 or 500 series request errors
-    public class Error
+    public class ObjectDeleteResponse
     {
-        /// Error description
-        public string Description { get; set; } = null!;
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 }

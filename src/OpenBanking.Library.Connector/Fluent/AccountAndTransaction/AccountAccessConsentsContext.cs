@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
     public interface IAccountAccessConsentsContext :
         IEntityContext<AccountAccessConsentRequest,
             IAccountAccessConsentPublicQuery,
-            AccountAccessConsentReadResponse, AccountAccessConsentReadLocalResponse>,
+            AccountAccessConsentResponse, AccountAccessConsentResponse>,
         IDeleteContext
     {
         /// <summary>
@@ -36,8 +36,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         /// </summary>
         ILocalEntityContext<AccountAccessConsentAuthContextRequest,
                 IAccountAccessConsentAuthContextPublicQuery,
-                AccountAccessConsentAuthContextCreateLocalResponse,
-                AccountAccessConsentAuthContextReadLocalResponse>
+                AccountAccessConsentAuthContextCreateResponse,
+                AccountAccessConsentAuthContextReadResponse>
             AuthContexts { get; }
     }
 
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         IAccountAccessConsentsContext,
         IEntityContextInternal<AccountAccessConsentRequest,
             IAccountAccessConsentPublicQuery,
-            AccountAccessConsentReadResponse, AccountAccessConsentReadLocalResponse>, IDeleteContextInternal { }
+            AccountAccessConsentResponse, AccountAccessConsentResponse>, IDeleteContextInternal { }
 
     internal class AccountAccessConsentsConsentContext :
         ObjectContextBase<AccountAccessConsentPersisted>,
@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.ApiVariantMapper);
             ReadLocalObject =
                 new LocalEntityGet<AccountAccessConsentPersisted, IAccountAccessConsentPublicQuery,
-                    AccountAccessConsentReadLocalResponse>(
+                    AccountAccessConsentResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
@@ -92,13 +92,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
         public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
             IAccountAccessConsentAuthContextPublicQuery,
-            AccountAccessConsentAuthContextCreateLocalResponse,
-            AccountAccessConsentAuthContextReadLocalResponse> AuthContexts =>
+            AccountAccessConsentAuthContextCreateResponse,
+            AccountAccessConsentAuthContextReadResponse> AuthContexts =>
             new LocalEntityContextInternal<AccountAccessConsentAuthContextPersisted,
                 AccountAccessConsentAuthContextRequest,
                 IAccountAccessConsentAuthContextPublicQuery,
-                AccountAccessConsentAuthContextCreateLocalResponse,
-                AccountAccessConsentAuthContextReadLocalResponse>(
+                AccountAccessConsentAuthContextCreateResponse,
+                AccountAccessConsentAuthContextReadResponse>(
                 _sharedContext,
                 new AccountAccessConsentAuthContext(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAuthContextPersisted>(),
@@ -108,14 +108,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<AccountAccessConsentReadResponse> ReadObject { get; }
+        public IObjectRead<AccountAccessConsentResponse> ReadObject { get; }
 
-        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentReadResponse> CreateObject { get; }
+        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentResponse> CreateObject { get; }
 
-        public IObjectReadLocal<IAccountAccessConsentPublicQuery, AccountAccessConsentReadLocalResponse> ReadLocalObject
-        {
-            get;
-        }
+        public IObjectReadLocal<IAccountAccessConsentPublicQuery, AccountAccessConsentResponse> ReadLocalObject { get; }
 
         public IObjectDelete DeleteObject { get; }
     }

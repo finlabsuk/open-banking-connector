@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class VariableRecurringPaymentsApiResponse : BaseResponse, IVariableRecurringPaymentsApiQuery
+    public class VariableRecurringPaymentsApiResponse : LocalObjectBaseResponse, IVariableRecurringPaymentsApiQuery
     {
         internal VariableRecurringPaymentsApiResponse(
             Guid id,
@@ -32,6 +32,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             ApiVersion = apiVersion;
             BaseUrl = baseUrl;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Bank with which this API is associated.

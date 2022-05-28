@@ -59,11 +59,11 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             PaymentInitiationApiRequest paymentInitiationApiRequest =
                 bankProfile.GetPaymentInitiationApiRequest(bankId);
             paymentInitiationApiRequest.Reference = demoNameUnique;
-            IFluentResponse<PaymentInitiationApiResponse> response = await requestBuilder
+            PaymentInitiationApiResponse response = await requestBuilder
                 .BankConfiguration
                 .PaymentInitiationApis
                 .CreateLocalAsync(paymentInitiationApiRequest);
-            Guid bankApiSetId = response.Data!.Id;
+            Guid bankApiSetId = response.Id;
 
 
             // Create domestic payment consent

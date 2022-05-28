@@ -25,7 +25,7 @@ using AccountAndTransactionModelsV3p1p7 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class
-        AccountAccessConsentGet : ReadWriteGet<AccountAccessConsentPersisted, AccountAccessConsentReadResponse,
+        AccountAccessConsentGet : ReadWriteGet<AccountAccessConsentPersisted, AccountAccessConsentResponse,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1>
     {
         public AccountAccessConsentGet(
@@ -116,11 +116,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 nonErrorMessages);
         }
 
-        protected override AccountAccessConsentReadResponse GetReadResponse(
+        protected override AccountAccessConsentResponse GetReadResponse(
             AccountAccessConsentPersisted persistedObject,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse)
         {
-            return new AccountAccessConsentReadResponse(
+            return new AccountAccessConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
@@ -128,7 +128,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 persistedObject.BankRegistrationId,
                 persistedObject.AccountAndTransactionApiId,
                 persistedObject.ExternalApiId,
-                apiResponse);
+                apiResponse,
+                null);
         }
     }
 }

@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
 {
     [ApiController]
     [ApiExplorerSettings(GroupName = "auth-contexts")]
+    [Tags("OAuth2 Redirects")]
+    [Route("auth")]
     public class RedirectController : ControllerBase
     {
         private readonly IRequestBuilder _requestBuilder;
@@ -24,11 +25,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
             _requestBuilder = requestBuilder;
         }
 
-        [HttpGet]
-        [Route("auth/query-redirect")]
+        /// <summary>
+        ///     OAuth2 query redirect endpoint
+        /// </summary>
+        /// <param name="idToken"></param>
+        /// <param name="code"></param>
+        /// <param name="state"></param>
+        /// <param name="nonce"></param>
+        /// <returns></returns>
+        [HttpGet("query-redirect")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HttpResponseMessages))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
         public async Task<IActionResult> GetQueryRedirectDelegateAsync(
             [FromQuery(Name = "id_token")] string idToken,
             [FromQuery(Name = "code")]
@@ -43,31 +49,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
                 new AuthResult(
                     OAuth2ResponseMode.Query,
                     new OAuth2RedirectData(idToken, code, state, nonce));
-            IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
+            AuthContextResponse fluentResponse = await _requestBuilder
                 .AuthContexts
-                .UpdateAuthResultLocalAsync(authResult);
+                .UpdateAuthResultLocalAsync(authResult, "Redirect to /auth/query-redirect");
 
-            // HTTP response
-            return fluentResponse switch
-            {
-                FluentSuccessResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status200OK },
-                FluentBadRequestErrorResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status400BadRequest },
-                FluentOtherErrorResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status500InternalServerError },
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return Ok(fluentResponse);
         }
 
-        [HttpPost]
-        [Route("auth/redirect-delegate")]
+        /// <summary>
+        ///     Delegate endpoint for forwarding data captured elsewhere from OAuth2 redirect
+        /// </summary>
+        /// <param name="idToken"></param>
+        /// <param name="code"></param>
+        /// <param name="state"></param>
+        /// <param name="responseMode"></param>
+        /// <param name="nonce"></param>
+        /// <param name="modifiedBy"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        [HttpPost("redirect-delegate")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HttpResponseMessages))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(HttpResponseMessages))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(HttpResponseMessages))]
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<IActionResult> PostRedirectDelegateAsync(
             [FromForm(Name = "id_token")] string idToken,
@@ -78,7 +79,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
             [FromForm(Name = "response_mode")]
             string responseMode,
             [FromForm(Name = "nonce")]
-            string? nonce)
+            string? nonce,
+            [FromForm(Name = "modified_by")]
+            string? modifiedBy)
         {
             // Operation
             OAuth2ResponseMode oAuth2ResponseMode = responseMode switch
@@ -95,24 +98,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
                 new AuthResult(
                     oAuth2ResponseMode,
                     new OAuth2RedirectData(idToken, code, state, nonce));
-            IFluentResponse<AuthContextResponse> fluentResponse = await _requestBuilder
+            AuthContextResponse fluentResponse = await _requestBuilder
                 .AuthContexts
-                .UpdateAuthResultLocalAsync(authResult);
+                .UpdateAuthResultLocalAsync(authResult, modifiedBy);
 
-            // HTTP response
-            return fluentResponse switch
-            {
-                FluentSuccessResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status201Created },
-                FluentBadRequestErrorResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status400BadRequest },
-                FluentOtherErrorResponse<AuthContextResponse> _ =>
-                    new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                        { StatusCode = StatusCodes.Status500InternalServerError },
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            return Created("about:blank", fluentResponse);
         }
     }
 }

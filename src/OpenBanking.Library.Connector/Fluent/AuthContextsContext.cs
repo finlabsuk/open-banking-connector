@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         ///     Update auth context with auth result which is data received from bank (e.g. via redirect) following user
         ///     authorisation of consent.
         /// </summary>
-        Task<IFluentResponse<AuthContextResponse>> UpdateAuthResultLocalAsync(
+        Task<AuthContextResponse> UpdateAuthResultLocalAsync(
             AuthResult publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             Context = sharedContext;
         }
 
-        public Task<IFluentResponse<AuthContextResponse>> UpdateAuthResultLocalAsync(
+        public Task<AuthContextResponse> UpdateAuthResultLocalAsync(
             AuthResult publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,

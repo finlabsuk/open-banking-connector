@@ -14,17 +14,17 @@ using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persi
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
-        ICreateContext<BankRegistration, BankRegistrationReadResponse>,
-        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse>,
-        IReadContext<BankRegistrationReadResponse>,
+        ICreateContext<BankRegistration, BankRegistrationResponse>,
+        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        IReadContext<BankRegistrationResponse>,
         IDeleteLocalContext,
         IDeleteContext { }
 
     internal interface IBankRegistrationsContextInternal :
         IBankRegistrationsContext,
-        ICreateContextInternal<BankRegistration, BankRegistrationReadResponse>,
-        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse>,
-        IReadContextInternal<BankRegistrationReadResponse>,
+        ICreateContextInternal<BankRegistration, BankRegistrationResponse>,
+        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
+        IReadContextInternal<BankRegistrationResponse>,
         IDeleteContextInternal { }
 
     internal class BankRegistrationsContextInternal :
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         {
             ReadLocalObject =
                 new LocalEntityGet<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-                    BankRegistrationReadLocalResponse>(
+                    BankRegistrationResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
@@ -66,14 +66,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.BankProfileDefinitions);
         }
 
-        public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationReadLocalResponse> ReadLocalObject
-        {
-            get;
-        }
+        public IObjectReadLocal<IBankRegistrationPublicQuery, BankRegistrationResponse> ReadLocalObject { get; }
 
-        public IObjectCreate<BankRegistration, BankRegistrationReadResponse> CreateObject { get; }
+        public IObjectCreate<BankRegistration, BankRegistrationResponse> CreateObject { get; }
 
         public IObjectDelete DeleteObject { get; }
-        public IObjectRead<BankRegistrationReadResponse> ReadObject { get; }
+        public IObjectRead<BankRegistrationResponse> ReadObject { get; }
     }
 }

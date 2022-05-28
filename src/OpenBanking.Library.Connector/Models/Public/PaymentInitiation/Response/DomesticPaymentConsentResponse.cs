@@ -31,9 +31,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Response to ReadLocal requests
     /// </summary>
-    public class DomesticPaymentConsentReadLocalResponse : BaseResponse, IDomesticPaymentConsentPublicQuery
+    public abstract class DomesticPaymentConsentBaseResponse : LocalObjectBaseResponse,
+        IDomesticPaymentConsentPublicQuery
     {
-        internal DomesticPaymentConsentReadLocalResponse(
+        internal DomesticPaymentConsentBaseResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -67,9 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// <summary>
     ///     Response to Read and Create requests
     /// </summary>
-    public class DomesticPaymentConsentReadResponse : DomesticPaymentConsentReadLocalResponse
+    public class DomesticPaymentConsentResponse : DomesticPaymentConsentBaseResponse
     {
-        internal DomesticPaymentConsentReadResponse(
+        internal DomesticPaymentConsentResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -90,12 +91,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 
     /// <summary>
     ///     Response to ReadFundsConfirmation requests
     /// </summary>
-    public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentReadLocalResponse
+    public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentBaseResponse
     {
         internal DomesticPaymentConsentReadFundsConfirmationResponse(
             Guid id,
@@ -118,5 +124,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
     }
 }

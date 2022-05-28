@@ -82,9 +82,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     }
 
     internal partial class DomesticVrpConsent :
-        ISupportsFluentLocalEntityGet<DomesticVrpConsentReadLocalResponse>
+        ISupportsFluentLocalEntityGet<DomesticVrpConsentResponse>
     {
-        public DomesticVrpConsentReadLocalResponse PublicGetLocalResponse =>
+        public DomesticVrpConsentResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Created,
@@ -92,6 +92,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
                 Reference,
                 BankRegistrationId,
                 VariableRecurringPaymentsApiId,
-                ExternalApiId);
+                ExternalApiId,
+                null);
     }
 }

@@ -2,13 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -31,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="apiResponseWriteFile"></param>
         /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> CreateAsync(
+        Task<TPublicResponse> CreateAsync(
             TPublicRequest publicRequest,
             string? createdBy = null,
             string? apiRequestWriteFile = null,
@@ -47,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         IObjectCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> ICreateContext<TPublicRequest, TPublicResponse>.CreateAsync(
+        async Task<TPublicResponse> ICreateContext<TPublicRequest, TPublicResponse>.CreateAsync(
             TPublicRequest publicRequest,
             string? createdBy,
             string? apiRequestWriteFile,
@@ -56,63 +52,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         {
             publicRequest.ArgNotNull(nameof(publicRequest));
 
-            // Create non-error list
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
-
             // Validate request data and convert to messages
             ValidationResult validationResult = await publicRequest.ValidateAsync();
-            IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
-                validationResult.ProcessValidationResultsAndReturnBadRequestErrorMessages(
-                    "prefix",
-                    out
-                    IList<FluentResponseBadRequestErrorMessage> badRequestErrorMessages);
-            nonErrorMessages.AddRange(newNonErrorMessages);
-
-            // If any request errors, terminate execution
-            if (badRequestErrorMessages.Any())
+            if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
             {
-                IEnumerable<IFluentBadRequestErrorResponseMessage>
-                    badRequestErrorMessagesAEnumerable =
-                        badRequestErrorMessages; // use IEnumerable<T> for covariant cast
-                IEnumerable<IFluentBadRequestErrorResponseMessage> messages =
-                    badRequestErrorMessagesAEnumerable.Concat(nonErrorMessages);
-                return new FluentBadRequestErrorResponse<TPublicResponse>(
-                    messages: messages.ToList()); // ToList() is workaround for IEnumerable to IReadOnlyList conversion
+                throw new ValidationException(validationResult.Errors);
             }
 
             // Execute operation catching errors 
-            try
-            {
-                (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await CreateObject.CreateAsync(
-                        publicRequest,
-                        createdBy,
-                        apiRequestWriteFile,
-                        apiResponseWriteFile,
-                        apiResponseOverrideFile);
-                nonErrorMessages.AddRange(postEntityNonErrorMessages);
+            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+                await CreateObject.CreateAsync(
+                    publicRequest,
+                    createdBy,
+                    apiRequestWriteFile,
+                    apiResponseWriteFile,
+                    apiResponseOverrideFile);
 
-                // Return success response (thrown exceptions produce error response)
-                return new FluentSuccessResponse<TPublicResponse>(
-                    response,
-                    nonErrorMessages);
-            }
-            catch (AggregateException ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    messages: ex.CreateOtherErrorMessages()
-                        .ToList()); // ToList() is workaround for IList to IReadOnlyList conversion; see https://github.com/dotnet/runtime/issues/31001
-            }
-            catch (Exception ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    new List<FluentResponseOtherErrorMessage> { ex.CreateOtherErrorMessage() });
-            }
+            return response;
         }
     }
 }

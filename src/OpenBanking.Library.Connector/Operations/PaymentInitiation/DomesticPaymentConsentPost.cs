@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     internal class
         DomesticPaymentConsentPost : ReadWritePost<DomesticPaymentConsentPersisted,
             DomesticPaymentConsent,
-            DomesticPaymentConsentReadResponse,
+            DomesticPaymentConsentResponse,
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
     {
@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
         protected override string ClientCredentialsGrantScope => "payments";
 
-        protected override async Task<DomesticPaymentConsentReadResponse> AddEntity(
+        protected override async Task<DomesticPaymentConsentResponse> AddEntity(
             DomesticPaymentConsent request,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? apiResponse,
             ITimeProvider timeProvider)
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             await _entityMethods.AddAsync(persistedObject);
 
             // Create response (may involve additional processing based on entity)
-            var response = new DomesticPaymentConsentReadResponse(
+            var response = new DomesticPaymentConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,

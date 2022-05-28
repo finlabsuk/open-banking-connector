@@ -5,6 +5,7 @@ debugger
         console.log('Fragment supplied.');
         const params = new URLSearchParams(fragmentParams);
         params.append('response_mode', 'fragment');
+        params.append('modified_by', 'Redirect to /auth/fragment-redirect');
         const newURL = 'redirect-delegate'; // relative to current URL
         let response
         try {

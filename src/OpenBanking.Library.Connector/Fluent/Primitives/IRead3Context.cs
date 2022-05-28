@@ -2,11 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -26,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="consentId"></param>
         /// <param name="modifiedBy"></param>
         /// <returns></returns>
-        Task<IFluentResponse<TPublicResponse>> ReadAsync(
+        Task<TPublicResponse> ReadAsync(
             string externalId,
             Guid consentId,
             string? modifiedBy = null);
@@ -39,44 +34,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     {
         IObjectRead3<TPublicResponse> ReadObject { get; }
 
-        async Task<IFluentResponse<TPublicResponse>> IRead3Context<TPublicResponse>.ReadAsync(
+        async Task<TPublicResponse> IRead3Context<TPublicResponse>.ReadAsync(
             string externalId,
             Guid consentId,
             string? modifiedBy)
         {
-            // Create non-error list
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
+            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+                await ReadObject.ReadAsync(
+                    externalId,
+                    consentId,
+                    modifiedBy);
 
-            try
-            {
-                (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                    await ReadObject.ReadAsync(
-                        externalId,
-                        consentId,
-                        modifiedBy);
-                nonErrorMessages.AddRange(postEntityNonErrorMessages);
-
-                // Return success response (thrown exceptions produce error response)
-                return new FluentSuccessResponse<TPublicResponse>(
-                    response,
-                    nonErrorMessages);
-            }
-            catch (AggregateException ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    messages: ex.CreateOtherErrorMessages()
-                        .ToList()); // ToList() is workaround for IList to IReadOnlyList conversion; see https://github.com/dotnet/runtime/issues/31001
-            }
-            catch (Exception ex)
-            {
-                Context.Instrumentation.Exception(ex);
-
-                return new FluentOtherErrorResponse<TPublicResponse>(
-                    new List<FluentResponseOtherErrorMessage> { ex.CreateOtherErrorMessage() });
-            }
+            return response;
         }
     }
 }

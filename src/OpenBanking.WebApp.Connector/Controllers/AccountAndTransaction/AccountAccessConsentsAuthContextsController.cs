@@ -5,8 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTransaction;
@@ -14,6 +12,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
 [Tags("Account Access Consent Auth Contexts")]
+[Route("aisp/account-access-consent-auth-contexts")]
 public class AccountAccessConsentsAuthContextsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -24,43 +23,45 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an AccountAccessConsent AuthContext
+    ///     Create AccountAccessConsent AuthContext
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("aisp/account-access-consent-auth-contexts")]
     [HttpPost]
     [ProducesResponseType(
-        typeof(AccountAccessConsentAuthContextCreateLocalResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+        StatusCodes.Status201Created,
+        Type = typeof(AccountAccessConsentAuthContextCreateResponse))]
     public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentAuthContext request)
     {
-        IFluentResponse<AccountAccessConsentAuthContextCreateLocalResponse> fluentResponse = await _requestBuilder
+        AccountAccessConsentAuthContextCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .AuthContexts
             .CreateLocalAsync(request);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<AccountAccessConsentAuthContextCreateLocalResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { accountAccessConsentAuthContextId = fluentResponse.Id },
+            fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read AccountAccessConsent AuthContext
+    /// </summary>
+    /// <param name="accountAccessConsentAuthContextId">ID of AccountAccessConsent AuthContext</param>
+    /// <returns></returns>
+    [HttpGet("{accountAccessConsentAuthContextId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentAuthContextReadResponse))]
+    public async Task<IActionResult> GetAsync(Guid accountAccessConsentAuthContextId)
+    {
+        // Operation
+        AccountAccessConsentAuthContextReadResponse fluentResponse = await _requestBuilder
+            .AccountAndTransaction
+            .AccountAccessConsents
+            .AuthContexts
+            .ReadLocalAsync(accountAccessConsentAuthContextId);
+
+        return Ok(fluentResponse);
     }
 }

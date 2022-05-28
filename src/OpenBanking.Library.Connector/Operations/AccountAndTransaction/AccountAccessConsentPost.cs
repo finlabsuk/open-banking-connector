@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
     internal class
         AccountAccessConsentPost : ReadWritePost<AccountAccessConsentPersisted,
             AccountAccessConsent,
-            AccountAccessConsentReadResponse,
+            AccountAccessConsentResponse,
             AccountAndTransactionModelsPublic.OBReadConsent1,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1>
     {
@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
         protected override string ClientCredentialsGrantScope => "accounts";
 
-        protected override async Task<AccountAccessConsentReadResponse> AddEntity(
+        protected override async Task<AccountAccessConsentResponse> AddEntity(
             AccountAccessConsent request,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1? apiResponse,
             ITimeProvider timeProvider)
@@ -106,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             // Create response (may involve additional processing based on entity)
             var response =
-                new AccountAccessConsentReadResponse(
+                new AccountAccessConsentResponse(
                     persistedObject.Id,
                     persistedObject.Created,
                     persistedObject.CreatedBy,
@@ -114,7 +114,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     persistedObject.BankRegistrationId,
                     persistedObject.AccountAndTransactionApiId,
                     persistedObject.ExternalApiId,
-                    apiResponse);
+                    apiResponse,
+                    null);
 
             return response;
         }

@@ -12,12 +12,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Response to DomesticVrpConsentAuthContext Read requests.
     /// </summary>
-    public class DomesticVrpConsentAuthContextReadLocalResponse : BaseResponse,
+    public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse,
         IDomesticVrpConsentAuthContextPublicQuery
     {
-        internal DomesticVrpConsentAuthContextReadLocalResponse(
+        internal DomesticVrpConsentAuthContextReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -27,15 +27,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DomesticVrpConsentId = domesticVrpConsentId;
         }
 
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
+
         public Guid DomesticVrpConsentId { get; }
     }
 
     /// <summary>
-    ///     Response to Get, Post
+    ///     Response to DomesticVrpConsentAuthContext Create requests.
     /// </summary>
-    public class DomesticVrpConsentAuthContextCreateLocalResponse : DomesticVrpConsentAuthContextReadLocalResponse
+    public class DomesticVrpConsentAuthContextCreateResponse : DomesticVrpConsentAuthContextReadResponse
     {
-        internal DomesticVrpConsentAuthContextCreateLocalResponse(
+        internal DomesticVrpConsentAuthContextCreateResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -47,5 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public string AuthUrl { get; }
+
     }
 }

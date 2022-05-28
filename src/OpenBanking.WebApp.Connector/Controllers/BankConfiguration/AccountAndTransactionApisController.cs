@@ -5,14 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfiguration;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
+[Route("config/account-and-transaction-apis")]
 public class AccountAndTransactionApisController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,82 +23,84 @@ public class AccountAndTransactionApisController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an AccountAndTransactionApi object
+    ///     Create AccountAndTransactionApi
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(AccountAndTransactionApiResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAndTransactionApiResponse))]
     public async Task<IActionResult> PostAsync([FromBody] AccountAndTransactionApiRequest request)
     {
-        IFluentResponse<AccountAndTransactionApiResponse> fluentResponse = await _requestBuilder
+        // Operation
+        AccountAndTransactionApiResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .AccountAndTransactionApis
             .CreateLocalAsync(request);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<AccountAndTransactionApiResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<AccountAndTransactionApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<AccountAndTransactionApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { accountAndTransactionApiId = fluentResponse.Id },
+            fluentResponse);
     }
+
+    /// <summary>
+    ///     Read AccountAndTransactionApi
+    /// </summary>
+    /// <param name="accountAndTransactionApiId"></param>
+    /// <returns></returns>
+    [HttpGet("{accountAndTransactionApiId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAndTransactionApiResponse))]
+    public async Task<IActionResult> GetAsync(Guid accountAndTransactionApiId)
+    {
+        // Operation
+        AccountAndTransactionApiResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .AccountAndTransactionApis
+            .ReadLocalAsync(accountAndTransactionApiId);
+
+        return Ok(fluentResponse);
+    }
+
 
     /// <summary>
     ///     Read all AccountAndTransactionApi objects (temporary endpoint)
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/account-and-transaction-apis")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<AccountAndTransactionApiResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+        StatusCodes.Status200OK,
+        Type = typeof(IList<AccountAndTransactionApiResponse>))]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<AccountAndTransactionApiResponse>> fluentResponse = await _requestBuilder
+        IQueryable<AccountAndTransactionApiResponse> fluentResponse = await _requestBuilder
             .BankConfiguration
             .AccountAndTransactionApis
             .ReadLocalAsync(query => true);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<AccountAndTransactionApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Delete AccountAndTransactionApi
+    /// </summary>
+    /// <param name="bankId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpDelete("{accountAndTransactionApiId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
+    public async Task<IActionResult> DeleteAsync(
+        Guid bankId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        ObjectDeleteResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .AccountAndTransactionApis
+            .DeleteLocalAsync(bankId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 }

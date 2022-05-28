@@ -12,12 +12,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Response to Read requests.
     /// </summary>
-    public class DomesticPaymentConsentAuthContextReadLocalResponse : BaseResponse,
+    public class DomesticPaymentConsentAuthContextReadResponse : LocalObjectBaseResponse,
         IDomesticPaymentConsentAuthContextPublicQuery
     {
-        internal DomesticPaymentConsentAuthContextReadLocalResponse(
+        internal DomesticPaymentConsentAuthContextReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -27,16 +27,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             DomesticPaymentConsentId = domesticPaymentConsentId;
         }
 
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
+
         public Guid DomesticPaymentConsentId { get; }
     }
 
     /// <summary>
-    ///     Response to Get, Post
+    ///     Response to Create requests.
     /// </summary>
     public class
-        DomesticPaymentConsentAuthContextCreateLocalResponse : DomesticPaymentConsentAuthContextReadLocalResponse
+        DomesticPaymentConsentAuthContextCreateResponse : DomesticPaymentConsentAuthContextReadResponse
     {
-        internal DomesticPaymentConsentAuthContextCreateLocalResponse(
+        internal DomesticPaymentConsentAuthContextCreateResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
@@ -48,5 +53,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public string AuthUrl { get; }
+
     }
 }

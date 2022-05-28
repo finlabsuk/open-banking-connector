@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
     internal class
         DomesticVrpConsentPost : ReadWritePost<DomesticVrpConsentPersisted,
             DomesticVrpConsent,
-            DomesticVrpConsentReadResponse,
+            DomesticVrpConsentResponse,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>
     {
@@ -56,7 +56,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
         protected override string ClientCredentialsGrantScope => "payments";
 
-        protected override async Task<DomesticVrpConsentReadResponse> AddEntity(
+        protected override async Task<DomesticVrpConsentResponse> AddEntity(
             DomesticVrpConsent request,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? apiResponse,
             ITimeProvider timeProvider)
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
             // Create response (may involve additional processing based on entity)
             var response =
-                new DomesticVrpConsentReadResponse(
+                new DomesticVrpConsentResponse(
                     persistedObject.Id,
                     persistedObject.Created,
                     persistedObject.CreatedBy,

@@ -237,7 +237,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 };
 
                 a.Should().Throw<HttpRequestException>();
-                instrumentationClient.Received(1).Info(Arg.Any<string>());
+                instrumentationClient.Received(1).Trace(Arg.Any<string>());
             }
         }
 

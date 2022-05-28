@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class PaymentInitiationApiResponse : BaseResponse, IPaymentInitiationApiQuery
+    public class PaymentInitiationApiResponse : LocalObjectBaseResponse, IPaymentInitiationApiQuery
     {
         internal PaymentInitiationApiResponse(
             Guid id,
@@ -33,6 +33,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             ApiVersion = apiVersion;
             BaseUrl = baseUrl;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Bank with which this API is associated.

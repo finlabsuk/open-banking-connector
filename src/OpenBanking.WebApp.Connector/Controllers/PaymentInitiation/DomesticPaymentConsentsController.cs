@@ -5,14 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitiation;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "pisp")]
+[Tags("Domestic Payment Consents")]
+[Route("pisp/domestic-payment-consents")]
 public class DomesticPaymentConsentsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,79 +23,45 @@ public class DomesticPaymentConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create a DomesticPaymentConsent object
+    ///     Create DomesticPaymentConsent
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("pisp/domestic-payment-consents")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponse<DomesticPaymentConsentReadResponse>),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentResponse))]
     public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
     {
-        IFluentResponse<DomesticPaymentConsentReadResponse> fluentResponse = await _requestBuilder
+        DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .CreateAsync(request);
 
-        // HTTP response
-        HttpResponse<DomesticPaymentConsentReadResponse> httpResponse = fluentResponse.ToHttpResponse();
-        int statusCode = fluentResponse switch
-        {
-            FluentSuccessResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status201Created,
-            FluentBadRequestErrorResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<DomesticPaymentConsentReadResponse> _ => StatusCodes.Status500InternalServerError,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { domesticPaymentConsentId = fluentResponse.Id },
+            fluentResponse);
     }
 
     /// <summary>
-    ///     Read all DomesticPaymentConsent objects
+    ///     Read DomesticPaymentConsent
     /// </summary>
+    /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
+    /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("pisp/domestic-payment-consents")]
-    [HttpGet]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<DomesticPaymentConsentReadLocalResponse>>),
-        StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetAsync()
+    [HttpGet("{domesticPaymentConsentId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentResponse))]
+    public async Task<IActionResult> GetAsync(
+        Guid domesticPaymentConsentId,
+        [FromHeader]
+        string? modifiedBy)
     {
         // Operation
-        IFluentResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> fluentResponse = await _requestBuilder
+        DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
-            .ReadLocalAsync(query => true);
+            .ReadAsync(domesticPaymentConsentId, modifiedBy);
 
-        // HTTP response
-        HttpResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>>
-            httpResponse = fluentResponse.ToHttpResponse();
-        int statusCode = fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ => StatusCodes.Status200OK,
-            FluentBadRequestErrorResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ =>
-                StatusCodes.Status400BadRequest,
-            FluentOtherErrorResponse<IQueryable<DomesticPaymentConsentReadLocalResponse>> _ =>
-                StatusCodes.Status500InternalServerError,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        return new ObjectResult(httpResponse)
-            { StatusCode = statusCode };
+        return Ok(fluentResponse);
     }
 }

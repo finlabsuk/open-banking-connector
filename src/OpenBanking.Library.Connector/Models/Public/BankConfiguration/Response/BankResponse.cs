@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class BankResponse : BaseResponse, IBankPublicQuery
+    public class BankResponse : LocalObjectBaseResponse, IBankPublicQuery
     {
         public BankResponse(
             Guid id,
@@ -78,6 +78,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             DcrApiVersion = dynamicClientRegistrationApiVersion;
             CustomBehaviour = customBehaviour;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         public string JwksUri { get; }
 

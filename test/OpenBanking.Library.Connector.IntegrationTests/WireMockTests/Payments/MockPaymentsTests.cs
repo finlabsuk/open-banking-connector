@@ -102,14 +102,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
                 Reference = "MyBank"
             };
-            IFluentResponse<BankResponse> bankResp = requestBuilder.BankConfiguration
+            BankResponse bankResp = requestBuilder.BankConfiguration
                 .Banks
                 .CreateLocalAsync(bankRequest)
                 .Result;
             bankResp.Should().NotBeNull();
-            bankResp.Messages.Should().BeEmpty();
-            bankResp.Data.Should().NotBeNull();
-            Guid bankId = bankResp.Data!.Id;
+            bankResp.Warnings.Should().BeNull();
+            Guid bankId = bankResp.Id;
 
             // Create bank registration
             var registrationRequest = new BankRegistration
@@ -119,15 +118,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 RegistrationScope = RegistrationScopeEnum.PaymentInitiation,
                 AllowMultipleRegistrations = false
             };
-            IFluentResponse<BankRegistrationReadResponse> bankRegistrationResp = requestBuilder.BankConfiguration
+            BankRegistrationResponse bankRegistrationResp = requestBuilder.BankConfiguration
                 .BankRegistrations
                 .CreateAsync(registrationRequest)
                 .Result;
 
             bankRegistrationResp.Should().NotBeNull();
-            bankRegistrationResp.Messages.Should().BeEmpty();
-            bankRegistrationResp.Data.Should().NotBeNull();
-            Guid bankRegistrationId = bankRegistrationResp.Data!.Id;
+            bankRegistrationResp.Warnings.Should().BeNull();
+            bankRegistrationResp.ExternalApiResponse.Should().NotBeNull();
+            Guid bankRegistrationId = bankRegistrationResp.Id;
 
             // Create bank API information
             var apiSetRequest = new PaymentInitiationApiRequest
@@ -136,16 +135,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 ApiVersion = PaymentInitiationApiVersion.Version3p1p6,
                 BaseUrl = MockRoutes.Url
             };
-            IFluentResponse<PaymentInitiationApiResponse> bankApiInformationResponse = requestBuilder
+            PaymentInitiationApiResponse bankApiInformationResponse = requestBuilder
                 .BankConfiguration
                 .PaymentInitiationApis
                 .CreateLocalAsync(apiSetRequest)
                 .Result;
 
             bankApiInformationResponse.Should().NotBeNull();
-            bankApiInformationResponse.Messages.Should().BeEmpty();
-            bankApiInformationResponse.Data.Should().NotBeNull();
-            Guid bankApiInformationId = bankApiInformationResponse.Data!.Id;
+            bankApiInformationResponse.Warnings.Should().BeNull();
+            Guid bankApiInformationId = bankApiInformationResponse.Id;
 
             // _mockPaymentsServer.SetupTokenEndpointMock();
             // _mockPaymentsServer.SetupPaymentEndpointMock();

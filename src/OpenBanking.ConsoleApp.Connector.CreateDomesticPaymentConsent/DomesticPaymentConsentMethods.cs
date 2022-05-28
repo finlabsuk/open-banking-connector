@@ -47,12 +47,12 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     endToEndIdentification);
 
             // POST domestic payment consent
-            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResponse =
+            DomesticPaymentConsentResponse domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
                     .CreateAsync(domesticPaymentConsentRequest);
-            Guid domesticPaymentConsentId = domesticPaymentConsentResponse.Data!.Id;
+            Guid domesticPaymentConsentId = domesticPaymentConsentResponse.Id;
 
             // Return ID of created object
             return domesticPaymentConsentId;
@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentReadResponse> domesticPaymentConsentResponse =
+            DomesticPaymentConsentResponse domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticPaymentConsentReadFundsConfirmationResponse> domesticPaymentConsentResponse =
+            DomesticPaymentConsentReadFundsConfirmationResponse domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents

@@ -11,14 +11,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         Guid BankId { get; }
         AccountAndTransactionApiVersion ApiVersion { get; }
-
         string BaseUrl { get; }
     }
 
     /// <summary>
     ///     Response to GetLocal
     /// </summary>
-    public class AccountAndTransactionApiResponse : BaseResponse, IAccountAndTransactionApiQuery
+    public class AccountAndTransactionApiResponse : LocalObjectBaseResponse, IAccountAndTransactionApiQuery
     {
         internal AccountAndTransactionApiResponse(
             Guid id,
@@ -35,6 +34,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         }
 
         /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
+
+        /// <summary>
         ///     Bank with which this API is associated.
         /// </summary>
         public Guid BankId { get; }
@@ -42,11 +46,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Version of UK Open Banking Account and Transaction API.
         /// </summary>
-        public AccountAndTransactionApiVersion ApiVersion { get; set; }
+        public AccountAndTransactionApiVersion ApiVersion { get; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Account and Transaction API.
         /// </summary>
-        public string BaseUrl { get; set; }
+        public string BaseUrl { get; }
     }
 }

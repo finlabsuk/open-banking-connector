@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
     {
         public static IEnumerable<Type> GetPublicModelTypes()
         {
-            Type asmType = typeof(Error);
+            Type asmType = typeof(ObjectDeleteResponse);
             Assembly asm = asmType.Assembly;
 
             IEnumerable<Type> asmTypes = asm.GetTypes().Where(t => t.IsInNamespace(asmType));

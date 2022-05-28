@@ -41,13 +41,13 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     domesticVrpTypeEnum);
 
             // POST domestic payment consent
-            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResponse =
+            DomesticVrpConsentResponse domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents
                     .CreateAsync(domesticVrpConsentRequest);
 
-            Guid domesticVrpConsentId = domesticVrpConsentResponse.Data!.Id;
+            Guid domesticVrpConsentId = domesticVrpConsentResponse.Id;
 
             // Return ID of created object
             return domesticVrpConsentId;
@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpConsentId)
         {
             // GET domestic VRP consent
-            IFluentResponse<DomesticVrpConsentReadResponse> domesticVrpConsentResponse =
+            DomesticVrpConsentResponse domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents
@@ -80,7 +80,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpConsentId)
         {
             // GET domestic payment consent
-            IFluentResponse<DomesticVrpConsentReadFundsConfirmationResponse> domesticVrpConsentResponse =
+            DomesticVrpConsentReadFundsConfirmationResponse domesticVrpConsentResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents

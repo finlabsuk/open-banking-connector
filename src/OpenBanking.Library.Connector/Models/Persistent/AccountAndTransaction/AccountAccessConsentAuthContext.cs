@@ -43,9 +43,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
     }
 
     internal partial class AccountAccessConsentAuthContext :
-        ISupportsFluentLocalEntityGet<AccountAccessConsentAuthContextReadLocalResponse>
+        ISupportsFluentLocalEntityGet<AccountAccessConsentAuthContextReadResponse>
     {
-        public AccountAccessConsentAuthContextReadLocalResponse PublicGetLocalResponse =>
+        public AccountAccessConsentAuthContextReadResponse PublicGetLocalResponse =>
             new(
                 Id,
                 Created,

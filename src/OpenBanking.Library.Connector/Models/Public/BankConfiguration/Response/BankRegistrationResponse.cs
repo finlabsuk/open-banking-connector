@@ -59,32 +59,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     }
 
     /// <summary>
-    ///     Response to BankRegistration ReadLocal requests.
+    ///     Response to BankRegistration Read and Create requests.
     /// </summary>
-    public class BankRegistrationReadLocalResponse : BaseResponse, IBankRegistrationPublicQuery
+    public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrationPublicQuery
     {
-        internal BankRegistrationReadLocalResponse(
+        public BankRegistrationResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            ExternalApiObjectResponse externalApiObject,
             string softwareStatementProfileId,
-            string? softwareStatementAndCertificateProfileOverrideCase,
+            string? softwareStatementProfileOverride,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
             Guid bankId,
-            ExternalApiObjectResponse externalApiObject) : base(id, created, createdBy, reference)
+            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
+            IList<string>? warnings) : base(id, created, createdBy, reference)
         {
+            ExternalApiObject = externalApiObject;
             SoftwareStatementProfileId = softwareStatementProfileId;
-            SoftwareStatementProfileOverride = softwareStatementAndCertificateProfileOverrideCase;
+            SoftwareStatementProfileOverride = softwareStatementProfileOverride;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             RegistrationScope = registrationScope;
             BankId = bankId;
-            ExternalApiObject = externalApiObject;
+            ExternalApiResponse = externalApiResponse;
+            Warnings = warnings;
         }
 
-
         public ExternalApiObjectResponse ExternalApiObject { get; }
+
+        public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; }
 
         public string SoftwareStatementProfileId { get; }
 
@@ -109,39 +119,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;
-    }
-
-    /// <summary>
-    ///     Response to BankRegistration Read and Create requests
-    /// </summary>
-    public class BankRegistrationReadResponse : BankRegistrationReadLocalResponse
-    {
-        internal BankRegistrationReadResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            string softwareStatementProfileId,
-            string? softwareStatementAndCertificateProfileOverrideCase,
-            TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            RegistrationScopeEnum registrationScope,
-            Guid bankId,
-            ExternalApiObjectResponse externalApiObject,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse) : base(
-            id,
-            created,
-            createdBy,
-            reference,
-            softwareStatementProfileId,
-            softwareStatementAndCertificateProfileOverrideCase,
-            tokenEndpointAuthMethod,
-            registrationScope,
-            bankId,
-            externalApiObject)
-        {
-            ExternalApiResponse = externalApiResponse;
-        }
-
-        public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
     }
 }

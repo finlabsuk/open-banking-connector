@@ -5,14 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfiguration;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
+[Route("config/variable-recurring-payments-apis")]
 public class VariableRecurringPaymentsApisController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,82 +23,83 @@ public class VariableRecurringPaymentsApisController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an VariableRecurringPaymentsApi object
+    ///     Create VariableRecurringPaymentsApi
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/variable-recurring-payments-apis")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(VariableRecurringPaymentsApiResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(VariableRecurringPaymentsApiResponse))]
     public async Task<IActionResult> PostAsync([FromBody] VariableRecurringPaymentsApiRequest request)
     {
-        IFluentResponse<VariableRecurringPaymentsApiResponse> fluentResponse = await _requestBuilder
+        // Operation
+        VariableRecurringPaymentsApiResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .VariableRecurringPaymentsApis
             .CreateLocalAsync(request);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<VariableRecurringPaymentsApiResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<VariableRecurringPaymentsApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<VariableRecurringPaymentsApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { variableRecurringPaymentsApiId = fluentResponse.Id },
+            fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read VariableRecurringPaymentsApi
+    /// </summary>
+    /// <param name="variableRecurringPaymentsApiId"></param>
+    /// <returns></returns>
+    [HttpGet("{variableRecurringPaymentsApiId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(VariableRecurringPaymentsApiResponse))]
+    public async Task<IActionResult> GetAsync(Guid variableRecurringPaymentsApiId)
+    {
+        // Operation
+        VariableRecurringPaymentsApiResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .VariableRecurringPaymentsApis
+            .ReadLocalAsync(variableRecurringPaymentsApiId);
+
+        return Ok(fluentResponse);
     }
 
     /// <summary>
     ///     Read all VariableRecurringPaymentsApi objects (temporary endpoint)
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/variable-recurring-payments-apis")]
     [HttpGet]
     [ProducesResponseType(
-        typeof(HttpResponse<IList<VariableRecurringPaymentsApiResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+        StatusCodes.Status200OK,
+        Type = typeof(IList<VariableRecurringPaymentsApiResponse>))]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<VariableRecurringPaymentsApiResponse>> fluentResponse = await _requestBuilder
+        IQueryable<VariableRecurringPaymentsApiResponse> fluentResponse = await _requestBuilder
             .BankConfiguration
             .VariableRecurringPaymentsApis
             .ReadLocalAsync(query => true);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<VariableRecurringPaymentsApiResponse>> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<VariableRecurringPaymentsApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<VariableRecurringPaymentsApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Delete VariableRecurringPaymentsApi
+    /// </summary>
+    /// <param name="bankId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpDelete("{variableRecurringPaymentsApiId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
+    public async Task<IActionResult> DeleteAsync(
+        Guid bankId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        ObjectDeleteResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .VariableRecurringPaymentsApis
+            .DeleteLocalAsync(bankId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 }

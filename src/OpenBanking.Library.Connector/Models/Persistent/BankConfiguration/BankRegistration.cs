@@ -118,18 +118,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     }
 
     internal partial class BankRegistration :
-        ISupportsFluentLocalEntityGet<BankRegistrationReadLocalResponse>
+        ISupportsFluentLocalEntityGet<BankRegistrationResponse>
     {
-        public BankRegistrationReadLocalResponse PublicGetLocalResponse => new(
+        public BankRegistrationResponse PublicGetLocalResponse => new(
             Id,
             Created,
             CreatedBy,
             Reference,
+            new ExternalApiObjectResponse(_externalApiId),
             SoftwareStatementProfileId,
             SoftwareStatementProfileOverride,
             TokenEndpointAuthMethod,
             RegistrationScope,
             BankId,
-            new ExternalApiObjectResponse(_externalApiId));
+            null,
+            null);
     }
 }

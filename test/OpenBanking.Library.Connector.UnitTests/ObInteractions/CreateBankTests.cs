@@ -4,9 +4,10 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -23,27 +24,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
         [Fact]
         public async Task Create_IdReturned()
         {
-            // Bank resultProfile = new Bank();
-            // (new Bank(Arg.Any<Models.Public.Request.Bank>())).Returns(resultProfile);
-
             var interaction =
-                new BankPost(
-                    Substitute.For<IDbEntityMethods<Bank>>(),
+                new AccountAndTransactionApiPost(
+                    Substitute.For<IDbEntityMethods<AccountAndTransactionApiEntity>>(),
                     Substitute.For<IDbSaveChangesMethod>(),
                     Substitute.For<ITimeProvider>(),
                     Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                     Substitute.For<IInstrumentationClient>(),
-                    Substitute.For<IBankProfileDefinitions>(),
-                    Substitute.For<IApiClient>());
+                    Substitute.For<IBankProfileDefinitions>());
 
-            var newBank = new Models.Public.BankConfiguration.Request.Bank
+            var newBank = new AccountAndTransactionApiRequest
             {
-                IssuerUrl = "a",
-                FinancialId = "b",
-                Reference = "c"
+                Reference = "c",
+                BankId = default,
+                ApiVersion = AccountAndTransactionApiVersion.Version3p1p7,
+                BaseUrl = "www.example.com"
             };
 
-            (BankResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
+            (AccountAndTransactionApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
                 await interaction.CreateAsync(newBank);
 
             response.Should().NotBeNull();

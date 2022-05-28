@@ -18,23 +18,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     }
 
     /// <summary>
-    ///     Response to AccountAccessConsent ReadLocal requests
+    ///     Response to AccountAccessConsent Read and Create requests.
     /// </summary>
-    public class AccountAccessConsentReadLocalResponse : BaseResponse, IAccountAccessConsentPublicQuery
+    public class AccountAccessConsentResponse : LocalObjectBaseResponse, IAccountAccessConsentPublicQuery
     {
-        internal AccountAccessConsentReadLocalResponse(
+        internal AccountAccessConsentResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
             Guid bankRegistrationId,
             Guid accountAndTransactionApiId,
-            string externalApiId) : base(id, created, createdBy, reference)
+            string externalApiId,
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse,
+            IList<string>? warnings) : base(id, created, createdBy, reference)
         {
             BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
             ExternalApiId = externalApiId;
+            ExternalApiResponse = externalApiResponse;
+            Warnings = warnings;
         }
+
+        /// <summary>
+        ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     <a
+        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
+        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
+        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+        /// </summary>
+        public AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; }
 
         /// <summary>
         ///     ID of associated BankRegistration object
@@ -50,40 +68,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     External (bank) API ID for this object
         /// </summary>
         public string ExternalApiId { get; }
-    }
-
-    /// <summary>
-    ///     Response to AccountAccessConsent Read and Create requests
-    /// </summary>
-    public class AccountAccessConsentReadResponse : AccountAccessConsentReadLocalResponse
-    {
-        internal AccountAccessConsentReadResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            Guid bankRegistrationId,
-            Guid accountAndTransactionApiId,
-            string externalApiId,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse) : base(
-            id,
-            created,
-            createdBy,
-            reference,
-            bankRegistrationId,
-            accountAndTransactionApiId,
-            externalApiId)
-        {
-            ExternalApiResponse = externalApiResponse;
-        }
-
-        /// <summary>
-        ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
-        ///     <a
-        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
-        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
-        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
-        /// </summary>
-        public AccountAndTransactionModelsPublic.OBReadConsentResponse1? ExternalApiResponse { get; }
     }
 }

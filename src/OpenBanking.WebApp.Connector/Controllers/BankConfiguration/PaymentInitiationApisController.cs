@@ -5,14 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfiguration;
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
+[Route("config/payment-initiation-apis")]
 public class PaymentInitiationApisController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,82 +23,81 @@ public class PaymentInitiationApisController : ControllerBase
     }
 
     /// <summary>
-    ///     Create an PaymentInitiationApi object
+    ///     Create PaymentInitiationApi
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/payment-initiation-apis")]
     [HttpPost]
-    [ProducesResponseType(
-        typeof(PaymentInitiationApiResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PaymentInitiationApiResponse))]
     public async Task<IActionResult> PostAsync([FromBody] PaymentInitiationApiRequest request)
     {
-        IFluentResponse<PaymentInitiationApiResponse> fluentResponse = await _requestBuilder
+        // Operation
+        PaymentInitiationApiResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .PaymentInitiationApis
             .CreateLocalAsync(request);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<PaymentInitiationApiResponse> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<PaymentInitiationApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<PaymentInitiationApiResponse> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return CreatedAtAction(
+            nameof(GetAsync),
+            new { paymentInitiationApiId = fluentResponse.Id },
+            fluentResponse);
+    }
+
+    /// <summary>
+    ///     Read PaymentInitiationApi
+    /// </summary>
+    /// <param name="paymentInitiationApiId"></param>
+    /// <returns></returns>
+    [HttpGet("{paymentInitiationApiId:guid}")]
+    [ActionName(nameof(GetAsync))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaymentInitiationApiResponse))]
+    public async Task<IActionResult> GetAsync(Guid paymentInitiationApiId)
+    {
+        // Operation
+        PaymentInitiationApiResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .PaymentInitiationApis
+            .ReadLocalAsync(paymentInitiationApiId);
+
+        return Ok(fluentResponse);
     }
 
     /// <summary>
     ///     Read all PaymentInitiationApi objects (temporary endpoint)
     /// </summary>
     /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    [Route("config/payment-initiation-apis")]
     [HttpGet]
-    [ProducesResponseType(
-        typeof(HttpResponse<IList<PaymentInitiationApiResponse>>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(HttpResponseMessages),
-        StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<PaymentInitiationApiResponse>))]
     public async Task<IActionResult> GetAsync()
     {
         // Operation
-        IFluentResponse<IQueryable<PaymentInitiationApiResponse>> fluentResponse = await _requestBuilder
+        IQueryable<PaymentInitiationApiResponse> fluentResponse = await _requestBuilder
             .BankConfiguration
             .PaymentInitiationApis
             .ReadLocalAsync(query => true);
 
-        // HTTP response
-        return fluentResponse switch
-        {
-            FluentSuccessResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
-                new ObjectResult(fluentResponse.Data!)
-                    { StatusCode = StatusCodes.Status200OK },
-            FluentBadRequestErrorResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status400BadRequest },
-            FluentOtherErrorResponse<IQueryable<PaymentInitiationApiResponse>> _ =>
-                new ObjectResult(fluentResponse.GetHttpResponseMessages() ?? new HttpResponseMessages())
-                    { StatusCode = StatusCodes.Status500InternalServerError },
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return Ok(fluentResponse);
+    }
+
+    /// <summary>
+    ///     Delete PaymentInitiationApi
+    /// </summary>
+    /// <param name="bankId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    [HttpDelete("{paymentInitiationApiId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
+    public async Task<IActionResult> DeleteAsync(
+        Guid bankId,
+        [FromHeader]
+        string? modifiedBy)
+    {
+        // Operation
+        ObjectDeleteResponse fluentResponse = await _requestBuilder
+            .BankConfiguration
+            .PaymentInitiationApis
+            .DeleteLocalAsync(bankId, modifiedBy);
+
+        return Ok(fluentResponse);
     }
 }

@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -32,28 +33,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 _serviceProvider.GetRequiredService<BankProfileDefinitions>();
 
             // GET bank (example: NatWest)
-            IFluentResponse<IQueryable<BankResponse>> bankResp = await requestBuilder.BankConfiguration
+            IQueryable<BankResponse> bankResp = await requestBuilder.BankConfiguration
                 .Banks
                 .ReadLocalAsync(x => x.FinancialId == bankProfileDefinitions.NatWest.FinancialId);
-            bankResp.Messages.Should().BeEmpty();
-            bankResp.Data.Should().NotBeNull();
-            BankResponse bank = bankResp.Data!.Single();
+            //bankResp.Messages.Should().BeEmpty();
+            BankResponse bank = bankResp.Single();
 
             // GET bank registration (example: assume single registration for Lloyds)
-            IFluentResponse<IQueryable<BankRegistrationReadLocalResponse>> registrationResp = await requestBuilder
+            IQueryable<BankRegistrationResponse> registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .ReadLocalAsync(x => x.BankId == bank.Id);
-            registrationResp.Messages.Should().BeEmpty();
-            registrationResp.Data.Should().NotBeNull();
-            BankRegistrationReadLocalResponse bankRegistration = registrationResp.Data!.Single();
+            //registrationResp.Messages.Should().BeEmpty();
+            //registrationResp.Data.Should().NotBeNull();
+            BankRegistrationResponse bankRegistration = registrationResp.Single();
 
             // DELETE bank registration
-            IFluentResponse registrationResp2 = await requestBuilder
+            ObjectDeleteResponse registrationResp2 = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .DeleteAsync(bankRegistration.Id, null, true);
-            registrationResp2.Messages.Should().BeEmpty();
+            registrationResp2.Warnings.Should().BeEmpty();
         }
     }
 }
