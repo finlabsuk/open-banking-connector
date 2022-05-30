@@ -2,6 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Net;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using Newtonsoft.Json;
@@ -12,6 +15,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
     {
         private readonly HttpClient _httpClient;
         private readonly IInstrumentationClient _instrumentation;
+
+        public ApiClient(
+            IInstrumentationClient instrumentationClient,
+            IList<X509Certificate2>? clientCertificates = null,
+            IServerCertificateValidator? serverCertificateValidator = null)
+        {
+            var clientHandler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+            };
+
+            const int maxRedirects = 50;
+            clientHandler.AllowAutoRedirect = true;
+            clientHandler.MaxAutomaticRedirections = maxRedirects;
+
+            if (clientCertificates is not null &&
+                clientCertificates.Count > 0)
+            {
+                clientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                clientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+
+                foreach (X509Certificate2 certificate in clientCertificates)
+                {
+                    clientHandler.ClientCertificates.Add(certificate);
+                }
+            }
+
+            if (serverCertificateValidator is not null)
+            {
+                clientHandler.ServerCertificateCustomValidationCallback = serverCertificateValidator.IsOk;
+            }
+
+            _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
+            _httpClient = new HttpClient(clientHandler);
+        }
 
         public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
         {

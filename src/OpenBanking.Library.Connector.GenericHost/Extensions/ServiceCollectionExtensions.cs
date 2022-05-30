@@ -53,10 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // Set up API client not associated with software statement profile
             services.AddSingleton<IApiClient>(
                 sp => new ApiClient(
-                    sp.GetRequiredService<IInstrumentationClient>(),
-                    new HttpClient(
-                        new HttpRequestBuilder()
-                            .CreateMessageHandler()))); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
+                    sp.GetRequiredService<IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
 
             // Set up mapper for API variants (different Open Banking standards)
             services.AddSingleton<IApiVariantMapper, ApiVariantMapper>();

@@ -252,22 +252,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
                     ));
             transportCerts.Add(transportCert);
 
-            IHttpRequestBuilder httpRequestBuilder = new HttpRequestBuilder()
-                .SetClientCertificates(transportCerts);
+            IServerCertificateValidator? serverCertificateValidator = null;
             if (transportCertificateProfile.DisableTlsCertificateVerification)
             {
-                httpRequestBuilder
-                    .SetServerCertificateValidator(new DefaultServerCertificateValidator());
+                serverCertificateValidator = new DefaultServerCertificateValidator();
             }
-
-            HttpMessageHandler handler = httpRequestBuilder.CreateMessageHandler();
 
             var processedSoftwareStatementProfile = new ProcessedSoftwareStatementProfile(
                 id,
                 transportCertificateProfile,
                 signingCertificateProfile,
                 softwareStatementProfile,
-                new ApiClient(instrumentationClient, new HttpClient(handler)));
+                new ApiClient(instrumentationClient, transportCerts, serverCertificateValidator));
             return processedSoftwareStatementProfile;
         }
     }
