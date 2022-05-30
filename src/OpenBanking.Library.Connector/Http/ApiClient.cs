@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
 
             _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-            _httpClient = new HttpClient(clientHandler);
+            _httpClient = new HttpClient(new ErrorAndLoggingHandler(clientHandler));
         }
 
         public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)

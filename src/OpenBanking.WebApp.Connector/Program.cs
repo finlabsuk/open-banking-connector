@@ -5,8 +5,8 @@
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
-using FinnovationLabs.OpenBanking.WebApp.Connector;
 using FinnovationLabs.OpenBanking.WebApp.Connector.Extensions;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -96,6 +96,7 @@ builder.Services
         options =>
         {
             // Add filter
+            options.Filters.Add<ExternalApiHttpErrorExceptionFilter>();
             options.Filters.Add<GlobalExceptionFilter>();
         })
     // Add JSON support
@@ -112,7 +113,7 @@ WebApplication app = builder.Build();
 // Errors
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 
