@@ -62,26 +62,6 @@ public class AccountAndTransactionApisController : ControllerBase
         return Ok(fluentResponse);
     }
 
-
-    /// <summary>
-    ///     Read all AccountAndTransactionApi objects (temporary endpoint)
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    [ProducesResponseType(
-        StatusCodes.Status200OK,
-        Type = typeof(IList<AccountAndTransactionApiResponse>))]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IQueryable<AccountAndTransactionApiResponse> fluentResponse = await _requestBuilder
-            .BankConfiguration
-            .AccountAndTransactionApis
-            .ReadLocalAsync(query => true);
-
-        return Ok(fluentResponse);
-    }
-
     /// <summary>
     ///     Delete AccountAndTransactionApi
     /// </summary>

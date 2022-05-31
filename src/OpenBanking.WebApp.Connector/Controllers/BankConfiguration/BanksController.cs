@@ -63,23 +63,6 @@ public class BanksController : ControllerBase
     }
 
     /// <summary>
-    ///     Read all Bank objects (temporary endpoint)
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<BankResponse>))]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IQueryable<BankResponse> fluentResponse = await _requestBuilder
-            .BankConfiguration
-            .Banks
-            .ReadLocalAsync(query => true);
-
-        return Ok(fluentResponse);
-    }
-
-    /// <summary>
     ///     Delete Bank object
     /// </summary>
     /// <param name="bankId"></param>

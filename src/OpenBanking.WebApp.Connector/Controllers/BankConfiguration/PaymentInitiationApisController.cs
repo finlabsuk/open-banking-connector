@@ -63,23 +63,6 @@ public class PaymentInitiationApisController : ControllerBase
     }
 
     /// <summary>
-    ///     Read all PaymentInitiationApi objects (temporary endpoint)
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<PaymentInitiationApiResponse>))]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IQueryable<PaymentInitiationApiResponse> fluentResponse = await _requestBuilder
-            .BankConfiguration
-            .PaymentInitiationApis
-            .ReadLocalAsync(query => true);
-
-        return Ok(fluentResponse);
-    }
-
-    /// <summary>
     ///     Delete PaymentInitiationApi
     /// </summary>
     /// <param name="bankId"></param>

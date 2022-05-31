@@ -63,25 +63,6 @@ public class VariableRecurringPaymentsApisController : ControllerBase
     }
 
     /// <summary>
-    ///     Read all VariableRecurringPaymentsApi objects (temporary endpoint)
-    /// </summary>
-    /// <returns></returns>
-    [HttpGet]
-    [ProducesResponseType(
-        StatusCodes.Status200OK,
-        Type = typeof(IList<VariableRecurringPaymentsApiResponse>))]
-    public async Task<IActionResult> GetAsync()
-    {
-        // Operation
-        IQueryable<VariableRecurringPaymentsApiResponse> fluentResponse = await _requestBuilder
-            .BankConfiguration
-            .VariableRecurringPaymentsApis
-            .ReadLocalAsync(query => true);
-
-        return Ok(fluentResponse);
-    }
-
-    /// <summary>
     ///     Delete VariableRecurringPaymentsApi
     /// </summary>
     /// <param name="bankId"></param>
