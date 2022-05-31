@@ -65,13 +65,13 @@ public class VariableRecurringPaymentsApisController : ControllerBase
     /// <summary>
     ///     Delete VariableRecurringPaymentsApi
     /// </summary>
-    /// <param name="bankId"></param>
+    /// <param name="variableRecurringPaymentsApiId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpDelete("{variableRecurringPaymentsApiId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
-        Guid bankId,
+        Guid variableRecurringPaymentsApiId,
         [FromHeader]
         string? modifiedBy)
     {
@@ -79,7 +79,7 @@ public class VariableRecurringPaymentsApisController : ControllerBase
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .VariableRecurringPaymentsApis
-            .DeleteLocalAsync(bankId, modifiedBy);
+            .DeleteLocalAsync(variableRecurringPaymentsApiId, modifiedBy);
 
         return Ok(fluentResponse);
     }

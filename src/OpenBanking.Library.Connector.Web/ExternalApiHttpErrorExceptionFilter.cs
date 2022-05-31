@@ -2,9 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Net.Http.Headers;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Web;
 
@@ -16,19 +20,35 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
     {
         if (context.Exception is ExternalApiHttpErrorException httpResponseException)
         {
-            var problemDetails = new ProblemDetails
+            var jsonObject = new JsonObject
             {
-                Detail =
-                    $"Endpoint {httpResponseException.RequestHttpMethod} {httpResponseException.RequestUrl} " +
-                    "responded with an error. Property 'message' on this object conveys any JSON or plain text received.",
-                Status = httpResponseException.ResponseStatusCode,
-                Title = httpResponseException.Message,
+                ["title"] = httpResponseException.Message,
+                ["detail"] =
+                    $"External API endpoint responded with HTTP status code {httpResponseException.ResponseStatusCode}. See properties " +
+                    "'endpointHttpMethod', 'endpointUrl' and 'endpointResponse' for more details.",
+                ["status"] = httpResponseException.ResponseStatusCode,
+                ["endpointHttpMethod"] = httpResponseException.RequestHttpMethod,
+                ["endpointUrl"] = httpResponseException.RequestUrl,
             };
 
-            problemDetails.Extensions.Add("message", $"{httpResponseException.ResponseMessage}");
-
-            context.Result = new ObjectResult(problemDetails)
+            JsonNode? responseMessage = JsonNode.Parse(httpResponseException.ResponseMessage);
+            if (responseMessage is not null)
             {
+                jsonObject["endpointResponse"] = responseMessage;
+            }
+            else
+            {
+                jsonObject["endpointResponse"] = httpResponseException.ResponseMessage;
+            }
+
+            string jsonString = JsonSerializer.Serialize(jsonObject);
+
+            MediaTypeHeaderValue mediaTypeHeaderValue = MediaTypeHeaderValue.Parse("application/problem+json");
+            mediaTypeHeaderValue.Encoding = Encoding.UTF8;
+            context.Result = new ContentResult
+            {
+                Content = jsonString,
+                ContentType = mediaTypeHeaderValue.ToString(),
                 StatusCode = httpResponseException.ResponseStatusCode
             };
 

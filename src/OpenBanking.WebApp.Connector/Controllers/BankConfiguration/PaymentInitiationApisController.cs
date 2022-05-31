@@ -65,13 +65,13 @@ public class PaymentInitiationApisController : ControllerBase
     /// <summary>
     ///     Delete PaymentInitiationApi
     /// </summary>
-    /// <param name="bankId"></param>
+    /// <param name="paymentInitiationApiId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
     [HttpDelete("{paymentInitiationApiId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
-        Guid bankId,
+        Guid paymentInitiationApiId,
         [FromHeader]
         string? modifiedBy)
     {
@@ -79,7 +79,7 @@ public class PaymentInitiationApisController : ControllerBase
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .PaymentInitiationApis
-            .DeleteLocalAsync(bankId, modifiedBy);
+            .DeleteLocalAsync(paymentInitiationApiId, modifiedBy);
 
         return Ok(fluentResponse);
     }
