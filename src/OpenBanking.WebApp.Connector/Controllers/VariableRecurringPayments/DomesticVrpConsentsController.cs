@@ -71,19 +71,22 @@ public class DomesticVrpConsentsController : ControllerBase
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{domesticVrpConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid domesticVrpConsentId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .DeleteAsync(domesticVrpConsentId, modifiedBy);
+            .DeleteAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

@@ -64,6 +64,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // different sub-tests.
             BankUser bankUser = bankUserList[0];
 
+            var modifiedBy = "Automated bank tests";
+
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create VariableRecurringPaymentsApi
@@ -83,6 +85,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             variableRecurringPaymentsApiResponse.Should().NotBeNull();
             variableRecurringPaymentsApiResponse.Warnings.Should().BeNull();
             Guid variableRecurringPaymentsApiId = variableRecurringPaymentsApiResponse.Id;
+
+            // Read VariableRecurringPaymentsApi
+            VariableRecurringPaymentsApiResponse variableRecurringPaymentsApiReadResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .VariableRecurringPaymentsApis
+                    .ReadLocalAsync(variableRecurringPaymentsApiId);
+
+            // Checks
+            variableRecurringPaymentsApiReadResponse.Should().NotBeNull();
+            variableRecurringPaymentsApiReadResponse.Warnings.Should().BeNull();
 
             // Basic request object for domestic payment consent
             DomesticVrpConsentRequest domesticVrpConsentRequest =
@@ -222,9 +235,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 domesticVrpResp2.ExternalApiResponse.Should().NotBeNull();
 
                 // DELETE domestic payment consent
+                var includeExternalApiOperation = true;
                 ObjectDeleteResponse domesticVrpConsentResp3 = await requestBuilderNew.VariableRecurringPayments
                     .DomesticVrpConsents
-                    .DeleteAsync(domesticVrpConsentId);
+                    .DeleteAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation);
 
                 // Checks
                 domesticVrpConsentResp3.Should().NotBeNull();

@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         IEntityContext<AccountAccessConsentRequest,
             IAccountAccessConsentPublicQuery,
             AccountAccessConsentResponse, AccountAccessConsentResponse>,
-        IDeleteContext
+        IDeleteConsentContext
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         IAccountAccessConsentsContext,
         IEntityContextInternal<AccountAccessConsentRequest,
             IAccountAccessConsentPublicQuery,
-            AccountAccessConsentResponse, AccountAccessConsentResponse>, IDeleteContextInternal { }
+            AccountAccessConsentResponse, AccountAccessConsentResponse>, IDeleteConsentContextInternal { }
 
     internal class AccountAccessConsentsConsentContext :
         ObjectContextBase<AccountAccessConsentPersisted>,
@@ -87,7 +87,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
+                    sharedContext.Instrumentation,
+                    sharedContext.BankProfileDefinitions);
         }
 
         public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
@@ -114,6 +115,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
         public IObjectReadLocal<IAccountAccessConsentPublicQuery, AccountAccessConsentResponse> ReadLocalObject { get; }
 
-        public IObjectDelete DeleteObject { get; }
+        public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
     }
 }

@@ -50,7 +50,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // different sub-tests.
             BankUser bankUser = bankUserList[0];
 
-            var createdBy = "Automated bank tests";
+            var modifiedBy = "Automated bank tests";
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 
@@ -62,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postRequest")
                 .WriteFile(accountAndTransactionApiRequest);
             accountAndTransactionApiRequest.BankId = bankId;
-            accountAndTransactionApiRequest.CreatedBy = createdBy;
+            accountAndTransactionApiRequest.CreatedBy = modifiedBy;
             accountAndTransactionApiRequest.Reference = testNameUnique;
             AccountAndTransactionApiResponse accountAndTransactionApiResponse =
                 await requestBuilder
@@ -72,6 +72,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAndTransactionApiResponse.Should().NotBeNull();
             accountAndTransactionApiResponse.Warnings.Should().BeNull();
             Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Id;
+
+            // Read AccountAndTransactionApi
+            AccountAndTransactionApiResponse accountAndTransactionApiReadResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .AccountAndTransactionApis
+                    .ReadLocalAsync(accountAndTransactionApiId);
+
+            // Checks
+            accountAndTransactionApiReadResponse.Should().NotBeNull();
+            accountAndTransactionApiReadResponse.Warnings.Should().BeNull();
 
             // Create account access consent or use existing
             Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
@@ -94,14 +105,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         : new AccessToken
                         {
                             RefreshToken = testData2.AccountAccessConsentRefreshToken,
-                            ModifiedBy = createdBy
+                            ModifiedBy = modifiedBy
                         }
                 };
             }
 
             accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
             accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
-            accountAccessConsentRequest.CreatedBy = createdBy;
+            accountAccessConsentRequest.CreatedBy = modifiedBy;
             accountAccessConsentRequest.Reference = testNameUnique;
             AccountAccessConsentResponse accountAccessConsentResp =
                 await requestBuilder
@@ -192,7 +203,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             null,
                             null,
                             "",
-                            createdBy);
+                            modifiedBy);
 
                 // Checks
                 accountsResp.Should().NotBeNull();
@@ -215,7 +226,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                 null,
                                 null,
                                 "",
-                                createdBy);
+                                modifiedBy);
 
                     // Checks
                     accountsResp2.Should().NotBeNull();
@@ -234,7 +245,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                 null,
                                 null,
                                 "",
-                                createdBy);
+                                modifiedBy);
 
                     // Checks
                     balancesResp.Should().NotBeNull();
@@ -258,7 +269,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                     null,
                                     null,
                                     null,
-                                    createdBy,
+                                    modifiedBy,
                                     null,
                                     queryString);
 
@@ -284,7 +295,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                 null,
                                 null,
                                 "",
-                                createdBy);
+                                modifiedBy);
 
                     // Checks
                     partyResp.Should().NotBeNull();
@@ -303,7 +314,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                 null,
                                 null,
                                 "",
-                                createdBy);
+                                modifiedBy);
 
                     // Checks
                     partiesResp.Should().NotBeNull();
@@ -311,18 +322,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     partiesResp.ExternalApiResponse.Should().NotBeNull();
                 }
 
-                // DELETE account access consent
+                // Delete AccountAccessConsent
+                var includeExternalApiOperation = true;
                 ObjectDeleteResponse accountAccessConsentResp3 = await requestBuilderNew
                     .AccountAndTransaction
                     .AccountAccessConsents
-                    .DeleteAsync(accountAccessConsentId);
+                    .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation);
 
                 // Checks
                 accountAccessConsentResp3.Should().NotBeNull();
                 accountAccessConsentResp3.Warnings.Should().BeNull();
             }
 
-            // DELETE API object
+            // Delete AccountAndTransactionApi
             ObjectDeleteResponse apiResponse = await requestBuilder
                 .BankConfiguration
                 .AccountAndTransactionApis

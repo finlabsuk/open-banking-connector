@@ -84,6 +84,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             paymentInitiationApiResponse.Warnings.Should().BeNull();
             Guid paymentInitiationApiId = paymentInitiationApiResponse.Id;
 
+            // Read PaymentInitiationApi
+            PaymentInitiationApiResponse paymentInitiationApiReadResponse =
+                await requestBuilder
+                    .BankConfiguration
+                    .PaymentInitiationApis
+                    .ReadLocalAsync(paymentInitiationApiId);
+
+            // Checks
+            paymentInitiationApiReadResponse.Should().NotBeNull();
+            paymentInitiationApiReadResponse.Warnings.Should().BeNull();
+
             // Basic request object for domestic payment consent
             DomesticPaymentConsentRequest domesticPaymentConsentRequest =
                 bankProfile.DomesticPaymentConsentRequest(

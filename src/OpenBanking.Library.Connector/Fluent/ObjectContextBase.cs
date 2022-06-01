@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         protected ObjectContextBase(ISharedContext sharedContext)
         {
             Context = sharedContext;
-            DeleteLocalObject = new LocalEntityDelete<TEntity>(
+            DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
                 sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -25,6 +25,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         }
 
         public ISharedContext Context { get; }
-        public IObjectDelete DeleteLocalObject { get; }
+        public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
     }
 }

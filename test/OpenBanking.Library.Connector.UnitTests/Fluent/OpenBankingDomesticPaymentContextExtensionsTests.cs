@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
             SharedContext ctx =
                 TestDataFactory.CreateMockOpenBankingContext();
 
-            var x = new LocalEntityDelete<DomesticPaymentConsent>(
+            var x = new LocalEntityDelete<DomesticPaymentConsent, ConsentDeleteParams>(
                 ctx.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 ctx.DbService.GetDbSaveChangesMethodClass(),
                 ctx.TimeProvider,

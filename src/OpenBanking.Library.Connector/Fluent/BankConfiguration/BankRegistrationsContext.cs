@@ -18,14 +18,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadContext<BankRegistrationResponse>,
         IDeleteLocalContext,
-        IDeleteContext { }
+        IDeleteBankRegistrationContext { }
 
     internal interface IBankRegistrationsContextInternal :
         IBankRegistrationsContext,
         ICreateContextInternal<BankRegistration, BankRegistrationResponse>,
         IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadContextInternal<BankRegistrationResponse>,
-        IDeleteContextInternal { }
+        IDeleteBankRegistrationContextInternal { }
 
     internal class BankRegistrationsContextInternal :
         ObjectContextBase<BankRegistrationPersisted>,
@@ -53,7 +53,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation);
+                sharedContext.Instrumentation,
+                sharedContext.BankProfileDefinitions);
             CreateObject = new BankRegistrationPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -70,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 
         public IObjectCreate<BankRegistration, BankRegistrationResponse> CreateObject { get; }
 
-        public IObjectDelete DeleteObject { get; }
+        public IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
         public IObjectRead<BankRegistrationResponse> ReadObject { get; }
     }
 }

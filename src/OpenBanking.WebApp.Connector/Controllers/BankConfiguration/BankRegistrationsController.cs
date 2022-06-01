@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
@@ -71,19 +72,33 @@ public class BankRegistrationsController : ControllerBase
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
+    /// <param name="useRegistrationAccessToken"></param>
+    /// <param name="bankProfile"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid bankRegistrationId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation,
+        [FromHeader]
+        bool? useRegistrationAccessToken,
+        [FromHeader]
+        BankProfileEnum? bankProfile)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankRegistrations
-            .DeleteAsync(bankRegistrationId, modifiedBy);
+            .DeleteAsync(
+                bankRegistrationId,
+                modifiedBy,
+                includeExternalApiOperation,
+                useRegistrationAccessToken,
+                bankProfile);
 
         return Ok(fluentResponse);
     }

@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             IDomesticVrpConsentPublicQuery,
             DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
         IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>,
-        IDeleteContext
+        IDeleteConsentContext
     {
         /// <summary>
         ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             IDomesticVrpConsentPublicQuery,
             DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
         IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse>,
-        IDeleteContextInternal { }
+        IDeleteConsentContextInternal { }
 
     internal class DomesticVrpConsentsContext :
         ObjectContextBase<DomesticVrpConsentPersisted>, IDomesticVrpConsentsContextInternal
@@ -94,7 +94,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
+                    sharedContext.Instrumentation,
+                    sharedContext.BankProfileDefinitions);
         }
 
         public IObjectRead<DomesticVrpConsentResponse> ReadObject { get; }
@@ -121,6 +122,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
         public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse> CreateObject { get; }
         public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
-        public IObjectDelete DeleteObject { get; }
+        public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
     }
 }

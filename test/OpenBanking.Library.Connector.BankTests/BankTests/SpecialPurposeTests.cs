@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
@@ -52,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             ObjectDeleteResponse registrationResp2 = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .DeleteAsync(bankRegistration.Id, null, true);
+                .DeleteAsync(bankRegistration.Id, null, null, null, BankProfileEnum.NatWest);
             registrationResp2.Warnings.Should().BeEmpty();
         }
     }

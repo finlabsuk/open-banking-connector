@@ -10,37 +10,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     /// <summary>
     ///     Fluent interface methods for Delete.
     /// </summary>
-    public interface IDeleteContext
+    public interface IDeleteConsentContext
     {
         /// <summary>
         ///     DELETE object by ID (includes DELETE-ing object at bank API).
         ///     Object will be deleted at bank and also from local database if it is a Bank Registration or Consent.
         ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id"> </param>
         /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
-        /// <param name="useRegistrationAccessToken"></param>
+        /// <param name="includeExternalApiOperation"></param>
         /// <returns></returns>
         Task<ObjectDeleteResponse> DeleteAsync(
             Guid id,
             string? modifiedBy = null,
-            bool useRegistrationAccessToken = false);
+            bool includeExternalApiOperation = true);
     }
 
-    internal interface IDeleteContextInternal : IDeleteContext, IBaseContextInternal
+    internal interface IDeleteConsentContextInternal : IDeleteConsentContext, IBaseContextInternal
     {
-        IObjectDelete DeleteObject { get; }
+        IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 
-        async Task<ObjectDeleteResponse> IDeleteContext.DeleteAsync(
+        async Task<ObjectDeleteResponse> IDeleteConsentContext.DeleteAsync(
             Guid id,
             string? modifiedBy,
-            bool useRegistrationAccessToken)
+            bool includeExternalApiOperation)
         {
+            var consentDeleteParams = new ConsentDeleteParams(id, modifiedBy, includeExternalApiOperation);
             IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
-                await DeleteObject.DeleteAsync(
-                    id,
-                    modifiedBy,
-                    useRegistrationAccessToken);
+                await DeleteObject.DeleteAsync(consentDeleteParams);
 
             return new ObjectDeleteResponse();
         }

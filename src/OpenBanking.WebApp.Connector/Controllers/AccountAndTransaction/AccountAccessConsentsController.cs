@@ -71,19 +71,22 @@ public class AccountAccessConsentsController : ControllerBase
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{accountAccessConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid accountAccessConsentId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentId, modifiedBy);
+            .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

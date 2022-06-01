@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -17,14 +18,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
-    internal class AccountAccessConsentDelete : EntityDelete<AccountAccessConsent>
+    internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, ConsentDeleteParams>
     {
         public AccountAccessConsentDelete(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
+            IInstrumentationClient instrumentationClient,
+            IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -36,10 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected string RelativePathAfterId => "";
 
         protected override async
-            Task<(AccountAccessConsent persistedObject, IApiClient apiClient, Uri uri, IDeleteRequestProcessor
-                deleteRequestProcessor, List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiDeleteData(
-                Guid id,
-                bool useRegistrationAccessToken)
+            Task<(AccountAccessConsent persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            ApiDelete(ConsentDeleteParams deleteParams)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -53,39 +53,47 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.AccountAndTransactionApiNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefaultAsync(x => x.Id == id) ??
-                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {id}.");
-            AccountAndTransactionApiEntity accountAndTransactionApiEntity =
-                persistedObject.AccountAndTransactionApiNavigation;
-            BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
-            string bankApiId = persistedObject.ExternalApiId;
-            string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
+                    .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
+                throw new KeyNotFoundException(
+                    $"No record found for Account Access Consent with ID {deleteParams.Id}.");
 
-            // Get software statement profile
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementProfileOverride);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            if (deleteParams.IncludeExternalApiOperation)
+            {
+                AccountAndTransactionApiEntity accountAndTransactionApiEntity =
+                    persistedObject.AccountAndTransactionApiNavigation;
+                BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
+                string bankApiId = persistedObject.ExternalApiId;
+                string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
-            // Determine endpoint URL
-            string baseUrl = accountAndTransactionApiEntity.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
+                // Get software statement profile
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                    await _softwareStatementProfileRepo.GetAsync(
+                        bankRegistration.SoftwareStatementProfileId,
+                        bankRegistration.SoftwareStatementProfileOverride);
+                IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            // Get client credentials grant token
-            TokenEndpointResponse tokenEndpointResponse =
-                await PostTokenRequest.PostClientCredentialsGrantAsync(
-                    "accounts",
-                    processedSoftwareStatementProfile,
-                    bankRegistration,
-                    persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
-                    null,
-                    apiClient,
-                    _instrumentationClient);
-            IDeleteRequestProcessor deleteRequestProcessor =
-                new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
+                // Determine endpoint URL
+                string baseUrl = accountAndTransactionApiEntity.BaseUrl;
+                var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
-            return (persistedObject, apiClient, endpointUrl, deleteRequestProcessor, nonErrorMessages);
+                // Get client credentials grant token
+                TokenEndpointResponse tokenEndpointResponse =
+                    await PostTokenRequest.PostClientCredentialsGrantAsync(
+                        "accounts",
+                        processedSoftwareStatementProfile,
+                        bankRegistration,
+                        persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                        null,
+                        apiClient,
+                        _instrumentationClient);
+                IDeleteRequestProcessor deleteRequestProcessor =
+                    new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
+
+                // Delete at API
+                await deleteRequestProcessor.DeleteAsync(endpointUrl, apiClient);
+            }
+
+            return (persistedObject, nonErrorMessages);
         }
     }
 }

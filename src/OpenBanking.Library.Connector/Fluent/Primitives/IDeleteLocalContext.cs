@@ -27,17 +27,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal interface IDeleteLocalContextInternal : IDeleteLocalContext, IBaseContextInternal
     {
-        IObjectDelete DeleteLocalObject { get; }
+        IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 
         async Task<ObjectDeleteResponse> IDeleteLocalContext.DeleteLocalAsync(
             Guid id,
             string? modifiedBy)
         {
+            var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
             IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
-                await DeleteLocalObject.DeleteAsync(
-                    id,
-                    modifiedBy,
-                    false);
+                await DeleteLocalObject.DeleteAsync(localDeleteParams);
             return new ObjectDeleteResponse();
         }
     }
