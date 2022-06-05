@@ -20,7 +20,7 @@ using AccountAndTransactionModelsV3p1p7 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class Party2Get : AccountAccessConsentExternalObject<Parties2Response,
-        AccountAndTransactionModelsPublic.OBReadParty3>
+        AccountAndTransactionModelsPublic.OBReadParty3, ExternalEntityReadParams>
     {
         public Party2Get(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
@@ -36,56 +36,53 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             dbSaveChangesMethod,
             timeProvider) { }
 
-        protected override string GetApiBaseRequestUrl(
+        protected override Uri GetApiRequestUrl(
             string baseUrl,
-            string? externalApiAccountId,
-            string? externalApiStatementId) =>
-            (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
+            ExternalEntityReadParams readParams)
+        {
+            string urlString = readParams.ExternalApiAccountId switch
             {
-                (null, null) => baseUrl + "/parties",
-                ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + "/parties",
-                ({ } extAccountId, { } extStatementId) =>
-                    baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + "/parties",
-                _ => throw new ArgumentOutOfRangeException()
+                null => throw new ArgumentOutOfRangeException(),
+                { } extAccountId => $"{baseUrl}/accounts/{extAccountId}/parties"
             };
+            return new UriBuilder(urlString)
+            {
+                Query = readParams.QueryString ?? string.Empty
+            }.Uri;
+        }
 
         protected override Parties2Response PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadParty3 apiResponse,
             Uri apiRequestUrl,
-            string? requestUrlWithoutQuery,
-            bool supportAllQueryParameters,
-            IList<string> validQueryParameters)
+            ExternalEntityReadParams readParams)
         {
+            var validQueryParameters = new List<string>();
+
             // Get link queries
             apiResponse.Links.Self = GetLinkUrlQuery(
                 apiResponse.Links.Self,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.First = GetLinkUrlQuery(
                 apiResponse.Links.First,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Prev = GetLinkUrlQuery(
                 apiResponse.Links.Prev,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Next = GetLinkUrlQuery(
                 apiResponse.Links.Next,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Last = GetLinkUrlQuery(
                 apiResponse.Links.Last,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
 
             return new Parties2Response(apiResponse);

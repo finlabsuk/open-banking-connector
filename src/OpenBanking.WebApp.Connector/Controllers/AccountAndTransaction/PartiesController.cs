@@ -53,12 +53,8 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                null,
-                null,
-                null,
-                null,
-                modifiedBy,
-                requestUrlWithoutQuery);
+                modifiedBy: modifiedBy,
+                requestUrlWithoutQuery: requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }
@@ -92,12 +88,8 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                null,
-                null,
-                null,
-                null,
-                modifiedBy,
-                requestUrlWithoutQuery);
+                modifiedBy: modifiedBy,
+                requestUrlWithoutQuery: requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

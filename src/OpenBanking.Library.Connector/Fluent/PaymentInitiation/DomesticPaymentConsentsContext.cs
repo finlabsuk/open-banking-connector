@@ -21,9 +21,10 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
     public interface IDomesticPaymentConsentsContext :
-        IEntityContext<DomesticPaymentConsentRequest,
+        IConsentContext<DomesticPaymentConsentRequest,
             IDomesticPaymentConsentPublicQuery,
             DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
+        IDeleteLocalContext,
         IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
     {
         /// <summary>
@@ -39,18 +40,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
     internal interface IDomesticPaymentConsentsContextInternal :
         IDomesticPaymentConsentsContext,
-        IEntityContextInternal<DomesticPaymentConsentRequest,
+        IConsentContextInternal<DomesticPaymentConsentRequest,
             IDomesticPaymentConsentPublicQuery,
             DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
+        IDeleteLocalContextInternal,
         IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
 
     internal class DomesticPaymentConsentsConsentContext :
-        ObjectContextBase<DomesticPaymentConsent>,
         IDomesticPaymentConsentsContextInternal
     {
         private readonly ISharedContext _sharedContext;
 
-        public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext) : base(sharedContext)
+        public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext)
         {
             _sharedContext = sharedContext;
             CreateObject = new DomesticPaymentConsentPost(
@@ -77,13 +78,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper);
             ReadLocalObject =
-                new LocalEntityGet<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
+                new LocalEntityRead<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
                     DomesticPaymentConsentBaseResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation);
+            DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
+                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation);
         }
 
         public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
@@ -104,13 +111,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<DomesticPaymentConsentResponse> ReadObject { get; }
+        public IObjectRead<DomesticPaymentConsentResponse, ConsentReadParams> ReadObject { get; }
 
-        public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse> ReadFundsConfirmationObject { get; }
+        public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse, LocalReadParams>
+            ReadFundsConfirmationObject { get; }
 
         public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse> CreateObject { get; }
 
-        public IObjectReadLocal<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentBaseResponse>
+        public IObjectReadWithSearch<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentBaseResponse,
+                LocalReadParams>
             ReadLocalObject { get; }
+
+        public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
     }
 }

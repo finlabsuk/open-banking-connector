@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             bool includeExternalApiOperation = true);
     }
 
-    internal interface IDeleteConsentContextInternal : IDeleteConsentContext, IBaseContextInternal
+    internal interface IDeleteConsentContextInternal : IDeleteConsentContext
     {
         IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 

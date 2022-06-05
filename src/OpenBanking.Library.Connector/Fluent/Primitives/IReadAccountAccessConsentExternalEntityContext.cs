@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IRead2Context<TPublicResponse>
+    public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
@@ -19,55 +19,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="consentId"></param>
         /// <param name="externalApiAccountId"></param>
-        /// <param name="externalApiStatementId"></param>
-        /// <param name="fromBookingDateTime"></param>
-        /// <param name="toBookingDateTime"></param>
-        /// <param name="page"></param>
+        /// <param name="queryString"></param>
         /// <param name="modifiedBy"></param>
         /// <param name="requestUrlWithoutQuery"></param>
-        /// <param name="queryString"></param>
         /// <returns></returns>
         Task<TPublicResponse> ReadAsync(
             Guid consentId,
             string? externalApiAccountId = null,
-            string? externalApiStatementId = null,
-            string? fromBookingDateTime = null,
-            string? toBookingDateTime = null,
-            string? page = null,
+            string? queryString = null,
             string? modifiedBy = null,
-            string? requestUrlWithoutQuery = null,
-            string? queryString = null);
+            string? requestUrlWithoutQuery = null);
     }
 
     internal interface
-        IRead2ContextInternal<TPublicResponse> : IRead2Context<TPublicResponse>,
-            IBaseContextInternal
+        IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse> :
+            IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead2<TPublicResponse> ReadObject { get; }
+        IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
 
-        async Task<TPublicResponse> IRead2Context<TPublicResponse>.ReadAsync(
+        async Task<TPublicResponse> IReadAccountAccessConsentExternalEntityContext<TPublicResponse>.ReadAsync(
             Guid consentId,
             string? externalApiAccountId,
-            string? externalApiStatementId,
-            string? fromBookingDateTime,
-            string? toBookingDateTime,
-            string? page,
+            string? queryString,
             string? modifiedBy,
-            string? requestUrlWithoutQuery,
-            string? queryString)
+            string? requestUrlWithoutQuery)
         {
+            var externalEntityReadParams = new ExternalEntityReadParams(
+                consentId,
+                modifiedBy,
+                externalApiAccountId,
+                requestUrlWithoutQuery,
+                queryString);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadObject.ReadAsync(
-                    consentId,
-                    externalApiAccountId,
-                    externalApiStatementId,
-                    fromBookingDateTime,
-                    toBookingDateTime,
-                    page,
-                    modifiedBy,
-                    requestUrlWithoutQuery,
-                    queryString);
+                await ReadObject.ReadAsync(externalEntityReadParams);
 
             return response;
         }

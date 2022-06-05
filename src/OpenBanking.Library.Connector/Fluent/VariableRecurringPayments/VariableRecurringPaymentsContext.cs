@@ -54,7 +54,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider);
                 return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
-                    _sharedContext,
                     domesticVrp,
                     domesticVrp);
             }

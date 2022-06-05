@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
     /// <typeparam name="TApiRequest"></typeparam>
     internal abstract class
         DomesticVrpConsentExternalObject<TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> :
-            IObjectRead3<TPublicResponse>, IObjectCreate2<TPublicRequest, TPublicResponse>
+            IExternalRead<TPublicResponse>, IExternalCreate<TPublicRequest, TPublicResponse>
         where TApiResponse : class, ISupportsValidation
         where TApiRequest : class, ISupportsValidation
     {

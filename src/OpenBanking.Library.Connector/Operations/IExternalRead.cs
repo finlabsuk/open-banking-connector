@@ -4,23 +4,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal interface IObjectReadLocal<TPublicQuery, TPublicResponse>
+    internal interface IExternalRead<TPublicResponse>
     {
         Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
-            Guid id,
-            string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
-
-        Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
-                )>
-            ReadAsync(Expression<Func<TPublicQuery, bool>> predicate);
+            string externalId,
+            Guid consentId,
+            string? modifiedBy);
     }
 }

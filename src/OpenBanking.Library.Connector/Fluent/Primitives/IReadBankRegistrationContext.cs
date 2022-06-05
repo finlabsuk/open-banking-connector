@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadContext<TPublicResponse>
+    public interface IReadBankRegistrationContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
@@ -30,24 +30,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal interface
-        IReadContextInternal<TPublicResponse> : IReadContext<TPublicResponse>,
-            IBaseContextInternal
+        IReadBankRegistrationContextInternal<TPublicResponse> : IReadBankRegistrationContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead<TPublicResponse> ReadObject { get; }
+        IObjectRead<TPublicResponse, BankRegistrationReadParams> ReadObject { get; }
 
-        async Task<TPublicResponse> IReadContext<TPublicResponse>.ReadAsync(
+        async Task<TPublicResponse> IReadBankRegistrationContext<TPublicResponse>.ReadAsync(
             Guid id,
             string? modifiedBy,
             string? apiResponseWriteFile,
             string? apiResponseOverrideFile)
         {
+            var readParams = new BankRegistrationReadParams(id, modifiedBy, null, null);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadObject.ReadAsync(
-                    id,
-                    modifiedBy,
-                    apiResponseWriteFile,
-                    apiResponseOverrideFile);
+                await ReadObject.ReadAsync(readParams);
 
             return response;
         }

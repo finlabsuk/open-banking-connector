@@ -26,9 +26,9 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentGetFundsConfirmation : ReadWriteGet<DomesticVrpConsentPersisted,
+        DomesticVrpConsentGetFundsConfirmation : ConsentRead<DomesticVrpConsentPersisted,
             DomesticVrpConsentReadFundsConfirmationResponse,
-            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse, LocalReadParams>
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
 
@@ -52,8 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 timeProvider);
         }
 
-        protected override string RelativePathBeforeId => "/domestic-vrp-consents";
-        protected override string RelativePathAfterId => "/funds-confirmation";
+        protected string RelativePathBeforeId => "/domestic-vrp-consents";
+        protected string RelativePathAfterId => "/funds-confirmation";
 
         protected override string ClientCredentialsGrantScope => "payments";
 
@@ -79,14 +79,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     $"VRP API version {bankApiSet.VariableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion} not supported.")
             };
 
-        protected override async Task<(
-            string bankApiId,
-            Uri endpointUrl,
-            DomesticVrpConsentPersisted persistedObject,
-            BankApiSet2 bankApiInformation,
-            BankRegistration bankRegistration,
-            string bankFinancialId,
-            string? accessToken,
+        protected override async Task<(Uri endpointUrl, DomesticVrpConsentPersisted persistedObject, BankApiSet2
+            bankApiInformation, BankRegistration bankRegistration, string bankFinancialId, string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id, string? modifiedBy)
         {
             // Create non-error list
@@ -127,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             string baseUrl = variableRecurringPaymentsApi.BaseUrl;
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
-            return (bankApiId, endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId,
+            return (endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId,
                 accessToken, nonErrorMessages);
         }
 

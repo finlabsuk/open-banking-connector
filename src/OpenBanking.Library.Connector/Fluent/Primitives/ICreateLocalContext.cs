@@ -37,7 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 
     internal interface
         ICreateLocalContextInternal<in TPublicRequest, TPublicResponse> :
-            ICreateLocalContext<TPublicRequest, TPublicResponse>, IBaseContextInternal
+            ICreateLocalContext<TPublicRequest, TPublicResponse>
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {

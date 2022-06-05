@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IRead3Context<TPublicResponse>
+    public interface IReadExternalEntityContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
@@ -28,13 +28,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal interface
-        IRead3ContextInternal<TPublicResponse> : IRead3Context<TPublicResponse>,
-            IBaseContextInternal
+        IReadExternalEntityContextInternal<TPublicResponse> : IReadExternalEntityContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead3<TPublicResponse> ReadObject { get; }
+        IExternalRead<TPublicResponse> ReadObject { get; }
 
-        async Task<TPublicResponse> IRead3Context<TPublicResponse>.ReadAsync(
+        async Task<TPublicResponse> IReadExternalEntityContext<TPublicResponse>.ReadAsync(
             string externalId,
             Guid consentId,
             string? modifiedBy)

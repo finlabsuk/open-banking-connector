@@ -14,21 +14,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicReadResponse"></typeparam>
     /// <typeparam name="TPublicReadLocalResponse"></typeparam>
-    public interface IEntityContext<in TPublicRequest, TPublicQuery, TPublicReadResponse, TPublicReadLocalResponse> :
-        ICreateContext<TPublicRequest, TPublicReadResponse>,
-        IReadContext<TPublicReadResponse>,
-        IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>,
-        IDeleteLocalContext
+    public interface IConsentContext<in TPublicRequest, TPublicQuery, TPublicReadResponse, TPublicReadLocalResponse> :
+        ICreateEntityContext<TPublicRequest, TPublicReadResponse>,
+        IReadConsentContext<TPublicReadResponse>,
+        IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>
         where TPublicReadResponse : class
         where TPublicReadLocalResponse : class { }
 
-    internal interface IEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicResponse,
+    internal interface IConsentContextInternal<in TPublicRequest, TPublicQuery, TPublicResponse,
         TPublicReadLocalResponse> :
-        IEntityContext<TPublicRequest, TPublicQuery, TPublicResponse, TPublicReadLocalResponse>,
-        ICreateContextInternal<TPublicRequest, TPublicResponse>,
-        IReadContextInternal<TPublicResponse>,
-        IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>,
-        IDeleteLocalContextInternal
+        IConsentContext<TPublicRequest, TPublicQuery, TPublicResponse, TPublicReadLocalResponse>,
+        ICreateEntityContextInternal<TPublicRequest, TPublicResponse>,
+        IReadConsentContextInternal<TPublicResponse>,
+        IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
         where TPublicResponse : class
         where TPublicRequest : class, ISupportsValidation
         where TPublicReadLocalResponse : class { }

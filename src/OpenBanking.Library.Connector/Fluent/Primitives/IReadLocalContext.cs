@@ -16,37 +16,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         where TPublicResponse : class
     {
         /// <summary>
-        ///     READ local object by ID (does not include GETing object from bank API).
-        ///     Object will be read from local database only.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<TPublicResponse> ReadLocalAsync(Guid id);
-
-        /// <summary>
         ///     READ local object(s) by query (does not include GETing object(s) from bank API).
         ///     Object(s) will be read from local database only.
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
         Task<IQueryable<TPublicResponse>> ReadLocalAsync(Expression<Func<TPublicQuery, bool>> predicate);
+
+        Task<TPublicResponse> ReadLocalAsync(
+            Guid id,
+            string? modifiedBy = null,
+            string? apiResponseWriteFile = null,
+            string? apiResponseOverrideFile = null);
     }
 
     internal interface
-        IReadLocalContextInternal<TPublicQuery, TPublicResponse> : IReadLocalContext<TPublicQuery, TPublicResponse>,
-            IBaseContextInternal
+        IReadLocalContextInternal<TPublicQuery, TPublicResponse> : IReadLocalContext<TPublicQuery, TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectReadLocal<TPublicQuery, TPublicResponse> ReadLocalObject { get; }
+        IObjectReadWithSearch<TPublicQuery, TPublicResponse, LocalReadParams> ReadLocalObject { get; }
 
-
-        async Task<TPublicResponse> IReadLocalContext<TPublicQuery, TPublicResponse>.ReadLocalAsync(Guid id)
-        {
-            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadLocalObject.ReadAsync(id);
-
-            return response;
-        }
 
         async Task<IQueryable<TPublicResponse>> IReadLocalContext<TPublicQuery, TPublicResponse>.
             ReadLocalAsync(Expression<Func<TPublicQuery, bool>> predicate)
@@ -54,6 +43,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             (IQueryable<TPublicResponse> response,
                     IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                 await ReadLocalObject.ReadAsync(predicate);
+            return response;
+        }
+
+        async Task<TPublicResponse> IReadLocalContext<TPublicQuery, TPublicResponse>.ReadLocalAsync(
+            Guid id,
+            string? modifiedBy,
+            string? apiResponseWriteFile,
+            string? apiResponseOverrideFile)
+        {
+            var readParams = new LocalReadParams(id, modifiedBy);
+            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+                await ReadLocalObject.ReadAsync(readParams);
+
             return response;
         }
     }

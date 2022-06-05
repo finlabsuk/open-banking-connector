@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal interface IObjectCreate2<in TPublicRequest, TPublicResponse>
+    internal interface IExternalCreate<in TPublicRequest, TPublicResponse>
     {
         Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
             TPublicRequest request,

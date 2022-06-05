@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -13,9 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     internal class
         LocalEntityContextInternal<TEntity, TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
             TPublicReadLocalResponse> :
-            ObjectContextBase<TEntity>,
             ILocalEntityContextInternal<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-                TPublicReadLocalResponse>
+                TPublicReadLocalResponse>, IDeleteLocalContextInternal
         where TEntity : class, IEntity,
         ISupportsFluentLocalEntityGet<TPublicReadLocalResponse>
         where TPublicCreateLocalResponse : class
@@ -24,20 +24,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public LocalEntityContextInternal(
             ISharedContext sharedContext,
-            IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> postObject) : base(sharedContext)
+            IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> postObject)
         {
             CreateLocalObject = postObject;
             ReadLocalObject =
-                new LocalEntityGet<TEntity, TPublicQuery, TPublicReadLocalResponse>(
+                new LocalEntityRead<TEntity, TPublicQuery, TPublicReadLocalResponse>(
                     sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
                     sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation);
+            DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
+                sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation);
         }
+
+        public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 
         public IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> CreateLocalObject { get; }
 
-        public IObjectReadLocal<TPublicQuery, TPublicReadLocalResponse> ReadLocalObject { get; }
+        public IObjectReadWithSearch<TPublicQuery, TPublicReadLocalResponse, LocalReadParams> ReadLocalObject { get; }
     }
 }

@@ -25,8 +25,8 @@ using AccountAndTransactionModelsV3p1p7 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class
-        AccountAccessConsentGet : ReadWriteGet<AccountAccessConsentPersisted, AccountAccessConsentResponse,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1>
+        AccountAccessConsentGet : ConsentRead<AccountAccessConsentPersisted, AccountAccessConsentResponse,
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1, ConsentReadParams>
     {
         public AccountAccessConsentGet(
             IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             instrumentationClient,
             mapper) { }
 
-        protected override string RelativePathBeforeId => "/account-access-consents";
+        protected string RelativePathBeforeId => "/account-access-consents";
 
         protected override string ClientCredentialsGrantScope => "accounts";
 
@@ -67,14 +67,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     $"AISP API version {bankApiSet.AccountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")
             };
 
-        protected override async Task<(
-            string bankApiId,
-            Uri endpointUrl,
-            AccountAccessConsentPersisted persistedObject,
-            BankApiSet2 bankApiInformation,
-            BankRegistration bankRegistration,
-            string bankFinancialId,
-            string? accessToken,
+        protected override async Task<(Uri endpointUrl, AccountAccessConsentPersisted persistedObject, BankApiSet2
+            bankApiInformation, BankRegistration bankRegistration, string bankFinancialId, string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id, string? modifiedBy)
         {
             // Create non-error list
@@ -108,9 +102,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             // Determine endpoint URL
             string baseUrl = accountAndTransactionApi.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
+            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}");
 
-            return (bankApiId, endpointUrl, persistedObject, bankApiInformation: bankApiSet2, bankRegistration,
+            return (endpointUrl, persistedObject, bankApiInformation: bankApiSet2, bankRegistration,
                 bankFinancialId,
                 null,
                 nonErrorMessages);

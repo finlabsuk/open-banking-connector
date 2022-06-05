@@ -74,10 +74,9 @@ public class TransactionsController : ControllerBase
                 externalApiStatementId,
                 null,
                 null,
-                null,
+                queryString,
                 modifiedBy,
-                requestUrlWithoutQuery,
-                queryString);
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

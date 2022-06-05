@@ -52,7 +52,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider);
                 return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
-                    _sharedContext,
                     domesticPayment,
                     domesticPayment);
             }

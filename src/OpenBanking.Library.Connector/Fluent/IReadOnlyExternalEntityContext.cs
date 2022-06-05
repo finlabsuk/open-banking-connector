@@ -12,26 +12,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
     public interface IReadOnlyExternalEntityContext<TPublicResponse> :
-        IRead2Context<TPublicResponse>
+        IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
         where TPublicResponse : class { }
 
     internal interface IReadOnlyExternalEntityContextInternal<TPublicResponse> :
         IReadOnlyExternalEntityContext<TPublicResponse>,
-        IRead2ContextInternal<TPublicResponse>
+        IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse>
         where TPublicResponse : class { }
 
     internal class ReadOnlyExternalEntityContextInternal<TPublicResponse> :
         IReadOnlyExternalEntityContextInternal<TPublicResponse>
         where TPublicResponse : class
     {
-        public ReadOnlyExternalEntityContextInternal(ISharedContext context, IObjectRead2<TPublicResponse> readObject)
+        public ReadOnlyExternalEntityContextInternal(
+            IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> readObject)
         {
             ReadObject = readObject;
-            Context = context;
         }
 
-        public IObjectRead2<TPublicResponse> ReadObject { get; }
-
-        public ISharedContext Context { get; }
+        public IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
     }
 }

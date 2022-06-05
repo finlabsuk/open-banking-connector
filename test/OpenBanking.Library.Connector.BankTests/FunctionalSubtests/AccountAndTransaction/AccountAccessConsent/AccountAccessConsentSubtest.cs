@@ -199,9 +199,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         .ReadAsync(
                             accountAccessConsentId,
                             null,
-                            null,
-                            null,
-                            null,
                             "",
                             modifiedBy);
 
@@ -222,9 +219,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                null,
-                                null,
-                                null,
                                 "",
                                 modifiedBy);
 
@@ -241,9 +235,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                null,
-                                null,
-                                null,
                                 "",
                                 modifiedBy);
 
@@ -268,10 +259,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                     null,
                                     null,
                                     null,
-                                    null,
-                                    modifiedBy,
-                                    null,
-                                    queryString);
+                                    queryString,
+                                    modifiedBy);
 
                         // Checks
                         transactionsResp.Should().NotBeNull();
@@ -291,9 +280,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                null,
-                                null,
-                                null,
                                 "",
                                 modifiedBy);
 
@@ -310,9 +296,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                null,
-                                null,
-                                null,
                                 "",
                                 modifiedBy);
 

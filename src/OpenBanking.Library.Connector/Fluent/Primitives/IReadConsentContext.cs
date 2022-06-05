@@ -10,18 +10,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     ///     Fluent interface methods for Read.
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadFundsConfirmationContext<TPublicResponse>
+    public interface IReadConsentContext<TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
-        ///     READ funds confirmation by ID (includes GETing object from bank API).
+        ///     READ object by ID (includes GETing object from bank API).
+        ///     Object will be read from bank and also from local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="modifiedBy"></param>
         /// <param name="apiResponseWriteFile"></param>
         /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
-        Task<TPublicResponse> ReadFundsConfirmationAsync(
+        Task<TPublicResponse> ReadAsync(
             Guid id,
             string? modifiedBy = null,
             string? apiResponseWriteFile = null,
@@ -29,21 +30,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     }
 
     internal interface
-        IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>
+        IReadConsentContextInternal<TPublicResponse> : IReadConsentContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead<TPublicResponse, LocalReadParams> ReadFundsConfirmationObject { get; }
+        IObjectRead<TPublicResponse, ConsentReadParams> ReadObject { get; }
 
-        async Task<TPublicResponse> IReadFundsConfirmationContext<TPublicResponse>.
-            ReadFundsConfirmationAsync(
-                Guid id,
-                string? modifiedBy,
-                string? apiResponseWriteFile,
-                string? apiResponseOverrideFile)
+        async Task<TPublicResponse> IReadConsentContext<TPublicResponse>.ReadAsync(
+            Guid id,
+            string? modifiedBy,
+            string? apiResponseWriteFile,
+            string? apiResponseOverrideFile)
         {
-            var readParams = new LocalReadParams(id, modifiedBy);
+            var readParams = new ConsentReadParams(id, modifiedBy, false);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadFundsConfirmationObject.ReadAsync(readParams);
+                await ReadObject.ReadAsync(readParams);
+
             return response;
         }
     }

@@ -30,7 +30,8 @@ using ClientRegistrationModelsV3p1 =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class BankRegistrationGet : GetBase<BankRegistrationPersisted, BankRegistrationResponse>
+    internal class
+        BankRegistrationGet : BaseRead<BankRegistrationPersisted, BankRegistrationResponse, BankRegistrationReadParams>
     {
         protected readonly IApiVariantMapper _mapper;
 
@@ -54,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
         protected override async
             Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiGet(GetRequestInfo requestInfo)
+            ApiGet(BankRegistrationReadParams readParams)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -65,9 +66,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 await _entityMethods
                     .DbSetNoTracking
                     .Include(o => o.BankNavigation)
-                    .SingleOrDefaultAsync(x => x.Id == requestInfo.Id) ??
+                    .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
                 throw new KeyNotFoundException(
-                    $"No record found for BankRegistration with ID {requestInfo.ModifiedBy}.");
+                    $"No record found for BankRegistration with ID {readParams.ModifiedBy}.");
             CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
                 entity.BankNavigation.DcrApiVersion;

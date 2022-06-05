@@ -26,11 +26,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     }
 
     internal class AuthContextsContext : IAuthContextsContext,
-        ICreateContextInternal<AuthResult, AuthContextResponse>
+        ICreateLocalContextInternal<AuthResult, AuthContextResponse>
     {
         public AuthContextsContext(ISharedContext sharedContext)
         {
-            CreateObject = new AuthContextUpdate(
+            CreateLocalObject = new AuthContextUpdate(
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             string? apiRequestWriteFile = null,
             string? apiResponseWriteFile = null,
             string? apiResponseOverrideFile = null) =>
-            ((ICreateContextInternal<AuthResult, AuthContextResponse>) this).CreateAsync(
+            ((ICreateLocalContextInternal<AuthResult, AuthContextResponse>) this).CreateLocalAsync(
                 publicRequest,
                 createdBy,
                 apiRequestWriteFile,
@@ -53,6 +53,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 apiResponseOverrideFile);
 
         public ISharedContext Context { get; }
-        public IObjectCreate<AuthResult, AuthContextResponse> CreateObject { get; }
+        public IObjectCreate<AuthResult, AuthContextResponse> CreateLocalObject { get; }
     }
 }

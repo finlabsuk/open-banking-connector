@@ -20,11 +20,15 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal abstract class
-        ReadWriteGet<TEntity, TPublicResponse, TApiResponse> : EntityGet<TEntity, TPublicResponse, TApiResponse>
+        ConsentRead<TEntity, TPublicResponse, TApiResponse, TReadParams> : BaseRead<TEntity, TPublicResponse,
+            TReadParams>
         where TEntity : class, IEntity
         where TApiResponse : class, ISupportsValidation
+        where TReadParams : LocalReadParams
     {
-        public ReadWriteGet(
+        private readonly IApiVariantMapper _mapper;
+
+        public ConsentRead(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
@@ -35,12 +39,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient,
-            mapper) { }
-
-        protected abstract string RelativePathBeforeId { get; }
-
-        protected virtual string RelativePathAfterId => "";
+            instrumentationClient)
+        {
+            _mapper = mapper;
+        }
 
         protected abstract string ClientCredentialsGrantScope { get; }
 
@@ -51,23 +53,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient);
 
-        protected override async Task<(
-            TEntity persistedObject,
-            IApiGetRequests<TApiResponse> apiRequests,
-            IApiClient apiClient,
-            Uri uri,
-            JsonSerializerSettings? jsonSerializerSettings,
-            List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetData(Guid id, string? modifiedBy)
+        protected override async
+            Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            ApiGet(TReadParams readParams)
         {
-            (string bankApiId,
-                    Uri endpointUrl,
+            (Uri endpointUrl,
                     TEntity persistedObject,
                     BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
                     string? accessToken,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await ApiGetRequestData(id, modifiedBy);
+                await ApiGetRequestData(readParams.Id, readParams.ModifiedBy);
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -99,12 +96,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 processedSoftwareStatementProfile,
                 _instrumentationClient);
 
-            return (persistedObject, apiRequests, apiClient, endpointUrl, jsonSerializerSettings,
-                nonErrorMessages);
+            TApiResponse apiResponse;
+            IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+            (apiResponse, newNonErrorMessages) =
+                await apiRequests.GetAsync(
+                    endpointUrl,
+                    jsonSerializerSettings,
+                    apiClient,
+                    _mapper);
+            nonErrorMessages.AddRange(newNonErrorMessages);
+
+            // Create response
+            TPublicResponse response = GetReadResponse(persistedObject, apiResponse);
+
+            return (response, nonErrorMessages);
         }
 
+        protected abstract TPublicResponse GetReadResponse(
+            TEntity persistedObject,
+            TApiResponse apiResponse);
+
         protected abstract Task<(
-                string bankApiId,
                 Uri endpointUrl,
                 TEntity persistedObject,
                 BankApiSet2 bankApiInformation,

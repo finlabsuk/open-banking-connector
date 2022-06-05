@@ -91,19 +91,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            // Checks
-            if (consent.AccessToken is not null)
-            {
-                throw new InvalidOperationException("Token already supplied for auth context so aborting.");
-            }
-
-            const int authContextExpiryIntervalInSeconds = 3600;
+            // Only accept redirects within 30 mins of auth context creation
+            const int authContextExpiryIntervalInSeconds = 30 * 60;
             DateTimeOffset authContextExpiryTime = authContext.Created
                 .AddSeconds(authContextExpiryIntervalInSeconds);
             if (_timeProvider.GetUtcNow() > authContextExpiryTime)
             {
                 throw new InvalidOperationException(
-                    "Auth context exists but now expired so will not process redirect.");
+                    "Auth context exists but now stale (more than 30 mins old) so will not process redirect. " +
+                    "Please create a new auth context and authenticate again.");
             }
 
             BankRegistration bankRegistration = authContext switch
@@ -129,17 +125,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration,
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient);
-
-            // Check token endpoint response
-            bool isBearerTokenType = string.Equals(
-                tokenEndpointResponse.TokenType,
-                "bearer",
-                StringComparison.OrdinalIgnoreCase);
-            if (!isBearerTokenType)
-            {
-                throw new InvalidDataException(
-                    "Access token received does not have token type equal to Bearer or bearer.");
-            }
 
             // Update auth context with token
             consent.UpdateAccessToken(

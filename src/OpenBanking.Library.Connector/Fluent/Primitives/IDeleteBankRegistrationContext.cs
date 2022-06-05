@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             BankProfileEnum? bankProfile = null);
     }
 
-    internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrationContext, IBaseContextInternal
+    internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrationContext
     {
         IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
 

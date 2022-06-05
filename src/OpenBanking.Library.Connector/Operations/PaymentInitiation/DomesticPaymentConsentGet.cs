@@ -25,8 +25,8 @@ using DomesticPaymentConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentGet : ReadWriteGet<DomesticPaymentConsentPersisted, DomesticPaymentConsentResponse,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>
+        DomesticPaymentConsentGet : ConsentRead<DomesticPaymentConsentPersisted, DomesticPaymentConsentResponse,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5, ConsentReadParams>
     {
         public DomesticPaymentConsentGet(
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
@@ -42,7 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             instrumentationClient,
             mapper) { }
 
-        protected override string RelativePathBeforeId => "/domestic-payment-consents";
+        protected string RelativePathBeforeId => "/domestic-payment-consents";
 
         protected override string ClientCredentialsGrantScope => "payments";
 
@@ -88,14 +88,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     $"PISP API version {bankApiSet.PaymentInitiationApi.PaymentInitiationApiVersion} not supported.")
             };
 
-        protected override async Task<(
-            string bankApiId,
-            Uri endpointUrl,
-            DomesticPaymentConsentPersisted persistedObject,
-            BankApiSet2 bankApiInformation,
-            BankRegistration bankRegistration,
-            string bankFinancialId,
-            string? accessToken,
+        protected override async Task<(Uri endpointUrl, DomesticPaymentConsentPersisted persistedObject, BankApiSet2
+            bankApiInformation, BankRegistration bankRegistration, string bankFinancialId, string? accessToken,
             List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ApiGetRequestData(Guid id, string? modifiedBy)
         {
             // Create non-error list
@@ -129,9 +123,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
             // Determine endpoint URL
             string baseUrl = paymentInitiationApi.BaseUrl;
-            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
+            var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}");
 
-            return (bankApiId, endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId, null,
+            return (endpointUrl, persistedObject, bankApiSet2, bankRegistration, bankFinancialId, null,
                 nonErrorMessages);
         }
 

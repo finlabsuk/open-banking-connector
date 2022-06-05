@@ -133,7 +133,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 responseJsonSerializerSettings,
                 apiClient);
 
-            // TODO: validate response?
+            // Check token endpoint response
+            bool isBearerTokenType = string.Equals(
+                response.TokenType,
+                "bearer",
+                StringComparison.OrdinalIgnoreCase);
+            if (!isBearerTokenType)
+            {
+                throw new InvalidDataException(
+                    "Access token received does not have token type equal to Bearer or bearer.");
+            }
 
             return response;
         }

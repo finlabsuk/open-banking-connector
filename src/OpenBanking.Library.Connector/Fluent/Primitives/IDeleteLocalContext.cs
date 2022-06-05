@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? modifiedBy = null);
     }
 
-    internal interface IDeleteLocalContextInternal : IDeleteLocalContext, IBaseContextInternal
+    internal interface IDeleteLocalContextInternal : IDeleteLocalContext
     {
         IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 

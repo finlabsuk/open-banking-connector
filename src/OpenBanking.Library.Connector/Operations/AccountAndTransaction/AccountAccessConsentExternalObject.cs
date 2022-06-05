@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Specialized;
-using System.Web;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -30,10 +28,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
     /// </summary>
     /// <typeparam name="TPublicResponse"></typeparam>
     /// <typeparam name="TApiResponse"></typeparam>
+    /// <typeparam name="TExternalEntityReadParams"></typeparam>
     internal abstract class
-        AccountAccessConsentExternalObject<TPublicResponse, TApiResponse> :
-            IObjectRead2<TPublicResponse>
+        AccountAccessConsentExternalObject<TPublicResponse, TApiResponse, TExternalEntityReadParams> :
+            IAccountAccessConsentExternalRead<TPublicResponse, TExternalEntityReadParams>
         where TApiResponse : class, ISupportsValidation
+        where TExternalEntityReadParams : ExternalEntityReadParams
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
@@ -62,16 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         }
 
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ReadAsync(
-                Guid consentId,
-                string? externalApiAccountId,
-                string? externalApiStatementId,
-                string? fromBookingDateTime,
-                string? toBookingDateTime,
-                string? page,
-                string? modifiedBy,
-                string? publicRequestUrlWithoutQuery,
-                string? queryString)
+            ReadAsync(TExternalEntityReadParams readParams)
         {
             // Create non-error list
             var nonErrorMessages =
@@ -85,8 +76,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     .Include(o => o.AccountAndTransactionApiNavigation)
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefaultAsync(x => x.Id == consentId) ??
-                throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+                    .SingleOrDefaultAsync(x => x.Id == readParams.ConsentId) ??
+                throw new KeyNotFoundException(
+                    $"No record found for Account Access Consent with ID {readParams.ConsentId}.");
             AccountAndTransactionApiEntity accountAndTransactionApiEntity =
                 persistedConsent.AccountAndTransactionApiNavigation;
             var accountAndTransactionApi = new AccountAndTransactionApi
@@ -109,22 +101,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
                     bankRegistration,
-                    modifiedBy);
+                    readParams.ModifiedBy);
 
             // Retrieve endpoint URL
-            string apiRequestBaseUrl = GetApiBaseRequestUrl(
+            Uri apiRequestUrl = GetApiRequestUrl(
                 accountAndTransactionApi.BaseUrl,
-                externalApiAccountId,
-                externalApiStatementId);
-            string apiRequestQueryString = GetQueryString(
-                fromBookingDateTime,
-                toBookingDateTime,
-                page,
-                queryString);
-            Uri apiRequestUrl = new UriBuilder(apiRequestBaseUrl)
-            {
-                Query = apiRequestQueryString
-            }.Uri;
+                readParams);
 
             // Get external object from bank API
             JsonSerializerSettings? jsonSerializerSettings = null;
@@ -144,73 +126,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Create response
-            var validQueryParameters = new List<string>();
-            if (fromBookingDateTime is not null)
-            {
-                validQueryParameters.Add("fromBookingDateTime");
-            }
-
-            if (toBookingDateTime is not null)
-            {
-                validQueryParameters.Add("toBookingDateTime");
-            }
-
-            if (page is not null)
-            {
-                validQueryParameters.Add("page");
-            }
-
             TPublicResponse response = PublicGetResponse(
                 apiResponse,
                 apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                queryString is not null,
-                validQueryParameters);
+                readParams);
 
             return (response, nonErrorMessages);
         }
 
-        private string GetQueryString(
-            string? fromBookingDateTime,
-            string? toBookingDateTime,
-            string? page,
-            string? queryString)
-        {
-            NameValueCollection query = HttpUtility.ParseQueryString(new UriBuilder().Query);
-            if (!string.IsNullOrEmpty(fromBookingDateTime))
-            {
-                query["fromBookingDateTime"] = fromBookingDateTime;
-            }
-
-            if (!string.IsNullOrEmpty(toBookingDateTime))
-            {
-                query["toBookingDateTime"] = toBookingDateTime;
-            }
-
-            if (!string.IsNullOrEmpty(page))
-            {
-                query["page"] = page;
-            }
-
-            if (queryString is null)
-            {
-                return query.ToString()!;
-            }
-
-            return queryString!;
-        }
-
-        protected abstract string GetApiBaseRequestUrl(
+        protected abstract Uri GetApiRequestUrl(
             string baseUrl,
-            string? externalApiAccountId,
-            string? externalApiStatementId);
+            TExternalEntityReadParams readParams);
 
         protected abstract TPublicResponse PublicGetResponse(
             TApiResponse apiResponse,
             Uri apiRequestUrl,
-            string? publicRequestUrlWithoutQuery,
-            bool supportAllQueryParameters,
-            IList<string> validQueryParameters);
+            TExternalEntityReadParams readParams);
 
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
             AccountAndTransactionApi accountAndTransactionApi,
@@ -221,10 +152,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected string? GetLinkUrlQuery(
             string? linkUrlString,
             Uri apiRequestUrl,
-            string? publicRequestUrlWithoutQuery,
-            bool supportAllQueryParameters,
+            TExternalEntityReadParams readParams,
             IList<string> validQueryParameters)
         {
+            string? publicRequestUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
+            bool supportAllQueryParameters = readParams.QueryString is not null;
+
             if (linkUrlString is null)
             {
                 return null;

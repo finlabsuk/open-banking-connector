@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Specialized;
+using System.Web;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -21,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 {
     internal class
         TransactionGet : AccountAccessConsentExternalObject<TransactionsResponse,
-            AccountAndTransactionModelsPublic.OBReadTransaction6>
+            AccountAndTransactionModelsPublic.OBReadTransaction6, TransactionsReadParams>
     {
         public TransactionGet(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
@@ -37,56 +39,82 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             dbSaveChangesMethod,
             timeProvider) { }
 
-        protected override string GetApiBaseRequestUrl(
+        protected override Uri GetApiRequestUrl(
             string baseUrl,
-            string? externalApiAccountId,
-            string? externalApiStatementId) =>
-            (externalAccountId: externalApiAccountId, externalStatementId: externalApiStatementId) switch
+            TransactionsReadParams readParams)
+        {
+            string urlString = (externalAccountId: readParams.ExternalApiAccountId,
+                    externalStatementId: readParams.ExternalApiStatementId) switch
+                {
+                    (null, null) => $"{baseUrl}/transactions",
+                    ({ } extAccountId, null) => $"{baseUrl}/accounts/{extAccountId}/transactions",
+                    ({ } extAccountId, { } extStatementId) =>
+                        $"{baseUrl}/accounts/{extAccountId}/statements/{extStatementId}/transactions",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            return new UriBuilder(urlString)
             {
-                (null, null) => baseUrl + "/transactions",
-                ({ } extAccountId, null) => baseUrl + $"/accounts/{extAccountId}" + "/transactions",
-                ({ } extAccountId, { } extStatementId) =>
-                    baseUrl + $"/accounts/{extAccountId}" + $"/statements/{extStatementId}" + "/transactions",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                Query = readParams.QueryString ?? ConstructedQuery(readParams)
+            }.Uri;
+        }
+
+        private string ConstructedQuery(TransactionsReadParams readParams)
+        {
+            NameValueCollection query = HttpUtility.ParseQueryString(new UriBuilder().Query);
+            if (!string.IsNullOrEmpty(readParams.FromBookingDateTime))
+            {
+                query["fromBookingDateTime"] = readParams.FromBookingDateTime;
+            }
+
+            if (!string.IsNullOrEmpty(readParams.ToBookingDateTime))
+            {
+                query["toBookingDateTime"] = readParams.ToBookingDateTime;
+            }
+
+            return query.ToString()!;
+        }
 
         protected override TransactionsResponse PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse,
             Uri apiRequestUrl,
-            string? requestUrlWithoutQuery,
-            bool supportAllQueryParameters,
-            IList<string> validQueryParameters)
+            TransactionsReadParams readParams)
         {
+            var validQueryParameters = new List<string>();
+            if (readParams.FromBookingDateTime is not null)
+            {
+                validQueryParameters.Add("fromBookingDateTime");
+            }
+
+            if (readParams.ToBookingDateTime is not null)
+            {
+                validQueryParameters.Add("toBookingDateTime");
+            }
+
             // Get link queries
             apiResponse.Links.Self = GetLinkUrlQuery(
                 apiResponse.Links.Self,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.First = GetLinkUrlQuery(
                 apiResponse.Links.First,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Prev = GetLinkUrlQuery(
                 apiResponse.Links.Prev,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Next = GetLinkUrlQuery(
                 apiResponse.Links.Next,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
             apiResponse.Links.Last = GetLinkUrlQuery(
                 apiResponse.Links.Last,
                 apiRequestUrl,
-                requestUrlWithoutQuery,
-                supportAllQueryParameters,
+                readParams,
                 validQueryParameters);
 
             return new TransactionsResponse(apiResponse);
