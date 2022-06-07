@@ -25,13 +25,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public BankRegistrationReadParams(
             Guid id,
             string? modifiedBy,
+            bool? useRegistrationAccessToken,
             bool? includeExternalApiOperation,
             BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
         {
+            UseRegistrationAccessToken = useRegistrationAccessToken;
             IncludeExternalApiOperation = includeExternalApiOperation;
             BankProfileEnum = bankProfileEnum;
         }
 
+        public bool? UseRegistrationAccessToken { get; }
         public bool? IncludeExternalApiOperation { get; }
         public BankProfileEnum? BankProfileEnum { get; }
     }

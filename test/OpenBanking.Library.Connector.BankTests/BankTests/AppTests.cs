@@ -155,7 +155,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Determine whether test case should be skipped based on registration scope
                     BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
                     bool registrationScopeValid =
-                        bankProfile.BankConfigurationApiSettings.UseRegistrationScope(testGroup.RegistrationScope);
+                        bankProfile.BankConfigurationApiSettings.RegistrationScopeIsValid(testGroup.RegistrationScope);
                     bool testCaseShouldBeSkipped = !registrationScopeValid;
 
                     // Add test case to theory data if skip status matches that of theory data

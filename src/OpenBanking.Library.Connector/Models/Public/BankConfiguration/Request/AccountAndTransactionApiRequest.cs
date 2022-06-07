@@ -18,8 +18,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class AccountAndTransactionApiRequest : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
+        ///     requests.
+        /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
-        
+
         /// <summary>
         ///     Bank with which this API is associated.
         /// </summary>
@@ -30,16 +34,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Version of UK Open Banking Account and Transaction API.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public AccountAndTransactionApiVersion ApiVersion { get; set; }
+        public AccountAndTransactionApiVersion? ApiVersion { get; set; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Account and Transaction API.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public string BaseUrl { get; set; } = null!;
+        public string? BaseUrl { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AccountAndTransactionApiRequestValidator()

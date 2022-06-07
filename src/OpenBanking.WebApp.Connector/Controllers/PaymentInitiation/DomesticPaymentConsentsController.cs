@@ -47,6 +47,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// </summary>
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -54,13 +55,15 @@ public class DomesticPaymentConsentsController : ControllerBase
     public async Task<IActionResult> GetAsync(
         Guid domesticPaymentConsentId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation)
     {
         // Operation
         DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
-            .ReadAsync(domesticPaymentConsentId, modifiedBy);
+            .ReadAsync(domesticPaymentConsentId, modifiedBy, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

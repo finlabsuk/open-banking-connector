@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             ObjectDeleteResponse registrationResp2 = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .DeleteAsync(bankRegistration.Id, null, null, null, BankProfileEnum.NatWest);
+                .DeleteAsync(bankRegistration.Id, null, BankProfileEnum.NatWest);
             registrationResp2.Warnings.Should().BeEmpty();
         }
     }

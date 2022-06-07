@@ -49,6 +49,9 @@ public class BankRegistrationsController : ControllerBase
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
+    /// <param name="useRegistrationAccessToken"></param>
+    /// <param name="bankProfile"></param>
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -56,13 +59,31 @@ public class BankRegistrationsController : ControllerBase
     public async Task<IActionResult> GetAsync(
         Guid bankRegistrationId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation,
+        [FromHeader]
+        bool? useRegistrationAccessToken,
+        [FromHeader]
+        BankProfileEnum? bankProfile)
     {
+
+        if (includeExternalApiOperation is null &&
+            bankProfile is null)
+        {
+            includeExternalApiOperation = false;
+        }
+        
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
             .BankConfiguration
             .BankRegistrations
-            .ReadAsync(bankRegistrationId, modifiedBy);
+            .ReadAsync(
+                bankRegistrationId,
+                modifiedBy,
+                bankProfile,
+                includeExternalApiOperation,
+                useRegistrationAccessToken);
 
         return Ok(fluentResponse);
     }
@@ -89,6 +110,12 @@ public class BankRegistrationsController : ControllerBase
         [FromHeader]
         BankProfileEnum? bankProfile)
     {
+        if (includeExternalApiOperation is null &&
+            bankProfile is null)
+        {
+            includeExternalApiOperation = false;
+        }
+        
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .BankConfiguration
@@ -96,9 +123,9 @@ public class BankRegistrationsController : ControllerBase
             .DeleteAsync(
                 bankRegistrationId,
                 modifiedBy,
+                bankProfile,
                 includeExternalApiOperation,
-                useRegistrationAccessToken,
-                bankProfile);
+                useRegistrationAccessToken);
 
         return Ok(fluentResponse);
     }

@@ -18,9 +18,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         private void CreateRules()
         {
-            RuleFor(x => x.BaseUrl)
-                .Must(ValidationRules.IsUrl)
-                .WithMessage($"Invalid {nameof(AccountAndTransactionApiRequest.BaseUrl)}: must be a URL.");
+            When(
+                x => !string.IsNullOrEmpty(x.BaseUrl),
+                () =>
+                {
+                    RuleFor(x => x.BaseUrl)
+                        .Must(ValidationRules.IsUrl)
+                        .WithMessage($"Invalid {nameof(AccountAndTransactionApiRequest.BaseUrl)}: must be a URL.");
+                });
         }
     }
 }

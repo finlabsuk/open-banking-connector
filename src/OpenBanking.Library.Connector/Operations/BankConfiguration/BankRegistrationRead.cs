@@ -4,6 +4,8 @@
 
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -31,18 +33,19 @@ using ClientRegistrationModelsV3p1 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
     internal class
-        BankRegistrationGet : BaseRead<BankRegistrationPersisted, BankRegistrationResponse, BankRegistrationReadParams>
+        BankRegistrationRead : BaseRead<BankRegistrationPersisted, BankRegistrationResponse, BankRegistrationReadParams>
     {
-        protected readonly IApiVariantMapper _mapper;
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IApiVariantMapper _mapper;
 
-
-        public BankRegistrationGet(
+        public BankRegistrationRead(
             IDbReadWriteEntityMethods<BankRegistrationPersisted> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IApiVariantMapper mapper) : base(
+            IApiVariantMapper mapper,
+            IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -50,8 +53,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             instrumentationClient)
         {
             _mapper = mapper;
+            _bankProfileDefinitions = bankProfileDefinitions;
         }
-
 
         protected override async
             Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -60,6 +63,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
+
+            BankProfile? bankProfile = readParams.BankProfileEnum is not null
+                ? _bankProfileDefinitions.GetBankProfile(readParams.BankProfileEnum.Value)
+                : null;
+
+            bool includeExternalApiOperationValue =
+                readParams.IncludeExternalApiOperation ??
+                bankProfile?.BankConfigurationApiSettings.UseReadEndpoint ??
+                throw new ArgumentNullException(
+                    null,
+                    "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
+            includeExternalApiOperationValue = false;
 
             // Load object
             BankRegistrationPersisted entity =
@@ -72,15 +87,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
                 entity.BankNavigation.DcrApiVersion;
-            string registrationEndpoint = entity.BankNavigation.RegistrationEndpoint;
 
-            var useExternalApiGet = false;
             ClientRegistrationModelsPublic.OBClientRegistration1Response? apiResponse = null;
-            if (useExternalApiGet)
+            if (includeExternalApiOperationValue)
             {
-                // Determine endpoint URL
-                string bankApiId = entity.ExternalApiObject.ExternalApiId;
-                var endpointUrl = new Uri(registrationEndpoint + $"/{bankApiId}");
+                bool useRegistrationAccessTokenValue =
+                    readParams.UseRegistrationAccessToken ??
+                    bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
+                    throw new ArgumentNullException(
+                        null,
+                        "useRegistrationAccessToken specified as null and cannot be obtained using specified BankProfile (also null).");
 
                 // Get software statement profile
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -89,8 +105,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                         entity.SoftwareStatementProfileOverride);
                 IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
+                // Determine endpoint URL
+                string registrationEndpoint = entity.BankNavigation.RegistrationEndpoint;
+                string bankApiId = entity.ExternalApiObject.ExternalApiId;
+                var apiRequestUrl = new Uri(registrationEndpoint + $"/{bankApiId}");
+
                 // Get client credentials grant token if necessary
-                string accessToken = (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                string accessToken = useRegistrationAccessTokenValue
+                    ? entity.ExternalApiObject.RegistrationAccessToken ??
+                      throw new InvalidOperationException("No registration access token available")
+                    : (await PostTokenRequest.PostClientCredentialsGrantAsync(
                         null,
                         processedSoftwareStatementProfile,
                         entity,
@@ -169,7 +193,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 (apiResponse, newNonErrorMessages) =
                     await apiRequests.GetAsync(
-                        endpointUrl,
+                        apiRequestUrl,
                         responseJsonSerializerSettings,
                         apiClient,
                         _mapper);

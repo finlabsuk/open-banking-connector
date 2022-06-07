@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -171,13 +172,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
+            BankProfile? bankProfile = null;
             if (request.BankProfile is not null)
             {
-                request = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value)
-                    .AccountAccessConsentRequest(
-                        request.BankRegistrationId,
-                        request.AccountAndTransactionApiId,
-                        AccountAccessConsentType.MaximumPermissions);
+                bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
 
             // Load relevant data and checks
@@ -214,13 +212,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             }
 
             // Create request
-            AccountAndTransactionModelsPublic.OBReadConsent1 apiRequest = request.ExternalApiRequest;
+            AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
+                request.ExternalApiRequest ??
+                bankProfile?.AccountAccessConsentExternalApiRequest(AccountAccessConsentType.MaximumPermissions) ??
+                throw new InvalidOperationException(
+                    "ExternalApiRequest specified as null and cannot be obtained using BankProfile.");
+            ExternalApiRequestAdjustments? adjustmentsFcn = bankProfile?.AccountAndTransactionApiSettings
+                .ExternalApiRequestAdjustments;
+            if (adjustmentsFcn is not null)
+            {
+                externalApiRequest = adjustmentsFcn(externalApiRequest);
+            }
 
             // Determine endpoint URL
             string baseUrl = accountAndTransactionApiEntity.BaseUrl;
             var endpointUrl = new Uri(baseUrl + "/account-access-consents");
 
-            return (apiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, nonErrorMessages);
+            return (externalApiRequest, endpointUrl, bankApiSet2, bankRegistration, bankFinancialId, nonErrorMessages);
         }
     }
 }

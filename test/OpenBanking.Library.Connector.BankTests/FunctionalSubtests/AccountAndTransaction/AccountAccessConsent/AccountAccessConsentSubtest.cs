@@ -55,15 +55,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create AccountAndTransactionApi
-            AccountAndTransactionApiRequest accountAndTransactionApiRequest =
-                bankProfile.GetAccountAndTransactionApiRequest(Guid.Empty);
             await configFluentRequestLogging
                 .AppendToPath("accountAndTransactionApi")
                 .AppendToPath("postRequest")
-                .WriteFile(accountAndTransactionApiRequest);
-            accountAndTransactionApiRequest.BankId = bankId;
-            accountAndTransactionApiRequest.CreatedBy = modifiedBy;
-            accountAndTransactionApiRequest.Reference = testNameUnique;
+                .WriteFile(bankProfile.GetAccountAndTransactionApiRequest(default));
+            var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
+            {
+                Reference = testNameUnique,
+                CreatedBy = modifiedBy,
+                BankProfile = bankProfile.BankProfileEnum,
+                BankId = bankId,
+            };
             AccountAndTransactionApiResponse accountAndTransactionApiResponse =
                 await requestBuilder
                     .BankConfiguration
@@ -85,35 +87,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAndTransactionApiReadResponse.Warnings.Should().BeNull();
 
             // Create account access consent or use existing
-            Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent accountAccessConsentRequest =
-                bankProfile.AccountAccessConsentRequest(
-                    Guid.Empty, // set below
-                    Guid.Empty,
-                    AccountAccessConsentSubtestHelper.GetAccountAccessConsentType(subtestEnum));
             await aispFluentRequestLogging
                 .AppendToPath("accountAccessConsent")
                 .AppendToPath("postRequest")
-                .WriteFile(accountAccessConsentRequest);
-
-            if (testData2.AccountAccessConsentExternalApiId is not null)
-            {
-                accountAccessConsentRequest.ExternalApiObject = new ExternalApiConsent
+                .WriteFile(
+                    new Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent
+                    {
+                        BankRegistrationId = default,
+                        AccountAndTransactionApiId = default,
+                        ExternalApiRequest =
+                            bankProfile.AccountAndTransactionApiSettings
+                                .ExternalApiRequestAdjustments(
+                                    bankProfile.AccountAccessConsentExternalApiRequest(
+                                        AccountAccessConsentSubtestHelper
+                                            .GetAccountAccessConsentType(subtestEnum)))
+                    });
+            var accountAccessConsentRequest =
+                new Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent
                 {
-                    ExternalApiId = testData2.AccountAccessConsentExternalApiId,
-                    AccessToken = testData2.AccountAccessConsentRefreshToken is null
-                        ? null
-                        : new AccessToken
-                        {
-                            RefreshToken = testData2.AccountAccessConsentRefreshToken,
-                            ModifiedBy = modifiedBy
-                        }
+                    Reference = testNameUnique,
+                    CreatedBy = modifiedBy,
+                    ExternalApiObject =
+                        testData2.AccountAccessConsentExternalApiId is not null
+                            ? new ExternalApiConsent
+                            {
+                                ExternalApiId = testData2.AccountAccessConsentExternalApiId,
+                                AccessToken = testData2.AccountAccessConsentRefreshToken is null
+                                    ? null
+                                    : new AccessToken
+                                    {
+                                        RefreshToken = testData2.AccountAccessConsentRefreshToken,
+                                        ModifiedBy = modifiedBy
+                                    }
+                            }
+                            : null,
+                    BankProfile = bankProfile.BankProfileEnum,
+                    BankRegistrationId = bankRegistrationId,
+                    AccountAndTransactionApiId = accountAndTransactionApiId,
                 };
-            }
-
-            accountAccessConsentRequest.BankRegistrationId = bankRegistrationId;
-            accountAccessConsentRequest.AccountAndTransactionApiId = accountAndTransactionApiId;
-            accountAccessConsentRequest.CreatedBy = modifiedBy;
-            accountAccessConsentRequest.Reference = testNameUnique;
             AccountAccessConsentResponse accountAccessConsentResp =
                 await requestBuilder
                     .AccountAndTransaction
@@ -306,7 +317,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // Delete AccountAccessConsent
-                var includeExternalApiOperation = true;
+                bool includeExternalApiOperation = testData2.AccountAccessConsentExternalApiId is not null;
                 ObjectDeleteResponse accountAccessConsentResp3 = await requestBuilderNew
                     .AccountAndTransaction
                     .AccountAccessConsents

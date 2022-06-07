@@ -20,16 +20,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="id"> </param>
         /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
+        /// <param name="bankProfile"></param>
         /// <param name="includeExternalApiOperation"></param>
         /// <param name="useRegistrationAccessToken"></param>
-        /// <param name="bankProfile"></param>
         /// <returns></returns>
         Task<ObjectDeleteResponse> DeleteAsync(
             Guid id,
             string? modifiedBy = null,
+            BankProfileEnum? bankProfile = null,
             bool? includeExternalApiOperation = null,
-            bool? useRegistrationAccessToken = null,
-            BankProfileEnum? bankProfile = null);
+            bool? useRegistrationAccessToken = null);
     }
 
     internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrationContext
@@ -39,9 +39,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         async Task<ObjectDeleteResponse> IDeleteBankRegistrationContext.DeleteAsync(
             Guid id,
             string? modifiedBy,
+            BankProfileEnum? bankProfile,
             bool? includeExternalApiOperation,
-            bool? useRegistrationAccessToken,
-            BankProfileEnum? bankProfile)
+            bool? useRegistrationAccessToken)
         {
             var bankRegistrationDeleteParams = new BankRegistrationDeleteParams(
                 id,

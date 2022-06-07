@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
@@ -19,14 +20,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="id"></param>
         /// <param name="modifiedBy"></param>
-        /// <param name="apiResponseWriteFile"></param>
-        /// <param name="apiResponseOverrideFile"></param>
+        /// <param name="bankProfile"></param>
+        /// <param name="includeExternalApiOperation"></param>
+        /// <param name="useRegistrationAccessToken"></param>
         /// <returns></returns>
         Task<TPublicResponse> ReadAsync(
             Guid id,
             string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
+            BankProfileEnum? bankProfile = null,
+            bool? includeExternalApiOperation = null,
+            bool? useRegistrationAccessToken = null);
     }
 
     internal interface
@@ -38,10 +41,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         async Task<TPublicResponse> IReadBankRegistrationContext<TPublicResponse>.ReadAsync(
             Guid id,
             string? modifiedBy,
-            string? apiResponseWriteFile,
-            string? apiResponseOverrideFile)
+            BankProfileEnum? bankProfile,
+            bool? includeExternalApiOperation,
+            bool? useRegistrationAccessToken)
         {
-            var readParams = new BankRegistrationReadParams(id, modifiedBy, null, null);
+            var readParams = new BankRegistrationReadParams(
+                id,
+                modifiedBy,
+                includeExternalApiOperation,
+                includeExternalApiOperation,
+                bankProfile);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                 await ReadObject.ReadAsync(readParams);
 

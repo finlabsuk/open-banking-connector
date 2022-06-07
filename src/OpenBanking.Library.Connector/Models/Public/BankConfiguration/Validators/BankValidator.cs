@@ -18,13 +18,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         private void CreateRules()
         {
-            RuleFor(x => x.IssuerUrl)
-                .Must(ValidationRules.IsUrl)
-                .WithMessage($"Missing or invalid {nameof(Bank.IssuerUrl)}.");
+            When(
+                x => !string.IsNullOrEmpty(x.IssuerUrl),
+                () =>
+                {
+                    RuleFor(x => x.IssuerUrl)
+                        .Must(ValidationRules.IsUrl)
+                        .WithMessage($"Missing or invalid {nameof(Bank.IssuerUrl)}.");
+                });
 
-            RuleFor(x => x.FinancialId)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(Bank.FinancialId)}.");
+            When(
+                x => !string.IsNullOrEmpty(x.FinancialId),
+                () =>
+                {
+                    RuleFor(x => x.FinancialId)
+                        .Must(ValidationRules.IsNotNullOrEmpty)
+                        .WithMessage($"Missing or invalid {nameof(Bank.FinancialId)}.");
+                });
         }
     }
 }

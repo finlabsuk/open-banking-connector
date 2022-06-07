@@ -39,13 +39,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation);
-            ReadObject = new BankRegistrationGet(
+            ReadObject = new BankRegistrationRead(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                sharedContext.BankProfileDefinitions);
             DeleteObject = new BankRegistrationDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),

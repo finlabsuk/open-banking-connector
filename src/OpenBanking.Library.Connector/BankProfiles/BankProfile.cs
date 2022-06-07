@@ -4,22 +4,21 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
+using AccountAndTransactionModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 {
-    public delegate BankRegistration BankRegistrationAdjustments(BankRegistration bankRegistration);
+    public delegate bool RegistrationScopeIsValid(RegistrationScopeEnum registrationScope);
 
-    public delegate bool UseRegistrationScope(RegistrationScopeEnum registrationScope);
-
-    public delegate AccountAccessConsent AccountAccessConsentAdjustments(AccountAccessConsent domesticPaymentConsent);
+    public delegate AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequestAdjustments(
+        AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest);
 
     public delegate DomesticPaymentConsent DomesticPaymentConsentAdjustments(
         DomesticPaymentConsent domesticPaymentConsent);
@@ -32,26 +31,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         ///     Describes whether a registration scope should be used when testing with this bank.
         ///     By default, any registration scope can be used.
         /// </summary>
-        public UseRegistrationScope UseRegistrationScope { get; set; } = registrationScope => true;
-
-        /// <summary>
-        ///     Adjustments to default BankRegistration request object.
-        /// </summary>
-        public BankRegistrationAdjustments BankRegistrationAdjustments { get; set; } =
-            x => x;
+        public RegistrationScopeIsValid RegistrationScopeIsValid { get; set; } = registrationScope => true;
 
         /// <summary>
         ///     Describes whether DELETE /register/{ClientId} is used when testing with this bank.
         /// </summary>
         public bool UseDeleteEndpoint { get; set; } = false;
 
+        /// <summary>
+        ///     Describes whether GET /register/{ClientId} is used when testing with this bank.
+        /// </summary>
+        public bool UseReadEndpoint { get; set; } = false;
+
         public bool UseRegistrationAccessToken { get; set; } = false;
     }
 
     public class AccountAndTransactionApiSettings
     {
-        public AccountAccessConsentAdjustments
-            AccountAccessConsentAdjustments { get; set; } = x => x;
+        public ExternalApiRequestAdjustments
+            ExternalApiRequestAdjustments { get; set; } = x => x;
     }
 
     public class PaymentInitiationApiSettings
@@ -78,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         public BankProfile(
             BankProfileEnum bankProfileEnum,
-            string issuerUrl,
+            string? issuerUrl,
             string financialId,
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
             AccountAndTransactionApi? accountAndTransactionApi,
@@ -104,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Bank issuer URL which points to well-known endpoint
         /// </summary>
-        public string IssuerUrl { get; }
+        public string? IssuerUrl { get; }
 
         /// <summary>
         ///     Bank financial ID used in UK Open Banking

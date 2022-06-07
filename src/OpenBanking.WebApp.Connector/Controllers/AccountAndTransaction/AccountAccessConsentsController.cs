@@ -48,6 +48,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -55,13 +56,15 @@ public class AccountAccessConsentsController : ControllerBase
     public async Task<IActionResult> GetAsync(
         Guid accountAccessConsentId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation)
     {
         // Operation
         AccountAccessConsentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .ReadAsync(accountAccessConsentId, modifiedBy);
+            .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

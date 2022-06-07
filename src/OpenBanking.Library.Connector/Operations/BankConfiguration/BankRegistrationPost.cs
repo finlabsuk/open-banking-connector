@@ -4,7 +4,7 @@
 
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -89,14 +89,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
+            BankProfile? bankProfile = null;
             if (requestInfo.Request.BankProfile is not null)
             {
-                requestInfo.Request = _bankProfileDefinitions.GetBankProfile(requestInfo.Request.BankProfile.Value)
-                    .GetBankRegistrationRequest(
-                        requestInfo.Request.BankId,
-                        requestInfo.Request.SoftwareStatementProfileId,
-                        requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
-                        requestInfo.Request.RegistrationScope);
+                bankProfile = _bankProfileDefinitions.GetBankProfile(requestInfo.Request.BankProfile.Value);
             }
 
             // Load bank from DB and check for existing bank registrations
@@ -135,7 +131,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             RegistrationScopeEnum registrationScope =
                 requestInfo.Request.RegistrationScope ??
                 processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
-
+            var registrationScopeIsValidFcn = bankProfile?.BankConfigurationApiSettings.RegistrationScopeIsValid;
+            if (registrationScopeIsValidFcn is not null &&
+                !registrationScopeIsValidFcn(registrationScope))
+            {
+                throw new InvalidOperationException(
+                    "RegistrationScope fails RegistrationScopeIsValid check from BankProfile");
+            }
+            
             // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
             string? issuerUrl = bank.IssuerUrl;
             OpenIdConfiguration? openIdConfiguration;

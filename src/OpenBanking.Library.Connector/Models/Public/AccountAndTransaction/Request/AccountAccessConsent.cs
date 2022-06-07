@@ -20,6 +20,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     /// </summary>
     public class AccountAccessConsent : ConsentRequestBase, ISupportsValidation
     {
+        /// <summary>
+        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
+        ///     requests.
+        /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
         /// <summary>
@@ -47,9 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     v3.1.9r5 <a />. Open Banking Connector will automatically
         ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public AccountAndTransactionModelsPublic.OBReadConsent1 ExternalApiRequest { get; set; } = null!;
+        public AccountAndTransactionModelsPublic.OBReadConsent1? ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AccountAccessConsentValidator()

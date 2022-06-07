@@ -2,15 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using Newtonsoft.Json;
-using ValidationResult = FluentValidation.Results.ValidationResult;
+using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
 {
@@ -23,6 +21,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class Bank : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
+        ///     requests.
+        /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
         /// <summary>
@@ -30,9 +32,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public string? JwksUri { get; set; }
 
-        public OAuth2ResponseMode DefaultResponseMode { get; set; } = OAuth2ResponseMode.Fragment;
+        public OAuth2ResponseMode? DefaultResponseMode { get; set; }
 
-        public bool SupportsSca { get; set; } = false;
+        public bool? SupportsSca { get; set; }
 
         /// <summary>
         ///     Issuer URL to use when creating Bank Registration which indicates the presence of valid
@@ -44,9 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     FAPI financial ID to use when creating Bank Registration
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public string FinancialId { get; set; } = null!;
+        public string? FinancialId { get; set; }
 
 
         /// <summary>
@@ -70,8 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Version of Open Banking Dynamic Client Registration API to use
         ///     for bank registration.
         /// </summary>
-        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; set; } =
-            DynamicClientRegistrationApiVersion.Version3p3;
+        public DynamicClientRegistrationApiVersion? DynamicClientRegistrationApiVersion { get; set; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.

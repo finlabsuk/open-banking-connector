@@ -25,17 +25,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
             Guid bankId,
             string softwareStatementProfileId,
             string? softwareStatementAndCertificateProfileOverrideCase,
-            RegistrationScopeEnum? registrationScope)
-        {
-            var bankRegistration = new BankRegistration
+            RegistrationScopeEnum? registrationScope) =>
+            new()
             {
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
                 RegistrationScope = registrationScope,
             };
-            return bankProfile.BankConfigurationApiSettings.BankRegistrationAdjustments.Invoke(bankRegistration);
-        }
 
         public static AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(
             this BankProfile bankProfile,

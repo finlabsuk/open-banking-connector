@@ -14,6 +14,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 {
     public class BankRegistration : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
+        ///     requests.
+        /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
         /// <summary>

@@ -48,6 +48,7 @@ public class DomesticVrpConsentsController : ControllerBase
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -55,13 +56,15 @@ public class DomesticVrpConsentsController : ControllerBase
     public async Task<IActionResult> GetAsync(
         Guid domesticVrpConsentId,
         [FromHeader]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader]
+        bool? includeExternalApiOperation)
     {
         // Operation
         DomesticVrpConsentResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .ReadAsync(domesticVrpConsentId, modifiedBy);
+            .ReadAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

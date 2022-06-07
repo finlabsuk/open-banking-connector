@@ -71,7 +71,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 },
                 AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
                 {
-                    AccountAccessConsentAdjustments = consent =>
+                    ExternalApiRequestAdjustments = externalApiRequest =>
                     {
                         var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
                         {
@@ -82,15 +82,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                         };
                         foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
                         {
-                            consent.ExternalApiRequest.Data.Permissions.Remove(element);
+                            externalApiRequest.Data.Permissions.Remove(element);
                         }
 
                         if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
                         {
-                            consent.ExternalApiRequest.Data.ExpirationDateTime = DateTimeOffset.UtcNow.AddDays(89);
+                            externalApiRequest.Data.ExpirationDateTime = DateTimeOffset.UtcNow.AddDays(89);
                         }
 
-                        return consent;
+                        return externalApiRequest;
                     }
                 },
                 DefaultResponseMode = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox

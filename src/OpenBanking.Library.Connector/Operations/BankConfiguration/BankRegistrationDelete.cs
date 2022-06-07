@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
 
             // Load object
-            BankRegistration persistedObject =
+            BankRegistration entity =
                 await _entityMethods
                     .DbSet
                     .Include(o => o.BankNavigation)
@@ -76,24 +76,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 // Get API client
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                     await _softwareStatementProfileRepo.GetAsync(
-                        persistedObject.SoftwareStatementProfileId,
-                        persistedObject.SoftwareStatementProfileOverride);
+                        entity.SoftwareStatementProfileId,
+                        entity.SoftwareStatementProfileOverride);
                 IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
                 // Get URI
-                string registrationEndpoint = persistedObject.BankNavigation.RegistrationEndpoint;
-                string bankApiId = persistedObject.ExternalApiObject.ExternalApiId;
-                var uri = new Uri(registrationEndpoint + $"/{bankApiId}");
+                string registrationEndpoint = entity.BankNavigation.RegistrationEndpoint;
+                string bankApiId = entity.ExternalApiObject.ExternalApiId;
+                var apiRequestUrl = new Uri(registrationEndpoint + $"/{bankApiId}");
 
                 // Get appropriate token
                 string accessToken = useRegistrationAccessTokenValue
-                    ? persistedObject.ExternalApiObject.RegistrationAccessToken ??
+                    ? entity.ExternalApiObject.RegistrationAccessToken ??
                       throw new InvalidOperationException("No registration access token available")
                     : (await PostTokenRequest.PostClientCredentialsGrantAsync(
                         null,
                         processedSoftwareStatementProfile,
-                        persistedObject,
-                        persistedObject.BankNavigation.TokenEndpoint,
+                        entity,
+                        entity.BankNavigation.TokenEndpoint,
                         null,
                         apiClient,
                         _instrumentationClient))
@@ -102,10 +102,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 // Delete at API
                 IDeleteRequestProcessor deleteRequestProcessor =
                     new ApiDeleteRequestProcessor(accessToken, null);
-                await deleteRequestProcessor.DeleteAsync(uri, apiClient);
+                await deleteRequestProcessor.DeleteAsync(apiRequestUrl, apiClient);
             }
 
-            return (persistedObject, nonErrorMessages);
+            return (entity, nonErrorMessages);
         }
     }
 }

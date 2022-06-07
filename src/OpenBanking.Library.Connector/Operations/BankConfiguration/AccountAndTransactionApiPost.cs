@@ -2,10 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -39,11 +40,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             AccountAndTransactionApiRequest request,
             ITimeProvider timeProvider)
         {
+            BankProfile? bankProfile = null;
             if (request.BankProfile is not null)
             {
-                request = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value)
-                    .GetAccountAndTransactionApiRequest(request.BankId);
+                bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
+
+            AccountAndTransactionApiVersion apiVersion =
+                request.ApiVersion ??
+                bankProfile?.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
+                throw new InvalidOperationException(
+                    "ApiVersion specified as null and cannot be obtained using specified BankProfile.");
+            string baseUrl =
+                request.BaseUrl ??
+                bankProfile?.AccountAndTransactionApi?.BaseUrl ??
+                throw new InvalidOperationException(
+                    "BaseUrl specified as null and cannot be obtained using specified BankProfile.");
 
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new AccountAndTransactionApiEntity(
@@ -55,8 +67,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 utcNow,
                 request.CreatedBy,
                 request.BankId,
-                request.ApiVersion,
-                request.BaseUrl.TrimEnd('/'));
+                apiVersion,
+                baseUrl.TrimEnd('/'));
 
             // Add entity
             await _entityMethods.AddAsync(entity);

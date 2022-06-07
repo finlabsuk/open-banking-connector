@@ -30,13 +30,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var modifiedBy = "Automated bank tests";
 
             // Create bank
-            Bank bankRequest = bankProfile.GetBankRequest();
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
-                .WriteFile(bankRequest);
-            bankRequest.CreatedBy = modifiedBy;
-            bankRequest.Reference = testNameUnique;
+                .WriteFile(bankProfile.GetBankRequest());
+            var bankRequest = new Bank
+            {
+                Reference = testNameUnique,
+                CreatedBy = modifiedBy,
+                BankProfile = bankProfile.BankProfileEnum
+            };
             BankResponse bankCreateResponse = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -63,27 +66,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .AppendToPath("postResponse")
                 .GetFilePath();
             string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
-            BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
-                default,
-                testData1.SoftwareStatementProfileId,
-                testData1.SoftwareStatementAndCertificateProfileOverride,
-                testData1.RegistrationScope);
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postRequest")
-                .WriteFile(registrationRequest);
+                .WriteFile(
+                    bankProfile.GetBankRegistrationRequest(
+                        default,
+                        testData1.SoftwareStatementProfileId,
+                        testData1.SoftwareStatementAndCertificateProfileOverride,
+                        testData1.RegistrationScope));
 
-            if (testData2.BankRegistrationExternalApiId is not null)
+            var registrationRequest = new BankRegistration
             {
-                registrationRequest.ExternalApiObject = new ExternalApiBankRegistration
-                {
-                    ExternalApiId = testData2.BankRegistrationExternalApiId
-                };
-            }
-
-            registrationRequest.BankId = bankId;
-            registrationRequest.CreatedBy = modifiedBy;
-            registrationRequest.Reference = testNameUnique;
+                Reference = testNameUnique,
+                CreatedBy = modifiedBy,
+                BankProfile = bankProfile.BankProfileEnum,
+                BankId = bankId,
+                SoftwareStatementProfileId = testData1.SoftwareStatementProfileId,
+                SoftwareStatementAndCertificateProfileOverrideCase =
+                    testData1.SoftwareStatementAndCertificateProfileOverride,
+                RegistrationScope = testData1.RegistrationScope,
+                ExternalApiObject =
+                    testData2.BankRegistrationExternalApiId is not null
+                        ? new ExternalApiBankRegistration
+                        {
+                            ExternalApiId = testData2.BankRegistrationExternalApiId
+                        }
+                        : null
+            };
             BankRegistrationResponse registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
@@ -106,7 +116,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             BankRegistrationResponse bankRegistrationReadResponse = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .ReadAsync(bankRegistrationId, modifiedBy);
+                .ReadAsync(
+                    bankRegistrationId,
+                    modifiedBy,
+                    bankProfile.BankProfileEnum);
 
             // Checks
             bankRegistrationReadResponse.Should().NotBeNull();
@@ -125,13 +138,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var modifiedBy = "Automated bank tests";
 
             // Delete bankRegistration
-            bool includeExternalApiOperation = bankConfigurationApiSettings.UseDeleteEndpoint;
+            bool includeExternalApiOperation =
+                bankConfigurationApiSettings.UseDeleteEndpoint &&
+                testData2.BankRegistrationExternalApiId is not null;
             ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
                 .DeleteAsync(
                     bankRegistrationId,
                     modifiedBy,
+                    null,
                     includeExternalApiOperation,
                     bankConfigurationApiSettings.UseRegistrationAccessToken);
 
@@ -140,14 +156,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankRegistrationDeleteResponse.Warnings.Should().BeNull();
 
             // Delete bank
-            ObjectDeleteResponse bankResp = await requestBuilder
+            ObjectDeleteResponse bankDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .Banks
                 .DeleteLocalAsync(bankId);
 
             // Checks
-            bankResp.Should().NotBeNull();
-            bankResp.Warnings.Should().BeNull();
+            bankDeleteResponse.Should().NotBeNull();
+            bankDeleteResponse.Warnings.Should().BeNull();
         }
     }
 }
