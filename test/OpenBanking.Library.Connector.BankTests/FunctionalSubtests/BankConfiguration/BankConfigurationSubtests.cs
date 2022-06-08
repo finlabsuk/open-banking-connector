@@ -109,7 +109,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks and assignments
             registrationResp.Should().NotBeNull();
             registrationResp.Warnings.Should().BeNull();
-            registrationResp.ExternalApiResponse.Should().NotBeNull();
+            if (testData2.BankRegistrationExternalApiId is null)
+            {
+                registrationResp.ExternalApiResponse.Should().NotBeNull();
+            }
             Guid bankRegistrationId = registrationResp.Id;
 
             // Read bankRegistration
@@ -140,7 +143,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Delete bankRegistration
             bool includeExternalApiOperation =
                 bankConfigurationApiSettings.UseDeleteEndpoint &&
-                testData2.BankRegistrationExternalApiId is not null;
+                testData2.BankRegistrationExternalApiId is null;
             ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations

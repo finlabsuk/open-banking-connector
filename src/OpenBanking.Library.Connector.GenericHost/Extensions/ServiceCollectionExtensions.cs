@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
@@ -15,12 +15,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 {
@@ -44,6 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                 .AddSingleton<IProcessedSoftwareStatementProfileStore,
                     ProcessedSoftwareStatementProfileStore>();
 
+            // Set up bank profile definitions
+            services.AddSingleton<IBankProfileDefinitions, BankProfileDefinitions>();
+
             // Set up time provider
             services.AddSingleton<ITimeProvider, TimeProvider>();
 
@@ -53,7 +54,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // Set up API client not associated with software statement profile
             services.AddSingleton<IApiClient>(
                 sp => new ApiClient(
-                    sp.GetRequiredService<IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
+                    sp.GetRequiredService<
+                        IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
 
             // Set up mapper for API variants (different Open Banking standards)
             services.AddSingleton<IApiVariantMapper, ApiVariantMapper>();

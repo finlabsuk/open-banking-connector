@@ -17,7 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -97,6 +96,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     obTransportCertificateProfilesSettings);
             var obSigningCertificateProfilesSettingsProvider =
                 new DefaultSettingsProvider<SigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
+            var bankProfilesSettingsProvider =
+                new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
 
             // Create stores
             var timeProvider = new TimeProvider();
@@ -121,10 +122,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     apiClient,
                     processedSoftwareStatementProfileStore,
                     GetDbContext(),
-                    new BankProfileDefinitions(
-                        DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
-                            bankProfilesSettings.HiddenPropertiesFile,
-                            new JsonSerializerSettings()).GetAwaiter().GetResult())),
+                    new BankProfileDefinitions(bankProfilesSettingsProvider)),
                 false);
         }
 

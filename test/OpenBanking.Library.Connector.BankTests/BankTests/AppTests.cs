@@ -22,12 +22,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
-using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -63,18 +61,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Get bank profile definitions
             var bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
-            bankProfilesSettings.Validate();
-            BankProfileHiddenPropertiesDictionary bankProfileHiddenProperties =
-                DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
-                        bankProfilesSettings.HiddenPropertiesFile,
-                        new JsonSerializerSettings
-                        {
-                            NullValueHandling = NullValueHandling.Ignore
-                        }).GetAwaiter()
-                    .GetResult();
+            var bankProfilesSettingsProvider =
+                new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
             var bankProfileDefinitions =
-                new BankProfileDefinitions(bankProfileHiddenProperties);
-
+                new BankProfileDefinitions(bankProfilesSettingsProvider);
             var data =
                 new TheoryData<BankTestData1, BankTestData2>();
 

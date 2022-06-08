@@ -8,10 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public partial class BankProfileDefinitions
+    public partial class BankProfileDefinitions2
     {
-        public BankProfile NewDayAmazon { get; }
-
         private BankProfile GetNewDayAmazon()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
@@ -20,7 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.NewDayAmazon,
                 "https://api.newdaycards.com/sandbox/identity/v1.0/amazon/", //from https://developer.newdaycards.com/docs/services/AuthenticationSandbox/operations/wellknown
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 null,
                 new PaymentInitiationApi
                 {

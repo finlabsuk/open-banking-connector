@@ -2,12 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.Configuration;
@@ -45,18 +43,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
                 });
             services.AddNodeJS();
 
-            // Set up bank profile definitions
-            services.AddSingleton<IBankProfileDefinitions>(
-                sp =>
-                {
-                    BankProfilesSettings bankProfilesSettings =
-                        sp.GetRequiredService<ISettingsProvider<BankProfilesSettings>>().GetSettings();
-                    return new BankProfileDefinitions(
-                        DataFile.ReadFile<BankProfileHiddenPropertiesDictionary>(
-                            bankProfilesSettings.HiddenPropertiesFile,
-                            new JsonSerializerSettings()).GetAwaiter().GetResult());
-                });
-            
             // Set up bank users
             services.AddSingleton(
                 sp =>

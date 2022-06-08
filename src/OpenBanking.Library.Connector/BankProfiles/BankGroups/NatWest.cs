@@ -2,27 +2,48 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
-    public partial class BankProfileDefinitions
+    public enum NatWestBank
     {
-        public BankProfile NatWest { get; }
+        NatWest,
+        RoyalBankOfScotland
+    }
 
-        private BankProfile GetNatWest()
+    public class NatWest : BankGroupBase<NatWestBank>
+    {
+        protected override ConcurrentDictionary<BankProfileEnum, NatWestBank> BankProfileToBank { get; } =
+            new()
+            {
+                [BankProfileEnum.NatWest] = NatWestBank.NatWest,
+                [BankProfileEnum.RoyalBankOfScotland] = NatWestBank.RoyalBankOfScotland
+            };
+
+        public override BankProfile GetBankProfile(
+            BankProfileEnum bankProfileEnum,
+            HiddenPropertiesDictionary hiddenPropertiesDictionary)
         {
+            NatWestBank bank = GetBank(bankProfileEnum);
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.NatWest);
+                hiddenPropertiesDictionary[bankProfileEnum] ??
+                throw new Exception(
+                    $"Hidden properties are required for bank profile {bankProfileEnum} and cannot be found.");
             return new BankProfile(
-                BankProfileEnum.NatWest,
+                bankProfileEnum,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
-                "0015800000jfwxXAAQ", // from https://bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                DynamicClientRegistrationApiVersion
-                    .Version3p2, // from https://www.bankofapis.com/products/natwest-group-open-banking/dynamic-client-registration/documentation/nwb/1.0
+                bank switch
+                {
+                    NatWestBank
+                        .NatWest => "0015800000jfwxXAAQ", // from https://bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                    NatWestBank.RoyalBankOfScotland => bankProfileHiddenProperties.GetRequiredFinancialId(),
+                    _ => throw new ArgumentOutOfRangeException()
+                },
                 null,
                 new PaymentInitiationApi
                 {

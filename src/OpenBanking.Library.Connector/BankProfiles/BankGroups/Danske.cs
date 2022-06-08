@@ -1,30 +1,38 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
-    public partial class BankProfileDefinitions
+    public enum DanskeBank
     {
-        public BankProfile Danske { get; }
+        Danske
+    }
+
+    public class Danske : BankGroupBase<DanskeBank>
+    {
+        protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
+            new()
+            {
+                [BankProfileEnum.Danske] = DanskeBank.Danske
+            };
 
         //See https://developers.danskebank.com/documentation
-
-        private BankProfile GetDanske()
+        public override BankProfile GetBankProfile(
+            BankProfileEnum bankProfileEnum,
+            HiddenPropertiesDictionary hiddenPropertiesDictionary)
         {
-            BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Danske);
+            DanskeBank bank = GetBank(bankProfileEnum);
             return new BankProfile(
-                BankProfileEnum.Danske,
+                bankProfileEnum,
                 "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
                 "0015800000jf7AeAAI", //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
-                DynamicClientRegistrationApiVersion
-                    .Version3p2, // from https://developers.danskebank.com/documentation
                 null,
                 new PaymentInitiationApi
                 {

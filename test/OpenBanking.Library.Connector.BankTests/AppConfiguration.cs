@@ -48,9 +48,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
         public static TSettings GetSettings<TSettings>()
             where TSettings : ISettings<TSettings>, new()
         {
-            var settings = Configuration
-                .GetSection(new TSettings().SettingsGroupName)
-                .Get<TSettings>();
+            TSettings settings =
+                Configuration
+                    .GetSection(new TSettings().SettingsGroupName)
+                    .Get<TSettings>() ??
+                new TSettings();
             return settings;
         }
     }

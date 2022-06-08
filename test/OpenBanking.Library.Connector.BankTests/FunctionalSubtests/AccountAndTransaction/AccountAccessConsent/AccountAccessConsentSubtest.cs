@@ -134,7 +134,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks
             accountAccessConsentResp.Should().NotBeNull();
             accountAccessConsentResp.Warnings.Should().BeNull();
-            accountAccessConsentResp.ExternalApiResponse.Should().NotBeNull();
+            if (testData2.AccountAccessConsentExternalApiId is null)
+            {
+                accountAccessConsentResp.ExternalApiResponse.Should().NotBeNull();
+            }
             Guid accountAccessConsentId = accountAccessConsentResp.Id;
 
             // GET /account access consents/{consentId}
@@ -158,7 +161,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var authContextRequest = new AccountAccessConsentAuthContext
             {
                 AccountAccessConsentId = accountAccessConsentId,
-                Reference = testNameUnique + "_AccountAccessConsent"
+                Reference = testNameUnique + "_AccountAccessConsent",
+                CreatedBy = modifiedBy
             };
             AccountAccessConsentAuthContextCreateResponse authContextResponse =
                 await requestBuilder
@@ -317,7 +321,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 }
 
                 // Delete AccountAccessConsent
-                bool includeExternalApiOperation = testData2.AccountAccessConsentExternalApiId is not null;
+                bool includeExternalApiOperation = testData2.AccountAccessConsentExternalApiId is null;
                 ObjectDeleteResponse accountAccessConsentResp3 = await requestBuilderNew
                     .AccountAndTransaction
                     .AccountAccessConsents

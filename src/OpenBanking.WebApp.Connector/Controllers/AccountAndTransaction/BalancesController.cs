@@ -46,6 +46,9 @@ public class BalancesController : ControllerBase
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Support pass-through of all query parameters
+        string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+
         // Operation
         BalancesResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -53,8 +56,9 @@ public class BalancesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                modifiedBy: modifiedBy,
-                requestUrlWithoutQuery: requestUrlWithoutQuery);
+                queryString,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

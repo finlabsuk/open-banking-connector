@@ -28,7 +28,7 @@ public class ConsentAuth
     public static IBankProfileUiMethods GetUiMethods(BankProfileEnum bankProfileEnum) =>
         bankProfileEnum switch
         {
-            BankProfileEnum.Modelo => new Modelo(),
+            BankProfileEnum.Obie_Modelo => new Modelo(),
             BankProfileEnum.NatWest => new NatWest(),
             BankProfileEnum.RoyalBankOfScotland => new RoyalBankOfScotland(),
             BankProfileEnum.Hsbc_Sandbox => new Hsbc(),

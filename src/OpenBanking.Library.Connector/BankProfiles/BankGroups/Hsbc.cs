@@ -2,9 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
@@ -13,55 +13,82 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
     public enum HsbcBank
     {
+        FirstDirect,
         Sandbox,
+        UkBusiness,
+        UkKinetic,
         UkPersonal
     }
 
-    public class Hsbc
+    public class Hsbc : BankGroupBase<HsbcBank>
     {
-        public BankProfile GetBankProfile(
-            HsbcBank bank,
-            BankProfileHiddenPropertiesDictionary hiddenPropertiesDictionary)
-        {
-            BankProfileEnum bankProfileEnum = bank switch
+        protected override ConcurrentDictionary<BankProfileEnum, HsbcBank> BankProfileToBank { get; } =
+            new()
             {
-                HsbcBank.Sandbox => BankProfileEnum.Hsbc_Sandbox,
-                HsbcBank.UkPersonal => BankProfileEnum.Hsbc_UkPersonal,
-                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                [BankProfileEnum.Hsbc_FirstDirect] = HsbcBank.FirstDirect,
+                [BankProfileEnum.Hsbc_Sandbox] = HsbcBank.Sandbox,
+                [BankProfileEnum.Hsbc_UkBusiness] = HsbcBank.UkBusiness,
+                [BankProfileEnum.Hsbc_UkKinetic] = HsbcBank.UkKinetic,
+                [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal
             };
 
+        public override BankProfile GetBankProfile(
+            BankProfileEnum bankProfileEnum,
+            HiddenPropertiesDictionary hiddenPropertiesDictionary)
+        {
+            HsbcBank bank = GetBank(bankProfileEnum);
             BankProfileHiddenProperties bankProfileHiddenProperties =
                 hiddenPropertiesDictionary[bankProfileEnum] ??
                 throw new Exception(
                     $"Hidden properties are required for bank profile {bankProfileEnum} and cannot be found.");
-
+            (string issuerUrl, string accountAndTransactionApiBaseUrl) = bank switch
+            {
+                HsbcBank.FirstDirect => (
+                    // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/915047304/Implementation+Guide+first+direct
+                    "https://api.ob.firstdirect.com",
+                    "https://api.ob.firstdirect.com/obie/open-banking/v3.1/aisp"),
+                HsbcBank.Sandbox => (
+                    bankProfileHiddenProperties.GetRequiredIssuerUrl(),
+                    bankProfileHiddenProperties.GetRequiredAccountAndTransactionApiBaseUrl()),
+                HsbcBank.UkBusiness => (
+                    // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1059489023/Implementation+Guide+HSBC+Business
+                    "https://api.ob.business.hsbc.co.uk",
+                    "https://api.ob.business.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
+                HsbcBank.UkKinetic => (
+                    // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
+                    "https://api.ob.hsbckinetic.co.uk",
+                    "https://api.ob.hsbckinetic.com/obie/open-banking/v3.1/aisp"),
+                HsbcBank.UkPersonal => (
+                    // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
+                    "https://api.ob.hsbc.co.uk",
+                    "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
+                _ => throw new ArgumentOutOfRangeException()
+            };
             return new BankProfile(
                 bankProfileEnum,
-                bankProfileHiddenProperties.GetRequiredIssuerUrl(),
+                issuerUrl,
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 new AccountAndTransactionApi
                 {
                     AccountAndTransactionApiVersion = bankProfileHiddenProperties
                         .GetRequiredAccountAndTransactionApiVersion(),
-                    BaseUrl = bankProfileHiddenProperties
-                        .GetRequiredAccountAndTransactionApiBaseUrl()
+                    BaseUrl = accountAndTransactionApiBaseUrl
                 },
                 null,
                 null,
-                bankProfileEnum is not BankProfileEnum.Hsbc_Sandbox)
+                bank is not HsbcBank.Sandbox)
             {
                 CustomBehaviour = new CustomBehaviourClass
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
                         ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
-                        AudClaim = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                        AudClaim = bank is HsbcBank.Sandbox
                             ? bankProfileHiddenProperties.GetAdditionalProperty1()
-                            : bankProfileHiddenProperties.GetRequiredIssuerUrl(),
+                            : issuerUrl,
                         UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                     },
-                    AccountAccessConsentAuthGet = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                    AccountAccessConsentAuthGet = bank is HsbcBank.Sandbox
                         ? new ConsentAuthGetCustomBehaviour
                         {
                             AudClaim = bankProfileHiddenProperties.GetAdditionalProperty1(),
@@ -85,7 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                             externalApiRequest.Data.Permissions.Remove(element);
                         }
 
-                        if (bankProfileEnum is BankProfileEnum.Hsbc_Sandbox)
+                        if (bank is HsbcBank.Sandbox)
                         {
                             externalApiRequest.Data.ExpirationDateTime = DateTimeOffset.UtcNow.AddDays(89);
                         }
@@ -93,7 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                         return externalApiRequest;
                     }
                 },
-                DefaultResponseMode = bankProfileEnum is BankProfileEnum.Hsbc_Sandbox
+                DefaultResponseMode = bank is HsbcBank.Sandbox
                     ? OAuth2ResponseMode.Query
                     : OAuth2ResponseMode.Fragment
             };

@@ -6,10 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public partial class BankProfileDefinitions
+    public partial class BankProfileDefinitions2
     {
-        public BankProfile Santander { get; }
-
         private BankProfile GetSantander()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
@@ -18,7 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Santander,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 null,
                 new PaymentInitiationApi
                 {

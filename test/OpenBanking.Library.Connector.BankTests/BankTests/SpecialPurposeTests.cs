@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // GET bank (example: NatWest)
             IQueryable<BankResponse> bankResp = await requestBuilder.BankConfiguration
                 .Banks
-                .ReadLocalAsync(x => x.FinancialId == bankProfileDefinitions.NatWest.FinancialId);
+                .ReadLocalAsync(x => x.FinancialId == bankProfileDefinitions.GetBankProfile(BankProfileEnum.NatWest).FinancialId);
             //bankResp.Messages.Should().BeEmpty();
             BankResponse bank = bankResp.Single();
 

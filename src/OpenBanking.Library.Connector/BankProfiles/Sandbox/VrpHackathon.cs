@@ -6,10 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public partial class BankProfileDefinitions
+    public partial class BankProfileDefinitions2
     {
-        public BankProfile VrpHackathon { get; }
-
         private BankProfile GetVrpHackathon()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
@@ -18,7 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.VrpHackathon,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 null,
                 null,
                 new VariableRecurringPaymentsApi

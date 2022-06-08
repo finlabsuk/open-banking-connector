@@ -9,22 +9,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public interface IBankProfileDefinitions
-    {
-        BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
-    }
 
-    public class BankProfileDefinitionsStub : IBankProfileDefinitions
+    public partial class BankProfileDefinitions2
     {
-        public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum)
+        
+        private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
         {
             throw new NotImplementedException();
         }
-    }
-
-    public partial class BankProfileDefinitions : IBankProfileDefinitions
-    {
-        public BankProfile Nationwide { get; }
 
         private BankProfile GetNationwide()
         {
@@ -34,8 +26,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.Nationwide,
                 "https://apionline.obtpp.nationwideinterfaces.io/open-banking", // from https://developer.nationwide.co.uk/open-banking/faqs
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                DynamicClientRegistrationApiVersion
-                    .Version3p3, // from https://developer.nationwide.co.uk/dcr-33-tech-implementation-guidance
                 null,
                 new PaymentInitiationApi
                 {
@@ -48,6 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 null,
                 false)
             {
+                DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3, // from https://developer.nationwide.co.uk/dcr-33-tech-implementation-guidance
                 CustomBehaviour = new CustomBehaviourClass
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour

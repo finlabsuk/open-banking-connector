@@ -78,20 +78,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             BankProfileEnum bankProfileEnum,
             string? issuerUrl,
             string financialId,
-            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
             AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
             VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
             bool supportsSca)
         {
             BankProfileEnum = bankProfileEnum;
-            IssuerUrl = issuerUrl ?? throw new ArgumentNullException(nameof(issuerUrl));
+            IssuerUrl = issuerUrl;
             FinancialId = financialId ?? throw new ArgumentNullException(nameof(financialId));
             AccountAndTransactionApi = accountAndTransactionApi;
             PaymentInitiationApi = paymentInitiationApi;
             VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
             SupportsSca = supportsSca;
-            DynamicClientRegistrationApiVersion = dynamicClientRegistrationApiVersion;
         }
 
         /// <summary>
@@ -112,7 +110,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Client Registration (DCR) API version.
         /// </summary>
-        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; }
+        public DynamicClientRegistrationApiVersion DynamicClientRegistrationApiVersion { get; set; } =
+            DynamicClientRegistrationApiVersion.Version3p2;
 
         /// <summary>
         ///     Account and Transaction (AISP) API version. May be null where API not supported or used/tested.

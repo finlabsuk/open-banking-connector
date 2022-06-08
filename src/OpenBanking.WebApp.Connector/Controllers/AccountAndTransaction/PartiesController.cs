@@ -46,6 +46,9 @@ public class PartiesController : ControllerBase
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Support pass-through of all query parameters
+        string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+
         // Operation
         PartiesResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -53,8 +56,9 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                modifiedBy: modifiedBy,
-                requestUrlWithoutQuery: requestUrlWithoutQuery);
+                queryString,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }
@@ -81,6 +85,9 @@ public class PartiesController : ControllerBase
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Support pass-through of all query parameters
+        string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+
         // Operation
         Parties2Response fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -88,8 +95,9 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                modifiedBy: modifiedBy,
-                requestUrlWithoutQuery: requestUrlWithoutQuery);
+                queryString,
+                modifiedBy,
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

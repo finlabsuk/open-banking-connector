@@ -22,7 +22,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     /// </summary>
     public class PaymentInitiationApiHiddenProperties
     {
-        public PaymentInitiationApiVersion? PaymentInitiationApiVersion { get; set; }
+        public PaymentInitiationApiVersion? ApiVersion { get; set; }
 
         public string? BaseUrl { get; set; }
     }
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     /// </summary>
     public class VariableRecurringPaymentsApiHiddenProperties
     {
-        public VariableRecurringPaymentsApiVersion? VariableRecurringPaymentsApiVersion { get; set; }
+        public VariableRecurringPaymentsApiVersion? ApiVersion { get; set; }
 
         public string? BaseUrl { get; set; }
     }
@@ -50,15 +50,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
 
         public DynamicClientRegistrationApiVersion? DefaultClientRegistrationApiVersion { get; set; }
 
-        public AccountAndTransactionApiHiddenProperties? DefaultAccountAndTransactionApi { get; set; }
+        public AccountAndTransactionApiHiddenProperties? AccountAndTransactionApi { get; set; }
 
-        public PaymentInitiationApiHiddenProperties? DefaultPaymentInitiationApi { get; set; }
+        public PaymentInitiationApiHiddenProperties? PaymentInitiationApi { get; set; }
 
-        public VariableRecurringPaymentsApiHiddenProperties? DefaultVariableRecurringPaymentsApi { get; set; }
+        public VariableRecurringPaymentsApiHiddenProperties? VariableRecurringPaymentsApi { get; set; }
 
-        public string? AdditionalProperty1 { get; set; }
+        public string? Extra1 { get; set; }
 
-        public string? AdditionalProperty2 { get; set; }
+        public string? Extra2 { get; set; }
 
         public string? AdditionalProperty3 { get; set; }
 
@@ -78,31 +78,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             DefaultClientRegistrationApiVersion ?? throw new Exception("No ClientRegistrationApiVersion");
 
         public AccountAndTransactionApiVersion GetRequiredAccountAndTransactionApiVersion() =>
-            DefaultAccountAndTransactionApi?.ApiVersion ??
+            AccountAndTransactionApi?.ApiVersion ??
             throw new Exception("No AISP API version");
 
         public string GetRequiredAccountAndTransactionApiBaseUrl() =>
-            DefaultAccountAndTransactionApi?.BaseUrl ?? throw new Exception("No AISP base URL");
+            AccountAndTransactionApi?.BaseUrl ?? throw new Exception("No AISP base URL");
 
         public PaymentInitiationApiVersion GetRequiredPaymentInitiationApiVersion() =>
-            DefaultPaymentInitiationApi?.PaymentInitiationApiVersion ??
+            PaymentInitiationApi?.ApiVersion ??
             throw new Exception("No PISP API version");
 
         public string GetRequiredPaymentInitiationApiBaseUrl() =>
-            DefaultPaymentInitiationApi?.BaseUrl ?? throw new Exception("No PISP base URL");
+            PaymentInitiationApi?.BaseUrl ?? throw new Exception("No PISP base URL");
 
         public VariableRecurringPaymentsApiVersion GetRequiredVariableRecurringPaymentsApiVersion() =>
-            DefaultVariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+            VariableRecurringPaymentsApi?.ApiVersion ??
             throw new Exception("No VRP API version");
 
         public string GetRequiredVariableRecurringPaymentsApiBaseUrl() =>
-            DefaultVariableRecurringPaymentsApi?.BaseUrl ?? throw new Exception("No VRP base URL");
+            VariableRecurringPaymentsApi?.BaseUrl ?? throw new Exception("No VRP base URL");
 
         public string GetAdditionalProperty1() =>
-            AdditionalProperty1 ?? throw new Exception($"Hidden property not found: {AdditionalProperty1}");
+            Extra1 ?? throw new Exception($"Hidden property not found: {Extra1}");
 
         public string GetAdditionalProperty2() =>
-            AdditionalProperty2 ?? throw new Exception($"Hidden property not found: {AdditionalProperty2}");
+            Extra2 ?? throw new Exception($"Hidden property not found: {Extra2}");
 
         public string GetAdditionalProperty3() =>
             AdditionalProperty3 ?? throw new Exception($"Hidden property not found: {AdditionalProperty3}");

@@ -1,26 +1,39 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
-    public partial class BankProfileDefinitions
+    public enum MonzoBank
     {
-        public BankProfile Monzo { get; }
+        Monzo
+    }
 
-        private BankProfile GetMonzo()
+    public class Monzo : BankGroupBase<MonzoBank>
+    {
+        protected override ConcurrentDictionary<BankProfileEnum, MonzoBank> BankProfileToBank { get; } =
+            new()
+            {
+                [BankProfileEnum.Monzo] = MonzoBank.Monzo
+            };
+
+        public override BankProfile GetBankProfile(
+            BankProfileEnum bankProfileEnum,
+            HiddenPropertiesDictionary hiddenPropertiesDictionary)
         {
+            MonzoBank bank = GetBank(bankProfileEnum);
             BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Monzo);
+                hiddenPropertiesDictionary[bankProfileEnum] ??
+                throw new Exception(
+                    $"Hidden properties are required for bank profile {bankProfileEnum} and cannot be found.");
             return new BankProfile(
-                BankProfileEnum.Monzo,
+                bankProfileEnum,
                 "https://api.s101.nonprod-ffs.io/open-banking/", //from https://docs.monzo.com/#well-known-endpoints
                 bankProfileHiddenProperties.GetRequiredFinancialId(),
-                DynamicClientRegistrationApiVersion
-                    .Version3p2, // from https://docs.monzo.com/#dynamic-client-registration60
                 null,
                 new PaymentInitiationApi
                 {

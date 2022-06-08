@@ -5,10 +5,12 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -255,7 +257,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
                 new ApiClient(new ConsoleInstrumentationClient(), httpClient),
                 softwareStatementProfilesRepository,
                 new DbService(dB),
-                new BankProfileDefinitions(new BankProfileHiddenPropertiesDictionary()));
+                new BankProfileDefinitions(
+                    new DefaultSettingsProvider<BankProfilesSettings>(new BankProfilesSettings())));
 
             return requestBuilder;
         }

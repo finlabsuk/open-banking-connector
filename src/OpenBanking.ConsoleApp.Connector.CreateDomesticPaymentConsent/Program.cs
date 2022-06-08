@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -44,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             IRequestBuilder requestBuilder = scopedRequestBuilder.RequestBuilder;
 
             // Create bank configuration
-            BankProfile bankProfile = bankProfileDefinitions.Modelo;
+            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(BankProfileEnum.Obie_Modelo);
             string demoNameUnique = "Demo" + Guid.NewGuid();
             (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationMethods.Create(
@@ -52,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     null,
                     RegistrationScopeEnum.All,
                     requestBuilder,
-                    bankProfileDefinitions.Modelo,
+                    bankProfileDefinitions.GetBankProfile(BankProfileEnum.Obie_Modelo),
                     demoNameUnique);
 
             // Create bank API information

@@ -1,32 +1,41 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
-using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
-    public partial class BankProfileDefinitions
+    public enum LloydsBank
     {
-        public BankProfile Lloyds { get; }
+        Lloyds
+    }
 
-        // See https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/LBG_Sandbox_Developers_Guide_V403.pdf
-        // which includes:
-        // API discovery endpoint (section 2.4): https://rs.aspsp.sandbox.lloydsbanking.com/open-banking/discover
+    // See https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/LBG_Sandbox_Developers_Guide_V403.pdf
+    // which includes:
+    // API discovery endpoint (section 2.4): https://rs.aspsp.sandbox.lloydsbanking.com/open-banking/discover
+    public class Lloyds : BankGroupBase<LloydsBank>
+    {
+        protected override ConcurrentDictionary<BankProfileEnum, LloydsBank> BankProfileToBank { get; } =
+            new()
+            {
+                [BankProfileEnum.Lloyds] = LloydsBank.Lloyds
+            };
 
-        private BankProfile GetLloyds()
+        public override BankProfile GetBankProfile(
+            BankProfileEnum bankProfileEnum,
+            HiddenPropertiesDictionary hiddenPropertiesDictionary)
         {
-            BankProfileHiddenProperties bankProfileHiddenProperties =
-                GetRequiredBankProfileHiddenProperties(BankProfileEnum.Lloyds);
+            LloydsBank bank = GetBank(bankProfileEnum);
             return new BankProfile(
-                BankProfileEnum.Lloyds,
+                bankProfileEnum,
                 "https://as.aspsp.sandbox.lloydsbanking.com/oauth2", // from API discovery endpoint
                 "0015800000jf9GgAAI", // from API discovery endpoint
-                bankProfileHiddenProperties.GetRequiredClientRegistrationApiVersion(),
                 null,
                 new PaymentInitiationApi
                 {
@@ -43,11 +52,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
                         GrantTypesClaim =
-                            new List<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>
+                            new List<OBRegistrationProperties1grantTypesItemEnum>
                             {
-                                ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                OBRegistrationProperties1grantTypesItemEnum
                                     .ClientCredentials,
-                                ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum
+                                OBRegistrationProperties1grantTypesItemEnum
                                     .AuthorizationCode
                             },
                         SubjectTypeClaim = "pairwise"

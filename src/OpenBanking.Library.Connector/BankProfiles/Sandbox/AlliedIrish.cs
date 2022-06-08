@@ -3,16 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
 {
-    public partial class BankProfileDefinitions
+    public partial class BankProfileDefinitions2
     {
-        public BankProfile AlliedIrish { get; }
-
         private BankProfile GetAlliedIrish()
         {
             BankProfileHiddenProperties bankProfileHiddenProperties =
@@ -21,8 +18,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox
                 BankProfileEnum.AlliedIrish,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
                 "0015800000jf9VgAAI", //from https://developer.aibgb.co.uk/sandbox-for-api-testing-gb
-                DynamicClientRegistrationApiVersion
-                    .Version3p2, //from https://developer.aibgb.co.uk/dynamic-client-registration-api-v3-2-gb/apis
                 null,
                 new PaymentInitiationApi
                 {
