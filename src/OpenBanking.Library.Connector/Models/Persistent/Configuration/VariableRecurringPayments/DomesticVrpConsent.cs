@@ -23,27 +23,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             base.Configure(builder);
 
             // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.Id)
-                .HasColumnOrder(1);
-            builder.Property(e => e.BankRegistrationId)
-                .HasColumnOrder(2)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.VariableRecurringPaymentsApiId)
-                .HasColumnOrder(3)
+                .HasColumnOrder(10)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.ExternalApiId)
-                .HasColumnOrder(4)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property("_accessTokenAccessToken")
-                .HasColumnOrder(5);
-            builder.Property("_accessTokenExpiresIn")
-                .HasColumnOrder(6);
-            builder.Property("_accessTokenRefreshToken")
-                .HasColumnOrder(7);
-            builder.Property("_accessTokenModified")
-                .HasColumnOrder(8);
-            builder.Property("_accessTokenModifiedBy")
-                .HasColumnOrder(9);
         }
     }
 }

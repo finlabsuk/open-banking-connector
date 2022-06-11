@@ -28,12 +28,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? createdBy,
             string? accessTokenAccessToken,
             int accessTokenExpiresIn,
-            string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy,
+            string? accessTokenRefreshToken,
             Guid bankRegistrationId,
-            Guid accountAndTransactionApiId,
-            string externalApiId) : base(
+            string externalApiId,
+            string? nonce,
+            DateTimeOffset nonceModified,
+            string? nonceModifiedBy,
+            Guid accountAndTransactionApiId) : base(
             id,
             reference,
             isDeleted,
@@ -43,17 +46,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             createdBy,
             accessTokenAccessToken,
             accessTokenExpiresIn,
-            accessTokenRefreshToken,
             accessTokenModified,
-            accessTokenModifiedBy)
+            accessTokenModifiedBy,
+            accessTokenRefreshToken,
+            bankRegistrationId,
+            externalApiId,
+            nonce,
+            nonceModified,
+            nonceModifiedBy)
         {
-            BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
-            ExternalApiId = externalApiId;
         }
-
-        [ForeignKey("BankRegistrationId")]
-        public BankRegistration BankRegistrationNavigation { get; set; } = null!;
 
         [ForeignKey("AccountAndTransactionApiId")]
         public AccountAndTransactionApiEntity AccountAndTransactionApiNavigation { get; set; } = null!;
@@ -62,20 +65,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             new List<AccountAccessConsentAuthContext>();
 
         /// <summary>
-        ///     Associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
-
-        /// <summary>
         ///     Associated AccountAndTransactionApi object
         /// </summary>
         public Guid AccountAndTransactionApiId { get; }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
     internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentResponse>

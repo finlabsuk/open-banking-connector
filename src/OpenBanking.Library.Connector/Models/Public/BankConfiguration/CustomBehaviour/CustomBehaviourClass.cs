@@ -10,6 +10,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class CustomBehaviourClass
     {
+        public JwksGetCustomBehaviour? JwksGet { get; set; }
+        public GrantPostCustomBehaviour? GrantPost { get; set; }
         public OpenIdConfigurationGetCustomBehaviour? OpenIdConfigurationGet { get; set; }
         public BankRegistrationPostCustomBehaviour? BankRegistrationPost { get; set; }
         public ConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }

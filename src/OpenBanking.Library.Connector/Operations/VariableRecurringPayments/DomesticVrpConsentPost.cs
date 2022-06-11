@@ -41,6 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
+            IGrantPost grantPost,
             IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> bankApiSetMethods,
             IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
@@ -48,7 +49,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper)
+            mapper,
+            grantPost)
         {
             _bankApiSetMethods = bankApiSetMethods;
             _bankRegistrationMethods = bankRegistrationMethods;
@@ -77,12 +79,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 request.CreatedBy,
                 null,
                 0,
+                utcNow,
+                request.CreatedBy,
+                null,
+                request.BankRegistrationId,
+                externalApiId,
                 null,
                 utcNow,
                 request.CreatedBy,
-                request.BankRegistrationId,
-                request.VariableRecurringPaymentsApiId,
-                externalApiId);
+                request.VariableRecurringPaymentsApiId);
 
             AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
             if (accessToken is not null)

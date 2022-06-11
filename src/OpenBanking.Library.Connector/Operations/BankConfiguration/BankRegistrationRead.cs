@@ -5,7 +5,6 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -36,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         BankRegistrationRead : BaseRead<BankRegistrationPersisted, BankRegistrationResponse, BankRegistrationReadParams>
     {
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IGrantPost _grantPost;
         private readonly IApiVariantMapper _mapper;
 
         public BankRegistrationRead(
@@ -45,7 +45,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileDefinitions bankProfileDefinitions,
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -54,6 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         {
             _mapper = mapper;
             _bankProfileDefinitions = bankProfileDefinitions;
+            _grantPost = grantPost;
         }
 
         protected override async
@@ -114,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 string accessToken = useRegistrationAccessTokenValue
                     ? entity.ExternalApiObject.RegistrationAccessToken ??
                       throw new InvalidOperationException("No registration access token available")
-                    : (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                    : (await _grantPost.PostClientCredentialsGrantAsync(
                         null,
                         processedSoftwareStatementProfile,
                         entity,

@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using DomesticPaymentOperations =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation.DomesticPayment;
 using DomesticPaymentConsentPersisted =
@@ -50,7 +52,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider);
+                    _sharedContext.TimeProvider,
+                    new GrantPost(_sharedContext.ApiClient),
+                    new AuthContextAccessTokenGet(
+                        _sharedContext.SoftwareStatementProfileCachedRepo,
+                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                        _sharedContext.TimeProvider,
+                        new GrantPost(_sharedContext.ApiClient)));
                 return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
                     domesticPayment,
                     domesticPayment);

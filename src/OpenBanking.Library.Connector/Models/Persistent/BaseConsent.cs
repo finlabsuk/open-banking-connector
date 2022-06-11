@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
 {
@@ -33,7 +34,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string? ModifiedBy { get; }
     }
 
-
     /// <summary>
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
@@ -63,6 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         [Column("access_token_refresh_token")]
         private string? _accessTokenRefreshToken;
 
+
         public BaseConsent(
             Guid id,
             string? reference,
@@ -73,9 +74,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? createdBy,
             string? accessTokenAccessToken,
             int accessTokenExpiresIn,
-            string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
-            string? accessTokenModifiedBy) : base(
+            string? accessTokenModifiedBy,
+            string? accessTokenRefreshToken,
+            Guid bankRegistrationId,
+            string externalApiId,
+            string? nonce,
+            DateTimeOffset nonceModified,
+            string? nonceModifiedBy) : base(
             id,
             reference,
             isDeleted,
@@ -86,10 +92,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         {
             _accessTokenAccessToken = accessTokenAccessToken;
             _accessTokenExpiresIn = accessTokenExpiresIn;
-            _accessTokenRefreshToken = accessTokenRefreshToken;
             _accessTokenModified = accessTokenModified;
             _accessTokenModifiedBy = accessTokenModifiedBy;
+            _accessTokenRefreshToken = accessTokenRefreshToken;
+            BankRegistrationId = bankRegistrationId;
+            ExternalApiId = externalApiId;
+            Nonce = nonce;
+            NonceModified = nonceModified;
+            NonceModifiedBy = nonceModifiedBy;
         }
+
+
+        [ForeignKey("BankRegistrationId")]
+        public BankRegistration BankRegistrationNavigation { get; set; } = null!;
+
+        /// <summary>
+        ///     Associated BankRegistration object
+        /// </summary>
+        public Guid BankRegistrationId { get; }
+
+        /// <summary>
+        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+        /// </summary>
+        public string ExternalApiId { get; }
+
+        /// <summary>
+        ///     OpenID Connect "nonce". This is mutable as re-auth will generate a new value.
+        /// </summary>
+        public string? Nonce { get; private set; }
+
+        public DateTimeOffset NonceModified { get; private set; }
+
+        public string? NonceModifiedBy { get; private set; }
 
         public AccessToken? AccessToken => _accessTokenAccessToken switch
         {
@@ -103,8 +138,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                     _accessTokenModifiedBy)
         };
 
+        public void UpdateNonce(string nonce, DateTimeOffset modified, string? modifiedBy)
+        {
+            Nonce = nonce;
+            NonceModified = modified;
+            NonceModifiedBy = modifiedBy;
+        }
+
         public void UpdateAccessToken(
-            string? accessTokenValue,
+            string accessTokenValue,
             int accessTokenExpiresIn,
             string? accessTokenRefreshToken,
             DateTimeOffset modified,

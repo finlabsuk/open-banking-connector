@@ -11,19 +11,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
     internal static class OAuth2RequestObjectClaimsFactory
     {
         public static OAuth2RequestObjectClaims CreateOAuth2RequestObjectClaims(
-            string externalApiId,
+            string clientExternalApiId,
             ConsentAuthGetCustomBehaviour? consentAuthGet,
             string redirectUrl,
             string[] scope,
             string externalApiConsentId,
             string consentAuthGetAudClaim,
             bool supportsSca,
-            string state)
+            string state,
+            string nonce)
         {
             var oAuth2RequestObjectClaims = new OAuth2RequestObjectClaims
             {
-                Iss = consentAuthGet?.IssClaim ??
-                      externalApiId,
+                Iss = clientExternalApiId,
                 Iat = DateTimeOffset.Now,
                 Nbf = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddMinutes(30),
@@ -31,7 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                 Jti = Guid.NewGuid().ToString(),
                 ResponseType = "code id_token",
                 //ResponseMode = "fragment",
-                ClientId = externalApiId,
+                ClientId = clientExternalApiId,
                 RedirectUri = redirectUrl,
                 Scope = scope.JoinString(" "),
                 MaxAge = 86400,
@@ -39,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi
                     externalApiConsentId,
                     consentAuthGet?.ConsentIdClaimPrefix,
                     supportsSca),
-                State = state
+                State = state,
+                Nonce = nonce
             };
 
             return oAuth2RequestObjectClaims;

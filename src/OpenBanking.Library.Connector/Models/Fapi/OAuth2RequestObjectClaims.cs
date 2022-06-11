@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using Newtonsoft.Json;
 
@@ -74,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public OAuth2RequestObjectInnerClaims Claims { get; set; } = null!;
 
         [JsonProperty("nonce")]
-        public string Nonce { get; set; } = Guid.NewGuid().ToString();
+        public string Nonce { get; set; } = null!;
 
         [JsonProperty("state")]
         public string State { get; set; } = null!;

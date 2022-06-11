@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
@@ -46,14 +47,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
-                sharedContext.BankProfileDefinitions);
+                sharedContext.BankProfileDefinitions,
+                new GrantPost(sharedContext.ApiClient));
             DeleteObject = new BankRegistrationDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.BankProfileDefinitions);
+                sharedContext.BankProfileDefinitions,
+                new GrantPost(sharedContext.ApiClient));
             CreateObject = new BankRegistrationPost(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -61,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
-                sharedContext.ApiClient,
+                new OpenIdConfigurationRead(sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
                 sharedContext.BankProfileDefinitions);
         }

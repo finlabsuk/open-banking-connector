@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.Bank;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
@@ -75,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation,
                     _sharedContext.BankProfileDefinitions,
-                    _sharedContext.ApiClient));
+                    new OpenIdConfigurationRead(_sharedContext.ApiClient)));
 
         public IBankRegistrationsContext
             BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);

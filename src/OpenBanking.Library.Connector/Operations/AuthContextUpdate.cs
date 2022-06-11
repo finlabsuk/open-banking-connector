@@ -29,11 +29,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<AuthContext>
             _authContextMethods;
 
+        private readonly IOpenIdConfigurationRead _configurationRead;
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+        private readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
-
 
         public AuthContextUpdate(
             IDbSaveChangesMethod dbSaveChangesMethod,
@@ -41,13 +42,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<AuthContext>
                 authContextMethods,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient)
+            IInstrumentationClient instrumentationClient,
+            IOpenIdConfigurationRead configurationRead,
+            IGrantPost grantPost)
         {
             _dbSaveChangesMethod = dbSaveChangesMethod;
             _timeProvider = timeProvider;
             _authContextMethods = authContextMethods;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _instrumentationClient = instrumentationClient;
+            _configurationRead = configurationRead;
+            _grantPost = grantPost;
         }
 
         public async
@@ -63,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
-            // Load relevant data
+            // Read auth context etc from DB
             var authContextId = new Guid(request.RedirectData.State);
             AuthContext authContext =
                 _authContextMethods
@@ -79,28 +84,71 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                             .BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefault(x => x.Id == authContextId) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
+            string nonce = authContext.Nonce;
 
             // Get consent info
-            (ConsentType consentType, BaseConsent consent, Guid consentId, BankRegistration bankRegistration) =
+            (ConsentType consentType, Guid consentId, string externalApiConsentId, BaseConsent consent,
+                    BankRegistration bankRegistration, string? requestObjectAudClaim) =
                 authContext switch
                 {
                     AccountAccessConsentAuthContext ac => (
                         ConsentType.AccountAccessConsent,
-                        ac.AccountAccessConsentNavigation,
                         ac.AccountAccessConsentId,
-                        ac.AccountAccessConsentNavigation.BankRegistrationNavigation),
+                        ac.AccountAccessConsentNavigation.ExternalApiId,
+                        ac.AccountAccessConsentNavigation,
+                        ac.AccountAccessConsentNavigation.BankRegistrationNavigation,
+                        ac.AccountAccessConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                            ?.AccountAccessConsentAuthGet
+                            ?.AudClaim),
                     DomesticPaymentConsentAuthContext ac => (
                         ConsentType.DomesticPaymentConsent,
-                        (BaseConsent) ac.DomesticPaymentConsentNavigation,
                         ac.DomesticPaymentConsentId,
-                        ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation),
+                        ac.DomesticPaymentConsentNavigation.ExternalApiId,
+                        (BaseConsent) ac.DomesticPaymentConsentNavigation,
+                        ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
+                        ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                            ?.DomesticPaymentConsentAuthGet
+                            ?.AudClaim),
                     DomesticVrpConsentAuthContext ac => (
                         ConsentType.DomesticVrpConsent,
-                        (BaseConsent) ac.DomesticVrpConsentNavigation,
                         ac.DomesticVrpConsentId,
-                        ac.DomesticVrpConsentNavigation.BankRegistrationNavigation),
+                        ac.DomesticVrpConsentNavigation.ExternalApiId,
+                        (BaseConsent) ac.DomesticVrpConsentNavigation,
+                        ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
+                        ac.DomesticVrpConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                            ?.DomesticVrpConsentAuthGet
+                            ?.AudClaim),
                     _ => throw new ArgumentOutOfRangeException()
                 };
+            string bankIssuerUrl =
+                requestObjectAudClaim ??
+                bankRegistration.BankNavigation.IssuerUrl ??
+                throw new Exception("Cannot determine issuer URL for bank");
+            string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
+
+            // Validate ID token
+            bool doNotValidateIdToken =
+                bankRegistration.BankNavigation.CustomBehaviour?.GrantPost?.DoNotValidateIdToken ?? false;
+            if (doNotValidateIdToken is false)
+            {
+                string jwksUri = bankRegistration.BankNavigation.JwksUri;
+                bool jwksGetResponseHasNoRootProperty =
+                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet?.ResponseHasNoRootProperty ?? false;
+                await _grantPost.ValidateIdTokenAuthEndpoint(
+                    request.RedirectData,
+                    jwksUri,
+                    jwksGetResponseHasNoRootProperty,
+                    bankIssuerUrl,
+                    externalApiClientId,
+                    externalApiConsentId,
+                    nonce,
+                    bankRegistration.BankNavigation.SupportsSca);
+            }
+
+            // if (request.RedirectData.Nonce is not null)
+            // {
+            //     throw new Exception("test");
+            // }
 
             // Only accept redirects within 30 mins of auth context creation
             const int authContextExpiryIntervalInSeconds = 30 * 60;
@@ -122,15 +170,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string redirectUrl =
                 processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             JsonSerializerSettings? jsonSerializerSettings = null;
-            TokenEndpointResponse tokenEndpointResponse =
-                await PostTokenRequest.PostAuthCodeGrantAsync(
+            AuthCodeGrantResponse tokenEndpointResponse =
+                await _grantPost.PostAuthCodeGrantAsync(
                     request.RedirectData.Code,
                     redirectUrl,
+                    bankIssuerUrl,
+                    externalApiClientId,
+                    externalApiConsentId,
+                    nonce,
                     bankRegistration,
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient);
 
-            // Update auth context with token
+            // Update consent with nonce, token
+            consent.UpdateNonce(
+                nonce,
+                _timeProvider.GetUtcNow(),
+                modifiedBy);
             consent.UpdateAccessToken(
                 tokenEndpointResponse.AccessToken,
                 tokenEndpointResponse.ExpiresIn,

@@ -23,6 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string nonce,
             Guid accountAccessConsentId) : base(
             id,
             reference,
@@ -30,7 +31,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy)
+            createdBy,
+            nonce)
         {
             AccountAccessConsentId = accountAccessConsentId;
         }

@@ -31,13 +31,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider) : base(
+            ITimeProvider timeProvider,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet) : base(
             entityMethods,
             instrumentationClient,
             softwareStatementProfileRepo,
             mapper,
             dbSaveChangesMethod,
-            timeProvider) { }
+            timeProvider,
+            grantPost,
+            authContextAccessTokenGet) { }
 
         protected override Uri GetApiRequestUrl(
             string baseUrl,

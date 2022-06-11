@@ -52,6 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         {
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var nonce = Guid.NewGuid().ToString();
             var entity = new AccountAccessConsentAuthContextPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -60,6 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy,
+                nonce,
                 request.AccountAccessConsentId);
 
             // Add entity
@@ -103,6 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 consentAuthGetAudClaim,
                 supportsSca,
                 state,
+                nonce,
                 "accounts",
                 _instrumentationClient);
             var response =

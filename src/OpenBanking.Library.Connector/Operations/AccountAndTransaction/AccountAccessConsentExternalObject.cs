@@ -37,6 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+        protected readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
@@ -48,17 +49,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider)
+            ITimeProvider timeProvider,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet)
         {
             _entityMethods = entityMethods;
             _instrumentationClient = instrumentationClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _mapper = mapper;
             _timeProvider = timeProvider;
-            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
-                softwareStatementProfileRepo,
-                dbSaveChangesMethod,
-                timeProvider);
+            _grantPost = grantPost;
+            _authContextAccessTokenGet = authContextAccessTokenGet;
         }
 
         public async Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -97,9 +98,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token
+            string? requestObjectAudClaim =
+                persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                    ?.AccountAccessConsentAuthGet
+                    ?.AudClaim;
+            string bankIssuerUrl =
+                requestObjectAudClaim ??
+                bankRegistration.BankNavigation.IssuerUrl ??
+                throw new Exception("Cannot determine issuer URL for bank");
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
+                    bankIssuerUrl,
                     bankRegistration,
                     readParams.ModifiedBy);
 

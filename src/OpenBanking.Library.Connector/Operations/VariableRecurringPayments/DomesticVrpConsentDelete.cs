@@ -20,18 +20,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 {
     internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, ConsentDeleteParams>
     {
+        protected readonly IGrantPost _grantPost;
+
         public DomesticVrpConsentDelete(
             IDbReadWriteEntityMethods<DomesticVrpConsent> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileDefinitions bankProfileDefinitions,
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient) { }
+            instrumentationClient)
+        {
+            _grantPost = grantPost;
+        }
 
         protected string RelativePathBeforeId => "/domestic-vrp-consents";
 
@@ -76,8 +82,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
                 // Get client credentials grant token
-                TokenEndpointResponse tokenEndpointResponse =
-                    await PostTokenRequest.PostClientCredentialsGrantAsync(
+                ClientCredentialsGrantResponse tokenEndpointResponse =
+                    await _grantPost.PostClientCredentialsGrantAsync(
                         "payments",
                         processedSoftwareStatementProfile,
                         bankRegistration,

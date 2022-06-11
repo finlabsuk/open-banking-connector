@@ -25,17 +25,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         // JsonConverter to use for scope claim response
         public DelimitedStringConverterOptions? ScopeClaimResponseJsonConverter { get; set; }
 
-        // Overwrite iss claim when true
-        public bool? IssClaimIsSoftwareStatementXFapiFinancialId { get; set; }
-
         // Override aud claim
         public string? AudClaim { get; set; }
 
         // Overwrite subject_type claim
         public string? SubjectTypeClaim { get; set; }
-
-        // Overwrite token_endpoint_auth_signing_alg claim 
-        public string? TokenEndpointAuthSigningAlgClaim { get; set; }
 
         // Override grant_types claim
         public IList<ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum>? GrantTypesClaim

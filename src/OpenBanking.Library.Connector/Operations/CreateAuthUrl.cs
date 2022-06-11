@@ -19,12 +19,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         internal static string Create(
             string externalApiConsentId,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-            string externalApiId,
+            string clientExternalApiId,
             ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
             string authorisationEndpoint,
             string consentAuthGetAudClaim,
             bool supportsSca,
             string state,
+            string nonce,
             string scopeString,
             IInstrumentationClient instrumentationClient)
         {
@@ -33,14 +34,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
                 OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(
-                    externalApiId,
+                    clientExternalApiId,
                     customBehaviourConsentAuthGet,
                     redirectUrl,
                     new[] { "openid", scopeString },
                     externalApiConsentId,
                     consentAuthGetAudClaim,
                     supportsSca,
-                    state);
+                    state,
+                    nonce);
             string requestObjectJwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
                 oAuth2RequestObjectClaims,
@@ -65,12 +67,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             {
                 { "response_type", oAuth2RequestObjectClaims.ResponseType },
                 { "client_id", oAuth2RequestObjectClaims.ClientId },
-                { "redirect_uri", oAuth2RequestObjectClaims.RedirectUri },
+                { "redirect_uri", oAuth2RequestObjectClaims.RedirectUri }, // required by some banks but not by spec
                 { "scope", oAuth2RequestObjectClaims.Scope },
-                { "request", requestObjectJwt },
-                { "nonce", oAuth2RequestObjectClaims.Nonce },
+                { "request", requestObjectJwt }
+                //{ "nonce", oAuth2RequestObjectClaims.Nonce },
                 //{ "response_mode", "fragment"},
-                { "state", oAuth2RequestObjectClaims.State }
+                //{ "state", oAuth2RequestObjectClaims.State }
             };
             string queryString = keyValuePairs.ToUrlEncoded();
             string authUrl = authorisationEndpoint + "?" + queryString;

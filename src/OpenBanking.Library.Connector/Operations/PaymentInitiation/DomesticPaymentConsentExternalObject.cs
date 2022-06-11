@@ -38,11 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
+        protected readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         protected readonly ITimeProvider _timeProvider;
-
 
         public DomesticPaymentConsentExternalObject(
             IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
@@ -50,17 +50,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider)
+            ITimeProvider timeProvider,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet)
         {
             _entityMethods = entityMethods;
             _instrumentationClient = instrumentationClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _mapper = mapper;
             _timeProvider = timeProvider;
-            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
-                softwareStatementProfileRepo,
-                dbSaveChangesMethod,
-                timeProvider);
+            _grantPost = grantPost;
+            _authContextAccessTokenGet = authContextAccessTokenGet;
         }
 
         protected abstract string ClientCredentialsGrantScope { get; }
@@ -104,9 +104,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token
+            string? requestObjectAudClaim =
+                persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                    ?.DomesticPaymentConsentAuthGet
+                    ?.AudClaim;
+            string bankIssuerUrl =
+                requestObjectAudClaim ??
+                bankRegistration.BankNavigation.IssuerUrl ??
+                throw new Exception("Cannot determine issuer URL for bank");
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
+                    bankIssuerUrl,
                     bankRegistration,
                     createdBy);
 
@@ -180,7 +189,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Get access token
             JsonSerializerSettings? jsonSerializerSettings1 = null;
             string accessToken =
-                (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,

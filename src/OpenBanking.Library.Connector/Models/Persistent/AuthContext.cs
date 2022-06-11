@@ -17,13 +17,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             DateTimeOffset isDeletedModified,
             string? isDeletedModifiedBy,
             DateTimeOffset created,
-            string? createdBy) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy) { }
+            string? createdBy,
+            string nonce) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
+        {
+            Nonce = nonce;
+        }
+
+        /// <summary>
+        ///     OpenID Connect "nonce".
+        /// </summary>
+        public string Nonce { get; }
     }
 }

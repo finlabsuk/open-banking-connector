@@ -4,12 +4,8 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
-public class ConsentAuthGetCustomBehaviour
+public class GrantPostCustomBehaviour
 {
-    // Set prefix for consent ID claim(s)
-    public string? ConsentIdClaimPrefix { get; set; }
-
-    // Override aud claim
-    public string? AudClaim { get; set; }
-
+    
+    public bool? DoNotValidateIdToken { get; set; }
 }

@@ -3,10 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -22,8 +20,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 {
     internal class BankPost : LocalEntityPost<Bank, Models.Public.BankConfiguration.Request.Bank, BankResponse>
     {
-        private readonly IApiClient _apiClient;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IOpenIdConfigurationRead _configurationRead;
 
         public BankPost(
             IDbReadWriteEntityMethods<Bank> entityMethods,
@@ -32,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IBankProfileDefinitions bankProfileDefinitions,
-            IApiClient apiClient) : base(
+            IOpenIdConfigurationRead configurationRead) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -40,18 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             instrumentationClient)
         {
             _bankProfileDefinitions = bankProfileDefinitions;
-            _apiClient = apiClient;
-        }
-
-        private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
-        {
-            var uri = new Uri(string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
-
-            return await new HttpRequestBuilder()
-                .SetMethod(HttpMethod.Get)
-                .SetUri(uri)
-                .Create()
-                .RequestJsonAsync<OpenIdConfiguration>(_apiClient);
+            _configurationRead = configurationRead;
         }
 
         protected override async Task<BankResponse> AddEntity(
@@ -131,7 +118,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                OpenIdConfiguration openIdConfiguration = await GetOpenIdConfigurationAsync(issuerUrl);
+                OpenIdConfiguration openIdConfiguration =
+                    await _configurationRead.GetOpenIdConfigurationAsync(issuerUrl);
 
                 // Update OpenID Provider Configuration based on overrides
                 IList<OAuth2ResponseMode>? responseModesSupportedOverride =

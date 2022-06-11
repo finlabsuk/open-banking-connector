@@ -4,7 +4,6 @@
 
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -155,10 +154,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
 
         public string GetOpenIdTokenEndpointResponseJson()
         {
-            var model = new TokenEndpointResponse
+            var model = new ClientCredentialsGrantResponse
             {
                 AccessToken = GetAccessToken(),
-                RefreshToken = "RefreshToken",
                 ExpiresIn = 300,
                 TokenType = "payments"
             };

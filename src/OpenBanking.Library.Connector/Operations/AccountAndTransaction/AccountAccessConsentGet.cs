@@ -34,13 +34,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IApiVariantMapper mapper) : base(
+            IApiVariantMapper mapper,
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper) { }
+            mapper,
+            grantPost) { }
 
         protected string RelativePathBeforeId => "/account-access-consents";
 

@@ -80,6 +80,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
             {
                 CustomBehaviour = new CustomBehaviourClass
                 {
+                    JwksGet = bank is HsbcBank.Sandbox
+                        ? new JwksGetCustomBehaviour
+                        {
+                            ResponseHasNoRootProperty = true
+                        }
+                        : null,
+                    GrantPost = bank is HsbcBank.Sandbox
+                        ? new GrantPostCustomBehaviour
+                        {
+                            DoNotValidateIdToken = true
+                        }
+                        : null,
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
                         ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,

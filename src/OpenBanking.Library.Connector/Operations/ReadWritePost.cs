@@ -29,19 +29,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
+        private readonly IGrantPost _grantPost;
+
         public ReadWritePost(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IApiVariantMapper mapper) : base(
+            IApiVariantMapper mapper,
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper) { }
+            mapper)
+        {
+            _grantPost = grantPost;
+        }
 
         protected abstract string ClientCredentialsGrantScope { get; }
 
@@ -83,7 +89,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                 // Get client credentials grant token
                 string accessTokenNew =
-                    (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                    (await _grantPost.PostClientCredentialsGrantAsync(
                         ClientCredentialsGrantScope,
                         processedSoftwareStatementProfile,
                         bankRegistration,

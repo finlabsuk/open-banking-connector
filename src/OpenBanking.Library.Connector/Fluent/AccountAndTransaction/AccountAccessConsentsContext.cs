@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using AccountAccessConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent;
 using AccountAccessConsentAuthContextRequest =
@@ -62,16 +63,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                sharedContext.BankProfileDefinitions);
+                sharedContext.BankProfileDefinitions,
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             ReadObject = new AccountAccessConsentGet(
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient));
             ReadLocalObject =
                 new LocalEntityRead<AccountAccessConsentPersisted, IAccountAccessConsentPublicQuery,
                     AccountAccessConsentResponse>(
@@ -87,7 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation,
-                    sharedContext.BankProfileDefinitions);
+                    new GrantPost(_sharedContext.ApiClient));
         }
 
         public ILocalEntityContext<AccountAccessConsentAuthContextRequest,

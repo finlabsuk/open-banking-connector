@@ -27,6 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string nonce,
             Guid domesticVrpConsentId) : base(
             id,
             reference,
@@ -34,10 +35,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             isDeletedModified,
             isDeletedModifiedBy,
             created,
-            createdBy)
+            createdBy,
+            nonce)
         {
             DomesticVrpConsentId = domesticVrpConsentId;
         }
+
 
         // Parent consent (optional to avoid warning due to non-support of global query filter)
         [ForeignKey("DomesticVrpConsentId")]

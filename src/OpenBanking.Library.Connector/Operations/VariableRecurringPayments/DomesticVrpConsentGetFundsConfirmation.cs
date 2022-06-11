@@ -38,18 +38,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IApiVariantMapper mapper) : base(
+            IApiVariantMapper mapper,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper)
+            mapper,
+            grantPost)
         {
-            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
-                softwareStatementProfileRepo,
-                dbSaveChangesMethod,
-                timeProvider);
+            _authContextAccessTokenGet = authContextAccessTokenGet;
         }
 
         protected string RelativePathBeforeId => "/domestic-vrp-consents";
@@ -112,9 +112,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             // Get access token
+            string? requestObjectAudClaim =
+                persistedObject.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                    ?.DomesticVrpConsentAuthGet
+                    ?.AudClaim;
+            string bankIssuerUrl =
+                requestObjectAudClaim ??
+                bankRegistration.BankNavigation.IssuerUrl ??
+                throw new Exception("Cannot determine issuer URL for bank");
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedObject,
+                    bankIssuerUrl,
                     bankRegistration,
                     modifiedBy);
 

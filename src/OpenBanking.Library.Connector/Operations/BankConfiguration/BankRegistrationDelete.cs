@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -20,6 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistrationDeleteParams>
     {
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IGrantPost _grantPost;
 
         public BankRegistrationDelete(
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
@@ -27,7 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileDefinitions bankProfileDefinitions,
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
@@ -35,6 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             instrumentationClient)
         {
             _bankProfileDefinitions = bankProfileDefinitions;
+            _grantPost = grantPost;
         }
 
         protected override async
@@ -89,7 +91,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 string accessToken = useRegistrationAccessTokenValue
                     ? entity.ExternalApiObject.RegistrationAccessToken ??
                       throw new InvalidOperationException("No registration access token available")
-                    : (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                    : (await _grantPost.PostClientCredentialsGrantAsync(
                         null,
                         processedSoftwareStatementProfile,
                         entity,

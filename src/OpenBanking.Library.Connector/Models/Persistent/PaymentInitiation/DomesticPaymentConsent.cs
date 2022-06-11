@@ -31,12 +31,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? createdBy,
             string? accessTokenAccessToken,
             int accessTokenExpiresIn,
-            string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy,
+            string? accessTokenRefreshToken,
             Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
-            string externalApiId) : base(
+            string externalApiId,
+            string? nonce,
+            DateTimeOffset nonceModified,
+            string? nonceModifiedBy,
+            Guid paymentInitiationApiId) : base(
             id,
             reference,
             isDeleted,
@@ -46,17 +49,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             createdBy,
             accessTokenAccessToken,
             accessTokenExpiresIn,
-            accessTokenRefreshToken,
             accessTokenModified,
-            accessTokenModifiedBy)
+            accessTokenModifiedBy,
+            accessTokenRefreshToken,
+            bankRegistrationId,
+            externalApiId,
+            nonce,
+            nonceModified,
+            nonceModifiedBy)
         {
-            BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
-            ExternalApiId = externalApiId;
         }
-
-        [ForeignKey("BankRegistrationId")]
-        public BankRegistration BankRegistrationNavigation { get; set; } = null!;
 
         [ForeignKey("PaymentInitiationApiId")]
         public PaymentInitiationApiEntity PaymentInitiationApiNavigation { get; set; } = null!;
@@ -65,20 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             new List<DomesticPaymentConsentAuthContext>();
 
         /// <summary>
-        ///     Associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
-
-        /// <summary>
         ///     Associated PaymentInitiationApi object
         /// </summary>
         public Guid PaymentInitiationApiId { get; }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
     internal partial class DomesticPaymentConsent :

@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FluentValidation;
 using FluentValidation.Results;
 using AuthContextPersisted =
@@ -32,7 +33,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 sharedContext.TimeProvider,
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
                 sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation);
+                sharedContext.Instrumentation,
+                new OpenIdConfigurationRead(sharedContext.ApiClient),
+                new GrantPost(sharedContext.ApiClient));
         }
 
         public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }

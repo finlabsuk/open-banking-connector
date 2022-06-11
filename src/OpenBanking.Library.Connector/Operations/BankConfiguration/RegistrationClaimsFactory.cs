@@ -96,9 +96,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             var registrationClaims =
                 new ClientRegistrationModelsPublic.OBClientRegistration1
                 {
-                    Iss = bankRegistrationPostCustomBehaviour?.IssClaimIsSoftwareStatementXFapiFinancialId ?? false
-                        ? sProfile.SoftwareStatementPayload.OrgId
-                        : sProfile.SoftwareStatementPayload.SoftwareId,
+                    Iss = sProfile.SoftwareStatementPayload.SoftwareId,
                     Iat = DateTimeOffset.Now,
                     Exp = DateTimeOffset.UtcNow.AddMinutes(30),
                     Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??

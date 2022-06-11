@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using DomesticVrpRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
 using DomesticVrpConsentPersisted =
@@ -52,7 +54,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider);
+                    _sharedContext.TimeProvider,
+                    new GrantPost(_sharedContext.ApiClient),
+                    new AuthContextAccessTokenGet(
+                        _sharedContext.SoftwareStatementProfileCachedRepo,
+                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                        _sharedContext.TimeProvider,
+                        new GrantPost(_sharedContext.ApiClient)));
                 return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
                     domesticVrp,
                     domesticVrp);

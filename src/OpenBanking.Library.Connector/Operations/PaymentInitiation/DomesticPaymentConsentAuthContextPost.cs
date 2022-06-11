@@ -51,6 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         {
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var nonce = Guid.NewGuid().ToString();
             var entity = new DomesticPaymentConsentAuthContextPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -59,6 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy,
+                nonce,
                 request.DomesticPaymentConsentId);
 
             // Add entity
@@ -101,6 +103,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 consentAuthGetAudClaim,
                 supportsSca,
                 state,
+                nonce,
                 "payments",
                 _instrumentationClient);
             var response =

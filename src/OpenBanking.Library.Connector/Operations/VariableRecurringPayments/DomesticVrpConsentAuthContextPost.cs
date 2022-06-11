@@ -52,6 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         {
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var nonce = Guid.NewGuid().ToString();
             var entity = new DomesticVrpConsentAuthContextPersisted(
                 Guid.NewGuid(),
                 request.Reference,
@@ -60,6 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy,
+                nonce,
                 request.DomesticVrpConsentId);
 
             // Add entity
@@ -102,6 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 consentAuthGetAudClaim,
                 supportsSca,
                 state,
+                nonce,
                 "payments",
                 _instrumentationClient);
             var response =

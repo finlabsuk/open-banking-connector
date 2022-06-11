@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using DomesticVrpConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
@@ -64,6 +65,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<VariableRecurringPaymentsApiEntity>(),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             ReadObject = new DomesticVrpConsentGet(
@@ -72,14 +74,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient));
             ReadFundsConfirmationObject = new DomesticVrpConsentGetFundsConfirmation(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient),
+                new AuthContextAccessTokenGet(
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    new GrantPost(_sharedContext.ApiClient)));
             ReadLocalObject =
                 new LocalEntityRead<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
                     DomesticVrpConsentBaseResponse>(
@@ -95,7 +104,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     sharedContext.TimeProvider,
                     sharedContext.SoftwareStatementProfileCachedRepo,
                     sharedContext.Instrumentation,
-                    sharedContext.BankProfileDefinitions);
+                    sharedContext.BankProfileDefinitions,
+                    new GrantPost(_sharedContext.ApiClient));
         }
 
         public IObjectRead<DomesticVrpConsentResponse, ConsentReadParams> ReadObject { get; }

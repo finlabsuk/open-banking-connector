@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -20,18 +19,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 {
     internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, ConsentDeleteParams>
     {
+        protected readonly IGrantPost _grantPost;
+
         public AccountAccessConsentDelete(
             IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient) { }
+            instrumentationClient)
+        {
+            _grantPost = grantPost;
+        }
 
         protected string RelativePathBeforeId => "/account-access-consents";
 
@@ -77,8 +81,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
                 // Get client credentials grant token
-                TokenEndpointResponse tokenEndpointResponse =
-                    await PostTokenRequest.PostClientCredentialsGrantAsync(
+                ClientCredentialsGrantResponse tokenEndpointResponse =
+                    await _grantPost.PostClientCredentialsGrantAsync(
                         "accounts",
                         processedSoftwareStatementProfile,
                         bankRegistration,

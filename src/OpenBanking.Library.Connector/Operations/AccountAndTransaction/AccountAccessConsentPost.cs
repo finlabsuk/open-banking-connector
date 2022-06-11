@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -47,19 +46,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
+            IGrantPost grantPost,
             IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> bankApiSetMethods,
-            IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileDefinitions bankProfileDefinitions,
+            IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient,
-            mapper)
+            mapper,
+            grantPost)
         {
             _bankApiSetMethods = bankApiSetMethods;
-            _bankRegistrationMethods = bankRegistrationMethods;
             _bankProfileDefinitions = bankProfileDefinitions;
+            _bankRegistrationMethods = bankRegistrationMethods;
         }
 
         protected override string ClientCredentialsGrantScope => "accounts";
@@ -85,12 +86,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 request.CreatedBy,
                 null,
                 0,
+                utcNow,
+                request.CreatedBy,
+                null,
+                request.BankRegistrationId,
+                externalApiId,
                 null,
                 utcNow,
                 request.CreatedBy,
-                request.BankRegistrationId,
-                request.AccountAndTransactionApiId,
-                externalApiId);
+                request.AccountAndTransactionApiId);
             AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
             if (accessToken is not null)
             {

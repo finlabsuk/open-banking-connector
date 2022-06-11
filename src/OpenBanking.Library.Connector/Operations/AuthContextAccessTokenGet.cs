@@ -17,22 +17,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     internal class AuthContextAccessTokenGet
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+        private readonly IGrantPost _grantPost;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
-        protected readonly ITimeProvider _timeProvider;
-
+        private readonly ITimeProvider _timeProvider;
 
         public AuthContextAccessTokenGet(
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider)
+            ITimeProvider timeProvider,
+            IGrantPost grantPost)
         {
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _dbSaveChangesMethod = dbSaveChangesMethod;
             _timeProvider = timeProvider;
+            _grantPost = grantPost;
         }
 
         public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
             TConsentEntity consent,
+            string bankIssuerUrl,
             BankRegistration bankRegistration,
             string? modifiedBy)
             where TConsentEntity : BaseConsent
@@ -40,7 +43,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Get token
             AccessToken accessToken =
                 consent.AccessToken ??
-                throw new InvalidOperationException("No token is available for Consent.");
+                throw new InvalidOperationException("No access token is available for Consent.");
+            string nonce =
+                consent.Nonce ??
+                throw new InvalidOperationException("No nonce is available for Consent.");
+            string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
             // Calculate token expiry time
             const int tokenEarlyExpiryIntervalInSeconds = 10;
@@ -63,10 +70,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     string redirectUrl =
                         processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
                     JsonSerializerSettings? jsonSerializerSettings = null;
-                    TokenEndpointResponse tokenEndpointResponse =
-                        await PostTokenRequest.PostRefreshTokenGrantAsync(
+                    RefreshTokenGrantResponse tokenEndpointResponse =
+                        await _grantPost.PostRefreshTokenGrantAsync(
                             accessToken.RefreshToken,
                             redirectUrl,
+                            bankIssuerUrl,
+                            externalApiClientId,
+                            consent.ExternalApiId,
+                            nonce,
                             bankRegistration,
                             jsonSerializerSettings,
                             processedSoftwareStatementProfile.ApiClient);

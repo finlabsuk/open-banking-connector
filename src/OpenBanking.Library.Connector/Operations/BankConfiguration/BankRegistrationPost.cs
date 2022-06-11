@@ -5,10 +5,8 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -44,9 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             BankRegistrationRequest, BankRegistrationResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
             ClientRegistrationModelsPublic.OBClientRegistration1Response>
     {
-        private readonly IApiClient _apiClient;
         private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IOpenIdConfigurationRead _configurationRead;
 
         public BankRegistrationPost(
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
@@ -55,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
-            IApiClient apiClient,
+            IOpenIdConfigurationRead configurationRead,
             IDbReadOnlyEntityMethods<Bank> bankMethods,
             IBankProfileDefinitions bankProfileDefinitions) : base(
             entityMethods,
@@ -65,20 +63,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             instrumentationClient,
             mapper)
         {
-            _apiClient = apiClient;
             _bankMethods = bankMethods;
             _bankProfileDefinitions = bankProfileDefinitions;
-        }
-
-        private async Task<OpenIdConfiguration> GetOpenIdConfigurationAsync(string issuerUrl)
-        {
-            var uri = new Uri(string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
-
-            return await new HttpRequestBuilder()
-                .SetMethod(HttpMethod.Get)
-                .SetUri(uri)
-                .Create()
-                .RequestJsonAsync<OpenIdConfiguration>(_apiClient);
+            _configurationRead = configurationRead;
         }
 
         protected override async
@@ -131,14 +118,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             RegistrationScopeEnum registrationScope =
                 requestInfo.Request.RegistrationScope ??
                 processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
-            var registrationScopeIsValidFcn = bankProfile?.BankConfigurationApiSettings.RegistrationScopeIsValid;
+            RegistrationScopeIsValid? registrationScopeIsValidFcn =
+                bankProfile?.BankConfigurationApiSettings.RegistrationScopeIsValid;
             if (registrationScopeIsValidFcn is not null &&
                 !registrationScopeIsValidFcn(registrationScope))
             {
                 throw new InvalidOperationException(
                     "RegistrationScope fails RegistrationScopeIsValid check from BankProfile");
             }
-            
+
             // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
             string? issuerUrl = bank.IssuerUrl;
             OpenIdConfiguration? openIdConfiguration;
@@ -152,7 +140,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                openIdConfiguration = await GetOpenIdConfigurationAsync(issuerUrl);
+                openIdConfiguration = await _configurationRead.GetOpenIdConfigurationAsync(issuerUrl);
 
                 // Update OpenID Provider Configuration based on overrides
                 IList<OAuth2ResponseMode>? responseModesSupportedOverride =

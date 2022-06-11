@@ -31,12 +31,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             string? createdBy,
             string? accessTokenAccessToken,
             int accessTokenExpiresIn,
-            string? accessTokenRefreshToken,
             DateTimeOffset accessTokenModified,
             string? accessTokenModifiedBy,
+            string? accessTokenRefreshToken,
             Guid bankRegistrationId,
-            Guid variableRecurringPaymentsApiId,
-            string externalApiId) : base(
+            string externalApiId,
+            string? nonce,
+            DateTimeOffset nonceModified,
+            string? nonceModifiedBy,
+            Guid variableRecurringPaymentsApiId) : base(
             id,
             reference,
             isDeleted,
@@ -46,17 +49,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             createdBy,
             accessTokenAccessToken,
             accessTokenExpiresIn,
-            accessTokenRefreshToken,
             accessTokenModified,
-            accessTokenModifiedBy)
+            accessTokenModifiedBy,
+            accessTokenRefreshToken,
+            bankRegistrationId,
+            externalApiId,
+            nonce,
+            nonceModified,
+            nonceModifiedBy)
         {
-            BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
-            ExternalApiId = externalApiId;
         }
-
-        [ForeignKey("BankRegistrationId")]
-        public BankRegistration BankRegistrationNavigation { get; set; } = null!;
 
         [ForeignKey("VariableRecurringPaymentsApiId")]
         public VariableRecurringPaymentsApiEntity VariableRecurringPaymentsApiNavigation { get; set; } = null!;
@@ -65,20 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             new List<DomesticVrpConsentAuthContext>();
 
         /// <summary>
-        ///     Associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
-
-        /// <summary>
         ///     Associated VariableRecurringPaymentsApi object
         /// </summary>
         public Guid VariableRecurringPaymentsApiId { get; }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
     internal partial class DomesticVrpConsent :

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
@@ -33,13 +32,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider) : base(
+            ITimeProvider timeProvider,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet) : base(
             entityMethods,
             instrumentationClient,
             softwareStatementProfileRepo,
             mapper,
             dbSaveChangesMethod,
-            timeProvider) { }
+            timeProvider,
+            grantPost,
+            authContextAccessTokenGet) { }
 
         protected override string ClientCredentialsGrantScope => "payments";
 
@@ -63,14 +66,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         }
 
         protected override Uri RetrieveGetUrl(string baseUrl, string externalId) =>
-            new Uri(baseUrl + "/domestic-vrps" + $"/{externalId}");
+            new(baseUrl + "/domestic-vrps" + $"/{externalId}");
 
-        protected override Uri RetrievePostUrl(string baseUrl) => new Uri(baseUrl + "/domestic-vrps");
+        protected override Uri RetrievePostUrl(string baseUrl) => new(baseUrl + "/domestic-vrps");
 
 
         protected override DomesticVrpResponse PublicGetResponse(
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse) =>
-            new DomesticVrpResponse(apiResponse);
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse apiResponse) => new(apiResponse);
 
         protected override IApiGetRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse> ApiGetRequests(
             VariableRecurringPaymentsApi variableRecurringPaymentsApi,

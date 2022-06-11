@@ -38,11 +38,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
         private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _entityMethods;
+        private readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly IApiVariantMapper _mapper;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         protected readonly ITimeProvider _timeProvider;
-
 
         public DomesticVrpConsentExternalObject(
             IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
@@ -50,17 +50,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IApiVariantMapper mapper,
             IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider)
+            ITimeProvider timeProvider,
+            IGrantPost grantPost,
+            AuthContextAccessTokenGet authContextAccessTokenGet)
         {
             _entityMethods = entityMethods;
             _instrumentationClient = instrumentationClient;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _mapper = mapper;
             _timeProvider = timeProvider;
-            _authContextAccessTokenGet = new AuthContextAccessTokenGet(
-                softwareStatementProfileRepo,
-                dbSaveChangesMethod,
-                timeProvider);
+            _grantPost = grantPost;
+            _authContextAccessTokenGet = authContextAccessTokenGet;
         }
 
         protected abstract string ClientCredentialsGrantScope { get; }
@@ -105,9 +105,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get access token
+            string? requestObjectAudClaim =
+                persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                    ?.DomesticVrpConsentAuthGet
+                    ?.AudClaim;
+            string bankIssuerUrl =
+                requestObjectAudClaim ??
+                bankRegistration.BankNavigation.IssuerUrl ??
+                throw new Exception("Cannot determine issuer URL for bank");
             string accessToken =
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
+                    bankIssuerUrl,
                     bankRegistration,
                     createdBy);
 
@@ -182,7 +191,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             // Get access token
             JsonSerializerSettings? jsonSerializerSettings1 = null;
             string accessToken =
-                (await PostTokenRequest.PostClientCredentialsGrantAsync(
+                (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,

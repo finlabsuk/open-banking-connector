@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using DomesticPaymentConsentRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
@@ -61,6 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             ReadObject = new DomesticPaymentConsentGet(
@@ -69,14 +71,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient));
             ReadFundsConfirmationObject = new DomesticPaymentConsentGetFundsConfirmation(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper);
+                sharedContext.ApiVariantMapper,
+                new GrantPost(_sharedContext.ApiClient),
+                new AuthContextAccessTokenGet(
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    new GrantPost(_sharedContext.ApiClient)));
             ReadLocalObject =
                 new LocalEntityRead<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
                     DomesticPaymentConsentBaseResponse>(
