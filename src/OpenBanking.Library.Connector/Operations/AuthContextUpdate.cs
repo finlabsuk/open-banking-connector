@@ -23,7 +23,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal class AuthContextUpdate :
-        IObjectCreate<AuthResult, AuthContextResponse>
+        IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse>
     {
         private readonly
             IDbReadWriteEntityMethods<AuthContext>
@@ -51,13 +51,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         public async
-            Task<(AuthContextResponse response, IList<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)> CreateAsync(
+            Task<(AuthContextUpdateAuthResultResponse response, IList<IFluentResponseInfoOrWarningMessage>
+                nonErrorMessages)>
+            CreateAsync(
                 AuthResult request,
-                string? createdBy = null,
-                string? apiRequestWriteFile = null,
-                string? apiResponseWriteFile = null,
-                string? apiResponseOverrideFile = null)
+                string? modifiedBy)
         {
             request.ArgNotNull(nameof(request));
 
@@ -82,14 +80,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .SingleOrDefault(x => x.Id == authContextId) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
 
-            // Get consent
-            BaseConsent consent = authContext switch
-            {
-                AccountAccessConsentAuthContext ac => ac.AccountAccessConsentNavigation,
-                DomesticPaymentConsentAuthContext ac => ac.DomesticPaymentConsentNavigation,
-                DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            // Get consent info
+            (ConsentType consentType, BaseConsent consent, Guid consentId, BankRegistration bankRegistration) =
+                authContext switch
+                {
+                    AccountAccessConsentAuthContext ac => (
+                        ConsentType.AccountAccessConsent,
+                        ac.AccountAccessConsentNavigation,
+                        ac.AccountAccessConsentId,
+                        ac.AccountAccessConsentNavigation.BankRegistrationNavigation),
+                    DomesticPaymentConsentAuthContext ac => (
+                        ConsentType.DomesticPaymentConsent,
+                        (BaseConsent) ac.DomesticPaymentConsentNavigation,
+                        ac.DomesticPaymentConsentId,
+                        ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation),
+                    DomesticVrpConsentAuthContext ac => (
+                        ConsentType.DomesticVrpConsent,
+                        (BaseConsent) ac.DomesticVrpConsentNavigation,
+                        ac.DomesticVrpConsentId,
+                        ac.DomesticVrpConsentNavigation.BankRegistrationNavigation),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
 
             // Only accept redirects within 30 mins of auth context creation
             const int authContextExpiryIntervalInSeconds = 30 * 60;
@@ -102,13 +113,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     "Please create a new auth context and authenticate again.");
             }
 
-            BankRegistration bankRegistration = authContext switch
-            {
-                AccountAccessConsentAuthContext ac => ac.AccountAccessConsentNavigation.BankRegistrationNavigation,
-                DomesticPaymentConsentAuthContext ac => ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
-                DomesticVrpConsentAuthContext ac => ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
-                _ => throw new ArgumentOutOfRangeException()
-            };
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
@@ -132,21 +136,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 tokenEndpointResponse.ExpiresIn,
                 tokenEndpointResponse.RefreshToken,
                 _timeProvider.GetUtcNow(),
-                createdBy);
+                modifiedBy);
 
             // Delete auth context
-            authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), createdBy);
-
-            // Create response (may involve additional processing based on entity)
-            var response =
-                new AuthContextResponse(
-                    authContext.Id,
-                    authContext.Created,
-                    authContext.CreatedBy,
-                    authContext.Reference);
+            authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), modifiedBy);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();
+
+            // Create response (may involve additional processing based on entity)
+            var response =
+                new AuthContextUpdateAuthResultResponse(
+                    consentType,
+                    consentId,
+                    null);
 
             return (response, nonErrorMessages);
         }

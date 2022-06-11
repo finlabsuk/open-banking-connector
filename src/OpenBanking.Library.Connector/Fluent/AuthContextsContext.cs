@@ -2,10 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
+using FluentValidation;
+using FluentValidation.Results;
 using AuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext;
 
@@ -17,42 +18,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
         ///     Update auth context with auth result which is data received from bank (e.g. via redirect) following user
         ///     authorisation of consent.
         /// </summary>
-        Task<AuthContextResponse> UpdateAuthResultLocalAsync(
-            AuthResult publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
+        Task<AuthContextUpdateAuthResultResponse> UpdateAuthResultAsync(
+            AuthResult authResult,
+            string? createdBy = null);
     }
 
-    internal class AuthContextsContext : IAuthContextsContext,
-        ICreateLocalContextInternal<AuthResult, AuthContextResponse>
+    internal class AuthContextsContext : IAuthContextsContext
     {
         public AuthContextsContext(ISharedContext sharedContext)
         {
-            CreateLocalObject = new AuthContextUpdate(
+            UpdateLocalObject = new AuthContextUpdate(
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation);
-            Context = sharedContext;
         }
 
-        public Task<AuthContextResponse> UpdateAuthResultLocalAsync(
-            AuthResult publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null) =>
-            ((ICreateLocalContextInternal<AuthResult, AuthContextResponse>) this).CreateLocalAsync(
-                publicRequest,
-                createdBy,
-                apiRequestWriteFile,
-                apiResponseWriteFile,
-                apiResponseOverrideFile);
+        public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }
 
-        public ISharedContext Context { get; }
-        public IObjectCreate<AuthResult, AuthContextResponse> CreateLocalObject { get; }
+        public async Task<AuthContextUpdateAuthResultResponse> UpdateAuthResultAsync(
+            AuthResult authResult,
+            string? createdBy = null)
+        {
+            authResult.ArgNotNull(nameof(authResult));
+
+            // Validate request data and convert to messages
+            ValidationResult validationResult = await authResult.ValidateAsync();
+            if (validationResult.Errors.Any(failure => failure.Severity == Severity.Error))
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
+            // Execute operation catching errors 
+            (AuthContextUpdateAuthResultResponse response,
+                    IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+                await UpdateLocalObject.CreateAsync(
+                    authResult,
+                    createdBy);
+
+            return response;
+        }
     }
 }

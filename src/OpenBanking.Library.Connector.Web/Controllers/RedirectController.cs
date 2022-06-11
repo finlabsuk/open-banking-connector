@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +33,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         /// <param name="nonce"></param>
         /// <returns></returns>
         [HttpGet("query-redirect")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HttpResponseMessages))]
         public async Task<IActionResult> GetQueryRedirectDelegateAsync(
             [FromQuery(Name = "id_token")] string idToken,
             [FromQuery(Name = "code")]
@@ -49,11 +47,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
                 new AuthResult(
                     OAuth2ResponseMode.Query,
                     new OAuth2RedirectData(idToken, code, state, nonce));
-            AuthContextResponse fluentResponse = await _requestBuilder
+            _ = await _requestBuilder
                 .AuthContexts
-                .UpdateAuthResultLocalAsync(authResult, "Redirect to /auth/query-redirect");
+                .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
 
-            return Ok(fluentResponse);
+            return Ok(); // We do not return data to bank following query redirect
         }
 
         /// <summary>
@@ -68,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         [HttpPost("redirect-delegate")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HttpResponseMessages))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AuthContextUpdateAuthResultResponse))]
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<IActionResult> PostRedirectDelegateAsync(
             [FromForm(Name = "id_token")] string idToken,
@@ -98,9 +96,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
                 new AuthResult(
                     oAuth2ResponseMode,
                     new OAuth2RedirectData(idToken, code, state, nonce));
-            AuthContextResponse fluentResponse = await _requestBuilder
+            AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
                 .AuthContexts
-                .UpdateAuthResultLocalAsync(authResult, modifiedBy);
+                .UpdateAuthResultAsync(authResult, modifiedBy);
 
             return Created("about:blank", fluentResponse);
         }
