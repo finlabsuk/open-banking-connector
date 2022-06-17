@@ -131,10 +131,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 nonErrorMessages);
         }
 
-        protected override DomesticPaymentConsentResponse GetReadResponse(
+        protected override DomesticPaymentConsentResponse GetPublicResponse(
             DomesticPaymentConsentPersisted persistedObject,
-            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse)
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
         {
+            // TODO: Update links
+
             return new DomesticPaymentConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,

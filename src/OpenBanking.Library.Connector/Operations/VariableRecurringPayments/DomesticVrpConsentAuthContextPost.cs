@@ -22,7 +22,7 @@ using DomesticVrpConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentAuthContextPost : LocalEntityPost<
+        DomesticVrpConsentAuthContextPost : LocalEntityCreate<
             DomesticVrpConsentAuthContextPersisted,
             DomesticVrpConsentAuthContextRequest,
             DomesticVrpConsentAuthContextCreateResponse>

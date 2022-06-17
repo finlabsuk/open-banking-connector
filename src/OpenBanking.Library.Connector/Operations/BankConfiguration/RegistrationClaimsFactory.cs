@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -37,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScopeEnum registrationScope,
             BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
-            string bankXFapiFinancialId)
+            Bank bank)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
@@ -100,7 +101,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     Iat = DateTimeOffset.Now,
                     Exp = DateTimeOffset.UtcNow.AddMinutes(30),
                     Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
-                          bankXFapiFinancialId,
+                          bank.FinancialId,
                     Jti = Guid.NewGuid().ToString(),
                     TokenEndpointAuthMethod = tokenEndpointAuthMethodLocal,
                     GrantTypes = grantTypes,

@@ -169,8 +169,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.WireMoc
             var model = new OAuth2RedirectData(
                 "idToken123",
                 "code123",
-                "1ab89221-ca25-4055-9f96-7064fe953c52",
-                "a71276e3-d7fe-4f0d-9ce5-10a7ac2f3dca");
+                "1ab89221-ca25-4055-9f96-7064fe953c52");
 
             return JsonConvert.SerializeObject(model);
         }

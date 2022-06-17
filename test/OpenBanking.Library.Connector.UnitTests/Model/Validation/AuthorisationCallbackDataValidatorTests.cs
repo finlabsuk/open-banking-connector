@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!);
+            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
         {
             var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!);
+            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -45,7 +45,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             var data = new AuthResult(
                 OAuth2ResponseMode.Fragment,
-                new OAuth2RedirectData("", "", "", null));
+                new OAuth2RedirectData("", "", ""),
+                null);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -60,7 +61,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 
             var data = new AuthResult(
                 OAuth2ResponseMode.Fragment,
-                new OAuth2RedirectData("a", "a", "a", null));
+                new OAuth2RedirectData("a", "a", "a"),
+                null);
 
             IList<ValidationFailure>? results = validator.Validate(data).Errors;
 

@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             services
                 .AddSettingsGroup<SoftwareStatementAndCertificateProfileOverridesSettings>(configuration)
                 .AddSettingsGroup<DatabaseSettings>(configuration)
-                .AddSettingsGroup<BankProfilesSettings>(configuration, false)
+                .AddSettingsGroup<BankProfilesSettings>(configuration)
                 .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)
                 .AddSettingsGroup<TransportCertificateProfilesSettings>(configuration)
                 .AddSettingsGroup<SigningCertificateProfilesSettings>(configuration);
@@ -67,13 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     .Get<DatabaseSettings>() ??
                 new DatabaseSettings(); // Use defaults in case of no configuration section
             databaseSettings.Validate();
-            if (!databaseSettings.ConnectionStrings.TryGetValue(
-                    databaseSettings.Provider,
-                    out string? connectionString))
-            {
-                throw new ArgumentException(
-                    $"No database connection string found for provider {databaseSettings.Provider}.");
-            }
+            string connectionString = GetConnectionString(databaseSettings, configuration);
 
             switch (databaseSettings.Provider)
             {
@@ -132,6 +126,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     ConfigurationSettingsProvider<TSettings>>();
 
             return services;
+        }
+
+        public static string GetConnectionString(DatabaseSettings settings, IConfiguration configuration)
+        {
+            if (!settings.ConnectionStrings.TryGetValue(settings.Provider, out string? connectionString))
+            {
+                throw new ArgumentException($"No database connection string found for provider {settings.Provider}.");
+            }
+
+            string? password = null;
+            if (settings.PasswordSettingNames.TryGetValue(settings.Provider, out string? passwordSettingName))
+            {
+                password = configuration.GetValue<string>(passwordSettingName, "");
+                if (string.IsNullOrEmpty(password))
+                {
+                    throw new ArgumentException(
+                        $"Cannot get non-empty password from specified setting {passwordSettingName}.");
+                }
+            }
+
+            return settings.Provider switch
+            {
+                DbProvider.Sqlite => connectionString,
+                DbProvider.PostgreSql => connectionString + (password is not null ? $";Password={password}" : ""),
+                _ => throw new ArgumentOutOfRangeException(nameof(settings.Provider), settings.Provider, null)
+            };
         }
     }
 }

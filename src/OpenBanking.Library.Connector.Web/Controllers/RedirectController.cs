@@ -30,7 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         /// <param name="idToken"></param>
         /// <param name="code"></param>
         /// <param name="state"></param>
-        /// <param name="nonce"></param>
         /// <returns></returns>
         [HttpGet("query-redirect")]
         public async Task<IActionResult> GetQueryRedirectDelegateAsync(
@@ -38,15 +37,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
             [FromQuery(Name = "code")]
             string code,
             [FromQuery(Name = "state")]
-            string state,
-            [FromQuery(Name = "nonce")]
-            string? nonce)
+            string state)
         {
             // Operation
             var authResult =
                 new AuthResult(
                     OAuth2ResponseMode.Query,
-                    new OAuth2RedirectData(idToken, code, state, nonce));
+                    new OAuth2RedirectData(idToken, code, state),
+                    null);
             _ = await _requestBuilder
                 .AuthContexts
                 .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
@@ -61,8 +59,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
         /// <param name="code"></param>
         /// <param name="state"></param>
         /// <param name="responseMode"></param>
-        /// <param name="nonce"></param>
         /// <param name="modifiedBy"></param>
+        /// <param name="redirectUrl"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         [HttpPost("redirect-delegate")]
@@ -76,10 +74,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
             string state,
             [FromForm(Name = "response_mode")]
             string responseMode,
-            [FromForm(Name = "nonce")]
-            string? nonce,
             [FromForm(Name = "modified_by")]
-            string? modifiedBy)
+            string? modifiedBy,
+            [FromForm(Name = "redirect_uri")]
+            string? redirectUrl)
         {
             // Operation
             OAuth2ResponseMode oAuth2ResponseMode = responseMode switch
@@ -95,7 +93,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers
             var authResult =
                 new AuthResult(
                     oAuth2ResponseMode,
-                    new OAuth2RedirectData(idToken, code, state, nonce));
+                    new OAuth2RedirectData(idToken, code, state),
+                    redirectUrl);
             AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
                 .AuthContexts
                 .UpdateAuthResultAsync(authResult, modifiedBy);

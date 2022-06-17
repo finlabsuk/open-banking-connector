@@ -23,9 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 IRequestBuilder requestBuilder,
                 BankProfile bankProfile,
                 string testNameUnique,
-                FilePathBuilder testDataProcessorFluentRequestLogging,
-                FilePathBuilder? testDataProcessorApiLogging,
-                FilePathBuilder testDataProcessorApiOverrides)
+                FilePathBuilder testDataProcessorFluentRequestLogging)
         {
             var modifiedBy = "Automated bank tests";
 
@@ -61,11 +59,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankReadResponse.Warnings.Should().BeNull();
 
             // Create bankRegistration or use existing
-            string filePath = testDataProcessorApiOverrides
-                .AppendToPath("bankRegistration")
-                .AppendToPath("postResponse")
-                .GetFilePath();
-            string? apiResponseOverrideFile = File.Exists(filePath) ? filePath : null;
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")
                 .AppendToPath("postRequest")
@@ -90,21 +83,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     testData2.BankRegistrationExternalApiId is not null
                         ? new ExternalApiBankRegistration
                         {
-                            ExternalApiId = testData2.BankRegistrationExternalApiId
+                            ExternalApiId = testData2.BankRegistrationExternalApiId,
+                            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret
                         }
                         : null
             };
             BankRegistrationResponse registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
-                .CreateAsync(
-                    registrationRequest,
-                    null,
-                    testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postRequest")
-                        .GetFilePath(),
-                    testDataProcessorApiLogging?.AppendToPath("bankRegistration").AppendToPath("postResponse")
-                        .GetFilePath(),
-                    apiResponseOverrideFile);
+                .CreateAsync(registrationRequest);
 
             // Checks and assignments
             registrationResp.Should().NotBeNull();
@@ -113,6 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             {
                 registrationResp.ExternalApiResponse.Should().NotBeNull();
             }
+
             Guid bankRegistrationId = registrationResp.Id;
 
             // Read bankRegistration

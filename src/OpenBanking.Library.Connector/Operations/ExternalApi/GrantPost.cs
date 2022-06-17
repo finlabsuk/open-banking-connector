@@ -7,6 +7,7 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -33,16 +34,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 
         public async Task ValidateIdTokenAuthEndpoint(
             OAuth2RedirectData redirectData,
+            ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
             string jwksUri,
-            bool jwksGetResponseHasNoRootProperty,
+            JwksGetCustomBehaviour? jwksGetCustomBehaviour,
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
             bool supportsSca)
         {
+            bool jwksGetResponseHasNoRootProperty =
+                jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
             string idTokenEncoded = redirectData.IdToken;
-
             string idTokenDecoded = await DecodeIdTokenAsync(jwksUri, jwksGetResponseHasNoRootProperty, idTokenEncoded);
 
             // Deserialise IT token claims
@@ -63,6 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
+                consentAuthGetCustomBehaviour?.IdTokenSubClaimIsClientIdNotConsentId ?? false,
                 nonce,
                 supportsSca);
 
@@ -93,7 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 { "grant_type", "client_credentials" }
             };
 
-            if (!(scope is null))
+            if (scope is not null)
             {
                 keyValuePairs["scope"] = scope;
             }
@@ -130,7 +134,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
-                mtlsApiClient);
+                mtlsApiClient,
+                scope,
+                bankRegistration.BankNavigation.CustomBehaviour?.ClientCredentialsGrantPost
+                    ?.DoNotValidateScopeResponse ?? false);
 
             if (response.IdToken is not null)
             {
@@ -147,6 +154,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
+            string? requestScope,
             BankRegistration bankRegistration,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient matlsApiClient)
@@ -162,20 +170,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
-                matlsApiClient);
+                matlsApiClient,
+                requestScope,
+                false);
 
-            bool doNotValidateIdToken =
-                bankRegistration.BankNavigation.CustomBehaviour?.GrantPost?.DoNotValidateIdToken ?? false;
+            GrantPostCustomBehaviour? grantPostCustomBehaviour =
+                bankRegistration.BankNavigation.CustomBehaviour?.AuthCodeGrantPost;
+            bool doNotValidateIdToken = grantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
             if (doNotValidateIdToken is false)
             {
                 string jwksUri = bankRegistration.BankNavigation.JwksUri;
-                bool jwksGetResponseHasNoRootProperty =
-                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet?.ResponseHasNoRootProperty ?? false;
+                JwksGetCustomBehaviour? jwksGetCustomBehaviour =
+                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
                 await ValidateIdTokenTokenEndpoint(
                     response.IdToken,
                     response.AccessToken,
+                    grantPostCustomBehaviour,
                     jwksUri,
-                    jwksGetResponseHasNoRootProperty,
+                    jwksGetCustomBehaviour,
                     bankIssuerUrl,
                     externalApiClientId,
                     externalApiConsentId,
@@ -193,6 +205,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
+            string? requestScope,
             BankRegistration bankRegistration,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient mtlsApiClient)
@@ -200,28 +213,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             var keyValuePairs = new Dictionary<string, string>
             {
                 { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken },
-                { "redirect_uri", redirectUrl }
+                { "refresh_token", refreshToken }
             };
 
             var response = await PostGrantAsync<RefreshTokenGrantResponse>(
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
-                mtlsApiClient);
+                mtlsApiClient,
+                requestScope,
+                false);
 
-            bool doNotValidateIdToken =
-                bankRegistration.BankNavigation.CustomBehaviour?.GrantPost?.DoNotValidateIdToken ?? false;
+            GrantPostCustomBehaviour? customBehaviour =
+                bankRegistration.BankNavigation.CustomBehaviour?.RefreshTokenGrantPost;
+            bool doNotValidateIdToken = customBehaviour?.DoNotValidateIdToken ?? false;
             if (doNotValidateIdToken is false)
             {
                 string jwksUri = bankRegistration.BankNavigation.JwksUri;
-                bool jwksGetResponseHasNoRootProperty =
-                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet?.ResponseHasNoRootProperty ?? false;
+                JwksGetCustomBehaviour? jwksGetCustomBehaviour =
+                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
                 await ValidateIdTokenTokenEndpoint(
                     response.IdToken,
                     response.AccessToken,
+                    customBehaviour,
                     jwksUri,
-                    jwksGetResponseHasNoRootProperty,
+                    jwksGetCustomBehaviour,
                     bankIssuerUrl,
                     externalApiClientId,
                     externalApiConsentId,
@@ -237,6 +253,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
+            bool idTokenSubClaimIsClientIdNotConsentId,
             string nonce,
             bool supportsSca)
         {
@@ -255,6 +272,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 throw new Exception("Nonce from ID token does not match expected nonce.");
             }
 
+            if (supportsSca && idToken.AuthTime is null)
+            {
+                throw new Exception("Auth time is null.");
+            }
+
             if (supportsSca && idToken.Acr != Acr.Sca)
             {
                 throw new Exception("Acr from ID token does not match expected Acr.");
@@ -269,12 +291,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             {
                 throw new Exception("Audience from ID token does not match expected audience.");
             }
-            
-            if (!string.Equals(idToken.Subject, externalApiConsentId))
+
+            string expectedSubject = idTokenSubClaimIsClientIdNotConsentId ? externalApiClientId : externalApiConsentId;
+            if (!string.Equals(idToken.Subject, expectedSubject))
             {
                 throw new Exception("Subject from ID token does not match expected subject.");
             }
-
         }
 
         private async Task<Jwks> GetJwksAsync(string jwksUrl, bool responseHasNoRootProperty)
@@ -296,14 +318,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         private async Task ValidateIdTokenTokenEndpoint(
             string idTokenEncoded,
             string accessToken,
+            GrantPostCustomBehaviour? grantPostCustomBehaviour,
             string jwksUri,
-            bool jwksGetResponseHasNoRootProperty,
+            JwksGetCustomBehaviour? jwksGetCustomBehaviour,
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
             bool supportsSca)
         {
+            bool jwksGetResponseHasNoRootProperty =
+                jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
             string idTokenDecoded = await DecodeIdTokenAsync(jwksUri, jwksGetResponseHasNoRootProperty, idTokenEncoded);
 
             // Deserialise IT token claims
@@ -324,6 +349,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
+                grantPostCustomBehaviour?.IdTokenSubClaimIsClientIdNotConsentId ?? false,
                 nonce,
                 supportsSca);
 
@@ -413,9 +439,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
         {
             using var mySha = SHA256.Create();
             byte[] hashValue = mySha.ComputeHash(Encoding.UTF8.GetBytes(input));
-            // byte[] newArray = new byte[16];
-            // Array.Copy(hashValue, 0, newArray, 0, 16);
-            //return Convert.ToBase64String(newArray); // leads to padding so changed
             return Base64UrlEncoder.Encode(hashValue, 0, 16);
         }
 
@@ -423,7 +446,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             Dictionary<string, string> keyValuePairs,
             BankRegistration bankRegistration,
             JsonSerializerSettings? responseJsonSerializerSettings,
-            IApiClient mtlsApiClient)
+            IApiClient mtlsApiClient,
+            string? requestScope,
+            bool doNotValidateScopeResponse)
             where TGrantResponse : GrantResponseBase
         {
             // POST request
@@ -438,14 +463,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 mtlsApiClient);
 
             // Check token endpoint response
-            bool isBearerTokenType = string.Equals(
-                response.TokenType,
-                "bearer",
-                StringComparison.OrdinalIgnoreCase);
-            if (!isBearerTokenType)
+            StringComparison stringComparison = bankRegistration.BankNavigation.SupportsSca
+                ? StringComparison.Ordinal
+                : StringComparison.OrdinalIgnoreCase;
+
+            if (!string.Equals(response.TokenType, "Bearer", stringComparison))
             {
-                throw new InvalidDataException(
-                    "Access token received does not have token type equal to Bearer or bearer.");
+                throw new InvalidDataException("Access token received does not have token type equal to Bearer.");
+            }
+
+            // Ensure received token scope when provided matches that requested
+            if (requestScope is not null)
+            {
+                if (response.Scope is not null)
+                {
+                    IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
+                    IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
+                    if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered) &&
+                        !doNotValidateScopeResponse)
+                    {
+                        throw new Exception("Requested and received scope for access token differ.");
+                    }
+                }
+                else
+                {
+                    if (bankRegistration.BankNavigation.SupportsSca)
+                    {
+                        throw new Exception("Expected scope from bank (even if not strictly required by spec).");
+                    }
+                }
+            }
+            else
+            {
+                if (response.Scope is not null)
+                {
+                    throw new Exception("Received scope for access token but none requested.");
+                }
             }
 
             return response;

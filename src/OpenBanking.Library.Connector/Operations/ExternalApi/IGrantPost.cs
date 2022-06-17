@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using Newtonsoft.Json;
 
@@ -29,6 +30,7 @@ internal interface IGrantPost
         string externalApiClientId,
         string externalApiConsentId,
         string nonce,
+        string? requestScope,
         BankRegistration bankRegistration,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient matlsApiClient);
@@ -40,14 +42,16 @@ internal interface IGrantPost
         string externalApiClientId,
         string externalApiConsentId,
         string nonce,
+        string? requestScope,
         BankRegistration bankRegistration,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient mtlsApiClient);
 
     Task ValidateIdTokenAuthEndpoint(
         OAuth2RedirectData redirectData,
+        ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
         string jwksUri,
-        bool jwksGetResponseHasNoRootProperty,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string bankIssuerUrl,
         string externalApiClientId,
         string externalApiConsentId,

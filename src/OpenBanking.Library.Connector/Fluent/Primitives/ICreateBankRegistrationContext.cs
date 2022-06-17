@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
     /// </summary>
     /// <typeparam name="TPublicRequest"></typeparam>
     /// <typeparam name="TPublicResponse"></typeparam>
-    public interface ICreateEntityContext<in TPublicRequest, TPublicResponse>
+    public interface ICreateBankRegistrationContext<in TPublicRequest, TPublicResponse>
         where TPublicResponse : class
     {
         /// <summary>
@@ -22,33 +22,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="publicRequest">Request object</param>
-        /// <param name="createdBy">Optional user name or comment for DB record(s).</param>
-        /// <param name="apiRequestWriteFile"></param>
-        /// <param name="apiResponseWriteFile"></param>
-        /// <param name="apiResponseOverrideFile"></param>
         /// <returns></returns>
-        Task<TPublicResponse> CreateAsync(
-            TPublicRequest publicRequest,
-            string? createdBy = null,
-            string? apiRequestWriteFile = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
+        Task<TPublicResponse> CreateAsync(TPublicRequest publicRequest);
     }
 
     internal interface
-        ICreateEntityContextInternal<in TPublicRequest, TPublicResponse> :
-            ICreateEntityContext<TPublicRequest, TPublicResponse>
+        ICreateBankRegistrationContextInternal<in TPublicRequest, TPublicResponse> :
+            ICreateBankRegistrationContext<TPublicRequest, TPublicResponse>
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {
-        IObjectCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
+        IObjectCreate<TPublicRequest, TPublicResponse, BankRegistrationCreateParams> CreateObject { get; }
 
-        async Task<TPublicResponse> ICreateEntityContext<TPublicRequest, TPublicResponse>.CreateAsync(
-            TPublicRequest publicRequest,
-            string? createdBy,
-            string? apiRequestWriteFile,
-            string? apiResponseWriteFile,
-            string? apiResponseOverrideFile)
+        async Task<TPublicResponse> ICreateBankRegistrationContext<TPublicRequest, TPublicResponse>.CreateAsync(
+            TPublicRequest publicRequest)
         {
             publicRequest.ArgNotNull(nameof(publicRequest));
 
@@ -59,14 +46,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 throw new ValidationException(validationResult.Errors);
             }
 
-            // Execute operation catching errors 
+            // Execute operation catching errors
+            var bankRegistrationCreateParams = new BankRegistrationCreateParams();
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await CreateObject.CreateAsync(
-                    publicRequest,
-                    createdBy,
-                    apiRequestWriteFile,
-                    apiResponseWriteFile,
-                    apiResponseOverrideFile);
+                await CreateObject.CreateAsync(publicRequest, bankRegistrationCreateParams);
 
             return response;
         }

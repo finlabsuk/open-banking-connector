@@ -15,7 +15,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -40,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
         BankRegistrationPost : EntityPost<
             BankRegistration,
             BankRegistrationRequest, BankRegistrationResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response>
+            ClientRegistrationModelsPublic.OBClientRegistration1Response, BankRegistrationCreateParams>
     {
         private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
@@ -70,20 +69,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
         protected override async
             Task<(BankRegistrationResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiPost(PostRequestInfo requestInfo)
+            ApiPost(
+                BankRegistrationRequest request,
+                BankRegistrationCreateParams createParams)
         {
             // Create non-error list
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             BankProfile? bankProfile = null;
-            if (requestInfo.Request.BankProfile is not null)
+            if (request.BankProfile is not null)
             {
-                bankProfile = _bankProfileDefinitions.GetBankProfile(requestInfo.Request.BankProfile.Value);
+                bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
 
             // Load bank from DB and check for existing bank registrations
-            Guid bankId = requestInfo.Request.BankId;
+            Guid bankId = request.BankId;
             Bank bank =
                 await _bankMethods
                     .DbSetNoTracking
@@ -101,22 +102,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     .Where(x => x.BankId == bankId)
                     .FirstOrDefaultAsync();
             if (!(existingRegistration is null) &&
-                !requestInfo.Request.AllowMultipleRegistrations)
+                !request.AllowMultipleRegistrations)
             {
                 throw new InvalidOperationException(
                     "There is already at least one registration for this bank. Set AllowMultipleRegistrations to force creation of an additional registration.");
             }
 
             // Load processed software statement profile
-            string softwareStatementProfileId = requestInfo.Request.SoftwareStatementProfileId;
+            string softwareStatementProfileId = request.SoftwareStatementProfileId;
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     softwareStatementProfileId,
-                    requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase);
+                    request.SoftwareStatementAndCertificateProfileOverrideCase);
 
             // Determine registration scope
             RegistrationScopeEnum registrationScope =
-                requestInfo.Request.RegistrationScope ??
+                request.RegistrationScope ??
                 processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
             RegistrationScopeIsValid? registrationScopeIsValidFcn =
                 bankProfile?.BankConfigurationApiSettings.RegistrationScopeIsValid;
@@ -128,47 +129,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
 
             // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
-            string? issuerUrl = bank.IssuerUrl;
+            Uri? openIdConfigurationUrl = null;
+            if (customBehaviour?.OpenIdConfigurationGet?.EndpointUnavailable is not true)
+            {
+                openIdConfigurationUrl = new Uri(
+                    customBehaviour?.OpenIdConfigurationGet?.Url
+                    ?? string.Join("/", bank.IssuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
+            }
+
             OpenIdConfiguration? openIdConfiguration;
             TokenEndpointAuthMethod tokenEndpointAuthMethod;
-            if (issuerUrl is null)
+            if (openIdConfigurationUrl is null)
             {
                 tokenEndpointAuthMethod =
-                    requestInfo.Request.TokenEndpointAuthMethod ??
+                    request.TokenEndpointAuthMethod ??
                     throw new ArgumentNullException(
                         "TokenEndpointAuthMethod specified as null and cannot be obtained using specified IssuerUrl (also null).");
             }
             else
             {
-                openIdConfiguration = await _configurationRead.GetOpenIdConfigurationAsync(issuerUrl);
+                (openIdConfiguration, IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+                    await _configurationRead.GetOpenIdConfigurationAsync(
+                        openIdConfigurationUrl,
+                        customBehaviour?.OpenIdConfigurationGet);
+                nonErrorMessages.AddRange(newNonErrorMessages);
 
-                // Update OpenID Provider Configuration based on overrides
-                IList<OAuth2ResponseMode>? responseModesSupportedOverride =
-                    customBehaviour?.OpenIdConfigurationGet?.ResponseModesSupportedResponse;
-                if (!(responseModesSupportedOverride is null))
-                {
-                    openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
-                }
-
-                IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-                    customBehaviour?.OpenIdConfigurationGet
-                        ?.TokenEndpointAuthMethodsSupportedResponse;
-                if (!(tokenEndpointAuthMethodsSupportedOverride is null))
-                {
-                    openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
-                }
-
-                // Validate OpenID Connect configuration
-                {
-                    IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
-                        new OpenBankingOpenIdConfigurationResponseValidator()
-                            .Validate(openIdConfiguration)
-                            .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
-                    nonErrorMessages.AddRange(newNonErrorMessages);
-                }
 
                 // Select tokenEndpointAuthMethod based on most preferred
-                if (requestInfo.Request.TokenEndpointAuthMethod is null)
+                if (request.TokenEndpointAuthMethod is null)
                 {
                     if (openIdConfiguration.TokenEndpointAuthMethodsSupported.Contains(
                             OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
@@ -193,7 +181,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 }
                 else
                 {
-                    tokenEndpointAuthMethod = requestInfo.Request.TokenEndpointAuthMethod.Value;
+                    tokenEndpointAuthMethod = request.TokenEndpointAuthMethod.Value;
                 }
             }
 
@@ -202,7 +190,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             string? externalApiSecret;
             string? registrationAccessToken;
             ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse = null;
-            if (requestInfo.Request.ExternalApiObject is null)
+            if (request.ExternalApiObject is null)
             {
                 // Get DCR claims
                 ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
@@ -211,7 +199,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                         processedSoftwareStatementProfile,
                         registrationScope,
                         customBehaviour?.BankRegistrationPost,
-                        bank.FinancialId);
+                        bank);
 
                 // Get DCR URL
                 var uri = new Uri(registrationEndpoint);
@@ -325,7 +313,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 (ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
                         IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
                     await EntityPostCommon(
-                        requestInfo,
                         apiRequest,
                         apiRequests,
                         processedSoftwareStatementProfile.ApiClient,
@@ -342,29 +329,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                externalApiId = requestInfo.Request.ExternalApiObject.ExternalApiId;
-                externalApiSecret = requestInfo.Request.ExternalApiObject.ExternalApiSecret;
-                registrationAccessToken = requestInfo.Request.ExternalApiObject.RegistrationAccessToken;
+                externalApiId = request.ExternalApiObject.ExternalApiId;
+                externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
+                registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
             }
 
             // Create persisted entity
             DateTimeOffset utcNow = _timeProvider.GetUtcNow();
             var entity = new BankRegistration(
                 Guid.NewGuid(),
-                requestInfo.Request.Reference,
+                request.Reference,
                 false,
                 utcNow,
-                requestInfo.Request.CreatedBy,
+                request.CreatedBy,
                 utcNow,
-                requestInfo.Request.CreatedBy,
+                request.CreatedBy,
                 externalApiId,
                 externalApiSecret,
                 registrationAccessToken,
-                requestInfo.Request.SoftwareStatementProfileId,
-                requestInfo.Request.SoftwareStatementAndCertificateProfileOverrideCase,
+                request.SoftwareStatementProfileId,
+                request.SoftwareStatementAndCertificateProfileOverrideCase,
                 tokenEndpointAuthMethod,
                 registrationScope,
-                requestInfo.Request.BankId);
+                request.BankId);
 
             // Save entity
             await _entityMethods.AddAsync(entity);

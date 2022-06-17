@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     /// <typeparam name="TPublicReadResponse"></typeparam>
     /// <typeparam name="TPublicReadLocalResponse"></typeparam>
     public interface IConsentContext<in TPublicRequest, TPublicQuery, TPublicReadResponse, TPublicReadLocalResponse> :
-        ICreateEntityContext<TPublicRequest, TPublicReadResponse>,
+        ICreateConsentContext<TPublicRequest, TPublicReadResponse>,
         IReadConsentContext<TPublicReadResponse>,
         IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>
         where TPublicReadResponse : class
@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     internal interface IConsentContextInternal<in TPublicRequest, TPublicQuery, TPublicResponse,
         TPublicReadLocalResponse> :
         IConsentContext<TPublicRequest, TPublicQuery, TPublicResponse, TPublicReadLocalResponse>,
-        ICreateEntityContextInternal<TPublicRequest, TPublicResponse>,
+        ICreateConsentContextInternal<TPublicRequest, TPublicResponse>,
         IReadConsentContextInternal<TPublicResponse>,
         IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
         where TPublicResponse : class

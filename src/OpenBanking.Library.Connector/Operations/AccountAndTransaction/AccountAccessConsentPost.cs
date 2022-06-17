@@ -29,7 +29,7 @@ using AccountAccessConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class
-        AccountAccessConsentPost : ReadWritePost<AccountAccessConsentPersisted,
+        AccountAccessConsentPost : ConsentPost<AccountAccessConsentPersisted,
             AccountAccessConsent,
             AccountAccessConsentResponse,
             AccountAndTransactionModelsPublic.OBReadConsent1,
@@ -68,12 +68,56 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override async Task<AccountAccessConsentResponse> AddEntity(
             AccountAccessConsent request,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1? apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
             ITimeProvider timeProvider)
         {
             string externalApiId =
                 request.ExternalApiObject is null
                     ? apiResponse!.Data.ConsentId
                     : request.ExternalApiObject.ExternalApiId;
+
+            // Transform links
+            if (apiResponse is not null)
+            {
+                var apiGetRequestUrl = new Uri(apiRequestUrl + $"/{externalApiId}");
+                string? publicGetRequestUrlWithoutQuery = publicRequestUrlWithoutQuery switch
+                {
+                    { } x => x + $"/{externalApiId}",
+                    null => null
+                };
+                var validQueryParameters = new List<string>();
+                apiResponse.Links.Self = Helpers.TransformLinkUrl(
+                    apiResponse.Links.Self,
+                    apiGetRequestUrl,
+                    publicGetRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                apiResponse.Links.First = Helpers.TransformLinkUrl(
+                    apiResponse.Links.First,
+                    apiGetRequestUrl,
+                    publicGetRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                apiResponse.Links.Last = Helpers.TransformLinkUrl(
+                    apiResponse.Links.Last,
+                    apiGetRequestUrl,
+                    publicGetRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                apiResponse.Links.Next = Helpers.TransformLinkUrl(
+                    apiResponse.Links.Next,
+                    apiGetRequestUrl,
+                    publicGetRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                apiResponse.Links.Prev = Helpers.TransformLinkUrl(
+                    apiResponse.Links.Prev,
+                    apiGetRequestUrl,
+                    publicGetRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+            }
 
             DateTimeOffset utcNow = timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(

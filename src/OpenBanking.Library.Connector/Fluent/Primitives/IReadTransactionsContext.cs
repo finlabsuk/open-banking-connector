@@ -20,20 +20,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="consentId"></param>
         /// <param name="externalApiAccountId"></param>
         /// <param name="externalApiStatementId"></param>
+        /// <param name="modifiedBy"></param>
         /// <param name="fromBookingDateTime"></param>
         /// <param name="toBookingDateTime"></param>
         /// <param name="queryString"></param>
-        /// <param name="modifiedBy"></param>
         /// <param name="requestUrlWithoutQuery"></param>
         /// <returns></returns>
         Task<TPublicResponse> ReadAsync(
             Guid consentId,
             string? externalApiAccountId = null,
             string? externalApiStatementId = null,
+            string? modifiedBy = null,
             string? fromBookingDateTime = null,
             string? toBookingDateTime = null,
             string? queryString = null,
-            string? modifiedBy = null,
             string? requestUrlWithoutQuery = null);
     }
 
@@ -47,10 +47,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             Guid consentId,
             string? externalApiAccountId,
             string? externalApiStatementId,
+            string? modifiedBy,
             string? fromBookingDateTime,
             string? toBookingDateTime,
             string? queryString,
-            string? modifiedBy,
             string? requestUrlWithoutQuery)
         {
             var transactionsReadParams = new TransactionsReadParams(

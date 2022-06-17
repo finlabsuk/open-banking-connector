@@ -6,6 +6,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
 public class GrantPostCustomBehaviour
 {
-    
     public bool? DoNotValidateIdToken { get; set; }
+
+    public bool? DoNotValidateScopeResponse { get; set; }
+
+    public bool? IdTokenSubClaimIsClientIdNotConsentId { get; set; }
 }

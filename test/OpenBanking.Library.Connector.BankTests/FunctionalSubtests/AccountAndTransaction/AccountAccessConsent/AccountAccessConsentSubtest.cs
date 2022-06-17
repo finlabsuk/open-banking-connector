@@ -138,6 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             {
                 accountAccessConsentResp.ExternalApiResponse.Should().NotBeNull();
             }
+
             Guid accountAccessConsentId = accountAccessConsentResp.Id;
 
             // GET /account access consents/{consentId}
@@ -214,7 +215,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         .ReadAsync(
                             accountAccessConsentId,
                             null,
-                            "",
                             modifiedBy);
 
                 // Checks
@@ -234,7 +234,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                "",
                                 modifiedBy);
 
                     // Checks
@@ -250,7 +249,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                "",
                                 modifiedBy);
 
                     // Checks
@@ -261,7 +259,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     // GET /transactions/{accountId}
                     const int maxPages = 30;
                     var page = 0;
-                    var queryString = "";
+                    string queryString = "";
                     do
                     {
                         TransactionsResponse transactionsResp =
@@ -272,10 +270,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                     accountAccessConsentId,
                                     externalAccountId,
                                     null,
+                                    modifiedBy,
                                     null,
                                     null,
-                                    queryString,
-                                    modifiedBy);
+                                    queryString);
 
                         // Checks
                         transactionsResp.Should().NotBeNull();
@@ -295,7 +293,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                "",
                                 modifiedBy);
 
                     // Checks
@@ -311,7 +308,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             .ReadAsync(
                                 accountAccessConsentId,
                                 externalAccountId,
-                                "",
                                 modifiedBy);
 
                     // Checks

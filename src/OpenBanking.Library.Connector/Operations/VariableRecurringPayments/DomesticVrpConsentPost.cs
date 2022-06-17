@@ -25,7 +25,7 @@ using DomesticVrpConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
 {
     internal class
-        DomesticVrpConsentPost : ReadWritePost<DomesticVrpConsentPersisted,
+        DomesticVrpConsentPost : ConsentPost<DomesticVrpConsentPersisted,
             DomesticVrpConsent,
             DomesticVrpConsentResponse,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
@@ -61,8 +61,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         protected override async Task<DomesticVrpConsentResponse> AddEntity(
             DomesticVrpConsent request,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
             ITimeProvider timeProvider)
         {
+            // TODO: Transform links
+            
             string externalApiId =
                 request.ExternalApiObject is null
                     ? apiResponse!.Data.ConsentId

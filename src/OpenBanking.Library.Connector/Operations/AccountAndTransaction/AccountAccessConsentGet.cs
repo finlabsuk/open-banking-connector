@@ -112,10 +112,46 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 nonErrorMessages);
         }
 
-        protected override AccountAccessConsentResponse GetReadResponse(
+        protected override AccountAccessConsentResponse GetPublicResponse(
             AccountAccessConsentPersisted persistedObject,
-            AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse)
+            AccountAndTransactionModelsPublic.OBReadConsentResponse1 apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
         {
+            var validQueryParameters = new List<string>();
+
+            // Transform links 
+            apiResponse.Links.Self = Helpers.TransformLinkUrl(
+                apiResponse.Links.Self,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            apiResponse.Links.First = Helpers.TransformLinkUrl(
+                apiResponse.Links.First,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            apiResponse.Links.Last = Helpers.TransformLinkUrl(
+                apiResponse.Links.Last,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            apiResponse.Links.Next = Helpers.TransformLinkUrl(
+                apiResponse.Links.Next,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            apiResponse.Links.Prev = Helpers.TransformLinkUrl(
+                apiResponse.Links.Prev,
+                apiRequestUrl,
+                publicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+
             return new AccountAccessConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,

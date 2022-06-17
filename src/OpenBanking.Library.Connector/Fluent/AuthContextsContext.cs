@@ -34,7 +34,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                new OpenIdConfigurationRead(sharedContext.ApiClient),
                 new GrantPost(sharedContext.ApiClient));
         }
 

@@ -22,14 +22,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             _thirdPartyThumbprints = new Lazy<HashSet<string>>(GetThumbprints(GetServerCertificatesAsync().Result));
         }
 
-        public bool IsOk(HttpRequestMessage msg, X509Certificate2? cert, X509Chain? chain, SslPolicyErrors errors)
+        public bool IsOk(object stateInfo, X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors)
         {
             if (cert is null)
             {
                 return false;
             }
 
-            string tp = cert.Thumbprint;
+            string tp = ((X509Certificate2) cert).Thumbprint;
 
             return _thirdPartyThumbprints.Value.Contains(tp);
         }

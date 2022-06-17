@@ -116,7 +116,7 @@ public class IdTokenBase
     [JsonProperty("nonce", Required = Required.Always)]
     public string Nonce { get; set; } = null!;
 
-    [JsonProperty(PropertyName = "authTime")]
+    [JsonProperty(PropertyName = "auth_time")]
     public string? AuthTime { get; set; }
 
     [JsonProperty("openbanking_intent_id", Required = Required.Always)]

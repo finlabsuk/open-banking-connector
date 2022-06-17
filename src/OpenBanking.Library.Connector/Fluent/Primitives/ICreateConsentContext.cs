@@ -10,32 +10,36 @@ using FluentValidation.Results;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
 {
     /// <summary>
-    ///     Fluent interface methods for CreateLocal.
+    ///     Fluent interface methods for Create.
     /// </summary>
     /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicPostResponse"></typeparam>
-    public interface ICreateLocalContext<in TPublicRequest, TPublicPostResponse>
-        where TPublicPostResponse : class
+    /// <typeparam name="TPublicResponse"></typeparam>
+    public interface ICreateConsentContext<in TPublicRequest, TPublicResponse>
+        where TPublicResponse : class
     {
         /// <summary>
-        ///     CREATE local object (does not include POSTing object to bank API).
-        ///     Object will be created in local database only.
+        ///     CREATE object (includes POSTing object to bank API).
+        ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
         /// </summary>
         /// <param name="publicRequest">Request object</param>
+        /// <param name="publicRequestUrlWithoutQuery"></param>
         /// <returns></returns>
-        Task<TPublicPostResponse> CreateLocalAsync(TPublicRequest publicRequest);
+        Task<TPublicResponse> CreateAsync(
+            TPublicRequest publicRequest,
+            string? publicRequestUrlWithoutQuery = null);
     }
 
     internal interface
-        ICreateLocalContextInternal<in TPublicRequest, TPublicResponse> :
-            ICreateLocalContext<TPublicRequest, TPublicResponse>
+        ICreateConsentContextInternal<in TPublicRequest, TPublicResponse> :
+            ICreateConsentContext<TPublicRequest, TPublicResponse>
         where TPublicRequest : class, ISupportsValidation
         where TPublicResponse : class
     {
-        IObjectCreate<TPublicRequest, TPublicResponse, LocalCreateParams> CreateLocalObject { get; }
+        IObjectCreate<TPublicRequest, TPublicResponse, ConsentCreateParams> CreateObject { get; }
 
-        async Task<TPublicResponse> ICreateLocalContext<TPublicRequest, TPublicResponse>.
-            CreateLocalAsync(TPublicRequest publicRequest)
+        async Task<TPublicResponse> ICreateConsentContext<TPublicRequest, TPublicResponse>.CreateAsync(
+            TPublicRequest publicRequest,
+            string? publicRequestUrlWithoutQuery)
         {
             publicRequest.ArgNotNull(nameof(publicRequest));
 
@@ -47,9 +51,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             }
 
             // Execute operation catching errors
-            var localCreateParams = new LocalCreateParams();
+            var consentCreateParams = new ConsentCreateParams(publicRequestUrlWithoutQuery);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await CreateLocalObject.CreateAsync(publicRequest, localCreateParams);
+                await CreateObject.CreateAsync(publicRequest, consentCreateParams);
 
             return response;
         }

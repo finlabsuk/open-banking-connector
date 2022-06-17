@@ -116,6 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
                     bankIssuerUrl,
+                    "openid payments",
                     bankRegistration,
                     createdBy);
 

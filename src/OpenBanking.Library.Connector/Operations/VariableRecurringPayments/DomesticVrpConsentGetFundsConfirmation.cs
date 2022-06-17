@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
     internal class
         DomesticVrpConsentGetFundsConfirmation : ConsentRead<DomesticVrpConsentPersisted,
             DomesticVrpConsentReadFundsConfirmationResponse,
-            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse, LocalReadParams>
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse, ConsentBaseReadParams>
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
 
@@ -124,6 +124,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedObject,
                     bankIssuerUrl,
+                    "openid payments",
                     bankRegistration,
                     modifiedBy);
 
@@ -134,10 +135,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 accessToken, nonErrorMessages);
         }
 
-        protected override DomesticVrpConsentReadFundsConfirmationResponse GetReadResponse(
+        protected override DomesticVrpConsentReadFundsConfirmationResponse GetPublicResponse(
             DomesticVrpConsentPersisted persistedObject,
-            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse apiResponse)
+            VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
         {
+            // TODO: Update links
+
             return new DomesticVrpConsentReadFundsConfirmationResponse(
                 persistedObject.Id,
                 persistedObject.Created,

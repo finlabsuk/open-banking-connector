@@ -58,35 +58,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override BalancesResponse PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse,
             Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
+            bool allowValidQueryParametersOnly,
             ExternalEntityReadParams readParams)
         {
             var validQueryParameters = new List<string>();
 
             // Get link queries
-            apiResponse.Links.Self = GetLinkUrlQuery(
+            apiResponse.Links.Self = Helpers.TransformLinkUrl(
                 apiResponse.Links.Self,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.First = GetLinkUrlQuery(
+            apiResponse.Links.First = Helpers.TransformLinkUrl(
                 apiResponse.Links.First,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Prev = GetLinkUrlQuery(
+            apiResponse.Links.Prev = Helpers.TransformLinkUrl(
                 apiResponse.Links.Prev,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Next = GetLinkUrlQuery(
+            apiResponse.Links.Next = Helpers.TransformLinkUrl(
                 apiResponse.Links.Next,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Last = GetLinkUrlQuery(
+            apiResponse.Links.Last = Helpers.TransformLinkUrl(
                 apiResponse.Links.Last,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
 
             return new BalancesResponse(apiResponse);

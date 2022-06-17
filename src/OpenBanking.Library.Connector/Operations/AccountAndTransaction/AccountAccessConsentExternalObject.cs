@@ -110,6 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
                     bankIssuerUrl,
+                    "openid accounts",
                     bankRegistration,
                     readParams.ModifiedBy);
 
@@ -139,6 +140,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             TPublicResponse response = PublicGetResponse(
                 apiResponse,
                 apiRequestUrl,
+                readParams.PublicRequestUrlWithoutQuery,
+                false, // always support all query parameters now
                 readParams);
 
             return (response, nonErrorMessages);
@@ -151,6 +154,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected abstract TPublicResponse PublicGetResponse(
             TApiResponse apiResponse,
             Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
+            bool allowValidQueryParametersOnly,
             TExternalEntityReadParams readParams);
 
         protected abstract IApiGetRequests<TApiResponse> ApiRequests(
@@ -158,70 +163,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             string bankFinancialId,
             string accessToken,
             IInstrumentationClient instrumentationClient);
-
-        protected string? GetLinkUrlQuery(
-            string? linkUrlString,
-            Uri apiRequestUrl,
-            TExternalEntityReadParams readParams,
-            IList<string> validQueryParameters)
-        {
-            string? publicRequestUrlWithoutQuery = readParams.PublicRequestUrlWithoutQuery;
-            bool supportAllQueryParameters = readParams.QueryString is not null;
-
-            if (linkUrlString is null)
-            {
-                return null;
-            }
-
-            var linkUrl = new Uri(linkUrlString);
-
-            int urlsMatch = Uri.Compare(
-                linkUrl,
-                apiRequestUrl,
-                UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
-                UriFormat.Unescaped,
-                StringComparison.InvariantCulture);
-
-            // Check URLs without fragment and query parameters match
-            if (urlsMatch != 0)
-            {
-                throw new InvalidOperationException(
-                    $"Request URL {apiRequestUrl} and link URL {linkUrl} have different base URLs!");
-            }
-
-            // Check there are no fragment parameters
-            if (!string.IsNullOrEmpty(linkUrl.Fragment))
-            {
-                throw new InvalidOperationException($"Link URL {linkUrl} has unexpected fragment.");
-            }
-
-            // Check query parameters are valid
-            if (!string.IsNullOrEmpty(linkUrl.Query) &&
-                !supportAllQueryParameters)
-            {
-                string[] linkUrlQueryParameterPairs = linkUrl.Query.TrimStart('?').Split('&');
-                foreach (string queryParameterPair in linkUrlQueryParameterPairs)
-                {
-                    string queryParameterName = queryParameterPair.Split('=')[0];
-                    if (!validQueryParameters.Contains(queryParameterName))
-                    {
-                        throw new InvalidOperationException(
-                            $"External API returned link URL with query parameter {queryParameterName} which is unexpected.");
-                    }
-                }
-            }
-
-            // Return relative URL
-            if (publicRequestUrlWithoutQuery is null)
-            {
-                return linkUrl.Query;
-            }
-
-            // Return absolute URL
-            var uriBuilder = new UriBuilder(publicRequestUrlWithoutQuery);
-            uriBuilder.Query = linkUrl.Query;
-            Uri fullUri = uriBuilder.Uri;
-            return fullUri.ToString();
-        }
     }
 }

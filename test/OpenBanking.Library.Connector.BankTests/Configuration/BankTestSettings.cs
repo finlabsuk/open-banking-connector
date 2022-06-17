@@ -193,12 +193,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects to specify when using POST to create a new BankRegistration
+        ///     Existing external (bank) API BankRegistration objects (IDs here) to specify when using POST to create a new BankRegistration
         ///     object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
         public Dictionary<BankProfileEnum, string>
             BankRegistrationExternalApiIds { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing external (bank) API BankRegistration objects (secrets here) to specify when using POST to create a new BankRegistration
+        ///     object. Secrets only used where corresponding ID specified.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            BankRegistrationExternalApiSecrets { get; set; } =
             new();
 
         /// <summary>

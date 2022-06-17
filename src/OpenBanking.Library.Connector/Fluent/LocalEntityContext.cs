@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         public LocalEntityContextInternal(
             ISharedContext sharedContext,
-            IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> postObject)
+            IObjectCreate<TPublicRequest, TPublicCreateLocalResponse, LocalCreateParams> postObject)
         {
             CreateLocalObject = postObject;
             ReadLocalObject =
@@ -44,7 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
 
         public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 
-        public IObjectCreate<TPublicRequest, TPublicCreateLocalResponse> CreateLocalObject { get; }
+        public IObjectCreate<TPublicRequest, TPublicCreateLocalResponse, LocalCreateParams> CreateLocalObject { get; }
 
         public IObjectReadWithSearch<TPublicQuery, TPublicReadLocalResponse, LocalReadParams> ReadLocalObject { get; }
     }

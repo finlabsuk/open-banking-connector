@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
+    /// <summary>
+    /// OAuth2 parameters apart from refresh token.
+    /// </summary>
     public abstract class GrantResponseBase
     {
         [JsonProperty("access_token", Required = Required.Always)]
@@ -16,6 +19,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         [JsonProperty("token_type", Required = Required.Always)]
         public string TokenType { get; set; } = null!;
+        
+        public string? Scope { get; set; }
     }
 
     public class ClientCredentialsGrantResponse : GrantResponseBase

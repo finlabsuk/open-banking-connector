@@ -11,14 +11,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class BankPost : LocalEntityPost<Bank, Models.Public.BankConfiguration.Request.Bank, BankResponse>
+    internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguration.Request.Bank, BankResponse>
     {
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
         private readonly IOpenIdConfigurationRead _configurationRead;
@@ -55,9 +54,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
 
+            CustomBehaviourClass? customBehaviour =
+                request.CustomBehaviour ??
+                bankProfile?.CustomBehaviour;
+
             string? issuerUrl =
                 request.IssuerUrl ??
                 bankProfile?.IssuerUrl;
+
+            Uri? openIdConfigurationUrl = null;
+            if (customBehaviour?.OpenIdConfigurationGet?.EndpointUnavailable is not true)
+            {
+                openIdConfigurationUrl = new Uri(
+                    customBehaviour?.OpenIdConfigurationGet?.Url
+                    ?? string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
+            }
 
             string financialId =
                 request.FinancialId ??
@@ -83,16 +94,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 throw new InvalidOperationException(
                     "DynamicClientRegistrationApiVersion specified as null and cannot be obtained using specified BankProfile.");
 
-            CustomBehaviourClass? customBehaviour =
-                request.CustomBehaviour ??
-                bankProfile?.CustomBehaviour;
-
             // Get OpenID Provider Configuration if issuer URL available and determine endpoints appropriately
             string registrationEndpoint;
             string tokenEndpoint;
             string authorizationEndpoint;
             string jwksUri;
-            if (issuerUrl is null)
+            if (openIdConfigurationUrl is null)
             {
                 // Determine endpoints
                 registrationEndpoint =
@@ -118,33 +125,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             }
             else
             {
-                OpenIdConfiguration openIdConfiguration =
-                    await _configurationRead.GetOpenIdConfigurationAsync(issuerUrl);
-
-                // Update OpenID Provider Configuration based on overrides
-                IList<OAuth2ResponseMode>? responseModesSupportedOverride =
-                    customBehaviour?.OpenIdConfigurationGet?.ResponseModesSupportedResponse;
-                if (!(responseModesSupportedOverride is null))
-                {
-                    openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
-                }
-
-                IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-                    customBehaviour?.OpenIdConfigurationGet
-                        ?.TokenEndpointAuthMethodsSupportedResponse;
-                if (!(tokenEndpointAuthMethodsSupportedOverride is null))
-                {
-                    openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;
-                }
-
-                // Validate OpenID Connect configuration
-                {
-                    IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
-                        new OpenBankingOpenIdConfigurationResponseValidator()
-                            .Validate(openIdConfiguration)
-                            .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
-                    nonErrorMessages.AddRange(newNonErrorMessages);
-                }
+                (OpenIdConfiguration openIdConfiguration,
+                        IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+                    await _configurationRead.GetOpenIdConfigurationAsync(
+                        openIdConfigurationUrl,
+                        customBehaviour?.OpenIdConfigurationGet);
+                nonErrorMessages.AddRange(newNonErrorMessages);
 
                 // Determine endpoints
                 registrationEndpoint =

@@ -57,12 +57,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 HsbcBank.UkKinetic => (
                     // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/1387201093/Implementation+Guide+HSBC+-+Kinetic
                     "https://api.ob.hsbckinetic.co.uk",
-                    "https://api.ob.hsbckinetic.com/obie/open-banking/v3.1/aisp"),
+                    "https://api.ob.hsbckinetic.co.uk/obie/open-banking/v3.1/aisp"),
                 HsbcBank.UkPersonal => (
                     // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
                     "https://api.ob.hsbc.co.uk",
                     "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
                 _ => throw new ArgumentOutOfRangeException()
+            };
+            var sandboxGrantPostCustomBehaviour = new GrantPostCustomBehaviour
+            {
+                DoNotValidateIdToken = true
             };
             return new BankProfile(
                 bankProfileEnum,
@@ -80,32 +84,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
             {
                 CustomBehaviour = new CustomBehaviourClass
                 {
+                    OpenIdConfigurationGet = bank is HsbcBank.Sandbox
+                        ? new OpenIdConfigurationGetCustomBehaviour
+                        {
+                            Url = bankProfileHiddenProperties.GetAdditionalProperty1()
+                        }
+                        : null,
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                    {
+                        ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
+                        AudClaim = issuerUrl,
+                        UseApplicationJoseNotApplicationJwtContentTypeHeader = true
+                    },
                     JwksGet = bank is HsbcBank.Sandbox
                         ? new JwksGetCustomBehaviour
                         {
                             ResponseHasNoRootProperty = true
                         }
                         : null,
-                    GrantPost = bank is HsbcBank.Sandbox
-                        ? new GrantPostCustomBehaviour
-                        {
-                            DoNotValidateIdToken = true
-                        }
-                        : null,
-                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
-                    {
-                        ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
-                        AudClaim = bank is HsbcBank.Sandbox
-                            ? bankProfileHiddenProperties.GetAdditionalProperty1()
-                            : issuerUrl,
-                        UseApplicationJoseNotApplicationJwtContentTypeHeader = true
-                    },
                     AccountAccessConsentAuthGet = bank is HsbcBank.Sandbox
                         ? new ConsentAuthGetCustomBehaviour
                         {
-                            AudClaim = bankProfileHiddenProperties.GetAdditionalProperty1(),
-                            ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2()
+                            ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2(),
+                            DoNotValidateIdToken = true
                         }
+                        : null,
+                    AuthCodeGrantPost = bank is HsbcBank.Sandbox
+                        ? sandboxGrantPostCustomBehaviour
+                        : null,
+                    RefreshTokenGrantPost = bank is HsbcBank.Sandbox
+                        ? sandboxGrantPostCustomBehaviour
                         : null
                 },
                 AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings

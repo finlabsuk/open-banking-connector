@@ -15,14 +15,14 @@ using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persi
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
-        ICreateEntityContext<BankRegistration, BankRegistrationResponse>,
+        ICreateBankRegistrationContext<BankRegistration, BankRegistrationResponse>,
         IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadBankRegistrationContext<BankRegistrationResponse>,
         IDeleteBankRegistrationContext { }
 
     internal interface IBankRegistrationsContextInternal :
         IBankRegistrationsContext,
-        ICreateEntityContextInternal<BankRegistration, BankRegistrationResponse>,
+        ICreateBankRegistrationContextInternal<BankRegistration, BankRegistrationResponse>,
         IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadBankRegistrationContextInternal<BankRegistrationResponse>,
         IDeleteBankRegistrationContextInternal { }
@@ -72,7 +72,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
         public IObjectReadWithSearch<IBankRegistrationPublicQuery, BankRegistrationResponse, LocalReadParams>
             ReadLocalObject { get; }
 
-        public IObjectCreate<BankRegistration, BankRegistrationResponse> CreateObject { get; }
+        public IObjectCreate<BankRegistration, BankRegistrationResponse, BankRegistrationCreateParams> CreateObject
+        {
+            get;
+        }
 
         public IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
         public IObjectRead<BankRegistrationResponse, BankRegistrationReadParams> ReadObject { get; }

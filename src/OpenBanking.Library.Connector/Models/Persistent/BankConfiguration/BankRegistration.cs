@@ -107,6 +107,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         ///     Functional APIs used for bank registration.
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
+        
+        /// <summary>
+        ///     Redirect URIs used for this registration.
+        /// The first in the list is the default one.
+        /// </summary>
+        //public IList<string> RedirectUris { get; } = new List<string>();
 
         /// <summary>
         ///     Bank with which this BankRegistration is associated.

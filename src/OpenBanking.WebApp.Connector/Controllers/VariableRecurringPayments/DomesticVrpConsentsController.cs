@@ -16,11 +16,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.VariableRecur
 [Route("vrp/domestic-vrp-consents")]
 public class DomesticVrpConsentsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public DomesticVrpConsentsController(IRequestBuilder requestBuilder)
+    public DomesticVrpConsentsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -32,10 +34,14 @@ public class DomesticVrpConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticVrpConsentResponse))]
     public async Task<IActionResult> PostAsync([FromBody] DomesticVrpConsent request)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         DomesticVrpConsentResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .CreateAsync(request);
+            .CreateAsync(request, requestUrlWithoutQuery);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -60,11 +66,15 @@ public class DomesticVrpConsentsController : ControllerBase
         [FromHeader]
         bool? includeExternalApiOperation)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         DomesticVrpConsentResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
-            .ReadAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation ?? true);
+            .ReadAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

@@ -15,6 +15,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class OpenIdConfigurationGetCustomBehaviour
     {
+        /// <summary>
+        ///     Explicit URL to use for well-known endpoint instead of that created using Issuer URL.
+        /// </summary>
+        public string? Url { get; set; }
+
+        public bool? EndpointUnavailable { get; set; }
+
         public IList<OAuth2ResponseMode>? ResponseModesSupportedResponse { get; set; }
 
         public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? TokenEndpointAuthMethodsSupportedResponse

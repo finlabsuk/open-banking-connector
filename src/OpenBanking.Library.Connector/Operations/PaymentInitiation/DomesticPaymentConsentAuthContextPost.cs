@@ -21,7 +21,7 @@ using DomesticPaymentConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentAuthContextPost : LocalEntityPost<
+        DomesticPaymentConsentAuthContextPost : LocalEntityCreate<
             DomesticPaymentConsentAuthContextPersisted,
             DomesticPaymentConsentAuthContextRequest,
             DomesticPaymentConsentAuthContextCreateResponse>

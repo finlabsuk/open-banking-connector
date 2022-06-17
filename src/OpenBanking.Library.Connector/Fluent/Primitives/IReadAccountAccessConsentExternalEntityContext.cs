@@ -19,15 +19,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="consentId"></param>
         /// <param name="externalApiAccountId"></param>
-        /// <param name="queryString"></param>
         /// <param name="modifiedBy"></param>
+        /// <param name="queryString"></param>
         /// <param name="requestUrlWithoutQuery"></param>
         /// <returns></returns>
         Task<TPublicResponse> ReadAsync(
             Guid consentId,
             string? externalApiAccountId = null,
-            string? queryString = null,
             string? modifiedBy = null,
+            string? queryString = null,
             string? requestUrlWithoutQuery = null);
     }
 
@@ -41,8 +41,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         async Task<TPublicResponse> IReadAccountAccessConsentExternalEntityContext<TPublicResponse>.ReadAsync(
             Guid consentId,
             string? externalApiAccountId,
-            string? queryString,
             string? modifiedBy,
+            string? queryString,
             string? requestUrlWithoutQuery)
         {
             var externalEntityReadParams = new ExternalEntityReadParams(

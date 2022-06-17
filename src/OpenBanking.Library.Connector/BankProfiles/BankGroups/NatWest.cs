@@ -4,7 +4,6 @@
 
 using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -34,6 +33,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 hiddenPropertiesDictionary[bankProfileEnum] ??
                 throw new Exception(
                     $"Hidden properties are required for bank profile {bankProfileEnum} and cannot be found.");
+            // var sandboxGrantPostCustomBehaviour = new GrantPostCustomBehaviour
+            // {
+            //     IdTokenSubClaimIsClientIdNotConsentId = true
+            // };
             return new BankProfile(
                 bankProfileEnum,
                 bankProfileHiddenProperties.GetRequiredIssuerUrl(),
@@ -58,11 +61,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
             {
                 CustomBehaviour = new CustomBehaviourClass
                 {
+                    // HttpMtls = bank is NatWestBank.NatWest
+                    //     ? new HttpMtlsCustomBehaviour { DisableTlsCertificateVerification = true }
+                    //     : null,
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
                         ScopeClaimResponseJsonConverter =
                             DelimitedStringConverterOptions.JsonIsStringArrayNotString
-                    }
+                    },
+                    // DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                    // {
+                    //     IdTokenSubClaimIsClientIdNotConsentId = true
+                    // },
+                    // AuthCodeGrantPost = sandboxGrantPostCustomBehaviour,
+                    // RefreshTokenGrantPost = sandboxGrantPostCustomBehaviour
                 }
             };
         }

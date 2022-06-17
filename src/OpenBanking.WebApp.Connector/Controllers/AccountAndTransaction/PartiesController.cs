@@ -56,8 +56,8 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                queryString,
                 modifiedBy,
+                queryString,
                 requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
@@ -95,8 +95,8 @@ public class PartiesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                queryString,
                 modifiedBy,
+                queryString,
                 requestUrlWithoutQuery);
 
         return Ok(fluentResponse);

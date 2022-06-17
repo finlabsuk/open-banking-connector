@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
@@ -45,6 +45,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 null,
                 false)
             {
+                CustomBehaviour = new CustomBehaviourClass
+                {
+                    ClientCredentialsGrantPost = new GrantPostCustomBehaviour
+                    {
+                        DoNotValidateScopeResponse = true
+                    }
+                },
                 PaymentInitiationApiSettings = new PaymentInitiationApiSettings
                 {
                     DomesticPaymentConsentAdjustments = consent =>

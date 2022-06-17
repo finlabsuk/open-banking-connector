@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAnd
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -29,7 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IDbReadWriteEntityMethods<AuthContext>
             _authContextMethods;
 
-        private readonly IOpenIdConfigurationRead _configurationRead;
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
@@ -43,7 +43,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 authContextMethods,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IOpenIdConfigurationRead configurationRead,
             IGrantPost grantPost)
         {
             _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -51,7 +50,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             _authContextMethods = authContextMethods;
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _instrumentationClient = instrumentationClient;
-            _configurationRead = configurationRead;
             _grantPost = grantPost;
         }
 
@@ -88,7 +86,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Get consent info
             (ConsentType consentType, Guid consentId, string externalApiConsentId, BaseConsent consent,
-                    BankRegistration bankRegistration, string? requestObjectAudClaim) =
+                    BankRegistration bankRegistration, ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
+                    string? requestScope) =
                 authContext switch
                 {
                     AccountAccessConsentAuthContext ac => (
@@ -98,8 +97,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         ac.AccountAccessConsentNavigation,
                         ac.AccountAccessConsentNavigation.BankRegistrationNavigation,
                         ac.AccountAccessConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                            ?.AccountAccessConsentAuthGet
-                            ?.AudClaim),
+                            ?.AccountAccessConsentAuthGet, "openid accounts"),
                     DomesticPaymentConsentAuthContext ac => (
                         ConsentType.DomesticPaymentConsent,
                         ac.DomesticPaymentConsentId,
@@ -107,8 +105,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         (BaseConsent) ac.DomesticPaymentConsentNavigation,
                         ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
                         ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                            ?.DomesticPaymentConsentAuthGet
-                            ?.AudClaim),
+                            ?.DomesticPaymentConsentAuthGet, "openid payments"),
                     DomesticVrpConsentAuthContext ac => (
                         ConsentType.DomesticVrpConsent,
                         ac.DomesticVrpConsentId,
@@ -116,28 +113,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         (BaseConsent) ac.DomesticVrpConsentNavigation,
                         ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
                         ac.DomesticVrpConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                            ?.DomesticVrpConsentAuthGet
-                            ?.AudClaim),
+                            ?.DomesticVrpConsentAuthGet, "openid payments"),
                     _ => throw new ArgumentOutOfRangeException()
                 };
+            string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
             string bankIssuerUrl =
                 requestObjectAudClaim ??
                 bankRegistration.BankNavigation.IssuerUrl ??
                 throw new Exception("Cannot determine issuer URL for bank");
             string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(
+                    bankRegistration.SoftwareStatementProfileId,
+                    bankRegistration.SoftwareStatementProfileOverride);
+            string redirectUrl =
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+
+            // Validate redirect URL
+            if (request.RedirectUrl is not null)
+            {
+                if (!string.Equals(request.RedirectUrl, redirectUrl))
+                {
+                    throw new Exception("Redirect URL supplied does not match that which was expected");
+                }
+            }
+            
+            // Validate response mode
+            if (request.ResponseMode != bankRegistration.BankNavigation.DefaultResponseMode)
+            {
+                throw new Exception("Response mode supplied does not match that which was expected");
+            }
+
             // Validate ID token
-            bool doNotValidateIdToken =
-                bankRegistration.BankNavigation.CustomBehaviour?.GrantPost?.DoNotValidateIdToken ?? false;
+            bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
             if (doNotValidateIdToken is false)
             {
                 string jwksUri = bankRegistration.BankNavigation.JwksUri;
-                bool jwksGetResponseHasNoRootProperty =
-                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet?.ResponseHasNoRootProperty ?? false;
+                JwksGetCustomBehaviour? jwksGetCustomBehaviour =
+                    bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
                 await _grantPost.ValidateIdTokenAuthEndpoint(
                     request.RedirectData,
+                    consentAuthGetCustomBehaviour,
                     jwksUri,
-                    jwksGetResponseHasNoRootProperty,
+                    jwksGetCustomBehaviour,
                     bankIssuerUrl,
                     externalApiClientId,
                     externalApiConsentId,
@@ -145,13 +164,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.BankNavigation.SupportsSca);
             }
 
-            // if (request.RedirectData.Nonce is not null)
-            // {
-            //     throw new Exception("test");
-            // }
-
-            // Only accept redirects within 30 mins of auth context creation
-            const int authContextExpiryIntervalInSeconds = 30 * 60;
+            // Only accept redirects within 10 mins of auth context (session) creation
+            const int authContextExpiryIntervalInSeconds = 10 * 60;
             DateTimeOffset authContextExpiryTime = authContext.Created
                 .AddSeconds(authContextExpiryIntervalInSeconds);
             if (_timeProvider.GetUtcNow() > authContextExpiryTime)
@@ -161,14 +175,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     "Please create a new auth context and authenticate again.");
             }
 
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementProfileOverride);
-
             // Obtain token for consent
-            string redirectUrl =
-                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
             JsonSerializerSettings? jsonSerializerSettings = null;
             AuthCodeGrantResponse tokenEndpointResponse =
                 await _grantPost.PostAuthCodeGrantAsync(
@@ -178,6 +185,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     externalApiClientId,
                     externalApiConsentId,
                     nonce,
+                    requestScope,
                     bankRegistration,
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient);
@@ -189,6 +197,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 modifiedBy);
             consent.UpdateAccessToken(
                 tokenEndpointResponse.AccessToken,
+                //0,
                 tokenEndpointResponse.ExpiresIn,
                 tokenEndpointResponse.RefreshToken,
                 _timeProvider.GetUtcNow(),

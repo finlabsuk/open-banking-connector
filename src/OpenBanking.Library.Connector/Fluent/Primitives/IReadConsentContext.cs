@@ -20,8 +20,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="id"></param>
         /// <param name="modifiedBy"></param>
         /// <param name="includeExternalApiOperation"></param>
+        /// <param name="publicRequestUrlWithoutQuery"></param>
         /// <returns></returns>
-        Task<TPublicResponse> ReadAsync(Guid id, string? modifiedBy = null, bool includeExternalApiOperation = true);
+        Task<TPublicResponse> ReadAsync(
+            Guid id,
+            string? modifiedBy = null,
+            bool includeExternalApiOperation = true,
+            string? publicRequestUrlWithoutQuery = null);
     }
 
     internal interface
@@ -33,9 +38,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         async Task<TPublicResponse> IReadConsentContext<TPublicResponse>.ReadAsync(
             Guid id,
             string? modifiedBy,
-            bool includeExternalApiOperation)
+            bool includeExternalApiOperation,
+            string? publicRequestUrlWithoutQuery)
         {
-            var readParams = new ConsentReadParams(id, modifiedBy, includeExternalApiOperation);
+            var readParams = new ConsentReadParams(
+                id,
+                modifiedBy,
+                publicRequestUrlWithoutQuery,
+                includeExternalApiOperation);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                 await ReadObject.ReadAsync(readParams);
 

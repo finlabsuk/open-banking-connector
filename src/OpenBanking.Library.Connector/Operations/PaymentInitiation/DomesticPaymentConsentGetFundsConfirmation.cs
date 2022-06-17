@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
     internal class
         DomesticPaymentConsentGetFundsConfirmation : ConsentRead<DomesticPaymentConsentPersisted,
             DomesticPaymentConsentReadFundsConfirmationResponse,
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1, LocalReadParams>
+            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1, ConsentBaseReadParams>
     {
         private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
 
@@ -130,6 +130,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedObject,
                     bankIssuerUrl,
+                    "openid payments",
                     bankRegistration,
                     modifiedBy);
 
@@ -141,10 +142,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 accessToken, nonErrorMessages);
         }
 
-        protected override DomesticPaymentConsentReadFundsConfirmationResponse GetReadResponse(
+        protected override DomesticPaymentConsentReadFundsConfirmationResponse GetPublicResponse(
             DomesticPaymentConsentPersisted persistedObject,
-            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 apiResponse)
+            PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
         {
+            // TODO: Update links
+
             return new DomesticPaymentConsentReadFundsConfirmationResponse(
                 persistedObject.Id,
                 persistedObject.Created,

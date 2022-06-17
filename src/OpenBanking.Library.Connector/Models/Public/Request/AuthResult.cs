@@ -12,10 +12,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
 {
     public class AuthResult : ISupportsValidation
     {
-        public AuthResult(OAuth2ResponseMode responseMode, OAuth2RedirectData redirectData)
+        public AuthResult(OAuth2ResponseMode responseMode, OAuth2RedirectData redirectData, string? redirectUrl)
         {
             ResponseMode = responseMode;
             RedirectData = redirectData;
+            RedirectUrl = redirectUrl;
         }
 
         /// <summary>
@@ -25,6 +26,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request
         /// </summary>
         [JsonProperty("response_mode")]
         public OAuth2ResponseMode ResponseMode { get; }
+
+        /// <summary>
+        ///     Redirect URL can be optionally supplied for checking.
+        /// </summary>
+        public string? RedirectUrl { get; }
 
         public OAuth2RedirectData RedirectData { get; }
 

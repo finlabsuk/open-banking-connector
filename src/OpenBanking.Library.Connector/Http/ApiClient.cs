@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Net;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http
@@ -21,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             IList<X509Certificate2>? clientCertificates = null,
             IServerCertificateValidator? serverCertificateValidator = null)
         {
-            var clientHandler = new HttpClientHandler
+            var clientHandler = new SocketsHttpHandler
             {
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
             };
@@ -30,22 +32,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             clientHandler.AllowAutoRedirect = true;
             clientHandler.MaxAutomaticRedirections = maxRedirects;
 
+            // SSL settings
+            var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
+            {
+                EnabledSslProtocols = SslProtocols.Tls12
+            };
+
+            // Limit cipher suites on Linux
+            var cipherSuites = new[]
+            {
+                TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+                TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
+                TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+            };
+            if (OsPlatformEnumHelper.GetCurrentOsPlatform() is OsPlatformEnum.Linux)
+            {
+                sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
+            }
+
+            // Add client certs
             if (clientCertificates is not null &&
                 clientCertificates.Count > 0)
             {
-                clientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                clientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
-
-                foreach (X509Certificate2 certificate in clientCertificates)
-                {
-                    clientHandler.ClientCertificates.Add(certificate);
-                }
+                X509Certificate2[] y = clientCertificates.ToArray();
+                sslClientAuthenticationOptions.ClientCertificates = new X509Certificate2Collection(y);
             }
 
+            // Add custom remote cert validation
             if (serverCertificateValidator is not null)
             {
-                clientHandler.ServerCertificateCustomValidationCallback = serverCertificateValidator.IsOk;
+                sslClientAuthenticationOptions.RemoteCertificateValidationCallback = serverCertificateValidator.IsOk;
             }
+
+            clientHandler.SslOptions = sslClientAuthenticationOptions;
 
             _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
             _httpClient = new HttpClient(new ErrorAndLoggingHandler(clientHandler));

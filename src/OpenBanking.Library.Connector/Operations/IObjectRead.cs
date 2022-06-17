@@ -39,9 +39,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public BankProfileEnum? BankProfileEnum { get; }
     }
 
-    internal class ConsentReadParams : LocalReadParams
+    internal class ConsentBaseReadParams : LocalReadParams
     {
-        public ConsentReadParams(Guid id, string? modifiedBy, bool includeExternalApiOperation) : base(id, modifiedBy)
+        public ConsentBaseReadParams(Guid id, string? modifiedBy, string? publicRequestUrlWithoutQuery) : base(
+            id,
+            modifiedBy)
+        {
+            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
+        }
+
+        public string? PublicRequestUrlWithoutQuery { get; }
+    }
+
+    internal class ConsentReadParams : ConsentBaseReadParams
+    {
+        public ConsentReadParams(
+            Guid id,
+            string? modifiedBy,
+            string? publicRequestUrlWithoutQuery,
+            bool includeExternalApiOperation) : base(id, modifiedBy, publicRequestUrlWithoutQuery)
         {
             IncludeExternalApiOperation = includeExternalApiOperation;
         }

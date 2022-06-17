@@ -56,8 +56,8 @@ public class BalancesController : ControllerBase
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,
-                queryString,
                 modifiedBy,
+                queryString,
                 requestUrlWithoutQuery);
 
         return Ok(fluentResponse);

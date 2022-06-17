@@ -21,9 +21,8 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal abstract class
-        ReadWritePost<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> : EntityPost<
-            TEntity,
-            TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
+        ConsentPost<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> : EntityPost<
+            TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse, ConsentCreateParams>
         where TEntity : class, IEntity
         where TPublicRequest : ConsentRequestBase
         where TApiRequest : class, ISupportsValidation
@@ -31,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IGrantPost _grantPost;
 
-        public ReadWritePost(
+        public ConsentPost(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
@@ -54,6 +53,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected abstract Task<TPublicResponse> AddEntity(
             TPublicRequest request,
             TApiResponse? apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
             ITimeProvider timeProvider);
 
         protected abstract IApiPostRequests<TApiRequest, TApiResponse> ApiRequests(
@@ -65,20 +66,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
         protected override async
             Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiPost(PostRequestInfo requestInfo)
+            ApiPost(
+                TPublicRequest request,
+                ConsentCreateParams createParams)
         {
             (
                     TApiRequest apiRequest,
-                    Uri endpointUrl,
+                    Uri apiRequestUrl,
                     BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
                     string bankFinancialId,
                     List<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await ApiPostRequestData(requestInfo.Request);
+                await ApiPostRequestData(request);
 
             TApiResponse? externalApiResponse = null;
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2;
-            if (requestInfo.Request.ExternalApiObject is null)
+            if (request.ExternalApiObject is null)
             {
                 // Get software statement profile
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -113,11 +116,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                 (externalApiResponse, nonErrorMessages2) =
                     await EntityPostCommon(
-                        requestInfo,
                         apiRequest,
                         apiRequests,
                         apiClient,
-                        endpointUrl,
+                        apiRequestUrl,
                         requestJsonSerializerSettings,
                         responseJsonSerializerSettings,
                         nonErrorMessages);
@@ -129,8 +131,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
             // Create persisted entity and return response
             TPublicResponse response = await AddEntity(
-                requestInfo.Request,
+                request,
                 externalApiResponse,
+                apiRequestUrl,
+                createParams.PublicRequestUrlWithoutQuery,
                 _timeProvider);
 
             // Persist updates (this happens last so as not to happen if there are any previous errors)

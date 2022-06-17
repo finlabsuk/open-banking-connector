@@ -72,10 +72,10 @@ public class TransactionsController : ControllerBase
                 accountAccessConsentId,
                 externalApiAccountId,
                 externalApiStatementId,
+                modifiedBy,
                 null,
                 null,
                 queryString,
-                modifiedBy,
                 requestUrlWithoutQuery);
 
         return Ok(fluentResponse);

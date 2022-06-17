@@ -18,30 +18,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="id"></param>
         /// <param name="modifiedBy"></param>
-        /// <param name="apiResponseWriteFile"></param>
-        /// <param name="apiResponseOverrideFile"></param>
+        /// <param name="publicRequestUrlWithoutQuery"></param>
         /// <returns></returns>
         Task<TPublicResponse> ReadFundsConfirmationAsync(
             Guid id,
             string? modifiedBy = null,
-            string? apiResponseWriteFile = null,
-            string? apiResponseOverrideFile = null);
+            string? publicRequestUrlWithoutQuery = null);
     }
 
     internal interface
         IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead<TPublicResponse, LocalReadParams> ReadFundsConfirmationObject { get; }
+        IObjectRead<TPublicResponse, ConsentBaseReadParams> ReadFundsConfirmationObject { get; }
 
         async Task<TPublicResponse> IReadFundsConfirmationContext<TPublicResponse>.
             ReadFundsConfirmationAsync(
                 Guid id,
                 string? modifiedBy,
-                string? apiResponseWriteFile,
-                string? apiResponseOverrideFile)
+                string? publicRequestUrlWithoutQuery)
         {
-            var readParams = new LocalReadParams(id, modifiedBy);
+            var readParams = new ConsentBaseReadParams(id, modifiedBy, publicRequestUrlWithoutQuery);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                 await ReadFundsConfirmationObject.ReadAsync(readParams);
             return response;

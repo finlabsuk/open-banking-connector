@@ -115,10 +115,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 nonErrorMessages);
         }
 
-        protected override DomesticVrpConsentResponse GetReadResponse(
+        protected override DomesticVrpConsentResponse GetPublicResponse(
             DomesticVrpConsentPersisted persistedObject,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse)
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery)
         {
+            // TODO: Update links
+
             return new DomesticVrpConsentResponse(
                 persistedObject.Id,
                 persistedObject.Created,

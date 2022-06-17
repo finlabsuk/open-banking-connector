@@ -58,13 +58,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 };
             return new UriBuilder(urlString)
             {
-                Query = readParams.QueryString ?? ConstructedQuery(readParams)
+                Query =  ConstructedQuery(readParams.QueryString, readParams)
             }.Uri;
         }
 
-        private string ConstructedQuery(TransactionsReadParams readParams)
+        private string ConstructedQuery(string? queryString, TransactionsReadParams readParams)
         {
-            NameValueCollection query = HttpUtility.ParseQueryString(new UriBuilder().Query);
+            NameValueCollection query = HttpUtility.ParseQueryString(queryString ?? new UriBuilder().Query);
             if (!string.IsNullOrEmpty(readParams.FromBookingDateTime))
             {
                 query["fromBookingDateTime"] = readParams.FromBookingDateTime;
@@ -81,44 +81,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override TransactionsResponse PublicGetResponse(
             AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse,
             Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
+            bool allowValidQueryParametersOnly,
             TransactionsReadParams readParams)
         {
             var validQueryParameters = new List<string>();
-            if (readParams.FromBookingDateTime is not null)
-            {
-                validQueryParameters.Add("fromBookingDateTime");
-            }
-
-            if (readParams.ToBookingDateTime is not null)
-            {
-                validQueryParameters.Add("toBookingDateTime");
-            }
 
             // Get link queries
-            apiResponse.Links.Self = GetLinkUrlQuery(
+            apiResponse.Links.Self = Helpers.TransformLinkUrl(
                 apiResponse.Links.Self,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.First = GetLinkUrlQuery(
+            apiResponse.Links.First = Helpers.TransformLinkUrl(
                 apiResponse.Links.First,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Prev = GetLinkUrlQuery(
+            apiResponse.Links.Prev = Helpers.TransformLinkUrl(
                 apiResponse.Links.Prev,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Next = GetLinkUrlQuery(
+            apiResponse.Links.Next = Helpers.TransformLinkUrl(
                 apiResponse.Links.Next,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.Last = GetLinkUrlQuery(
+            apiResponse.Links.Last = Helpers.TransformLinkUrl(
                 apiResponse.Links.Last,
                 apiRequestUrl,
-                readParams,
+                publicRequestUrlWithoutQuery,
+                allowValidQueryParametersOnly,
                 validQueryParameters);
 
             return new TransactionsResponse(apiResponse);

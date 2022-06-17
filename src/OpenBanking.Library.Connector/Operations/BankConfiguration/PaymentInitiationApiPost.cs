@@ -12,7 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class PaymentInitiationApiPost : LocalEntityPost<PaymentInitiationApiEntity,
+    internal class PaymentInitiationApiPost : LocalEntityCreate<PaymentInitiationApiEntity,
         PaymentInitiationApiRequest, PaymentInitiationApiResponse>
     {
         public PaymentInitiationApiPost(

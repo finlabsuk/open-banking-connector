@@ -22,7 +22,7 @@ using AccountAccessConsentAuthContextPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
     internal class
-        AccountAccessConsentAuthContextPost : LocalEntityPost<
+        AccountAccessConsentAuthContextPost : LocalEntityCreate<
             AccountAccessConsentAuthContextPersisted,
             AccountAccessConsentAuthContextRequest,
             AccountAccessConsentAuthContextCreateResponse>

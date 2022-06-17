@@ -15,11 +15,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.PaymentInitia
 [Route("pisp/domestic-payment-consents")]
 public class DomesticPaymentConsentsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public DomesticPaymentConsentsController(IRequestBuilder requestBuilder)
+    public DomesticPaymentConsentsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -31,10 +33,14 @@ public class DomesticPaymentConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentResponse))]
     public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
-            .CreateAsync(request);
+            .CreateAsync(request, requestUrlWithoutQuery);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -59,11 +65,19 @@ public class DomesticPaymentConsentsController : ControllerBase
         [FromHeader]
         bool? includeExternalApiOperation)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
-            .ReadAsync(domesticPaymentConsentId, modifiedBy, includeExternalApiOperation ?? true);
+            .ReadAsync(
+                domesticPaymentConsentId,
+                modifiedBy,
+                includeExternalApiOperation ?? true,
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

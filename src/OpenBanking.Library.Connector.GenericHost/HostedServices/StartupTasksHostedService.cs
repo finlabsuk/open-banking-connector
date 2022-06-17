@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -18,19 +19,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
     {
         private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        // Ensures store set up at application start-up
+        // Ensures these set up at application start-up
         private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
+        private readonly IBankProfileDefinitions _bankProfileDefinitions;
 
         public StartupTasksHostedService(
             ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
             IServiceScopeFactory serviceScopeFactory,
-            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore)
+            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
+            IBankProfileDefinitions bankProfileDefinitions)
         {
             _databaseSettingsProvider =
                 databaseSettingsProvider ??
                 throw new ArgumentNullException(nameof(databaseSettingsProvider));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
             _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
+            _bankProfileDefinitions = bankProfileDefinitions;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -12,4 +12,7 @@ public class ConsentAuthGetCustomBehaviour
     // Override aud claim
     public string? AudClaim { get; set; }
 
+    public bool? DoNotValidateIdToken { get; set; }
+
+    public bool? IdTokenSubClaimIsClientIdNotConsentId { get; set; }
 }

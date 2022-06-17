@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -42,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
             };
 
             (AccountAndTransactionApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await interaction.CreateAsync(newBank);
+                await interaction.CreateAsync(newBank, new LocalCreateParams());
 
             response.Should().NotBeNull();
         }

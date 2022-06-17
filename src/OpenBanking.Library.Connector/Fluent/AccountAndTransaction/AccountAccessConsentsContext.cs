@@ -113,7 +113,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
         public IObjectRead<AccountAccessConsentResponse, ConsentReadParams> ReadObject { get; }
 
-        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentResponse> CreateObject { get; }
+        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentResponse, ConsentCreateParams>
+            CreateObject { get; }
 
         public IObjectReadWithSearch<IAccountAccessConsentPublicQuery, AccountAccessConsentResponse, LocalReadParams>
             ReadLocalObject { get; }

@@ -29,12 +29,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             ISettingsProvider<BankProfilesSettings>
                 bankProfilesSettingsProvider)
         {
+            // Load bank profile settings and check
             BankProfilesSettings topLevelDict = bankProfilesSettingsProvider.GetSettings();
+            foreach ((string key, Dictionary<string, BankProfileHiddenProperties> value) in topLevelDict)
+            {
+                if (!Enum.TryParse(key, out BankGroupEnum bankGroupEnum))
+                {
+                    throw new ArgumentException(
+                        "Configuration or key secrets error: " +
+                        $"Invalid bank group {key} used in bank profile setting.");
+                }
+
+                IBankGroup bankGroup = GetBankGroup(bankGroupEnum);
+                foreach ((string innerKey, BankProfileHiddenProperties _) in value)
+                {
+                    string _ = string.Equals(innerKey, "Default")
+                        ? "Default"
+                        : bankGroup.BankProfileToBankName.Values.FirstOrDefault(x => x == innerKey) ??
+                          throw new ArgumentException(
+                              "Configuration or key secrets error: " +
+                              $"Invalid bank {innerKey} used with bank group {bankGroupEnum} in bank profile setting.");
+                }
+            }
+
             foreach (BankGroupEnum bankGroupEnum in Enum.GetValues<BankGroupEnum>())
             {
                 // Get bank group dictionary if available
                 if (!topLevelDict.TryGetValue(
-                        bankGroupEnum,
+                        bankGroupEnum.ToString(),
                         out Dictionary<string, BankProfileHiddenProperties>? bankGroupDict))
                 {
                     continue;

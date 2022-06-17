@@ -18,35 +18,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public OAuth2RedirectData(
             string idToken,
             string code,
-            string state,
-            string? nonce)
+            string state)
         {
             IdToken = idToken;
             Code = code;
             State = state;
-            Nonce = nonce;
         }
 
         /// <summary>
         ///     Required data in redirect when "response_type" = "code id_token"
         /// </summary>
-        [JsonProperty("id_token")]
+        [JsonProperty("id_token", Required = Required.Always)]
         public string IdToken { get; set; }
 
         /// <summary>
         ///     Required data in redirect when "response_type" = "code id_token"
         /// </summary>
-        [JsonProperty("code")]
+        [JsonProperty("code", Required = Required.Always)]
         public string Code { get; set; }
 
         /// <summary>
         ///     Required data in redirect when "response_type" = "code id_token" and "state" is request parameter
         /// </summary>
-        [JsonProperty("state")]
+        [JsonProperty("state", Required = Required.Always)]
         public string State { get; set; }
-
-        [JsonProperty("nonce", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public string? Nonce { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AuthResultValidator()

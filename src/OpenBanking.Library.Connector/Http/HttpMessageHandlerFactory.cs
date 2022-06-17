@@ -23,8 +23,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
             ApplyCertificates(value, clientHandler);
 
-            ApplyServerCertificateValidator(value, clientHandler);
-
             ApplyProxy(value, clientHandler);
 
             ApplyRedirects(value, clientHandler);
@@ -100,12 +98,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             }
         }
 
-        private void ApplyServerCertificateValidator(HttpRequestInfo value, HttpClientHandler clientHandler)
-        {
-            if (value.ServerCertificateValidator is not null)
-            {
-                clientHandler.ServerCertificateCustomValidationCallback = value.ServerCertificateValidator.IsOk;
-            }
-        }
     }
 }

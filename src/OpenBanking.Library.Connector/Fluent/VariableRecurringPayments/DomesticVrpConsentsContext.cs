@@ -131,12 +131,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         public IObjectReadWithSearch<IDomesticVrpConsentPublicQuery, DomesticVrpConsentBaseResponse, LocalReadParams>
             ReadLocalObject { get; }
 
-        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse> CreateObject { get; }
-
-        public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse, LocalReadParams> ReadFundsConfirmationObject
+        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse, ConsentCreateParams> CreateObject
         {
             get;
         }
+
+        public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
+            ReadFundsConfirmationObject { get; }
 
         public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
     }

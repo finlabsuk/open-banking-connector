@@ -10,12 +10,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class CustomBehaviourClass
     {
-        public JwksGetCustomBehaviour? JwksGet { get; set; }
-        public GrantPostCustomBehaviour? GrantPost { get; set; }
+        // Non-endpoint
+        //public HttpMtlsCustomBehaviour? HttpMtls { get; set; }
+
+        // Bank config endpoints
         public OpenIdConfigurationGetCustomBehaviour? OpenIdConfigurationGet { get; set; }
         public BankRegistrationPostCustomBehaviour? BankRegistrationPost { get; set; }
+
+        // Client auth 
+        public GrantPostCustomBehaviour? ClientCredentialsGrantPost { get; set; }
+
+        // Consent auth endpoints
+        public JwksGetCustomBehaviour? JwksGet { get; set; }
         public ConsentAuthGetCustomBehaviour? AccountAccessConsentAuthGet { get; set; }
         public ConsentAuthGetCustomBehaviour? DomesticPaymentConsentAuthGet { get; set; }
         public ConsentAuthGetCustomBehaviour? DomesticVrpConsentAuthGet { get; set; }
+        public GrantPostCustomBehaviour? AuthCodeGrantPost { get; set; }
+        public GrantPostCustomBehaviour? RefreshTokenGrantPost { get; set; }
     }
 }

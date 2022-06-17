@@ -27,7 +27,7 @@ using DomesticPaymentConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     internal class
-        DomesticPaymentConsentPost : ReadWritePost<DomesticPaymentConsentPersisted,
+        DomesticPaymentConsentPost : ConsentPost<DomesticPaymentConsentPersisted,
             DomesticPaymentConsent,
             DomesticPaymentConsentResponse,
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
@@ -63,8 +63,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         protected override async Task<DomesticPaymentConsentResponse> AddEntity(
             DomesticPaymentConsent request,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery,
             ITimeProvider timeProvider)
         {
+            // TODO: Transform links
+            
             string externalApiId =
                 request.ExternalApiObject is null
                     ? apiResponse!.Data.ConsentId

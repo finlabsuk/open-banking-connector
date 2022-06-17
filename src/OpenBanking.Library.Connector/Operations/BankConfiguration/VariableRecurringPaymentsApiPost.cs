@@ -12,7 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
-    internal class VariableRecurringPaymentsApiPost : LocalEntityPost<VariableRecurringPaymentsApiEntity,
+    internal class VariableRecurringPaymentsApiPost : LocalEntityCreate<VariableRecurringPaymentsApiEntity,
         VariableRecurringPaymentsApiRequest, VariableRecurringPaymentsApiResponse>
     {
         public VariableRecurringPaymentsApiPost(

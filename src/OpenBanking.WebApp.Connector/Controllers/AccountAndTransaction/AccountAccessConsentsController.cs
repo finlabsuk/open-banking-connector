@@ -16,11 +16,13 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 [Route("aisp/account-access-consents")]
 public class AccountAccessConsentsController : ControllerBase
 {
+    private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public AccountAccessConsentsController(IRequestBuilder requestBuilder)
+    public AccountAccessConsentsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
+        _linkGenerator = linkGenerator;
     }
 
     /// <summary>
@@ -32,10 +34,14 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAccessConsentResponse))]
     public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsent request)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         AccountAccessConsentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .CreateAsync(request);
+            .CreateAsync(request, requestUrlWithoutQuery);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -60,11 +66,15 @@ public class AccountAccessConsentsController : ControllerBase
         [FromHeader]
         bool? includeExternalApiOperation)
     {
+        string requestUrlWithoutQuery =
+            _linkGenerator.GetUriByAction(HttpContext) ??
+            throw new InvalidOperationException("Can't generate calling URL.");
+
         // Operation
         AccountAccessConsentResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true);
+            .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }

@@ -36,6 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
             TConsentEntity consent,
             string bankIssuerUrl,
+            string? requestScope,
             BankRegistration bankRegistration,
             string? modifiedBy)
             where TConsentEntity : BaseConsent
@@ -56,61 +57,54 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 .AddSeconds(
                     -tokenEarlyExpiryIntervalInSeconds); // less margin to allow for time required to obtain token and to re-use token
 
-            // If token expired, attempt to get a new one 
-            if (_timeProvider.GetUtcNow() > tokenExpiryTime)
+            // Return unexpired access token if available
+            if (_timeProvider.GetUtcNow() <= tokenExpiryTime)
             {
-                if (!(accessToken.RefreshToken is null))
-                {
-                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                        await _softwareStatementProfileRepo.GetAsync(
-                            bankRegistration.SoftwareStatementProfileId,
-                            bankRegistration.SoftwareStatementProfileOverride);
-
-                    // Obtain token for consent
-                    string redirectUrl =
-                        processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
-                    JsonSerializerSettings? jsonSerializerSettings = null;
-                    RefreshTokenGrantResponse tokenEndpointResponse =
-                        await _grantPost.PostRefreshTokenGrantAsync(
-                            accessToken.RefreshToken,
-                            redirectUrl,
-                            bankIssuerUrl,
-                            externalApiClientId,
-                            consent.ExternalApiId,
-                            nonce,
-                            bankRegistration,
-                            jsonSerializerSettings,
-                            processedSoftwareStatementProfile.ApiClient);
-
-                    // Check token endpoint response
-                    bool isBearerTokenType = string.Equals(
-                        tokenEndpointResponse.TokenType,
-                        "bearer",
-                        StringComparison.OrdinalIgnoreCase);
-                    if (!isBearerTokenType)
-                    {
-                        throw new InvalidDataException(
-                            "Access token received does not have token type equal to Bearer or bearer.");
-                    }
-
-                    // Update auth context with token
-                    consent.UpdateAccessToken(
-                        tokenEndpointResponse.AccessToken,
-                        tokenEndpointResponse.ExpiresIn,
-                        tokenEndpointResponse.RefreshToken,
-                        _timeProvider.GetUtcNow(),
-                        modifiedBy);
-
-                    // Persist updates (this happens last so as not to happen if there are any previous errors)
-                    await _dbSaveChangesMethod.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new InvalidOperationException("Access token has expired and no refresh token is available.");
-                }
+                return accessToken.Token;
             }
 
-            return accessToken.Token;
+            // Check that refresh token is available
+            if (accessToken.RefreshToken is null)
+            {
+                throw new InvalidOperationException("Access token has expired and no refresh token is available.");
+            }
+
+            // Get new access token using refresh token 
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(
+                    bankRegistration.SoftwareStatementProfileId,
+                    bankRegistration.SoftwareStatementProfileOverride);
+
+            // Obtain token for consent
+            string redirectUrl =
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+            JsonSerializerSettings? jsonSerializerSettings = null;
+            RefreshTokenGrantResponse tokenEndpointResponse =
+                await _grantPost.PostRefreshTokenGrantAsync(
+                    accessToken.RefreshToken,
+                    redirectUrl,
+                    bankIssuerUrl,
+                    externalApiClientId,
+                    consent.ExternalApiId,
+                    nonce,
+                    requestScope,
+                    bankRegistration,
+                    jsonSerializerSettings,
+                    processedSoftwareStatementProfile.ApiClient);
+
+            // Update auth context with token
+            consent.UpdateAccessToken(
+                tokenEndpointResponse.AccessToken,
+                tokenEndpointResponse.ExpiresIn,
+                tokenEndpointResponse.RefreshToken,
+                _timeProvider.GetUtcNow(),
+                modifiedBy);
+
+            // Persist updates (this happens last so as not to happen if there are any previous errors)
+            await _dbSaveChangesMethod.SaveChangesAsync();
+
+            return tokenEndpointResponse.AccessToken;
+
         }
     }
 }

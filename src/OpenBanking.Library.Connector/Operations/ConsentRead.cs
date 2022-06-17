@@ -24,7 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TReadParams>
         where TEntity : class, IEntity
         where TApiResponse : class, ISupportsValidation
-        where TReadParams : LocalReadParams
+        where TReadParams : ConsentBaseReadParams
     {
         private readonly IGrantPost _grantPost;
         private readonly IApiVariantMapper _mapper;
@@ -60,7 +60,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             ApiGet(TReadParams readParams)
         {
-            (Uri endpointUrl,
+            (Uri apiRequestUrl,
                     TEntity persistedObject,
                     BankApiSet2 bankApiInformation,
                     BankRegistrationPersisted bankRegistration,
@@ -103,21 +103,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
             (apiResponse, newNonErrorMessages) =
                 await apiRequests.GetAsync(
-                    endpointUrl,
+                    apiRequestUrl,
                     jsonSerializerSettings,
                     apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Create response
-            TPublicResponse response = GetReadResponse(persistedObject, apiResponse);
+            TPublicResponse response = GetPublicResponse(
+                persistedObject,
+                apiResponse,
+                apiRequestUrl,
+                readParams.PublicRequestUrlWithoutQuery);
 
             return (response, nonErrorMessages);
         }
 
-        protected abstract TPublicResponse GetReadResponse(
+        protected abstract TPublicResponse GetPublicResponse(
             TEntity persistedObject,
-            TApiResponse apiResponse);
+            TApiResponse apiResponse,
+            Uri apiRequestUrl,
+            string? publicRequestUrlWithoutQuery);
 
         protected abstract Task<(
                 Uri endpointUrl,

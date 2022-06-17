@@ -31,6 +31,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
                 [DbProvider.PostgreSql] = string.Empty
             };
 
+        public Dictionary<DbProvider, string> PasswordSettingNames { get; set; } =
+            new();
+
         /// <summary>
         ///     At application start-up, ensure database is created if does not exist.
         /// </summary>
@@ -38,10 +41,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
 
         /// <summary>
         ///     At application start-up, apply pending migrations. Only supported
-        /// for database providers with migration support (i.e. only PostgreSql at this time).
+        ///     for database providers with migration support (i.e. only PostgreSql at this time).
         /// </summary>
         public bool EnsureDatabaseMigrated { get; set; } = false;
-        
+
         public string SettingsGroupName => "OpenBankingConnector:Database";
 
         public DatabaseSettings Validate()

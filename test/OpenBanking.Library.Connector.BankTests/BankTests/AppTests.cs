@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
@@ -126,6 +125,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                             ? value6
                             : null;
 
+                    // Get external API BankRegistration secret
+                    string? externalApiBankRegistrationSecret =
+                        testGroup
+                            .BankRegistrationExternalApiSecrets
+                            .TryGetValue(bankProfileEnum, out string? value61)
+                            ? value61
+                            : null;
+
                     // Get external API AccountAccessConsent ID
                     string? externalApiAccountAccessConsentId =
                         testGroup
@@ -166,6 +173,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                                 BankRegistrationId = bankRegistrationId,
                                 AccountAccessConsentId = accountAccessConsentId,
                                 BankRegistrationExternalApiId = externalApiBankRegistrationId,
+                                BankRegistrationExternalApiSecret = externalApiBankRegistrationSecret,
                                 AccountAccessConsentExternalApiId = externalApiAccountAccessConsentId,
                                 AccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
                             });
@@ -285,10 +293,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     bankProfile,
                     testNameUnique,
                     testDataProcessorFluentRequestLogging
-                        .AppendToPath("config"),
-                    testDataProcessorApiLogging?
-                        .AppendToPath("config"),
-                    testDataProcessorApiOverrides
                         .AppendToPath("config"));
 
             // Run account access consent subtests

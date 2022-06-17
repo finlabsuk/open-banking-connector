@@ -14,7 +14,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
@@ -31,13 +30,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     /// <typeparam name="TPublicPostResponse"></typeparam>
     /// <typeparam name="TApiRequest"></typeparam>
     /// <typeparam name="TApiResponse"></typeparam>
+    /// <typeparam name="TCreateParams"></typeparam>
     internal abstract class
-        EntityPost<TEntity, TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse> :
-            PostBase<TPublicRequest, TPublicPostResponse>
+        EntityPost<TEntity, TPublicRequest, TPublicPostResponse, TApiRequest, TApiResponse, TCreateParams> :
+            BaseCreate<TPublicRequest, TPublicPostResponse, TCreateParams>
         where TEntity : class, IEntity
         where TPublicRequest : Base
         where TApiResponse : class, ISupportsValidation
         where TApiRequest : class, ISupportsValidation
+        where TCreateParams : LocalCreateParams
     {
         protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         protected readonly IApiVariantMapper _mapper;
@@ -61,7 +62,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         protected async
             Task<(TApiResponse apiResponse, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
             EntityPostCommon(
-                PostRequestInfo requestInfo,
                 TApiRequest apiRequest,
                 IApiPostRequests<TApiRequest, TApiResponse> apiRequests,
                 IApiClient apiClient,
@@ -70,43 +70,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 JsonSerializerSettings? responseJsonSerializerSettings,
                 IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
         {
-            string? writeRequestFile = requestInfo.ApiRequestWriteFile;
-            string? readResponseFile = requestInfo.ApiResponseOverrideFile;
-            string? writeResponseFile = requestInfo.ApiResponseWriteFile;
-
-            // Log request to file
-            if (!(writeRequestFile is null))
-            {
-                await DataFile.WriteFile(apiRequest, writeRequestFile, requestJsonSerializerSettings);
-            }
-
-            // Either use API response override or call API
+            // Call API
             TApiResponse apiResponse;
-            if (!(readResponseFile is null))
-            {
-                apiResponse = await DataFile.ReadFile<TApiResponse>(readResponseFile, responseJsonSerializerSettings);
-            }
-            else
-            {
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+            IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
 
-                (apiResponse, newNonErrorMessages) =
-                    await apiRequests.PostAsync(
-                        uri,
-                        apiRequest,
-                        requestJsonSerializerSettings,
-                        responseJsonSerializerSettings,
-                        apiClient,
-                        _mapper);
+            (apiResponse, newNonErrorMessages) =
+                await apiRequests.PostAsync(
+                    uri,
+                    apiRequest,
+                    requestJsonSerializerSettings,
+                    responseJsonSerializerSettings,
+                    apiClient,
+                    _mapper);
 
-                nonErrorMessages.AddRange(newNonErrorMessages);
-            }
-
-            // Log response to file
-            if (!(writeResponseFile is null))
-            {
-                await DataFile.WriteFile(apiResponse, writeResponseFile, responseJsonSerializerSettings);
-            }
+            nonErrorMessages.AddRange(newNonErrorMessages);
 
 
             return (apiResponse, nonErrorMessages);

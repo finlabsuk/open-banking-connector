@@ -2,19 +2,30 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal interface IObjectCreate<in TPublicRequest, TPublicResponse>
+    internal class LocalCreateParams { }
+
+    internal class BankRegistrationCreateParams : LocalCreateParams { }
+
+    internal class ConsentCreateParams : LocalCreateParams
+    {
+        public ConsentCreateParams(string? publicRequestUrlWithoutQuery)
+        {
+            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
+        }
+
+        public string? PublicRequestUrlWithoutQuery { get; }
+    }
+
+
+    internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateParams>
+        where TCreateParams : LocalCreateParams
     {
         Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
             TPublicRequest request,
-            string? createdBy,
-            string? apiRequestWriteFile,
-            string? apiResponseWriteFile,
-            string? apiResponseOverrideFile);
+            TCreateParams createParams);
     }
 }

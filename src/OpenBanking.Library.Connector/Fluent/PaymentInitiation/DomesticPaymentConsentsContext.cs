@@ -122,10 +122,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
         public IObjectRead<DomesticPaymentConsentResponse, ConsentReadParams> ReadObject { get; }
 
-        public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse, LocalReadParams>
+        public IObjectRead<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
             ReadFundsConfirmationObject { get; }
 
-        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse> CreateObject { get; }
+        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse, ConsentCreateParams>
+            CreateObject { get; }
 
         public IObjectReadWithSearch<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentBaseResponse,
                 LocalReadParams>
