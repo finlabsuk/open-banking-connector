@@ -17,7 +17,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
                 DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
                 CustomBehaviour = bankProfile.CustomBehaviour,
                 SupportsSca = bankProfile.SupportsSca,
-                DefaultResponseMode = bankProfile.DefaultResponseMode
             };
 
         public static BankRegistration GetBankRegistrationRequest(
@@ -32,6 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObje
                 SoftwareStatementProfileId = softwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
                 RegistrationScope = registrationScope,
+                DefaultResponseMode = bankProfile.DefaultResponseMode
             };
 
         public static AccountAndTransactionApiRequest GetAccountAndTransactionApiRequest(

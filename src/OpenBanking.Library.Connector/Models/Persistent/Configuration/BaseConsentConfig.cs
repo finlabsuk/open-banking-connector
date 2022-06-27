@@ -28,27 +28,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.BankRegistrationId)
                 .HasColumnOrder(1)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            
+
             builder.Property(e => e.ExternalApiId)
                 .HasColumnOrder(100)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.Nonce)
+            builder.Property(e => e.AuthContextState)
                 .HasColumnOrder(101);
-            builder.Property(e => e.NonceModified)
+            builder.Property(e => e.AuthContextNonce)
                 .HasColumnOrder(102);
-            builder.Property(e => e.NonceModifiedBy)
+            builder.Property(e => e.AuthContextModified)
                 .HasColumnOrder(103);
-            builder.Property("_accessTokenAccessToken")
+            builder.Property(e => e.AuthContextModifiedBy)
                 .HasColumnOrder(104);
-            builder.Property("_accessTokenExpiresIn")
+            builder.Property("_accessTokenAccessToken")
                 .HasColumnOrder(105);
-            builder.Property("_accessTokenRefreshToken")
+            builder.Property("_accessTokenExpiresIn")
                 .HasColumnOrder(106);
-            builder.Property("_accessTokenModified")
+            builder.Property("_accessTokenRefreshToken")
                 .HasColumnOrder(107);
-            builder.Property("_accessTokenModifiedBy")
+            builder.Property("_accessTokenModified")
                 .HasColumnOrder(108);
-            
+            builder.Property("_accessTokenModifiedBy")
+                .HasColumnOrder(109);
+
             // Note: we specify column order above and in parent classes to solve two problems:
             // (1) Auto-ordering with two base classes seems to put columns from "middle" class at end of table.
             // (2) Field-sourced columns jump to start of table with auto-ordering and their ordering w.r.t. one

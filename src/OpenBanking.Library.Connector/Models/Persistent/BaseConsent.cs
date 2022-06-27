@@ -38,8 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class BaseConsent :
-        BaseEntity
+    internal class BaseConsent : BaseEntity
     {
         /// <summary>
         ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
@@ -79,9 +78,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? accessTokenRefreshToken,
             Guid bankRegistrationId,
             string externalApiId,
-            string? nonce,
-            DateTimeOffset nonceModified,
-            string? nonceModifiedBy) : base(
+            string? authContextState,
+            string? authContextNonce,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy) : base(
             id,
             reference,
             isDeleted,
@@ -97,11 +97,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             _accessTokenRefreshToken = accessTokenRefreshToken;
             BankRegistrationId = bankRegistrationId;
             ExternalApiId = externalApiId;
-            Nonce = nonce;
-            NonceModified = nonceModified;
-            NonceModifiedBy = nonceModifiedBy;
+            AuthContextState = authContextState;
+            AuthContextNonce = authContextNonce;
+            AuthContextModified = authContextModified;
+            AuthContextModifiedBy = authContextModifiedBy;
         }
-
 
         [ForeignKey("BankRegistrationId")]
         public BankRegistration BankRegistrationNavigation { get; set; } = null!;
@@ -118,13 +118,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public string ExternalApiId { get; }
 
         /// <summary>
+        ///     OAuth2 "state". This is mutable as re-auth will generate a new value.
+        /// </summary>
+        public string? AuthContextState { get; private set; }
+
+        /// <summary>
         ///     OpenID Connect "nonce". This is mutable as re-auth will generate a new value.
         /// </summary>
-        public string? Nonce { get; private set; }
+        public string? AuthContextNonce { get; private set; }
 
-        public DateTimeOffset NonceModified { get; private set; }
+        public DateTimeOffset AuthContextModified { get; private set; }
 
-        public string? NonceModifiedBy { get; private set; }
+        public string? AuthContextModifiedBy { get; private set; }
 
         public AccessToken? AccessToken => _accessTokenAccessToken switch
         {
@@ -138,11 +143,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
                     _accessTokenModifiedBy)
         };
 
-        public void UpdateNonce(string nonce, DateTimeOffset modified, string? modifiedBy)
+        public void UpdateAuthContext(string state, string nonce, DateTimeOffset modified, string? modifiedBy)
         {
-            Nonce = nonce;
-            NonceModified = modified;
-            NonceModifiedBy = modifiedBy;
+            AuthContextState = state;
+            AuthContextNonce = nonce;
+            AuthContextModified = modified;
+            AuthContextModifiedBy = modifiedBy;
         }
 
         public void UpdateAccessToken(

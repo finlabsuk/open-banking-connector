@@ -249,7 +249,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ObjectDeleteResponse apiResponse = await requestBuilder
                 .BankConfiguration
                 .VariableRecurringPaymentsApis
-                .DeleteLocalAsync(variableRecurringPaymentsApiId);
+                .DeleteLocalAsync(variableRecurringPaymentsApiId, modifiedBy);
 
             // Checks
             apiResponse.Should().NotBeNull();

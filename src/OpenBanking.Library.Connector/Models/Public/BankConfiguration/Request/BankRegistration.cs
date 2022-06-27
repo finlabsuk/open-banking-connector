@@ -5,6 +5,7 @@
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
@@ -55,6 +56,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     If not supplied, registration scope implied by software statement profile will be used.
         /// </summary>
         public RegistrationScopeEnum? RegistrationScope { get; set; }
+
+        public OAuth2ResponseMode? DefaultResponseMode { get; set; }
+
+        /// <summary>
+        ///     Default redirect URI used for this registration.
+        /// </summary>
+        public string? DefaultRedirectUri { get; set; }
+
+        /// <summary>
+        ///     Redirect URIs in addition to default one used for this registration.
+        /// </summary>
+        public List<string>? OtherRedirectUris { get; set; }
 
         /// <summary>
         ///     Information about external BankRegistration (OAuth2 client) created using external (bank) API.

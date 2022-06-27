@@ -216,13 +216,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.CreatedBy,
                 entity.Reference,
                 new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
+                apiResponse,
+                null,
                 entity.SoftwareStatementProfileId,
                 entity.SoftwareStatementProfileOverride,
                 entity.TokenEndpointAuthMethod,
                 entity.RegistrationScope,
                 entity.BankId,
-                apiResponse,
-                null);
+                entity.DefaultResponseMode);
 
             return (response, nonErrorMessages);
         }

@@ -3,6 +3,7 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 {
     [DbContext(typeof(PostgreSqlDbContext))]
-    partial class PostgreSqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220628125126_AddRedirectUrlFlexibility")]
+    partial class AddRedirectUrlFlexibility
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,21 +36,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("uuid")
                         .HasColumnName("account_and_transaction_api_id")
                         .HasColumnOrder(10);
-
-                    b.Property<DateTimeOffset>("AuthContextModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
-
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
-
-                    b.Property<string>("AuthContextNonce")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
 
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
@@ -85,6 +72,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("Nonce")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce")
+                        .HasColumnOrder(102);
+
+                    b.Property<DateTimeOffset>("NonceModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("nonce_modified")
+                        .HasColumnOrder(103);
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<string>("Reference")
                         .HasColumnType("text")
@@ -532,21 +534,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<DateTimeOffset>("AuthContextModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
-
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
-
-                    b.Property<string>("AuthContextNonce")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
-
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
                         .HasColumnName("auth_context_state")
@@ -582,6 +569,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("Nonce")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce")
+                        .HasColumnOrder(102);
+
+                    b.Property<DateTimeOffset>("NonceModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("nonce_modified")
+                        .HasColumnOrder(103);
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<Guid>("PaymentInitiationApiId")
                         .HasColumnType("uuid")
@@ -637,21 +639,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<DateTimeOffset>("AuthContextModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("auth_context_modified")
-                        .HasColumnOrder(103);
-
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
-
-                    b.Property<string>("AuthContextNonce")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_nonce")
-                        .HasColumnOrder(102);
-
                     b.Property<string>("AuthContextState")
                         .HasColumnType("text")
                         .HasColumnName("auth_context_state")
@@ -687,6 +674,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("Nonce")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce")
+                        .HasColumnOrder(102);
+
+                    b.Property<DateTimeOffset>("NonceModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("nonce_modified")
+                        .HasColumnOrder(103);
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<string>("Reference")
                         .HasColumnType("text")

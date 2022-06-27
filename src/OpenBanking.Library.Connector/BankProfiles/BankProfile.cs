@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
     {
         public BankProfile(
             BankProfileEnum bankProfileEnum,
-            string? issuerUrl,
+            string issuerUrl,
             string financialId,
             AccountAndTransactionApi? accountAndTransactionApi,
             PaymentInitiationApi? paymentInitiationApi,
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
         /// <summary>
         ///     Bank issuer URL which points to well-known endpoint
         /// </summary>
-        public string? IssuerUrl { get; }
+        public string IssuerUrl { get; }
 
         /// <summary>
         ///     Bank financial ID used in UK Open Banking

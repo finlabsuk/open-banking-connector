@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             ITimeProvider timeProvider)
         {
             // TODO: Transform links
-            
+
             string externalApiId =
                 request.ExternalApiObject is null
                     ? apiResponse!.Data.ConsentId
@@ -90,6 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 null,
                 request.BankRegistrationId,
                 externalApiId,
+                null,
                 null,
                 utcNow,
                 request.CreatedBy,

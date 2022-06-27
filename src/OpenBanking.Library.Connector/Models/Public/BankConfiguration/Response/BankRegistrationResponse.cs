@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
@@ -54,6 +55,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         Guid BankId { get; }
 
+        public OAuth2ResponseMode DefaultResponseMode { get; }
+
 
         IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
     }
@@ -63,28 +66,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrationPublicQuery
     {
-        public BankRegistrationResponse(
+        internal BankRegistrationResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
             ExternalApiObjectResponse externalApiObject,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
+            IList<string>? warnings,
             string softwareStatementProfileId,
             string? softwareStatementProfileOverride,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
             Guid bankId,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
-            IList<string>? warnings) : base(id, created, createdBy, reference)
+            OAuth2ResponseMode defaultResponseMode) : base(id, created, createdBy, reference)
         {
             ExternalApiObject = externalApiObject;
+            ExternalApiResponse = externalApiResponse;
+            Warnings = warnings;
             SoftwareStatementProfileId = softwareStatementProfileId;
             SoftwareStatementProfileOverride = softwareStatementProfileOverride;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             RegistrationScope = registrationScope;
             BankId = bankId;
-            ExternalApiResponse = externalApiResponse;
-            Warnings = warnings;
+            DefaultResponseMode = defaultResponseMode;
         }
 
         public ExternalApiObjectResponse ExternalApiObject { get; }
@@ -116,6 +121,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Bank with which this BankRegistration is associated.
         /// </summary>
         public Guid BankId { get; }
+
+        public OAuth2ResponseMode DefaultResponseMode { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;

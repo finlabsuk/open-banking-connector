@@ -50,37 +50,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             DomesticVrpConsentAuthContextRequest request,
             ITimeProvider timeProvider)
         {
-            // Create persisted entity
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var nonce = Guid.NewGuid().ToString();
-            var entity = new DomesticVrpConsentAuthContextPersisted(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                nonce,
-                request.DomesticVrpConsentId);
-
-            // Add entity
-            await _entityMethods.AddAsync(entity);
-
             // Load relevant data objects
             DomesticVrpConsentPersisted domesticVrpConsent =
                 _domesticPaymentConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == entity.DomesticVrpConsentId) ??
+                    .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {entity.DomesticVrpConsentId}.");
+                    $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
             CustomBehaviourClass? customBehaviour =
                 domesticVrpConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
             string authorizationEndpoint =
                 domesticVrpConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-            string? issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+            string issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
             bool supportsSca = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -90,23 +73,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                         .SoftwareStatementProfileOverride);
 
             // Create auth URL
-            var state = entity.Id.ToString();
             string consentAuthGetAudClaim =
                 customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
-                issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
+                issuerUrl;
 
-            string authUrl = CreateAuthUrl.Create(
+            (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
                 domesticVrpConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
+                domesticVrpConsent.BankRegistrationNavigation,
                 domesticVrpConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
                 customBehaviour?.DomesticVrpConsentAuthGet,
                 authorizationEndpoint,
                 consentAuthGetAudClaim,
                 supportsSca,
-                state,
-                nonce,
                 "payments",
                 _instrumentationClient);
+
+            // Create persisted entity
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var entity = new DomesticVrpConsentAuthContextPersisted(
+                Guid.NewGuid(),
+                request.Reference,
+                false,
+                utcNow,
+                request.CreatedBy,
+                utcNow,
+                request.CreatedBy,
+                state,
+                nonce,
+                request.DomesticVrpConsentId);
+
+            // Add entity
+            await _entityMethods.AddAsync(entity);
+
             var response =
                 new DomesticVrpConsentAuthContextCreateResponse(
                     entity.Id,

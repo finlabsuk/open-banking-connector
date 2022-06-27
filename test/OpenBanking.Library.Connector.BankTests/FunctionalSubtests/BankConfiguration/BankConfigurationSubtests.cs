@@ -150,7 +150,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ObjectDeleteResponse bankDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .Banks
-                .DeleteLocalAsync(bankId);
+                .DeleteLocalAsync(bankId, modifiedBy);
 
             // Checks
             bankDeleteResponse.Should().NotBeNull();

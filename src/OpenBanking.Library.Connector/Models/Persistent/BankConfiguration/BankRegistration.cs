@@ -3,10 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -67,19 +70,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string externalApiId,
             string? externalApiSecret,
             string? registrationAccessToken,
+            string defaultRedirectUri,
+            IList<string> otherRedirectUris,
             string softwareStatementProfileId,
             string? softwareStatementProfileOverride,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
+            OAuth2ResponseMode defaultResponseMode,
             Guid bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
         {
             _externalApiId = externalApiId;
             _externalApiSecret = externalApiSecret;
             _registrationAccessToken = registrationAccessToken;
+            DefaultRedirectUri = defaultRedirectUri;
+            OtherRedirectUris = otherRedirectUris;
             SoftwareStatementProfileId = softwareStatementProfileId;
             SoftwareStatementProfileOverride = softwareStatementProfileOverride;
             TokenEndpointAuthMethod = tokenEndpointAuthMethod;
             RegistrationScope = registrationScope;
+            DefaultResponseMode = defaultResponseMode;
             BankId = bankId;
         }
 
@@ -90,6 +99,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             _externalApiId,
             _externalApiSecret,
             _registrationAccessToken);
+
+        /// <summary>
+        ///     Default redirect URI used for this registration.
+        /// </summary>
+        public string DefaultRedirectUri { get; set; }
+
+        /// <summary>
+        ///     Redirect URIs in addition to default one used for this registration.
+        /// </summary>
+        public IList<string> OtherRedirectUris { get; set; }
 
         /// <summary>
         ///     ID of SoftwareStatementProfile to use in association with BankRegistration
@@ -107,12 +126,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         ///     Functional APIs used for bank registration.
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
-        
-        /// <summary>
-        ///     Redirect URIs used for this registration.
-        /// The first in the list is the default one.
-        /// </summary>
-        //public IList<string> RedirectUris { get; } = new List<string>();
+
+        public OAuth2ResponseMode DefaultResponseMode { get; }
 
         /// <summary>
         ///     Bank with which this BankRegistration is associated.
@@ -121,6 +136,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;
+    }
+
+    public class BankRegistrationCleanup
+    {
+        public async Task Cleanup(
+            PostgreSqlDbContext postgreSqlDbContext,
+            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore)
+        {
+            foreach (BankRegistration bankRegistration in postgreSqlDbContext.Set<BankRegistration>())
+            {
+                if (string.IsNullOrEmpty(bankRegistration.DefaultRedirectUri))
+                {
+                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                        await processedSoftwareStatementProfileStore.GetAsync(
+                            bankRegistration.SoftwareStatementProfileId,
+                            bankRegistration.SoftwareStatementProfileOverride);
+
+                    string defaultRedirectUri = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+                    if (string.IsNullOrEmpty(defaultRedirectUri))
+                    {
+                        throw new Exception(
+                            $"Can't find defaultRedirectUri for software statement profile {bankRegistration.SoftwareStatementProfileId} ");
+                    }
+
+                    List<string> otherRedirectUris =
+                        processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareRedirectUris;
+                    otherRedirectUris.Remove(defaultRedirectUri);
+
+                    bankRegistration.DefaultRedirectUri = defaultRedirectUri;
+                    bankRegistration.OtherRedirectUris = otherRedirectUris;
+                }
+            }
+        }
     }
 
     internal partial class BankRegistration :
@@ -132,12 +180,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             CreatedBy,
             Reference,
             new ExternalApiObjectResponse(_externalApiId),
+            null,
+            null,
             SoftwareStatementProfileId,
             SoftwareStatementProfileOverride,
             TokenEndpointAuthMethod,
             RegistrationScope,
             BankId,
-            null,
-            null);
+            DefaultResponseMode);
     }
 }

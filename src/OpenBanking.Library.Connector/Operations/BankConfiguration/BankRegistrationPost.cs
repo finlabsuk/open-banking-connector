@@ -83,6 +83,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
 
+            OAuth2ResponseMode defaultResponseMode =
+                request.DefaultResponseMode ??
+                bankProfile?.DefaultResponseMode ??
+                throw new InvalidOperationException(
+                    "DefaultResponseMode specified as null and cannot be obtained using specified BankProfile.");
+
             // Load bank from DB and check for existing bank registrations
             Guid bankId = request.BankId;
             Bank bank =
@@ -114,6 +120,44 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 await _softwareStatementProfileRepo.GetAsync(
                     softwareStatementProfileId,
                     request.SoftwareStatementAndCertificateProfileOverrideCase);
+
+            List<string> softwareStatementRedirectUris =
+                processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareRedirectUris;
+
+            if (request.DefaultRedirectUri is not null)
+            {
+                if (!softwareStatementRedirectUris.Contains(request.DefaultRedirectUri))
+                {
+                    throw new InvalidOperationException(
+                        $"Specified default redirect URI {request.DefaultRedirectUri} not included in software statement.");
+                }
+            }
+
+            string defaultRedirectUri =
+                request.DefaultRedirectUri ??
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+
+            List<string> otherRedirectUris;
+            if (request.OtherRedirectUris is not null)
+            {
+                foreach (string redirectUri in request.OtherRedirectUris)
+                {
+                    if (!softwareStatementRedirectUris.Contains(redirectUri))
+                    {
+                        throw new InvalidOperationException(
+                            $"Specified other redirect URI {redirectUri} not included in software statement.");
+                    }
+                }
+
+                otherRedirectUris = request.OtherRedirectUris;
+            }
+            else
+            {
+                otherRedirectUris = softwareStatementRedirectUris;
+            }
+
+            otherRedirectUris.Remove(defaultRedirectUri);
+            List<string> defaultPlusOtherRedirectUris = new(otherRedirectUris) { defaultRedirectUri };
 
             // Determine registration scope
             RegistrationScopeEnum registrationScope =
@@ -196,6 +240,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 ClientRegistrationModelsPublic.OBClientRegistration1 apiRequest =
                     RegistrationClaimsFactory.CreateRegistrationClaims(
                         tokenEndpointAuthMethod,
+                        defaultPlusOtherRedirectUris,
                         processedSoftwareStatementProfile,
                         registrationScope,
                         customBehaviour?.BankRegistrationPost,
@@ -347,10 +392,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 externalApiId,
                 externalApiSecret,
                 registrationAccessToken,
+                defaultRedirectUri,
+                otherRedirectUris,
                 request.SoftwareStatementProfileId,
                 request.SoftwareStatementAndCertificateProfileOverrideCase,
                 tokenEndpointAuthMethod,
                 registrationScope,
+                defaultResponseMode,
                 request.BankId);
 
             // Save entity
@@ -372,13 +420,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.CreatedBy,
                 entity.Reference,
                 new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
+                externalApiResponse,
+                null,
                 entity.SoftwareStatementProfileId,
                 entity.SoftwareStatementProfileOverride,
                 entity.TokenEndpointAuthMethod,
                 entity.RegistrationScope,
                 entity.BankId,
-                externalApiResponse,
-                null);
+                entity.DefaultResponseMode);
 
             return (response, nonErrorMessages);
         }

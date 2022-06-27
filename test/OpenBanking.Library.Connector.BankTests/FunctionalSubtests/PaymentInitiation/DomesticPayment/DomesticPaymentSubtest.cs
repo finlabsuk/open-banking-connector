@@ -64,6 +64,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // different sub-tests.
             BankUser bankUser = bankUserList[0];
 
+            var modifiedBy = "Automated bank tests";
+
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create PaymentInitiationApi
@@ -75,6 +77,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 .WriteFile(paymentInitiationApiRequest);
             paymentInitiationApiRequest.Reference = testNameUnique;
             paymentInitiationApiRequest.BankId = bankId;
+            paymentInitiationApiRequest.CreatedBy = modifiedBy;
             PaymentInitiationApiResponse paymentInitiationApiResponse =
                 await requestBuilder
                     .BankConfiguration
@@ -126,6 +129,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
                 Guid.NewGuid().ToString("N");
             domesticPaymentConsentRequest.Reference = testNameUnique;
+            domesticPaymentConsentRequest.CreatedBy = modifiedBy;
             DomesticPaymentConsentResponse domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .CreateAsync(domesticPaymentConsentRequest);
@@ -150,7 +154,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var authContextRequest = new DomesticPaymentConsentAuthContext
             {
                 DomesticPaymentConsentId = domesticPaymentConsentId,
-                Reference = testNameUnique
+                Reference = testNameUnique,
+                CreatedBy = modifiedBy
             };
             DomesticPaymentConsentAuthContextCreateResponse authContextResponse =
                 await requestBuilder.PaymentInitiation
@@ -236,7 +241,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ObjectDeleteResponse domesticPaymentConsentResp3 = await requestBuilder
                 .PaymentInitiation
                 .DomesticPaymentConsents
-                .DeleteLocalAsync(domesticPaymentConsentId);
+                .DeleteLocalAsync(domesticPaymentConsentId, modifiedBy);
 
             // Checks
             domesticPaymentConsentResp3.Should().NotBeNull();
@@ -246,7 +251,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ObjectDeleteResponse apiResponse = await requestBuilder
                 .BankConfiguration
                 .PaymentInitiationApis
-                .DeleteLocalAsync(paymentInitiationApiId);
+                .DeleteLocalAsync(paymentInitiationApiId, modifiedBy);
 
             // Checks
             apiResponse.Should().NotBeNull();

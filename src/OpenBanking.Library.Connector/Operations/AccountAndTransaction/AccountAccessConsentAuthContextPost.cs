@@ -50,37 +50,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             AccountAccessConsentAuthContextRequest request,
             ITimeProvider timeProvider)
         {
-            // Create persisted entity
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var nonce = Guid.NewGuid().ToString();
-            var entity = new AccountAccessConsentAuthContextPersisted(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                nonce,
-                request.AccountAccessConsentId);
-
-            // Add entity
-            await _entityMethods.AddAsync(entity);
-
             // Load relevant data objects
             AccountAccessConsentPersisted accountAccessConsent =
                 _accountAccessConsentMethods
                     .DbSetNoTracking
                     .Include(o => o.BankRegistrationNavigation)
                     .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == entity.AccountAccessConsentId) ??
+                    .SingleOrDefault(x => x.Id == request.AccountAccessConsentId) ??
                 throw new KeyNotFoundException(
-                    $"No record found for Account Access Consent with ID {entity.AccountAccessConsentId}.");
+                    $"No record found for Account Access Consent with ID {request.AccountAccessConsentId}.");
             CustomBehaviourClass? customBehaviour =
                 accountAccessConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
             string authorizationEndpoint =
                 accountAccessConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-            string? issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+            string issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
             bool supportsSca = accountAccessConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -90,24 +73,39 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                         .SoftwareStatementProfileOverride);
 
             // Create auth URL
-            var state = entity.Id.ToString();
-
             string consentAuthGetAudClaim =
                 customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
-                issuerUrl ?? throw new ArgumentException("No Issuer URL or custom behaviour Aud claim specified.");
+                issuerUrl;
 
-            string authUrl = CreateAuthUrl.Create(
+            (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
                 accountAccessConsent.ExternalApiId,
                 processedSoftwareStatementProfile,
+                accountAccessConsent.BankRegistrationNavigation,
                 accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
                 customBehaviour?.AccountAccessConsentAuthGet,
                 authorizationEndpoint,
                 consentAuthGetAudClaim,
                 supportsSca,
-                state,
-                nonce,
                 "accounts",
                 _instrumentationClient);
+
+            // Create persisted entity
+            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+            var entity = new AccountAccessConsentAuthContextPersisted(
+                Guid.NewGuid(),
+                request.Reference,
+                false,
+                utcNow,
+                request.CreatedBy,
+                utcNow,
+                request.CreatedBy,
+                state,
+                nonce,
+                request.AccountAccessConsentId);
+
+            // Add entity
+            await _entityMethods.AddAsync(entity);
+
             var response =
                 new AccountAccessConsentAuthContextCreateResponse(
                     entity.Id,

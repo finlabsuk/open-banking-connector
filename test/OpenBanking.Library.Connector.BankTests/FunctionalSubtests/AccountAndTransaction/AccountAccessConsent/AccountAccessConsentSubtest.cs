@@ -259,7 +259,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     // GET /transactions/{accountId}
                     const int maxPages = 30;
                     var page = 0;
-                    string queryString = "";
+                    var queryString = "";
                     do
                     {
                         TransactionsResponse transactionsResp =
@@ -332,7 +332,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             ObjectDeleteResponse apiResponse = await requestBuilder
                 .BankConfiguration
                 .AccountAndTransactionApis
-                .DeleteLocalAsync(accountAndTransactionApiId);
+                .DeleteLocalAsync(accountAndTransactionApiId, modifiedBy);
 
             // Checks
             apiResponse.Should().NotBeNull();

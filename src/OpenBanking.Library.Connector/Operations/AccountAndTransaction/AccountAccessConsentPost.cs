@@ -136,6 +136,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 request.BankRegistrationId,
                 externalApiId,
                 null,
+                null,
                 utcNow,
                 request.CreatedBy,
                 request.AccountAndTransactionApiId);

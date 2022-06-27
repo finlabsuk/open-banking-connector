@@ -33,9 +33,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? accessTokenRefreshToken,
             Guid bankRegistrationId,
             string externalApiId,
-            string? nonce,
-            DateTimeOffset nonceModified,
-            string? nonceModifiedBy,
+            string? authContextState,
+            string? authContextNonce,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid accountAndTransactionApiId) : base(
             id,
             reference,
@@ -51,9 +52,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             accessTokenRefreshToken,
             bankRegistrationId,
             externalApiId,
-            nonce,
-            nonceModified,
-            nonceModifiedBy)
+            authContextState,
+            authContextNonce,
+            authContextModified,
+            authContextModifiedBy)
         {
             AccountAndTransactionApiId = accountAndTransactionApiId;
         }

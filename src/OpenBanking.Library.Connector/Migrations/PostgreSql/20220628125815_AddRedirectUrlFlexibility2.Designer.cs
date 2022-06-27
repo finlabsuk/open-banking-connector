@@ -3,6 +3,7 @@ using System;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
 {
     [DbContext(typeof(PostgreSqlDbContext))]
-    partial class PostgreSqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220628125815_AddRedirectUrlFlexibility2")]
+    partial class AddRedirectUrlFlexibility2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,11 +41,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("auth_context_modified")
                         .HasColumnOrder(103);
-
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
 
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
@@ -85,6 +82,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<string>("Reference")
                         .HasColumnType("text")
@@ -537,11 +539,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnName("auth_context_modified")
                         .HasColumnOrder(103);
 
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
-
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
                         .HasColumnName("auth_context_nonce")
@@ -582,6 +579,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<Guid>("PaymentInitiationApiId")
                         .HasColumnType("uuid")
@@ -642,11 +644,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                         .HasColumnName("auth_context_modified")
                         .HasColumnOrder(103);
 
-                    b.Property<string>("AuthContextModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("auth_context_modified_by")
-                        .HasColumnOrder(104);
-
                     b.Property<string>("AuthContextNonce")
                         .HasColumnType("text")
                         .HasColumnName("auth_context_nonce")
@@ -687,6 +684,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                     b.Property<string>("IsDeletedModifiedBy")
                         .HasColumnType("text")
                         .HasColumnName("is_deleted_modified_by");
+
+                    b.Property<string>("NonceModifiedBy")
+                        .HasColumnType("text")
+                        .HasColumnName("nonce_modified_by")
+                        .HasColumnOrder(104);
 
                     b.Property<string>("Reference")
                         .HasColumnType("text")

@@ -35,6 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
         public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
+            List<string> redirectUris,
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScopeEnum registrationScope,
             BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
@@ -112,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     ApplicationType = ClientRegistrationModelsPublic.OBRegistrationProperties1applicationTypeEnum.Web,
                     IdTokenSignedResponseAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                     RequestObjectSigningAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
-                    RedirectUris = sProfile.SoftwareStatementPayload.SoftwareRedirectUris,
+                    RedirectUris = redirectUris,
                     SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
                     Scope = scope,
                     SoftwareStatement = sProfile.SoftwareStatement,

@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -32,8 +31,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public string? JwksUri { get; set; }
 
-        public OAuth2ResponseMode? DefaultResponseMode { get; set; }
-
         public bool? SupportsSca { get; set; }
 
         /// <summary>
@@ -47,7 +44,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     FAPI financial ID to use when creating Bank Registration
         /// </summary>
         public string? FinancialId { get; set; }
-
 
         /// <summary>
         ///     Registration endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.

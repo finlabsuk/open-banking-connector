@@ -46,7 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 consent.AccessToken ??
                 throw new InvalidOperationException("No access token is available for Consent.");
             string nonce =
-                consent.Nonce ??
+                consent.AuthContextNonce ??
                 throw new InvalidOperationException("No nonce is available for Consent.");
             string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
@@ -76,8 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.SoftwareStatementProfileOverride);
 
             // Obtain token for consent
-            string redirectUrl =
-                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+            string redirectUrl = bankRegistration.DefaultRedirectUri;
             JsonSerializerSettings? jsonSerializerSettings = null;
             RefreshTokenGrantResponse tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
@@ -104,7 +103,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             await _dbSaveChangesMethod.SaveChangesAsync();
 
             return tokenEndpointResponse.AccessToken;
-
         }
     }
 }

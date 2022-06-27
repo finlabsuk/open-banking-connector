@@ -27,6 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string state,
             string nonce,
             Guid domesticPaymentConsentId) : base(
             id,
@@ -36,6 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             isDeletedModifiedBy,
             created,
             createdBy,
+            state,
             nonce)
         {
             DomesticPaymentConsentId = domesticPaymentConsentId;

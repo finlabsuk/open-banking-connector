@@ -67,7 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             // Read auth context etc from DB
-            var authContextId = new Guid(request.RedirectData.State);
+            string state = request.RedirectData.State;
             AuthContext authContext =
                 _authContextMethods
                     .DbSet
@@ -80,8 +80,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     .Include(
                         o => ((DomesticVrpConsentAuthContext) o).DomesticVrpConsentNavigation
                             .BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == authContextId) ??
-                throw new KeyNotFoundException($"No record found for Auth Context with ID {authContextId}.");
+                    .SingleOrDefault(x => x.State == state) ??
+                throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
             string nonce = authContext.Nonce;
 
             // Get consent info
@@ -119,33 +119,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
             string bankIssuerUrl =
                 requestObjectAudClaim ??
-                bankRegistration.BankNavigation.IssuerUrl ??
-                throw new Exception("Cannot determine issuer URL for bank");
+                bankRegistration.BankNavigation.IssuerUrl;
             string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementProfileOverride);
-            string redirectUrl =
-                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
-
-            // Validate redirect URL
-            if (request.RedirectUrl is not null)
+            // Only accept redirects within 10 mins of auth context (session) creation
+            const int authContextExpiryIntervalInSeconds = 10 * 60;
+            DateTimeOffset authContextExpiryTime = authContext.Created
+                .AddSeconds(authContextExpiryIntervalInSeconds);
+            if (_timeProvider.GetUtcNow() > authContextExpiryTime)
             {
-                if (!string.Equals(request.RedirectUrl, redirectUrl))
-                {
-                    throw new Exception("Redirect URL supplied does not match that which was expected");
-                }
-            }
-            
-            // Validate response mode
-            if (request.ResponseMode != bankRegistration.BankNavigation.DefaultResponseMode)
-            {
-                throw new Exception("Response mode supplied does not match that which was expected");
+                throw new InvalidOperationException(
+                    "Auth context exists but now stale (more than 10 mins old) so will not process redirect. " +
+                    "Please create a new auth context and authenticate again.");
             }
 
-            // Validate ID token
+            // Validate ID token including nonce
             bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
             if (doNotValidateIdToken is false)
             {
@@ -164,59 +152,79 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.BankNavigation.SupportsSca);
             }
 
-            // Only accept redirects within 10 mins of auth context (session) creation
-            const int authContextExpiryIntervalInSeconds = 10 * 60;
-            DateTimeOffset authContextExpiryTime = authContext.Created
-                .AddSeconds(authContextExpiryIntervalInSeconds);
-            if (_timeProvider.GetUtcNow() > authContextExpiryTime)
-            {
-                throw new InvalidOperationException(
-                    "Auth context exists but now stale (more than 30 mins old) so will not process redirect. " +
-                    "Please create a new auth context and authenticate again.");
-            }
-
-            // Obtain token for consent
-            JsonSerializerSettings? jsonSerializerSettings = null;
-            AuthCodeGrantResponse tokenEndpointResponse =
-                await _grantPost.PostAuthCodeGrantAsync(
-                    request.RedirectData.Code,
-                    redirectUrl,
-                    bankIssuerUrl,
-                    externalApiClientId,
-                    externalApiConsentId,
-                    nonce,
-                    requestScope,
-                    bankRegistration,
-                    jsonSerializerSettings,
-                    processedSoftwareStatementProfile.ApiClient);
-
-            // Update consent with nonce, token
-            consent.UpdateNonce(
-                nonce,
-                _timeProvider.GetUtcNow(),
-                modifiedBy);
-            consent.UpdateAccessToken(
-                tokenEndpointResponse.AccessToken,
-                //0,
-                tokenEndpointResponse.ExpiresIn,
-                tokenEndpointResponse.RefreshToken,
-                _timeProvider.GetUtcNow(),
-                modifiedBy);
-
-            // Delete auth context
+            // Valid ID token means nonce has been validated so we delete auth context to ensure nonce can only be used once
             authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), modifiedBy);
 
-            // Persist updates (this happens last so as not to happen if there are any previous errors)
-            await _dbSaveChangesMethod.SaveChangesAsync();
+            // Wrap remaining processing in try block to ensure DB changes persisted
+            try
+            {
+                // Validate redirect URL
+                string redirectUrl = bankRegistration.DefaultRedirectUri;
+                if (request.RedirectUrl is not null)
+                {
+                    if (!string.Equals(request.RedirectUrl, redirectUrl))
+                    {
+                        throw new Exception("Redirect URL supplied does not match that which was expected");
+                    }
+                }
 
-            // Create response (may involve additional processing based on entity)
-            var response =
-                new AuthContextUpdateAuthResultResponse(
-                    consentType,
-                    consentId,
-                    null);
+                // Validate response mode
+                if (request.ResponseMode != bankRegistration.DefaultResponseMode)
+                {
+                    throw new Exception("Response mode supplied does not match that which was expected");
+                }
 
-            return (response, nonErrorMessages);
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                    await _softwareStatementProfileRepo.GetAsync(
+                        bankRegistration.SoftwareStatementProfileId,
+                        bankRegistration.SoftwareStatementProfileOverride);
+
+                // Obtain token for consent
+                JsonSerializerSettings? jsonSerializerSettings = null;
+                AuthCodeGrantResponse tokenEndpointResponse =
+                    await _grantPost.PostAuthCodeGrantAsync(
+                        request.RedirectData.Code,
+                        redirectUrl,
+                        bankIssuerUrl,
+                        externalApiClientId,
+                        externalApiConsentId,
+                        nonce,
+                        requestScope,
+                        bankRegistration,
+                        jsonSerializerSettings,
+                        processedSoftwareStatementProfile.ApiClient);
+
+                // Update consent with nonce, token
+                consent.UpdateAuthContext(
+                    authContext.State,
+                    nonce,
+                    _timeProvider.GetUtcNow(),
+                    modifiedBy);
+                consent.UpdateAccessToken(
+                    tokenEndpointResponse.AccessToken,
+                    //0,
+                    tokenEndpointResponse.ExpiresIn,
+                    tokenEndpointResponse.RefreshToken,
+                    _timeProvider.GetUtcNow(),
+                    modifiedBy);
+
+                // Create response (may involve additional processing based on entity)
+                var response =
+                    new AuthContextUpdateAuthResultResponse(
+                        consentType,
+                        consentId,
+                        null);
+
+                return (response, nonErrorMessages);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                await _dbSaveChangesMethod.SaveChangesAsync();
+            }
         }
     }
 }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -27,9 +26,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
 
             // Top-level read-only properties
             builder.Property(e => e.JwksUri)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.DefaultResponseMode)
-                .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.SupportsSca)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

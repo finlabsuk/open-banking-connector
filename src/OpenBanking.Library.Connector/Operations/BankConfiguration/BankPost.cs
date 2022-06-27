@@ -58,9 +58,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 request.CustomBehaviour ??
                 bankProfile?.CustomBehaviour;
 
-            string? issuerUrl =
+            string issuerUrl =
                 request.IssuerUrl ??
-                bankProfile?.IssuerUrl;
+                bankProfile?.IssuerUrl ??
+                throw new InvalidOperationException(
+                    "IssuerUrl specified as null and cannot be obtained using specified BankProfile.");
 
             Uri? openIdConfigurationUrl = null;
             if (customBehaviour?.OpenIdConfigurationGet?.EndpointUnavailable is not true)
@@ -81,12 +83,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 bankProfile?.SupportsSca ??
                 throw new InvalidOperationException(
                     "SupportsSca specified as null and cannot be obtained using specified BankProfile.");
-
-            OAuth2ResponseMode defaultResponseMode =
-                request.DefaultResponseMode ??
-                bankProfile?.DefaultResponseMode ??
-                throw new InvalidOperationException(
-                    "DefaultResponseMode specified as null and cannot be obtained using specified BankProfile.");
 
             DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
                 request.DynamicClientRegistrationApiVersion ??
@@ -153,16 +149,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 request.CreatedBy,
                 utcNow,
                 request.CreatedBy,
+                jwksUri,
+                supportsSca,
                 issuerUrl,
                 financialId,
                 registrationEndpoint,
                 tokenEndpoint,
                 authorizationEndpoint,
-                jwksUri,
-                defaultResponseMode,
                 dynamicClientRegistrationApiVersion,
-                customBehaviour,
-                supportsSca);
+                customBehaviour);
 
             // Add entity
             await _entityMethods.AddAsync(entity);

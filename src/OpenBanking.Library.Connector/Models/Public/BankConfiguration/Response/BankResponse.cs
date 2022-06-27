@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
@@ -12,11 +11,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public string JwksUri { get; }
 
-        public OAuth2ResponseMode DefaultResponseMode { get; }
-
         public bool SupportsSca { get; }
 
-        public string? IssuerUrl { get; }
+        public string IssuerUrl { get; }
         public string FinancialId { get; }
 
         /// <summary>
@@ -51,31 +48,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     /// </summary>
     public class BankResponse : LocalObjectBaseResponse, IBankPublicQuery
     {
-        public BankResponse(
+        internal BankResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             string jwksUri,
-            OAuth2ResponseMode defaultResponseMode,
             bool supportsSca,
-            string? issuerUrl,
+            string issuerUrl,
             string financialId,
             string registrationEndpoint,
             string tokenEndpoint,
             string authorizationEndpoint,
-            DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
+            DynamicClientRegistrationApiVersion dcrApiVersion,
             CustomBehaviourClass? customBehaviour) : base(id, created, createdBy, reference)
         {
+            Warnings = warnings;
             JwksUri = jwksUri;
-            DefaultResponseMode = defaultResponseMode;
             SupportsSca = supportsSca;
             IssuerUrl = issuerUrl;
             FinancialId = financialId;
             RegistrationEndpoint = registrationEndpoint;
             TokenEndpoint = tokenEndpoint;
             AuthorizationEndpoint = authorizationEndpoint;
-            DcrApiVersion = dynamicClientRegistrationApiVersion;
+            DcrApiVersion = dcrApiVersion;
             CustomBehaviour = customBehaviour;
         }
 
@@ -86,11 +83,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         public string JwksUri { get; }
 
-        public OAuth2ResponseMode DefaultResponseMode { get; }
 
         public bool SupportsSca { get; }
 
-        public string? IssuerUrl { get; }
+        public string IssuerUrl { get; }
         public string FinancialId { get; }
 
         /// <summary>

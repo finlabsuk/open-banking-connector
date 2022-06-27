@@ -36,9 +36,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? accessTokenRefreshToken,
             Guid bankRegistrationId,
             string externalApiId,
-            string? nonce,
-            DateTimeOffset nonceModified,
-            string? nonceModifiedBy,
+            string? authContextState,
+            string? authContextNonce,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid paymentInitiationApiId) : base(
             id,
             reference,
@@ -54,9 +55,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             accessTokenRefreshToken,
             bankRegistrationId,
             externalApiId,
-            nonce,
-            nonceModified,
-            nonceModifiedBy)
+            authContextState,
+            authContextNonce,
+            authContextModified,
+            authContextModifiedBy)
         {
             PaymentInitiationApiId = paymentInitiationApiId;
         }

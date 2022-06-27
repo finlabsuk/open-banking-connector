@@ -27,6 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
+            string state,
             string nonce,
             Guid domesticVrpConsentId) : base(
             id,
@@ -36,6 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             isDeletedModifiedBy,
             created,
             createdBy,
+            state,
             nonce)
         {
             DomesticVrpConsentId = domesticVrpConsentId;

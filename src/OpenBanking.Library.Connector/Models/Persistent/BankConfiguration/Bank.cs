@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
@@ -26,16 +25,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             string? isDeletedModifiedBy,
             DateTimeOffset created,
             string? createdBy,
-            string? issuerUrl,
+            string jwksUri,
+            bool supportsSca,
+            string issuerUrl,
             string financialId,
             string registrationEndpoint,
             string tokenEndpoint,
             string authorizationEndpoint,
-            string jwksUri,
-            OAuth2ResponseMode defaultResponseMode,
             DynamicClientRegistrationApiVersion dcrApiVersion,
-            CustomBehaviourClass? customBehaviour,
-            bool supportsSca) : base(
+            CustomBehaviourClass? customBehaviour) : base(
             id,
             reference,
             isDeleted,
@@ -44,16 +42,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             created,
             createdBy)
         {
+            JwksUri = jwksUri;
+            SupportsSca = supportsSca;
             IssuerUrl = issuerUrl;
             FinancialId = financialId;
             RegistrationEndpoint = registrationEndpoint;
             TokenEndpoint = tokenEndpoint;
             AuthorizationEndpoint = authorizationEndpoint;
-            JwksUri = jwksUri;
-            DefaultResponseMode = defaultResponseMode;
             DcrApiVersion = dcrApiVersion;
             CustomBehaviour = customBehaviour;
-            SupportsSca = supportsSca;
         }
 
         public IList<BankRegistration> BankRegistrationsNavigation { get; } = new List<BankRegistration>();
@@ -72,11 +69,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// </summary>
         public string JwksUri { get; }
 
-        public OAuth2ResponseMode DefaultResponseMode { get; }
-
         public bool SupportsSca { get; }
 
-        public string? IssuerUrl { get; }
+        public string IssuerUrl { get; }
 
         public string FinancialId { get; }
 
@@ -115,8 +110,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             Created,
             CreatedBy,
             Reference,
+            null,
             JwksUri,
-            DefaultResponseMode,
             SupportsSca,
             IssuerUrl,
             FinancialId,

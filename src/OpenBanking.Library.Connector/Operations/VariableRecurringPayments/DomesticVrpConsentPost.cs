@@ -66,7 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             ITimeProvider timeProvider)
         {
             // TODO: Transform links
-            
+
             string externalApiId =
                 request.ExternalApiObject is null
                     ? apiResponse!.Data.ConsentId
@@ -88,6 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 null,
                 request.BankRegistrationId,
                 externalApiId,
+                null,
                 null,
                 utcNow,
                 request.CreatedBy,
