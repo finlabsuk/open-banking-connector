@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text.RegularExpressions;
+using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
@@ -36,6 +36,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // Log Operating System
+            string osName = OsPlatformEnumHelper.GetCurrentOsPlatform() switch
+            {
+                OsPlatformEnum.MacOs => "macOS",
+                OsPlatformEnum.Linux => "Linux",
+                OsPlatformEnum.Windows => "Windows",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            _logger.LogInformation("Operating System detected:" + Environment.NewLine + $"{osName}");
+
             if (_hostEnvironment.IsDevelopment())
             {
                 // Log application parts found

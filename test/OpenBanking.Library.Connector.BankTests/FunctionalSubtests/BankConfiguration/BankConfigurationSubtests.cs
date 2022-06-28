@@ -23,10 +23,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 IRequestBuilder requestBuilder,
                 BankProfile bankProfile,
                 string testNameUnique,
+                string modifiedBy,
                 FilePathBuilder testDataProcessorFluentRequestLogging)
         {
-            var modifiedBy = "Automated bank tests";
-
             // Create bank
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
@@ -122,12 +121,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         public static async Task DeleteObjects(
             BankTestData2 testData2,
             IRequestBuilder requestBuilder,
+            string modifiedBy,
             Guid bankRegistrationId,
             Guid bankId,
             BankConfigurationApiSettings bankConfigurationApiSettings)
         {
-            var modifiedBy = "Automated bank tests";
-
             // Delete bankRegistration
             bool includeExternalApiOperation =
                 bankConfigurationApiSettings.UseDeleteEndpoint &&

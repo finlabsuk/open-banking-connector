@@ -17,21 +17,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         /// <summary>
         ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
-        ///     requests.
+        ///     requests. Use null to not specify a bank profile.
         /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
         /// <summary>
-        ///     Bank this registration is with.
+        ///     Target bank for registration.
         /// </summary>
         [Required]
         [JsonProperty(Required = Required.Always)]
         public Guid BankId { get; set; }
 
         /// <summary>
-        ///     ID of software statement profile used to create bank registration. Only
-        ///     IDs which have been specified via configuration
-        ///     will be accepted.
+        ///     ID of software statement profile to use for registration. The ID must
+        ///     correspond to a software statement profile provided via secrets/configuration.
         /// </summary>
         [Required]
         [JsonProperty(Required = Required.Always)]
@@ -46,39 +45,47 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         /// <summary>
         ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
-        ///     supported methods in Issuer URL OpenID Provider Configuration.
+        ///     supported methods from OpenID Configuration (IssuerUrl).
         /// </summary>
         public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
 
-
         /// <summary>
-        ///     Functional APIs used for bank registration.
-        ///     If not supplied, registration scope implied by software statement profile will be used.
+        ///     Functional APIs specified in bank registration "scope".
+        ///     If null, registration scope implied by software statement profile will be used.
         /// </summary>
         public RegistrationScopeEnum? RegistrationScope { get; set; }
 
+        /// <summary>
+        ///     Default response mode for OpenID auth request.
+        ///     Normally null which means value obtained from BankProfile.
+        /// </summary>
         public OAuth2ResponseMode? DefaultResponseMode { get; set; }
 
         /// <summary>
-        ///     Default redirect URI used for this registration.
+        ///     Default redirect URI to use for this registration. This redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        ///     If null, the default redirect URI specified in the software statement profile will be used.
         /// </summary>
         public string? DefaultRedirectUri { get; set; }
 
         /// <summary>
-        ///     Redirect URIs in addition to default one used for this registration.
+        ///     Other redirect URIs in addition to default one to use for this registration.
+        ///     Each redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        ///     If null, redirect URIs in the software statement profile (excluding that used as the default) will be used.
         /// </summary>
         public List<string>? OtherRedirectUris { get; set; }
 
         /// <summary>
-        ///     Information about external BankRegistration (OAuth2 client) created using external (bank) API.
-        ///     When non-null, this will be referenced
+        ///     Information about a previously-created BankRegistration (OAuth2 client) created at the external (bank) API.
+        ///     When non-null, this will be referenced in the local object
         ///     instead of
         ///     creating a new external BankRegistration object at the external API via DCR.
         /// </summary>
         public ExternalApiBankRegistration? ExternalApiObject { get; set; }
 
         /// <summary>
-        ///     If registration already exists for bank, allow creation of additional one. NB this may
+        ///     If registration already exists for bank, allow creation of an additional one. NB this may
         ///     disrupt existing registration depending on bank support for multiple registrations.
         /// </summary>
         public bool AllowMultipleRegistrations { get; set; } = false;

@@ -22,55 +22,62 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         /// <summary>
         ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
-        ///     requests.
+        ///     requests. Use null to not specify a bank profile.
         /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
         /// <summary>
-        ///     JWK Set URI (normally supplied from OpenID Configuration)
+        ///     JWK Set URI. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
         /// </summary>
         public string? JwksUri { get; set; }
 
+        /// <summary>
+        ///     Supports Secure Customer Authentication. Normally set to false for sandboxes.
+        ///     Normally null which means value obtained from BankProfile.
+        /// </summary>
         public bool? SupportsSca { get; set; }
 
         /// <summary>
-        ///     Issuer URL to use when creating Bank Registration which indicates the presence of valid
+        ///     Issuer URL which identifies bank in OAuth2/OpenID Connect. It also generally implies existence of valid
         ///     OpenID Provider Configuration at the endpoint GET "/{IssuerUrl}/.well-known/openid-configuration".
-        ///     If no such OpenID Provider Configuration is available, please set this value to null.
+        ///     Normally null which means value obtained from BankProfile.
         /// </summary>
         public string? IssuerUrl { get; set; }
 
         /// <summary>
-        ///     FAPI financial ID to use when creating Bank Registration
+        ///     FAPI financial ID (org ID) of bank.
+        ///     Normally null which means value obtained from BankProfile.
         /// </summary>
         public string? FinancialId { get; set; }
 
         /// <summary>
-        ///     Registration endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        ///     Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl).
         ///     Only used by operations that access bank registration endpoint(s), e.g. DCR. If DCR and optional GET, PUT, DELETE
         ///     endpoints for bank registration are not supported, this value will not be used.
         /// </summary>
         public string? RegistrationEndpoint { get; set; }
 
         /// <summary>
-        ///     Token endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        ///     Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
         /// </summary>
         public string? TokenEndpoint { get; set; }
 
         /// <summary>
-        ///     Authorization endpoint. Specify null to set this from Issuer URL OpenID Provider Configuration.
+        ///     Authorization endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
         /// </summary>
         public string? AuthorizationEndpoint { get; set; }
 
         /// <summary>
         ///     Version of Open Banking Dynamic Client Registration API to use
-        ///     for bank registration.
+        ///     for bank registration.  Normally null which means value obtained from BankProfile.
         /// </summary>
         public DynamicClientRegistrationApiVersion? DynamicClientRegistrationApiVersion { get; set; }
 
         /// <summary>
         ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
+        ///     Normally null which means determined value obtained from BankProfile if available or else kept null.
+        ///     For a well-behaved bank, the determined value should be null - but this is often not the case for
+        ///     sandboxes unfortunately.
         /// </summary>
         public CustomBehaviourClass? CustomBehaviour { get; set; }
 

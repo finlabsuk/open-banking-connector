@@ -41,6 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilderIn,
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             string testNameUnique,
+            string modifiedBy,
             FilePathBuilder configFluentRequestLogging,
             FilePathBuilder pispFluentRequestLogging,
             ConsentAuth? consentAuth,
@@ -63,8 +64,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // For now, we just use first bank user in list. Maybe later we can use different users for
             // different sub-tests.
             BankUser bankUser = bankUserList[0];
-
-            var modifiedBy = "Automated bank tests";
 
             IRequestBuilder requestBuilder = requestBuilderIn;
 

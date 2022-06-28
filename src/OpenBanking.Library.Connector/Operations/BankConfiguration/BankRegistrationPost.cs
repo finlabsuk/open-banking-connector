@@ -427,7 +427,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 entity.TokenEndpointAuthMethod,
                 entity.RegistrationScope,
                 entity.BankId,
-                entity.DefaultResponseMode);
+                entity.DefaultResponseMode,
+                entity.DefaultRedirectUri,
+                entity.OtherRedirectUris);
 
             return (response, nonErrorMessages);
         }

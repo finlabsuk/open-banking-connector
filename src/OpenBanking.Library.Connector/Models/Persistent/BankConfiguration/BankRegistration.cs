@@ -58,7 +58,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         [Column("registration_access_token")]
         private readonly string? _registrationAccessToken;
 
-
         public BankRegistration(
             Guid id,
             string? reference,
@@ -140,18 +139,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 
     public class BankRegistrationCleanup
     {
-        public async Task Cleanup(
+        public async Task<List<string>> Cleanup(
             PostgreSqlDbContext postgreSqlDbContext,
             IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore)
         {
+            var missingSoftwareStatementProfileIds = new List<string>();
+
             foreach (BankRegistration bankRegistration in postgreSqlDbContext.Set<BankRegistration>())
             {
                 if (string.IsNullOrEmpty(bankRegistration.DefaultRedirectUri))
                 {
-                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                        await processedSoftwareStatementProfileStore.GetAsync(
+                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile;
+                    try
+                    {
+                        processedSoftwareStatementProfile = await processedSoftwareStatementProfileStore.GetAsync(
                             bankRegistration.SoftwareStatementProfileId,
                             bankRegistration.SoftwareStatementProfileOverride);
+                    }
+                    catch
+                    {
+                        missingSoftwareStatementProfileIds.Add(bankRegistration.SoftwareStatementProfileId);
+                        continue;
+                    }
 
                     string defaultRedirectUri = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
                     if (string.IsNullOrEmpty(defaultRedirectUri))
@@ -168,6 +177,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
                     bankRegistration.OtherRedirectUris = otherRedirectUris;
                 }
             }
+
+            return missingSoftwareStatementProfileIds;
         }
     }
 
@@ -187,6 +198,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             TokenEndpointAuthMethod,
             RegistrationScope,
             BankId,
-            DefaultResponseMode);
+            DefaultResponseMode,
+            DefaultRedirectUri,
+            OtherRedirectUris);
     }
 }

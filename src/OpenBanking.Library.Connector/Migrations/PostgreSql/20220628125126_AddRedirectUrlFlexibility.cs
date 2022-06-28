@@ -209,7 +209,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                 table: "bank_registration",
                 type: "text",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "Fragment");
 
             migrationBuilder.AddColumn<string>(
                 name: "other_redirect_uris",

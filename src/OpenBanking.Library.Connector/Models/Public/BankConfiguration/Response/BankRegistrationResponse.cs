@@ -55,8 +55,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         Guid BankId { get; }
 
+        /// <summary>
+        ///     Default response mode for OpenID auth request.
+        /// </summary>
         public OAuth2ResponseMode DefaultResponseMode { get; }
 
+        /// <summary>
+        ///     Default redirect URI to use for this registration. This redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        /// </summary>
+        public string DefaultRedirectUri { get; }
+
+        /// <summary>
+        ///     Other redirect URIs in addition to default one to use for this registration.
+        ///     Each redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        /// </summary>
+        public IList<string> OtherRedirectUris { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
     }
@@ -79,7 +94,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
             Guid bankId,
-            OAuth2ResponseMode defaultResponseMode) : base(id, created, createdBy, reference)
+            OAuth2ResponseMode defaultResponseMode,
+            string defaultRedirectUri,
+            IList<string> otherRedirectUris) : base(id, created, createdBy, reference)
         {
             ExternalApiObject = externalApiObject;
             ExternalApiResponse = externalApiResponse;
@@ -90,6 +107,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             RegistrationScope = registrationScope;
             BankId = bankId;
             DefaultResponseMode = defaultResponseMode;
+            DefaultRedirectUri = defaultRedirectUri;
+            OtherRedirectUris = otherRedirectUris;
         }
 
         public ExternalApiObjectResponse ExternalApiObject { get; }
@@ -122,7 +141,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public Guid BankId { get; }
 
+        /// <summary>
+        ///     Default response mode for OpenID auth request.
+        /// </summary>
         public OAuth2ResponseMode DefaultResponseMode { get; }
+
+        /// <summary>
+        ///     Default redirect URI to use for this registration. This redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        /// </summary>
+        public string DefaultRedirectUri { get; }
+
+        /// <summary>
+        ///     Other redirect URIs in addition to default one to use for this registration.
+        ///     Each redirect URI must
+        ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+        /// </summary>
+        public IList<string> OtherRedirectUris { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;

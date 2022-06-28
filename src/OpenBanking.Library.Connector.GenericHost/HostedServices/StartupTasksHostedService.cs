@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices
 {
@@ -23,16 +24,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
         private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
+        private readonly ILogger<StartupTasksHostedService> _logger;
+
         // Ensures this set up at application start-up
         private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
-        
+
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public StartupTasksHostedService(
             ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
             IServiceScopeFactory serviceScopeFactory,
             IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
-            IBankProfileDefinitions bankProfileDefinitions)
+            IBankProfileDefinitions bankProfileDefinitions,
+            ILogger<StartupTasksHostedService> logger)
         {
             _databaseSettingsProvider =
                 databaseSettingsProvider ??
@@ -40,6 +44,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
             _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
             _bankProfileDefinitions = bankProfileDefinitions;
+            _logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -118,11 +123,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
                 var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
 
-                await new BankRegistrationCleanup().Cleanup(
+                List<string> missingSoftwareStatementProfileIds = await new BankRegistrationCleanup().Cleanup(
                     postgreSqlDbContext,
                     _processedSoftwareStatementProfileStore);
 
                 await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation(
+                    string.Join(
+                        Environment.NewLine,
+                        missingSoftwareStatementProfileIds.Prepend("Missing software statement profile IDs:")));
             }
         }
 

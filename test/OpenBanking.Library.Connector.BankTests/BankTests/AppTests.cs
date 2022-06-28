@@ -284,6 +284,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 consentAuth = null;
             }
 
+            var modifiedBy = "Automated bank tests";
+
             // Create bank configuration objects
             (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationSubtests.PostAndGetObjects(
@@ -292,6 +294,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     bankProfile,
                     testNameUnique,
+                    modifiedBy,
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("config"));
 
@@ -309,6 +312,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     requestBuilderGenerator,
                     testNameUnique,
+                    modifiedBy,
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("config"),
                     testDataProcessorFluentRequestLogging
@@ -332,6 +336,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     requestBuilderGenerator,
                     testNameUnique,
+                    modifiedBy,
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("config"),
                     testDataProcessorFluentRequestLogging
@@ -355,6 +360,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     requestBuilder,
                     requestBuilderGenerator,
                     testNameUnique,
+                    modifiedBy,
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("config"),
                     testDataProcessorFluentRequestLogging
@@ -368,6 +374,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             await BankConfigurationSubtests.DeleteObjects(
                 testData2,
                 requestBuilder,
+                modifiedBy,
                 bankRegistrationId,
                 bankId,
                 bankProfile.BankConfigurationApiSettings);
