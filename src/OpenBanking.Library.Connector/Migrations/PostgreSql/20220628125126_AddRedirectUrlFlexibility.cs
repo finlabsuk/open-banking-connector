@@ -227,6 +227,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                 oldClrType: typeof(string),
                 oldType: "text",
                 oldNullable: true);
+            
+            migrationBuilder.Sql("TRUNCATE TABLE auth_context");
 
             migrationBuilder.AddColumn<string>(
                 name: "state",
@@ -327,7 +329,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Migrations.PostgreSql
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 101);
 
-            migrationBuilder.CreateIndex(
+           migrationBuilder.CreateIndex(
                 name: "ix_auth_context_nonce",
                 table: "auth_context",
                 column: "nonce",

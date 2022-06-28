@@ -77,13 +77,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     ? apiResponse!.Data.ConsentId
                     : request.ExternalApiObject.ExternalApiId;
 
+            var entityId = Guid.NewGuid();
+
             // Transform links
             if (apiResponse is not null)
             {
                 var apiGetRequestUrl = new Uri(apiRequestUrl + $"/{externalApiId}");
                 string? publicGetRequestUrlWithoutQuery = publicRequestUrlWithoutQuery switch
                 {
-                    { } x => x + $"/{externalApiId}",
+                    { } x => x + $"/{entityId}",
                     null => null
                 };
                 var validQueryParameters = new List<string>();
@@ -121,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
             DateTimeOffset utcNow = timeProvider.GetUtcNow();
             var persistedObject = new AccountAccessConsentPersisted(
-                Guid.NewGuid(),
+                entityId,
                 request.Reference,
                 false,
                 utcNow,
