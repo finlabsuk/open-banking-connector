@@ -113,7 +113,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     entity.CreatedBy,
                     entity.Reference,
                     entity.AccountAccessConsentId,
-                    authUrl);
+                    authUrl, state);
 
             return response;
         }

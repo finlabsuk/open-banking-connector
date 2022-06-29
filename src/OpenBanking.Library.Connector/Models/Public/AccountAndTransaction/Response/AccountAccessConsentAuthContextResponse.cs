@@ -46,12 +46,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             string? createdBy,
             string? reference,
             Guid accountAccessConsentId,
-            string authUrl) : base(id, created, createdBy, reference, accountAccessConsentId)
+            string authUrl,
+            string state) : base(id, created, createdBy, reference, accountAccessConsentId)
         {
             AuthUrl = authUrl;
+            State = state;
         }
 
         public string AuthUrl { get; }
+        
+        public string State { get; }
 
     }
 }
