@@ -20,20 +20,30 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
     {
         if (context.Exception is ExternalApiAccessException httpResponseException)
         {
+            int statusCode;
+            if (context.Exception is ExternalApiResponseDeserialisationException ex)
+            {
+                statusCode = 500;
+            }
+            else
+            {
+                statusCode = httpResponseException.ResponseStatusCode;
+            }
+
             var jsonObject = new JsonObject
             {
                 ["title"] = httpResponseException.Message,
                 ["detail"] =
                     $"External API endpoint responded with HTTP status code {httpResponseException.ResponseStatusCode}. See properties " +
                     "'endpointHttpMethod', 'endpointUrl' and 'endpointResponse' for more details.",
-                ["status"] = httpResponseException.ResponseStatusCode,
+                ["status"] = statusCode,
                 ["endpointHttpMethod"] = httpResponseException.RequestHttpMethod,
                 ["endpointUrl"] = httpResponseException.RequestUrl,
             };
 
-            if (context.Exception is ExternalApiResponseDeserialisationException ex)
+            if (context.Exception is ExternalApiResponseDeserialisationException ex2)
             {
-                jsonObject["deserialisationError"] = ex.DeserialisationErrorMessage;
+                jsonObject["deserialisationError"] = ex2.DeserialisationErrorMessage;
             }
 
             JsonNode? responseMessage = JsonNode.Parse(httpResponseException.ResponseMessage);
@@ -54,7 +64,7 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
             {
                 Content = jsonString,
                 ContentType = mediaTypeHeaderValue.ToString(),
-                StatusCode = httpResponseException.ResponseStatusCode
+                StatusCode = statusCode
             };
 
             context.ExceptionHandled = true;
