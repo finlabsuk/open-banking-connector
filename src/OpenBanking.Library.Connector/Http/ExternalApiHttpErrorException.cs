@@ -4,25 +4,16 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-public class ExternalApiHttpErrorException : Exception
+public class ExternalApiHttpErrorException : ExternalApiAccessException
 {
     public ExternalApiHttpErrorException(
         int responseStatusCode,
         string requestHttpMethod,
         string requestUrl,
-        string responseMessage) : base("Pass-through error from external API endpoint")
-    {
-        ResponseStatusCode = responseStatusCode;
-        RequestHttpMethod = requestHttpMethod;
-        RequestUrl = requestUrl;
-        ResponseMessage = responseMessage;
-    }
-
-    public int ResponseStatusCode { get; }
-
-    public string RequestHttpMethod { get; }
-
-    public string RequestUrl { get; }
-
-    public string ResponseMessage { get; }
+        string responseMessage) : base(
+        "Pass-through error from external API endpoint",
+        responseStatusCode,
+        requestHttpMethod,
+        requestUrl,
+        responseMessage) { }
 }

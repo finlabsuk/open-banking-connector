@@ -102,10 +102,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                     throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
                 }
 
-                // De-serialise body
-                T responseBodyTyped =
-                    JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings) ??
+                T? responseBodyTyped;
+                try
+                {
+                    // De-serialise body
+                    responseBodyTyped = JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings);
+                }
+                catch (Exception ex)
+                {
+                    throw new ExternalApiResponseDeserialisationException(
+                        (int) response.StatusCode,
+                        $"{request.Method}",
+                        $"{request.RequestUri}",
+                        await response.Content.ReadAsStringAsync(default),
+                        ex.Message);
+                }
+
+                if (responseBodyTyped is null)
+                {
                     throw new HttpRequestException("Could not de-serialise HTTP body");
+                }
 
                 return responseBodyTyped;
             }

@@ -18,7 +18,7 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
 
     public void OnActionExecuted(ActionExecutedContext context)
     {
-        if (context.Exception is ExternalApiHttpErrorException httpResponseException)
+        if (context.Exception is ExternalApiAccessException httpResponseException)
         {
             var jsonObject = new JsonObject
             {
@@ -30,6 +30,11 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
                 ["endpointHttpMethod"] = httpResponseException.RequestHttpMethod,
                 ["endpointUrl"] = httpResponseException.RequestUrl,
             };
+
+            if (context.Exception is ExternalApiResponseDeserialisationException ex)
+            {
+                jsonObject["deserialisationError"] = ex.DeserialisationErrorMessage;
+            }
 
             JsonNode? responseMessage = JsonNode.Parse(httpResponseException.ResponseMessage);
             if (responseMessage is not null)
