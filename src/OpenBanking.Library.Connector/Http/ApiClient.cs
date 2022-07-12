@@ -114,7 +114,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                         (int) response.StatusCode,
                         $"{request.Method}",
                         $"{request.RequestUri}",
-                        await response.Content.ReadAsStringAsync(default),
+                        responseBody,
                         ex.Message);
                 }
 
