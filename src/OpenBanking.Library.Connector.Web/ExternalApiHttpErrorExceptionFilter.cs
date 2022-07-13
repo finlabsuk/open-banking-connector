@@ -38,8 +38,13 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
                     "'endpointHttpMethod', 'endpointUrl' and 'endpointResponse' for more details.",
                 ["status"] = statusCode,
                 ["endpointHttpMethod"] = httpResponseException.RequestHttpMethod,
-                ["endpointUrl"] = httpResponseException.RequestUrl,
+                ["endpointUrl"] = httpResponseException.RequestUrl
             };
+
+            if (httpResponseException.XFapiInteractionId is not null)
+            {
+                jsonObject["endpointFapiInteractionId"] = httpResponseException.XFapiInteractionId;
+            }
 
             if (context.Exception is ExternalApiResponseDeserialisationException ex2)
             {
@@ -55,6 +60,7 @@ public class ExternalApiHttpErrorExceptionFilter : IActionFilter, IOrderedFilter
             {
                 responseMessage = httpResponseException.ResponseMessage;
             }
+
             jsonObject["endpointResponse"] = responseMessage;
 
             string jsonString = JsonSerializer.Serialize(jsonObject);

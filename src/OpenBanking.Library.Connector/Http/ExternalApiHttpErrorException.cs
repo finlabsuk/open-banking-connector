@@ -10,10 +10,12 @@ public class ExternalApiHttpErrorException : ExternalApiAccessException
         int responseStatusCode,
         string requestHttpMethod,
         string requestUrl,
-        string responseMessage) : base(
+        string responseMessage,
+        string? xFapiInteractionId) : base(
         "Pass-through error from external API endpoint",
         responseStatusCode,
         requestHttpMethod,
         requestUrl,
-        responseMessage) { }
+        responseMessage,
+        xFapiInteractionId) { }
 }

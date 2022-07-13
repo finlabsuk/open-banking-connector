@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             request.ArgNotNull(nameof(request));
             client.ArgNotNull(nameof(client));
 
-            return client.RequestJsonAsync<T>(
+            return client.SendExpectingJsonResponseAsync<T>(
                 request,
                 jsonSerializerSettings);
         }
@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             IApiClient client)
         {
             request.ArgNotNull(nameof(request));
-            return client.SendAsync(request);
+            return client.SendExpectingNoResponseAsync(request);
         }
     }
 }

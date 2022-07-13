@@ -11,12 +11,14 @@ public abstract class ExternalApiAccessException : Exception
         int responseStatusCode,
         string requestHttpMethod,
         string requestUrl,
-        string responseMessage) : base(message)
+        string responseMessage,
+        string? xFapiInteractionId) : base(message)
     {
         ResponseStatusCode = responseStatusCode;
         RequestHttpMethod = requestHttpMethod;
         RequestUrl = requestUrl;
         ResponseMessage = responseMessage;
+        XFapiInteractionId = xFapiInteractionId;
     }
 
     public int ResponseStatusCode { get; }
@@ -26,4 +28,6 @@ public abstract class ExternalApiAccessException : Exception
     public string RequestUrl { get; }
 
     public string ResponseMessage { get; }
+
+    public string? XFapiInteractionId { get; }
 }

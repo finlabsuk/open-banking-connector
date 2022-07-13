@@ -11,12 +11,14 @@ public class ExternalApiResponseDeserialisationException : ExternalApiAccessExce
         string requestHttpMethod,
         string requestUrl,
         string responseMessage,
+        string? xFapiInteractionId,
         string deserialisationErrorMessage) : base(
         "De-serialisation error when converting data from external API endpoint",
         responseStatusCode,
         requestHttpMethod,
         requestUrl,
-        responseMessage)
+        responseMessage,
+        xFapiInteractionId)
     {
         DeserialisationErrorMessage = deserialisationErrorMessage;
     }

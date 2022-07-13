@@ -121,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 var api = new ApiClient(
                     Substitute.For<IInstrumentationClient>(),
                     http);
-                var result = await api.RequestJsonAsync<SerialisedEntity>(
+                var result = await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                     req,
                     null);
 
@@ -152,7 +152,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
                 Action a = () =>
                 {
-                    SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
+                    SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                             req,
                             null)
                         .Result;
@@ -192,12 +192,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
                 Action a = () =>
                 {
-                    SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
+                    SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                         req,
                         null).Result;
                 };
 
-                a.Should().Throw<HttpRequestException>();
+                a.Should().Throw<ExternalApiHttpErrorException>();
             }
         }
 
@@ -231,12 +231,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
                 Action a = () =>
                 {
-                    SerialisedEntity _ = api.RequestJsonAsync<SerialisedEntity>(
+                    SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                         req,
                         null).Result;
                 };
 
-                a.Should().Throw<HttpRequestException>();
+                a.Should().Throw<ExternalApiHttpErrorException>();
                 instrumentationClient.Received(1).Trace(Arg.Any<string>());
             }
         }

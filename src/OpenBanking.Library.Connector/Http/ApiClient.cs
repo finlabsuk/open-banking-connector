@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             clientHandler.SslOptions = sslClientAuthenticationOptions;
 
             _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-            _httpClient = new HttpClient(new ErrorAndLoggingHandler(clientHandler));
+            _httpClient = new HttpClient(new LoggingHandler(clientHandler));
         }
 
         public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
@@ -78,85 +78,92 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         }
 
 
-        public async Task<T> RequestJsonAsync<T>(
+        public async Task<T> SendExpectingJsonResponseAsync<T>(
             HttpRequestMessage request,
             JsonSerializerSettings? jsonSerializerSettings)
             where T : class
         {
             request.ArgNotNull(nameof(request));
 
-            HttpResponseMessage? response = null;
-            string? responseBody = null;
+            (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+
+            // Check body not null
+            if (responseBody is null)
+            {
+                throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
+            }
+
+            T? responseBodyTyped;
             try
             {
-                // Make HTTP call
-                response = await _httpClient.SendAsync(request);
-                responseBody = await GetStringResponseAsync(response);
-
-                // Check HTTP status code
-                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
-
-                // Check body not null
-                if (responseBody is null)
-                {
-                    throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
-                }
-
-                T? responseBodyTyped;
-                try
-                {
-                    // De-serialise body
-                    responseBodyTyped = JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings);
-                }
-                catch (Exception ex)
-                {
-                    throw new ExternalApiResponseDeserialisationException(
-                        (int) response.StatusCode,
-                        $"{request.Method}",
-                        $"{request.RequestUri}",
-                        responseBody,
-                        ex.Message);
-                }
-
-                if (responseBodyTyped is null)
-                {
-                    throw new HttpRequestException("Could not de-serialise HTTP body");
-                }
-
-                return responseBodyTyped;
+                // De-serialise body
+                responseBodyTyped = JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings);
             }
             catch (Exception ex)
             {
-                _instrumentation.Exception(ex, request.RequestUri!.ToString());
-                throw;
+                throw new ExternalApiResponseDeserialisationException(
+                    statusCode,
+                    $"{request.Method}",
+                    $"{request.RequestUri}",
+                    responseBody,
+                    xFapiInteractionId,
+                    ex.Message);
             }
-            finally
+
+            if (responseBodyTyped is null)
             {
-                await LogRequest(request, response, responseBody);
-                response?.Dispose();
+                throw new HttpRequestException("Could not de-serialise HTTP body");
             }
+
+            return responseBodyTyped;
         }
 
-        public async Task SendAsync(HttpRequestMessage request)
+        public async Task SendExpectingNoResponseAsync(HttpRequestMessage request)
         {
             request.ArgNotNull(nameof(request));
 
+            (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+
+            // Check body not null
+            if (!string.IsNullOrEmpty(responseBody))
+            {
+                throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
+            }
+        }
+
+        private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
+            HttpRequestMessage request)
+        {
             HttpResponseMessage? response = null;
+
+            int statusCode;
             string? responseBody = null;
+            string? xFapiInteractionId = null;
             try
             {
                 // Make HTTP call
                 response = await _httpClient.SendAsync(request);
                 responseBody = await GetStringResponseAsync(response);
 
-                // Check HTTP status code
-                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
-
-                // Check body not null
-                if (!string.IsNullOrEmpty(responseBody))
+                // Get selected headers
+                if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
                 {
-                    throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
+                    xFapiInteractionId = values.First();
                 }
+
+                // Check HTTP status code
+                statusCode = (int) response.StatusCode;
+                if (statusCode >= 400)
+                {
+                    throw new ExternalApiHttpErrorException(
+                        statusCode,
+                        $"{request.Method}",
+                        $"{request.RequestUri}",
+                        responseBody ?? "",
+                        xFapiInteractionId);
+                }
+
+                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -168,6 +175,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 await LogRequest(request, response, responseBody);
                 response?.Dispose();
             }
+
+
+            return (statusCode, responseBody, xFapiInteractionId);
         }
 
         public async Task<HttpResponseMessage> LowLevelSendAsync(HttpRequestMessage request)
@@ -266,11 +276,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
         {
-            if (response.Content is null)
-            {
-                return null;
-            }
-
             using (response.Content)
             {
                 return await response.Content.ReadAsStringAsync();
