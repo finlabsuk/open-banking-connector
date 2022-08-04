@@ -19,14 +19,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.M
         /// <exception cref="ArgumentNullException"> <paramref name="amount"/> or <paramref name="currency"/> is null. </exception>
         public OBReadBalance1DataBalanceItemCreditLineItemAmount(string amount, string currency)
         {
-            if (amount == null)
-            {
-                throw new ArgumentNullException(nameof(amount));
-            }
-            if (currency == null)
-            {
-                throw new ArgumentNullException(nameof(currency));
-            }
+            // if (amount == null)
+            // {
+            //     throw new ArgumentNullException(nameof(amount));
+            // }
+            // if (currency == null)
+            // {
+            //     throw new ArgumentNullException(nameof(currency));
+            // }
 
             Amount = amount;
             Currency = currency;
