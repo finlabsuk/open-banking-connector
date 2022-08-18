@@ -105,7 +105,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                     AccountAccessConsentAuthGet = bank is HsbcBank.Sandbox
                         ? new ConsentAuthGetCustomBehaviour
                         {
-                            ConsentIdClaimPrefix = bankProfileHiddenProperties.GetAdditionalProperty2(),
                             DoNotValidateIdToken = true
                         }
                         : null,
