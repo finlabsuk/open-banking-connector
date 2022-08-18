@@ -125,37 +125,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     new BankProfileDefinitions(bankProfilesSettingsProvider)),
                 false);
         }
-
-        public IApiClient GetApiClient()
-        {
-            if (TestConfig.GetBooleanValue("mockHttp").GetValueOrDefault(false))
-            {
-                var mockHttp = new MockHttpMessageHandler();
-
-                OpenIdConfiguration openIdConfigData = TestConfig.GetOpenBankingOpenIdConfiguration()!;
-                string openIdConfig = JsonConvert.SerializeObject(openIdConfigData);
-
-
-                mockHttp.When(HttpMethod.Get, "https://issuer.com/.well-known/openid-configuration")
-                    .Respond("application/json", openIdConfig);
-
-                mockHttp.When(HttpMethod.Get, "").Respond("application/json", "{}");
-                mockHttp.When(HttpMethod.Post, "").Respond("application/json", "{}");
-
-                var client = mockHttp.ToHttpClient();
-
-                return new ApiClient(Substitute.For<IInstrumentationClient>(), client);
-            }
-
-            X509Certificate2 certificate = CertificateFactories.GetCertificate2FromPem(
-                TestConfig.GetValue("transportcertificatekey")!,
-                TestConfig.GetValue("transportCertificate")!)!;
-
-            HttpMessageHandler handler = new HttpRequestBuilder()
-                .SetClientCertificate(certificate)
-                .CreateMessageHandler();
-
-            return ApiClientFactory.CreateApiClient(new ConsoleInstrumentationClient(), handler);
-        }
     }
 }
