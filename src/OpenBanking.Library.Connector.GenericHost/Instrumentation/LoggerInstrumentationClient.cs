@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation
 {
-    internal class LoggerInstrumentationClient : IInstrumentationClient
+    public class LoggerInstrumentationClient : IInstrumentationClient
     {
         private readonly ILogger<object> _logger;
 
@@ -46,10 +46,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
 
             if (info is HttpTraceInfo httpInfo)
             {
-                if (httpInfo.Url != null)
-                {
-                    sb.AppendLine($"Url: {httpInfo.Url}");
-                }
+                sb.AppendLine($"Url: {httpInfo.Url}");
 
                 if (httpInfo.StatusCode.HasValue)
                 {

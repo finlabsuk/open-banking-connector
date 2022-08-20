@@ -32,13 +32,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
     public abstract class AppTests
     {
-        protected readonly ITestOutputHelper _outputHelper;
+        private readonly AppContextFixture _appContextFixture;
+        private readonly ITestOutputHelper _outputHelper;
         protected readonly IServiceProvider _serviceProvider;
 
         protected AppTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture)
         {
             _outputHelper = outputHelper ?? throw new ArgumentNullException(nameof(outputHelper));
             _serviceProvider = appContextFixture.Host.Services;
+            _appContextFixture = appContextFixture;
         }
 
         public static TheoryData<BankTestData1, BankTestData2>
@@ -378,6 +380,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 bankRegistrationId,
                 bankId,
                 bankProfile.BankConfigurationApiSettings);
+        }
+
+        protected void SetTestLogging()
+        {
+            _appContextFixture.OutputHelper = _outputHelper;
+        }
+
+        protected void UnsetTestLogging()
+        {
+            _appContextFixture.OutputHelper = null;
         }
     }
 }

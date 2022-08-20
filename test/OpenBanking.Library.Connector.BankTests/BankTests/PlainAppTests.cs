@@ -2,26 +2,20 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using NSubstitute;
-using RichardSzalay.MockHttp;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,6 +24,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
     [Collection("App context collection")]
     public partial class PlainAppTests : AppTests, IDisposable
     {
+        private readonly AppContextFixture _appContextFixture;
         private readonly SqliteConnection _connection;
         private readonly DbContextOptions<SqliteDbContext> _dbContextOptions;
 
@@ -45,6 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 .Options;
             using var context = new SqliteDbContext(_dbContextOptions);
             context.Database.EnsureCreated(); // Initialise DB with schema
+            _appContextFixture = appContextFixture;
         }
 
         public ITestConfigurationProvider TestConfig { get; }
@@ -99,9 +95,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var bankProfilesSettingsProvider =
                 new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
 
-            // Create stores
+            // Set up time provider
             var timeProvider = new TimeProvider();
-            var instrumentationClient = new TestInstrumentationClient(_outputHelper, timeProvider);
+
+            // Set up logging
+            // ILoggerFactory? factory = LoggerFactory.Create(
+            //     b =>
+            //         b.AddConsole().AddXUnit(_appContextFixture));
+            // ILogger<object> logger = factory.CreateLogger<object>();
+            ILogger<object> logger = _serviceProvider.GetRequiredService<ILogger<object>>();
+            var instrumentationClient = new LoggerInstrumentationClient(logger);
+
+            // Connect output to logging
+            SetTestLogging();
+
+            // Set up software statement store
             var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
                 obcSettingsProvider2,
                 softwareStatementProfilesSettingsProvider,
@@ -109,9 +117,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 obSigningCertificateProfilesSettingsProvider,
                 instrumentationClient);
 
-            // Run test            
             var apiVariantMapper = new ApiVariantMapper();
             var apiClient = new ApiClient(instrumentationClient, new HttpClient());
+
+            // Run test            
             await TestAllInner(
                 testGroup,
                 bankProfile,
@@ -124,6 +133,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     GetDbContext(),
                     new BankProfileDefinitions(bankProfilesSettingsProvider)),
                 false);
+
+            UnsetTestLogging();
         }
     }
 }

@@ -12,14 +12,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
     [Collection("App context collection")]
     public partial class GenericHostAppTests : AppTests
     {
-        private readonly AppContextFixture _appContextFixture;
-
         public GenericHostAppTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture) : base(
             outputHelper,
-            appContextFixture)
-        {
-            _appContextFixture = appContextFixture ?? throw new ArgumentNullException(nameof(appContextFixture));
-        }
+            appContextFixture) { }
 
         [Theory]
         [MemberData(
@@ -44,16 +39,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 true);
 
             UnsetTestLogging();
-        }
-
-        private void SetTestLogging()
-        {
-            _appContextFixture.OutputHelper = _outputHelper;
-        }
-
-        private void UnsetTestLogging()
-        {
-            _appContextFixture.OutputHelper = null;
         }
     }
 }
