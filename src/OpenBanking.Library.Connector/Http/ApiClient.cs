@@ -184,13 +184,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
         {
             try
             {
-                _instrumentation.StartTrace(new HttpTraceInfo("Starting request", request.RequestUri!));
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
-                _instrumentation.EndTrace(
-                    new HttpTraceInfo(
-                        "Ended request",
-                        request.RequestUri!,
-                        response.StatusCode));
 
                 return response;
             }

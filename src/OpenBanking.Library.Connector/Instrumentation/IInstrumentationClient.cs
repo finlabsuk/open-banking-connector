@@ -6,9 +6,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
 {
     public interface IInstrumentationClient
     {
-        void StartTrace(TraceInfo info);
-        void EndTrace(TraceInfo info);
-
         void Info(string message);
         void Warning(string message);
         void Error(string message);

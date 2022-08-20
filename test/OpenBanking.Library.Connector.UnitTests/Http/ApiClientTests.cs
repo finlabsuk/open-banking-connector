@@ -2,11 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FluentAssertions;
@@ -68,9 +65,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
                 .Create();
 
             HttpResponseMessage response = await apiClient.LowLevelSendAsync(req);
-
-            instrumentationClient.Received(1).StartTrace(Arg.Any<TraceInfo>());
-            instrumentationClient.Received(1).EndTrace(Arg.Any<TraceInfo>());
         }
 
         [Theory]
@@ -94,10 +88,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
             Func<Task> a = async () => await apiClient.LowLevelSendAsync(req);
 
             a.Should().ThrowAsync<HttpRequestException>();
-
-            instrumentationClient.Received(1).StartTrace(Arg.Any<TraceInfo>());
-            instrumentationClient.Received(0).EndTrace(Arg.Any<TraceInfo>());
-            instrumentationClient.Received(1).Exception(Arg.Any<Exception>(), Arg.Any<string>());
         }
 
 
