@@ -13,7 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         public BankRegistrationValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
             CreateRules();
         }
 

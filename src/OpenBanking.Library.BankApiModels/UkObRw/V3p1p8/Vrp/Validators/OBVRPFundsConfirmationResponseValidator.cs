@@ -14,7 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Va
     {
         public OBVRPFundsConfirmationResponseValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
+
             CreateRules();
         }
 

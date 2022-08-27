@@ -14,7 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Va
     {
         public OBDomesticVRPResponseValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
             CreateRules();
         }
 

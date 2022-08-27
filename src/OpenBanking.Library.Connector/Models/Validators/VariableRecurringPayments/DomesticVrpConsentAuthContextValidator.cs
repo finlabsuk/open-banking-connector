@@ -11,7 +11,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
     {
         public DomesticVrpConsentAuthContextValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
             CreateRules();
         }
 

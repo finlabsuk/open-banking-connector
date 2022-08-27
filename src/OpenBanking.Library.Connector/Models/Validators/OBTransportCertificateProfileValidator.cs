@@ -13,7 +13,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
     {
         public OBTransportCertificateProfileValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
+
 
             CreateRules();
         }

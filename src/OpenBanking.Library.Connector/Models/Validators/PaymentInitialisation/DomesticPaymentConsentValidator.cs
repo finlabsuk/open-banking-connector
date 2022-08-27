@@ -13,7 +13,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Paymen
     {
         public DomesticPaymentConsentValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
             CreateRules();
         }
 

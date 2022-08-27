@@ -21,7 +21,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.V
 
         public OBWriteDomesticConsentResponse5DataInitiationValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
+
             CreateRules();
         }
 

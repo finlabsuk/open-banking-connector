@@ -14,7 +14,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Validat
     {
         public OBClientRegistration1ResponseValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
             CreateRules();
         }
 

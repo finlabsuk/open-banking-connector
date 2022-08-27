@@ -12,7 +12,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
     {
         public AuthorisationRedirectObjectValidator()
         {
-            CascadeMode = CascadeMode.Continue;
+            ClassLevelCascadeMode = CascadeMode.Continue;
+            RuleLevelCascadeMode = CascadeMode.Continue;
+
             CreateRules();
         }
 
