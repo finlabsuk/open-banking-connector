@@ -21,9 +21,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 using Xunit;
 using Xunit.Abstractions;
@@ -210,11 +208,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 _serviceProvider.GetRequiredService<BankUserStore>()
                     .GetRequiredBankUserList(testData2.BankProfileEnum);
 
-            // Get consent authoriser inputs
-            var nodeJsService = _serviceProvider.GetRequiredService<INodeJSService>();
-            // NodeJSProcessOptions nodeJSProcessOptions =
-            //     services.GetRequiredService<IOptions<NodeJSProcessOptions>>().Value;
-
             // Get API client
             var processedSoftwareStatementProfileStore =
                 _serviceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
@@ -258,28 +251,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             ConsentAuth? consentAuth;
             if (genericNotPlainAppTest)
             {
-                PuppeteerLaunchOptionsJavaScript puppeteerLaunchOptions =
-                    bankTestSettings.ConsentAuthoriser.PuppeteerLaunch.ToJavaScript();
+                PlaywrightLaunchOptions launchOptions =
+                    bankTestSettings.ConsentAuth.PlaywrightLaunch;
 
-                OutOfProcessNodeJSServiceOptions outOfProcessNodeJSServiceOptions =
-                    _serviceProvider.GetRequiredService<IOptions<OutOfProcessNodeJSServiceOptions>>().Value;
-
-                if (puppeteerLaunchOptions is null ||
-                    nodeJsService is null)
+                if (launchOptions is null)
                 {
-                    throw new ArgumentNullException($"{nameof(puppeteerLaunchOptions)} or {nameof(nodeJsService)}");
+                    throw new ArgumentNullException($"{nameof(launchOptions)}");
                 }
 
-                var launchOptions = new BrowserTypeLaunchOptions
+                var browserTypeLaunchOptions = new BrowserTypeLaunchOptions
                 {
-                    Args = puppeteerLaunchOptions.Args,
-                    Devtools = puppeteerLaunchOptions.Devtools,
-                    ExecutablePath = puppeteerLaunchOptions.ExecutablePath,
-                    Headless = puppeteerLaunchOptions.Headless,
-                    SlowMo = (float?) puppeteerLaunchOptions.SlowMo,
-                    Timeout = outOfProcessNodeJSServiceOptions.TimeoutMS
+                    Args = launchOptions.ProcessedArgs,
+                    Devtools = launchOptions.DevTools,
+                    ExecutablePath = launchOptions.ProcessedExecutablePath,
+                    Headless = launchOptions.Headless,
+                    SlowMo = launchOptions.ProcessedSlowMo,
+                    Timeout = launchOptions.TimeOut
                 };
-                consentAuth = new ConsentAuth(launchOptions);
+                consentAuth = new ConsentAuth(browserTypeLaunchOptions);
             }
             else
             {

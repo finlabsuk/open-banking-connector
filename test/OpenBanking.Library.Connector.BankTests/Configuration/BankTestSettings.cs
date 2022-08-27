@@ -8,18 +8,19 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
-using Jering.Javascript.NodeJS;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
 {
     /// <summary>
     ///     Options to be fed to "puppeteer.launch()"
     /// </summary>
-    public class PuppeteerLaunchOptions
+    public class PlaywrightLaunchOptions
     {
         public bool Headless { get; set; } = true;
 
-        public double? SlowMo { get; set; } = null;
+        public float SlowMo { get; set; } = 0;
+
+        public float TimeOut { get; set; } = 0;
 
         public bool DevTools { get; set; } = false;
 
@@ -28,99 +29,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         ///     This allows for example easy switching between the user's Chrome installation plus extension(s) and
         ///     the Puppeteer version of Chromium.
         /// </summary>
-        public bool IgnoreExecutablePathAndArgs { get; set; } = false;
-
+        public bool IgnoreExecutablePathAndArgs { get; set; } = true;
 
         /// <summary>
-        ///     Path to chrome folder.
+        ///     Path to browser folder.
         /// </summary>
-        public ExecutablePath? ExecutablePath { get; set; }
-
-        public string[] Args { get; set; } = new string[0];
-
-        public PuppeteerLaunchOptionsJavaScript ToJavaScript()
+        public ExecutablePath ExecutablePath { get; set; } = new()
         {
-            var js = new PuppeteerLaunchOptionsJavaScript { Headless = Headless, SlowMo = SlowMo, Devtools = DevTools };
+            Windows = "C:/Program Files/Google/Chrome/Application/chrome.exe",
+            MacOs = "~/Library/Application Support/Google/Chrome",
+            Linux = "~/.config/google-chrome/default"
+        };
 
-            //if using executable path then retrieve path using the GetExecutablePath method
-            if (!IgnoreExecutablePathAndArgs)
-            {
-                js.ExecutablePath = GetExecutablePathForCurrentOs();
-                js.Args = Args;
-            }
+        public string[] Args { get; set; } = Array.Empty<string>();
 
-            return js;
-        }
+        public float? ProcessedSlowMo => SlowMo == 0 ? null : SlowMo;
+
+        public string? ProcessedExecutablePath => IgnoreExecutablePathAndArgs ? null : GetExecutablePathForCurrentOs();
+
+        public string[]? ProcessedArgs => IgnoreExecutablePathAndArgs ? null : Args;
 
         // Gets chrome directory for current OS platform
         public string? GetExecutablePathForCurrentOs() =>
             OsPlatformEnumHelper.GetCurrentOsPlatform() switch
             {
-                OsPlatformEnum.MacOs => ExecutablePath?.MacOs,
-                OsPlatformEnum.Linux => ExecutablePath?.Linux,
-                OsPlatformEnum.Windows => ExecutablePath?.Windows,
+                OsPlatformEnum.MacOs => ExecutablePath.MacOs,
+                OsPlatformEnum.Linux => ExecutablePath.Linux,
+                OsPlatformEnum.Windows => ExecutablePath.Windows,
                 _ => throw new ArgumentOutOfRangeException()
             };
     }
 
-    /// <summary>
-    ///     Processed version of <see cref="PuppeteerLaunchOptions" /> which is sent to JavaScript.
-    /// </summary>
-    public class PuppeteerLaunchOptionsJavaScript
-    {
-        public bool? Headless { get; set; }
-
-        public double? SlowMo { get; set; }
-
-        public bool? Devtools { get; set; }
-
-        public string? ExecutablePath { get; set; }
-
-        public string[]? Args { get; set; }
-    }
-
-    /// <summary>
-    /// </summary>
-    public class NodeJSOptions
-    {
-        /// <summary>
-        ///     User-supplied settings which are processed in <see cref="GetProccessedNodeJSProcessOptions" />.
-        /// </summary>
-        public NodeJSProcessOptions NodeJSProcessOptions { get; set; } = new();
-
-        public bool NodeJSProcessOptionsAddInspectBrk { get; set; } = false;
-
-        public OutOfProcessNodeJSServiceOptions OutOfProcessNodeJSServiceOptions { get; set; } = new();
-
-        /// <summary>
-        ///     Get processed version of <see cref="NodeJSProcessOptions" />
-        /// </summary>
-        /// <returns></returns>
-        public NodeJSProcessOptions GetProccessedNodeJSProcessOptions()
-        {
-            NodeJSProcessOptions nodeJSNodeJSProcessOptions = NodeJSProcessOptions;
-            if (NodeJSProcessOptionsAddInspectBrk)
-            {
-                nodeJSNodeJSProcessOptions.NodeAndV8Options = string.Join(
-                    " ",
-                    nodeJSNodeJSProcessOptions.NodeAndV8Options,
-                    "--inspect-brk");
-            }
-
-            nodeJSNodeJSProcessOptions.ProjectPath = FolderPaths.ConsentAuthoriserBuildFolder;
-
-            return nodeJSNodeJSProcessOptions;
-        }
-    }
-
     public class ConsentAuthoriserOptions
     {
-        public NodeJSOptions NodeJS { get; set; } = new();
-
         /// <summary>
         ///     User-supplied settings which are processed in <see cref="GetProcessedPuppeteerLaunch" />.
         /// </summary>
-        public PuppeteerLaunchOptions PuppeteerLaunch { get; set; } = new();
+        public PlaywrightLaunchOptions PlaywrightLaunch { get; set; } = new();
     }
 
     /// <summary>
@@ -193,7 +138,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (IDs here) to specify when using POST to create a new BankRegistration
+        ///     Existing external (bank) API BankRegistration objects (IDs here) to specify when using POST to create a new
+        ///     BankRegistration
         ///     object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
@@ -202,7 +148,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (secrets here) to specify when using POST to create a new BankRegistration
+        ///     Existing external (bank) API BankRegistration objects (secrets here) to specify when using POST to create a new
+        ///     BankRegistration
         ///     object. Secrets only used where corresponding ID specified.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
@@ -271,7 +218,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         /// </summary>
         public Dictionary<string, TestGroup> TestGroups { get; set; } = new();
 
-        public ConsentAuthoriserOptions ConsentAuthoriser { get; set; } = new();
+        public ConsentAuthoriserOptions ConsentAuth { get; set; } = new();
 
         /// <summary>
         ///     Path to data folder used for logging, "API overrides", and bank user information.
@@ -295,20 +242,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             }
 
             // Check executable path in the case where this is not ignored
-            if (!ConsentAuthoriser.PuppeteerLaunch.IgnoreExecutablePathAndArgs)
+            if (!ConsentAuth.PlaywrightLaunch.IgnoreExecutablePathAndArgs)
             {
                 // Check executable path is not null
-                if (ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs() is null)
+                if (ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs() is null)
                 {
                     throw new ArgumentException("Please specify an executable path in app settings.");
                 }
 
                 // Check executable path exists
-                if (!File.Exists(ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs()))
+                if (!File.Exists(ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs()))
                 {
                     throw new DirectoryNotFoundException(
                         "Can't locate executable path specified in bank test setting ExecutablePath:" +
-                        $"{ConsentAuthoriser.PuppeteerLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
+                        $"{ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
                 }
             }
 

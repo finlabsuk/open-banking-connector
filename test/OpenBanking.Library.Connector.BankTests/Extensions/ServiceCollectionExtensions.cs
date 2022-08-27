@@ -7,10 +7,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
-using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
@@ -24,24 +22,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
             // Add settings groups
             services
                 .AddSettingsGroup<BankTestSettings>(configuration);
-
-            // Set up Node JS services
-            services.AddSingleton<IOptions<NodeJSProcessOptions>>(
-                sp =>
-                {
-                    BankTestSettings bankTestSettings =
-                        sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
-                    return Options.Create(
-                        bankTestSettings.ConsentAuthoriser.NodeJS.GetProccessedNodeJSProcessOptions());
-                });
-            services.AddSingleton<IOptions<OutOfProcessNodeJSServiceOptions>>(
-                sp =>
-                {
-                    BankTestSettings bankTestSettings =
-                        sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
-                    return Options.Create(bankTestSettings.ConsentAuthoriser.NodeJS.OutOfProcessNodeJSServiceOptions);
-                });
-            services.AddNodeJS();
 
             // Set up bank users
             services.AddSingleton(
