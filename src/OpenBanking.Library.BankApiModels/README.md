@@ -1,7 +1,9 @@
-# Bank API Models
+# Bank API models
 
-This project contains bank API models generated using [AutoRest](https://github.com/Azure/autorest) from Swagger/Open
+This library contains bank API models generated using [AutoRest v3](https://github.com/Azure/autorest) from Swagger/Open
 API source files.
+
+## Source files
 
 The Swagger/Open API source files come from the following two repos:
 
@@ -10,6 +12,30 @@ The Swagger/Open API source files come from the following two repos:
 
 whose copyright holder is the UK Open Banking Implementation Entity and which are made available under the MIT licence (
 see footer of this [page](https://standards.openbanking.org.uk/api-specifications/)).
+
+## Model generation
+
+To generate models on a Windows machine,
+- install Node.js and npm
+- install AutoRest v3:
+  ```powershell
+  npm install -g autorest
+  ```
+- navigate to target current directory, e.g.
+  ```powershell
+  cd src/OpenBanking.Library.BankApiModels/UkObRw/V3p1p10/Aisp
+  ```
+- generate model files:
+  ```powershell
+  autorest --reset
+  autorest --use=@autorest/csharp@3.0.0-beta.20220317.3
+  ```
+
+
+
+
+
+## Misc
 
 The first version of the file `src\OpenBanking.Library.BankApiModels\UkObRw\V3p1p8\Pisp\swagger.json` was created by
 converting https://raw.githubusercontent.com/OpenBankingUK/read-write-api-specs/v3.1.8r4/dist/openapi/payment-initiation-openapi.json

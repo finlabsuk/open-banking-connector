@@ -6,11 +6,11 @@ This file contains configuration for generating bank API models using AutoRest.
 
 ```yaml
 input-file:
-  - ./account-info-openapi-modified.yaml # modified AISP v3.1.9r5 spec
+  - ./account-info-openapi-modified.yaml # modified AISP v3.1.10r5 spec
 csharp:
   use-datetimeoffset: true
 output-folder: .
-namespace: FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp
+namespace: FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp
 
 directive:
   - from: openapi-document # do it globally 
