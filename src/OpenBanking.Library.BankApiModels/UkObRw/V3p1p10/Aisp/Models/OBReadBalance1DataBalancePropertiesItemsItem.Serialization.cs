@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBReadBalance1DataBalancePropertiesItemsItem
     {
-        internal static OBReadBalance1DataBalancePropertiesItemsItem DeserializeOBReadBalance1DataBalancePropertiesItemsItem(JsonElement element)
+        public static OBReadBalance1DataBalancePropertiesItemsItem DeserializeOBReadBalance1DataBalancePropertiesItemsItem(JsonElement element)
         {
             bool included = default;
             Optional<OBReadBalance1DataBalanceCreditLineTypeEnum> type = default;

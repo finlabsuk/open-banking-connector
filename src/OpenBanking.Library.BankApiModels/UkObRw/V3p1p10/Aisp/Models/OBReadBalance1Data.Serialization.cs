@@ -7,13 +7,12 @@
 
 using System.Collections.Generic;
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBReadBalance1Data
     {
-        internal static OBReadBalance1Data DeserializeOBReadBalance1Data(JsonElement element)
+        public static OBReadBalance1Data DeserializeOBReadBalance1Data(JsonElement element)
         {
             IReadOnlyList<OBReadBalance1DataBalanceItem> balance = default;
             foreach (var property in element.EnumerateObject())

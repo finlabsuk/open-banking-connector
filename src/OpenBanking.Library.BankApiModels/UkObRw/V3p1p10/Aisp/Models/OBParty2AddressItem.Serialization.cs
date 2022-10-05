@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBParty2AddressItem
     {
-        internal static OBParty2AddressItem DeserializeOBParty2AddressItem(JsonElement element)
+        public static OBParty2AddressItem DeserializeOBParty2AddressItem(JsonElement element)
         {
             Optional<OBAddressTypeCodeEnum> addressType = default;
             Optional<IReadOnlyList<string>> addressLine = default;

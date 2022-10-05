@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBReadConsentResponse1
     {
-        internal static OBReadConsentResponse1 DeserializeOBReadConsentResponse1(JsonElement element)
+        public static OBReadConsentResponse1 DeserializeOBReadConsentResponse1(JsonElement element)
         {
             OBReadConsentResponse1Data data = default;
             object risk = default;
@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
                     continue;
                 }
             }
-            return new OBReadConsentResponse1(data, risk, links.Value, meta.Value);
+            return new OBReadConsentResponse1(data, links.Value, meta.Value, risk);
         }
     }
 }

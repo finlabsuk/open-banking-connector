@@ -6,13 +6,12 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBActiveOrHistoricCurrencyAndAmount6
     {
-        internal static OBActiveOrHistoricCurrencyAndAmount6 DeserializeOBActiveOrHistoricCurrencyAndAmount6(JsonElement element)
+        public static OBActiveOrHistoricCurrencyAndAmount6 DeserializeOBActiveOrHistoricCurrencyAndAmount6(JsonElement element)
         {
             string amount = default;
             string currency = default;

@@ -8,10 +8,12 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Set of elements used to define the balance details. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1DataBalanceItem))]
     public partial class OBReadBalance1DataBalanceItem
     {
         /// <summary> Initializes a new instance of OBReadBalance1DataBalanceItem. </summary>
@@ -28,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="amount"/> is null. </exception>
-        internal OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount)
+        public OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount)
         {
             if (accountId == null)
             {
@@ -61,7 +63,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <param name="creditLine"></param>
-        internal OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount, IReadOnlyList<OBReadBalance1DataBalancePropertiesItemsItem> creditLine)
+        [JsonConstructor]
+        public OBReadBalance1DataBalanceItem(string accountId, OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, DateTimeOffset dateTime, OBReadBalance1DataBalanceItemAmount amount, IReadOnlyList<OBReadBalance1DataBalancePropertiesItemsItem> creditLine)
         {
             AccountId = accountId;
             CreditDebitIndicator = creditDebitIndicator;

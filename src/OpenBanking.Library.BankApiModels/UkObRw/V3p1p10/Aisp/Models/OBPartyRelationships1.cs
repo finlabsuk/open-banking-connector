@@ -5,19 +5,23 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> The Party&apos;s relationships with other resources. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBPartyRelationships1))]
     public partial class OBPartyRelationships1
     {
         /// <summary> Initializes a new instance of OBPartyRelationships1. </summary>
-        internal OBPartyRelationships1()
+        public OBPartyRelationships1()
         {
         }
 
         /// <summary> Initializes a new instance of OBPartyRelationships1. </summary>
         /// <param name="account"> Relationship to the Account resource. </param>
-        internal OBPartyRelationships1(OBPartyRelationships1Account account)
+        [JsonConstructor]
+        public OBPartyRelationships1(OBPartyRelationships1Account account)
         {
             Account = account;
         }

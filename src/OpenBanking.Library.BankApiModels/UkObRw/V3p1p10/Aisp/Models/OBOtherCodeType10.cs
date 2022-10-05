@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> The OBOtherCodeType10. </summary>
-    internal partial class OBOtherCodeType10
+    public partial class OBOtherCodeType10
     {
         /// <summary> Initializes a new instance of OBOtherCodeType10. </summary>
         /// <param name="name"> Long name associated with the code. </param>
         /// <param name="description"> Description to describe the purpose of the code. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="name"/> or <paramref name="description"/> is null. </exception>
-        internal OBOtherCodeType10(string name, string description)
+        public OBOtherCodeType10(string name, string description)
         {
             if (name == null)
             {

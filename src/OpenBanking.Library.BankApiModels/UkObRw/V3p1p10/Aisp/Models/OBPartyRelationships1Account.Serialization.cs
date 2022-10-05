@@ -6,13 +6,12 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBPartyRelationships1Account
     {
-        internal static OBPartyRelationships1Account DeserializeOBPartyRelationships1Account(JsonElement element)
+        public static OBPartyRelationships1Account DeserializeOBPartyRelationships1Account(JsonElement element)
         {
             string related = default;
             string id = default;

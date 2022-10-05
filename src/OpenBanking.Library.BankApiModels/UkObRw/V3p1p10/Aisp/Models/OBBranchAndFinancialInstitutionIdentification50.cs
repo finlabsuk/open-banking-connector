@@ -10,13 +10,14 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBBranchAndFinancialInstitutionIdentification50))]
     public partial class OBBranchAndFinancialInstitutionIdentification50
     {
         /// <summary> Initializes a new instance of OBBranchAndFinancialInstitutionIdentification50. </summary>
         /// <param name="schemeName"> Name of the identification scheme, in a coded form as published in an external list. </param>
         /// <param name="identification"> Unique and unambiguous identification of the servicing institution. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="schemeName"/> or <paramref name="identification"/> is null. </exception>
-        internal OBBranchAndFinancialInstitutionIdentification50(string schemeName, string identification)
+        public OBBranchAndFinancialInstitutionIdentification50(string schemeName, string identification)
         {
             if (schemeName == null)
             {

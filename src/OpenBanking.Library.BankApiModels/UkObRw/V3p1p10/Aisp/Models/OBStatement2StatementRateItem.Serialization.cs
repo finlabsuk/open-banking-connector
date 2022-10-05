@@ -6,13 +6,12 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBStatement2StatementRateItem
     {
-        internal static OBStatement2StatementRateItem DeserializeOBStatement2StatementRateItem(JsonElement element)
+        public static OBStatement2StatementRateItem DeserializeOBStatement2StatementRateItem(JsonElement element)
         {
             string rate = default;
             string type = default;

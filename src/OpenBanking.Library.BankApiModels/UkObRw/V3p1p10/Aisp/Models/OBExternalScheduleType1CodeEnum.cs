@@ -5,14 +5,21 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Specifies the scheduled payment date type requested. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBExternalScheduleType1CodeEnum
     {
         /// <summary> Arrival. </summary>
+        [EnumMember(Value = "Arrival")]
         Arrival,
         /// <summary> Execution. </summary>
+        [EnumMember(Value = "Execution")]
         Execution
     }
 }

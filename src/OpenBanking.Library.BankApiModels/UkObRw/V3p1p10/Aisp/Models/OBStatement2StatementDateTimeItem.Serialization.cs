@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBStatement2StatementDateTimeItem
     {
-        internal static OBStatement2StatementDateTimeItem DeserializeOBStatement2StatementDateTimeItem(JsonElement element)
+        public static OBStatement2StatementDateTimeItem DeserializeOBStatement2StatementDateTimeItem(JsonElement element)
         {
             DateTimeOffset dateTime = default;
             string type = default;

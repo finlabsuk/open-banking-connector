@@ -14,14 +14,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
     public partial class OBReadDataStatement2
     {
         /// <summary> Initializes a new instance of OBReadDataStatement2. </summary>
-        internal OBReadDataStatement2()
+        public OBReadDataStatement2()
         {
             Statement = new ChangeTrackingList<OBStatement2>();
         }
 
         /// <summary> Initializes a new instance of OBReadDataStatement2. </summary>
         /// <param name="statement"></param>
-        internal OBReadDataStatement2(IReadOnlyList<OBStatement2> statement)
+        public OBReadDataStatement2(IReadOnlyList<OBStatement2> statement)
         {
             Statement = statement;
         }

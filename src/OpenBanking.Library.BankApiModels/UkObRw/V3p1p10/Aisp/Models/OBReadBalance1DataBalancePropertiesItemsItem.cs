@@ -5,9 +5,12 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the credit line. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1DataBalancePropertiesItemsItem))]
     public partial class OBReadBalance1DataBalancePropertiesItemsItem
     {
         /// <summary> Initializes a new instance of OBReadBalance1DataBalancePropertiesItemsItem. </summary>
@@ -15,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// Indicates whether or not the credit line is included in the balance of the account.
         /// Usage: If not present, credit line is not included in the balance amount of the account.
         /// </param>
-        internal OBReadBalance1DataBalancePropertiesItemsItem(bool included)
+        public OBReadBalance1DataBalancePropertiesItemsItem(bool included)
         {
             Included = included;
         }
@@ -27,7 +30,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// </param>
         /// <param name="type"> Limit type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the credit line. </param>
-        internal OBReadBalance1DataBalancePropertiesItemsItem(bool included, OBReadBalance1DataBalanceCreditLineTypeEnum? type, OBReadBalance1DataBalanceItemCreditLineItemAmount amount)
+        [JsonConstructor]
+        public OBReadBalance1DataBalancePropertiesItemsItem(bool included, OBReadBalance1DataBalanceCreditLineTypeEnum? type, OBReadBalance1DataBalanceItemCreditLineItemAmount amount)
         {
             Included = included;
             Type = type;

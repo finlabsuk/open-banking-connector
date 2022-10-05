@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBBranchAndFinancialInstitutionIdentification60
     {
-        internal static OBBranchAndFinancialInstitutionIdentification60 DeserializeOBBranchAndFinancialInstitutionIdentification60(JsonElement element)
+        public static OBBranchAndFinancialInstitutionIdentification60 DeserializeOBBranchAndFinancialInstitutionIdentification60(JsonElement element)
         {
             Optional<string> schemeName = default;
             Optional<string> identification = default;

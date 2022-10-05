@@ -5,18 +5,27 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> The card authorisation type. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBTransactionCardInstrument1AuthorisationTypeEnum
     {
         /// <summary> ConsumerDevice. </summary>
+        [EnumMember(Value = "ConsumerDevice")]
         ConsumerDevice,
         /// <summary> Contactless. </summary>
+        [EnumMember(Value = "Contactless")]
         Contactless,
         /// <summary> None. </summary>
+        [EnumMember(Value = "None")]
         None,
         /// <summary> PIN. </summary>
+        [EnumMember(Value = "PIN")]
         PIN
     }
 }

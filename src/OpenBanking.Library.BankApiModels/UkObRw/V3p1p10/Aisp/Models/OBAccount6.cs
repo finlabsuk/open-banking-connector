@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -20,12 +21,13 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
     /// 
     /// For all other accounts, the fields must be populated by the ASPSP.
     /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBAccount6))]
     public partial class OBAccount6
     {
         /// <summary> Initializes a new instance of OBAccount6. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> is null. </exception>
-        internal OBAccount6(string accountId)
+        public OBAccount6(string accountId)
         {
             if (accountId == null)
             {
@@ -66,7 +68,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="switchStatus"> Specifies the switch status for the account, in a coded form. </param>
         /// <param name="account"></param>
         /// <param name="servicer"> Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. </param>
-        internal OBAccount6(string accountId, OBAccountStatus1CodeEnum? status, DateTimeOffset? statusUpdateDateTime, string currency, OBExternalAccountType1CodeEnum? accountType, OBExternalAccountSubType1CodeEnum? accountSubType, string description, string nickname, DateTimeOffset? openingDate, DateTimeOffset? maturityDate, string switchStatus, IReadOnlyList<OBAccount6AccountItem> account, OBBranchAndFinancialInstitutionIdentification50 servicer)
+        [JsonConstructor]
+        public OBAccount6(string accountId, OBAccountStatus1CodeEnum? status, DateTimeOffset? statusUpdateDateTime, string currency, OBExternalAccountType1CodeEnum? accountType, OBExternalAccountSubType1CodeEnum? accountSubType, string description, string nickname, DateTimeOffset? openingDate, DateTimeOffset? maturityDate, string switchStatus, IReadOnlyList<OBAccount6AccountItem> account, OBBranchAndFinancialInstitutionIdentification50 servicer)
         {
             AccountId = accountId;
             Status = status;

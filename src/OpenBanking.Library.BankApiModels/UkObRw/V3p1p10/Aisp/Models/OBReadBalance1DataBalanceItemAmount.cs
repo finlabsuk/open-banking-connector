@@ -10,13 +10,14 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Amount of money of the cash balance. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1DataBalanceItemAmount))]
     public partial class OBReadBalance1DataBalanceItemAmount
     {
         /// <summary> Initializes a new instance of OBReadBalance1DataBalanceItemAmount. </summary>
         /// <param name="amount"> A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217. </param>
         /// <param name="currency"> A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 &quot;Codes for the representation of currencies and funds&quot;. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="amount"/> or <paramref name="currency"/> is null. </exception>
-        internal OBReadBalance1DataBalanceItemAmount(string amount, string currency)
+        public OBReadBalance1DataBalanceItemAmount(string amount, string currency)
         {
             if (amount == null)
             {

@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class ProprietaryBankTransactionCodeStructure1
     {
-        internal static ProprietaryBankTransactionCodeStructure1 DeserializeProprietaryBankTransactionCodeStructure1(JsonElement element)
+        public static ProprietaryBankTransactionCodeStructure1 DeserializeProprietaryBankTransactionCodeStructure1(JsonElement element)
         {
             string code = default;
             Optional<string> issuer = default;

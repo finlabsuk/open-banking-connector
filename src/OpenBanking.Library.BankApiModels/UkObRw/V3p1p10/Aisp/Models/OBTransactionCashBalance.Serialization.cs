@@ -6,13 +6,12 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBTransactionCashBalance
     {
-        internal static OBTransactionCashBalance DeserializeOBTransactionCashBalance(JsonElement element)
+        public static OBTransactionCashBalance DeserializeOBTransactionCashBalance(JsonElement element)
         {
             OBCreditDebitCode2Enum creditDebitIndicator = default;
             OBBalanceType1CodeEnum type = default;

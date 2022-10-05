@@ -6,13 +6,12 @@
 #nullable disable
 
 using System.Text.Json;
-using Azure.Core;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     public partial class OBBranchAndFinancialInstitutionIdentification50
     {
-        internal static OBBranchAndFinancialInstitutionIdentification50 DeserializeOBBranchAndFinancialInstitutionIdentification50(JsonElement element)
+        public static OBBranchAndFinancialInstitutionIdentification50 DeserializeOBBranchAndFinancialInstitutionIdentification50(JsonElement element)
         {
             string schemeName = default;
             string identification = default;

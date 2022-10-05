@@ -5,22 +5,30 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Rate type for Fee/Charge (where it is charged in terms of a rate rather than an amount). </summary>
-    internal enum OBInterestRateType1Code1Enum
+    public enum OBInterestRateType1Code1Enum
     {
         /// <summary> INBB. </summary>
+        [EnumMember(Value = "Inbb")]
         Inbb,
         /// <summary> INFR. </summary>
+        [EnumMember(Value = "Infr")]
         Infr,
         /// <summary> INGR. </summary>
+        [EnumMember(Value = "Ingr")]
         Ingr,
         /// <summary> INLR. </summary>
+        [EnumMember(Value = "Inlr")]
         Inlr,
         /// <summary> INNE. </summary>
+        [EnumMember(Value = "Inne")]
         Inne,
         /// <summary> INOT. </summary>
+        [EnumMember(Value = "Inot")]
         Inot
     }
 }

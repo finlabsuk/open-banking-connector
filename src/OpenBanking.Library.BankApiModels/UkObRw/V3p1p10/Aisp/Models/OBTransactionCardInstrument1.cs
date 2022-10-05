@@ -8,11 +8,12 @@
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Set of elements to describe the card instrument used in the transaction. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransactionCardInstrument1))]
     public partial class OBTransactionCardInstrument1
     {
         /// <summary> Initializes a new instance of OBTransactionCardInstrument1. </summary>
         /// <param name="cardSchemeName"> Name of the card scheme. </param>
-        internal OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName)
+        public OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName)
         {
             CardSchemeName = cardSchemeName;
         }
@@ -22,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="authorisationType"> The card authorisation type. </param>
         /// <param name="name"> Name of the cardholder using the card instrument. </param>
         /// <param name="identification"> Identification assigned by an institution to identify the card instrument used in the transaction. This identification is known by the account owner, and may be masked. </param>
-        internal OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName, OBTransactionCardInstrument1AuthorisationTypeEnum? authorisationType, string name, string identification)
+        public OBTransactionCardInstrument1(OBTransactionCardInstrument1CardSchemeNameEnum cardSchemeName, OBTransactionCardInstrument1AuthorisationTypeEnum? authorisationType, string name, string identification)
         {
             CardSchemeName = cardSchemeName;
             AuthorisationType = authorisationType;

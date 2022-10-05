@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="type"> Interest amount type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the statement interest amount type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2StatementInterestItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount7 amount)
+        public OBStatement2StatementInterestItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount7 amount)
         {
             if (type == null)
             {
@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="rateType"> Description that may be available for the statement Interest rate type. </param>
         /// <param name="frequency"> Specifies the statement fee type requested. </param>
         /// <param name="amount"> Amount of money associated with the statement interest amount type. </param>
-        internal OBStatement2StatementInterestItem(string description, OBCreditDebitCode0Enum creditDebitIndicator, string type, float? rate, string rateType, string frequency, OBActiveOrHistoricCurrencyAndAmount7 amount)
+        public OBStatement2StatementInterestItem(string description, OBCreditDebitCode0Enum creditDebitIndicator, string type, float? rate, string rateType, string frequency, OBActiveOrHistoricCurrencyAndAmount7 amount)
         {
             Description = description;
             CreditDebitIndicator = creditDebitIndicator;

@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class Meta
     {
-        internal static Meta DeserializeMeta(JsonElement element)
+        public static Meta DeserializeMeta(JsonElement element)
         {
             Optional<int> totalPages = default;
             Optional<DateTimeOffset> firstAvailableDateTime = default;

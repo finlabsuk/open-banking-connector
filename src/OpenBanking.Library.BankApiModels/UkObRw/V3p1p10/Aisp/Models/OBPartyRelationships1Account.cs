@@ -10,13 +10,14 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Relationship to the Account resource. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBPartyRelationships1Account))]
     public partial class OBPartyRelationships1Account
     {
         /// <summary> Initializes a new instance of OBPartyRelationships1Account. </summary>
         /// <param name="related"> Absolute URI to the related resource. </param>
         /// <param name="id"> Unique identification as assigned by the ASPSP to uniquely identify the related resource. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="related"/> or <paramref name="id"/> is null. </exception>
-        internal OBPartyRelationships1Account(string related, string id)
+        public OBPartyRelationships1Account(string related, string id)
         {
             if (related == null)
             {

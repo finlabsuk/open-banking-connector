@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBErrorResponse1
     {
-        internal static OBErrorResponse1 DeserializeOBErrorResponse1(JsonElement element)
+        public static OBErrorResponse1 DeserializeOBErrorResponse1(JsonElement element)
         {
             string code = default;
             Optional<string> id = default;

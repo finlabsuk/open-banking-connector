@@ -5,14 +5,18 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Type of interest rate, Fixed or Variable. </summary>
-    internal enum OBInterestFixedVariableType1CodeEnum
+    public enum OBInterestFixedVariableType1CodeEnum
     {
         /// <summary> INFI. </summary>
+        [EnumMember(Value = "Infi")]
         Infi,
         /// <summary> INVA. </summary>
+        [EnumMember(Value = "Inva")]
         Inva
     }
 }

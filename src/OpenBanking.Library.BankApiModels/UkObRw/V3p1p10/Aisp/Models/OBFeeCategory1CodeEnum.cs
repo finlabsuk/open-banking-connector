@@ -5,16 +5,24 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Categorisation of fees and charges into standard categories. </summary>
-    internal enum OBFeeCategory1CodeEnum
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum OBFeeCategory1CodeEnum
     {
         /// <summary> FCOT. </summary>
+        [EnumMember(Value = "Fcot")]
         Fcot,
         /// <summary> FCRE. </summary>
+        [EnumMember(Value = "Fcre")]
         Fcre,
         /// <summary> FCSV. </summary>
+        [EnumMember(Value = "Fcsv")]
         Fcsv
     }
 }

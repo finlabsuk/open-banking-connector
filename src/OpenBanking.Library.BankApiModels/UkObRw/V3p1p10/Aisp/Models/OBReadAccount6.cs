@@ -6,16 +6,24 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
-    /// <summary> The OBReadAccount6. </summary>
+    /// <summary>
+    ///     Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     <a
+    ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml" />
+    ///     v3.1.10r5 <a />. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadAccount6))]
     public partial class OBReadAccount6
     {
         /// <summary> Initializes a new instance of OBReadAccount6. </summary>
         /// <param name="data"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null. </exception>
-        internal OBReadAccount6(OBReadAccount6Data data)
+        public OBReadAccount6(OBReadAccount6Data data)
         {
             if (data == null)
             {
@@ -29,7 +37,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadAccount6(OBReadAccount6Data data, Links links, Meta meta)
+        [JsonConstructor]
+        public OBReadAccount6(OBReadAccount6Data data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

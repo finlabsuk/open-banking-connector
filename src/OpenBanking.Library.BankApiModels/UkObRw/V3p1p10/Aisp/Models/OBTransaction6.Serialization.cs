@@ -14,7 +14,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
 {
     public partial class OBTransaction6
     {
-        internal static OBTransaction6 DeserializeOBTransaction6(JsonElement element)
+        public static OBTransaction6 DeserializeOBTransaction6(JsonElement element)
         {
             string accountId = default;
             Optional<string> transactionId = default;

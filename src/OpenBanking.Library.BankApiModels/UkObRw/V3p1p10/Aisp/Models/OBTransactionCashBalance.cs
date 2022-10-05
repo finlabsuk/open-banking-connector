@@ -10,6 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
     /// <summary> Set of elements used to define the balance as a numerical representation of the net increases and decreases in an account after a transaction entry is applied to the account. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBTransactionCashBalance))]
     public partial class OBTransactionCashBalance
     {
         /// <summary> Initializes a new instance of OBTransactionCashBalance. </summary>
@@ -20,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="type"> Balance type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the cash balance after a transaction entry is applied to the account.. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="amount"/> is null. </exception>
-        internal OBTransactionCashBalance(OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, OBTransactionCashBalanceAmount amount)
+        public OBTransactionCashBalance(OBCreditDebitCode2Enum creditDebitIndicator, OBBalanceType1CodeEnum type, OBTransactionCashBalanceAmount amount)
         {
             if (amount == null)
             {
