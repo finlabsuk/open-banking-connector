@@ -8,9 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransac
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction
 {

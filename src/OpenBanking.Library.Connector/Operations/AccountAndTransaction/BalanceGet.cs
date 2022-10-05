@@ -12,10 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.Accou
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
-using AccountAndTransactionModelsV3p1p7 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
@@ -110,9 +106,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     AccountAndTransactionModelsPublic.OBReadBalance1,
                     AccountAndTransactionModelsV3p1p7.OBReadBalance1>(
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadBalance1,
-                    AccountAndTransactionModelsPublic.OBReadBalance1>(
+                    AccountAndTransactionModelsV3p1p10.OBReadBalance1>(
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")

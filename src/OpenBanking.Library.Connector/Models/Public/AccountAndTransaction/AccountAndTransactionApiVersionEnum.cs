@@ -14,10 +14,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         [EnumMember(Value = "Version3p1p7")]
         Version3p1p7,
 
-        [EnumMember(Value = "Version3p1p8")]
-        Version3p1p8,
+        // Support not currently required
+        // [EnumMember(Value = "Version3p1p8")]
+        // Version3p1p8,
 
-        [EnumMember(Value = "Version3p1p9")]
-        Version3p1p9
+        // Support not currently required
+        // [EnumMember(Value = "Version3p1p9")]
+        // Version3p1p9,
+        
+        [EnumMember(Value = "Version3p1p10")]
+        Version3p1p10
+
     }
 }

@@ -15,12 +15,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
-using AccountAndTransactionModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p9.Aisp.Models;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using AccountAndTransactionModelsV3p1p7 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
 {
@@ -60,9 +56,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p9 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                    AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+                    AccountAndTransactionModelsV3p1p10.OBReadConsentResponse1>(
                     new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
                 null => throw new NullReferenceException("No AISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
