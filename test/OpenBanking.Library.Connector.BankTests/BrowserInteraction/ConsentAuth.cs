@@ -51,30 +51,35 @@ public class ConsentAuth
         IPage page = await browser.NewPageAsync();
         await page.GotoAsync(authUrl);
         await GetUiMethods(bankProfileEnum).ConsentUiInteractions(page, consentVariety, bankUser);
-        // Wait for redirect to complete
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         bool isFragmentRedirect = bankProfileEnum != BankProfileEnum.Hsbc_Sandbox;
         if (isFragmentRedirect)
         {
+            // Wait for redirect (allow 60s for now to support interaction)
             await page.WaitForSelectorAsync(
-                "auth-fragment-redirect",
+                "id=auth-fragment-redirect",
                 new PageWaitForSelectorOptions
                 {
-                    State = WaitForSelectorState.Hidden,
+                    State = WaitForSelectorState.Attached,
+                    Timeout = 60000
                 });
 
-            // Wait 5 secs for redirect
+            // Wait for delegate API call (allows 5s)
             IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
                 "window.pageStatus",
                 null,
-                new PageWaitForFunctionOptions { Timeout = 10000 });
+                new PageWaitForFunctionOptions { Timeout = 5000 });
 
             var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
             if (pageStatus is not "POST of fragment succeeded")
             {
                 throw new Exception("Redirect page could not capture and pass on parameters in URL fragment");
             }
+        }
+        else
+        {
+            // Wait for network activity to complete
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
         // Delay to ensure token available

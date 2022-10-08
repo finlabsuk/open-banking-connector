@@ -9,9 +9,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInterac
 
 public class Hsbc2 : IBankProfileUiMethods
 {
-    public async Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
+    public Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
     {
-        await Task.Delay(20000);
-
+        return Task.CompletedTask;
     }
 }
