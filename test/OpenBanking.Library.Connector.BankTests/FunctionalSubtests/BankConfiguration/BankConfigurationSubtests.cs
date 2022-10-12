@@ -83,7 +83,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         ? new ExternalApiBankRegistration
                         {
                             ExternalApiId = testData2.BankRegistrationExternalApiId,
-                            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret
+                            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
+                            RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
                         }
                         : null
             };
@@ -124,12 +125,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string modifiedBy,
             Guid bankRegistrationId,
             Guid bankId,
-            BankConfigurationApiSettings bankConfigurationApiSettings)
+            BankConfigurationApiSettings bankConfigurationApiSettings,
+            AppTests.TestType testType)
         {
             // Delete bankRegistration
-            bool includeExternalApiOperation =
-                bankConfigurationApiSettings.UseDeleteEndpoint &&
-                testData2.BankRegistrationExternalApiId is null;
+            bool includeExternalApiOperation = false;
+            if (bankConfigurationApiSettings.UseDeleteEndpoint)
+            {
+                includeExternalApiOperation = testType switch
+                {
+                    // Never delete at API when creating reg
+                    AppTests.TestType.CreateRegistration => false,
+                    
+                    // Always delete at API when deleting reg
+                    AppTests.TestType.DeleteRegistration => true,
+                    
+                    // Normally delete based on whether external API reg supplied or created
+                    AppTests.TestType.AllEndpoints => testData2.BankRegistrationExternalApiId is null,
+                    
+                    _ => throw new ArgumentOutOfRangeException(nameof(testType), testType, null)
+                };
+            }
             ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations

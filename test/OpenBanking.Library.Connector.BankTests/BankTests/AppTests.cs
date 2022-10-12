@@ -16,9 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +28,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 {
     public abstract class AppTests
     {
+        public enum TestType
+        {
+            /// <summary>
+            ///     Test creation of bank registration.
+            /// </summary>
+            CreateRegistration,
+
+            /// <summary>
+            ///     Test creation then deletion of bank registration.
+            ///     If possible, force external bank registration deletion even if
+            ///     ExternalApi registration supplied via BankRegistrationExternalApiIds rather than created.
+            /// </summary>
+            DeleteRegistration,
+
+            /// <summary>
+            ///     Test all possible endpoints (maximal test).
+            /// </summary>
+            AllEndpoints
+        }
+
         private readonly AppContextFixture _appContextFixture;
         private readonly ITestOutputHelper _outputHelper;
         protected readonly IServiceProvider _serviceProvider;
@@ -78,76 +96,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 foreach (BankProfileEnum bankProfileEnum in testedBanks)
                 {
                     // Get override for software statement and certificate profiles
-                    string? overrideCase =
-                        testGroup
-                            .SoftwareStatementAndCertificateProfileOverrides
-                            .TryGetValue(bankProfileEnum, out string? value1)
-                            ? value1
-                            : null;
-
-                    // Get BankRegistration
-                    BankRegistration? bankRegistrationObject =
-                        testGroup
-                            .BankRegistrationObjects
-                            .TryGetValue(bankProfileEnum, out BankRegistration? value2)
-                            ? value2
-                            : null;
-
-                    // Get BankRegistration ID
-                    Guid? bankRegistrationId =
-                        testGroup
-                            .BankRegistrationIds
-                            .TryGetValue(bankProfileEnum, out Guid value3)
-                            ? value3
-                            : null;
-
-                    // Get AccountAccessConsent
-                    AccountAccessConsent? accountAccessConsentObject =
-                        testGroup
-                            .AccountAccessConsentObjects
-                            .TryGetValue(bankProfileEnum, out AccountAccessConsent? value4)
-                            ? value4
-                            : null;
-
-                    // Get AccountAccessConsent ID
-                    Guid? accountAccessConsentId =
-                        testGroup
-                            .AccountAccessConsentIds
-                            .TryGetValue(bankProfileEnum, out Guid value5)
-                            ? value5
-                            : null;
+                    testGroup
+                        .SoftwareStatementAndCertificateProfileOverrides
+                        .TryGetValue(bankProfileEnum, out string? overrideCase);
 
                     // Get external API BankRegistration ID
-                    string? externalApiBankRegistrationId =
-                        testGroup
-                            .BankRegistrationExternalApiIds
-                            .TryGetValue(bankProfileEnum, out string? value6)
-                            ? value6
-                            : null;
+                    testGroup
+                        .BankRegistrationExternalApiIds
+                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationId);
 
                     // Get external API BankRegistration secret
-                    string? externalApiBankRegistrationSecret =
-                        testGroup
-                            .BankRegistrationExternalApiSecrets
-                            .TryGetValue(bankProfileEnum, out string? value61)
-                            ? value61
-                            : null;
+                    testGroup
+                        .BankRegistrationExternalApiSecrets
+                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationSecret);
+
+                    // Get external API BankRegistration registration access token
+                    testGroup
+                        .BankRegistrationRegistrationAccessTokens
+                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationRegistrationAccessToken);
 
                     // Get external API AccountAccessConsent ID
-                    string? externalApiAccountAccessConsentId =
-                        testGroup
-                            .AccountAccessConsentExternalApiIds
-                            .TryGetValue(bankProfileEnum, out string? value7)
-                            ? value7
-                            : null;
+                    testGroup
+                        .AccountAccessConsentExternalApiIds
+                        .TryGetValue(bankProfileEnum, out string? externalApiAccountAccessConsentId);
 
                     // Get external API AccountAccessConsent refresh token
-                    string? externalApiAccountAccessConsentRefreshToken =
-                        testGroup
-                            .AccountAccessConsentRefreshTokens
-                            .TryGetValue(bankProfileEnum, out string? value8)
-                            ? value8
-                            : null;
+                    testGroup
+                        .AccountAccessConsentRefreshTokens
+                        .TryGetValue(bankProfileEnum, out string? externalApiAccountAccessConsentRefreshToken);
 
                     // Determine whether test case should be skipped based on registration scope
                     BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
@@ -169,11 +145,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                             new BankTestData2
                             {
                                 BankProfileEnum = bankProfileEnum,
-                                BankRegistrationObject = bankRegistrationObject,
-                                BankRegistrationId = bankRegistrationId,
-                                AccountAccessConsentId = accountAccessConsentId,
                                 BankRegistrationExternalApiId = externalApiBankRegistrationId,
                                 BankRegistrationExternalApiSecret = externalApiBankRegistrationSecret,
+                                BankRegistrationRegistrationAccessToken = externalApiBankRegistrationRegistrationAccessToken,
                                 AccountAccessConsentExternalApiId = externalApiAccountAccessConsentId,
                                 AccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
                             });
@@ -190,10 +164,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             Func<IRequestBuilderContainer> requestBuilderGenerator,
             bool genericNotPlainAppTest)
         {
-            // Test name
+            // Set test name
             string testName =
                 $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData1.RegistrationScope.AbbreviatedName()}";
             string testNameUnique = $"{testName}_{Guid.NewGuid()}";
+
+            // Set test type
+            var testType = TestType.AllEndpoints;
 
             // Get bank test settings
             BankTestSettings bankTestSettings =
@@ -202,6 +179,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Get bank profile definitions
             var bankProfileDefinitions =
                 _serviceProvider.GetRequiredService<IBankProfileDefinitions>();
+            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
             // Get bank users
             List<BankUser> bankUserList =
@@ -237,19 +215,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     ".json");
             }
 
-            var testDataProcessorApiOverrides = new FilePathBuilder(
-                Path.Combine(
-                    bankTestSettings.GetDataDirectoryForCurrentOs(),
-                    $"{topLevelFolderName}/apiOverrides"),
-                testName,
-                ".json");
-
-            // Dereference bank
-            BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
-
             // Create consent auth if in use
             ConsentAuth? consentAuth;
-            if (genericNotPlainAppTest)
+            bool useConsentAuth = genericNotPlainAppTest && testType is TestType.AllEndpoints;
+            if (useConsentAuth)
             {
                 PlaywrightLaunchOptions launchOptions =
                     bankTestSettings.ConsentAuth.PlaywrightLaunch;
@@ -277,7 +246,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             var modifiedBy = "Automated bank tests";
 
-            // Create bank configuration objects
+            // CREATE and READ bank configuration objects
             (Guid bankId, Guid bankRegistrationId) =
                 await BankConfigurationSubtests.PostAndGetObjects(
                     testData1,
@@ -289,77 +258,81 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     testDataProcessorFluentRequestLogging
                         .AppendToPath("config"));
 
-            // Run account access consent subtests
-            foreach (AccountAccessConsentSubtestEnum subTest in
-                     AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
+            if (testType is TestType.AllEndpoints)
             {
-                await AccountAccessConsentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    testData2,
-                    bankId,
-                    bankRegistrationId,
-                    bankProfile.AccountAndTransactionApiSettings,
-                    requestBuilder,
-                    requestBuilderGenerator,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("config"),
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("aisp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    bankUserList,
-                    apiClient);
+                // Run account access consent subtests
+                foreach (AccountAccessConsentSubtestEnum subTest in
+                         AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
+                {
+                    await AccountAccessConsentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        testData2,
+                        bankId,
+                        bankRegistrationId,
+                        bankProfile.AccountAndTransactionApiSettings,
+                        requestBuilder,
+                        requestBuilderGenerator,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("config"),
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("aisp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        bankUserList,
+                        apiClient);
+                }
+
+                // Run domestic payment consent subtests
+                foreach (DomesticPaymentSubtestEnum subTest in
+                         DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                {
+                    await DomesticPaymentSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankId,
+                        bankRegistrationId,
+                        bankProfile.PaymentInitiationApiSettings,
+                        requestBuilder,
+                        requestBuilderGenerator,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("config"),
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("pisp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        bankUserList,
+                        apiClient);
+                }
+
+                // Run domestic VRP consent subtests
+                foreach (DomesticVrpSubtestEnum subTest in
+                         DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                {
+                    await DomesticVrpSubtest.RunTest(
+                        subTest,
+                        bankProfile,
+                        bankId,
+                        bankRegistrationId,
+                        bankProfile.VariableRecurringPaymentsApiSettings,
+                        requestBuilder,
+                        requestBuilderGenerator,
+                        testNameUnique,
+                        modifiedBy,
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("config"),
+                        testDataProcessorFluentRequestLogging
+                            .AppendToPath("vrp")
+                            .AppendToPath($"{subTest.ToString()}"),
+                        consentAuth,
+                        bankUserList);
+                }
             }
 
-            // Run domestic payment consent subtests
-            foreach (DomesticPaymentSubtestEnum subTest in
-                     DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
-            {
-                await DomesticPaymentSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankId,
-                    bankRegistrationId,
-                    bankProfile.PaymentInitiationApiSettings,
-                    requestBuilder,
-                    requestBuilderGenerator,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("config"),
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("pisp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    bankUserList,
-                    apiClient);
-            }
-
-            // Run domestic VRP consent subtests
-            foreach (DomesticVrpSubtestEnum subTest in
-                     DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
-            {
-                await DomesticVrpSubtest.RunTest(
-                    subTest,
-                    bankProfile,
-                    bankId,
-                    bankRegistrationId,
-                    bankProfile.VariableRecurringPaymentsApiSettings,
-                    requestBuilder,
-                    requestBuilderGenerator,
-                    testNameUnique,
-                    modifiedBy,
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("config"),
-                    testDataProcessorFluentRequestLogging
-                        .AppendToPath("vrp")
-                        .AppendToPath($"{subTest.ToString()}"),
-                    consentAuth,
-                    bankUserList);
-            }
 
             // Delete bank configuration objects
             await BankConfigurationSubtests.DeleteObjects(
@@ -368,7 +341,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 modifiedBy,
                 bankRegistrationId,
                 bankId,
-                bankProfile.BankConfigurationApiSettings);
+                bankProfile.BankConfigurationApiSettings,
+                testType);
         }
 
         protected void SetTestLogging()

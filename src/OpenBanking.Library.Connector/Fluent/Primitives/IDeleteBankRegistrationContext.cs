@@ -20,9 +20,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// </summary>
         /// <param name="id"> </param>
         /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
-        /// <param name="bankProfile"></param>
-        /// <param name="includeExternalApiOperation"></param>
-        /// <param name="useRegistrationAccessToken"></param>
+        /// <param name="bankProfile">
+        ///     BankProfile used to supply default values for unspecified properties. Use null to not specify
+        ///     a bank profile.
+        /// </param>
+        /// <param name="includeExternalApiOperation">
+        ///     Include deletion of corresponding object at external API endpoint. When null,
+        ///     BankProfile is used to set value.
+        /// </param>
+        /// <param name="useRegistrationAccessToken">
+        ///     Use registration access token when deleting object at external API. When null, BankProfile is used
+        ///     to set value if deleting object at external API.
+        /// </param>
         /// <returns></returns>
         Task<ObjectDeleteResponse> DeleteAsync(
             Guid id,

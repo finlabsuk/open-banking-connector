@@ -106,39 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     BankRegistration objects to POST instead of POSTing the default request object.
-        ///     Dictionary whose keys are bankProfileEnums and values are BankRegistration objects
-        /// </summary>
-        public Dictionary<BankProfileEnum, BankRegistration>
-            BankRegistrationObjects { get; set; } =
-            new();
-
-        /// <summary>
-        ///     Existing BankRegistration objects to use instead of using POST to create a new object.
-        ///     Dictionary whose keys are bankProfileEnums and values are GUID IDs
-        /// </summary>
-        public Dictionary<BankProfileEnum, Guid>
-            BankRegistrationIds { get; set; } =
-            new();
-
-        /// <summary>
-        ///     AccountAccessConsent objects to POST instead of POSTing the default request object.
-        ///     Dictionary whose keys are bankProfileEnums and values are AccountAccessConsent objects
-        /// </summary>
-        public Dictionary<BankProfileEnum, AccountAccessConsent>
-            AccountAccessConsentObjects { get; set; } =
-            new();
-
-        /// <summary>
-        ///     Existing AccountAccessConsent objects to use instead of using POST to create a new object.
-        ///     Dictionary whose keys are bankProfileEnums and values are GUID IDs
-        /// </summary>
-        public Dictionary<BankProfileEnum, Guid>
-            AccountAccessConsentIds { get; set; } =
-            new();
-
-        /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (IDs here) to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (IDs in this property) to specify when using POST to create a new
         ///     BankRegistration
         ///     object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
@@ -148,7 +116,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (secrets here) to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (secrets in this property) to specify when using POST to create a new
         ///     BankRegistration
         ///     object. Secrets only used where corresponding ID specified.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
@@ -158,7 +126,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API AccountAccessConsent objects to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (registration access tokens in this property) to specify when using POST to create a new
+        ///     BankRegistration
+        ///     object. Registration access tokens only used where corresponding ID specified.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>f
+        public Dictionary<BankProfileEnum, string>
+            BankRegistrationRegistrationAccessTokens { get; set; } =
+            new();
+
+        /// <summary>
+        ///     Existing external (bank) API AccountAccessConsent objects (IDs in this property) to specify when using POST to create a new
         ///     AccountAccessConsent object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
@@ -167,7 +145,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API AccountAccessConsent refresh tokens to specify when using POST to create a new
+        ///     Existing external (bank) API AccountAccessConsent  (refresh tokens in this property)s to specify when using POST to create a new
         ///     AccountAccessConsent object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>

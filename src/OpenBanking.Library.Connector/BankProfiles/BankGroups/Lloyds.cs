@@ -4,7 +4,6 @@
 
 using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -69,7 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                             OAuth2ResponseMode.Fragment
                         }
                     }
-                }
+                },
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                    { UseDeleteEndpoint = true, UseRegistrationAccessToken = true }
             };
         }
     }

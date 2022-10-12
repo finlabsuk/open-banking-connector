@@ -110,7 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 // Determine endpoint URL
                 string registrationEndpoint = entity.BankNavigation.RegistrationEndpoint;
                 string bankApiId = entity.ExternalApiObject.ExternalApiId;
-                var apiRequestUrl = new Uri(registrationEndpoint + $"/{bankApiId}");
+                var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
                 // Get client credentials grant token if necessary
                 string accessToken = useRegistrationAccessTokenValue
