@@ -183,7 +183,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsV3p1p7.OBReadConsent1,
                     AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new AccountAndTransactionPostRequestProcessor<
                         AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
                         bankFinancialId,
@@ -194,7 +194,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsV3p1p10.OBReadConsent1,
                     AccountAndTransactionModelsV3p1p10.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new AccountAndTransactionPostRequestProcessor<
                         AccountAndTransactionModelsV3p1p10.OBReadConsent1>(
                         bankFinancialId,

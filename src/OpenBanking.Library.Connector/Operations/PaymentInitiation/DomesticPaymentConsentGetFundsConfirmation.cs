@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -70,13 +69,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsV3p1p4.OBWriteFundsConfirmationResponse1>(
-                    new PaymentInitiationGetRequestProcessor(
+                    new ApiGetRequestProcessor(
                         bankFinancialId,
                         accessToken)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                     PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
-                    new PaymentInitiationGetRequestProcessor(
+                    new ApiGetRequestProcessor(
                         bankFinancialId,
                         accessToken)),
                 null => throw new NullReferenceException("No PISP API specified for this bank."),

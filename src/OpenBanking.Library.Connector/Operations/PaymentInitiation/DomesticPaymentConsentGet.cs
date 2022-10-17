@@ -62,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticConsentResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsV3p1p4.OBWriteDomesticConsent4>(
                         bankFinancialId,
@@ -76,7 +76,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                     PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsPublic.OBWriteDomesticConsent4>(
                         bankFinancialId,

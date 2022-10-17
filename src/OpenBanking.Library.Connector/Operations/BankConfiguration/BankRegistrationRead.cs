@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -76,7 +77,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 throw new ArgumentNullException(
                     null,
                     "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
-            includeExternalApiOperationValue = false;
 
             // Load object
             BankRegistrationPersisted entity =
@@ -158,7 +158,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     };
                 }
 
-                var irrelevantVar = false;
                 IApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                     dynamicClientRegistrationApiVersion
                         switch
@@ -167,24 +166,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                                 new ApiGetRequests<
                                     ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                     ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                    new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                        processedSoftwareStatementProfile,
-                                        _instrumentationClient,
-                                        irrelevantVar)),
+                                    new BankRegistrationGetRequestProcessor(accessToken)),
                             DynamicClientRegistrationApiVersion.Version3p2 =>
                                 new ApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                     ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                    new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                        processedSoftwareStatementProfile,
-                                        _instrumentationClient,
-                                        irrelevantVar)),
+                                    new BankRegistrationGetRequestProcessor(accessToken)),
                             DynamicClientRegistrationApiVersion.Version3p3 =>
                                 new ApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                     ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                                    new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
-                                        processedSoftwareStatementProfile,
-                                        _instrumentationClient,
-                                        irrelevantVar)),
+                                    new BankRegistrationGetRequestProcessor(accessToken)),
                             _ => throw new ArgumentOutOfRangeException(
                                 nameof(dynamicClientRegistrationApiVersion),
                                 dynamicClientRegistrationApiVersion,

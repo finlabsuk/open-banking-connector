@@ -2,18 +2,17 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
 {
-    internal class AccountAndTransactionGetRequestProcessor : IGetRequestProcessor
+    internal class ApiGetRequestProcessor : IGetRequestProcessor
     {
         private readonly string _accessToken;
         private readonly string _financialId;
 
 
-        public AccountAndTransactionGetRequestProcessor(string financialId, string accessToken)
+        public ApiGetRequestProcessor(string financialId, string accessToken)
         {
             _financialId = financialId;
             _accessToken = accessToken;
@@ -24,8 +23,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.A
             // Assemble headers and body
             var headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", _financialId),
-                new HttpHeader("Authorization", "Bearer " + _accessToken),
+                new("x-fapi-financial-id", _financialId),
+                new("Authorization", "Bearer " + _accessToken),
             };
 
             return (headers, "application/json");

@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -70,7 +69,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiGetRequests<
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse,
                     VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse>(
-                    new PaymentInitiationGetRequestProcessor(
+                    new ApiGetRequestProcessor(
                         bankFinancialId,
                         accessToken)),
                 null => throw new NullReferenceException("No VRP API specified for this bank."),

@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiGetRequests<
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"Variable Recurring Payments API version {variableRecurringPaymentsApi.VariableRecurringPaymentsApiVersion} not supported.")
             };
@@ -104,7 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest>(
                         bankFinancialId,

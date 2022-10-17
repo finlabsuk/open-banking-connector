@@ -138,7 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                     VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest>(
                         bankFinancialId,

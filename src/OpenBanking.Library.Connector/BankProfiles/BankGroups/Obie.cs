@@ -55,7 +55,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                         ClientIdIssuedAtClaimResponseJsonConverter =
                             DateTimeOffsetConverter.UnixMilliSecondsJsonFormat
                     }
-                }
+                },
+                BankConfigurationApiSettings = new BankConfigurationApiSettings
+                    { UseReadEndpoint = false }
             };
         }
     }

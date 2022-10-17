@@ -147,7 +147,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                                 BankProfileEnum = bankProfileEnum,
                                 BankRegistrationExternalApiId = externalApiBankRegistrationId,
                                 BankRegistrationExternalApiSecret = externalApiBankRegistrationSecret,
-                                BankRegistrationRegistrationAccessToken = externalApiBankRegistrationRegistrationAccessToken,
+                                BankRegistrationRegistrationAccessToken =
+                                    externalApiBankRegistrationRegistrationAccessToken,
                                 AccountAccessConsentExternalApiId = externalApiAccountAccessConsentId,
                                 AccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
                             });
@@ -341,7 +342,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                 modifiedBy,
                 bankRegistrationId,
                 bankId,
-                bankProfile.BankConfigurationApiSettings,
+                bankProfile,
                 testType);
         }
 

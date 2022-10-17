@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -55,11 +54,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                     AccountAndTransactionModelsV3p1p10.OBReadConsentResponse1>(
-                    new AccountAndTransactionGetRequestProcessor(bankFinancialId, accessToken)),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 null => throw new NullReferenceException("No AISP API specified for this bank."),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {bankApiSet.AccountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")

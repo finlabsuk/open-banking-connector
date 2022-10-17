@@ -16,6 +16,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -315,11 +316,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                                 ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                 ClientRegistrationModelsV3p1.OBClientRegistration1,
                                 ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                                    processedSoftwareStatementProfile,
-                                    _instrumentationClient,
-                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
-                                new JwtRequestProcessor<ClientRegistrationModelsV3p1.OBClientRegistration1>(
+                                new BankRegistrationGetRequestProcessor(string.Empty),
+                                new BankRegistrationPostRequestProcessor<
+                                    ClientRegistrationModelsV3p1.OBClientRegistration1>(
                                     processedSoftwareStatementProfile,
                                     _instrumentationClient,
                                     useApplicationJoseNotApplicationJwtContentTypeHeader)),
@@ -328,11 +327,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                                 ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                 ClientRegistrationModelsV3p2.OBClientRegistration1,
                                 ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                                    processedSoftwareStatementProfile,
-                                    _instrumentationClient,
-                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
-                                new JwtRequestProcessor<ClientRegistrationModelsV3p2.OBClientRegistration1>(
+                                new BankRegistrationGetRequestProcessor(string.Empty),
+                                new BankRegistrationPostRequestProcessor<
+                                    ClientRegistrationModelsV3p2.OBClientRegistration1>(
                                     processedSoftwareStatementProfile,
                                     _instrumentationClient,
                                     useApplicationJoseNotApplicationJwtContentTypeHeader)),
@@ -341,11 +338,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                                 ClientRegistrationModelsPublic.OBClientRegistration1Response,
                                 ClientRegistrationModelsPublic.OBClientRegistration1,
                                 ClientRegistrationModelsPublic.OBClientRegistration1Response>(
-                                new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
-                                    processedSoftwareStatementProfile,
-                                    _instrumentationClient,
-                                    useApplicationJoseNotApplicationJwtContentTypeHeader),
-                                new JwtRequestProcessor<ClientRegistrationModelsPublic.OBClientRegistration1>(
+                                new BankRegistrationGetRequestProcessor(string.Empty),
+                                new BankRegistrationPostRequestProcessor<
+                                    ClientRegistrationModelsPublic.OBClientRegistration1>(
                                     processedSoftwareStatementProfile,
                                     _instrumentationClient,
                                     useApplicationJoseNotApplicationJwtContentTypeHeader)),

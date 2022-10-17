@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -103,7 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
                 // Delete at API
                 IDeleteRequestProcessor deleteRequestProcessor =
-                    new ApiDeleteRequestProcessor(accessToken, null);
+                    new BankRegistrationDeleteRequestProcessor(accessToken);
                 await deleteRequestProcessor.DeleteAsync(apiRequestUrl, apiClient);
             }
 

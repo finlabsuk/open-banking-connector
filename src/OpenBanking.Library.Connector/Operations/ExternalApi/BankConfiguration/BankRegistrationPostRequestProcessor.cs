@@ -9,18 +9,17 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration
 {
-    internal class JwtRequestProcessor<TVariantApiRequest> :
-        IPostRequestProcessor<TVariantApiRequest>,
-        IGetRequestProcessor
+    internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
+        IPostRequestProcessor<TVariantApiRequest>
         where TVariantApiRequest : class
     {
         private readonly IInstrumentationClient _instrumentationClient;
         private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
         private readonly bool _useApplicationJoseNotApplicationJwtContentTypeHeader;
 
-        public JwtRequestProcessor(
+        public BankRegistrationPostRequestProcessor(
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             IInstrumentationClient instrumentationClient,
             bool useApplicationJoseNotApplicationJwtContentTypeHeader)
@@ -29,11 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             _instrumentationClient = instrumentationClient;
             _useApplicationJoseNotApplicationJwtContentTypeHeader =
                 useApplicationJoseNotApplicationJwtContentTypeHeader;
-        }
-
-        (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
-        {
-            throw new NotImplementedException();
         }
 
         (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TVariantApiRequest>.

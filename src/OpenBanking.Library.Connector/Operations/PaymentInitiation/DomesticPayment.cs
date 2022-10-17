@@ -83,11 +83,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                 PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken)),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"Payment Initiation API version {paymentInitiationApi.PaymentInitiationApiVersion} not supported.")
             };
@@ -107,7 +107,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsV3p1p4.OBWriteDomestic2,
                     PaymentInitiationModelsV3p1p4.OBWriteDomesticResponse4>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsV3p1p4.OBWriteDomestic2>(
                         bankFinancialId,
@@ -121,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                     PaymentInitiationModelsPublic.OBWriteDomestic2,
                     PaymentInitiationModelsPublic.OBWriteDomesticResponse5>(
-                    new PaymentInitiationGetRequestProcessor(bankFinancialId, accessToken),
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken),
                     new PaymentInitiationPostRequestProcessor<
                         PaymentInitiationModelsPublic.OBWriteDomestic2>(
                         bankFinancialId,

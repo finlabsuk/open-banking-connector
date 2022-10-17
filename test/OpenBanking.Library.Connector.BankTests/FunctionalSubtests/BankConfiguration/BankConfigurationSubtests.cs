@@ -125,27 +125,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             string modifiedBy,
             Guid bankRegistrationId,
             Guid bankId,
-            BankConfigurationApiSettings bankConfigurationApiSettings,
+            BankProfile bankProfile,
             AppTests.TestType testType)
         {
             // Delete bankRegistration
             bool includeExternalApiOperation = false;
-            if (bankConfigurationApiSettings.UseDeleteEndpoint)
+            if (bankProfile.BankConfigurationApiSettings.UseDeleteEndpoint)
             {
                 includeExternalApiOperation = testType switch
                 {
                     // Never delete at API when creating reg
                     AppTests.TestType.CreateRegistration => false,
-                    
+
                     // Always delete at API when deleting reg
                     AppTests.TestType.DeleteRegistration => true,
-                    
+
                     // Normally delete based on whether external API reg supplied or created
                     AppTests.TestType.AllEndpoints => testData2.BankRegistrationExternalApiId is null,
-                    
+
                     _ => throw new ArgumentOutOfRangeException(nameof(testType), testType, null)
                 };
             }
+
             ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations
@@ -154,7 +155,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     modifiedBy,
                     null,
                     includeExternalApiOperation,
-                    bankConfigurationApiSettings.UseRegistrationAccessToken);
+                    bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken);
 
             // Checks
             bankRegistrationDeleteResponse.Should().NotBeNull();
