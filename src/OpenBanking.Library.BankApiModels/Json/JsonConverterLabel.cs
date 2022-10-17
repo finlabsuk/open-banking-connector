@@ -8,14 +8,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 {
     /// <summary>
     ///     Label for particular usages of a JSON converter. This allows bank-specific
-    ///     options to be used for these usages to e.g. correct serialisation errors.
+    ///     options to be used for these usages to e.g. correct serialisation errors. If a label is not both specified AND
+    ///     activated via serialiser settings,
+    ///     the default version of a JSON converter (which may be a "pass-through") is always used.
     /// </summary>
     public enum JsonConverterLabel
     {
-        /// <summary>
-        ///     No label is the default label
-        /// </summary>
-        NoLabel,
         DcrRegClientIdIssuedAt,
         DcrRegScope
     }

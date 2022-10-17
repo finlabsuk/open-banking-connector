@@ -2,8 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.IO;
+using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FsCheck;
 using FsCheck.Xunit;
@@ -76,13 +75,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
         {
             Func<bool> rule = () =>
             {
-                var converter = new DateTimeOffsetUnixConverter();
+                // Set up converter and JSON serialiser settings
+                var converter = new DateTimeOffsetUnixConverter(JsonConverterLabel.DcrRegScope);
+                var optionsDict = new Dictionary<JsonConverterLabel, int>
+                    { [JsonConverterLabel.DcrRegScope] = (int) DateTimeOffsetConverter.UnixSecondsJsonFormat };
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    Context = new StreamingContext(StreamingContextStates.All, optionsDict)
+                };
 
                 var stringWriter = new StringWriter();
                 var jsonWriter = new JsonTextWriter(stringWriter);
                 jsonWriter.WriteStartObject();
                 jsonWriter.WritePropertyName("iat");
-                converter.WriteJson(jsonWriter, value, new JsonSerializer());
+
+                var jsonSerializer = JsonSerializer.Create(jsonSerializerSettings);
+
+                converter.WriteJson(jsonWriter, value, jsonSerializer);
 
                 jsonWriter.WriteEndObject();
 

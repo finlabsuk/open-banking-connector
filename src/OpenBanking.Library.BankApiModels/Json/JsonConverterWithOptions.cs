@@ -4,8 +4,6 @@
 
 #nullable enable
 
-using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
@@ -19,9 +17,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
     public abstract class JsonConverterWithOptions<TClass, TOptionsEnum> : JsonConverter<TClass>
         where TOptionsEnum : struct, Enum
     {
-        private readonly JsonConverterLabel _jsonConverterLabel;
+        private readonly JsonConverterLabel? _jsonConverterLabel;
 
-        protected JsonConverterWithOptions(JsonConverterLabel jsonConverterLabel = JsonConverterLabel.NoLabel)
+        protected JsonConverterWithOptions(JsonConverterLabel? jsonConverterLabel)
         {
             _jsonConverterLabel = jsonConverterLabel;
         }
@@ -33,14 +31,20 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         protected TOptionsEnum GetOptions(JsonSerializer serializer) =>
-            _jsonConverterLabel is JsonConverterLabel.NoLabel
-                ? default
-                : serializer.Context.Context switch
+            _jsonConverterLabel switch
+            {
+                // return default if no label in use
+                null => default,
+                // return according to serialiser context
+                _ => serializer.Context.Context switch
                 {
                     null => default,
-                    Dictionary<JsonConverterLabel, int> x => (TOptionsEnum) (object)
-                        (x.TryGetValue(_jsonConverterLabel, out int value) ? value : default),
+                    Dictionary<JsonConverterLabel, int> x => (TOptionsEnum) Enum.ToObject(
+                        typeof(TOptionsEnum),
+                        // return default if label not found in serialiser context
+                        x.TryGetValue(_jsonConverterLabel.Value, out int value) ? value : default),
                     _ => throw new ArgumentOutOfRangeException()
-                };
+                }
+            };
     }
 }

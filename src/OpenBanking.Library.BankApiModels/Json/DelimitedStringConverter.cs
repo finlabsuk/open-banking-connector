@@ -26,19 +26,14 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
         DelimitedStringGenericConverter<TString> : JsonConverterWithOptions<TString,
             DelimitedStringConverterOptions>
     {
-        public DelimitedStringGenericConverter() { }
-
         public DelimitedStringGenericConverter(JsonConverterLabel jsonConverterLabel) :
             base(jsonConverterLabel) { }
     }
 
     public class DelimitedStringNullableConverter : DelimitedStringGenericConverter<string?>
     {
-        public DelimitedStringNullableConverter() { }
-
         public DelimitedStringNullableConverter(JsonConverterLabel jsonConverterLabel) :
             base(jsonConverterLabel) { }
-
 
         public override void WriteJson(JsonWriter writer, string? value, JsonSerializer serializer)
         {

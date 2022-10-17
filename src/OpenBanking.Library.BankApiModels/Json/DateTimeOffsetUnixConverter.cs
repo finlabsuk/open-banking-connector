@@ -15,8 +15,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DateTimeOffsetConverter
     {
-        [EnumMember(Value = "None")]
-        None = 0,
+        [EnumMember(Value = "UnixSecondsJsonFormat")]
+        UnixSecondsJsonFormat = 0,
 
         [EnumMember(Value = "UnixMilliSecondsJsonFormat")]
         UnixMilliSecondsJsonFormat = 1
@@ -26,9 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
         DateTimeOffsetGenericUnixConverter<TDateTimeOffset> : JsonConverterWithOptions<TDateTimeOffset,
             DateTimeOffsetConverter>
     {
-        public DateTimeOffsetGenericUnixConverter() { }
-
-        public DateTimeOffsetGenericUnixConverter(JsonConverterLabel jsonConverterLabel) :
+        public DateTimeOffsetGenericUnixConverter(JsonConverterLabel? jsonConverterLabel) :
             base(jsonConverterLabel) { }
 
         protected long GetUnixTime(DateTimeOffset time, DateTimeOffsetConverter options)
@@ -51,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 
     public class DateTimeOffsetUnixConverter : DateTimeOffsetGenericUnixConverter<DateTimeOffset>
     {
-        public DateTimeOffsetUnixConverter() { }
+        public DateTimeOffsetUnixConverter() : base(null) { } // required for case where no label used
 
         public DateTimeOffsetUnixConverter(JsonConverterLabel jsonConverterLabel) :
             base(jsonConverterLabel) { }
@@ -89,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
 
     public class DateTimeOffsetNullableUnixConverter : DateTimeOffsetGenericUnixConverter<DateTimeOffset?>
     {
-        public DateTimeOffsetNullableUnixConverter() { }
+        public DateTimeOffsetNullableUnixConverter() : base(null) { } // required for case where no label used
 
         public DateTimeOffsetNullableUnixConverter(JsonConverterLabel jsonConverterLabel) :
             base(jsonConverterLabel) { }
