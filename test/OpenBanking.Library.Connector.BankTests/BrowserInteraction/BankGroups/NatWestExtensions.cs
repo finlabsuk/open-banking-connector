@@ -9,16 +9,22 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class NatWestExtensions
+public class NatWestUiMethods : IBankGroupUiMethods
 {
-    public static async Task ConsentUiInteractions(
-        this NatWest bankGroup,
+    private readonly NatWest _bankGroup;
+
+    public NatWestUiMethods(NatWest bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public async Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
-        NatWestBank bank = bankGroup.GetBank(bankProfileEnum);
+        NatWestBank bank = _bankGroup.GetBank(bankProfileEnum);
 
         // Enter customer number
         await page.Locator("input[name=\"customer-number\"]").FillAsync(bankUser.UserNameOrNumber);
@@ -65,4 +71,6 @@ public static class NatWestExtensions
         await page.ClickAsync(selector);
         await page.ClickAsync("#approveButton");
     }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }

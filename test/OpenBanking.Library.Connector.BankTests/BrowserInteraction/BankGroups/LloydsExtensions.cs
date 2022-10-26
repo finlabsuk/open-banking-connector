@@ -9,13 +9,19 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class LloydsExtensions
+public class LloydsUiMethods : IBankGroupUiMethods
 {
-    public static async Task ConsentUiInteractions(
-        this Lloyds bankGroup,
+    private readonly Lloyds _bankGroup;
+
+    public LloydsUiMethods(Lloyds bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public async Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
         // Cookie popup
@@ -43,4 +49,6 @@ public static class LloydsExtensions
         // Confirm
         await page.Locator("button:has-text(\"Yes\")").ClickAsync();
     }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }

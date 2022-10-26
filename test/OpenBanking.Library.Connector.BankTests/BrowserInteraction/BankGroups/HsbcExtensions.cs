@@ -9,16 +9,22 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class HsbcExtensions
+public class HsbcUiMethods : IBankGroupUiMethods
 {
-    public static async Task ConsentUiInteractions(
-        this Hsbc bankGroup,
+    private readonly Hsbc _bankGroup;
+
+    public HsbcUiMethods(Hsbc bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public async Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
-        HsbcBank bank = bankGroup.GetBank(bankProfileEnum);
+        HsbcBank bank = _bankGroup.GetBank(bankProfileEnum);
 
         if (bank is HsbcBank.Sandbox)
         {
@@ -55,5 +61,11 @@ public static class HsbcExtensions
             await page.RunAndWaitForNavigationAsync(
                 async () => { await page.Locator("button:has-text(\"Finish\")").ClickAsync(); });
         }
+    }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety)
+    {
+        HsbcBank bank = _bankGroup.GetBank(bankProfileEnum);
+        return bank is not HsbcBank.Sandbox;
     }
 }

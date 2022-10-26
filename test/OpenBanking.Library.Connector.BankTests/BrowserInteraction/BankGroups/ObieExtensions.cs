@@ -9,13 +9,19 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class ObieExtensions
+public class ObieUiMethods : IBankGroupUiMethods
 {
-    public static async Task ConsentUiInteractions(
-        this Obie bankGroup,
+    private readonly Obie _bankGroup;
+
+    public ObieUiMethods(Obie bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public async Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
         await page.ClickAsync("#wizardContent > #loginForm #loginName");
@@ -38,4 +44,6 @@ public static class ObieExtensions
 
         await page.ClickAsync("#wizardContent > #selectAccountsPage > .nav > .nav-item:nth-child(1) > .nav-link");
     }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }

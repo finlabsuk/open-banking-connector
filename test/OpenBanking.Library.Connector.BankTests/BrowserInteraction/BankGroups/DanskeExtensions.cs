@@ -9,13 +9,19 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class DanskeExtensions
+public class DanskeUiMethods : IBankGroupUiMethods
 {
-    public static async Task ConsentUiInteractions(
-        this Danske bankGroup,
+    private readonly Danske _bankGroup;
+
+    public DanskeUiMethods(Danske bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public async Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
         // Enter user ID and password
@@ -43,4 +49,6 @@ public static class DanskeExtensions
         await page.WaitForTimeoutAsync(400); // workaround for clicks not registering sometimes
         await page.ClickAsync("#transfer");
     }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }

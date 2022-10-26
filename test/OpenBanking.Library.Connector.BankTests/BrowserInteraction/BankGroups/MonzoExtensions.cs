@@ -9,15 +9,23 @@ using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public static class MonzoExtensions
+public class MonzoUiMethods : IBankGroupUiMethods
 {
-    public static Task ConsentUiInteractions(
-        this Monzo bankGroup,
+    private readonly Monzo _bankGroup;
+
+    public MonzoUiMethods(Monzo bankGroup)
+    {
+        _bankGroup = bankGroup;
+    }
+
+    public Task PerformConsentAuthUiInteractions(
         BankProfileEnum bankProfileEnum,
-        IPage page,
         ConsentVariety consentVariety,
+        IPage page,
         BankUser bankUser)
     {
         return Task.CompletedTask;
     }
+
+    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }
