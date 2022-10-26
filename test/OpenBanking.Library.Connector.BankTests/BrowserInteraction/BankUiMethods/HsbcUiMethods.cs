@@ -2,31 +2,27 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankUiMethods;
 
-public class HsbcUiMethods : IBankGroupUiMethods
+public class HsbcUiMethods : IBankUiMethods
 {
-    private readonly Hsbc _bankGroup;
+    private readonly HsbcBank _hsbcBank;
 
-    public HsbcUiMethods(Hsbc bankGroup)
+    public HsbcUiMethods(HsbcBank hsbcBank)
     {
-        _bankGroup = bankGroup;
+        _hsbcBank = hsbcBank;
     }
 
     public async Task PerformConsentAuthUiInteractions(
-        BankProfileEnum bankProfileEnum,
         ConsentVariety consentVariety,
         IPage page,
         BankUser bankUser)
     {
-        HsbcBank bank = _bankGroup.GetBank(bankProfileEnum);
-
-        if (bank is HsbcBank.Sandbox)
+        if (_hsbcBank is HsbcBank.Sandbox)
         {
             // Click input[name="username"]
             await page.Locator("input[name=\"username\"]").ClickAsync();
@@ -61,11 +57,5 @@ public class HsbcUiMethods : IBankGroupUiMethods
             await page.RunAndWaitForNavigationAsync(
                 async () => { await page.Locator("button:has-text(\"Finish\")").ClickAsync(); });
         }
-    }
-
-    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety)
-    {
-        HsbcBank bank = _bankGroup.GetBank(bankProfileEnum);
-        return bank is not HsbcBank.Sandbox;
     }
 }

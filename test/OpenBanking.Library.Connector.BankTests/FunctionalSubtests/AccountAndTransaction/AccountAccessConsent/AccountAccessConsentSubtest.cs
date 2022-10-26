@@ -197,7 +197,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 {
                     await consentAuth.AuthoriseAsync(
                         authUrl,
-                        bankProfile.BankProfileEnum,
+                        bankProfile,
                         ConsentVariety.AccountAccessConsent,
                         bankUser);
                 }

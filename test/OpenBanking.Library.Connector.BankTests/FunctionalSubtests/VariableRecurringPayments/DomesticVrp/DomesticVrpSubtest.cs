@@ -186,7 +186,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 // Authorise consent in UI via Playwright
                 await consentAuth.AuthoriseAsync(
                     authUrl,
-                    bankProfile.BankProfileEnum,
+                    bankProfile,
                     ConsentVariety.DomesticVrpConsent,
                     bankUser);
 

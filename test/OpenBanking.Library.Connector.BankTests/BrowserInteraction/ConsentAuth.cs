@@ -4,8 +4,9 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankUiMethods;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using Microsoft.Playwright;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
@@ -21,31 +22,31 @@ public class ConsentAuth
         _bankProfileDefinitions = bankProfileDefinitions;
     }
 
-    private IBankGroupUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
+    private IBankUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
     {
         return _bankProfileDefinitions.GetBankGroup(_bankProfileDefinitions.GetBankGroupEnum(bankProfileEnum)) switch
         {
-            Danske danske => new DanskeUiMethods(danske),
-            Hsbc hsbc => new HsbcUiMethods(hsbc),
-            Lloyds lloyds => new LloydsUiMethods(lloyds),
-            Monzo monzo => new MonzoUiMethods(monzo),
-            NatWest natWest => new NatWestUiMethods(natWest),
-            Obie obie => new ObieUiMethods(obie),
+            Danske danske => new DanskeUiMethods(danske.GetBank(bankProfileEnum)),
+            Hsbc hsbc => new HsbcUiMethods(hsbc.GetBank(bankProfileEnum)),
+            Lloyds lloyds => new LloydsUiMethods(lloyds.GetBank(bankProfileEnum)),
+            Monzo monzo => new MonzoUiMethods(monzo.GetBank(bankProfileEnum)),
+            NatWest natWest => new NatWestUiMethods(natWest.GetBank(bankProfileEnum)),
+            Obie obie => new ObieUiMethods(obie.GetBank(bankProfileEnum)),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
 
     public async Task AuthoriseAsync(
         string authUrl,
-        BankProfileEnum bankProfileEnum,
+        BankProfile bankProfile,
         ConsentVariety consentVariety,
         BankUser bankUser)
     {
-        IBankGroupUiMethods bankGroupUiMethods = GetBankGroupUiMethods(bankProfileEnum);
+        IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
 
-        using IPlaywright? playwright = await Playwright.CreateAsync();
+        using IPlaywright playwright = await Playwright.CreateAsync();
 
-        bool requiresManualInteraction = bankGroupUiMethods.RequiresManualInteraction(bankProfileEnum, consentVariety);
+        bool requiresManualInteraction = bankProfile.SupportsSca;
         if (requiresManualInteraction)
         {
             _launchOptions.Headless = false;
@@ -54,13 +55,13 @@ public class ConsentAuth
         await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
         IPage page = await browser.NewPageAsync();
         await page.GotoAsync(authUrl);
-        await bankGroupUiMethods.PerformConsentAuthUiInteractions(bankProfileEnum, consentVariety, page, bankUser);
+        await bankUiMethods.PerformConsentAuthUiInteractions(consentVariety, page, bankUser);
 
-        bool isFragmentRedirect = bankProfileEnum != BankProfileEnum.Hsbc_Sandbox;
+        bool isFragmentRedirect = bankProfile.DefaultResponseMode is OAuth2ResponseMode.Fragment;
         if (isFragmentRedirect)
         {
             // Wait for redirect
-            int redirectTimeout = requiresManualInteraction ? 60000 : 10000; // allow 60s with manual interaction
+            int redirectTimeout = requiresManualInteraction ? 60000 : 10000; // allow 50s for manual interaction
             await page.WaitForSelectorAsync(
                 "id=auth-fragment-redirect",
                 new PageWaitForSelectorOptions

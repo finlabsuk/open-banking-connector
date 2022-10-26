@@ -2,30 +2,26 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankUiMethods;
 
-public class NatWestUiMethods : IBankGroupUiMethods
+public class NatWestUiMethods : IBankUiMethods
 {
-    private readonly NatWest _bankGroup;
+    private readonly NatWestBank _natWestBank;
 
-    public NatWestUiMethods(NatWest bankGroup)
+    public NatWestUiMethods(NatWestBank natWestBank)
     {
-        _bankGroup = bankGroup;
+        _natWestBank = natWestBank;
     }
 
     public async Task PerformConsentAuthUiInteractions(
-        BankProfileEnum bankProfileEnum,
         ConsentVariety consentVariety,
         IPage page,
         BankUser bankUser)
     {
-        NatWestBank bank = _bankGroup.GetBank(bankProfileEnum);
-
         // Enter customer number
         await page.Locator("input[name=\"customer-number\"]").FillAsync(bankUser.UserNameOrNumber);
         await page.Locator("input[name=\"customer-number\"]").ClickAsync(); // seems necessary
@@ -62,7 +58,7 @@ public class NatWestUiMethods : IBankGroupUiMethods
         await page.ClickAsync("#login-button");
 
         // Select accounts then confirm access
-        string selector = bank switch
+        string selector = _natWestBank switch
         {
             NatWestBank.NatWest => "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
             NatWestBank.RoyalBankOfScotland => "#account-list > .row-element:nth-child(2) > dl > .action > button",
@@ -71,6 +67,4 @@ public class NatWestUiMethods : IBankGroupUiMethods
         await page.ClickAsync(selector);
         await page.ClickAsync("#approveButton");
     }
-
-    public bool RequiresManualInteraction(BankProfileEnum bankProfileEnum, ConsentVariety consentVariety) => false;
 }
