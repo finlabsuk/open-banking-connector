@@ -2,16 +2,22 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.Sandbox;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public class Lloyds : IBankProfileUiMethods
+public static class LloydsExtensions
 {
-    public async Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
+    public static async Task ConsentUiInteractions(
+        this Lloyds bankGroup,
+        BankProfileEnum bankProfileEnum,
+        IPage page,
+        ConsentVariety consentVariety,
+        BankUser bankUser)
     {
-        
         // Cookie popup
         await page.Locator("text=Allow cookies").ClickAsync();
 
@@ -25,13 +31,11 @@ public class Lloyds : IBankProfileUiMethods
 
         // Next
         await page.RunAndWaitForNavigationAsync(
-            async () =>
-            {
-                await page.Locator("button:has-text(\"NEXT\")").ClickAsync();
-            });
-        
+            async () => { await page.Locator("button:has-text(\"NEXT\")").ClickAsync(); });
+
         // Select account
-        await page.Locator("label:has-text(\"518791******4295 Interim available : £638.20Interim booked : £11.80\")").ClickAsync();
+        await page.Locator("label:has-text(\"518791******4295 Interim available : £638.20Interim booked : £11.80\")")
+            .ClickAsync();
 
         // Proceed
         await page.Locator("button:has-text(\"Proceed\")").ClickAsync();

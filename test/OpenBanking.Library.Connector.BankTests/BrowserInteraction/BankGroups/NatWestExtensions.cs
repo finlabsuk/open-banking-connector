@@ -2,15 +2,24 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.Sandbox;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 
-public class RoyalBankOfScotland : IBankProfileUiMethods
+public static class NatWestExtensions
 {
-    public async Task ConsentUiInteractions(IPage page, ConsentVariety consentVariety, BankUser bankUser)
+    public static async Task ConsentUiInteractions(
+        this NatWest bankGroup,
+        BankProfileEnum bankProfileEnum,
+        IPage page,
+        ConsentVariety consentVariety,
+        BankUser bankUser)
     {
+        NatWestBank bank = bankGroup.GetBank(bankProfileEnum);
+
         // Enter customer number
         await page.Locator("input[name=\"customer-number\"]").FillAsync(bankUser.UserNameOrNumber);
         await page.Locator("input[name=\"customer-number\"]").ClickAsync(); // seems necessary
@@ -47,7 +56,13 @@ public class RoyalBankOfScotland : IBankProfileUiMethods
         await page.ClickAsync("#login-button");
 
         // Select accounts then confirm access
-        await page.ClickAsync("#account-list > .row-element:nth-child(2) > dl > .action > button");
+        string selector = bank switch
+        {
+            NatWestBank.NatWest => "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
+            NatWestBank.RoyalBankOfScotland => "#account-list > .row-element:nth-child(2) > dl > .action > button",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        await page.ClickAsync(selector);
         await page.ClickAsync("#approveButton");
     }
 }

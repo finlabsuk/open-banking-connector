@@ -238,7 +238,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     SlowMo = launchOptions.ProcessedSlowMo,
                     Timeout = launchOptions.TimeOut
                 };
-                consentAuth = new ConsentAuth(browserTypeLaunchOptions);
+                consentAuth = new ConsentAuth(browserTypeLaunchOptions, bankProfileDefinitions);
             }
             else
             {

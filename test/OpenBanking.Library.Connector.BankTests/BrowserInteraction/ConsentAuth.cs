@@ -3,7 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.Sandbox;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using Microsoft.Playwright;
 
@@ -18,28 +19,34 @@ public enum ConsentVariety
 
 public class ConsentAuth
 {
+    private readonly IBankProfileDefinitions _bankProfileDefinitions;
     private readonly BrowserTypeLaunchOptions _launchOptions;
 
-    public ConsentAuth(BrowserTypeLaunchOptions launchOptions)
+
+    public ConsentAuth(BrowserTypeLaunchOptions launchOptions, IBankProfileDefinitions bankProfileDefinitions)
     {
         _launchOptions = launchOptions;
+        _bankProfileDefinitions = bankProfileDefinitions;
     }
 
-    public static IBankProfileUiMethods GetUiMethods(BankProfileEnum bankProfileEnum) =>
-        bankProfileEnum switch
+    private Task ConsentUiInteractions(
+        BankProfileEnum bankProfileEnum,
+        IPage page,
+        ConsentVariety consentVariety,
+        BankUser bankUser)
+    {
+        return _bankProfileDefinitions.GetBankGroup(_bankProfileDefinitions.GetBankGroupEnum(bankProfileEnum)) switch
         {
-            BankProfileEnum.Obie_Modelo => new Modelo(),
-            BankProfileEnum.NatWest => new NatWest(),
-            BankProfileEnum.RoyalBankOfScotland => new RoyalBankOfScotland(),
-            BankProfileEnum.Hsbc_Sandbox => new Hsbc(),
-            BankProfileEnum.Hsbc_UkPersonal => new Hsbc2(),
-            BankProfileEnum.Danske => new Danske(),
-            BankProfileEnum.Monzo => new Monzo(),
-            BankProfileEnum.Lloyds => new Lloyds(),
-            _ => throw new ArgumentException(
-                $"{nameof(bankProfileEnum)} is not valid ${nameof(BankProfileEnum)} or needs to be added to this switch statement.")
+            Danske danske => danske.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            Hsbc hsbc => hsbc.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            Lloyds lloyds => lloyds.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            Monzo monzo => monzo.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            NatWest natWest => natWest.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            Obie obie => obie.ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser),
+            _ => throw new ArgumentOutOfRangeException()
         };
-
+    }
+    
     public async Task AuthoriseAsync(
         string authUrl,
         BankProfileEnum bankProfileEnum,
@@ -50,8 +57,8 @@ public class ConsentAuth
         await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
         IPage page = await browser.NewPageAsync();
         await page.GotoAsync(authUrl);
-        await GetUiMethods(bankProfileEnum).ConsentUiInteractions(page, consentVariety, bankUser);
-
+        await ConsentUiInteractions(bankProfileEnum, page, consentVariety, bankUser);
+        
         bool isFragmentRedirect = bankProfileEnum != BankProfileEnum.Hsbc_Sandbox;
         if (isFragmentRedirect)
         {

@@ -167,6 +167,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                         LazyThreadSafetyMode.ExecutionAndPublication))
                 .Value;
 
+        public IBankGroup GetBankGroup(BankGroupEnum bankGroupEnum) =>
+            bankGroupEnum switch
+            {
+                BankGroupEnum.Danske => GetBankGroup<Danske>(bankGroupEnum),
+                BankGroupEnum.Hsbc => GetBankGroup<Hsbc>(bankGroupEnum),
+                BankGroupEnum.Lloyds => GetBankGroup<Lloyds>(bankGroupEnum),
+                BankGroupEnum.Obie => GetBankGroup<Obie>(bankGroupEnum),
+                BankGroupEnum.Monzo => GetBankGroup<Monzo>(bankGroupEnum),
+                BankGroupEnum.NatWest => GetBankGroup<NatWest>(bankGroupEnum),
+                _ => throw new ArgumentOutOfRangeException(nameof(bankGroupEnum), bankGroupEnum, null)
+            };
+
+        public BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
+            bankProfileEnum switch
+            {
+                BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
+                BankProfileEnum.NatWest => BankGroupEnum.NatWest,
+                BankProfileEnum.RoyalBankOfScotland => BankGroupEnum.NatWest,
+                BankProfileEnum.Lloyds => BankGroupEnum.Lloyds,
+                BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
+                BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,
+                BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,
+                BankProfileEnum.Hsbc_UkKinetic => BankGroupEnum.Hsbc,
+                BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
+                BankProfileEnum.Danske => BankGroupEnum.Danske,
+                BankProfileEnum.Monzo => BankGroupEnum.Monzo,
+                _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
+            };
+
         private string? GetFirstNonemptyValueOrNull(string? value1, string? value2) =>
             (value1, value2) switch
             {
@@ -183,35 +212,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                         () => new TBankGroup(),
                         LazyThreadSafetyMode.ExecutionAndPublication))
                 .Value;
-
-        private IBankGroup GetBankGroup(BankGroupEnum bankGroupEnum) =>
-            bankGroupEnum switch
-            {
-                BankGroupEnum.Danske => GetBankGroup<Danske>(bankGroupEnum),
-                BankGroupEnum.Hsbc => GetBankGroup<Hsbc>(bankGroupEnum),
-                BankGroupEnum.Lloyds => GetBankGroup<Lloyds>(bankGroupEnum),
-                BankGroupEnum.Obie => GetBankGroup<Obie>(bankGroupEnum),
-                BankGroupEnum.Monzo => GetBankGroup<Monzo>(bankGroupEnum),
-                BankGroupEnum.NatWest => GetBankGroup<NatWest>(bankGroupEnum),
-                _ => throw new ArgumentOutOfRangeException(nameof(bankGroupEnum), bankGroupEnum, null)
-            };
-
-        private BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
-            bankProfileEnum switch
-            {
-                BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
-                BankProfileEnum.NatWest => BankGroupEnum.NatWest,
-                BankProfileEnum.RoyalBankOfScotland => BankGroupEnum.NatWest,
-                BankProfileEnum.Lloyds => BankGroupEnum.Lloyds,
-                BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
-                BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,
-                BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,
-                BankProfileEnum.Hsbc_UkKinetic => BankGroupEnum.Hsbc,
-                BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
-                BankProfileEnum.Danske => BankGroupEnum.Danske,
-                BankProfileEnum.Monzo => BankGroupEnum.Monzo,
-                _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
-            };
 
         private BankProfileHiddenProperties GetRequiredBankProfileHiddenProperties(BankProfileEnum bankProfileEnum)
         {

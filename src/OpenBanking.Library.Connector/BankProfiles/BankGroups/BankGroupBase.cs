@@ -4,7 +4,6 @@
 
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -22,7 +21,8 @@ public abstract class BankGroupBase<TBank> : IBankGroup
         BankProfileEnum bankProfileEnum,
         HiddenPropertiesDictionary hiddenPropertiesDictionary);
 
-    protected TBank GetBank(BankProfileEnum bankProfile) =>
+    // This is public due to use of extension methods in BankTests assembly
+    public TBank GetBank(BankProfileEnum bankProfile) =>
         BankProfileToBank.TryGetValue(bankProfile, out TBank? bank)
             ? bank
             : throw new ArgumentOutOfRangeException(nameof(bankProfile), bankProfile, null);
