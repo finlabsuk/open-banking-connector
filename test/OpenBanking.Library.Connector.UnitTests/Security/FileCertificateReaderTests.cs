@@ -91,7 +91,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
             catch (Exception ex)
                 when (
                     ex.Message == "The system cannot find the file specified." || // Windows
-                    ex.Message.StartsWith("Could not find file") // macOS
+                    ex.Message.StartsWith("Could not find file") || // macOS
+                    ex.Message.StartsWith("error:10000080:BIO routines::no such file") // Linux
                 )
             {
                 ioFacade.Received().GetContentPath();
