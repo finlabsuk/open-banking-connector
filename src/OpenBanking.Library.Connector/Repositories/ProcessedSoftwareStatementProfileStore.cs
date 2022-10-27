@@ -241,9 +241,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories
             // Create HttpMessageHandler with transport certificates
             var transportCerts = new List<X509Certificate2>();
             X509Certificate2 transportCert =
-                CertificateFactories.GetCertificate2FromPem(
-                    transportCertificateProfile.AssociatedKey,
-                    transportCertificateProfile.Certificate) ??
+                CertificateFactories.CreateCertWithKey(
+                    transportCertificateProfile.Certificate,
+                    transportCertificateProfile.AssociatedKey) ??
                 throw new ArgumentException(
                     $"Encountered problem when processing transport certificate from transport certificate profile with ID {transportCertificateProfileId}" +
                     (softwareStatementAndCertificateOverrideCase is null

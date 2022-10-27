@@ -2,9 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
 using Org.BouncyCastle.Crypto;
@@ -29,9 +28,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
         {
             var rdr = new PemParsingCertificateReader();
 
-            X509Certificate2? result = await rdr.GetCertificateAsync("");
+            Func<Task<X509Certificate2?>> a = () => rdr.GetCertificateAsync("");
 
-            result.Should().BeNull();
+            await a.Should().ThrowAsync<CryptographicException>();
         }
 
         [Fact]
@@ -47,9 +46,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
 
                 var rdr = new PemParsingCertificateReader();
 
-                X509Certificate2? result = await rdr.GetCertificateAsync(pem);
+                Func<Task<X509Certificate2?>> a = () => rdr.GetCertificateAsync(pem);
 
-                result.Should().BeNull();
+                await a.Should().ThrowAsync<CryptographicException>();
             }
         }
 

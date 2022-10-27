@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -14,85 +12,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security
     {
         public static void ImportPrivateKey(string privateKey, ref RSA rsaContainer)
         {
-            string cleanedPrivateKey;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                cleanedPrivateKey = Regex.Replace(privateKey, @"\\n", Environment.NewLine);
-            }
-            else
-            {
-                cleanedPrivateKey = privateKey;
-            }
-
-            string[] privateKeyBlocks = cleanedPrivateKey.Split(
-                "-",
-                StringSplitOptions.RemoveEmptyEntries);
-            byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
-
-            if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
-            {
-                rsaContainer.ImportPkcs8PrivateKey(privateKeyBytes, out _);
-            }
-            else if (privateKeyBlocks[0] == "BEGIN RSA PRIVATE KEY")
-            {
-                rsaContainer.ImportRSAPrivateKey(privateKeyBytes, out _);
-            }
+            string cleanedPrivateKey = CleanPem(privateKey);
+            rsaContainer.ImportFromPem(cleanedPrivateKey);
         }
 
-        public static X509Certificate2? GetCertificate2FromPem(string privateKey, string pem)
+        public static X509Certificate2 CreateCertWithKey(string certPem, string keyPem)
         {
-            string cleanedPrivateKey;
-            string cleanedPem;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                cleanedPrivateKey = Regex.Replace(privateKey, @"\\n", Environment.NewLine);
-                cleanedPem = Regex.Replace(pem, @"\\n", Environment.NewLine);
-            }
-            else
-            {
-                cleanedPrivateKey = privateKey;
-                cleanedPem = pem;
-            }
-            //instrumentationClient.Info(cleanedPrivateKey);
-            //instrumentationClient.Info(cleanedPem);
-
-            string[] privateKeyBlocks = cleanedPrivateKey.Split(
-                "-",
-                StringSplitOptions.RemoveEmptyEntries);
-
-            byte[] privateKeyBytes = Convert.FromBase64String(privateKeyBlocks[1]);
-            using var rsa = RSA.Create();
-
-            if (privateKeyBlocks[0] == "BEGIN PRIVATE KEY")
-            {
-                rsa.ImportPkcs8PrivateKey(privateKeyBytes, out _);
-            }
-            else if (privateKeyBlocks[0] == "BEGIN RSA PRIVATE KEY")
-            {
-                rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
-            }
-
-            using X509Certificate2? publicKey = GetCertificate2FromPem(cleanedPem);
-            using X509Certificate2? certWithKey = publicKey?.CopyWithPrivateKey(rsa);
-
-            return certWithKey is null
-                ? null
-                : new X509Certificate2(certWithKey.Export(X509ContentType.Pkcs12));
+            string cleanedKeyPem = CleanPem(keyPem);
+            string cleanedCertPem = CleanPem(certPem);
+            var initialCert = X509Certificate2.CreateFromPem(cleanedCertPem, cleanedKeyPem);
+            return new X509Certificate2(initialCert.Export(X509ContentType.Pkcs12));
         }
 
-        public static X509Certificate2? GetCertificate2FromPem(string pem)
+        private static string CleanPem(string pem)
         {
-            if (pem.ArgNotNull(nameof(pem)).IsPemThumbprint())
-            {
-                string[] publicKeyBlocks = pem.Split("-", StringSplitOptions.RemoveEmptyEntries);
-                if (publicKeyBlocks.Length == 4)
-                {
-                    byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBlocks[1]);
-                    return new X509Certificate2(publicKeyBytes);
-                }
-            }
+            // In Bash environment variables (not sure about Windows), "\n" does not represent a newline (it's not an escape sequence) and so
+            // gets converted to "\\n" in C#. We convert these back. This problem does not occur with .NET secrets where values
+            // contain "\n".
+            string cleanedPem = Regex.Replace(pem, @"\\n", "\n");
+            return cleanedPem;
+        }
 
-            return null;
+        public static X509Certificate2 CreateCert(string certPem)
+        {
+            string cleanedCertPem = CleanPem(certPem);
+            return X509Certificate2.CreateFromPem(cleanedCertPem);
         }
     }
 }
