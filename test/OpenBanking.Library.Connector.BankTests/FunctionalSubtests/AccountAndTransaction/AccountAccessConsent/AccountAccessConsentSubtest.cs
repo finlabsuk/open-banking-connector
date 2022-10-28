@@ -90,44 +90,48 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             var accountAccessConsentRequest =
                 new AccountAccessConsentRequest
                 {
+                    BankProfile = bankProfile.BankProfileEnum,
                     BankRegistrationId = default, // substitute logging placeholder
                     AccountAndTransactionApiId = default, // substitute logging placeholder
-                    TemplateRequest = new TemplateRequest
+                    TemplateRequest = new AccountAccessConsentTemplateRequest
                     {
                         Type = AccountAccessConsentSubtestHelper
-                            .GetAccountAccessConsentType(subtestEnum)
+                            .GetAccountAccessConsentTemplateType(subtestEnum)
                     }
                 };
 
-            AccountAccessConsentRequest
-                lowLevelAccountAccessConsentRequest =
-                    AccountAccessConsentPostHelper.ResolveToLowLevelRequest(bankProfile, accountAccessConsentRequest);
+            accountAccessConsentRequest.ExternalApiRequest =
+                AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
+                    accountAccessConsentRequest.ExternalApiRequest,
+                    accountAccessConsentRequest.TemplateRequest,
+                    bankProfile); // Resolve for fuller logging
+
             DateTimeOffset?
                 expDateTime =
-                    lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data
+                    accountAccessConsentRequest.ExternalApiRequest!.Data
                         .ExpirationDateTime; // ExternalApiRequest always non-null in low-level request
             if (expDateTime is not null)
             {
-                lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
-                    default; // substitute logging placeholder
+                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                    default(DateTimeOffset); // substitute logging placeholder
             }
 
             await aispFluentRequestLogging
                 .AppendToPath("accountAccessConsent")
                 .AppendToPath("postRequest")
-                .WriteFile(lowLevelAccountAccessConsentRequest);
-            lowLevelAccountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
-            lowLevelAccountAccessConsentRequest.AccountAndTransactionApiId =
+                .WriteFile(accountAccessConsentRequest);
+            accountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
+            accountAccessConsentRequest.AccountAndTransactionApiId =
                 accountAndTransactionApiId; // remove logging placeholder
             if (expDateTime is not null)
             {
-                lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
                     expDateTime; // remove logging placeholder
             }
 
             if (testData2.AccountAccessConsentExternalApiId is not null)
             {
-                lowLevelAccountAccessConsentRequest.ExternalApiObject =
+                accountAccessConsentRequest.ExternalApiObject =
                     new ExternalApiConsent
                     {
                         ExternalApiId = testData2.AccountAccessConsentExternalApiId,
@@ -141,13 +145,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     };
             }
 
-            lowLevelAccountAccessConsentRequest.Reference = testNameUnique;
-            lowLevelAccountAccessConsentRequest.CreatedBy = modifiedBy;
+            accountAccessConsentRequest.Reference = testNameUnique;
+            accountAccessConsentRequest.CreatedBy = modifiedBy;
             AccountAccessConsentResponse accountAccessConsentResp =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
-                    .CreateAsync(lowLevelAccountAccessConsentRequest);
+                    .CreateAsync(accountAccessConsentRequest);
 
             // Checks
             accountAccessConsentResp.Should().NotBeNull();
@@ -170,11 +174,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAccessConsentResp2.Should().NotBeNull();
             accountAccessConsentResp2.Warnings.Should().BeNull();
             accountAccessConsentResp2.ExternalApiResponse.Should().NotBeNull();
-
-            // var xx = await requestBuilder
-            //     .AccountAndTransaction
-            //     .AccountAccessConsents
-            //     .DeleteAsync(accountAccessConsentId);
 
             // POST auth context
             var authContextRequest = new AccountAccessConsentAuthContext

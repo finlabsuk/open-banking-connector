@@ -3,22 +3,36 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request
 {
-    public class TemplateRequest
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AccountAccessConsentTemplateType
+    {
+        [EnumMember(Value = "MaximumPermissions")]
+        MaximumPermissions
+    }
+
+    public class AccountAccessConsentTemplateParameters { }
+
+    public class AccountAccessConsentTemplateRequest
     {
         /// <summary>
         ///     Template type to use.
         /// </summary>
         public AccountAccessConsentTemplateType Type { get; set; }
+
+        /// <summary>
+        ///     Template parameters.
+        /// </summary>
+        public AccountAccessConsentTemplateParameters Parameters { get; set; } = null!;
     }
 
     /// <summary>
@@ -27,19 +41,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
     /// </summary>
     public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidation
     {
-        /// <summary>
-        ///     BankProfile used to apply transformations to external API requests.
-        /// </summary>
-        public BankProfileEnum? BankProfile { get; set; }
-
-        /// <summary>
-        ///     Specifies BankRegistration object to use when creating the consent.
-        ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer
-        ///     to objects with the same parent Bank object.
-        /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public Guid BankRegistrationId { get; set; }
 
         /// <summary>
         ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
@@ -56,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     and the others are ignored. At least one of these three must be non-null.
         ///     Specifies template used to create external API request object.
         /// </summary>
-        public TemplateRequest? TemplateRequest { get; set; }
+        public AccountAccessConsentTemplateRequest? TemplateRequest { get; set; }
 
         /// <summary>
         ///     Use directly-specified external API request object.

@@ -3,18 +3,61 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
 {
-    public class DomesticVrp : Base, ISupportsValidation
+    
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum DomesticVrpTemplateType
     {
+        [EnumMember(Value = "VrpWithDebtorAccountSpecifiedByPisp")]
+        VrpWithDebtorAccountSpecifiedByPisp, // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
+
+        [EnumMember(Value = "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation")]
+        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation, // same as VrpWithDebtorAccountSpecifiedByPisp but no debtor account specified
+
+        [EnumMember(
+            Value =
+                "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation")]
+        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
+    }
+
+
+    public class DomesticVrpTemplateParameters
+    {
+        public string InstructionIdentification { get; set; } = null!;
+        public string EndToEndIdentification { get; set; } = null!;
+    }
+
+    public class DomesticVrpTemplateRequest
+    {
+        /// <summary>
+        ///     Template type to use.
+        /// </summary>
+        public DomesticVrpTemplateType Type { get; set; }
+
+        public DomesticVrpTemplateParameters Parameters { get; set; } = null!;
+    }
+
+    public class DomesticVrpRequest : Base, ISupportsValidation
+    {
+        /// <summary>
+        ///     Use external API request object created from template.
+        ///     The first non-null of ExternalApiRequest and TemplateRequest (in that order) is used
+        ///     and the others are ignored. At least one of these must be non-null.
+        ///     Specifies template used to create external API request object.
+        /// </summary>
+        public DomesticVrpTemplateRequest? TemplateRequest { get; set; }
+        
         /// <summary>
         ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
         ///     to translate this for banks supporting an earlier spec version.
@@ -23,9 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         ///     DomesticVrpConsent or simply
         ///     left set to null in which case the correct value will be substituted.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest ExternalApiRequest { get; set; } = null!;
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest? ExternalApiRequest { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new DomesticVrpValidator()

@@ -31,7 +31,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsent request)
+    public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??

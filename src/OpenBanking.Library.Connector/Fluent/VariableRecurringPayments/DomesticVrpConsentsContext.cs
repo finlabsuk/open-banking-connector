@@ -4,12 +4,11 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
-using DomesticVrpConsentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
 using DomesticVrpConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
@@ -58,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
         public DomesticVrpConsentsContext(ISharedContext sharedContext)
         {
             _sharedContext = sharedContext;
-            CreateObject = new DomesticVrpConsentPost(
+            var domesticVrpConsentOperations = new DomesticVrpConsentOperations(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -67,28 +66,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.ApiVariantMapper,
                 new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<VariableRecurringPaymentsApiEntity>(),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
-            ReadObject = new DomesticVrpConsentGet(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                new GrantPost(_sharedContext.ApiClient));
-            ReadFundsConfirmationObject = new DomesticVrpConsentGetFundsConfirmation(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                new GrantPost(_sharedContext.ApiClient),
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.BankProfileDefinitions,
                 new AuthContextAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient)));
+            CreateObject = domesticVrpConsentOperations;
+            ReadObject = domesticVrpConsentOperations;
+            ReadFundsConfirmationObject = domesticVrpConsentOperations;
             ReadLocalObject =
                 new LocalEntityRead<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
                     DomesticVrpConsentBaseResponse>(
@@ -136,7 +123,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             get;
         }
 
-        public IObjectRead<DomesticVrpConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
+        public IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
             ReadFundsConfirmationObject { get; }
 
         public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }

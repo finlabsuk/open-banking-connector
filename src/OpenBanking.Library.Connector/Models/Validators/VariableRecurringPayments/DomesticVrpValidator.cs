@@ -9,7 +9,7 @@ using VariableRecurringPaymentsValidatorsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments
 {
-    public class DomesticVrpValidator : AbstractValidator<DomesticVrp>
+    public class DomesticVrpValidator : AbstractValidator<DomesticVrpRequest>
     {
         public DomesticVrpValidator()
         {
@@ -24,9 +24,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Variab
             //     .NotEmpty()
             //     .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
 
-            // WriteDomestic
-            RuleFor(x => x.ExternalApiRequest)
-                .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator());
+            // ExternalApiRequest
+            When(
+                x => x.ExternalApiRequest is not null,
+                () =>
+                    RuleFor(x => x.ExternalApiRequest!)
+                        .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator()));
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

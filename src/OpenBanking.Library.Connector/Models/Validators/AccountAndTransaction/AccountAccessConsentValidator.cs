@@ -17,6 +17,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Accoun
             CreateRules();
         }
 
-        private void CreateRules() { }
+        private void CreateRules()
+        {
+            
+            // ExternalApiRequest
+            // When(
+            //     x => x.ExternalApiRequest is not null,
+            //     () =>
+            //         RuleFor(x => x.ExternalApiRequest!)
+            //             .SetValidator(new AccountAndTransactionModelsPublic.OBReadConsent1Validator()));
+            
+        }
     }
 }

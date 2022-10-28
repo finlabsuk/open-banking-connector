@@ -2,8 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
     DomesticVrp
@@ -28,28 +27,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
         public static ISet<DomesticVrpSubtestEnum> AllDomesticVrpSubtests { get; }
 
-        public static DomesticVrpTypeEnum DomesticVrpType(DomesticVrpSubtestEnum subtestEnum) =>
+        public static DomesticVrpTemplateType GetDomesticVrpConsentTemplateType(
+            DomesticVrpSubtestEnum subtestEnum) =>
             subtestEnum switch
             {
                 DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp =>
-                    DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedByPisp,
+                    DomesticVrpTemplateType.VrpWithDebtorAccountSpecifiedByPisp,
                 DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation =>
-                    DomesticVrpTypeEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
+                    DomesticVrpTemplateType
+                        .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
                 DomesticVrpSubtestEnum
                         .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
                     =>
-                    DomesticVrpTypeEnum
+                    DomesticVrpTemplateType
                         .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation,
-                _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
-            };
-
-        // TODO: remove
-        public static DomesticPaymentTypeEnum DomesticPaymentType(DomesticVrpSubtestEnum subtestEnum) =>
-            subtestEnum switch
-            {
-                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp => DomesticPaymentTypeEnum
-                    .PersonToPerson,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
             };

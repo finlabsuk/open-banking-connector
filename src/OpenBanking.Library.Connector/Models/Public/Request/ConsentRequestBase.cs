@@ -2,10 +2,27 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 public class ConsentRequestBase : Base
 {
+    
+    /// <summary>
+    ///     BankProfile used to apply transformations to external API requests.
+    /// </summary>
+    public BankProfileEnum? BankProfile { get; set; }
+
+    /// <summary>
+    ///     Specifies BankRegistration object to use when creating the consent.
+    /// </summary>
+    [Required]
+    [JsonProperty(Required = Required.Always)]
+    public Guid BankRegistrationId { get; set; }
+    
     /// <summary>
     ///     Use existing external API object instead of making external API request.
     ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used

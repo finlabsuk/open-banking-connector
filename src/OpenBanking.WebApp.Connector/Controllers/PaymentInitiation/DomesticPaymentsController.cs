@@ -33,7 +33,7 @@ public class DomesticPaymentsController : ControllerBase
     public async Task<IActionResult> PostAsync(
         [FromHeader(Name = "x-obc-domestic-payment-consent-id")] Guid domesticPaymentConsentId,
         [FromBody]
-        DomesticPayment request)
+        DomesticPaymentRequest request)
     {
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation

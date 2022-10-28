@@ -117,7 +117,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 },
                 AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
                 {
-                    ExternalApiRequestAdjustments = externalApiRequest =>
+                    AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                     {
                         var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
                         {

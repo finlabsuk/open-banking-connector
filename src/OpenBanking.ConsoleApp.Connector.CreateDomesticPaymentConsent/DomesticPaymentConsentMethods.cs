@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -24,27 +23,35 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         /// <param name="endToEndIdentification"></param>
         /// <param name="requestBuilder"></param>
         /// <param name="testNameUnique"></param>
-        /// <param name="domesticPaymentType"></param>
+        /// <param name="domesticPaymentTemplateType"></param>
         /// <param name="instructionIdentification"></param>
         /// <returns></returns>
         public static async Task<Guid> Create(
             BankProfile bankProfile,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
-            DomesticPaymentTypeEnum domesticPaymentType,
+            DomesticPaymentTemplateType domesticPaymentTemplateType,
             string instructionIdentification,
             string endToEndIdentification,
             IRequestBuilder requestBuilder,
             string testNameUnique)
         {
             // Create domestic payment consent request
-            DomesticPaymentConsent domesticPaymentConsentRequest =
-                bankProfile.DomesticPaymentConsentRequest(
-                    bankRegistrationId,
-                    paymentInitiationApiId,
-                    domesticPaymentType,
-                    instructionIdentification,
-                    endToEndIdentification);
+            var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                BankRegistrationId = bankRegistrationId, // substitute logging placeholder
+                PaymentInitiationApiId = paymentInitiationApiId, // substitute logging placeholder
+                TemplateRequest = new DomesticPaymentTemplateRequest
+                {
+                    Type = domesticPaymentTemplateType,
+                    Parameters = new DomesticPaymentTemplateParameters
+                    {
+                        InstructionIdentification = instructionIdentification,
+                        EndToEndIdentification = endToEndIdentification
+                    }
+                }
+            };
 
             // POST domestic payment consent
             DomesticPaymentConsentResponse domesticPaymentConsentResponse =

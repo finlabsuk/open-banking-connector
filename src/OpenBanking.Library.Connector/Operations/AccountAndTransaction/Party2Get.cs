@@ -60,36 +60,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
             var validQueryParameters = new List<string>();
 
             // Get link queries
-            apiResponse.Links.Self = Helpers.TransformLinkUrl(
-                apiResponse.Links.Self,
+            var linksUrlOperations = new LinksUrlOperations(
                 apiRequestUrl,
                 publicRequestUrlWithoutQuery,
                 allowValidQueryParametersOnly,
                 validQueryParameters);
-            apiResponse.Links.First = Helpers.TransformLinkUrl(
-                apiResponse.Links.First,
-                apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                allowValidQueryParametersOnly,
-                validQueryParameters);
-            apiResponse.Links.Prev = Helpers.TransformLinkUrl(
-                apiResponse.Links.Prev,
-                apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                allowValidQueryParametersOnly,
-                validQueryParameters);
-            apiResponse.Links.Next = Helpers.TransformLinkUrl(
-                apiResponse.Links.Next,
-                apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                allowValidQueryParametersOnly,
-                validQueryParameters);
-            apiResponse.Links.Last = Helpers.TransformLinkUrl(
-                apiResponse.Links.Last,
-                apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                allowValidQueryParametersOnly,
-                validQueryParameters);
+            apiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Self);
+            apiResponse.Links.First = linksUrlOperations.TransformLinksUrl(apiResponse.Links.First);
+            apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
+            apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
+            apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
 
             return new Parties2Response(apiResponse);
         }

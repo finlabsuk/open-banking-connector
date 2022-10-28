@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -14,11 +13,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FluentAssertions;
-using DomesticPaymentConsentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPaymentConsent;
-using DomesticPaymentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.DomesticPayment;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
@@ -30,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             BankProfile bankProfile) =>
             bankProfile.PaymentInitiationApi is null
                 ? new HashSet<DomesticPaymentSubtestEnum>()
-                : DomesticPaymentFunctionalSubtestHelper.AllDomesticPaymentSubtests;
+                : DomesticPaymentSubtestHelper.AllDomesticPaymentSubtests;
 
         public static async Task RunTest(
             DomesticPaymentSubtestEnum subtestEnum,
@@ -97,14 +93,30 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             paymentInitiationApiReadResponse.Should().NotBeNull();
             paymentInitiationApiReadResponse.Warnings.Should().BeNull();
 
-            // Basic request object for domestic payment consent
-            DomesticPaymentConsentRequest domesticPaymentConsentRequest =
-                bankProfile.DomesticPaymentConsentRequest(
-                    Guid.Empty,
-                    Guid.Empty,
-                    DomesticPaymentFunctionalSubtestHelper.DomesticPaymentType(subtestEnum),
-                    "placeholder: random GUID",
-                    "placeholder: random GUID");
+            // Create DomesticPaymentConsent
+            var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                BankRegistrationId = default, // substitute logging placeholder
+                PaymentInitiationApiId = default, // substitute logging placeholder
+                TemplateRequest = new DomesticPaymentTemplateRequest
+                {
+                    Type = DomesticPaymentSubtestHelper
+                        .GetDomesticPaymentTemplateType(subtestEnum),
+                    Parameters = new DomesticPaymentTemplateParameters
+                    {
+                        InstructionIdentification = "placeholder", // substitute logging placeholder
+                        EndToEndIdentification = "placeholder" // substitute logging placeholder
+                    }
+                }
+            };
+
+            domesticPaymentConsentRequest.ExternalApiRequest =
+                DomesticPaymentConsentPublicMethods.ResolveExternalApiRequest(
+                    domesticPaymentConsentRequest.ExternalApiRequest,
+                    domesticPaymentConsentRequest.TemplateRequest,
+                    bankProfile); // Resolve for fuller logging
+
             await pispFluentRequestLogging
                 .AppendToPath("domesticPaymentConsent")
                 .AppendToPath("postRequest")
@@ -120,13 +132,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     ExternalApiRequest = obWriteDomestic
                 };
 
-            // POST domestic payment consent
-            domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId;
-            domesticPaymentConsentRequest.PaymentInitiationApiId = paymentInitiationApiId;
+            domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
+            domesticPaymentConsentRequest.PaymentInitiationApiId = paymentInitiationApiId; // remove logging placeholder
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
-                Guid.NewGuid().ToString("N");
+                Guid.NewGuid().ToString("N"); // remove logging placeholder
             domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
-                Guid.NewGuid().ToString("N");
+                Guid.NewGuid().ToString("N"); // remove logging placeholder
             domesticPaymentConsentRequest.Reference = testNameUnique;
             domesticPaymentConsentRequest.CreatedBy = modifiedBy;
             DomesticPaymentConsentResponse domesticPaymentConsentResp =
@@ -210,6 +221,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     .AppendToPath("domesticPayment")
                     .AppendToPath("postRequest")
                     .WriteFile(domesticPaymentRequest);
+                domesticPaymentRequest.ExternalApiRequest.Data.ConsentId = "";
                 domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
                     domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification;
                 domesticPaymentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =

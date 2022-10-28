@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>
         where TPublicResponse : class
     {
-        IObjectRead<TPublicResponse, ConsentBaseReadParams> ReadFundsConfirmationObject { get; }
+        IObjectReadFundsConfirmation<TPublicResponse, ConsentBaseReadParams> ReadFundsConfirmationObject { get; }
 
         async Task<TPublicResponse> IReadFundsConfirmationContext<TPublicResponse>.
             ReadFundsConfirmationAsync(
@@ -40,7 +40,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         {
             var readParams = new ConsentBaseReadParams(id, modifiedBy, publicRequestUrlWithoutQuery);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadFundsConfirmationObject.ReadAsync(readParams);
+                await ReadFundsConfirmationObject.ReadFundsConfirmationAsync(readParams);
             return response;
         }
     }

@@ -54,16 +54,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 },
                 PaymentInitiationApiSettings = new PaymentInitiationApiSettings
                 {
-                    DomesticPaymentConsentAdjustments = consent =>
+                    DomesticPaymentConsentExternalApiRequestAdjustments = externalApiRequest =>
                     {
-                        consent.ExternalApiRequest.Data.Initiation.SupplementaryData =
+                        externalApiRequest.Data.Initiation.SupplementaryData =
                             new Dictionary<string, object>
                             {
                                 ["DesiredStatus"] = "Authorised",
                                 ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
                                 ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
                             };
-                        return consent;
+                        return externalApiRequest;
                     }
                 }
             };

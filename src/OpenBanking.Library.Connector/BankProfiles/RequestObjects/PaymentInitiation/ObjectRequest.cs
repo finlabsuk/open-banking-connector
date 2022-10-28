@@ -6,152 +6,132 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
+
+public static class TemplateRequests
 {
-    public enum DomesticPaymentTypeEnum
+    public static PaymentInitiationModelsPublic.OBWriteDomesticConsent4 DomesticPaymentConsentExternalApiRequest(
+        DomesticPaymentTemplateRequest domesticPaymentTemplateRequest)
     {
-        PersonToPerson,
-        PersonToMerchant
-    }
-
-    public static class BankProfileExtensions
-    {
-        public static DomesticPaymentConsent DomesticPaymentConsentRequest(
-            this BankProfile bankProfile,
-            Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
-            DomesticPaymentTypeEnum domesticPaymentType,
-            string instructionIdentification,
-            string endToEndIdentification)
+        return domesticPaymentTemplateRequest.Type switch
         {
-            var domesticPaymentConsentRequest = new DomesticPaymentConsent
-            {
-                ExternalApiRequest =
-                    domesticPaymentType switch
+            DomesticPaymentTemplateType.PersonToPersonExample => new
+                PaymentInitiationModelsPublic.OBWriteDomesticConsent4
+                {
+                    Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
                     {
-                        DomesticPaymentTypeEnum.PersonToPerson => new
-                            PaymentInitiationModelsPublic.OBWriteDomesticConsent4
-                            {
-                                Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
+                        ReadRefundAccount = null,
+                        Initiation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation
+                        {
+                            InstructionIdentification =
+                                domesticPaymentTemplateRequest.Parameters.InstructionIdentification,
+                            EndToEndIdentification =
+                                domesticPaymentTemplateRequest.Parameters.EndToEndIdentification,
+                            LocalInstrument = "UK.OBIE.FPS",
+                            InstructedAmount =
+                                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationInstructedAmount
                                 {
-                                    ReadRefundAccount = null,
-                                    Initiation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation
+                                    Amount = "15.00",
+                                    Currency = "GBP"
+                                },
+                            DebtorAccount =
+                                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationDebtorAccount
+                                {
+                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
+                                    Identification = "08080021325645",
+                                    Name = "A Person"
+                                },
+                            CreditorAccount =
+                                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationCreditorAccount
+                                {
+                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
+                                    Identification = "08080021325698",
+                                    Name = "Another Person"
+                                },
+                            CreditorPostalAddress = null,
+                            RemittanceInformation =
+                                new PaymentInitiationModelsPublic.
+                                    OBWriteDomesticConsent4DataInitiationRemittanceInformation
                                     {
-                                        InstructionIdentification = instructionIdentification,
-                                        EndToEndIdentification = endToEndIdentification,
-                                        LocalInstrument = "UK.OBIE.FPS",
-                                        InstructedAmount =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationInstructedAmount
-                                                {
-                                                    Amount = "15.00",
-                                                    Currency = "GBP"
-                                                },
-                                        DebtorAccount =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationDebtorAccount
-                                                {
-                                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
-                                                    Identification = "08080021325645",
-                                                    Name = "A Person"
-                                                },
-                                        CreditorAccount =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationCreditorAccount
-                                                {
-                                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
-                                                    Identification = "08080021325698",
-                                                    Name = "Another Person"
-                                                },
-                                        CreditorPostalAddress = null,
-                                        RemittanceInformation =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationRemittanceInformation
-                                                {
-                                                    Unstructured = "Unstructured string",
-                                                    Reference = "MyRef"
-                                                },
-                                        SupplementaryData = null
+                                        Unstructured = "Unstructured string",
+                                        Reference = "MyRef"
                                     },
-                                    Authorisation =
-                                        new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
-                                        {
-                                            AuthorisationType = PaymentInitiationModelsPublic
-                                                .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Any,
-                                            CompletionDateTime = DateTimeOffset.UtcNow.AddDays(1)
-                                        },
-                                    SCASupportData = null
-                                },
-                                Risk = null
-                            },
-                        DomesticPaymentTypeEnum.PersonToMerchant =>
-                            new PaymentInitiationModelsPublic.OBWriteDomesticConsent4
+                            SupplementaryData = null
+                        },
+                        Authorisation =
+                            new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
                             {
-                                Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
-                                {
-                                    ReadRefundAccount = PaymentInitiationModelsPublic
-                                        .OBWriteDomesticConsent4DataReadRefundAccountEnum
-                                        .Yes,
-                                    Initiation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation
-                                    {
-                                        InstructionIdentification = instructionIdentification,
-                                        EndToEndIdentification = endToEndIdentification,
-                                        InstructedAmount =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationInstructedAmount
-                                                {
-                                                    Amount = "5.00",
-                                                    Currency = "GBP"
-                                                },
-                                        CreditorAccount =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationCreditorAccount
-                                                {
-                                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
-                                                    Identification = "08080021325698",
-                                                    Name = "ACME Inc",
-                                                    SecondaryIdentification = "0002"
-                                                },
-                                        RemittanceInformation =
-                                            new PaymentInitiationModelsPublic.
-                                                OBWriteDomesticConsent4DataInitiationRemittanceInformation
-                                                {
-                                                    Unstructured = "Internal ops code 5120101",
-                                                    Reference = "FRESCO-101"
-                                                },
-                                    }
-                                },
-                                Risk = new PaymentInitiationModelsPublic.OBRisk1
-                                {
-                                    PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCodeEnum
-                                        .EcommerceGoods,
-                                    MerchantCategoryCode = "5967",
-                                    MerchantCustomerIdentification = "053598653254",
-                                    DeliveryAddress = new PaymentInitiationModelsPublic.OBRisk1DeliveryAddress
-                                    {
-                                        AddressLine = new List<string>
-                                        {
-                                            "Flat 7",
-                                            "Acacia Lodge"
-                                        },
-                                        BuildingNumber = "27",
-                                        StreetName = "Acacia Avenue",
-                                        TownName = "Sparsholt",
-                                        PostCode = "GU31 2ZZ",
-                                        CountrySubDivision = "Wessex",
-                                        Country = "UK",
-                                    }
-                                },
+                                AuthorisationType = PaymentInitiationModelsPublic
+                                    .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Any,
+                                CompletionDateTime = DateTimeOffset.UtcNow.AddDays(1)
                             },
-                        _ => throw new ArgumentException(
-                            $"{nameof(DomesticPaymentTypeEnum)} is not valid ${nameof(DomesticPaymentTypeEnum)} or needs to be added to this switch statement.")
+                        SCASupportData = null
                     },
-                PaymentInitiationApiId = paymentInitiationApiId,
-                BankRegistrationId = bankRegistrationId,
-            };
-
-            return bankProfile.PaymentInitiationApiSettings.DomesticPaymentConsentAdjustments(
-                domesticPaymentConsentRequest);
-        }
+                    Risk = null
+                },
+            DomesticPaymentTemplateType.PersonToMerchantExample =>
+                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4
+                {
+                    Data = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4Data
+                    {
+                        ReadRefundAccount = PaymentInitiationModelsPublic
+                            .OBWriteDomesticConsent4DataReadRefundAccountEnum
+                            .Yes,
+                        Initiation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation
+                        {
+                            InstructionIdentification =
+                                domesticPaymentTemplateRequest.Parameters.InstructionIdentification,
+                            EndToEndIdentification =
+                                domesticPaymentTemplateRequest.Parameters.EndToEndIdentification,
+                            InstructedAmount =
+                                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationInstructedAmount
+                                {
+                                    Amount = "5.00",
+                                    Currency = "GBP"
+                                },
+                            CreditorAccount =
+                                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationCreditorAccount
+                                {
+                                    SchemeName = "UK.OBIE.SortCodeAccountNumber",
+                                    Identification = "08080021325698",
+                                    Name = "ACME Inc",
+                                    SecondaryIdentification = "0002"
+                                },
+                            RemittanceInformation =
+                                new PaymentInitiationModelsPublic.
+                                    OBWriteDomesticConsent4DataInitiationRemittanceInformation
+                                    {
+                                        Unstructured = "Internal ops code 5120101",
+                                        Reference = "FRESCO-101"
+                                    },
+                        }
+                    },
+                    Risk = new PaymentInitiationModelsPublic.OBRisk1
+                    {
+                        PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCodeEnum
+                            .EcommerceGoods,
+                        MerchantCategoryCode = "5967",
+                        MerchantCustomerIdentification = "053598653254",
+                        DeliveryAddress = new PaymentInitiationModelsPublic.OBRisk1DeliveryAddress
+                        {
+                            AddressLine = new List<string>
+                            {
+                                "Flat 7",
+                                "Acacia Lodge"
+                            },
+                            BuildingNumber = "27",
+                            StreetName = "Acacia Avenue",
+                            TownName = "Sparsholt",
+                            PostCode = "GU31 2ZZ",
+                            CountrySubDivision = "Wessex",
+                            Country = "UK",
+                        }
+                    },
+                },
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(domesticPaymentTemplateRequest.Type),
+                domesticPaymentTemplateRequest.Type,
+                null)
+        };
     }
 }

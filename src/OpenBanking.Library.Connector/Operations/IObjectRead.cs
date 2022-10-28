@@ -72,6 +72,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             TReadParams readParams);
     }
 
+    internal interface IObjectReadFundsConfirmation<TPublicResponse, in TReadParams>
+        where TReadParams : ConsentBaseReadParams
+    {
+        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+            ReadFundsConfirmationAsync(TReadParams readParams);
+    }
+
     internal interface
         IObjectReadWithSearch<TPublicQuery, TPublicResponse, in TReadParams> : IObjectRead<TPublicResponse, TReadParams>
         where TReadParams : LocalReadParams

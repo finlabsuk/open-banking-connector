@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
 {
@@ -15,9 +15,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         PersonToMerchantSubtest
     }
 
-    public static class DomesticPaymentFunctionalSubtestHelper
+    public static class DomesticPaymentSubtestHelper
     {
-        static DomesticPaymentFunctionalSubtestHelper()
+        static DomesticPaymentSubtestHelper()
         {
             AllDomesticPaymentSubtests = Enum.GetValues(typeof(DomesticPaymentSubtestEnum))
                 .Cast<DomesticPaymentSubtestEnum>().ToHashSet();
@@ -25,13 +25,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
         public static ISet<DomesticPaymentSubtestEnum> AllDomesticPaymentSubtests { get; }
 
-        public static DomesticPaymentTypeEnum DomesticPaymentType(DomesticPaymentSubtestEnum subtestEnum) =>
+        public static DomesticPaymentTemplateType GetDomesticPaymentTemplateType(
+            DomesticPaymentSubtestEnum subtestEnum) =>
             subtestEnum switch
             {
-                DomesticPaymentSubtestEnum.PersonToPersonSubtest => DomesticPaymentTypeEnum
-                    .PersonToPerson,
-                DomesticPaymentSubtestEnum.PersonToMerchantSubtest => DomesticPaymentTypeEnum
-                    .PersonToMerchant,
+                DomesticPaymentSubtestEnum.PersonToPersonSubtest => DomesticPaymentTemplateType.PersonToPersonExample,
+                DomesticPaymentSubtestEnum.PersonToMerchantSubtest => DomesticPaymentTemplateType
+                    .PersonToMerchantExample,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid {nameof(DomesticPaymentSubtestEnum)} or needs to be added to this switch statement.")
             };

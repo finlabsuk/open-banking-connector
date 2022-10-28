@@ -33,7 +33,7 @@ public class DomesticVrpController : ControllerBase
     public async Task<IActionResult> PostAsync(
         [FromHeader(Name = "x-obc-domestic-vrp-consent-id")] Guid domesticVrpConsentId,
         [FromBody]
-        DomesticVrp request)
+        DomesticVrpRequest request)
     {
         DomesticVrpResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments

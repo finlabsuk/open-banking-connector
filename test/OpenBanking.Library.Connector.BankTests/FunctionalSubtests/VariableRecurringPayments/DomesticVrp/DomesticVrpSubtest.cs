@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -14,10 +13,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FluentAssertions;
-using DomesticVrpConsentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrpConsent;
-using DomesticVrpRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.DomesticVrp;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
@@ -97,11 +92,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             variableRecurringPaymentsApiReadResponse.Warnings.Should().BeNull();
 
             // Basic request object for domestic payment consent
-            DomesticVrpConsentRequest domesticVrpConsentRequest =
-                bankProfile.DomesticVrpConsentRequest(
-                    Guid.Empty,
-                    Guid.Empty,
-                    DomesticVrpSubtestHelper.DomesticVrpType(subtestEnum));
+            var domesticVrpConsentRequest = new DomesticVrpConsentRequest
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                BankRegistrationId = default, // substitute logging placeholder
+                VariableRecurringPaymentsApiId = default, // substitute logging placeholder
+                TemplateRequest = new DomesticVrpTemplateRequest
+                {
+                    Type = DomesticVrpSubtestHelper.GetDomesticVrpConsentTemplateType(subtestEnum),
+                    Parameters = new DomesticVrpTemplateParameters
+                    {
+                        InstructionIdentification = "placeholder", // substitute logging placeholder
+                        EndToEndIdentification = "placeholder" // substitute logging placeholder
+                    }
+                }
+            };
             await vrpFluentRequestLogging
                 .AppendToPath("domesticVrpConsent")
                 .AppendToPath("postRequest")

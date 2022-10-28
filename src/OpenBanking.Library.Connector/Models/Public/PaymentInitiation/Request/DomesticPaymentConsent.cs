@@ -11,20 +11,10 @@ using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
 {
-    public class DomesticPaymentConsent : ConsentRequestBase, ISupportsValidation
+    public class DomesticPaymentConsentRequest : ConsentRequestBase, ISupportsValidation
     {
-        /// <summary>
-        ///     Specifies BankRegistration object to use when creating the consent.
-        ///     Both PaymentInitiationApiId and BankRegistrationId properties must refer
-        ///     to objects with the same parent Bank object.
-        /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public Guid BankRegistrationId { get; set; }
-
         /// <summary>
         ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
         ///     Both PaymentInitiationApiId and BankRegistrationId properties must refer
@@ -35,12 +25,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         public Guid PaymentInitiationApiId { get; set; }
 
         /// <summary>
+        ///     Use external API request object created from template.
+        ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
+        ///     and the others are ignored. At least one of these three must be non-null.
+        ///     Specifies template used to create external API request object.
+        /// </summary>
+        public DomesticPaymentTemplateRequest? TemplateRequest { get; set; }
+
+        /// <summary>
         ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
         ///     to translate this for banks supporting an earlier spec version.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4 ExternalApiRequest { get; set; } = null!;
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsent4? ExternalApiRequest { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new DomesticPaymentConsentValidator()

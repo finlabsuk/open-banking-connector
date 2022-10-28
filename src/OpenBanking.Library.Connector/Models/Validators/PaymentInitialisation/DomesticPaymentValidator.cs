@@ -9,7 +9,7 @@ using PaymentInitiationValidatorsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation
 {
-    public class DomesticPaymentValidator : AbstractValidator<DomesticPayment>
+    public class DomesticPaymentValidator : AbstractValidator<DomesticPaymentRequest>
     {
         public DomesticPaymentValidator()
         {
@@ -24,9 +24,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.Paymen
             //     .NotEmpty()
             //     .WithMessage($"Missing or invalid {nameof(DomesticPayment.DomesticPaymentConsentId)}.");
 
-            // WriteDomesticConsent
-            //RuleFor(x => x.OBWriteDomestic)
-            //  .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator());
+            // ExternalApiRequest
+            When(
+                x => x.ExternalApiRequest is not null,
+                () =>
+                    RuleFor(x => x.ExternalApiRequest!)
+                        .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator()));
 
             // RuleFor(x => x.RedirectUrl)
             //     .Must(ValidationRules.IsNotNull)

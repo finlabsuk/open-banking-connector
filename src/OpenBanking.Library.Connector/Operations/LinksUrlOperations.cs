@@ -2,16 +2,29 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-internal static class Helpers
+internal class LinksUrlOperations
 {
-    public static string? TransformLinkUrl(
-        string? linkUrlString,
+    private readonly bool _allowValidQueryParametersOnly;
+
+    private readonly Uri _apiRequestUrl;
+    private readonly string? _publicRequestUrlWithoutQuery;
+    private readonly IList<string> _validQueryParameters;
+
+    public LinksUrlOperations(
         Uri apiRequestUrl,
         string? publicRequestUrlWithoutQuery,
         bool allowValidQueryParametersOnly,
         IList<string> validQueryParameters)
+    {
+        _apiRequestUrl = apiRequestUrl;
+        _publicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
+        _allowValidQueryParametersOnly = allowValidQueryParametersOnly;
+        _validQueryParameters = validQueryParameters;
+    }
+
+    public string? TransformLinksUrl(string? linkUrlString)
     {
         if (linkUrlString is null)
         {
@@ -22,7 +35,7 @@ internal static class Helpers
 
         int urlsMatch = Uri.Compare(
             linkUrl,
-            apiRequestUrl,
+            _apiRequestUrl,
             UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
             UriFormat.Unescaped,
             StringComparison.InvariantCulture);
@@ -31,7 +44,7 @@ internal static class Helpers
         if (urlsMatch != 0)
         {
             throw new InvalidOperationException(
-                $"Request URL {apiRequestUrl} and link URL {linkUrl} have different base URLs!");
+                $"Request URL {_apiRequestUrl} and link URL {linkUrl} have different base URLs!");
         }
 
         // Check there are no fragment parameters
@@ -41,14 +54,14 @@ internal static class Helpers
         }
 
         // Check query parameters are valid
-        if (allowValidQueryParametersOnly &&
+        if (_allowValidQueryParametersOnly &&
             !string.IsNullOrEmpty(linkUrl.Query))
         {
             string[] linkUrlQueryParameterPairs = linkUrl.Query.TrimStart('?').Split('&');
             foreach (string queryParameterPair in linkUrlQueryParameterPairs)
             {
                 string queryParameterName = queryParameterPair.Split('=')[0];
-                if (!validQueryParameters.Contains(queryParameterName))
+                if (!_validQueryParameters.Contains(queryParameterName))
                 {
                     throw new InvalidOperationException(
                         $"External API returned link URL with query parameter {queryParameterName} which is unexpected.");
@@ -57,13 +70,13 @@ internal static class Helpers
         }
 
         // Return relative URL
-        if (publicRequestUrlWithoutQuery is null)
+        if (_publicRequestUrlWithoutQuery is null)
         {
             return linkUrl.Query;
         }
 
         // Return absolute URL
-        var uriBuilder = new UriBuilder(publicRequestUrlWithoutQuery);
+        var uriBuilder = new UriBuilder(_publicRequestUrlWithoutQuery);
         uriBuilder.Query = linkUrl.Query;
         Uri fullUri = uriBuilder.Uri;
         return fullUri.ToString();
