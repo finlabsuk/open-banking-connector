@@ -25,10 +25,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
         public static ISet<AccountAccessConsentSubtestEnum> AllAccountAccessConsentSubtests { get; }
 
-        public static AccountAccessConsentType GetAccountAccessConsentType(AccountAccessConsentSubtestEnum subtestEnum) =>
+        public static AccountAccessConsentTemplateType GetAccountAccessConsentType(AccountAccessConsentSubtestEnum subtestEnum) =>
             subtestEnum switch
             {
-                AccountAccessConsentSubtestEnum.MaximumPermissionsSubtest => AccountAccessConsentType.MaximumPermissions,
+                AccountAccessConsentSubtestEnum.MaximumPermissionsSubtest => AccountAccessConsentTemplateType.MaximumPermissions,
                 _ => throw new ArgumentException(
                     $"{nameof(subtestEnum)} is not valid {nameof(AccountAccessConsentSubtestEnum)} or needs to be added to this switch statement.")
             };

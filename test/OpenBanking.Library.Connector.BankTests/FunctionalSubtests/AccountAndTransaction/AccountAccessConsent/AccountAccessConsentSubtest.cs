@@ -17,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 using FluentAssertions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
@@ -85,50 +86,68 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAndTransactionApiReadResponse.Should().NotBeNull();
             accountAndTransactionApiReadResponse.Warnings.Should().BeNull();
 
-            // Create account access consent or use existing
+            // Create AccountAccessConsent
+            var accountAccessConsentRequest =
+                new AccountAccessConsentRequest
+                {
+                    BankRegistrationId = default, // substitute logging placeholder
+                    AccountAndTransactionApiId = default, // substitute logging placeholder
+                    TemplateRequest = new TemplateRequest
+                    {
+                        Type = AccountAccessConsentSubtestHelper
+                            .GetAccountAccessConsentType(subtestEnum)
+                    }
+                };
+
+            AccountAccessConsentRequest
+                lowLevelAccountAccessConsentRequest =
+                    AccountAccessConsentPostHelper.ResolveToLowLevelRequest(bankProfile, accountAccessConsentRequest);
+            DateTimeOffset?
+                expDateTime =
+                    lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data
+                        .ExpirationDateTime; // ExternalApiRequest always non-null in low-level request
+            if (expDateTime is not null)
+            {
+                lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                    default; // substitute logging placeholder
+            }
+
             await aispFluentRequestLogging
                 .AppendToPath("accountAccessConsent")
                 .AppendToPath("postRequest")
-                .WriteFile(
-                    new Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent
+                .WriteFile(lowLevelAccountAccessConsentRequest);
+            lowLevelAccountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
+            lowLevelAccountAccessConsentRequest.AccountAndTransactionApiId =
+                accountAndTransactionApiId; // remove logging placeholder
+            if (expDateTime is not null)
+            {
+                lowLevelAccountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                    expDateTime; // remove logging placeholder
+            }
+
+            if (testData2.AccountAccessConsentExternalApiId is not null)
+            {
+                lowLevelAccountAccessConsentRequest.ExternalApiObject =
+                    new ExternalApiConsent
                     {
-                        BankRegistrationId = default,
-                        AccountAndTransactionApiId = default,
-                        ExternalApiRequest =
-                            bankProfile.AccountAndTransactionApiSettings
-                                .ExternalApiRequestAdjustments(
-                                    bankProfile.AccountAccessConsentExternalApiRequest(
-                                        AccountAccessConsentSubtestHelper
-                                            .GetAccountAccessConsentType(subtestEnum)))
-                    });
-            var accountAccessConsentRequest =
-                new Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent
-                {
-                    Reference = testNameUnique,
-                    CreatedBy = modifiedBy,
-                    ExternalApiObject =
-                        testData2.AccountAccessConsentExternalApiId is not null
-                            ? new ExternalApiConsent
+                        ExternalApiId = testData2.AccountAccessConsentExternalApiId,
+                        AccessToken = testData2.AccountAccessConsentRefreshToken is null
+                            ? null
+                            : new AccessToken
                             {
-                                ExternalApiId = testData2.AccountAccessConsentExternalApiId,
-                                AccessToken = testData2.AccountAccessConsentRefreshToken is null
-                                    ? null
-                                    : new AccessToken
-                                    {
-                                        RefreshToken = testData2.AccountAccessConsentRefreshToken,
-                                        ModifiedBy = modifiedBy
-                                    }
+                                RefreshToken = testData2.AccountAccessConsentRefreshToken,
+                                ModifiedBy = modifiedBy
                             }
-                            : null,
-                    BankProfile = bankProfile.BankProfileEnum,
-                    BankRegistrationId = bankRegistrationId,
-                    AccountAndTransactionApiId = accountAndTransactionApiId,
-                };
+                    };
+            }
+
+            lowLevelAccountAccessConsentRequest.Reference = testNameUnique;
+            lowLevelAccountAccessConsentRequest.CreatedBy = modifiedBy;
             AccountAccessConsentResponse accountAccessConsentResp =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
-                    .CreateAsync(accountAccessConsentRequest);
+                    .CreateAsync(lowLevelAccountAccessConsentRequest);
 
             // Checks
             accountAccessConsentResp.Should().NotBeNull();

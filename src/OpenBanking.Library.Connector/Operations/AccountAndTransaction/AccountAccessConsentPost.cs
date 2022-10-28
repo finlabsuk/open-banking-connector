@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 {
     internal class
         AccountAccessConsentPost : ConsentPost<AccountAccessConsentPersisted,
-            AccountAccessConsent,
+            AccountAccessConsentRequest,
             AccountAccessConsentResponse,
             AccountAndTransactionModelsPublic.OBReadConsent1,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1>
@@ -62,7 +62,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
         protected override string ClientCredentialsGrantScope => "accounts";
 
         protected override async Task<AccountAccessConsentResponse> AddEntity(
-            AccountAccessConsent request,
+            AccountAccessConsentRequest request,
             AccountAndTransactionModelsPublic.OBReadConsentResponse1? apiResponse,
             Uri apiRequestUrl,
             string? publicRequestUrlWithoutQuery,
@@ -213,20 +213,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 BankRegistration bankRegistration,
                 string bankFinancialId,
                 List<IFluentResponseInfoOrWarningMessage>
-                nonErrorMessages)> ApiPostRequestData(AccountAccessConsent request)
+                nonErrorMessages)> ApiPostRequestData(AccountAccessConsentRequest request)
         {
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
-
+            
+            // Resolve bank profile
             BankProfile? bankProfile = null;
             if (request.BankProfile is not null)
             {
                 bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
             }
 
-            // Load relevant data and checks
-            Guid bankRegistrationId = request.BankRegistrationId;
+            // Convert to low-level request
+            AccountAccessConsentRequest lowLevelRequest = AccountAccessConsentPostHelper.ResolveToLowLevelRequest(bankProfile, request);
+            AccountAndTransactionModelsPublic.OBReadConsent1
+                externalApiRequest = lowLevelRequest.ExternalApiRequest!; // Always present in low-level request
+
+            // Load BankRegistration
+            Guid bankRegistrationId = lowLevelRequest.BankRegistrationId;
             BankRegistration bankRegistration =
                 await _bankRegistrationMethods
                     .DbSetNoTracking
@@ -236,7 +242,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
-            Guid accountAndTransactionApiId = request.AccountAndTransactionApiId;
+            // Load AccountAndTransactionApi
+            Guid accountAndTransactionApiId = lowLevelRequest.AccountAndTransactionApiId;
             AccountAndTransactionApiEntity accountAndTransactionApiEntity =
                 await _bankApiSetMethods
                     .DbSetNoTracking
@@ -258,20 +265,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     "Specified AccountAndTransactionApi and BankRegistration objects do not share same BankId.");
             }
 
-            // Create request
-            AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
-                request.ExternalApiRequest ??
-                bankProfile?.AccountAccessConsentExternalApiRequest(AccountAccessConsentType.MaximumPermissions) ??
-                throw new InvalidOperationException(
-                    "ExternalApiRequest specified as null and cannot be obtained using BankProfile.");
-            ExternalApiRequestAdjustments? adjustmentsFcn = bankProfile?.AccountAndTransactionApiSettings
-                .ExternalApiRequestAdjustments;
-            if (adjustmentsFcn is not null)
-            {
-                externalApiRequest = adjustmentsFcn(externalApiRequest);
-            }
-
-            // Determine endpoint URL
             string baseUrl = accountAndTransactionApiEntity.BaseUrl;
             var endpointUrl = new Uri(baseUrl + "/account-access-consents");
 

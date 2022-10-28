@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -18,6 +19,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     public class PaymentInitiationApiRequest : Base, ISupportsValidation
     {
         /// <summary>
+        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
+        ///     requests.
+        /// </summary>
+        public BankProfileEnum? BankProfile { get; set; }
+
+        /// <summary>
         ///     Bank with which this API is associated.
         /// </summary>
         [Required]
@@ -26,17 +33,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         /// <summary>
         ///     Version of UK Open Banking Payment Initiation API.
+        ///     When null, value obtained from BankProfile.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public PaymentInitiationApiVersion ApiVersion { get; set; }
+        public PaymentInitiationApiVersion? ApiVersion { get; set; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Payment Initiation API.
+        ///     When null, value obtained from BankProfile.
         /// </summary>
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public string BaseUrl { get; set; } = null!;
+        public string? BaseUrl { get; set; } = null!;
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new PaymentInitiationApiRequestValidator()

@@ -2,20 +2,24 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction
 {
-    public enum AccountAccessConsentType
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AccountAccessConsentTemplateType
     {
+        [EnumMember(Value = "MaximumPermissions")]
         MaximumPermissions
     }
 
-    public static class BankProfileExtensions
+    public static class TemplateRequests
     {
         public static OBReadConsent1 AccountAccessConsentExternalApiRequest(
-            this BankProfile bankProfile,
-            AccountAccessConsentType accountAccessConsentType) =>
+            AccountAccessConsentTemplateType accountAccessConsentTemplateType) =>
             new(
                 new OBReadConsent1Data(
                     new List<OBReadConsent1DataPermissionsEnum>

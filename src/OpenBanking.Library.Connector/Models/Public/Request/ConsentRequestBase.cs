@@ -7,10 +7,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 public class ConsentRequestBase : Base
 {
     /// <summary>
-    ///     Information about external Consent created using external (bank) API.
-    ///     When non-null, this will be referenced
-    ///     instead of
-    ///     creating a new external Consent object at the external API.
+    ///     Use existing external API object instead of making external API request.
+    ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
+    ///     and the others are ignored. At least one of these three must be non-null.
+    ///     Specifies external Consent created previously using external (bank) API request.
+    ///     When non-null, a new external Consent object will
+    ///     not be created at the external API.
     /// </summary>
     public ExternalApiConsent? ExternalApiObject { get; set; }
 }

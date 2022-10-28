@@ -33,11 +33,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         /// <summary>
         ///     Version of UK Open Banking Account and Transaction API.
+        ///     When null, value obtained from BankProfile.
         /// </summary>
         public AccountAndTransactionApiVersion? ApiVersion { get; set; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Account and Transaction API.
+        ///     When null, value obtained from BankProfile.
         /// </summary>
         public string? BaseUrl { get; set; }
 

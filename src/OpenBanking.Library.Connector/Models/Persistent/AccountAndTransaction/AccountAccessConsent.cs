@@ -6,8 +6,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using AccountAccessConsentRequest =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request.AccountAccessConsent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction
 {

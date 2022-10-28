@@ -11,7 +11,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     {
         Guid BankId { get; }
         PaymentInitiationApiVersion ApiVersion { get; }
-
         string BaseUrl { get; }
     }
 
@@ -47,11 +46,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// <summary>
         ///     Version of UK Open Banking Account and Transaction API.
         /// </summary>
-        public PaymentInitiationApiVersion ApiVersion { get; set; }
+        public PaymentInitiationApiVersion ApiVersion { get; }
 
         /// <summary>
         ///     Base URL for UK Open Banking Account and Transaction API.
         /// </summary>
-        public string BaseUrl { get; set; }
+        public string BaseUrl { get; }
     }
 }

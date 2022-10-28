@@ -5,6 +5,7 @@
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
 using Newtonsoft.Json;
@@ -12,15 +13,22 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request
 {
-    /// <summary>
-    ///     Request object used when creating an AccountAccessConsent object. Includes a UK Open Banking request object
-    ///     plus information on the bank registration and bank functional API to associate with the consent.
-    /// </summary>
-    public class AccountAccessConsent : ConsentRequestBase, ISupportsValidation
+    public class TemplateRequest
     {
         /// <summary>
-        ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
-        ///     requests.
+        ///     Template type to use.
+        /// </summary>
+        public AccountAccessConsentTemplateType Type { get; set; }
+    }
+
+    /// <summary>
+    ///     Request object used to create an AccountAccessConsent. Includes a UK Open Banking request object
+    ///     plus information on the bank registration and bank functional API to use for the consent.
+    /// </summary>
+    public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidation
+    {
+        /// <summary>
+        ///     BankProfile used to apply transformations to external API requests.
         /// </summary>
         public BankProfileEnum? BankProfile { get; set; }
 
@@ -43,13 +51,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         public Guid AccountAndTransactionApiId { get; set; }
 
         /// <summary>
-        ///     Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
+        ///     Use external API request object created from template.
+        ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
+        ///     and the others are ignored. At least one of these three must be non-null.
+        ///     Specifies template used to create external API request object.
+        /// </summary>
+        public TemplateRequest? TemplateRequest { get; set; }
+
+        /// <summary>
+        ///     Use directly-specified external API request object.
+        ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
+        ///     and the others are ignored. At least one of these three must be non-null.
+        ///     Specifies OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
         ///     <a
         ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
         ///     v3.1.9r5 <a />. Open Banking Connector will automatically
         ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
         /// </summary>
-        public AccountAndTransactionModelsPublic.OBReadConsent1? ExternalApiRequest { get; set; } = null!;
+        public AccountAndTransactionModelsPublic.OBReadConsent1? ExternalApiRequest { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new AccountAccessConsentValidator()

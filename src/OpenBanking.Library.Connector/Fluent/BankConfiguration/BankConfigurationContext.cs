@@ -106,7 +106,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.Instrumentation));
+                    _sharedContext.Instrumentation,
+                    _sharedContext.BankProfileDefinitions));
 
         public ILocalEntityContext<VariableRecurringPaymentsApiRequest, IVariableRecurringPaymentsApiQuery,
             VariableRecurringPaymentsApiResponse, VariableRecurringPaymentsApiResponse> VariableRecurringPaymentsApis
@@ -120,6 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         _sharedContext.SoftwareStatementProfileCachedRepo,
-                        _sharedContext.Instrumentation));
+                        _sharedContext.Instrumentation,
+                        _sharedContext.BankProfileDefinitions));
     }
 }

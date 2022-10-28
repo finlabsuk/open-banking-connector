@@ -32,7 +32,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAccessConsentResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsent request)
+    public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??

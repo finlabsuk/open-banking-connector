@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction
 {
-    public class AccountAccessConsentValidator : AbstractValidator<AccountAccessConsent>
+    public class AccountAccessConsentValidator : AbstractValidator<AccountAccessConsentRequest>
     {
         public AccountAccessConsentValidator()
         {
