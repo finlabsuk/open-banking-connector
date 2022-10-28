@@ -21,14 +21,16 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
     internal abstract class
-        ConsentPost<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> : EntityPost<
-            TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse, ConsentCreateParams>
+        ConsentPost<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse> : BaseCreate<
+            TPublicRequest, TPublicResponse, ConsentCreateParams>
         where TEntity : class, IEntity
         where TPublicRequest : ConsentRequestBase
         where TApiRequest : class, ISupportsValidation
         where TApiResponse : class, ISupportsValidation
     {
+        protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
         private readonly IGrantPost _grantPost;
+        private readonly IApiVariantMapper _mapper;
 
         public ConsentPost(
             IDbReadWriteEntityMethods<TEntity> entityMethods,
@@ -38,14 +40,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IInstrumentationClient instrumentationClient,
             IApiVariantMapper mapper,
             IGrantPost grantPost) : base(
-            entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient,
-            mapper)
+            instrumentationClient)
         {
             _grantPost = grantPost;
+            _entityMethods = entityMethods;
+            _mapper = mapper;
         }
 
         protected abstract string ClientCredentialsGrantScope { get; }
@@ -80,7 +82,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 await ApiPostRequestData(request);
 
             TApiResponse? externalApiResponse = null;
-            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2;
             if (request.ExternalApiObject is null)
             {
                 // Get software statement profile
@@ -114,19 +115,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         processedSoftwareStatementProfile,
                         _instrumentationClient);
 
-                (externalApiResponse, nonErrorMessages2) =
-                    await EntityPostCommon(
-                        apiRequest,
-                        apiRequests,
-                        apiClient,
+                // Call API
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+
+                (externalApiResponse, newNonErrorMessages) =
+                    await apiRequests.PostAsync(
                         apiRequestUrl,
+                        apiRequest,
                         requestJsonSerializerSettings,
                         responseJsonSerializerSettings,
-                        nonErrorMessages);
-            }
-            else
-            {
-                nonErrorMessages2 = nonErrorMessages;
+                        apiClient,
+                        _mapper);
+
+                nonErrorMessages.AddRange(newNonErrorMessages);
             }
 
             // Create persisted entity and return response
@@ -140,7 +141,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Persist updates (this happens last so as not to happen if there are any previous errors)
             await _dbSaveChangesMethod.SaveChangesAsync();
 
-            return (response, nonErrorMessages2);
+            return (response, nonErrorMessages);
         }
 
         protected abstract

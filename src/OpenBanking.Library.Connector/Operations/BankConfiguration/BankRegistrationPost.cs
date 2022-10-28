@@ -37,14 +37,14 @@ using ClientRegistrationModelsV3p1 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 {
     internal class
-        BankRegistrationPost : EntityPost<
-            BankRegistration,
-            BankRegistrationRequest, BankRegistrationResponse, ClientRegistrationModelsPublic.OBClientRegistration1,
-            ClientRegistrationModelsPublic.OBClientRegistration1Response, BankRegistrationCreateParams>
+        BankRegistrationPost : BaseCreate<
+            BankRegistrationRequest, BankRegistrationResponse, BankRegistrationCreateParams>
     {
         private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
         private readonly IBankProfileDefinitions _bankProfileDefinitions;
         private readonly IOpenIdConfigurationRead _configurationRead;
+        private readonly IDbReadWriteEntityMethods<BankRegistration> _entityMethods;
+        private readonly IApiVariantMapper _mapper;
 
         public BankRegistrationPost(
             IDbReadWriteEntityMethods<BankRegistration> entityMethods,
@@ -56,16 +56,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             IOpenIdConfigurationRead configurationRead,
             IDbReadOnlyEntityMethods<Bank> bankMethods,
             IBankProfileDefinitions bankProfileDefinitions) : base(
-            entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
-            instrumentationClient,
-            mapper)
+            instrumentationClient)
         {
             _bankMethods = bankMethods;
             _bankProfileDefinitions = bankProfileDefinitions;
             _configurationRead = configurationRead;
+            _entityMethods = entityMethods;
+            _mapper = mapper;
         }
 
         protected override async
@@ -350,19 +350,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                             null)
                     };
 
-                (ClientRegistrationModelsPublic.OBClientRegistration1Response apiResponse,
-                        IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) =
-                    await EntityPostCommon(
-                        apiRequest,
-                        apiRequests,
-                        processedSoftwareStatementProfile.ApiClient,
+                // Call API
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+                (externalApiResponse, newNonErrorMessages) =
+                    await apiRequests.PostAsync(
                         uri,
+                        apiRequest,
                         requestJsonSerializerSettings,
                         responseJsonSerializerSettings,
-                        nonErrorMessages);
-                nonErrorMessages = nonErrorMessages2;
+                        processedSoftwareStatementProfile.ApiClient,
+                        _mapper);
+                nonErrorMessages.AddRange(newNonErrorMessages);
 
-                externalApiResponse = apiResponse;
                 externalApiId = externalApiResponse.ClientId;
                 externalApiSecret = externalApiResponse.ClientSecret;
                 registrationAccessToken = externalApiResponse.RegistrationAccessToken;
