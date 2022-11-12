@@ -13,11 +13,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 public interface IOpenIdConfigurationRead
 {
-    Task<(OpenIdConfiguration openIdConfiguration, IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages
-            )>
-        GetOpenIdConfigurationAsync(
-            Uri issuerUrl,
-            OpenIdConfigurationGetCustomBehaviour? customBehaviour);
+    Task<(OpenIdConfiguration? openIdConfiguration, IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages
+        )> GetOpenIdConfigurationAsync(
+        string issuerUrl,
+        OpenIdConfigurationGetCustomBehaviour? openIdConfigurationGetCustomBehaviour);
 }
 
 public class OpenIdConfigurationRead : IOpenIdConfigurationRead
@@ -30,11 +29,20 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
     }
 
     public async
-        Task<(OpenIdConfiguration openIdConfiguration, IEnumerable<IFluentResponseInfoOrWarningMessage>
+        Task<(OpenIdConfiguration? openIdConfiguration, IEnumerable<IFluentResponseInfoOrWarningMessage>
             newNonErrorMessages)> GetOpenIdConfigurationAsync(
-            Uri openIdConfigurationUrl,
-            OpenIdConfigurationGetCustomBehaviour? customBehaviour)
+            string issuerUrl,
+            OpenIdConfigurationGetCustomBehaviour? openIdConfigurationGetCustomBehaviour)
     {
+        if (openIdConfigurationGetCustomBehaviour?.EndpointUnavailable is true)
+        {
+            return (null, new List<IFluentResponseInfoOrWarningMessage>());
+        }
+
+        var openIdConfigurationUrl = new Uri(
+            openIdConfigurationGetCustomBehaviour?.Url
+            ?? string.Join("/", issuerUrl.TrimEnd('/'), ".well-known/openid-configuration"));
+
         var openIdConfiguration = await new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
             .SetUri(openIdConfigurationUrl)
@@ -43,14 +51,14 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
 
         // Update OpenID Provider Configuration based on overrides
         IList<OAuth2ResponseMode>? responseModesSupportedOverride =
-            customBehaviour?.ResponseModesSupportedResponse;
+            openIdConfigurationGetCustomBehaviour?.ResponseModesSupportedResponse;
         if (!(responseModesSupportedOverride is null))
         {
             openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
         }
 
         IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
-            customBehaviour?.TokenEndpointAuthMethodsSupportedResponse;
+            openIdConfigurationGetCustomBehaviour?.TokenEndpointAuthMethodsSupportedResponse;
         if (!(tokenEndpointAuthMethodsSupportedOverride is null))
         {
             openIdConfiguration.TokenEndpointAuthMethodsSupported = tokenEndpointAuthMethodsSupportedOverride;

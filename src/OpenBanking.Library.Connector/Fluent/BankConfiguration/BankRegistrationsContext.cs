@@ -32,32 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
     {
         public BankRegistrationsContextInternal(ISharedContext sharedContext)
         {
-            ReadLocalObject =
-                new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-                    BankRegistrationResponse>(
-                    sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
-            ReadObject = new BankRegistrationRead(
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                sharedContext.BankProfileDefinitions,
-                new GrantPost(sharedContext.ApiClient));
-            DeleteObject = new BankRegistrationDelete(
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.BankProfileDefinitions,
-                new GrantPost(sharedContext.ApiClient));
-            CreateObject = new BankRegistrationPost(
+            var bankRegistrationOperations = new BankRegistrationOperations(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
@@ -66,7 +41,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.ApiVariantMapper,
                 new OpenIdConfigurationRead(sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
-                sharedContext.BankProfileDefinitions);
+                sharedContext.BankProfileDefinitions,new GrantPost(sharedContext.ApiClient));
+            ReadLocalObject =
+                new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
+                    BankRegistrationResponse>(
+                    sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    sharedContext.TimeProvider,
+                    sharedContext.SoftwareStatementProfileCachedRepo,
+                    sharedContext.Instrumentation);
+            ReadObject = bankRegistrationOperations;
+            DeleteObject = new BankRegistrationDelete(
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+                sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                sharedContext.TimeProvider,
+                sharedContext.SoftwareStatementProfileCachedRepo,
+                sharedContext.Instrumentation,
+                sharedContext.BankProfileDefinitions,
+                new GrantPost(sharedContext.ApiClient));
+            CreateObject = bankRegistrationOperations;
         }
 
         public IObjectReadWithSearch<IBankRegistrationPublicQuery, BankRegistrationResponse, LocalReadParams>

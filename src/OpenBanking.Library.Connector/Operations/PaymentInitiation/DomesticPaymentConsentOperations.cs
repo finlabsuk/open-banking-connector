@@ -83,7 +83,8 @@ internal class
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
         _consentCommon =
-            new ConsentCommon<DomesticPaymentConsentPersisted, DomesticPaymentConsentRequest, DomesticPaymentConsentResponse,
+            new ConsentCommon<DomesticPaymentConsentPersisted, DomesticPaymentConsentRequest,
+                DomesticPaymentConsentResponse,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                 bankRegistrationMethods,
@@ -228,6 +229,9 @@ internal class
         // Save entity
         await _entityMethods.AddAsync(persistedConsent);
 
+        // Persist updates (this happens last so as not to happen if there are any previous errors)
+        await _dbSaveChangesMethod.SaveChangesAsync();
+
         // Create response (may involve additional processing based on entity)
         var response =
             new DomesticPaymentConsentResponse(
@@ -239,9 +243,6 @@ internal class
                 persistedConsent.PaymentInitiationApiId,
                 persistedConsent.ExternalApiId,
                 externalApiResponse);
-
-        // Persist updates (this happens last so as not to happen if there are any previous errors)
-        await _dbSaveChangesMethod.SaveChangesAsync();
 
         return (response, nonErrorMessages);
     }
