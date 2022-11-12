@@ -183,8 +183,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             bankProfileEnum switch
             {
                 BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
-                BankProfileEnum.NatWest => BankGroupEnum.NatWest,
-                BankProfileEnum.RoyalBankOfScotland => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_NatWestSandbox => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_RoyalBankOfScotlandSandbox => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_NatWest => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_RoyalBankOfScotland => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_UlsterBankNI => BankGroupEnum.NatWest,
                 BankProfileEnum.Lloyds => BankGroupEnum.Lloyds,
                 BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
                 BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,

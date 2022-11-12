@@ -60,8 +60,8 @@ public class NatWestUiMethods : IBankUiMethods
         // Select accounts then confirm access
         string selector = _natWestBank switch
         {
-            NatWestBank.NatWest => "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
-            NatWestBank.RoyalBankOfScotland => "#account-list > .row-element:nth-child(2) > dl > .action > button",
+            NatWestBank.NatWestSandbox => "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
+            NatWestBank.RoyalBankOfScotlandSandbox => "#account-list > .row-element:nth-child(2) > dl > .action > button",
             _ => throw new ArgumentOutOfRangeException()
         };
         await page.ClickAsync(selector);

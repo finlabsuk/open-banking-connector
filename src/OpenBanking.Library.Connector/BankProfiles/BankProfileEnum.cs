@@ -18,9 +18,21 @@ public enum BankProfileEnum
     [EnumMember(Value = "Obie_Modelo")]
     Obie_Modelo,
 
-    [EnumMember(Value = "NatWest")]
-    NatWest,
+    [EnumMember(Value = "NatWest_NatWestSandbox")]
+    NatWest_NatWestSandbox,
 
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandSandbox")]
+    NatWest_RoyalBankOfScotlandSandbox,
+
+    [EnumMember(Value = "NatWest_NatWest")]
+    NatWest_NatWest,
+
+    [EnumMember(Value = "NatWest_RoyalBankOfScotland")]
+    NatWest_RoyalBankOfScotland,
+    
+    [EnumMember(Value = "NatWest_UlsterBankNI")]
+    NatWest_UlsterBankNI,
+    
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,
 
@@ -29,9 +41,6 @@ public enum BankProfileEnum
 
     [EnumMember(Value = "Barclays")]
     Barclays,
-
-    [EnumMember(Value = "RoyalBankOfScotland")]
-    RoyalBankOfScotland,
 
     [EnumMember(Value = "NewDayAmazon")]
     NewDayAmazon,
