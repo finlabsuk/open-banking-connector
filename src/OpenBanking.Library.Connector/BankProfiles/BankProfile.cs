@@ -34,12 +34,12 @@ public class BankConfigurationApiSettings
     /// <summary>
     ///     Describes whether DELETE /register/{ClientId} is used when testing with this bank.
     /// </summary>
-    public bool UseDeleteEndpoint { get; set; } = false;
+    public bool UseRegistrationDeleteEndpoint { get; set; } = false;
 
     /// <summary>
     ///     Describes whether GET /register/{ClientId} is used when testing with this bank.
     /// </summary>
-    public bool UseReadEndpoint { get; set; } = false;
+    public bool UseRegistrationGetEndpoint { get; set; } = false;
 
     public bool UseRegistrationAccessToken { get; set; } = false;
 }
@@ -48,11 +48,15 @@ public class AccountAndTransactionApiSettings
 {
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public bool UseGetPartyEndpoint { get; set; } = true;
+
+    public bool UseGetPartiesEndpoint { get; set; } = true;
 }
 
 public class PaymentInitiationApiSettings
 {
-    public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
+    public bool UseDomesticPaymentConsentGetFundsConfirmationEndpoint { get; set; } = true;
 
     public DomesticPaymentConsentExternalApiRequestAdjustments
         DomesticPaymentConsentExternalApiRequestAdjustments { get; set; } = x => x;

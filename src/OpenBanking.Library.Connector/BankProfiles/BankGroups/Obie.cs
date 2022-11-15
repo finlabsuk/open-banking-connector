@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                     }
                 },
                 BankConfigurationApiSettings = new BankConfigurationApiSettings
-                    { UseReadEndpoint = false }
+                    { UseRegistrationGetEndpoint = false }
             };
         }
     }

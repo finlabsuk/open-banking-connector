@@ -203,7 +203,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
                 IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
 
-                if (paymentInitiationApiSettings.UseConsentGetFundsConfirmationEndpoint)
+                if (paymentInitiationApiSettings.UseDomesticPaymentConsentGetFundsConfirmationEndpoint)
                 {
                     // GET consent funds confirmation
                     DomesticPaymentConsentReadFundsConfirmationResponse domesticPaymentConsentResp4 =

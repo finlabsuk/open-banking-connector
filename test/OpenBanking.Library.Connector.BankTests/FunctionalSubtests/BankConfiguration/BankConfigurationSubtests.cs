@@ -129,8 +129,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             AppTests.TestType testType)
         {
             // Delete bankRegistration
-            bool includeExternalApiOperation = false;
-            if (bankProfile.BankConfigurationApiSettings.UseDeleteEndpoint)
+            var includeExternalApiOperation = false;
+            if (bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint)
             {
                 includeExternalApiOperation = testType switch
                 {

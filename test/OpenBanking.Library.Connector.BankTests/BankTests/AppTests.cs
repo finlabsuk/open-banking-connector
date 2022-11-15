@@ -262,75 +262,81 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             if (testType is TestType.AllEndpoints)
             {
                 // Run account access consent subtests
-                foreach (AccountAccessConsentSubtestEnum subTest in
-                         AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
+                if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
                 {
-                    await AccountAccessConsentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        testData2,
-                        bankId,
-                        bankRegistrationId,
-                        bankProfile.AccountAndTransactionApiSettings,
-                        requestBuilder,
-                        requestBuilderGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("aisp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        bankUserList,
-                        apiClient);
+                    foreach (AccountAccessConsentSubtestEnum subTest in
+                             AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
+                    {
+                        await AccountAccessConsentSubtest.RunTest(
+                            subTest,
+                            bankProfile,
+                            testData2,
+                            bankId,
+                            bankRegistrationId,
+                            bankProfile.AccountAndTransactionApiSettings,
+                            requestBuilder,
+                            requestBuilderGenerator,
+                            testNameUnique,
+                            modifiedBy,
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("config"),
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("aisp")
+                                .AppendToPath($"{subTest.ToString()}"),
+                            consentAuth,
+                            bankUserList,
+                            apiClient);
+                    }
                 }
 
                 // Run domestic payment consent subtests
-                foreach (DomesticPaymentSubtestEnum subTest in
-                         DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
                 {
-                    await DomesticPaymentSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankId,
-                        bankRegistrationId,
-                        bankProfile.PaymentInitiationApiSettings,
-                        requestBuilder,
-                        requestBuilderGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("pisp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        bankUserList,
-                        apiClient);
-                }
+                    foreach (DomesticPaymentSubtestEnum subTest in
+                             DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))
+                    {
+                        await DomesticPaymentSubtest.RunTest(
+                            subTest,
+                            bankProfile,
+                            bankId,
+                            bankRegistrationId,
+                            bankProfile.PaymentInitiationApiSettings,
+                            requestBuilder,
+                            requestBuilderGenerator,
+                            testNameUnique,
+                            modifiedBy,
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("config"),
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("pisp")
+                                .AppendToPath($"{subTest.ToString()}"),
+                            consentAuth,
+                            bankUserList,
+                            apiClient);
+                    }
 
-                // Run domestic VRP consent subtests
-                foreach (DomesticVrpSubtestEnum subTest in
-                         DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
-                {
-                    await DomesticVrpSubtest.RunTest(
-                        subTest,
-                        bankProfile,
-                        bankId,
-                        bankRegistrationId,
-                        bankProfile.VariableRecurringPaymentsApiSettings,
-                        requestBuilder,
-                        requestBuilderGenerator,
-                        testNameUnique,
-                        modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("vrp")
-                            .AppendToPath($"{subTest.ToString()}"),
-                        consentAuth,
-                        bankUserList);
+                    // Run domestic VRP consent subtests
+                    foreach (DomesticVrpSubtestEnum subTest in
+                             DomesticVrpSubtest.DomesticVrpFunctionalSubtestsSupported(bankProfile))
+                    {
+                        await DomesticVrpSubtest.RunTest(
+                            subTest,
+                            bankProfile,
+                            bankId,
+                            bankRegistrationId,
+                            bankProfile.VariableRecurringPaymentsApiSettings,
+                            requestBuilder,
+                            requestBuilderGenerator,
+                            testNameUnique,
+                            modifiedBy,
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("config"),
+                            testDataProcessorFluentRequestLogging
+                                .AppendToPath("vrp")
+                                .AppendToPath($"{subTest.ToString()}"),
+                            consentAuth,
+                            bankUserList);
+                    }
                 }
             }
 

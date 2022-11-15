@@ -76,6 +76,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 null,
                 bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox))
             {
+                AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
+                {
+                    UseGetPartyEndpoint = false,
+                    UseGetPartiesEndpoint = false
+                },
                 CustomBehaviour = bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                     ? new CustomBehaviourClass
                     {

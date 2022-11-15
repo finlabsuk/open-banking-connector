@@ -303,34 +303,40 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     } while (queryString is not null && page < maxPages);
 
                     // GET /party/{accountId}
-                    PartiesResponse partyResp =
-                        await requestBuilderNew
-                            .AccountAndTransaction
-                            .Parties
-                            .ReadAsync(
-                                accountAccessConsentId,
-                                externalAccountId,
-                                modifiedBy);
+                    if (bankProfile.AccountAndTransactionApiSettings.UseGetPartyEndpoint)
+                    {
+                        PartiesResponse partyResp =
+                            await requestBuilderNew
+                                .AccountAndTransaction
+                                .Parties
+                                .ReadAsync(
+                                    accountAccessConsentId,
+                                    externalAccountId,
+                                    modifiedBy);
 
-                    // Checks
-                    partyResp.Should().NotBeNull();
-                    partyResp.Warnings.Should().BeNull();
-                    partyResp.ExternalApiResponse.Should().NotBeNull();
+                        // Checks
+                        partyResp.Should().NotBeNull();
+                        partyResp.Warnings.Should().BeNull();
+                        partyResp.ExternalApiResponse.Should().NotBeNull();
+                    }
 
                     // GET /parties/{accountId}
-                    Parties2Response partiesResp =
-                        await requestBuilderNew
-                            .AccountAndTransaction
-                            .Parties2
-                            .ReadAsync(
-                                accountAccessConsentId,
-                                externalAccountId,
-                                modifiedBy);
+                    if (bankProfile.AccountAndTransactionApiSettings.UseGetPartiesEndpoint)
+                    {
+                        Parties2Response partiesResp =
+                            await requestBuilderNew
+                                .AccountAndTransaction
+                                .Parties2
+                                .ReadAsync(
+                                    accountAccessConsentId,
+                                    externalAccountId,
+                                    modifiedBy);
 
-                    // Checks
-                    partiesResp.Should().NotBeNull();
-                    partiesResp.Warnings.Should().BeNull();
-                    partiesResp.ExternalApiResponse.Should().NotBeNull();
+                        // Checks
+                        partiesResp.Should().NotBeNull();
+                        partiesResp.Warnings.Should().BeNull();
+                        partiesResp.ExternalApiResponse.Should().NotBeNull();
+                    }
                 }
 
                 // Delete AccountAccessConsent

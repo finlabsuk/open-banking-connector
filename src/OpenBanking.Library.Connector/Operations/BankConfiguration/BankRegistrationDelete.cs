@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             bool includeExternalApiOperationValue =
                 deleteParams.IncludeExternalApiOperation ??
-                bankProfile?.BankConfigurationApiSettings.UseDeleteEndpoint ??
+                bankProfile?.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint ??
                 throw new ArgumentNullException(
                     null,
                     "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");

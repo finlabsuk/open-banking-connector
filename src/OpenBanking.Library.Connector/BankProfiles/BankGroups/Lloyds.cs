@@ -70,7 +70,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                     }
                 },
                 BankConfigurationApiSettings = new BankConfigurationApiSettings
-                    { UseDeleteEndpoint = true, UseRegistrationAccessToken = true }
+                    { UseRegistrationDeleteEndpoint = true, UseRegistrationAccessToken = true }
             };
         }
     }
