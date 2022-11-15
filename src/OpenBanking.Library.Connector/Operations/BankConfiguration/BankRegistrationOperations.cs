@@ -42,7 +42,7 @@ internal class
         IObjectRead<BankRegistrationResponse, BankRegistrationReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
-    private readonly IBankProfileDefinitions _bankProfileDefinitions;
+    private readonly IBankProfileService _bankProfileService;
     private readonly IOpenIdConfigurationRead _configurationRead;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IDbReadWriteEntityMethods<BankRegistrationPersisted> _entityMethods;
@@ -61,11 +61,11 @@ internal class
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IDbReadOnlyEntityMethods<Bank> bankMethods,
-        IBankProfileDefinitions bankProfileDefinitions,
+        IBankProfileService bankProfileService,
         IGrantPost grantPost)
     {
         _bankMethods = bankMethods;
-        _bankProfileDefinitions = bankProfileDefinitions;
+        _bankProfileService = bankProfileService;
         _grantPost = grantPost;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
@@ -84,7 +84,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         BankProfile? bankProfile = request.BankProfile is { } bankProfileEnum
-            ? _bankProfileDefinitions.GetBankProfile(bankProfileEnum)
+            ? _bankProfileService.GetBankProfile(bankProfileEnum)
             : null;
 
         OAuth2ResponseMode defaultResponseMode =
@@ -281,7 +281,7 @@ internal class
         BankProfile? bankProfile = null;
         if (readParams.BankProfileEnum is not null)
         {
-            bankProfile = _bankProfileDefinitions.GetBankProfile(readParams.BankProfileEnum.Value);
+            bankProfile = _bankProfileService.GetBankProfile(readParams.BankProfileEnum.Value);
         }
 
         // Load BankRegistration

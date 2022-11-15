@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IDbService dbService,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
             IApiVariantMapper apiVariantMapper,
-            IBankProfileDefinitions bankProfileDefinitions)
+            IBankProfileService bankProfileService)
         {
             TimeProvider = timeProvider;
             ApiClient = apiClient;
@@ -29,14 +29,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             DbService = dbService;
             SoftwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
             ApiVariantMapper = apiVariantMapper;
-            BankProfileDefinitions = bankProfileDefinitions;
+            BankProfileService = bankProfileService;
         }
 
         public ITimeProvider TimeProvider { get; }
         public DateTimeOffset Created { get; set; }
         public IApiClient ApiClient { get; }
         public IInstrumentationClient Instrumentation { get; }
-        public IBankProfileDefinitions BankProfileDefinitions { get; }
+        public IBankProfileService BankProfileService { get; }
         public IDbService DbService { get; }
         public IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
         public IApiVariantMapper ApiVariantMapper { get; }

@@ -3,27 +3,40 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
-public abstract class BankGroupBase<TBank> : IBankGroup
-    where TBank : Enum
+public abstract class BankGroupBase<TBank> : IBankGroup<TBank>
+    where TBank : struct, Enum
 {
+    protected BankGroupBase(BankGroupEnum bankGroupEnum)
+    {
+        BankGroupEnum = bankGroupEnum;
+    }
+
     protected abstract ConcurrentDictionary<BankProfileEnum, TBank> BankProfileToBank { get; }
 
-    public ReadOnlyDictionary<BankProfileEnum, string> BankProfileToBankName =>
-        new(BankProfileToBank.ToDictionary(keyValuePair => keyValuePair.Key, x => x.Value.ToString()));
+    public BankGroupEnum BankGroupEnum { get; }
 
-    public string GetBankString(BankProfileEnum bankProfile) => GetBank(bankProfile).ToString();
-
-    public abstract BankProfile GetBankProfile(
-        BankProfileEnum bankProfileEnum,
-        HiddenPropertiesDictionary hiddenPropertiesDictionary);
-
-    // This is public due to use of extension methods in BankTests assembly
+    /// <summary>
+    ///     Convert bank profile enum to bank enum.
+    /// </summary>
+    /// <param name="bankProfile"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public TBank GetBank(BankProfileEnum bankProfile) =>
-        BankProfileToBank.TryGetValue(bankProfile, out TBank? bank)
+        BankProfileToBank.TryGetValue(bankProfile, out TBank bank)
             ? bank
-            : throw new ArgumentOutOfRangeException(nameof(bankProfile), bankProfile, null);
+            : throw new ArgumentOutOfRangeException(
+                nameof(bankProfile),
+                bankProfile,
+                $"Bank profile {nameof(bankProfile)} does not represent a bank of type {nameof(TBank)}");
+
+    /// <summary>
+    ///     Convert bank enum to bank profile enum
+    /// </summary>
+    /// <param name="bank"></param>
+    /// <returns></returns>
+    public BankProfileEnum GetBankProfile(TBank bank) =>
+        BankProfileToBank.Single(x => x.Value.Equals(bank)).Key; // NB: always exists
 }

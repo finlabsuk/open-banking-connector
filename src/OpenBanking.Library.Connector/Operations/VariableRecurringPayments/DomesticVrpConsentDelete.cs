@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions,
+            IBankProfileService bankProfileService,
             IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,

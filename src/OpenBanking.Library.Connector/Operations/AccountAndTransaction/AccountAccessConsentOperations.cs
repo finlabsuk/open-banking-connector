@@ -31,7 +31,7 @@ internal class
 {
     private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
 
-    private readonly IBankProfileDefinitions _bankProfileDefinitions;
+    private readonly IBankProfileService _bankProfileService;
 
     private readonly ConsentCommon<AccountAccessConsentPersisted,
         AccountAccessConsentRequest,
@@ -56,12 +56,12 @@ internal class
         IApiVariantMapper mapper,
         IGrantPost grantPost,
         IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> bankApiSetMethods,
-        IBankProfileDefinitions bankProfileDefinitions,
+        IBankProfileService bankProfileService,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
         _bankApiSetMethods = bankApiSetMethods;
         _grantPost = grantPost;
-        _bankProfileDefinitions = bankProfileDefinitions;
+        _bankProfileService = bankProfileService;
         _entityMethods = entityMethods;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -94,7 +94,7 @@ internal class
         BankProfile? bankProfile = null;
         if (request.BankProfile is not null)
         {
-            bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
+            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
         }
 
         // Determine entity ID

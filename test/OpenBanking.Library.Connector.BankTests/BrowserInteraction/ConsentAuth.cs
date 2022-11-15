@@ -13,25 +13,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInterac
 
 public class ConsentAuth
 {
-    private readonly IBankProfileDefinitions _bankProfileDefinitions;
+    private readonly IBankProfileService _bankProfileService;
     private readonly BrowserTypeLaunchOptions _launchOptions;
 
-    public ConsentAuth(BrowserTypeLaunchOptions launchOptions, IBankProfileDefinitions bankProfileDefinitions)
+    public ConsentAuth(BrowserTypeLaunchOptions launchOptions, IBankProfileService bankProfileService)
     {
         _launchOptions = launchOptions;
-        _bankProfileDefinitions = bankProfileDefinitions;
+        _bankProfileService = bankProfileService;
     }
 
     private IBankUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
     {
-        return _bankProfileDefinitions.GetBankGroup(_bankProfileDefinitions.GetBankGroupEnum(bankProfileEnum)) switch
+        return _bankProfileService.GetBankGroupEnum(bankProfileEnum) switch
         {
-            Danske danske => new DanskeUiMethods(danske.GetBank(bankProfileEnum)),
-            Hsbc hsbc => new HsbcUiMethods(hsbc.GetBank(bankProfileEnum)),
-            Lloyds lloyds => new LloydsUiMethods(lloyds.GetBank(bankProfileEnum)),
-            Monzo monzo => new MonzoUiMethods(monzo.GetBank(bankProfileEnum)),
-            NatWest natWest => new NatWestUiMethods(natWest.GetBank(bankProfileEnum)),
-            Obie obie => new ObieUiMethods(obie.GetBank(bankProfileEnum)),
+            BankGroupEnum.Danske => new DanskeUiMethods(_bankProfileService.GetBank<DanskeBank>(bankProfileEnum)),
+            BankGroupEnum.Hsbc => new HsbcUiMethods(_bankProfileService.GetBank<HsbcBank>(bankProfileEnum)),
+            BankGroupEnum.Lloyds => new LloydsUiMethods(_bankProfileService.GetBank<LloydsBank>(bankProfileEnum)),
+            BankGroupEnum.Obie => new ObieUiMethods(_bankProfileService.GetBank<ObieBank>(bankProfileEnum)),
+            BankGroupEnum.Monzo => new MonzoUiMethods(_bankProfileService.GetBank<MonzoBank>(bankProfileEnum)),
+            BankGroupEnum.NatWest => new NatWestUiMethods(_bankProfileService.GetBank<NatWestBank>(bankProfileEnum)),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

@@ -6,9 +6,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
-public interface IBankProfileDefinitions
+public interface IBankProfileService
 {
     BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
-    IBankGroup GetBankGroup(BankGroupEnum bankGroupEnum);
     BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum);
+    TBank GetBank<TBank>(BankProfileEnum bankProfileEnum)
+        where TBank : struct, Enum;
 }

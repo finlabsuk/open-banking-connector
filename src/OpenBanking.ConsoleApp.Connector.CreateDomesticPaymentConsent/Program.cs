@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
         {
             // Get bank profile definitions
             var bankProfileDefinitions =
-                host.Services.GetRequiredService<BankProfileDefinitions>();
+                host.Services.GetRequiredService<BankProfileService>();
 
             // Get scoped request builder
             using IRequestBuilderContainer scopedRequestBuilder =

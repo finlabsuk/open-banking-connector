@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation,
-                    _sharedContext.BankProfileDefinitions,
+                    _sharedContext.BankProfileService,
                     new OpenIdConfigurationRead(_sharedContext.ApiClient)));
 
         public IBankRegistrationsContext
@@ -93,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation,
-                    _sharedContext.BankProfileDefinitions));
+                    _sharedContext.BankProfileService));
 
         public ILocalEntityContext<PaymentInitiationApiRequest, IPaymentInitiationApiQuery, PaymentInitiationApiResponse
             , PaymentInitiationApiResponse> PaymentInitiationApis =>
@@ -107,7 +107,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                     _sharedContext.TimeProvider,
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation,
-                    _sharedContext.BankProfileDefinitions));
+                    _sharedContext.BankProfileService));
 
         public ILocalEntityContext<VariableRecurringPaymentsApiRequest, IVariableRecurringPaymentsApiQuery,
             VariableRecurringPaymentsApiResponse, VariableRecurringPaymentsApiResponse> VariableRecurringPaymentsApis
@@ -122,6 +122,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                         _sharedContext.TimeProvider,
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.Instrumentation,
-                        _sharedContext.BankProfileDefinitions));
+                        _sharedContext.BankProfileService));
     }
 }

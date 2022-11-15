@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute
                     .For<IProcessedSoftwareStatementProfileStore>(),
                 Substitute.For<IApiVariantMapper>(),
-                Substitute.For<IBankProfileDefinitions>());
+                Substitute.For<IBankProfileService>());
         }
 
 
@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
                 Substitute.For<IApiClient>(),
                 Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                 Substitute.For<IDbService>(),
-                Substitute.For<IBankProfileDefinitions>());
+                Substitute.For<IBankProfileService>());
         }
     }
 }

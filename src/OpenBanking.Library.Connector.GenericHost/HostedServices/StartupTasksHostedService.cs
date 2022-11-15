@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
     public class StartupTasksHostedService : IHostedService
     {
         // Ensures this set up at application start-up
-        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IBankProfileService _bankProfileService;
 
         private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
             ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
             IServiceScopeFactory serviceScopeFactory,
             IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
-            IBankProfileDefinitions bankProfileDefinitions,
+            IBankProfileService bankProfileService,
             ILogger<StartupTasksHostedService> logger)
         {
             _databaseSettingsProvider =
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
                 throw new ArgumentNullException(nameof(databaseSettingsProvider));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
             _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
-            _bankProfileDefinitions = bankProfileDefinitions;
+            _bankProfileService = bankProfileService;
             _logger = logger;
         }
 

@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 {
     internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistrationDeleteParams>
     {
-        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IBankProfileService _bankProfileService;
         private readonly IGrantPost _grantPost;
 
         public BankRegistrationDelete(
@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions,
+            IBankProfileService bankProfileService,
             IGrantPost grantPost) : base(
             entityMethods,
             dbSaveChangesMethod,
@@ -36,7 +36,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             softwareStatementProfileRepo,
             instrumentationClient)
         {
-            _bankProfileDefinitions = bankProfileDefinitions;
+            _bankProfileService = bankProfileService;
             _grantPost = grantPost;
         }
 
@@ -49,7 +49,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 new List<IFluentResponseInfoOrWarningMessage>();
 
             BankProfile? bankProfile = deleteParams.BankProfileEnum is not null
-                ? _bankProfileDefinitions.GetBankProfile(deleteParams.BankProfileEnum.Value)
+                ? _bankProfileService.GetBankProfile(deleteParams.BankProfileEnum.Value)
                 : null;
 
             bool includeExternalApiOperationValue =

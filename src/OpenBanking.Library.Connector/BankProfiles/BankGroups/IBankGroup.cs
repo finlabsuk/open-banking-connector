@@ -2,17 +2,16 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.ObjectModel;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Sandbox;
+using System.Collections.Concurrent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
-public interface IBankGroup
-{
-    ReadOnlyDictionary<BankProfileEnum, string> BankProfileToBankName { get; }
-    string GetBankString(BankProfileEnum bankProfile);
+public interface IBankGroup { }
 
-    BankProfile GetBankProfile(
-        BankProfileEnum bankProfileEnum,
-        HiddenPropertiesDictionary hiddenPropertiesDictionary);
+public interface IBankGroup<TBank> : IBankGroup
+    where TBank : struct, Enum
+{
+    BankGroupEnum BankGroupEnum { get; }
+    TBank GetBank(BankProfileEnum bankProfile);
+    BankProfileEnum GetBankProfile(TBank bank);
 }

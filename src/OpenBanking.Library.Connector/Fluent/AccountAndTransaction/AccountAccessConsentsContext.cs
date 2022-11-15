@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.ApiVariantMapper,
                 new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
-                sharedContext.BankProfileDefinitions,
+                sharedContext.BankProfileService,
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             CreateObject = accountAccessConsentOperations;
             ReadObject = accountAccessConsentOperations;

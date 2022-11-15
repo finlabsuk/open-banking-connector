@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
                     ProcessedSoftwareStatementProfileStore>();
 
             // Set up bank profile definitions
-            services.AddSingleton<IBankProfileDefinitions, BankProfileDefinitions>();
+            services.AddSingleton<IBankProfileService, BankProfileService>();
 
             // Set up time provider
             services.AddSingleton<ITimeProvider, TimeProvider>();

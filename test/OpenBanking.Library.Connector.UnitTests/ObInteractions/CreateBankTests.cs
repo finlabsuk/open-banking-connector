@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
                     Substitute.For<ITimeProvider>(),
                     Substitute.For<IProcessedSoftwareStatementProfileStore>(),
                     Substitute.For<IInstrumentationClient>(),
-                    Substitute.For<IBankProfileDefinitions>());
+                    Substitute.For<IBankProfileService>());
 
             var newBank = new AccountAndTransactionApiRequest
             {

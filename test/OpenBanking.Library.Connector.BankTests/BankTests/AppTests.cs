@@ -81,7 +81,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             var bankProfilesSettingsProvider =
                 new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
             var bankProfileDefinitions =
-                new BankProfileDefinitions(bankProfilesSettingsProvider);
+                new BankProfileService(bankProfilesSettingsProvider);
             var data =
                 new TheoryData<BankTestData1, BankTestData2>();
 
@@ -179,7 +179,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Get bank profile definitions
             var bankProfileDefinitions =
-                _serviceProvider.GetRequiredService<IBankProfileDefinitions>();
+                _serviceProvider.GetRequiredService<IBankProfileService>();
             BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
             // Get bank users

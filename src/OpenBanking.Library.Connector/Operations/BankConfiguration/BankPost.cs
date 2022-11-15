@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
 internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguration.Request.Bank, BankResponse>
 {
-    private readonly IBankProfileDefinitions _bankProfileDefinitions;
+    private readonly IBankProfileService _bankProfileService;
     private readonly IOpenIdConfigurationRead _configurationRead;
 
     public BankPost(
@@ -28,7 +28,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
         ITimeProvider timeProvider,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
-        IBankProfileDefinitions bankProfileDefinitions,
+        IBankProfileService bankProfileService,
         IOpenIdConfigurationRead configurationRead) : base(
         entityMethods,
         dbSaveChangesMethod,
@@ -36,7 +36,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
         softwareStatementProfileRepo,
         instrumentationClient)
     {
-        _bankProfileDefinitions = bankProfileDefinitions;
+        _bankProfileService = bankProfileService;
         _configurationRead = configurationRead;
     }
 
@@ -49,7 +49,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             new List<IFluentResponseInfoOrWarningMessage>();
 
         BankProfile? bankProfile = request.BankProfile is { } bankProfileEnum
-            ? _bankProfileDefinitions.GetBankProfile(bankProfileEnum)
+            ? _bankProfileService.GetBankProfile(bankProfileEnum)
             : null;
 
         CustomBehaviourClass? customBehaviour =

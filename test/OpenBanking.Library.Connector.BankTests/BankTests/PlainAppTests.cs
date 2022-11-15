@@ -131,7 +131,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     apiClient,
                     processedSoftwareStatementProfileStore,
                     GetDbContext(),
-                    new BankProfileDefinitions(bankProfilesSettingsProvider)),
+                    new BankProfileService(bankProfilesSettingsProvider)),
                 false);
 
             UnsetTestLogging();

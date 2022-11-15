@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiClient apiClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
             BaseDbContext dbContext,
-            IBankProfileDefinitions bankProfileDefinitions)
+            IBankProfileService bankProfileService)
         {
             _dbContext = dbContext;
             RequestBuilder = new RequestBuilder(
@@ -38,7 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 apiClient,
                 softwareStatementProfilesRepository,
                 new DbService(dbContext),
-                bankProfileDefinitions);
+                bankProfileService);
         }
 
         public void Dispose()

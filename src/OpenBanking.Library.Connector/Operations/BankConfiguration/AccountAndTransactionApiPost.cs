@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
     internal class AccountAndTransactionApiPost : LocalEntityCreate<AccountAndTransactionApiEntity,
         AccountAndTransactionApiRequest, AccountAndTransactionApiResponse>
     {
-        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IBankProfileService _bankProfileService;
 
         public AccountAndTransactionApiPost(
             IDbReadWriteEntityMethods<AccountAndTransactionApiEntity> entityMethods,
@@ -25,14 +25,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ITimeProvider timeProvider,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IInstrumentationClient instrumentationClient,
-            IBankProfileDefinitions bankProfileDefinitions) : base(
+            IBankProfileService bankProfileService) : base(
             entityMethods,
             dbSaveChangesMethod,
             timeProvider,
             softwareStatementProfileRepo,
             instrumentationClient)
         {
-            _bankProfileDefinitions = bankProfileDefinitions;
+            _bankProfileService = bankProfileService;
         }
 
         protected override async Task<AccountAndTransactionApiResponse> AddEntity(
@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             BankProfile? bankProfile = null;
             if (request.BankProfile is not null)
             {
-                bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
+                bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
             }
 
             // Get API version

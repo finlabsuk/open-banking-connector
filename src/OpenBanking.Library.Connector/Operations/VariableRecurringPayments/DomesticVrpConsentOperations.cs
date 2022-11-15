@@ -39,7 +39,7 @@ internal class
     private readonly IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> _apiEntityMethods;
     private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
 
-    private readonly IBankProfileDefinitions _bankProfileDefinitions;
+    private readonly IBankProfileService _bankProfileService;
 
     private readonly ConsentCommon<DomesticVrpConsentPersisted,
         DomesticVrpConsentRequest,
@@ -65,12 +65,12 @@ internal class
         IGrantPost grantPost,
         IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> apiEntityMethods,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
-        IBankProfileDefinitions bankProfileDefinitions,
+        IBankProfileService bankProfileService,
         AuthContextAccessTokenGet authContextAccessTokenGet)
     {
         _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
-        _bankProfileDefinitions = bankProfileDefinitions;
+        _bankProfileService = bankProfileService;
         _authContextAccessTokenGet = authContextAccessTokenGet;
         _entityMethods = entityMethods;
         _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
@@ -106,7 +106,7 @@ internal class
         BankProfile? bankProfile = null;
         if (request.BankProfile is not null)
         {
-            bankProfile = _bankProfileDefinitions.GetBankProfile(request.BankProfile.Value);
+            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
         }
 
         // Determine entity ID

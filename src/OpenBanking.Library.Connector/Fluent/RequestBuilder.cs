@@ -58,7 +58,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     {
         private readonly IApiClient _apiClient;
         private readonly IApiVariantMapper _apiVariantMapper;
-        private readonly IBankProfileDefinitions _bankProfileDefinitions;
+        private readonly IBankProfileService _bankProfileService;
         private readonly IDbService _dbService;
         private readonly IInstrumentationClient _logger;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
@@ -71,13 +71,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
             IApiClient apiClient,
             IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
             IDbService dbService,
-            IBankProfileDefinitions bankProfileDefinitions)
+            IBankProfileService bankProfileService)
         {
             _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
             _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
             _softwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
             _dbService = dbService;
-            _bankProfileDefinitions = bankProfileDefinitions;
+            _bankProfileService = bankProfileService;
             _logger = logger.ArgNotNull(nameof(logger));
             _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         }
@@ -110,7 +110,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
                 _dbService,
                 _softwareStatementProfileCachedRepo,
                 _apiVariantMapper,
-                _bankProfileDefinitions)
+                _bankProfileService)
             {
                 Created = _timeProvider.GetUtcNow()
             };

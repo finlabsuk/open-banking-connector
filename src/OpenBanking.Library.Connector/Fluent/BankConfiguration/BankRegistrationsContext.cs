@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.ApiVariantMapper,
                 new OpenIdConfigurationRead(sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
-                sharedContext.BankProfileDefinitions,new GrantPost(sharedContext.ApiClient));
+                sharedContext.BankProfileService,new GrantPost(sharedContext.ApiClient));
             ReadLocalObject =
                 new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
                     BankRegistrationResponse>(
@@ -57,7 +57,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.BankProfileDefinitions,
+                sharedContext.BankProfileService,
                 new GrantPost(sharedContext.ApiClient));
             CreateObject = bankRegistrationOperations;
         }
