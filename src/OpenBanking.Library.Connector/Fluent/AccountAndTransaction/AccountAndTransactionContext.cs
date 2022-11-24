@@ -71,7 +71,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient))));
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation)));
 
         public IReadOnlyExternalEntityContext<BalancesResponse> Balances =>
             new ReadOnlyExternalEntityContextInternal<BalancesResponse>(
@@ -87,7 +88,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient))));
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation)));
 
         public IReadOnlyExternalEntityContext<PartiesResponse> Parties =>
             new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
@@ -103,7 +105,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient))));
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation)));
 
         public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
             new ReadOnlyExternalEntityContextInternal<Parties2Response>(
@@ -119,7 +122,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient))));
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation)));
 
         public ITransactionsContext<TransactionsResponse> Transactions =>
             new TransactionsContextInternal<TransactionsResponse>(
@@ -136,6 +140,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient))));
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation)));
     }
 }

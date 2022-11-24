@@ -90,6 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     bankIssuerUrl,
                     "openid payments",
                     bankRegistration,
+                    persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     createdBy);
 
             // Create external object at bank API

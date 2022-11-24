@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -18,6 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IGrantPost _grantPost;
+        private readonly IInstrumentationClient _instrumentationClient;
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
@@ -25,12 +27,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
-            IGrantPost grantPost)
+            IGrantPost grantPost,
+            IInstrumentationClient instrumentationClient)
         {
             _softwareStatementProfileRepo = softwareStatementProfileRepo;
             _dbSaveChangesMethod = dbSaveChangesMethod;
             _timeProvider = timeProvider;
             _grantPost = grantPost;
+            _instrumentationClient = instrumentationClient;
         }
 
         public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
@@ -38,6 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string bankIssuerUrl,
             string? requestScope,
             BankRegistration bankRegistration,
+            string tokenEndpoint,
             string? modifiedBy)
             where TConsentEntity : BaseConsent
         {
@@ -87,9 +92,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     consent.ExternalApiId,
                     nonce,
                     requestScope,
+                    processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpoint,
                     jsonSerializerSettings,
-                    processedSoftwareStatementProfile.ApiClient);
+                    processedSoftwareStatementProfile.ApiClient,
+                    _instrumentationClient);
 
             // Update auth context with token
             consent.UpdateAccessToken(

@@ -109,7 +109,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.NatWest_RoyalBankOfScotlandSandbox => BankGroupEnum.NatWest,
                 BankProfileEnum.NatWest_NatWest => BankGroupEnum.NatWest,
                 BankProfileEnum.NatWest_RoyalBankOfScotland => BankGroupEnum.NatWest,
-                BankProfileEnum.NatWest_UlsterBankNI => BankGroupEnum.NatWest,
+                BankProfileEnum.NatWest_UlsterBankNi => BankGroupEnum.NatWest,
                 BankProfileEnum.Lloyds_Sandbox => BankGroupEnum.Lloyds,
                 BankProfileEnum.Lloyds_LloydsPersonal => BankGroupEnum.Lloyds,
                 BankProfileEnum.Lloyds_LloydsBusiness => BankGroupEnum.Lloyds,

@@ -346,6 +346,7 @@ internal class
                 bankIssuerUrl,
                 "openid payments",
                 bankRegistration,
+                persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 readParams.ModifiedBy);
 
         // Read object from external API

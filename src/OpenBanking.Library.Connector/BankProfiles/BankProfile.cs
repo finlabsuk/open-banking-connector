@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -19,7 +20,9 @@ public delegate bool RegistrationScopeIsValid(RegistrationScopeEnum registration
 public delegate AccountAndTransactionModelsPublic.OBReadConsent1 AccountAccessConsentExternalApiRequestAdjustments(
     AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest);
 
-public delegate PaymentInitiationModelsPublic.OBWriteDomesticConsent4 DomesticPaymentConsentExternalApiRequestAdjustments(PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest);
+public delegate PaymentInitiationModelsPublic.OBWriteDomesticConsent4
+    DomesticPaymentConsentExternalApiRequestAdjustments(
+        PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest);
 
 public delegate DomesticVrpConsentRequest DomesticVrpConsentAdjustments(DomesticVrpConsentRequest domesticVrpConsent);
 
@@ -42,6 +45,8 @@ public class BankConfigurationApiSettings
     public bool UseRegistrationGetEndpoint { get; set; } = false;
 
     public bool UseRegistrationAccessToken { get; set; } = false;
+
+    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethod.TlsClientAuth;
 }
 
 public class AccountAndTransactionApiSettings

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -63,14 +62,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create VariableRecurringPaymentsApi
-            VariableRecurringPaymentsApiRequest variableRecurringPaymentsApiRequest =
-                bankProfile.GetVariableRecurringPaymentsApiRequest(Guid.Empty);
+            var variableRecurringPaymentsApiRequest =
+                new VariableRecurringPaymentsApiRequest
+                {
+                    BankProfile = bankProfile.BankProfileEnum,
+                    BankId = Guid.Empty,
+                    ApiVersion =
+                        bankProfile.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+                        throw new InvalidOperationException(
+                            "No VariableRecurringPaymentsApi specified in bank profile."),
+                    BaseUrl = bankProfile.VariableRecurringPaymentsApi.BaseUrl,
+                };
             await configFluentRequestLogging
                 .AppendToPath("variableRecurringPaymentsApi")
                 .AppendToPath("postRequest")
                 .WriteFile(variableRecurringPaymentsApiRequest);
-            variableRecurringPaymentsApiRequest.Reference = testNameUnique;
             variableRecurringPaymentsApiRequest.BankId = bankId;
+            variableRecurringPaymentsApiRequest.Reference = testNameUnique;
+            variableRecurringPaymentsApiRequest.CreatedBy = modifiedBy;
             VariableRecurringPaymentsApiResponse variableRecurringPaymentsApiResponse =
                 await requestBuilder
                     .BankConfiguration

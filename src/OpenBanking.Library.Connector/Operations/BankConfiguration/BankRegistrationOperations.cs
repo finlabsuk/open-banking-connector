@@ -158,6 +158,7 @@ internal class
         // Determine TokenEndpointAuthMethod
         TokenEndpointAuthMethod tokenEndpointAuthMethod = GetTokenEndpointAuthMethod(
             request,
+            bankProfile,
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
@@ -385,58 +386,50 @@ internal class
 
     private static TokenEndpointAuthMethod GetTokenEndpointAuthMethod(
         BankRegistration request,
+        BankProfile? bankProfile,
         bool supportsSca,
         IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupported)
     {
-        TokenEndpointAuthMethod tokenEndpointAuthMethod;
-        if (request.TokenEndpointAuthMethod is TokenEndpointAuthMethod.ClientSecretBasic &&
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            request.TokenEndpointAuthMethod ??
+            bankProfile?.BankConfigurationApiSettings.TokenEndpointAuthMethod ??
+            throw new ArgumentException(
+                $"Request property {nameof(request.TokenEndpointAuthMethod)} is null " +
+                $"and cannot be obtained using request property {request.BankProfile}.");
+
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.ClientSecretBasic &&
             !supportsSca)
         {
-            throw new ArgumentOutOfRangeException(
-                nameof(request.TokenEndpointAuthMethod),
-                $"{nameof(request.TokenEndpointAuthMethod)} specified as {TokenEndpointAuthMethod.ClientSecretBasic} for bank supporting SCA which is not supported.");
+            throw new ArgumentException(
+                $"Request property {nameof(request.TokenEndpointAuthMethod)} resolves to " +
+                $"{TokenEndpointAuthMethod.ClientSecretBasic} for bank supporting SCA which is not supported.");
         }
 
         if (tokenEndpointAuthMethodsSupported is { } methodsSupported)
         {
-            var orderedMethodsSupported = new List<TokenEndpointAuthMethod>();
+            var methodsSupportedFilter = new List<TokenEndpointAuthMethod>();
             if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
             {
-                orderedMethodsSupported.Add(TokenEndpointAuthMethod.TlsClientAuth);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethod.TlsClientAuth);
             }
 
             if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
             {
-                orderedMethodsSupported.Add(TokenEndpointAuthMethod.PrivateKeyJwt);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethod.PrivateKeyJwt);
             }
 
             if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic) &&
                 !supportsSca)
             {
-                orderedMethodsSupported.Add(TokenEndpointAuthMethod.ClientSecretBasic);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethod.ClientSecretBasic);
             }
 
-            tokenEndpointAuthMethod = request.TokenEndpointAuthMethod switch
+            if (!methodsSupportedFilter.Contains(tokenEndpointAuthMethod))
             {
-                { } requestAuthMethod => orderedMethodsSupported.Contains(requestAuthMethod)
-                    ? requestAuthMethod
-                    : throw new ArgumentOutOfRangeException(
-                        nameof(request.TokenEndpointAuthMethod),
-                        $"{nameof(request.TokenEndpointAuthMethod)} specified as {requestAuthMethod} which is not specified as supported by OpenID Configuration for Bank's IssuerUrl."),
-                _ => orderedMethodsSupported.Any()
-                    ? orderedMethodsSupported.First()
-                    : throw new ArgumentNullException(
-                        nameof(request.TokenEndpointAuthMethod),
-                        $"{nameof(request.TokenEndpointAuthMethod)} specified as null and not obtainable from OpenID Configuration for Bank's IssuerUrl. ")
-            };
-        }
-        else
-        {
-            tokenEndpointAuthMethod =
-                request.TokenEndpointAuthMethod ??
-                throw new ArgumentNullException(
-                    nameof(request.TokenEndpointAuthMethod),
-                    $"{nameof(request.TokenEndpointAuthMethod)} specified as null and not obtainable from OpenID Configuration for Bank's IssuerUrl. ");
+                throw new ArgumentException(
+                    $"Request property {nameof(request.TokenEndpointAuthMethod)} resolves to " +
+                    $"{tokenEndpointAuthMethod} which is not specified as supported by OpenID Configuration for Bank's IssuerUrl.");
+            }
         }
 
         return tokenEndpointAuthMethod;

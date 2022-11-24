@@ -72,7 +72,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient)));
+                    new GrantPost(_sharedContext.ApiClient),
+                    _sharedContext.Instrumentation));
             CreateObject = domesticVrpConsentOperations;
             ReadObject = domesticVrpConsentOperations;
             ReadFundsConfirmationObject = domesticVrpConsentOperations;

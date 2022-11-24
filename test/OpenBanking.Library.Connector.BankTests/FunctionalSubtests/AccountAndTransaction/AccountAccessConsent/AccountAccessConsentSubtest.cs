@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -55,17 +53,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create AccountAndTransactionApi
+            var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                BankId = Guid.Empty,
+                ApiVersion =
+                    bankProfile.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
+                    throw new InvalidOperationException(
+                        "No AccountAndTransactionApi specified in bank profile."),
+                BaseUrl = bankProfile.AccountAndTransactionApi.BaseUrl
+            };
             await configFluentRequestLogging
                 .AppendToPath("accountAndTransactionApi")
                 .AppendToPath("postRequest")
-                .WriteFile(bankProfile.GetAccountAndTransactionApiRequest(default));
-            var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
-            {
-                Reference = testNameUnique,
-                CreatedBy = modifiedBy,
-                BankProfile = bankProfile.BankProfileEnum,
-                BankId = bankId,
-            };
+                .WriteFile(accountAndTransactionApiRequest);
+            accountAndTransactionApiRequest.BankId = bankId;
+            accountAndTransactionApiRequest.Reference = testNameUnique;
+            accountAndTransactionApiRequest.CreatedBy = modifiedBy;
+
             AccountAndTransactionApiResponse accountAndTransactionApiResponse =
                 await requestBuilder
                     .BankConfiguration

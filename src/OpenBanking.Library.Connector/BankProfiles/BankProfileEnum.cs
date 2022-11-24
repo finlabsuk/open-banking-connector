@@ -31,7 +31,7 @@ public enum BankProfileEnum
     NatWest_RoyalBankOfScotland,
 
     [EnumMember(Value = "NatWest_UlsterBankNI")]
-    NatWest_UlsterBankNI,
+    NatWest_UlsterBankNi,
 
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,

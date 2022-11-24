@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -29,7 +28,14 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             string testNameUnique)
         {
             // Create bank
-            Bank bankRequest = bankProfile.GetBankRequest();
+            var bankRequest = new Bank
+            {
+                IssuerUrl = bankProfile.IssuerUrl,
+                FinancialId = bankProfile.FinancialId,
+                DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
+                CustomBehaviour = bankProfile.CustomBehaviour,
+                SupportsSca = bankProfile.SupportsSca,
+            };
             BankResponse bankResp = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -37,11 +43,14 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid bankId = bankResp.Id;
 
             // Create bank registration
-            BankRegistration registrationRequest = bankProfile.GetBankRegistrationRequest(
-                bankId,
-                softwareStatementProfileId,
-                softwareStatementAndCertificateProfileOverrideCase,
-                registrationScope);
+            var registrationRequest = new BankRegistration
+            {
+                BankId = bankId,
+                SoftwareStatementProfileId = softwareStatementProfileId,
+                SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
+                RegistrationScope = registrationScope,
+                DefaultResponseMode = bankProfile.DefaultResponseMode
+            };
             BankRegistrationResponse registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations

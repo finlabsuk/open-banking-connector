@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -64,14 +63,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create PaymentInitiationApi
-            PaymentInitiationApiRequest paymentInitiationApiRequest =
-                bankProfile.GetPaymentInitiationApiRequest(Guid.Empty);
+            var paymentInitiationApiRequest =
+                new PaymentInitiationApiRequest
+                {
+                    BankProfile = bankProfile.BankProfileEnum,
+                    BankId = Guid.Empty,
+                    ApiVersion =
+                        bankProfile.PaymentInitiationApi?.PaymentInitiationApiVersion ??
+                        throw new InvalidOperationException("No PaymentInitiationApi specified in bank profile."),
+                    BaseUrl = bankProfile.PaymentInitiationApi.BaseUrl
+                };
             await configFluentRequestLogging
                 .AppendToPath("paymentInitiationApi")
                 .AppendToPath("postRequest")
                 .WriteFile(paymentInitiationApiRequest);
-            paymentInitiationApiRequest.Reference = testNameUnique;
             paymentInitiationApiRequest.BankId = bankId;
+            paymentInitiationApiRequest.Reference = testNameUnique;
             paymentInitiationApiRequest.CreatedBy = modifiedBy;
             PaymentInitiationApiResponse paymentInitiationApiResponse =
                 await requestBuilder

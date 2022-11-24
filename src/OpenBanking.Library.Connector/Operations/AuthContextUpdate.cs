@@ -120,6 +120,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string bankIssuerUrl =
                 requestObjectAudClaim ??
                 bankRegistration.BankNavigation.IssuerUrl;
+            string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
             string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
             // Only accept redirects within 10 mins of auth context (session) creation
@@ -190,9 +191,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         externalApiConsentId,
                         nonce,
                         requestScope,
+                        processedSoftwareStatementProfile,
                         bankRegistration,
+                        tokenEndpoint,
                         jsonSerializerSettings,
-                        processedSoftwareStatementProfile.ApiClient);
+                        processedSoftwareStatementProfile.ApiClient,
+                        _instrumentationClient);
 
                 // Update consent with nonce, token
                 consent.UpdateAuthContext(

@@ -31,9 +31,12 @@ internal interface IGrantPost
         string externalApiConsentId,
         string nonce,
         string? requestScope,
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
-        IApiClient matlsApiClient);
+        IApiClient matlsApiClient,
+        IInstrumentationClient instrumentationClient);
 
     Task<RefreshTokenGrantResponse> PostRefreshTokenGrantAsync(
         string refreshToken,
@@ -43,9 +46,12 @@ internal interface IGrantPost
         string externalApiConsentId,
         string nonce,
         string? requestScope,
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
-        IApiClient mtlsApiClient);
+        IApiClient mtlsApiClient,
+        IInstrumentationClient instrumentationClient);
 
     Task ValidateIdTokenAuthEndpoint(
         OAuth2RedirectData redirectData,

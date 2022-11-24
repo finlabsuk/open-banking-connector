@@ -69,7 +69,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient)));
+                    new GrantPost(_sharedContext.ApiClient),
+                    _sharedContext.Instrumentation));
             CreateObject = domesticPaymentConsentOperations;
             ReadObject = domesticPaymentConsentOperations;
             ReadFundsConfirmationObject = domesticPaymentConsentOperations;

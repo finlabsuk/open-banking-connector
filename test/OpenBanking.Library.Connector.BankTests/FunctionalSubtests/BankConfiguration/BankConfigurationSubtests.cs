@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -27,16 +26,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 FilePathBuilder testDataProcessorFluentRequestLogging)
         {
             // Create bank
+            var bankRequest = new Bank
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                IssuerUrl = bankProfile.IssuerUrl,
+                FinancialId = bankProfile.FinancialId,
+                DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
+                CustomBehaviour = bankProfile.CustomBehaviour,
+                SupportsSca = bankProfile.SupportsSca
+            };
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
                 .AppendToPath("postRequest")
-                .WriteFile(bankProfile.GetBankRequest());
-            var bankRequest = new Bank
-            {
-                Reference = testNameUnique,
-                CreatedBy = modifiedBy,
-                BankProfile = bankProfile.BankProfileEnum
-            };
+                .WriteFile(bankRequest);
+            bankRequest.Reference = testNameUnique;
+            bankRequest.CreatedBy = modifiedBy;
             BankResponse bankCreateResponse = await requestBuilder
                 .BankConfiguration
                 .Banks
@@ -58,36 +62,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankReadResponse.Warnings.Should().BeNull();
 
             // Create bankRegistration or use existing
-            await testDataProcessorFluentRequestLogging
-                .AppendToPath("bankRegistration")
-                .AppendToPath("postRequest")
-                .WriteFile(
-                    bankProfile.GetBankRegistrationRequest(
-                        default,
-                        testData1.SoftwareStatementProfileId,
-                        testData1.SoftwareStatementAndCertificateProfileOverride,
-                        testData1.RegistrationScope));
-
             var registrationRequest = new BankRegistration
             {
-                Reference = testNameUnique,
-                CreatedBy = modifiedBy,
                 BankProfile = bankProfile.BankProfileEnum,
-                BankId = bankId,
+                BankId = default, // substitute logging placeholder
                 SoftwareStatementProfileId = testData1.SoftwareStatementProfileId,
                 SoftwareStatementAndCertificateProfileOverrideCase =
                     testData1.SoftwareStatementAndCertificateProfileOverride,
                 RegistrationScope = testData1.RegistrationScope,
-                ExternalApiObject =
-                    testData2.BankRegistrationExternalApiId is not null
-                        ? new ExternalApiBankRegistration
-                        {
-                            ExternalApiId = testData2.BankRegistrationExternalApiId,
-                            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
-                            RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
-                        }
-                        : null
+                TokenEndpointAuthMethod = bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod,
+                DefaultResponseMode = bankProfile.DefaultResponseMode,
             };
+            await testDataProcessorFluentRequestLogging
+                .AppendToPath("bankRegistration")
+                .AppendToPath("postRequest")
+                .WriteFile(registrationRequest);
+            if (testData2.BankRegistrationExternalApiId is not null)
+            {
+                registrationRequest.ExternalApiObject =
+                    new ExternalApiBankRegistration
+                    {
+                        ExternalApiId = testData2.BankRegistrationExternalApiId,
+                        ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
+                        RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
+                    };
+            }
+            registrationRequest.BankId = bankId; // remove logging placeholder
+            registrationRequest.Reference = testNameUnique;
+            registrationRequest.CreatedBy = modifiedBy;
             BankRegistrationResponse registrationResp = await requestBuilder
                 .BankConfiguration
                 .BankRegistrations

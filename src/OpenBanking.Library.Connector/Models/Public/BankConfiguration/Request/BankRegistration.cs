@@ -44,8 +44,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
 
         /// <summary>
-        ///     Token endpoint authorisation method. Specify null for "most preferred" method to be selected based on
-        ///     supported methods from OpenID Configuration (IssuerUrl).
+        ///     Token endpoint authorisation method.
+        ///     Specify null to use value from BankProfile.
         /// </summary>
         public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
 

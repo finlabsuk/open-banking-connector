@@ -105,25 +105,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             if (bankRegistration.TokenEndpointAuthMethod is
                 TokenEndpointAuthMethod.PrivateKeyJwt)
             {
-                // Create JWT
-                var claims = new
-                {
-                    iss = bankRegistration.ExternalApiObject.ExternalApiId,
-                    sub = bankRegistration.ExternalApiObject.ExternalApiId,
-                    aud = tokenEndpoint,
-                    jti = Guid.NewGuid().ToString(),
-                    iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
-                    exp = DateTimeOffset.UtcNow.AddMinutes(30).ToUnixTimeSeconds()
-                };
-                string jwt = JwtFactory.CreateJwt(
-                    JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
-                    claims,
-                    processedSoftwareStatementProfile.SigningKey,
-                    processedSoftwareStatementProfile.SigningCertificate);
-                StringBuilder requestTraceSb = new StringBuilder()
-                    .AppendLine("#### JWT (Client Auth)")
-                    .Append(jwt);
-                instrumentationClient.Trace(requestTraceSb.ToString());
+                string jwt = CreateClientAssertionJwt(
+                    processedSoftwareStatementProfile,
+                    bankRegistration,
+                    tokenEndpoint,
+                    instrumentationClient);
 
                 // Add parameters
                 keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -155,9 +141,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiConsentId,
             string nonce,
             string? requestScope,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
+            string tokenEndpoint,
             JsonSerializerSettings? jsonSerializerSettings,
-            IApiClient matlsApiClient)
+            IApiClient matlsApiClient,
+            IInstrumentationClient instrumentationClient)
         {
             var keyValuePairs = new Dictionary<string, string>
             {
@@ -165,6 +154,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 { "redirect_uri", redirectUrl },
                 { "code", authCode }
             };
+
+            if (bankRegistration.TokenEndpointAuthMethod is
+                TokenEndpointAuthMethod.PrivateKeyJwt)
+            {
+                string jwt = CreateClientAssertionJwt(
+                    processedSoftwareStatementProfile,
+                    bankRegistration,
+                    tokenEndpoint,
+                    instrumentationClient);
+
+                // Add parameters
+                keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+                keyValuePairs["client_assertion"] = jwt;
+            }
 
             var response = await PostGrantAsync<AuthCodeGrantResponse>(
                 keyValuePairs,
@@ -206,15 +209,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiConsentId,
             string nonce,
             string? requestScope,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
+            string tokenEndpoint,
             JsonSerializerSettings? jsonSerializerSettings,
-            IApiClient mtlsApiClient)
+            IApiClient mtlsApiClient,
+            IInstrumentationClient instrumentationClient)
         {
             var keyValuePairs = new Dictionary<string, string>
             {
                 { "grant_type", "refresh_token" },
                 { "refresh_token", refreshToken }
             };
+
+            if (bankRegistration.TokenEndpointAuthMethod is
+                TokenEndpointAuthMethod.PrivateKeyJwt)
+            {
+                string jwt = CreateClientAssertionJwt(
+                    processedSoftwareStatementProfile,
+                    bankRegistration,
+                    tokenEndpoint,
+                    instrumentationClient);
+
+                // Add parameters
+                keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+                keyValuePairs["client_assertion"] = jwt;
+            }
 
             var response = await PostGrantAsync<RefreshTokenGrantResponse>(
                 keyValuePairs,
@@ -246,6 +266,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             }
 
             return response;
+        }
+
+        private static string CreateClientAssertionJwt(
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            BankRegistration bankRegistration,
+            string tokenEndpoint,
+            IInstrumentationClient instrumentationClient)
+        {
+            // Create JWT
+            var claims = new
+            {
+                iss = bankRegistration.ExternalApiObject.ExternalApiId,
+                sub = bankRegistration.ExternalApiObject.ExternalApiId,
+                aud = tokenEndpoint,
+                jti = Guid.NewGuid().ToString(),
+                iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                exp = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds()
+            };
+            string jwt = JwtFactory.CreateJwt(
+                JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
+                claims,
+                processedSoftwareStatementProfile.SigningKey,
+                processedSoftwareStatementProfile.SigningCertificate);
+            StringBuilder requestTraceSb = new StringBuilder()
+                .AppendLine("#### JWT (Client Auth)")
+                .Append(jwt);
+            instrumentationClient.Trace(requestTraceSb.ToString());
+            return jwt;
         }
 
         private void ValidateIdTokenCommon(
@@ -483,13 +531,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                         !doNotValidateScopeResponse)
                     {
                         throw new Exception("Requested and received scope for access token differ.");
-                    }
-                }
-                else
-                {
-                    if (bankRegistration.BankNavigation.SupportsSca)
-                    {
-                        throw new Exception("Expected scope from bank (even if not strictly required by spec).");
                     }
                 }
             }

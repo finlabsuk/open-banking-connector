@@ -117,8 +117,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
                     Scope = scope,
                     SoftwareStatement = sProfile.SoftwareStatement,
-                    TlsClientAuthSubjectDn = tlsClientAuthSubjectDn
+                    TlsClientAuthSubjectDn = tlsClientAuthSubjectDn 
                 };
+
+            if (tokenEndpointAuthMethodLocal is ClientRegistrationModelsPublic
+                    .OBRegistrationProperties1tokenEndpointAuthMethodEnum.PrivateKeyJwt)
+            {
+                registrationClaims.TokenEndpointAuthSigningAlg =
+                    ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256;
+            }
 
             if (!(bankRegistrationPostCustomBehaviour?.SubjectTypeClaim is null))
             {

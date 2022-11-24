@@ -12,7 +12,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
         RoyalBankOfScotlandSandbox,
         NatWest,
         RoyalBankOfScotland,
-        UlsterBankNI
+        UlsterBankNi
     }
 
     public class NatWest : BankGroupBase<NatWestBank>
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
                 [BankProfileEnum.NatWest_RoyalBankOfScotlandSandbox] = NatWestBank.RoyalBankOfScotlandSandbox,
                 [BankProfileEnum.NatWest_NatWest] = NatWestBank.NatWest,
                 [BankProfileEnum.NatWest_RoyalBankOfScotland] = NatWestBank.RoyalBankOfScotland,
-                [BankProfileEnum.NatWest_UlsterBankNI] = NatWestBank.UlsterBankNI
+                [BankProfileEnum.NatWest_UlsterBankNi] = NatWestBank.UlsterBankNi
             };
     }
 }

@@ -112,6 +112,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                     bankIssuerUrl,
                     "openid accounts",
                     bankRegistration,
+                    persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     readParams.ModifiedBy);
 
             // Retrieve endpoint URL

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
@@ -55,8 +54,15 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
                     demoNameUnique);
 
             // Create bank API information
-            PaymentInitiationApiRequest paymentInitiationApiRequest =
-                bankProfile.GetPaymentInitiationApiRequest(bankId);
+            var paymentInitiationApiRequest =
+                new PaymentInitiationApiRequest
+                {
+                    BankId = bankId,
+                    ApiVersion =
+                        bankProfile.PaymentInitiationApi?.PaymentInitiationApiVersion ??
+                        throw new InvalidOperationException("No PaymentInitiationApi specified in bank profile."),
+                    BaseUrl = bankProfile.PaymentInitiationApi.BaseUrl,
+                };
             paymentInitiationApiRequest.Reference = demoNameUnique;
             PaymentInitiationApiResponse response = await requestBuilder
                 .BankConfiguration
