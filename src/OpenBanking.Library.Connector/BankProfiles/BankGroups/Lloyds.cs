@@ -8,7 +8,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
 {
     public enum LloydsBank
     {
-        Lloyds
+        Sandbox,
+        LloydsPersonal,
+        LloydsBusiness,
+        LloydsCommerical,
+        HalifaxPersonal,
+        BankOfScotlandPersonal,
+        BankOfScotlandBusiness,
+        BankOfScotlandCommerical,
+        MbnaPersonal
     }
 
     public class Lloyds : BankGroupBase<LloydsBank>
@@ -18,7 +26,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
         protected override ConcurrentDictionary<BankProfileEnum, LloydsBank> BankProfileToBank { get; } =
             new()
             {
-                [BankProfileEnum.Lloyds] = LloydsBank.Lloyds
+                [BankProfileEnum.Lloyds_Sandbox] = LloydsBank.Sandbox,
+                [BankProfileEnum.Lloyds_LloydsPersonal] = LloydsBank.LloydsPersonal,
+                [BankProfileEnum.Lloyds_LloydsBusiness] = LloydsBank.LloydsBusiness,
+                [BankProfileEnum.Lloyds_LloydsCommerical] = LloydsBank.LloydsCommerical,
+                [BankProfileEnum.Lloyds_HalifaxPersonal] = LloydsBank.HalifaxPersonal,
+                [BankProfileEnum.Lloyds_BankOfScotlandPersonal] = LloydsBank.BankOfScotlandPersonal,
+                [BankProfileEnum.Lloyds_BankOfScotlandBusiness] = LloydsBank.BankOfScotlandBusiness,
+                [BankProfileEnum.Lloyds_BankOfScotlandCommerical] = LloydsBank.BankOfScotlandCommerical,
+                [BankProfileEnum.Lloyds_MbnaPersonal] = LloydsBank.MbnaPersonal
             };
     }
 }

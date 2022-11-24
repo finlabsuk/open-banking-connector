@@ -29,10 +29,10 @@ public enum BankProfileEnum
 
     [EnumMember(Value = "NatWest_RoyalBankOfScotland")]
     NatWest_RoyalBankOfScotland,
-    
+
     [EnumMember(Value = "NatWest_UlsterBankNI")]
     NatWest_UlsterBankNI,
-    
+
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,
 
@@ -48,9 +48,33 @@ public enum BankProfileEnum
     [EnumMember(Value = "Nationwide")]
     Nationwide,
 
-    [EnumMember(Value = "Lloyds")]
-    Lloyds,
+    [EnumMember(Value = "Lloyds_Sandbox")]
+    Lloyds_Sandbox,
+    
+    [EnumMember(Value = "Lloyds_LloydsPersonal")]
+    Lloyds_LloydsPersonal,
 
+    [EnumMember(Value = "Lloyds_LloydsBusiness")]
+    Lloyds_LloydsBusiness,
+
+    [EnumMember(Value = "Lloyds_LloydsCommerical")]
+    Lloyds_LloydsCommerical,
+
+    [EnumMember(Value = "Lloyds_HalifaxPersonal")]
+    Lloyds_HalifaxPersonal,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandPersonal")]
+    Lloyds_BankOfScotlandPersonal,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandBusiness")]
+    Lloyds_BankOfScotlandBusiness,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandCommerical")]
+    Lloyds_BankOfScotlandCommerical,
+
+    [EnumMember(Value = "Lloyds_MbnaPersonal")]
+    Lloyds_MbnaPersonal,
+    
     [EnumMember(Value = "Hsbc_FirstDirect")]
     Hsbc_FirstDirect,
 
