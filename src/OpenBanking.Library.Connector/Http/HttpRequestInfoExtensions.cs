@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -35,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
 
         private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)
         {
-            var acceptableContentTypes = new List<string> { "application/json", "application/jose+jwe" };
+            var acceptableContentTypes = new List<string> { "application/json" };
 
             foreach (string contentType in acceptableContentTypes)
             {

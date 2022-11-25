@@ -19,11 +19,29 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
 
         private void CreateRules()
         {
-            // Check RegistrationEndpoint
-            RuleFor(x => x.RegistrationEndpoint)
+            // Check Issuer
+            RuleFor(x => x.Issuer)
                 .Must(ValidationRules.IsNotNullOrEmpty)
                 .Must(ValidationRules.IsUrl)
-                .WithMessage($"{nameof(OpenIdConfiguration.RegistrationEndpoint)} is missing or invalid.");
+                .WithMessage($"{nameof(OpenIdConfiguration.Issuer)} is missing or invalid.");
+
+            // Check AuthorizationEndpoint
+            RuleFor(x => x.AuthorizationEndpoint)
+                .Must(ValidationRules.IsNotNullOrEmpty)
+                .Must(ValidationRules.IsUrl)
+                .WithMessage($"{nameof(OpenIdConfiguration.AuthorizationEndpoint)} is missing or invalid.");
+
+            // Check TokenEndpoint
+            RuleFor(x => x.TokenEndpoint)
+                .Must(ValidationRules.IsNotNullOrEmpty)
+                .Must(ValidationRules.IsUrl)
+                .WithMessage($"{nameof(OpenIdConfiguration.TokenEndpoint)} is missing or invalid.");
+
+            // Check JwksUri
+            RuleFor(x => x.JwksUri)
+                .Must(ValidationRules.IsNotNullOrEmpty)
+                .Must(ValidationRules.IsUrl)
+                .WithMessage($"{nameof(OpenIdConfiguration.JwksUri)} is missing or invalid.");
 
             // Check TokenEndpointAuthMethodsSupported
             RuleFor(x => x.TokenEndpointAuthMethodsSupported)

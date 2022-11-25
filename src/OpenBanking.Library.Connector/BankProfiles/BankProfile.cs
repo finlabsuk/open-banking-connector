@@ -51,6 +51,11 @@ public class BankConfigurationApiSettings
 
 public class AccountAndTransactionApiSettings
 {
+    /// <summary>
+    ///     Describes whether GET /accounts/{AccountId}/party is used when testing with this bank
+    /// </summary>
+    public bool UseGetPartyEndpoint { get; set; } = true;
+
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
 }

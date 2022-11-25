@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
 
             HttpRequestMessage result = info.CreateRequestMessage();
 
-            result.Headers.Accept.Should().HaveCount(2);
+            result.Headers.Accept.Should().HaveCount(1);
         }
     }
 }

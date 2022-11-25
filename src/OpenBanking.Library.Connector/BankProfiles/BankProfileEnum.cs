@@ -39,8 +39,26 @@ public enum BankProfileEnum
     [EnumMember(Value = "Santander")]
     Santander,
 
-    [EnumMember(Value = "Barclays")]
-    Barclays,
+    [EnumMember(Value = "Barclays_Sandbox")]
+    Barclays_Sandbox,
+
+    [EnumMember(Value = "Barclays_Personal")]
+    Barclays_Personal,
+
+    [EnumMember(Value = "Barclays_Wealth")]
+    Barclays_Wealth,
+
+    [EnumMember(Value = "Barclays_Barclaycard")]
+    Barclays_Barclaycard,
+
+    [EnumMember(Value = "Barclays_Business")]
+    Barclays_Business,
+
+    [EnumMember(Value = "Barclays_Corporate")]
+    Barclays_Corporate,
+
+    [EnumMember(Value = "Barclays_BarclaycardCommercialPayments")]
+    Barclays_BarclaycardCommercialPayments,
 
     [EnumMember(Value = "NewDayAmazon")]
     NewDayAmazon,
@@ -50,7 +68,7 @@ public enum BankProfileEnum
 
     [EnumMember(Value = "Lloyds_Sandbox")]
     Lloyds_Sandbox,
-    
+
     [EnumMember(Value = "Lloyds_LloydsPersonal")]
     Lloyds_LloydsPersonal,
 
@@ -74,7 +92,7 @@ public enum BankProfileEnum
 
     [EnumMember(Value = "Lloyds_MbnaPersonal")]
     Lloyds_MbnaPersonal,
-    
+
     [EnumMember(Value = "Hsbc_FirstDirect")]
     Hsbc_FirstDirect,
 

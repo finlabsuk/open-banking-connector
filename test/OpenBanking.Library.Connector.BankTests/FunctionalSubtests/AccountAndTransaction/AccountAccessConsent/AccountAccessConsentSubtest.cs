@@ -332,19 +332,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadParty);
                     if (testGetParties)
                     {
-                        PartiesResponse partyResp =
-                            await requestBuilderNew
-                                .AccountAndTransaction
-                                .Parties
-                                .ReadAsync(
-                                    accountAccessConsentId,
-                                    externalAccountId,
-                                    modifiedBy);
+                        if (bankProfile.AccountAndTransactionApiSettings.UseGetPartyEndpoint)
+                        {
+                            PartiesResponse partyResp =
+                                await requestBuilderNew
+                                    .AccountAndTransaction
+                                    .Parties
+                                    .ReadAsync(
+                                        accountAccessConsentId,
+                                        externalAccountId,
+                                        modifiedBy);
 
-                        // Checks
-                        partyResp.Should().NotBeNull();
-                        partyResp.Warnings.Should().BeNull();
-                        partyResp.ExternalApiResponse.Should().NotBeNull();
+                            // Checks
+                            partyResp.Should().NotBeNull();
+                            partyResp.Warnings.Should().BeNull();
+                            partyResp.ExternalApiResponse.Should().NotBeNull();
+                        }
 
                         Parties2Response partiesResp =
                             await requestBuilderNew

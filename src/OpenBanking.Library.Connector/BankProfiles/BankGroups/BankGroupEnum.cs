@@ -11,9 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum BankGroupEnum
 {
+    [EnumMember(Value = "Barclays")]
+    Barclays,
+
     [EnumMember(Value = "Danske")]
     Danske,
-    
+
     [EnumMember(Value = "Hsbc")]
     Hsbc,
 

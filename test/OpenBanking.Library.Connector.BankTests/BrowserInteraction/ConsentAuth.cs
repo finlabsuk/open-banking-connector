@@ -32,6 +32,7 @@ public class ConsentAuth
             BankGroupEnum.Obie => new ObieUiMethods(_bankProfileService.GetBank<ObieBank>(bankProfileEnum)),
             BankGroupEnum.Monzo => new MonzoUiMethods(_bankProfileService.GetBank<MonzoBank>(bankProfileEnum)),
             BankGroupEnum.NatWest => new NatWestUiMethods(_bankProfileService.GetBank<NatWestBank>(bankProfileEnum)),
+            BankGroupEnum.Barclays => new BarclaysUiMethods(_bankProfileService.GetBank<BarclaysBank>(bankProfileEnum)),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -61,7 +62,7 @@ public class ConsentAuth
         if (isFragmentRedirect)
         {
             // Wait for redirect
-            int redirectTimeout = requiresManualInteraction ? 60000 : 10000; // allow 50s for manual interaction
+            int redirectTimeout = requiresManualInteraction ? 120000 : 10000; // allow 120s for manual interaction
             await page.WaitForSelectorAsync(
                 "id=auth-fragment-redirect",
                 new PageWaitForSelectorOptions

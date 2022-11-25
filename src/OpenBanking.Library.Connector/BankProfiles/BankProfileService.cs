@@ -42,6 +42,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             // Populate dictionary of bank groups
             _bankGroupsDictionary = new BankGroupsDictionary
             {
+                [BankGroupEnum.Barclays] = new Barclays(BankGroupEnum.Barclays),
                 [BankGroupEnum.Danske] = new Danske(BankGroupEnum.Danske),
                 [BankGroupEnum.Hsbc] = new Hsbc(BankGroupEnum.Hsbc),
                 [BankGroupEnum.Lloyds] = new Lloyds(BankGroupEnum.Lloyds),
@@ -53,6 +54,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
             // Populate dictionary of bank profile generators
             _bankProfileGeneratorsDictionary = new BankProfileGeneratorsDictionary
             {
+                [BankGroupEnum.Barclays] = new BarclaysGenerator(
+                    bankProfilesSettingsProvider,
+                    GetBankGroup<BarclaysBank>(BankGroupEnum.Barclays)),
                 [BankGroupEnum.Danske] = new DanskeGenerator(
                     bankProfilesSettingsProvider,
                     GetBankGroup<DanskeBank>(BankGroupEnum.Danske)),
@@ -80,6 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                     profileEnum => new Lazy<BankProfile>(
                         () => GetBankGroupEnum(profileEnum) switch
                         {
+                            BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum),
                             BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum),
                             BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum),
                             BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum),
@@ -126,6 +131,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
                 BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
                 BankProfileEnum.Danske => BankGroupEnum.Danske,
                 BankProfileEnum.Monzo => BankGroupEnum.Monzo,
+                BankProfileEnum.Barclays_Sandbox => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_Personal => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_Wealth => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_Barclaycard => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_Business => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_Corporate => BankGroupEnum.Barclays,
+                BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroupEnum.Barclays,
                 _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
             };
 
