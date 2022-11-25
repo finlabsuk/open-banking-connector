@@ -31,14 +31,14 @@ public class AccountAccessConsentsController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAccessConsentResponse))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAccessConsentCreateResponse))]
     public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
-        AccountAccessConsentResponse fluentResponse = await _requestBuilder
+        AccountAccessConsentCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .CreateAsync(request, requestUrlWithoutQuery);
@@ -58,7 +58,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentReadResponse))]
     public async Task<IActionResult> GetAsync(
         Guid accountAccessConsentId,
         [FromHeader]
@@ -71,7 +71,7 @@ public class AccountAccessConsentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        AccountAccessConsentResponse fluentResponse = await _requestBuilder
+        AccountAccessConsentReadResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);

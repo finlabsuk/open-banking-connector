@@ -27,10 +27,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         public string ExternalApiId { get; }
     }
 
-
-    /// <summary>
-    ///     Response to ReadLocal requests
-    /// </summary>
     public abstract class DomesticVrpConsentBaseResponse : LocalObjectBaseResponse, IDomesticVrpConsentPublicQuery
     {
         internal DomesticVrpConsentBaseResponse(
@@ -38,14 +34,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId) : base(id, created, createdBy, reference)
         {
+            Warnings = warnings;
             BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
             ExternalApiId = externalApiId;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Associated BankRegistration object
@@ -66,15 +69,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 
 
     /// <summary>
-    ///     Response to DomesticVrpConsent Read and Create requests.
+    ///     Response to DomesticVrpConsent Create requests.
     /// </summary>
-    public class DomesticVrpConsentResponse : DomesticVrpConsentBaseResponse
+    public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
     {
-        internal DomesticVrpConsentResponse(
+        internal DomesticVrpConsentCreateResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId,
@@ -83,6 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             created,
             createdBy,
             reference,
+            warnings,
             bankRegistrationId,
             variableRecurringPaymentsApiId,
             externalApiId)
@@ -91,11 +96,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; }
+    }
 
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
+    /// <summary>
+    ///     Response to DomesticVrpConsent Read requests.
+    /// </summary>
+    public class DomesticVrpConsentReadResponse : DomesticVrpConsentBaseResponse
+    {
+        internal DomesticVrpConsentReadResponse(
+            Guid id,
+            DateTimeOffset created,
+            string? createdBy,
+            string? reference,
+            IList<string>? warnings,
+            Guid bankRegistrationId,
+            Guid variableRecurringPaymentsApiId,
+            string externalApiId,
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
+            id,
+            created,
+            createdBy,
+            reference,
+            warnings,
+            bankRegistrationId,
+            variableRecurringPaymentsApiId,
+            externalApiId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse ExternalApiResponse { get; }
     }
 
     /// <summary>
@@ -109,6 +139,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid variableRecurringPaymentsApiId,
             string externalApiId,
@@ -117,6 +148,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             created,
             createdBy,
             reference,
+            warnings,
             bankRegistrationId,
             variableRecurringPaymentsApiId,
             externalApiId)
@@ -125,10 +157,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse { get; }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
     }
 }

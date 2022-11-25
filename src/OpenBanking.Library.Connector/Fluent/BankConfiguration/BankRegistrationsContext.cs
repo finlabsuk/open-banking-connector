@@ -16,14 +16,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
 {
     public interface IBankRegistrationsContext :
         ICreateBankRegistrationContext<BankRegistration, BankRegistrationResponse>,
-        IReadLocalContext<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadBankRegistrationContext<BankRegistrationResponse>,
         IDeleteBankRegistrationContext { }
 
     internal interface IBankRegistrationsContextInternal :
         IBankRegistrationsContext,
         ICreateBankRegistrationContextInternal<BankRegistration, BankRegistrationResponse>,
-        IReadLocalContextInternal<IBankRegistrationPublicQuery, BankRegistrationResponse>,
         IReadBankRegistrationContextInternal<BankRegistrationResponse>,
         IDeleteBankRegistrationContextInternal { }
 
@@ -42,14 +40,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 new OpenIdConfigurationRead(sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
                 sharedContext.BankProfileService,new GrantPost(sharedContext.ApiClient));
-            ReadLocalObject =
-                new LocalEntityRead<BankRegistrationPersisted, IBankRegistrationPublicQuery,
-                    BankRegistrationResponse>(
-                    sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
             ReadObject = bankRegistrationOperations;
             DeleteObject = new BankRegistrationDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
@@ -61,9 +51,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
                 new GrantPost(sharedContext.ApiClient));
             CreateObject = bankRegistrationOperations;
         }
-
-        public IObjectReadWithSearch<IBankRegistrationPublicQuery, BankRegistrationResponse, LocalReadParams>
-            ReadLocalObject { get; }
 
         public IObjectCreate<BankRegistration, BankRegistrationResponse, BankRegistrationCreateParams> CreateObject
         {

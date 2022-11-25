@@ -31,8 +31,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
 internal class
     DomesticVrpConsentOperations :
-        IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse, ConsentCreateParams>,
-        IObjectRead<DomesticVrpConsentResponse, ConsentReadParams>,
+        IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>,
+        IObjectRead<DomesticVrpConsentReadResponse, ConsentReadParams>,
         IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse,
             ConsentBaseReadParams>
 {
@@ -43,7 +43,7 @@ internal class
 
     private readonly ConsentCommon<DomesticVrpConsentPersisted,
         DomesticVrpConsentRequest,
-        DomesticVrpConsentResponse,
+        DomesticVrpConsentCreateResponse,
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse> _consentCommon;
 
@@ -82,7 +82,7 @@ internal class
         _timeProvider = timeProvider;
         _instrumentationClient = instrumentationClient;
         _consentCommon =
-            new ConsentCommon<DomesticVrpConsentPersisted, DomesticVrpConsentRequest, DomesticVrpConsentResponse,
+            new ConsentCommon<DomesticVrpConsentPersisted, DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                 bankRegistrationMethods,
@@ -95,7 +95,7 @@ internal class
     private string RelativePathBeforeId => "/domestic-vrp-consents";
 
     public async
-        Task<(DomesticVrpConsentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticVrpConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         CreateAsync(DomesticVrpConsentRequest request, ConsentCreateParams createParams)
     {
         // Create non-error list
@@ -228,11 +228,12 @@ internal class
 
         // Create response (may involve additional processing based on entity)
         var response =
-            new DomesticVrpConsentResponse(
+            new DomesticVrpConsentCreateResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.Reference,
+                null,
                 persistedObject.BankRegistrationId,
                 persistedObject.VariableRecurringPaymentsApiId,
                 persistedObject.ExternalApiId,
@@ -245,7 +246,7 @@ internal class
     }
 
     public async
-        Task<(DomesticVrpConsentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticVrpConsentReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         ReadAsync(ConsentReadParams readParams)
     {
         // Create non-error list
@@ -304,11 +305,12 @@ internal class
 
         // Create response
         var response =
-            new DomesticVrpConsentResponse(
+            new DomesticVrpConsentReadResponse(
                 persistedConsent.Id,
                 persistedConsent.Created,
                 persistedConsent.CreatedBy,
                 persistedConsent.Reference,
+                null,
                 persistedConsent.BankRegistrationId,
                 persistedConsent.VariableRecurringPaymentsApiId,
                 persistedConsent.ExternalApiId,
@@ -372,6 +374,7 @@ internal class
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.Reference,
+                null,
                 persistedObject.BankRegistrationId,
                 persistedObject.VariableRecurringPaymentsApiId,
                 persistedObject.ExternalApiId,

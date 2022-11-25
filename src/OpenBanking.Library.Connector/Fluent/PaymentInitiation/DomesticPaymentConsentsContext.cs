@@ -21,9 +21,7 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
     public interface IDomesticPaymentConsentsContext :
-        IConsentContext<DomesticPaymentConsentRequest,
-            IDomesticPaymentConsentPublicQuery,
-            DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
+        IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, DomesticPaymentConsentReadResponse>,
         IDeleteLocalContext,
         IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
     {
@@ -40,9 +38,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
     internal interface IDomesticPaymentConsentsContextInternal :
         IDomesticPaymentConsentsContext,
-        IConsentContextInternal<DomesticPaymentConsentRequest,
-            IDomesticPaymentConsentPublicQuery,
-            DomesticPaymentConsentResponse, DomesticPaymentConsentBaseResponse>,
+        IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, DomesticPaymentConsentReadResponse>,
         IDeleteLocalContextInternal,
         IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
 
@@ -74,14 +70,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
             CreateObject = domesticPaymentConsentOperations;
             ReadObject = domesticPaymentConsentOperations;
             ReadFundsConfirmationObject = domesticPaymentConsentOperations;
-            ReadLocalObject =
-                new LocalEntityRead<DomesticPaymentConsent, IDomesticPaymentConsentPublicQuery,
-                    DomesticPaymentConsentBaseResponse>(
-                    sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
             DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
@@ -108,17 +96,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<DomesticPaymentConsentResponse, ConsentReadParams> ReadObject { get; }
+        public IObjectRead<DomesticPaymentConsentReadResponse, ConsentReadParams> ReadObject { get; }
 
         public IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
             ReadFundsConfirmationObject { get; }
 
-        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse, ConsentCreateParams>
+        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, ConsentCreateParams>
             CreateObject { get; }
-
-        public IObjectReadWithSearch<IDomesticPaymentConsentPublicQuery, DomesticPaymentConsentBaseResponse,
-                LocalReadParams>
-            ReadLocalObject { get; }
 
         public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
     }

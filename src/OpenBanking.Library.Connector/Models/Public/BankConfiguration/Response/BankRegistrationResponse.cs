@@ -120,6 +120,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         /// </summary>
         public IList<string>? Warnings { get; }
 
+        /// <summary>
+        ///     ID of SoftwareStatementProfile to use in association with BankRegistration
+        /// </summary>
         public string SoftwareStatementProfileId { get; }
 
         public string? SoftwareStatementProfileOverride { get; }
@@ -128,14 +131,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Token endpoint authorisation method
         /// </summary>
         public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
-
+        
         /// <summary>
         ///     Functional APIs used for bank registration.
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
-
-
+        
         /// <summary>
         ///     Bank with which this BankRegistration is associated.
         /// </summary>

@@ -11,23 +11,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
     ///     Fluent context for entity created both in local and external (i.e. bank) database.
     /// </summary>
     /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicQuery"></typeparam>
     /// <typeparam name="TPublicReadResponse"></typeparam>
-    /// <typeparam name="TPublicReadLocalResponse"></typeparam>
-    public interface IConsentContext<in TPublicRequest, TPublicQuery, TPublicReadResponse, TPublicReadLocalResponse> :
-        ICreateConsentContext<TPublicRequest, TPublicReadResponse>,
-        IReadConsentContext<TPublicReadResponse>,
-        IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>
+    /// <typeparam name="TPublicCreateResponse"></typeparam>
+    public interface IConsentContext<in TPublicRequest, TPublicCreateResponse, TPublicReadResponse> :
+        ICreateConsentContext<TPublicRequest, TPublicCreateResponse>,
+        IReadConsentContext<TPublicReadResponse>
         where TPublicReadResponse : class
-        where TPublicReadLocalResponse : class { }
+        where TPublicCreateResponse : class { }
 
-    internal interface IConsentContextInternal<in TPublicRequest, TPublicQuery, TPublicResponse,
-        TPublicReadLocalResponse> :
-        IConsentContext<TPublicRequest, TPublicQuery, TPublicResponse, TPublicReadLocalResponse>,
-        ICreateConsentContextInternal<TPublicRequest, TPublicResponse>,
-        IReadConsentContextInternal<TPublicResponse>,
-        IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
-        where TPublicResponse : class
+    internal interface IConsentContextInternal<in TPublicRequest, TPublicCreateResponse, TPublicReadResponse> :
+        IConsentContext<TPublicRequest, TPublicCreateResponse, TPublicReadResponse>,
+        ICreateConsentContextInternal<TPublicRequest, TPublicCreateResponse>,
+        IReadConsentContextInternal<TPublicReadResponse>
         where TPublicRequest : class, ISupportsValidation
-        where TPublicReadLocalResponse : class { }
+        where TPublicReadResponse : class
+        where TPublicCreateResponse : class { }
 }

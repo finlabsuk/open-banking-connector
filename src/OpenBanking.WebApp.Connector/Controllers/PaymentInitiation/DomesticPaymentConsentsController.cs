@@ -30,14 +30,14 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentResponse))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentCreateResponse))]
     public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
-        DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
+        DomesticPaymentConsentCreateResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .CreateAsync(request, requestUrlWithoutQuery);
@@ -57,7 +57,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentReadResponse))]
     public async Task<IActionResult> GetAsync(
         Guid domesticPaymentConsentId,
         [FromHeader]
@@ -70,7 +70,7 @@ public class DomesticPaymentConsentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        DomesticPaymentConsentResponse fluentResponse = await _requestBuilder
+        DomesticPaymentConsentReadResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .ReadAsync(

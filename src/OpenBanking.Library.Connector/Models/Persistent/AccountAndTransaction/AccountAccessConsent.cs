@@ -13,7 +13,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class AccountAccessConsent :
+    internal class AccountAccessConsent :
         BaseConsent
     {
         public AccountAccessConsent(
@@ -70,18 +70,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         public Guid AccountAndTransactionApiId { get; }
     }
 
-    internal partial class AccountAccessConsent : ISupportsFluentLocalEntityGet<AccountAccessConsentResponse>
-    {
-        public AccountAccessConsentResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                BankRegistrationId,
-                AccountAndTransactionApiId,
-                ExternalApiId,
-                null,
-                null);
-    }
 }

@@ -53,10 +53,6 @@ public class AccountAndTransactionApiSettings
 {
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
-
-    public bool UseGetPartyEndpoint { get; set; } = true;
-
-    public bool UseGetPartiesEndpoint { get; set; } = true;
 }
 
 public class PaymentInitiationApiSettings

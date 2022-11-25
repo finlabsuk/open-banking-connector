@@ -146,7 +146,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
             domesticVrpConsentRequest.VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
             domesticVrpConsentRequest.Reference = testNameUnique;
-            DomesticVrpConsentResponse domesticVrpConsentResp =
+            DomesticVrpConsentCreateResponse domesticVrpConsentResp =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .CreateAsync(domesticVrpConsentRequest);
 
@@ -157,7 +157,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid domesticVrpConsentId = domesticVrpConsentResp.Id;
 
             // GET domestic payment consent
-            DomesticVrpConsentResponse domesticVrpConsentResp2 =
+            DomesticVrpConsentReadResponse domesticVrpConsentResp2 =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .ReadAsync(domesticVrpConsentId);
 

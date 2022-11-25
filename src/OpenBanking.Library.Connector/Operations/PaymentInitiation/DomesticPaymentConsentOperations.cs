@@ -32,9 +32,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 internal class
     DomesticPaymentConsentOperations :
-        IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentResponse,
+        IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
             ConsentCreateParams>,
-        IObjectRead<DomesticPaymentConsentResponse, ConsentReadParams>,
+        IObjectRead<DomesticPaymentConsentReadResponse, ConsentReadParams>,
         IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> _apiEntityMethods;
@@ -44,7 +44,7 @@ internal class
 
     private readonly ConsentCommon<DomesticPaymentConsentPersisted,
         DomesticPaymentConsentRequest,
-        DomesticPaymentConsentResponse,
+        DomesticPaymentConsentCreateResponse,
         PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> _consentCommon;
 
@@ -84,7 +84,7 @@ internal class
         _instrumentationClient = instrumentationClient;
         _consentCommon =
             new ConsentCommon<DomesticPaymentConsentPersisted, DomesticPaymentConsentRequest,
-                DomesticPaymentConsentResponse,
+                DomesticPaymentConsentCreateResponse,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                 bankRegistrationMethods,
@@ -97,7 +97,7 @@ internal class
     private string RelativePathBeforeId => "/domestic-payment-consents";
 
     public async
-        Task<(DomesticPaymentConsentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticPaymentConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         CreateAsync(DomesticPaymentConsentRequest request, ConsentCreateParams createParams)
     {
         // Create non-error list
@@ -234,11 +234,12 @@ internal class
 
         // Create response (may involve additional processing based on entity)
         var response =
-            new DomesticPaymentConsentResponse(
+            new DomesticPaymentConsentCreateResponse(
                 persistedConsent.Id,
                 persistedConsent.Created,
                 persistedConsent.CreatedBy,
                 persistedConsent.Reference,
+                null,
                 persistedConsent.BankRegistrationId,
                 persistedConsent.PaymentInitiationApiId,
                 persistedConsent.ExternalApiId,
@@ -248,7 +249,7 @@ internal class
     }
 
     public async
-        Task<(DomesticPaymentConsentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticPaymentConsentReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         ReadAsync(ConsentReadParams readParams)
     {
         // Create non-error list
@@ -306,11 +307,12 @@ internal class
 
         // Create response
         var response =
-            new DomesticPaymentConsentResponse(
+            new DomesticPaymentConsentReadResponse(
                 persistedObject.Id,
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.Reference,
+                null,
                 persistedObject.BankRegistrationId,
                 persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,
@@ -375,6 +377,7 @@ internal class
                 persistedObject.Created,
                 persistedObject.CreatedBy,
                 persistedObject.Reference,
+                null,
                 persistedObject.BankRegistrationId,
                 persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,

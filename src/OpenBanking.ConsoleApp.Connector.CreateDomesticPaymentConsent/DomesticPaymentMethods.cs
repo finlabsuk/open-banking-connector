@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentId)
         {
             // GET domestic payment consent
-            DomesticPaymentConsentResponse domesticPaymentResponse =
+            DomesticPaymentConsentReadResponse domesticPaymentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents

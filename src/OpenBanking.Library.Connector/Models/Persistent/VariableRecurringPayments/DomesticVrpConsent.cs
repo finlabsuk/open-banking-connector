@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class DomesticVrpConsent :
+    internal class DomesticVrpConsent :
         BaseConsent,
         IDomesticVrpConsentPublicQuery
     {
@@ -73,18 +73,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         public Guid VariableRecurringPaymentsApiId { get; }
     }
 
-    internal partial class DomesticVrpConsent :
-        ISupportsFluentLocalEntityGet<DomesticVrpConsentResponse>
-    {
-        public DomesticVrpConsentResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                BankRegistrationId,
-                VariableRecurringPaymentsApiId,
-                ExternalApiId,
-                null);
-    }
 }

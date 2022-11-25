@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -63,8 +64,21 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                UseGetPartyEndpoint = false,
-                UseGetPartiesEndpoint = false
+                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                {
+                    var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
+                    {
+                        OBReadConsent1DataPermissionsEnum.ReadParty,
+                        OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
+                        OBReadConsent1DataPermissionsEnum.ReadPAN
+                    };
+                    foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
+                    {
+                        externalApiRequest.Data.Permissions.Remove(element);
+                    }
+
+                    return externalApiRequest;
+                }
             },
             CustomBehaviour = bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                 ? new CustomBehaviourClass

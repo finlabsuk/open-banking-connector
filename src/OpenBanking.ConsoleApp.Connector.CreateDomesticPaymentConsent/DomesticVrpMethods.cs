@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticVrpId)
         {
             // GET domestic payment consent
-            DomesticVrpConsentResponse domesticVrpResponse =
+            DomesticVrpConsentReadResponse domesticVrpResponse =
                 await requestBuilder
                     .VariableRecurringPayments
                     .DomesticVrpConsents

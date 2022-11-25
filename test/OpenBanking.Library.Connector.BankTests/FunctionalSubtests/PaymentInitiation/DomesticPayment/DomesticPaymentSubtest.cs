@@ -147,7 +147,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 Guid.NewGuid().ToString("N"); // remove logging placeholder
             domesticPaymentConsentRequest.Reference = testNameUnique;
             domesticPaymentConsentRequest.CreatedBy = modifiedBy;
-            DomesticPaymentConsentResponse domesticPaymentConsentResp =
+            DomesticPaymentConsentCreateResponse domesticPaymentConsentResp =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .CreateAsync(domesticPaymentConsentRequest);
 
@@ -158,7 +158,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Id;
 
             // GET domestic payment consent
-            DomesticPaymentConsentResponse domesticPaymentConsentResp2 =
+            DomesticPaymentConsentReadResponse domesticPaymentConsentResp2 =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .ReadAsync(domesticPaymentConsentId);
 

@@ -28,9 +28,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         string ExternalApiId { get; }
     }
 
-    /// <summary>
-    ///     Response to ReadLocal requests
-    /// </summary>
     public abstract class DomesticPaymentConsentBaseResponse : LocalObjectBaseResponse,
         IDomesticPaymentConsentPublicQuery
     {
@@ -39,14 +36,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId) : base(id, created, createdBy, reference)
         {
+            Warnings = warnings;
             BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
             ExternalApiId = externalApiId;
         }
+
+        /// <summary>
+        ///     Optional list of warning messages from Open Banking Connector.
+        /// </summary>
+        public IList<string>? Warnings { get; set; }
 
         /// <summary>
         ///     Associated BankRegistration object
@@ -66,15 +70,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     }
 
     /// <summary>
-    ///     Response to Read and Create requests
+    ///     Response to DomesticPaymentConsent Create requests
     /// </summary>
-    public class DomesticPaymentConsentResponse : DomesticPaymentConsentBaseResponse
+    public class DomesticPaymentConsentCreateResponse : DomesticPaymentConsentBaseResponse
     {
-        internal DomesticPaymentConsentResponse(
+        internal DomesticPaymentConsentCreateResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId,
@@ -83,6 +88,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             created,
             createdBy,
             reference,
+            warnings,
             bankRegistrationId,
             paymentInitiationApiId,
             externalApiId)
@@ -91,23 +97,50 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
     }
 
     /// <summary>
-    ///     Response to ReadFundsConfirmation requests
+    ///     Response to DomesticPaymentConsent Read requests
     /// </summary>
-    public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentBaseResponse
+    public class DomesticPaymentConsentReadResponse : DomesticPaymentConsentBaseResponse
     {
-        internal DomesticPaymentConsentReadFundsConfirmationResponse(
+        internal DomesticPaymentConsentReadResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
+            IList<string>? warnings,
+            Guid bankRegistrationId,
+            Guid paymentInitiationApiId,
+            string externalApiId,
+            PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
+            id,
+            created,
+            createdBy,
+            reference,
+            warnings,
+            bankRegistrationId,
+            paymentInitiationApiId,
+            externalApiId)
+        {
+            ExternalApiResponse = externalApiResponse;
+        }
+
+        public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 ExternalApiResponse { get; }
+    }
+
+
+    /// <summary>
+    ///     Response to DomesticPaymentConsent ReadFundsConfirmation requests
+    /// </summary>
+    public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentBaseResponse
+    {
+        public DomesticPaymentConsentReadFundsConfirmationResponse(
+            Guid id,
+            DateTimeOffset created,
+            string? createdBy,
+            string? reference,
+            IList<string>? warnings,
             Guid bankRegistrationId,
             Guid paymentInitiationApiId,
             string externalApiId,
@@ -116,6 +149,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             created,
             createdBy,
             reference,
+            warnings,
             bankRegistrationId,
             paymentInitiationApiId,
             externalApiId)
@@ -124,10 +158,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         }
 
         public PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 ExternalApiResponse { get; }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
     }
 }

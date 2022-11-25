@@ -25,9 +25,7 @@ using AccountAccessConsentAuthContext =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction
 {
     public interface IAccountAccessConsentsContext :
-        IConsentContext<AccountAccessConsentRequest,
-            IAccountAccessConsentPublicQuery,
-            AccountAccessConsentResponse, AccountAccessConsentResponse>,
+        IConsentContext<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentReadResponse>,
         IDeleteConsentContext
     {
         /// <summary>
@@ -43,9 +41,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
     internal interface IAccountAccessConsentsContextInternal :
         IAccountAccessConsentsContext,
-        IConsentContextInternal<AccountAccessConsentRequest,
-            IAccountAccessConsentPublicQuery,
-            AccountAccessConsentResponse, AccountAccessConsentResponse>, IDeleteConsentContextInternal { }
+        IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentReadResponse>,
+        IDeleteConsentContextInternal { }
 
     internal class AccountAccessConsentsConsentContext :
         IAccountAccessConsentsContextInternal
@@ -68,14 +65,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             CreateObject = accountAccessConsentOperations;
             ReadObject = accountAccessConsentOperations;
-            ReadLocalObject =
-                new LocalEntityRead<AccountAccessConsentPersisted, IAccountAccessConsentPublicQuery,
-                    AccountAccessConsentResponse>(
-                    sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
             DeleteObject =
                 new AccountAccessConsentDelete(
                     sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
@@ -104,13 +93,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<AccountAccessConsentResponse, ConsentReadParams> ReadObject { get; }
+        public IObjectRead<AccountAccessConsentReadResponse, ConsentReadParams> ReadObject { get; }
 
-        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentResponse, ConsentCreateParams>
+        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>
             CreateObject { get; }
-
-        public IObjectReadWithSearch<IAccountAccessConsentPublicQuery, AccountAccessConsentResponse, LocalReadParams>
-            ReadLocalObject { get; }
 
         public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
     }

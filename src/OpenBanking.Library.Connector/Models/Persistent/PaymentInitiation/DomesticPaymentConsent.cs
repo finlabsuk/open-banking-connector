@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class DomesticPaymentConsent :
+    internal class DomesticPaymentConsent :
         BaseConsent,
         IDomesticPaymentConsentPublicQuery
     {
@@ -73,18 +73,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         public Guid PaymentInitiationApiId { get; }
     }
 
-    internal partial class DomesticPaymentConsent :
-        ISupportsFluentLocalEntityGet<DomesticPaymentConsentResponse>
-    {
-        public DomesticPaymentConsentResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                BankRegistrationId,
-                PaymentInitiationApiId,
-                ExternalApiId,
-                null);
-    }
 }

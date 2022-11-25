@@ -35,7 +35,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
     ///     Persisted type.
     ///     Internal to help ensure public request and response types used on public API.
     /// </summary>
-    internal partial class BankRegistration :
+    internal class BankRegistration :
         BaseEntity,
         IBankRegistrationPublicQuery
     {
@@ -180,26 +180,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 
             return missingSoftwareStatementProfileIds;
         }
-    }
-
-    internal partial class BankRegistration :
-        ISupportsFluentLocalEntityGet<BankRegistrationResponse>
-    {
-        public BankRegistrationResponse PublicGetLocalResponse => new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            new ExternalApiObjectResponse(_externalApiId),
-            null,
-            null,
-            SoftwareStatementProfileId,
-            SoftwareStatementProfileOverride,
-            TokenEndpointAuthMethod,
-            RegistrationScope,
-            BankId,
-            DefaultResponseMode,
-            DefaultRedirectUri,
-            OtherRedirectUris);
     }
 }

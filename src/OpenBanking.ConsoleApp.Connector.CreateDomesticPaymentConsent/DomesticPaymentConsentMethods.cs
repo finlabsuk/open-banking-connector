@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             };
 
             // POST domestic payment consent
-            DomesticPaymentConsentResponse domesticPaymentConsentResponse =
+            DomesticPaymentConsentCreateResponse domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents
@@ -75,7 +75,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             Guid domesticPaymentConsentId)
         {
             // GET domestic payment consent
-            DomesticPaymentConsentResponse domesticPaymentConsentResponse =
+            DomesticPaymentConsentReadResponse domesticPaymentConsentResponse =
                 await requestBuilder
                     .PaymentInitiation
                     .DomesticPaymentConsents

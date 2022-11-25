@@ -26,8 +26,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class
     AccountAccessConsentOperations :
-        IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentResponse, ConsentCreateParams>,
-        IObjectRead<AccountAccessConsentResponse, ConsentReadParams>
+        IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
+        IObjectRead<AccountAccessConsentReadResponse, ConsentReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
 
@@ -35,7 +35,7 @@ internal class
 
     private readonly ConsentCommon<AccountAccessConsentPersisted,
         AccountAccessConsentRequest,
-        AccountAccessConsentResponse,
+        AccountAccessConsentCreateResponse,
         AccountAndTransactionModelsPublic.OBReadConsent1,
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
@@ -69,7 +69,7 @@ internal class
         _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
         _consentCommon =
-            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest, AccountAccessConsentResponse,
+            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest, AccountAccessConsentCreateResponse,
                 AccountAndTransactionModelsPublic.OBReadConsent1, AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
                 bankRegistrationMethods,
                 instrumentationClient,
@@ -80,7 +80,7 @@ internal class
 
     protected string RelativePathBeforeId => "/account-access-consents";
 
-    public async Task<(AccountAccessConsentResponse response, IList<IFluentResponseInfoOrWarningMessage>
+    public async Task<(AccountAccessConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage>
             nonErrorMessages)>
         CreateAsync(
             AccountAccessConsentRequest request,
@@ -216,16 +216,16 @@ internal class
 
         // Create response (may involve additional processing based on entity)
         var response =
-            new AccountAccessConsentResponse(
+            new AccountAccessConsentCreateResponse(
                 persistedConsent.Id,
                 persistedConsent.Created,
                 persistedConsent.CreatedBy,
                 persistedConsent.Reference,
+                null,
                 persistedConsent.BankRegistrationId,
                 persistedConsent.AccountAndTransactionApiId,
                 persistedConsent.ExternalApiId,
-                externalApiResponse,
-                null);
+                externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();
@@ -234,7 +234,7 @@ internal class
     }
 
     public async
-        Task<(AccountAccessConsentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(AccountAccessConsentReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         ReadAsync(ConsentReadParams readParams)
     {
         // Create non-error list
@@ -292,16 +292,16 @@ internal class
 
         // Create response
         var response =
-            new AccountAccessConsentResponse(
+            new AccountAccessConsentReadResponse(
             persistedConsent.Id,
             persistedConsent.Created,
             persistedConsent.CreatedBy,
             persistedConsent.Reference,
+            null,
             persistedConsent.BankRegistrationId,
             persistedConsent.AccountAndTransactionApiId,
             persistedConsent.ExternalApiId,
-            externalApiResponse,
-            null);
+            externalApiResponse);
 
         return (response, nonErrorMessages);
     }

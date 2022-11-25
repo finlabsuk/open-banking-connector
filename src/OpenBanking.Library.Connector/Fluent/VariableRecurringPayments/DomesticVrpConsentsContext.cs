@@ -24,9 +24,7 @@ using DomesticVrpConsentPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments
 {
     public interface IDomesticVrpConsentsContext :
-        IConsentContext<DomesticVrpConsentRequest,
-            IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
+        IConsentContext<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, DomesticVrpConsentReadResponse>,
         IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>,
         IDeleteConsentContext
     {
@@ -43,9 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
     internal interface IDomesticVrpConsentsContextInternal :
         IDomesticVrpConsentsContext,
-        IConsentContextInternal<DomesticVrpConsentRequest,
-            IDomesticVrpConsentPublicQuery,
-            DomesticVrpConsentResponse, DomesticVrpConsentBaseResponse>,
+        IConsentContextInternal<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, DomesticVrpConsentReadResponse>,
         IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse>,
         IDeleteConsentContextInternal { }
 
@@ -77,14 +73,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
             CreateObject = domesticVrpConsentOperations;
             ReadObject = domesticVrpConsentOperations;
             ReadFundsConfirmationObject = domesticVrpConsentOperations;
-            ReadLocalObject =
-                new LocalEntityRead<DomesticVrpConsentPersisted, IDomesticVrpConsentPublicQuery,
-                    DomesticVrpConsentBaseResponse>(
-                    sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation);
             DeleteObject =
                 new DomesticVrpConsentDelete(
                     sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -96,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     new GrantPost(_sharedContext.ApiClient));
         }
 
-        public IObjectRead<DomesticVrpConsentResponse, ConsentReadParams> ReadObject { get; }
+        public IObjectRead<DomesticVrpConsentReadResponse, ConsentReadParams> ReadObject { get; }
 
         public ILocalEntityContext<DomesticVrpConsentAuthContextRequest,
             IDomesticVrpConsentAuthContextPublicQuery,
@@ -116,10 +104,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectReadWithSearch<IDomesticVrpConsentPublicQuery, DomesticVrpConsentBaseResponse, LocalReadParams>
-            ReadLocalObject { get; }
-
-        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentResponse, ConsentCreateParams> CreateObject
+        public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams> CreateObject
         {
             get;
         }
