@@ -51,6 +51,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
+                UseRegistrationEndpoints = false,
                 TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings

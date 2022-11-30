@@ -33,7 +33,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 FinancialId = bankProfile.FinancialId,
                 DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
                 CustomBehaviour = bankProfile.CustomBehaviour,
-                SupportsSca = bankProfile.SupportsSca
+                SupportsSca = bankProfile.SupportsSca,
+                AllowNullRegistrationEndpoint = !bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints
             };
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
@@ -87,6 +88,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
                     };
             }
+            else if (!bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints)
+            {
+                throw new ArgumentException(
+                    $"BankProfile {bankProfile.BankProfileEnum} sets " +
+                    $"{nameof(bankProfile.BankConfigurationApiSettings)}.{nameof(bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints)} " +
+                    $"to true so require {nameof(registrationRequest.ExternalApiObject)} to be specified.");
+            }
+
             registrationRequest.BankId = bankId; // remove logging placeholder
             registrationRequest.Reference = testNameUnique;
             registrationRequest.CreatedBy = modifiedBy;
@@ -132,7 +141,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         {
             // Delete bankRegistration
             var includeExternalApiOperation = false;
-            if (bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint)
+            if (bankProfile.BankConfigurationApiSettings.ProcessedUseRegistrationDeleteEndpoint)
             {
                 includeExternalApiOperation = testType switch
                 {

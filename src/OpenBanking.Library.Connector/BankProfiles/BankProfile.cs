@@ -35,14 +35,25 @@ public class BankConfigurationApiSettings
     public RegistrationScopeIsValid RegistrationScopeIsValid { get; set; } = registrationScope => true;
 
     /// <summary>
+    ///     Describes whether registration endpoints used when testing with this bank.
+    /// </summary>
+    public bool UseRegistrationEndpoints { get; set; } = true;
+
+    /// <summary>
     ///     Describes whether DELETE /register/{ClientId} is used when testing with this bank.
     /// </summary>
     public bool UseRegistrationDeleteEndpoint { get; set; } = false;
+
+    public bool ProcessedUseRegistrationDeleteEndpoint =>
+        UseRegistrationEndpoints && UseRegistrationDeleteEndpoint;
 
     /// <summary>
     ///     Describes whether GET /register/{ClientId} is used when testing with this bank.
     /// </summary>
     public bool UseRegistrationGetEndpoint { get; set; } = false;
+
+    public bool ProcessedUseRegistrationGetEndpoint =>
+        UseRegistrationEndpoints && UseRegistrationGetEndpoint;
 
     public bool UseRegistrationAccessToken { get; set; } = false;
 

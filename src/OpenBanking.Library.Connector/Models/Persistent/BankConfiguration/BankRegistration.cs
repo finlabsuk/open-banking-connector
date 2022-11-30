@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using Microsoft.Extensions.Logging;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -139,34 +140,45 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 
     public class BankRegistrationCleanup
     {
-        public async Task<List<string>> Cleanup(
+        public async Task Cleanup(
             PostgreSqlDbContext postgreSqlDbContext,
-            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore)
+            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
+            ILogger logger)
         {
-            var missingSoftwareStatementProfileIds = new List<string>();
+            IQueryable<BankRegistration> entityList =
+                postgreSqlDbContext.Set<BankRegistration>();
 
-            foreach (BankRegistration bankRegistration in postgreSqlDbContext.Set<BankRegistration>())
+            foreach (BankRegistration bankRegistration in entityList)
             {
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile;
+                string softwareStatementProfileId = bankRegistration.SoftwareStatementProfileId;
+                string? softwareStatementProfileOverride = bankRegistration.SoftwareStatementProfileOverride;
+                try
+                {
+                    processedSoftwareStatementProfile = await processedSoftwareStatementProfileStore.GetAsync(
+                        softwareStatementProfileId,
+                        softwareStatementProfileOverride);
+                }
+                catch
+                {
+                    string message =
+                        $"In its database record, BankRegistration with ID {bankRegistration.BankId} specifies " +
+                        $"use of software statement profile with ID {softwareStatementProfileId}";
+                    message += softwareStatementProfileOverride is null
+                        ? ". "
+                        : $" and override {softwareStatementProfileOverride}. ";
+                    message += "This software statement profile was not found in configuration/secrets.";
+                    logger.LogWarning(message);
+                    continue;
+                }
+
                 if (string.IsNullOrEmpty(bankRegistration.DefaultRedirectUri))
                 {
-                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile;
-                    try
-                    {
-                        processedSoftwareStatementProfile = await processedSoftwareStatementProfileStore.GetAsync(
-                            bankRegistration.SoftwareStatementProfileId,
-                            bankRegistration.SoftwareStatementProfileOverride);
-                    }
-                    catch
-                    {
-                        missingSoftwareStatementProfileIds.Add(bankRegistration.SoftwareStatementProfileId);
-                        continue;
-                    }
-
                     string defaultRedirectUri = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
                     if (string.IsNullOrEmpty(defaultRedirectUri))
                     {
                         throw new Exception(
-                            $"Can't find defaultRedirectUri for software statement profile {bankRegistration.SoftwareStatementProfileId} ");
+                            $"Can't find defaultRedirectUri for software statement profile {softwareStatementProfileId} ");
                     }
 
                     List<string> otherRedirectUris =
@@ -177,8 +189,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
                     bankRegistration.OtherRedirectUris = otherRedirectUris;
                 }
             }
-
-            return missingSoftwareStatementProfileIds;
         }
     }
 }

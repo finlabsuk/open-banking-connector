@@ -29,7 +29,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             bool supportsSca,
             string issuerUrl,
             string financialId,
-            string registrationEndpoint,
+            string? registrationEndpoint,
             string tokenEndpoint,
             string authorizationEndpoint,
             DynamicClientRegistrationApiVersion dcrApiVersion,
@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
         /// <summary>
         ///     Registration endpoint (normally supplied from OpenID Configuration)
         /// </summary>
-        public string RegistrationEndpoint { get; }
+        public string? RegistrationEndpoint { get; }
 
         /// <summary>
         ///     Token endpoint (normally supplied from OpenID Configuration)

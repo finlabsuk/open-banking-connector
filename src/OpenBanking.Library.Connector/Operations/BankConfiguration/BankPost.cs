@@ -88,12 +88,17 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
                 customBehaviour?.OpenIdConfigurationGet);
         nonErrorMessages.AddRange(newNonErrorMessages1);
 
-        string registrationEndpoint =
+        string? registrationEndpoint =
             request.RegistrationEndpoint ??
-            openIdConfiguration?.RegistrationEndpoint ??
+            openIdConfiguration?.RegistrationEndpoint;
+        if (registrationEndpoint is null &&
+            !request.AllowNullRegistrationEndpoint)
+        {
             throw new ArgumentNullException(
                 nameof(request.RegistrationEndpoint),
-                $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+                $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. " +
+                $"Additionally {request.AllowNullRegistrationEndpoint} is false.");
+        }
 
         string tokenEndpoint =
             request.TokenEndpoint ??
@@ -115,7 +120,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             throw new ArgumentNullException(
                 nameof(request.JwksUri),
                 $"{nameof(request.JwksUri)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
-        
+
         // Create persisted entity
         DateTimeOffset utcNow = _timeProvider.GetUtcNow();
         var entity = new Bank(

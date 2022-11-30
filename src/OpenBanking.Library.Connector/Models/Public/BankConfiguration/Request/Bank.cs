@@ -51,11 +51,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public string? FinancialId { get; set; }
 
         /// <summary>
-        ///     Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl).
-        ///     Only used by operations that access bank registration endpoint(s), e.g. DCR. If DCR and optional GET, PUT, DELETE
-        ///     endpoints for bank registration are not supported, this value will not be used.
+        ///     Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl) if
+        ///     available.
+        ///     Used by operations that access bank registration endpoint(s), i.e. DCR and optional GET, PUT, DELETE
+        ///     endpoints for bank registration.
         /// </summary>
         public string? RegistrationEndpoint { get; set; }
+
+        /// <summary>
+        ///     Allow registration endpoint to set to null if none supplied and none available via OpenID Configuration
+        ///     (IssuerUrl).
+        ///     This is to allow for banks which do not support DCR.
+        /// </summary>
+        public bool AllowNullRegistrationEndpoint { get; set; } = false;
 
         /// <summary>
         ///     Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).

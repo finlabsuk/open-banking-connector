@@ -54,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             bool includeExternalApiOperationValue =
                 deleteParams.IncludeExternalApiOperation ??
-                bankProfile?.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint ??
+                bankProfile?.BankConfigurationApiSettings.ProcessedUseRegistrationDeleteEndpoint ??
                 throw new ArgumentNullException(
                     null,
                     "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
@@ -69,6 +69,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
             if (includeExternalApiOperationValue)
             {
+                string registrationEndpoint =
+                    entity.BankNavigation.RegistrationEndpoint ??
+                    throw new InvalidOperationException(
+                        $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
+
                 bool useRegistrationAccessTokenValue =
                     deleteParams.UseRegistrationAccessToken ??
                     bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
@@ -84,7 +89,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
                 // Get URI
-                string registrationEndpoint = entity.BankNavigation.RegistrationEndpoint;
                 string bankApiId = entity.ExternalApiObject.ExternalApiId;
                 var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 

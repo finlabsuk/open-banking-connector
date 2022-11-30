@@ -115,7 +115,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
                 }
             }
 
-            // Database cleanup
+            // Database checks and cleanup
             if (databaseSettings.Provider is DbProvider.PostgreSql)
             {
                 // Get scope
@@ -123,16 +123,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
                 var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
 
-                List<string> missingSoftwareStatementProfileIds = await new BankRegistrationCleanup().Cleanup(
+                await new BankRegistrationCleanup().Cleanup(
                     postgreSqlDbContext,
-                    _processedSoftwareStatementProfileStore);
+                    _processedSoftwareStatementProfileStore,
+                    _logger);
 
                 await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
-
-                _logger.LogInformation(
-                    string.Join(
-                        Environment.NewLine,
-                        missingSoftwareStatementProfileIds.Prepend("Missing software statement profile IDs:")));
             }
         }
 

@@ -104,7 +104,6 @@ internal class
         CustomBehaviourClass? customBehaviour = bank.CustomBehaviour;
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bank.DcrApiVersion;
-        string registrationEndpoint = bank.RegistrationEndpoint;
         string issuerUrl = bank.IssuerUrl;
         bool supportsSca = bank.SupportsSca;
 
@@ -169,6 +168,13 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         if (request.ExternalApiObject is null)
         {
+            string registrationEndpoint =
+                bank.RegistrationEndpoint ??
+                throw new InvalidOperationException(
+                    $"Bank with ID {bank.Id} does not have a registration endpoint configured. " +
+                    "Please create a registration e.g. using the bank's portal and then try again using " +
+                    $"{request.ExternalApiObject} to specify the registration.");
+
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings =
                 GetRequestJsonSerializerSettings(customBehaviour);
@@ -300,12 +306,17 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation ??
-            bankProfile?.BankConfigurationApiSettings.UseRegistrationGetEndpoint ??
+            bankProfile?.BankConfigurationApiSettings.ProcessedUseRegistrationGetEndpoint ??
             throw new ArgumentNullException(
                 null,
                 "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
         if (includeExternalApiOperation)
         {
+            string registrationEndpoint =
+                entity.BankNavigation.RegistrationEndpoint ??
+                throw new InvalidOperationException(
+                    $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
+
             bool useRegistrationAccessTokenValue =
                 readParams.UseRegistrationAccessToken ??
                 bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
@@ -343,7 +354,7 @@ internal class
                     processedSoftwareStatementProfile,
                     false, // not used for GET
                     accessToken);
-            var externalApiUrl = new Uri(entity.BankNavigation.RegistrationEndpoint.TrimEnd('/') + $"/{externalApiId}");
+            var externalApiUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{externalApiId}");
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,

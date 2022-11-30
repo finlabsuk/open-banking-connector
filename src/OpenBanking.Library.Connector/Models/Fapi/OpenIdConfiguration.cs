@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public string AuthorizationEndpoint { get; set; } = null!;
 
         [JsonProperty("registration_endpoint")]
-        public string RegistrationEndpoint { get; set; } = null!;
+        public string? RegistrationEndpoint { get; set; }
 
         [JsonProperty("jwks_uri")]
         public string JwksUri { get; set; } = null!;
