@@ -30,7 +30,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
         {
             // Add settings groups
             services
-                .AddSettingsGroup<SoftwareStatementAndCertificateProfileOverridesSettings>(configuration)
                 .AddSettingsGroup<DatabaseSettings>(configuration)
                 .AddSettingsGroup<BankProfilesSettings>(configuration)
                 .AddSettingsGroup<SoftwareStatementProfilesSettings>(configuration)

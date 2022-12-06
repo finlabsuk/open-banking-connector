@@ -68,7 +68,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 BankProfile = bankProfile.BankProfileEnum,
                 BankId = default, // substitute logging placeholder
                 SoftwareStatementProfileId = testData1.SoftwareStatementProfileId,
-                SoftwareStatementAndCertificateProfileOverrideCase =
+                SoftwareStatementProfileOverrideCase =
                     testData1.SoftwareStatementAndCertificateProfileOverride,
                 RegistrationScope = testData1.RegistrationScope,
                 TokenEndpointAuthMethod = bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod,

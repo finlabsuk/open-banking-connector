@@ -4,9 +4,11 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FluentValidation.Results;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -73,22 +75,43 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         private readonly string? _defaultQueryRedirectUrl;
 
         public ProcessedSoftwareStatementProfile(
-            string softwareStatementProfileId,
-            TransportCertificateProfile transportCertificateProfile,
-            SigningCertificateProfile signingCertificateProfile,
+            ProcessedTransportCertificateProfile processedTransportCertificateProfile,
+            ProcessedSigningCertificateProfile processedSigningCertificateProfile,
             SoftwareStatementProfile softwareStatementProfile,
-            IApiClient apiClient)
+            string id,
+            string? overrideCase,
+            IInstrumentationClient instrumentationClient)
         {
+            // Log processing message
+            string message =
+                "Configuration/secrets info: " +
+                $"Processing Software Statement Profile with ID {id}";
+            message += overrideCase is null
+                ? "."
+                : $" and override {overrideCase}.";
+            instrumentationClient.Info(message);
+
+            // Validate software statement profile
+            ValidationResult validationResult = new SoftwareStatementProfileValidator()
+                .Validate(softwareStatementProfile);
+            validationResult.ProcessValidationResultsAndRaiseErrors(
+                "Configuration/secrets error",
+                $"Validation failure when checking software statement profile with ID {id}" +
+                (overrideCase is null
+                    ? "."
+                    : $" and override case {overrideCase}."
+                ));
+
             // Pass-through properties
-            SigningKeyId = signingCertificateProfile.AssociatedKeyId;
-            SigningKey = signingCertificateProfile.AssociatedKey;
-            SigningCertificate = signingCertificateProfile.Certificate;
-            TransportCertificateType = transportCertificateProfile.CertificateType;
+            SigningKeyId = processedSigningCertificateProfile.AssociatedKeyId;
+            SigningKey = processedSigningCertificateProfile.AssociatedKey;
+            TransportCertificateType = processedTransportCertificateProfile.CertificateType;
             TransportCertificateDnWithHexDottedDecimalAttributeValues =
-                transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
-            TransportCertificateDnWithStringDottedDecimalAttributeValues = transportCertificateProfile
+                processedTransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
+            TransportCertificateDnWithStringDottedDecimalAttributeValues = processedTransportCertificateProfile
                 .CertificateDnWithStringDottedDecimalAttributeValues;
-            SoftwareStatementProfileId = softwareStatementProfileId;
+            Id = id;
+            OverrideCase = overrideCase;
 
             // Break software statement into components
             string[] softwareStatementComponentsBase64 =
@@ -115,7 +138,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                         softwareStatementProfile.DefaultQueryRedirectUrl))
                 {
                     throw new ArgumentException(
-                        $"Software statement profile with ID {softwareStatementProfileId} contains DefaultQueryRedirectUrl {softwareStatementProfile.DefaultQueryRedirectUrl} " +
+                        $"Software statement profile with ID {id} contains DefaultQueryRedirectUrl {softwareStatementProfile.DefaultQueryRedirectUrl} " +
                         "which is not included in software statement software_redirect_uris field.");
                 }
 
@@ -128,7 +151,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                         softwareStatementProfile.DefaultFragmentRedirectUrl))
                 {
                     throw new ArgumentException(
-                        $"Software statement profile with ID {softwareStatementProfileId} contains DefaultFragmentRedirectUrl {softwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                        $"Software statement profile with ID {id} contains DefaultFragmentRedirectUrl {softwareStatementProfile.DefaultFragmentRedirectUrl} " +
                         "which is not included in software statement software_redirect_uris field.");
                 }
 
@@ -136,7 +159,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
             }
 
             // Api client
-            ApiClient = apiClient;
+            ApiClient = processedTransportCertificateProfile.ApiClient;
         }
 
         public string SoftwareStatementHeaderBase64 { get; }
@@ -163,9 +186,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
         /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
         public string SigningKey { get; }
 
-        /// Open Banking Signing Certificate as string, e.g. "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-        public string SigningCertificate { get; }
-
         /// <summary>
         ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.
         /// </summary>
@@ -176,7 +196,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 if (_defaultQueryRedirectUrl is null)
                 {
                     throw new ArgumentException(
-                        $"No non-empty DefaultQueryRedirectUrl provided in software statement profile with ID {SoftwareStatementProfileId}");
+                        $"No non-empty DefaultQueryRedirectUrl provided in software statement profile with ID {Id}");
                 }
 
                 return _defaultQueryRedirectUrl;
@@ -193,7 +213,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
                 if (_defaultFragmentRedirectUrl is null)
                 {
                     throw new ArgumentException(
-                        $"No non-empty DefaultFragmentRedirectUrl provided in software statement profile with ID {SoftwareStatementProfileId}");
+                        $"No non-empty DefaultFragmentRedirectUrl provided in software statement profile with ID {Id}");
                 }
 
                 return _defaultFragmentRedirectUrl;
@@ -208,7 +228,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository
 
         public IApiClient ApiClient { get; }
 
-        public string SoftwareStatementProfileId { get; }
+        public string Id { get; }
+
+        public string? OverrideCase { get; }
 
         public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
         {

@@ -68,8 +68,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Collect settings from configuration (to ensure common settings with Generic Host tests;
             // a "plain app" might get settings from environment variables or a custom system;
             // see comment in next section).
-            var softwareStatementAndCertificateProfileOverridesSettings =
-                AppConfiguration.GetSettings<SoftwareStatementAndCertificateProfileOverridesSettings>();
             var softwareStatementProfilesSettings =
                 AppConfiguration.GetSettings<SoftwareStatementProfilesSettings>();
             var obTransportCertificateProfilesSettings =
@@ -82,9 +80,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             // Create providers from settings
             // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
             // settings as might be done in a "plain app".
-            var obcSettingsProvider2 =
-                new DefaultSettingsProvider<SoftwareStatementAndCertificateProfileOverridesSettings>(
-                    softwareStatementAndCertificateProfileOverridesSettings);
             var softwareStatementProfilesSettingsProvider =
                 new DefaultSettingsProvider<SoftwareStatementProfilesSettings>(softwareStatementProfilesSettings);
             var obTransportCertificateProfilesSettingsProvider =
@@ -103,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             //     b =>
             //         b.AddConsole().AddXUnit(_appContextFixture));
             // ILogger<object> logger = factory.CreateLogger<object>();
-            ILogger<object> logger = _serviceProvider.GetRequiredService<ILogger<object>>();
+            var logger = _serviceProvider.GetRequiredService<ILogger<object>>();
             var instrumentationClient = new LoggerInstrumentationClient(logger);
 
             // Connect output to logging
@@ -111,7 +106,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
 
             // Set up software statement store
             var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
-                obcSettingsProvider2,
                 softwareStatementProfilesSettingsProvider,
                 obTransportCertificateProfilesSettingsProvider,
                 obSigningCertificateProfilesSettingsProvider,

@@ -287,8 +287,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string jwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
                 claims,
-                processedSoftwareStatementProfile.SigningKey,
-                processedSoftwareStatementProfile.SigningCertificate);
+                processedSoftwareStatementProfile.SigningKey);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine("#### JWT (Client Auth)")
                 .Append(jwt);

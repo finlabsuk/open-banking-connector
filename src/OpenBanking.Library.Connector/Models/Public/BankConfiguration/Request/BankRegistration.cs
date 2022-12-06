@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     can be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.
         ///     When null no override case is specified.
         /// </summary>
-        public string? SoftwareStatementAndCertificateProfileOverrideCase { get; set; }
+        public string? SoftwareStatementProfileOverrideCase { get; set; }
 
         /// <summary>
         ///     Token endpoint authorisation method.

@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -50,8 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
                     _processedSoftwareStatementProfile.SigningKeyId,
                     _useB64),
                 variantRequest,
-                _processedSoftwareStatementProfile.SigningKey,
-                _processedSoftwareStatementProfile.SigningCertificate);
+                _processedSoftwareStatementProfile.SigningKey);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### JWT ({requestDescription})")
                 .Append(jwt);
@@ -60,9 +57,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             // Assemble headers and body
             var headers = new List<HttpHeader>
             {
-                new HttpHeader("x-fapi-financial-id", _orgId),
-                new HttpHeader("Authorization", "Bearer " + _accessToken),
-                new HttpHeader("x-idempotency-key", Guid.NewGuid().ToString()),
+                new("x-fapi-financial-id", _orgId),
+                new("Authorization", "Bearer " + _accessToken),
+                new("x-idempotency-key", Guid.NewGuid().ToString()),
             };
             headers.Add(CreateJwsSignatureHeader(jwt));
             JsonSerializerSettings jsonSerializerSettings =
@@ -118,7 +115,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.P
             dict.Add("cty", "application/json");
             dict.Add("crit", crit);
             dict.Add("http://openbanking.org.uk/iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-            dict.Add("http://openbanking.org.uk/iss", $"{orgId}/{softwareId}"); // TODO: adjust. See HSBC implementation guide
+            dict.Add(
+                "http://openbanking.org.uk/iss",
+                $"{orgId}/{softwareId}"); // TODO: adjust. See HSBC implementation guide
             dict.Add("http://openbanking.org.uk/tan", "openbanking.org.uk");
             if (!(b64 is null))
             {

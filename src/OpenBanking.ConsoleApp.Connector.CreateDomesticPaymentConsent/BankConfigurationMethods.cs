@@ -47,7 +47,7 @@ namespace FinnovationLabs.OpenBanking.ConsoleApp.Connector.CreateDomesticPayment
             {
                 BankId = bankId,
                 SoftwareStatementProfileId = softwareStatementProfileId,
-                SoftwareStatementAndCertificateProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
+                SoftwareStatementProfileOverrideCase = softwareStatementAndCertificateProfileOverrideCase,
                 RegistrationScope = registrationScope,
                 DefaultResponseMode = bankProfile.DefaultResponseMode
             };

@@ -41,7 +41,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.B
                 JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.SigningKeyId),
                 variantRequest,
                 _processedSoftwareStatementProfile.SigningKey,
-                _processedSoftwareStatementProfile.SigningCertificate,
                 requestJsonSerializerSettings);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine($"#### Claims ({requestDescription})")

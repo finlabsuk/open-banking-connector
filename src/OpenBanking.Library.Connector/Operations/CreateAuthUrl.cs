@@ -59,8 +59,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string requestObjectJwt = JwtFactory.CreateJwt(
                 JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
                 oAuth2RequestObjectClaims,
-                processedSoftwareStatementProfile.SigningKey,
-                processedSoftwareStatementProfile.SigningCertificate);
+                processedSoftwareStatementProfile.SigningKey);
             StringBuilder requestTraceSb = new StringBuilder()
                 .AppendLine("#### Claims (Request Object)")
                 .AppendLine(

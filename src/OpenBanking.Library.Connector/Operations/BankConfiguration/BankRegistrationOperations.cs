@@ -125,7 +125,7 @@ internal class
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
                 softwareStatementProfileId,
-                request.SoftwareStatementAndCertificateProfileOverrideCase);
+                request.SoftwareStatementProfileOverrideCase);
 
         // Determine redirect URIs
         (string defaultRedirectUri, List<string> otherRedirectUris) = GetRedirectUris(
@@ -238,7 +238,7 @@ internal class
             defaultRedirectUri,
             otherRedirectUris,
             request.SoftwareStatementProfileId,
-            request.SoftwareStatementAndCertificateProfileOverrideCase,
+            request.SoftwareStatementProfileOverrideCase,
             tokenEndpointAuthMethod,
             registrationScope,
             defaultResponseMode,
