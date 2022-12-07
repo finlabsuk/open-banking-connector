@@ -47,15 +47,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
             // Set up time provider
             services.AddSingleton<ITimeProvider, TimeProvider>();
 
-            // Set up logging
-            services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient>();
-
-            // Set up API client not associated with software statement profile
-            services.AddSingleton<IApiClient>(
-                sp => new ApiClient(
-                    sp.GetRequiredService<
-                        IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
-
             // Set up mapper for API variants (different Open Banking standards)
             services.AddSingleton<IApiVariantMapper, ApiVariantMapper>();
 
@@ -86,6 +77,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions
 
             // Configure DB service
             services.AddScoped<IDbService, DbService>();
+
+            // Set up logging
+            services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient<RequestBuilder>>();
+
+            // Set up API client not associated with software statement profile
+            services.AddSingleton<IApiClient>(
+                sp => new ApiClient(
+                    sp.GetRequiredService<
+                        IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
 
             // Configure Request Builder
             services.AddScoped<IRequestBuilder, RequestBuilder>();

@@ -98,8 +98,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             //     b =>
             //         b.AddConsole().AddXUnit(_appContextFixture));
             // ILogger<object> logger = factory.CreateLogger<object>();
-            var logger = _serviceProvider.GetRequiredService<ILogger<object>>();
-            var instrumentationClient = new LoggerInstrumentationClient(logger);
+            var logger = _serviceProvider.GetRequiredService<ILogger<RequestBuilder>>();
+            var instrumentationClient = new LoggerInstrumentationClient<RequestBuilder>(logger);
 
             // Connect output to logging
             SetTestLogging();

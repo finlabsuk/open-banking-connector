@@ -8,18 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation
 {
-    public class LoggerInstrumentationClient : IInstrumentationClient
+    public class LoggerInstrumentationClient<TSource> : IInstrumentationClient
+        where TSource : class
     {
-        private readonly ILogger<object> _logger;
+        private readonly ILogger<TSource> _logger;
 
-        public LoggerInstrumentationClient(ILogger<object> logger)
+        public LoggerInstrumentationClient(ILogger<TSource> logger)
         {
             _logger = logger;
         }
-
-        public void StartTrace(TraceInfo info) => LogTrace("Start", info);
-
-        public void EndTrace(TraceInfo info) => LogTrace("End", info);
 
         public void Info(string message) => _logger.LogInformation(message);
 
@@ -33,6 +30,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentat
 
         public void Exception(Exception exception, string message) =>
             _logger.LogError(exception, message);
+
+        public void StartTrace(TraceInfo info) => LogTrace("Start", info);
+
+        public void EndTrace(TraceInfo info) => LogTrace("End", info);
 
         private void LogTrace(string prefix, TraceInfo info)
         {
