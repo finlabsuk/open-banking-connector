@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using Newtonsoft.Json;
@@ -29,6 +30,7 @@ internal interface IGrantPost
         string bankIssuerUrl,
         string externalApiClientId,
         string externalApiConsentId,
+        string? externalApiUserId,
         string nonce,
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -44,6 +46,7 @@ internal interface IGrantPost
         string bankIssuerUrl,
         string externalApiClientId,
         string externalApiConsentId,
+        string? externalApiUserId,
         string nonce,
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -53,7 +56,7 @@ internal interface IGrantPost
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient);
 
-    Task ValidateIdTokenAuthEndpoint(
+    Task<string?> ValidateIdTokenAuthEndpoint(
         OAuth2RedirectData redirectData,
         ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
         string jwksUri,
@@ -62,5 +65,7 @@ internal interface IGrantPost
         string externalApiClientId,
         string externalApiConsentId,
         string nonce,
-        bool supportsSca);
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
+        string? externalApiUserId);
 }

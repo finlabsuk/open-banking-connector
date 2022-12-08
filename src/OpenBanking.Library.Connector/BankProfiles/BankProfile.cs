@@ -58,6 +58,11 @@ public class BankConfigurationApiSettings
     public bool UseRegistrationAccessToken { get; set; } = false;
 
     public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethod.TlsClientAuth;
+
+    /// <summary>
+    ///     ID token "sub" claim type.
+    /// </summary>
+    public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
 }
 
 public class AccountAndTransactionApiSettings

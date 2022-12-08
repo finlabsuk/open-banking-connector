@@ -198,6 +198,9 @@ internal class
             null,
             utcNow,
             request.CreatedBy,
+            request.ExternalApiUserId,
+            utcNow,
+            request.CreatedBy,
             request.AccountAndTransactionApiId);
         
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
@@ -223,8 +226,9 @@ internal class
                 persistedConsent.Reference,
                 null,
                 persistedConsent.BankRegistrationId,
-                persistedConsent.AccountAndTransactionApiId,
                 persistedConsent.ExternalApiId,
+                persistedConsent.ExternalApiUserId,
+                persistedConsent.AccountAndTransactionApiId,
                 externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -299,8 +303,9 @@ internal class
             persistedConsent.Reference,
             null,
             persistedConsent.BankRegistrationId,
-            persistedConsent.AccountAndTransactionApiId,
             persistedConsent.ExternalApiId,
+            persistedConsent.ExternalApiUserId,
+            persistedConsent.AccountAndTransactionApiId,
             externalApiResponse);
 
         return (response, nonErrorMessages);

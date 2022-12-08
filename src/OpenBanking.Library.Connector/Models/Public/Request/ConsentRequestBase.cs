@@ -10,7 +10,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 public class ConsentRequestBase : Base
 {
-    
     /// <summary>
     ///     BankProfile used to apply transformations to external API requests.
     /// </summary>
@@ -22,7 +21,7 @@ public class ConsentRequestBase : Base
     [Required]
     [JsonProperty(Required = Required.Always)]
     public Guid BankRegistrationId { get; set; }
-    
+
     /// <summary>
     ///     Use existing external API object instead of making external API request.
     ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
@@ -32,4 +31,10 @@ public class ConsentRequestBase : Base
     ///     not be created at the external API.
     /// </summary>
     public ExternalApiConsent? ExternalApiObject { get; set; }
+
+    /// <summary>
+    ///     User ID at external API (bank) which may or may not be available via ID token "sub" claim. It can also optionally
+    ///     be specified here.
+    /// </summary>
+    public string? ExternalApiUserId { get; set; }
 }

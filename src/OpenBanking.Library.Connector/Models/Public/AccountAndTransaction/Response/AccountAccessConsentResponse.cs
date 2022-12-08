@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         public string ExternalApiId { get; }
     }
 
-    public abstract class AccountAccessConsentBaseResponse : LocalObjectBaseResponse, IAccountAccessConsentPublicQuery
+    public abstract class AccountAccessConsentBaseResponse : ConsentResponseBase, IAccountAccessConsentPublicQuery
     {
         internal AccountAccessConsentBaseResponse(
             Guid id,
@@ -25,34 +25,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid accountAndTransactionApiId,
-            string externalApiId) : base(id, created, createdBy, reference)
+            string externalApiId,
+            string? externalApiUserId,
+            Guid accountAndTransactionApiId) : base(
+            id,
+            created,
+            createdBy,
+            reference,
+            warnings,
+            bankRegistrationId,
+            externalApiId,
+            externalApiUserId)
         {
-            Warnings = warnings;
-            BankRegistrationId = bankRegistrationId;
             AccountAndTransactionApiId = accountAndTransactionApiId;
-            ExternalApiId = externalApiId;
         }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; }
-
-        /// <summary>
-        ///     ID of associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
 
         /// <summary>
         ///     ID of associated AccountAndTransactionApiEntity object
         /// </summary>
         public Guid AccountAndTransactionApiId { get; }
-
-        /// <summary>
-        ///     External (bank) API ID for this object
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
     /// <summary>
@@ -67,8 +58,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid accountAndTransactionApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid accountAndTransactionApiId,
             OBReadConsentResponse1? externalApiResponse) : base(
             id,
             created,
@@ -76,8 +68,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             reference,
             warnings,
             bankRegistrationId,
-            accountAndTransactionApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            accountAndTransactionApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
@@ -104,8 +97,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid accountAndTransactionApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid accountAndTransactionApiId,
             OBReadConsentResponse1 externalApiResponse) : base(
             id,
             created,
@@ -113,8 +107,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             reference,
             warnings,
             bankRegistrationId,
-            accountAndTransactionApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            accountAndTransactionApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }

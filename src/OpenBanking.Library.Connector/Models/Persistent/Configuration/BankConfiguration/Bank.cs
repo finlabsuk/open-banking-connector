@@ -42,6 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.DcrApiVersion)
                 .HasConversion(new EnumToStringConverter<DynamicClientRegistrationApiVersion>())
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+            builder.Property(e => e.IdTokenSubClaimType)
+                .HasConversion(new EnumToStringConverter<IdTokenSubClaimType>())
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.CustomBehaviour)
                 .HasConversion(
                     v => JsonConvert.SerializeObject(

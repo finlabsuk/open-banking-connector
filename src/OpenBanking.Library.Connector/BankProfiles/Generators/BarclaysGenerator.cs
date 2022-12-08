@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -52,7 +53,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 UseRegistrationEndpoints = false,
-                TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt
+                TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt,
+                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

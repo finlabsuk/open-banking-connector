@@ -54,6 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             string? createdBy,
             string? reference,
             IList<string>? warnings,
+            IdTokenSubClaimType idTokenSubClaimType,
             string jwksUri,
             bool supportsSca,
             string issuerUrl,
@@ -65,6 +66,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             CustomBehaviourClass? customBehaviour) : base(id, created, createdBy, reference)
         {
             Warnings = warnings;
+            IdTokenSubClaimType = idTokenSubClaimType;
             JwksUri = jwksUri;
             SupportsSca = supportsSca;
             IssuerUrl = issuerUrl;
@@ -80,6 +82,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Optional list of warning messages from Open Banking Connector.
         /// </summary>
         public IList<string>? Warnings { get; set; }
+
+        /// <summary>
+        ///     ID token "sub" claim type. Determined by how bank uses ID token.
+        /// </summary>
+        public IdTokenSubClaimType IdTokenSubClaimType { get; }
 
         public string JwksUri { get; }
 

@@ -7,188 +7,129 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-using Microsoft.Extensions.Logging;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+
+internal class ExternalApiObject : IBankRegistrationExternalApiObjectPublicQuery
 {
-    internal class ExternalApiObject : IBankRegistrationExternalApiObjectPublicQuery
+    public ExternalApiObject(string externalApiId, string? externalApiSecret, string? registrationAccessToken)
     {
-        public ExternalApiObject(string externalApiId, string? externalApiSecret, string? registrationAccessToken)
-        {
-            ExternalApiId = externalApiId;
-            ExternalApiSecret = externalApiSecret;
-            RegistrationAccessToken = registrationAccessToken;
-        }
-
-        public string? ExternalApiSecret { get; }
-
-        public string? RegistrationAccessToken { get; }
-
-        public string ExternalApiId { get; }
+        ExternalApiId = externalApiId;
+        ExternalApiSecret = externalApiSecret;
+        RegistrationAccessToken = registrationAccessToken;
     }
+
+    public string? ExternalApiSecret { get; }
+
+    public string? RegistrationAccessToken { get; }
+
+    public string ExternalApiId { get; }
+}
+
+/// <summary>
+///     Persisted type.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal class BankRegistration :
+    BaseEntity,
+    IBankRegistrationPublicQuery
+{
+    /// <summary>
+    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+    /// </summary>
+    [Column("external_api_id")]
+    private readonly string _externalApiId;
 
     /// <summary>
-    ///     Persisted type.
-    ///     Internal to help ensure public request and response types used on public API.
+    ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
     /// </summary>
-    internal class BankRegistration :
-        BaseEntity,
-        IBankRegistrationPublicQuery
+    [Column("external_api_secret")]
+    private readonly string? _externalApiSecret;
+
+    /// <summary>
+    ///     External API registration access token. Sometimes used to support registration adjustments etc.
+    /// </summary>
+    [Column("registration_access_token")]
+    private readonly string? _registrationAccessToken;
+
+    public BankRegistration(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        string externalApiId,
+        string? externalApiSecret,
+        string? registrationAccessToken,
+        string defaultRedirectUri,
+        IList<string> otherRedirectUris,
+        string softwareStatementProfileId,
+        string? softwareStatementProfileOverride,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        RegistrationScopeEnum registrationScope,
+        OAuth2ResponseMode defaultResponseMode,
+        Guid bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
     {
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        [Column("external_api_id")]
-        private readonly string _externalApiId;
-
-        /// <summary>
-        ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-        /// </summary>
-        [Column("external_api_secret")]
-        private readonly string? _externalApiSecret;
-
-        /// <summary>
-        ///     External API registration access token. Sometimes used to support registration adjustments etc.
-        /// </summary>
-        [Column("registration_access_token")]
-        private readonly string? _registrationAccessToken;
-
-        public BankRegistration(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string externalApiId,
-            string? externalApiSecret,
-            string? registrationAccessToken,
-            string defaultRedirectUri,
-            IList<string> otherRedirectUris,
-            string softwareStatementProfileId,
-            string? softwareStatementProfileOverride,
-            TokenEndpointAuthMethod tokenEndpointAuthMethod,
-            RegistrationScopeEnum registrationScope,
-            OAuth2ResponseMode defaultResponseMode,
-            Guid bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
-        {
-            _externalApiId = externalApiId;
-            _externalApiSecret = externalApiSecret;
-            _registrationAccessToken = registrationAccessToken;
-            DefaultRedirectUri = defaultRedirectUri;
-            OtherRedirectUris = otherRedirectUris;
-            SoftwareStatementProfileId = softwareStatementProfileId;
-            SoftwareStatementProfileOverride = softwareStatementProfileOverride;
-            TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-            RegistrationScope = registrationScope;
-            DefaultResponseMode = defaultResponseMode;
-            BankId = bankId;
-        }
-
-        [ForeignKey("BankId")]
-        public Bank BankNavigation { get; set; } = null!;
-
-        public ExternalApiObject ExternalApiObject => new(
-            _externalApiId,
-            _externalApiSecret,
-            _registrationAccessToken);
-
-        /// <summary>
-        ///     Default redirect URI used for this registration.
-        /// </summary>
-        public string DefaultRedirectUri { get; set; }
-
-        /// <summary>
-        ///     Redirect URIs in addition to default one used for this registration.
-        /// </summary>
-        public IList<string> OtherRedirectUris { get; set; }
-
-        /// <summary>
-        ///     ID of SoftwareStatementProfile to use in association with BankRegistration
-        /// </summary>
-        public string SoftwareStatementProfileId { get; }
-
-        public string? SoftwareStatementProfileOverride { get; }
-
-        /// <summary>
-        ///     Token endpoint authorisation method
-        /// </summary>
-        public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
-        /// <summary>
-        ///     Functional APIs used for bank registration.
-        /// </summary>
-        public RegistrationScopeEnum RegistrationScope { get; }
-
-        public OAuth2ResponseMode DefaultResponseMode { get; }
-
-        /// <summary>
-        ///     Bank with which this BankRegistration is associated.
-        /// </summary>
-        public Guid BankId { get; }
-
-        IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
-            ExternalApiObject;
+        _externalApiId = externalApiId;
+        _externalApiSecret = externalApiSecret;
+        _registrationAccessToken = registrationAccessToken;
+        DefaultRedirectUri = defaultRedirectUri;
+        OtherRedirectUris = otherRedirectUris;
+        SoftwareStatementProfileId = softwareStatementProfileId;
+        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
+        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
+        RegistrationScope = registrationScope;
+        DefaultResponseMode = defaultResponseMode;
+        BankId = bankId;
     }
 
-    public class BankRegistrationCleanup
-    {
-        public async Task Cleanup(
-            PostgreSqlDbContext postgreSqlDbContext,
-            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
-            ILogger logger)
-        {
-            IQueryable<BankRegistration> entityList =
-                postgreSqlDbContext.Set<BankRegistration>();
+    [ForeignKey("BankId")]
+    public Bank BankNavigation { get; set; } = null!;
 
-            foreach (BankRegistration bankRegistration in entityList)
-            {
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile;
-                string softwareStatementProfileId = bankRegistration.SoftwareStatementProfileId;
-                string? softwareStatementProfileOverride = bankRegistration.SoftwareStatementProfileOverride;
-                try
-                {
-                    processedSoftwareStatementProfile = await processedSoftwareStatementProfileStore.GetAsync(
-                        softwareStatementProfileId,
-                        softwareStatementProfileOverride);
-                }
-                catch
-                {
-                    string message =
-                        $"In its database record, BankRegistration with ID {bankRegistration.BankId} specifies " +
-                        $"use of software statement profile with ID {softwareStatementProfileId}";
-                    message += softwareStatementProfileOverride is null
-                        ? ". "
-                        : $" and override {softwareStatementProfileOverride}. ";
-                    message += "This software statement profile was not found in configuration/secrets.";
-                    logger.LogWarning(message);
-                    continue;
-                }
+    public ExternalApiObject ExternalApiObject => new(
+        _externalApiId,
+        _externalApiSecret,
+        _registrationAccessToken);
 
-                if (string.IsNullOrEmpty(bankRegistration.DefaultRedirectUri))
-                {
-                    string defaultRedirectUri = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
-                    if (string.IsNullOrEmpty(defaultRedirectUri))
-                    {
-                        throw new Exception(
-                            $"Can't find defaultRedirectUri for software statement profile {softwareStatementProfileId} ");
-                    }
+    /// <summary>
+    ///     Default redirect URI used for this registration.
+    /// </summary>
+    public string DefaultRedirectUri { get; set; }
 
-                    List<string> otherRedirectUris =
-                        processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareRedirectUris;
-                    otherRedirectUris.Remove(defaultRedirectUri);
+    /// <summary>
+    ///     Redirect URIs in addition to default one used for this registration.
+    /// </summary>
+    public IList<string> OtherRedirectUris { get; set; }
 
-                    bankRegistration.DefaultRedirectUri = defaultRedirectUri;
-                    bankRegistration.OtherRedirectUris = otherRedirectUris;
-                }
-            }
-        }
-    }
+    /// <summary>
+    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
+    /// </summary>
+    public string SoftwareStatementProfileId { get; }
+
+    public string? SoftwareStatementProfileOverride { get; }
+
+    /// <summary>
+    ///     Token endpoint authorisation method
+    /// </summary>
+    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
+
+    /// <summary>
+    ///     Functional APIs used for bank registration.
+    /// </summary>
+    public RegistrationScopeEnum RegistrationScope { get; }
+
+    public OAuth2ResponseMode DefaultResponseMode { get; }
+
+    /// <summary>
+    ///     Bank with which this BankRegistration is associated.
+    /// </summary>
+    public Guid BankId { get; }
+
+    IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
+        ExternalApiObject;
 }

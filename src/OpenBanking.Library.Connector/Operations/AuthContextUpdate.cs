@@ -135,13 +135,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             }
 
             // Validate ID token including nonce
+            DateTimeOffset modified = _timeProvider.GetUtcNow();
             bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
             if (doNotValidateIdToken is false)
             {
                 string jwksUri = bankRegistration.BankNavigation.JwksUri;
                 JwksGetCustomBehaviour? jwksGetCustomBehaviour =
                     bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
-                await _grantPost.ValidateIdTokenAuthEndpoint(
+                string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
                     request.RedirectData,
                     consentAuthGetCustomBehaviour,
                     jwksUri,
@@ -150,11 +151,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     externalApiClientId,
                     externalApiConsentId,
                     nonce,
-                    bankRegistration.BankNavigation.SupportsSca);
+                    bankRegistration.BankNavigation.SupportsSca,
+                    bankRegistration.BankNavigation.IdTokenSubClaimType,
+                    consent.ExternalApiUserId);
+                if (newExternalApiUserId != consent.ExternalApiUserId)
+                {
+                    consent.UpdateExternalApiUserId(
+                        newExternalApiUserId,
+                        modified,
+                        modifiedBy);
+                }
             }
 
             // Valid ID token means nonce has been validated so we delete auth context to ensure nonce can only be used once
-            authContext.UpdateIsDeleted(true, _timeProvider.GetUtcNow(), modifiedBy);
+            authContext.UpdateIsDeleted(true, modified, modifiedBy);
 
             // Wrap remaining processing in try block to ensure DB changes persisted
             try
@@ -189,6 +199,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         bankIssuerUrl,
                         externalApiClientId,
                         externalApiConsentId,
+                        consent.ExternalApiUserId,
                         nonce,
                         requestScope,
                         processedSoftwareStatementProfile,
@@ -202,14 +213,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 consent.UpdateAuthContext(
                     authContext.State,
                     nonce,
-                    _timeProvider.GetUtcNow(),
+                    modified,
                     modifiedBy);
                 consent.UpdateAccessToken(
                     tokenEndpointResponse.AccessToken,
                     //0,
                     tokenEndpointResponse.ExpiresIn,
                     tokenEndpointResponse.RefreshToken,
-                    _timeProvider.GetUtcNow(),
+                    modified,
                     modifiedBy);
 
                 // Create response (may involve additional processing based on entity)

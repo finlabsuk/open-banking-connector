@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
@@ -38,6 +37,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             string? authContextNonce,
             DateTimeOffset authContextModified,
             string? authContextModifiedBy,
+            string? externalApiUserId,
+            DateTimeOffset externalApiUserIdModified,
+            string? externalApiUserIdModifiedBy,
             Guid variableRecurringPaymentsApiId) : base(
             id,
             reference,
@@ -56,7 +58,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
             authContextState,
             authContextNonce,
             authContextModified,
-            authContextModifiedBy)
+            authContextModifiedBy,
+            externalApiUserId,
+            externalApiUserIdModified,
+            externalApiUserIdModifiedBy)
         {
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
         }
@@ -72,5 +77,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
         /// </summary>
         public Guid VariableRecurringPaymentsApiId { get; }
     }
-
 }

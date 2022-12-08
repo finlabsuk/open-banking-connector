@@ -80,6 +80,12 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             throw new InvalidOperationException(
                 "DynamicClientRegistrationApiVersion specified as null and cannot be obtained using specified BankProfile.");
 
+        IdTokenSubClaimType idTokenSubClaimType =
+            request.IdTokenSubClaimType ??
+            bankProfile?.BankConfigurationApiSettings.IdTokenSubClaimType ??
+            throw new InvalidOperationException(
+                $"{nameof(request.IdTokenSubClaimType)} specified as null and cannot be obtained using specified BankProfile.");
+
         // Get OpenID Provider Configuration if available
         (OpenIdConfiguration? openIdConfiguration,
                 IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages1) =
@@ -131,6 +137,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
+            idTokenSubClaimType,
             jwksUri,
             supportsSca,
             issuerUrl,

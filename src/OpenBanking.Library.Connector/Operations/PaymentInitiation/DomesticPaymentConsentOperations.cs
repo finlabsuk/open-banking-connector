@@ -213,6 +213,9 @@ internal class
             null,
             utcNow,
             request.CreatedBy,
+            request.ExternalApiUserId,
+            utcNow,
+            request.CreatedBy,
             request.PaymentInitiationApiId);
 
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
@@ -241,8 +244,9 @@ internal class
                 persistedConsent.Reference,
                 null,
                 persistedConsent.BankRegistrationId,
-                persistedConsent.PaymentInitiationApiId,
                 persistedConsent.ExternalApiId,
+                persistedConsent.ExternalApiUserId,
+                persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
@@ -314,8 +318,9 @@ internal class
                 persistedObject.Reference,
                 null,
                 persistedObject.BankRegistrationId,
-                persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,
+                persistedObject.ExternalApiUserId,
+                persistedObject.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
@@ -379,8 +384,9 @@ internal class
                 persistedObject.Reference,
                 null,
                 persistedObject.BankRegistrationId,
-                persistedObject.PaymentInitiationApiId,
                 persistedObject.ExternalApiId,
+                persistedObject.ExternalApiUserId,
+                persistedObject.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);

@@ -90,6 +90,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankIssuerUrl,
                     externalApiClientId,
                     consent.ExternalApiId,
+                    consent.ExternalApiUserId,
                     nonce,
                     requestScope,
                     processedSoftwareStatementProfile,

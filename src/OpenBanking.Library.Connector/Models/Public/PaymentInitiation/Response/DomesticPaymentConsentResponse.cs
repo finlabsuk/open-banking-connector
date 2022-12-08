@@ -28,7 +28,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
         string ExternalApiId { get; }
     }
 
-    public abstract class DomesticPaymentConsentBaseResponse : LocalObjectBaseResponse,
+    public abstract class DomesticPaymentConsentBaseResponse : ConsentResponseBase,
         IDomesticPaymentConsentPublicQuery
     {
         internal DomesticPaymentConsentBaseResponse(
@@ -38,35 +38,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
-            string externalApiId) : base(id, created, createdBy, reference)
+            string externalApiId,
+            string? externalApiUserId,
+            Guid paymentInitiationApiId) : base(
+            id,
+            created,
+            createdBy,
+            reference,
+            warnings,
+            bankRegistrationId,
+            externalApiId,
+            externalApiUserId)
         {
-            Warnings = warnings;
-            BankRegistrationId = bankRegistrationId;
             PaymentInitiationApiId = paymentInitiationApiId;
-            ExternalApiId = externalApiId;
         }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
-
-        /// <summary>
-        ///     Associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
 
         /// <summary>
         ///     Associated PaymentInitiationApi object
         /// </summary>
         public Guid PaymentInitiationApiId { get; }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
     /// <summary>
@@ -81,8 +71,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse) : base(
             id,
             created,
@@ -90,11 +81,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             reference,
             warnings,
             bankRegistrationId,
-            paymentInitiationApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
+
 
         public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
     }
@@ -111,8 +104,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
             id,
             created,
@@ -120,8 +114,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             reference,
             warnings,
             bankRegistrationId,
-            paymentInitiationApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
@@ -135,15 +130,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
     /// </summary>
     public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentBaseResponse
     {
-        public DomesticPaymentConsentReadFundsConfirmationResponse(
+        internal DomesticPaymentConsentReadFundsConfirmationResponse(
             Guid id,
             DateTimeOffset created,
             string? createdBy,
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid paymentInitiationApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
             id,
             created,
@@ -151,8 +147,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             reference,
             warnings,
             bankRegistrationId,
-            paymentInitiationApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }

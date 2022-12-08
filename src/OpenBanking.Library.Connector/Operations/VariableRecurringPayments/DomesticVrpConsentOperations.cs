@@ -210,6 +210,9 @@ internal class
             null,
             utcNow,
             request.CreatedBy,
+            request.ExternalApiUserId,
+            utcNow,
+            request.CreatedBy,
             request.VariableRecurringPaymentsApiId);
 
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
@@ -235,8 +238,9 @@ internal class
                 persistedObject.Reference,
                 null,
                 persistedObject.BankRegistrationId,
-                persistedObject.VariableRecurringPaymentsApiId,
                 persistedObject.ExternalApiId,
+                persistedObject.ExternalApiUserId,
+                persistedObject.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -312,8 +316,9 @@ internal class
                 persistedConsent.Reference,
                 null,
                 persistedConsent.BankRegistrationId,
-                persistedConsent.VariableRecurringPaymentsApiId,
                 persistedConsent.ExternalApiId,
+                persistedConsent.ExternalApiUserId,
+                persistedConsent.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
@@ -376,8 +381,9 @@ internal class
                 persistedObject.Reference,
                 null,
                 persistedObject.BankRegistrationId,
-                persistedObject.VariableRecurringPaymentsApiId,
                 persistedObject.ExternalApiId,
+                persistedObject.ExternalApiUserId,
+                persistedObject.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);

@@ -5,7 +5,8 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -123,10 +124,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
                 var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
 
-                await new BankRegistrationCleanup().Cleanup(
-                    postgreSqlDbContext,
-                    _processedSoftwareStatementProfileStore,
-                    _logger);
+                await new BankRegistrationCleanup()
+                    .Cleanup(
+                        postgreSqlDbContext,
+                        _processedSoftwareStatementProfileStore,
+                        _logger);
+
+                await new AccountAccessConsentCleanup()
+                    .Cleanup(
+                        postgreSqlDbContext,
+                        _processedSoftwareStatementProfileStore,
+                        _logger);
 
                 await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
             }

@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
@@ -38,6 +37,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             string? authContextNonce,
             DateTimeOffset authContextModified,
             string? authContextModifiedBy,
+            string? externalApiUserId,
+            DateTimeOffset externalApiUserIdModified,
+            string? externalApiUserIdModifiedBy,
             Guid paymentInitiationApiId) : base(
             id,
             reference,
@@ -56,7 +58,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
             authContextState,
             authContextNonce,
             authContextModified,
-            authContextModifiedBy)
+            authContextModifiedBy,
+            externalApiUserId,
+            externalApiUserIdModified,
+            externalApiUserIdModifiedBy)
         {
             PaymentInitiationApiId = paymentInitiationApiId;
         }
@@ -72,5 +77,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
         /// </summary>
         public Guid PaymentInitiationApiId { get; }
     }
-
 }

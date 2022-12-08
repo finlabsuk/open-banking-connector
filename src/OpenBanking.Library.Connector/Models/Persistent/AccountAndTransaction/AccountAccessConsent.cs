@@ -4,8 +4,6 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction
 {
@@ -35,6 +33,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             string? authContextNonce,
             DateTimeOffset authContextModified,
             string? authContextModifiedBy,
+            string? externalApiUserId,
+            DateTimeOffset externalApiUserIdModified,
+            string? externalApiUserIdModifiedBy,
             Guid accountAndTransactionApiId) : base(
             id,
             reference,
@@ -53,7 +54,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
             authContextState,
             authContextNonce,
             authContextModified,
-            authContextModifiedBy)
+            authContextModifiedBy,
+            externalApiUserId,
+            externalApiUserIdModified,
+            externalApiUserIdModifiedBy)
         {
             AccountAndTransactionApiId = accountAndTransactionApiId;
         }
@@ -69,5 +73,4 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
         /// </summary>
         public Guid AccountAndTransactionApiId { get; }
     }
-
 }

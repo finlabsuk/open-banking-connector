@@ -81,7 +81,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             string? authContextState,
             string? authContextNonce,
             DateTimeOffset authContextModified,
-            string? authContextModifiedBy) : base(
+            string? authContextModifiedBy,
+            string? externalApiUserId,
+            DateTimeOffset externalApiUserIdModified,
+            string? externalApiUserIdModifiedBy) : base(
             id,
             reference,
             isDeleted,
@@ -101,6 +104,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             AuthContextNonce = authContextNonce;
             AuthContextModified = authContextModified;
             AuthContextModifiedBy = authContextModifiedBy;
+            ExternalApiUserId = externalApiUserId;
+            ExternalApiUserIdModified = externalApiUserIdModified;
+            ExternalApiUserIdModifiedBy = externalApiUserIdModifiedBy;
         }
 
         [ForeignKey("BankRegistrationId")]
@@ -130,6 +136,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
         public DateTimeOffset AuthContextModified { get; private set; }
 
         public string? AuthContextModifiedBy { get; private set; }
+
+        /// <summary>
+        ///     User ID at external API (bank) which may or may not be available via ID token "sub" claim. If retrieved from ID
+        ///     token or supplied on object creation, it will be stored here.
+        /// </summary>
+        public string? ExternalApiUserId { get; private set; }
+
+        public DateTimeOffset ExternalApiUserIdModified { get; private set; }
+
+        public string? ExternalApiUserIdModifiedBy { get; private set; }
+
 
         public AccessToken? AccessToken => _accessTokenAccessToken switch
         {
@@ -164,6 +181,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
             _accessTokenRefreshToken = accessTokenRefreshToken;
             _accessTokenModified = modified;
             _accessTokenModifiedBy = modifiedBy;
+        }
+
+        public void UpdateExternalApiUserId(
+            string? externalApiUserId,
+            DateTimeOffset externalApiUserIdModified,
+            string? externalApiUserIdModifiedBy)
+        {
+            ExternalApiUserId = externalApiUserId;
+            ExternalApiUserIdModified = externalApiUserIdModified;
+            ExternalApiUserIdModifiedBy = externalApiUserIdModifiedBy;
         }
     }
 }

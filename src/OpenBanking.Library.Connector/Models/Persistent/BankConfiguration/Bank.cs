@@ -7,118 +7,125 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+
+/// <summary>
+///     Persisted type for Bank.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal partial class Bank :
+    BaseEntity,
+    IBankPublicQuery
 {
+    public Bank(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        IdTokenSubClaimType idTokenSubClaimType,
+        string jwksUri,
+        bool supportsSca,
+        string issuerUrl,
+        string financialId,
+        string? registrationEndpoint,
+        string tokenEndpoint,
+        string authorizationEndpoint,
+        DynamicClientRegistrationApiVersion dcrApiVersion,
+        CustomBehaviourClass? customBehaviour) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy)
+    {
+        IdTokenSubClaimType = idTokenSubClaimType;
+        JwksUri = jwksUri;
+        SupportsSca = supportsSca;
+        IssuerUrl = issuerUrl;
+        FinancialId = financialId;
+        RegistrationEndpoint = registrationEndpoint;
+        TokenEndpoint = tokenEndpoint;
+        AuthorizationEndpoint = authorizationEndpoint;
+        DcrApiVersion = dcrApiVersion;
+        CustomBehaviour = customBehaviour;
+    }
+
+    public IList<BankRegistration> BankRegistrationsNavigation { get; } = new List<BankRegistration>();
+
+    public IList<AccountAndTransactionApiEntity> AccountAndTransactionApisNavigation { get; } =
+        new List<AccountAndTransactionApiEntity>();
+
+    public IList<PaymentInitiationApiEntity> PaymentInitiationApisNavigation { get; } =
+        new List<PaymentInitiationApiEntity>();
+
+    public IList<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApisNavigation { get; } =
+        new List<VariableRecurringPaymentsApiEntity>();
+
     /// <summary>
-    ///     Persisted type for Bank.
-    ///     Internal to help ensure public request and response types used on public API.
+    ///     ID token "sub" claim type. Determined by how bank uses ID token.
     /// </summary>
-    internal partial class Bank :
-        BaseEntity,
-        IBankPublicQuery
-    {
-        public Bank(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string jwksUri,
-            bool supportsSca,
-            string issuerUrl,
-            string financialId,
-            string? registrationEndpoint,
-            string tokenEndpoint,
-            string authorizationEndpoint,
-            DynamicClientRegistrationApiVersion dcrApiVersion,
-            CustomBehaviourClass? customBehaviour) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy)
-        {
-            JwksUri = jwksUri;
-            SupportsSca = supportsSca;
-            IssuerUrl = issuerUrl;
-            FinancialId = financialId;
-            RegistrationEndpoint = registrationEndpoint;
-            TokenEndpoint = tokenEndpoint;
-            AuthorizationEndpoint = authorizationEndpoint;
-            DcrApiVersion = dcrApiVersion;
-            CustomBehaviour = customBehaviour;
-        }
+    public IdTokenSubClaimType IdTokenSubClaimType { get; }
 
-        public IList<BankRegistration> BankRegistrationsNavigation { get; } = new List<BankRegistration>();
+    /// <summary>
+    ///     JWK Set URI (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string JwksUri { get; }
 
-        public IList<AccountAndTransactionApiEntity> AccountAndTransactionApisNavigation { get; } =
-            new List<AccountAndTransactionApiEntity>();
+    public bool SupportsSca { get; }
 
-        public IList<PaymentInitiationApiEntity> PaymentInitiationApisNavigation { get; } =
-            new List<PaymentInitiationApiEntity>();
+    public string IssuerUrl { get; }
 
-        public IList<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApisNavigation { get; } =
-            new List<VariableRecurringPaymentsApiEntity>();
+    public string FinancialId { get; }
 
-        /// <summary>
-        ///     JWK Set URI (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string JwksUri { get; }
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
 
-        public bool SupportsSca { get; }
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
 
-        public string IssuerUrl { get; }
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
 
-        public string FinancialId { get; }
+    /// <summary>
+    ///     API version used for DCR requests (POST, GET etc)
+    /// </summary>
+    public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
 
-        /// <summary>
-        ///     Registration endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string? RegistrationEndpoint { get; }
+    /// <summary>
+    ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
+    ///     For a well-behaved bank, normally this object should be null.
+    /// </summary>
+    public CustomBehaviourClass? CustomBehaviour { get; }
+}
 
-        /// <summary>
-        ///     Token endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string TokenEndpoint { get; }
-
-        /// <summary>
-        ///     Authorization endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string AuthorizationEndpoint { get; }
-
-        /// <summary>
-        ///     API version used for DCR requests (POST, GET etc)
-        /// </summary>
-        public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
-
-        /// <summary>
-        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
-        /// </summary>
-        public CustomBehaviourClass? CustomBehaviour { get; }
-    }
-
-    internal partial class Bank :
-        ISupportsFluentLocalEntityGet<BankResponse>
-    {
-        public BankResponse PublicGetLocalResponse => new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            null,
-            JwksUri,
-            SupportsSca,
-            IssuerUrl,
-            FinancialId,
-            RegistrationEndpoint,
-            TokenEndpoint,
-            AuthorizationEndpoint,
-            DcrApiVersion,
-            CustomBehaviour);
-    }
+internal partial class Bank :
+    ISupportsFluentLocalEntityGet<BankResponse>
+{
+    public BankResponse PublicGetLocalResponse => new(
+        Id,
+        Created,
+        CreatedBy,
+        Reference,
+        null,
+        IdTokenSubClaimType,
+        JwksUri,
+        SupportsSca,
+        IssuerUrl,
+        FinancialId,
+        RegistrationEndpoint,
+        TokenEndpoint,
+        AuthorizationEndpoint,
+        DcrApiVersion,
+        CustomBehaviour);
 }

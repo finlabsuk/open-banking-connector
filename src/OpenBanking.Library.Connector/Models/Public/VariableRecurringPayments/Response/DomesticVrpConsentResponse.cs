@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         public string ExternalApiId { get; }
     }
 
-    public abstract class DomesticVrpConsentBaseResponse : LocalObjectBaseResponse, IDomesticVrpConsentPublicQuery
+    public abstract class DomesticVrpConsentBaseResponse : ConsentResponseBase, IDomesticVrpConsentPublicQuery
     {
         internal DomesticVrpConsentBaseResponse(
             Guid id,
@@ -36,35 +36,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid variableRecurringPaymentsApiId,
-            string externalApiId) : base(id, created, createdBy, reference)
+            string externalApiId,
+            string? externalApiUserId,
+            Guid variableRecurringPaymentsApiId) : base(
+            id,
+            created,
+            createdBy,
+            reference,
+            warnings,
+            bankRegistrationId,
+            externalApiId,
+            externalApiUserId)
         {
-            Warnings = warnings;
-            BankRegistrationId = bankRegistrationId;
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
-            ExternalApiId = externalApiId;
         }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
-
-        /// <summary>
-        ///     Associated BankRegistration object
-        /// </summary>
-        public Guid BankRegistrationId { get; }
 
         /// <summary>
         ///     Associated VariableRecurringPaymentsApi object
         /// </summary>
         public Guid VariableRecurringPaymentsApiId { get; }
-
-        /// <summary>
-        ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-        ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-        /// </summary>
-        public string ExternalApiId { get; }
     }
 
 
@@ -80,8 +70,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid variableRecurringPaymentsApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse) : base(
             id,
             created,
@@ -89,8 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             reference,
             warnings,
             bankRegistrationId,
-            variableRecurringPaymentsApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
@@ -110,8 +102,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid variableRecurringPaymentsApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
             id,
             created,
@@ -119,8 +112,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             reference,
             warnings,
             bankRegistrationId,
-            variableRecurringPaymentsApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }
@@ -141,8 +135,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             string? reference,
             IList<string>? warnings,
             Guid bankRegistrationId,
-            Guid variableRecurringPaymentsApiId,
             string externalApiId,
+            string? externalApiUserId,
+            Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
             id,
             created,
@@ -150,8 +145,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             reference,
             warnings,
             bankRegistrationId,
-            variableRecurringPaymentsApiId,
-            externalApiId)
+            externalApiId,
+            externalApiUserId,
+            variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
         }

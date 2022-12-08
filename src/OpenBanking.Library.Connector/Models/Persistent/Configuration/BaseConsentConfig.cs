@@ -50,6 +50,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                 .HasColumnOrder(108);
             builder.Property("_accessTokenModifiedBy")
                 .HasColumnOrder(109);
+            builder.Property(e => e.ExternalApiUserId);
+            builder.Property(e => e.ExternalApiUserIdModified);
+            builder.Property(e => e.ExternalApiUserIdModifiedBy);
 
             // Note: we specify column order above and in parent classes to solve two problems:
             // (1) Auto-ordering with two base classes seems to put columns from "middle" class at end of table.

@@ -7,6 +7,7 @@ using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -32,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             _apiClient = apiClient;
         }
 
-        public async Task ValidateIdTokenAuthEndpoint(
+        public async Task<string?> ValidateIdTokenAuthEndpoint(
             OAuth2RedirectData redirectData,
             ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
             string jwksUri,
@@ -41,7 +42,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
-            bool supportsSca)
+            bool supportsSca,
+            IdTokenSubClaimType idTokenSubClaimType,
+            string? externalApiUserId)
         {
             bool jwksGetResponseHasNoRootProperty =
                 jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
@@ -66,9 +69,42 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
-                consentAuthGetCustomBehaviour?.IdTokenSubClaimIsClientIdNotConsentId ?? false,
                 nonce,
                 supportsSca);
+
+            // Validate ID token subject claim
+            string? outputExternalApiUserId = externalApiUserId; // unchanged by default
+            switch (idTokenSubClaimType)
+            {
+                case IdTokenSubClaimType.EndUserId:
+                    if (externalApiUserId is null)
+                    {
+                        if (string.IsNullOrEmpty(idToken.Subject))
+                        {
+                            throw new Exception("Subject from ID token is null or empty.");
+                        }
+
+                        outputExternalApiUserId = idToken.Subject;
+                    }
+                    else
+                    {
+                        if (!string.Equals(idToken.Subject, externalApiUserId))
+                        {
+                            throw new Exception("Subject from ID token does not match user ID.");
+                        }
+                    }
+
+                    break;
+                case IdTokenSubClaimType.ConsentId:
+                    if (!string.Equals(idToken.Subject, externalApiConsentId))
+                    {
+                        throw new Exception("Subject from ID token does not match consent ID.");
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
+            }
 
             string codeHash = ComputeHash(redirectData.Code);
             if (!string.Equals(idToken.CodeHash, codeHash))
@@ -81,6 +117,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             {
                 throw new Exception("State hash from ID token does not match state hash.");
             }
+
+            return outputExternalApiUserId;
         }
 
         public async Task<ClientCredentialsGrantResponse> PostClientCredentialsGrantAsync(
@@ -139,6 +177,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
+            string? externalApiUserId,
             string nonce,
             string? requestScope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -195,7 +234,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     externalApiClientId,
                     externalApiConsentId,
                     nonce,
-                    bankRegistration.BankNavigation.SupportsSca);
+                    bankRegistration.BankNavigation.SupportsSca,
+                    bankRegistration.BankNavigation.IdTokenSubClaimType,
+                    externalApiUserId);
             }
 
             return response;
@@ -207,6 +248,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
+            string? externalApiUserId,
             string nonce,
             string? requestScope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
@@ -262,7 +304,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     externalApiClientId,
                     externalApiConsentId,
                     nonce,
-                    bankRegistration.BankNavigation.SupportsSca);
+                    bankRegistration.BankNavigation.SupportsSca,
+                    bankRegistration.BankNavigation.IdTokenSubClaimType,
+                    externalApiUserId);
             }
 
             return response;
@@ -300,7 +344,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
-            bool idTokenSubClaimIsClientIdNotConsentId,
             string nonce,
             bool supportsSca)
         {
@@ -338,12 +381,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             {
                 throw new Exception("Audience from ID token does not match expected audience.");
             }
-
-            string expectedSubject = idTokenSubClaimIsClientIdNotConsentId ? externalApiClientId : externalApiConsentId;
-            if (!string.Equals(idToken.Subject, expectedSubject))
-            {
-                throw new Exception("Subject from ID token does not match expected subject.");
-            }
         }
 
         private async Task<Jwks> GetJwksAsync(string jwksUrl, bool responseHasNoRootProperty)
@@ -372,7 +409,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string nonce,
-            bool supportsSca)
+            bool supportsSca,
+            IdTokenSubClaimType idTokenSubClaimType,
+            string? externalApiUserId)
         {
             bool jwksGetResponseHasNoRootProperty =
                 jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
@@ -396,9 +435,34 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
-                grantPostCustomBehaviour?.IdTokenSubClaimIsClientIdNotConsentId ?? false,
                 nonce,
                 supportsSca);
+
+            // Validate ID token subject claim
+            switch (idTokenSubClaimType)
+            {
+                case IdTokenSubClaimType.EndUserId:
+                    if (externalApiUserId is null)
+                    {
+                        throw new Exception("No user ID available to use in ID token validation.");
+                    }
+
+                    if (!string.Equals(idToken.Subject, externalApiUserId))
+                    {
+                        throw new Exception("Subject from ID token does not match user ID.");
+                    }
+
+                    break;
+                case IdTokenSubClaimType.ConsentId:
+                    if (!string.Equals(idToken.Subject, externalApiConsentId))
+                    {
+                        throw new Exception("Subject from ID token does not match consent ID.");
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(idTokenSubClaimType), idTokenSubClaimType, null);
+            }
 
             if (idToken.AccessTokenHash is not null)
             {
