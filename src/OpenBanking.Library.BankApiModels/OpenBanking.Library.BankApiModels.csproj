@@ -29,7 +29,7 @@
         <PackageReference Include="FluentValidation" Version="11.2.2" />
         <PackageReference Include="jose-jwt" Version="4.0.1" />
         <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     </ItemGroup>
 
