@@ -73,6 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 RegistrationScope = testData1.RegistrationScope,
                 TokenEndpointAuthMethod = bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod,
                 DefaultResponseMode = bankProfile.DefaultResponseMode,
+                BankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup
             };
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bankRegistration")

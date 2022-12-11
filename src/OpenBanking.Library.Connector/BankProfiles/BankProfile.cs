@@ -63,6 +63,11 @@ public class BankConfigurationApiSettings
     ///     ID token "sub" claim type.
     /// </summary>
     public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
+
+    /// <summary>
+    ///     Bank registration group.
+    /// </summary>
+    public BankRegistrationGroup? BankRegistrationGroup = null;
 }
 
 public class AccountAndTransactionApiSettings

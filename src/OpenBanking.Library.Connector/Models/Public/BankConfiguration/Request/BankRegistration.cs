@@ -85,10 +85,23 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public ExternalApiBankRegistration? ExternalApiObject { get; set; }
 
         /// <summary>
-        ///     If registration already exists for bank, allow creation of an additional one. NB this may
-        ///     disrupt existing registration depending on bank support for multiple registrations.
+        ///     Forces BankRegistrationGroup to be null regardless of what it is set to. This can be used to force
+        ///     a null value when the BankProfile is null or to ignore the BankProfile value.
         /// </summary>
-        public bool AllowMultipleRegistrations { get; set; } = false;
+        public bool ForceNullBankRegistrationGroup { get; set; } = false;
+
+        /// <summary>
+        ///     Bank registration group. When specified, the same external API (bank) registration object is
+        ///     re-used by all members of the group and DCR is only performed if required the first time the group is specified.
+        ///     This can be
+        ///     used to prevent multiple
+        ///     registrations which may disrupt an
+        ///     existing registration depending on bank support for multiple registrations.
+        ///     If null, the value will be obtained from the bank profile.
+        ///     Regardless of how this property is set, the value will be forced to be null when ForceNullBankRegistrationGroup is
+        ///     true.
+        /// </summary>
+        public BankRegistrationGroup? BankRegistrationGroup { get; set; }
 
         public async Task<ValidationResult> ValidateAsync() =>
             await new BankRegistrationValidator()

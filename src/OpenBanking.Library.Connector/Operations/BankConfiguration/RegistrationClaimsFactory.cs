@@ -39,7 +39,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
             ProcessedSoftwareStatementProfile sProfile,
             RegistrationScopeEnum registrationScope,
             BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
-            Bank bank)
+            string bankFinancialId)
         {
             sProfile.ArgNotNull(nameof(sProfile));
 
@@ -102,7 +102,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     Iat = DateTimeOffset.Now,
                     Exp = DateTimeOffset.UtcNow.AddMinutes(30),
                     Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
-                          bank.FinancialId,
+                          bankFinancialId,
                     Jti = Guid.NewGuid().ToString(),
                     TokenEndpointAuthMethod = tokenEndpointAuthMethodLocal,
                     GrantTypes = grantTypes,

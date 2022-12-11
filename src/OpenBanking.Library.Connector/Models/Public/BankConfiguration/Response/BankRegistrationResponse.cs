@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -74,6 +75,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public IList<string> OtherRedirectUris { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
+
+        /// <summary>
+        ///     Bank registration group. The same external API registration object is
+        ///     re-used by all members of a group.
+        /// </summary>
+        public BankRegistrationGroup? BankRegistrationGroup { get; }
     }
 
     /// <summary>
@@ -96,7 +103,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             Guid bankId,
             OAuth2ResponseMode defaultResponseMode,
             string defaultRedirectUri,
-            IList<string> otherRedirectUris) : base(id, created, createdBy, reference)
+            IList<string> otherRedirectUris,
+            BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
         {
             ExternalApiObject = externalApiObject;
             ExternalApiResponse = externalApiResponse;
@@ -109,6 +117,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
             DefaultResponseMode = defaultResponseMode;
             DefaultRedirectUri = defaultRedirectUri;
             OtherRedirectUris = otherRedirectUris;
+            BankRegistrationGroup = bankRegistrationGroup;
         }
 
         public ExternalApiObjectResponse ExternalApiObject { get; }
@@ -131,12 +140,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     Token endpoint authorisation method
         /// </summary>
         public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-        
+
         /// <summary>
         ///     Functional APIs used for bank registration.
         /// </summary>
         public RegistrationScopeEnum RegistrationScope { get; }
-        
+
         /// <summary>
         ///     Bank with which this BankRegistration is associated.
         /// </summary>
@@ -159,6 +168,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
         /// </summary>
         public IList<string> OtherRedirectUris { get; }
+
+        /// <summary>
+        ///     Bank registration group. The same external API registration object is
+        ///     re-used by all members of a group.
+        /// </summary>
+        public BankRegistrationGroup? BankRegistrationGroup { get; }
 
         IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
             ExternalApiObject;

@@ -105,27 +105,17 @@ internal class
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bank.DcrApiVersion;
         string issuerUrl = bank.IssuerUrl;
+        string bankFinancialId = bank.FinancialId;
         bool supportsSca = bank.SupportsSca;
-
-        // Check for existing bank registration(s)
-        BankRegistrationPersisted? existingRegistration =
-            await _entityMethods
-                .DbSet
-                .Where(x => x.BankId == bankId)
-                .FirstOrDefaultAsync();
-        if (existingRegistration is not null &&
-            !request.AllowMultipleRegistrations)
-        {
-            throw new ArgumentException(
-                $"One or more BankRegistrations already exist for this bank and request property {nameof(request.AllowMultipleRegistrations)} is false.");
-        }
+        string? registrationEndpoint = bank.RegistrationEndpoint;
 
         // Load processed software statement profile
         string softwareStatementProfileId = request.SoftwareStatementProfileId;
+        string? softwareStatementProfileOverrideCase = request.SoftwareStatementProfileOverrideCase;
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
                 softwareStatementProfileId,
-                request.SoftwareStatementProfileOverrideCase);
+                softwareStatementProfileOverrideCase);
 
         // Determine redirect URIs
         (string defaultRedirectUri, List<string> otherRedirectUris) = GetRedirectUris(
@@ -161,6 +151,37 @@ internal class
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
+        // Determine bank registration group
+        BankRegistrationGroup? bankRegistrationGroup = null;
+        if (!request.ForceNullBankRegistrationGroup)
+        {
+            if (request.BankRegistrationGroup is null &&
+                bankProfile is null)
+            {
+                throw new ArgumentException(
+                    $"Request property {nameof(request.BankRegistrationGroup)} is null and cannot " +
+                    $"be obtained using request property {request.BankProfile}. " +
+                    $"Set {nameof(request.BankRegistrationGroup)} to null to force value to null.");
+            }
+
+            bankRegistrationGroup =
+                request.BankRegistrationGroup ??
+                bankProfile?.BankConfigurationApiSettings.BankRegistrationGroup;
+        }
+
+        // Check for existing bank registration(s) in bank registration group
+        BankRegistrationPersisted? existingGroupRegistration = null;
+        if (bankRegistrationGroup is not null)
+        {
+            existingGroupRegistration =
+                await _entityMethods
+                    .DbSetNoTracking
+                    .Include(o => o.BankNavigation)
+                    .Where(x => x.BankRegistrationGroup == bankRegistrationGroup)
+                    .OrderBy(x => x.Created)
+                    .FirstOrDefaultAsync();
+        }
+
         // Set external (bank) API parameters via DCR or directly
         string externalApiId;
         string? externalApiSecret;
@@ -168,54 +189,111 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         if (request.ExternalApiObject is null)
         {
-            string registrationEndpoint =
-                bank.RegistrationEndpoint ??
-                throw new InvalidOperationException(
-                    $"Bank with ID {bank.Id} does not have a registration endpoint configured. " +
-                    "Please create a registration e.g. using the bank's portal and then try again using " +
-                    $"{request.ExternalApiObject} to specify the registration.");
+            // Re-use bank registration or create new one (DCR)
+            if (existingGroupRegistration is not null)
+            {
+                Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
 
-            // Create new object at external API
-            JsonSerializerSettings? requestJsonSerializerSettings =
-                GetRequestJsonSerializerSettings(customBehaviour);
-            JsonSerializerSettings? responseJsonSerializerSettings =
-                GetResponseJsonSerializerSettings(customBehaviour);
-            bool useApplicationJoseNotApplicationJwtContentTypeHeader =
-                customBehaviour?.BankRegistrationPost
-                    ?.UseApplicationJoseNotApplicationJwtContentTypeHeader ?? false;
-            IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
-                ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
-                ApiRequests(
+                // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
+
+                if (softwareStatementProfileId != existingGroupRegistration.SoftwareStatementProfileId)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used software statement profile with ID {existingGroupRegistration.SoftwareStatementProfileId} " +
+                            $"which is different from expected {softwareStatementProfileId}.");
+                }
+
+                if (softwareStatementProfileOverrideCase != existingGroupRegistration.SoftwareStatementProfileOverride)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used software statement profile with override {existingGroupRegistration.SoftwareStatementProfileOverride} " +
+                            $"which is different from expected {softwareStatementProfileOverrideCase}.");
+                }
+
+                if (registrationEndpoint != existingRegistrationBank.RegistrationEndpoint)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used bank registration endpoint {existingRegistrationBank.RegistrationEndpoint} " +
+                            $"which is different from expected {registrationEndpoint}.");
+                }
+
+                if (tokenEndpointAuthMethod != existingGroupRegistration.TokenEndpointAuthMethod)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used TokenEndpointAuthMethod {existingGroupRegistration.TokenEndpointAuthMethod} " +
+                            $"which is different from expected {tokenEndpointAuthMethod}.");
+                }
+
+                if (registrationScope != existingGroupRegistration.RegistrationScope)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used RegistrationScope {existingGroupRegistration.RegistrationScope} " +
+                            $"which is different from expected {registrationScope}.");
+                }
+
+                if (bankFinancialId != existingRegistrationBank.FinancialId)
+                {
+                    throw new
+                        InvalidOperationException(
+                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                            $"used bank financial ID {existingRegistrationBank.FinancialId} " +
+                            $"which is different from expected {bankFinancialId}.");
+                }
+
+                externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;
+                externalApiSecret = existingGroupRegistration.ExternalApiObject.ExternalApiSecret;
+                registrationAccessToken = existingGroupRegistration.ExternalApiObject.RegistrationAccessToken;
+                externalApiResponse = null;
+            }
+            else
+            {
+                BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
+                    customBehaviour?.BankRegistrationPost;
+                if (registrationEndpoint is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Bank with ID {bank.Id} does not have a registration endpoint configured. " +
+                        "Please create a registration e.g. using the bank's portal and then try again using " +
+                        "ExternalApiObject to specify the registration.");
+                }
+
+                externalApiResponse = await PerformDynamicClientRegistration(
+                    bankRegistrationPostCustomBehaviour,
                     dynamicClientRegistrationApiVersion,
                     processedSoftwareStatementProfile,
-                    useApplicationJoseNotApplicationJwtContentTypeHeader,
-                    string.Empty // not used for POST
-                );
-            var externalApiUrl = new Uri(registrationEndpoint);
-            ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest =
-                RegistrationClaimsFactory.CreateRegistrationClaims(
+                    registrationEndpoint,
                     tokenEndpointAuthMethod,
-                    new List<string>(otherRedirectUris) { defaultRedirectUri },
-                    processedSoftwareStatementProfile,
+                    otherRedirectUris,
+                    defaultRedirectUri,
                     registrationScope,
-                    customBehaviour?.BankRegistrationPost,
-                    bank);
-            (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-                await apiRequests.PostAsync(
-                    externalApiUrl,
-                    externalApiRequest,
-                    requestJsonSerializerSettings,
-                    responseJsonSerializerSettings,
-                    processedSoftwareStatementProfile.ApiClient,
-                    _mapper);
-            nonErrorMessages.AddRange(newNonErrorMessages);
+                    bankFinancialId,
+                    nonErrorMessages);
 
-            externalApiId = externalApiResponse.ClientId;
-            externalApiSecret = externalApiResponse.ClientSecret;
-            registrationAccessToken = externalApiResponse.RegistrationAccessToken;
+                externalApiId = externalApiResponse.ClientId;
+                externalApiSecret = externalApiResponse.ClientSecret;
+                registrationAccessToken = externalApiResponse.RegistrationAccessToken;
+            }
         }
         else
         {
+            if (existingGroupRegistration is not null)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        "already exists so cannot accept ExternalApiObject.");
+            }
+
             externalApiId = request.ExternalApiObject.ExternalApiId;
             externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
             registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
@@ -235,14 +313,15 @@ internal class
             externalApiId,
             externalApiSecret,
             registrationAccessToken,
+            bankRegistrationGroup,
             defaultRedirectUri,
             otherRedirectUris,
-            request.SoftwareStatementProfileId,
-            request.SoftwareStatementProfileOverrideCase,
+            softwareStatementProfileId,
+            softwareStatementProfileOverrideCase,
             tokenEndpointAuthMethod,
             registrationScope,
             defaultResponseMode,
-            request.BankId);
+            bankId);
 
         // Save entity
         await _entityMethods.AddAsync(entity);
@@ -272,7 +351,8 @@ internal class
             entity.BankId,
             entity.DefaultResponseMode,
             entity.DefaultRedirectUri,
-            entity.OtherRedirectUris);
+            entity.OtherRedirectUris,
+            entity.BankRegistrationGroup);
 
         return (response, nonErrorMessages);
     }
@@ -347,7 +427,7 @@ internal class
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings =
-                GetResponseJsonSerializerSettings(customBehaviour);
+                GetResponseJsonSerializerSettings(customBehaviour?.BankRegistrationPost);
             IApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                 ApiRequests(
                     dynamicClientRegistrationApiVersion,
@@ -390,13 +470,64 @@ internal class
             entity.BankId,
             entity.DefaultResponseMode,
             entity.DefaultRedirectUri,
-            entity.OtherRedirectUris);
+            entity.OtherRedirectUris,
+            entity.BankRegistrationGroup);
 
         return (response, nonErrorMessages);
     }
 
+    private async Task<ClientRegistrationModelsPublic.OBClientRegistration1Response> PerformDynamicClientRegistration(
+        BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
+        DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        string registrationEndpoint,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        List<string> otherRedirectUris,
+        string defaultRedirectUri,
+        RegistrationScopeEnum registrationScope,
+        string bankFinancialId,
+        List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
+    {
+        ClientRegistrationModelsPublic.OBClientRegistration1Response externalApiResponse;
+        // Create new object at external API
+        JsonSerializerSettings? requestJsonSerializerSettings =
+            GetRequestJsonSerializerSettings(bankRegistrationPostCustomBehaviour);
+        JsonSerializerSettings? responseJsonSerializerSettings =
+            GetResponseJsonSerializerSettings(bankRegistrationPostCustomBehaviour);
+        bool useApplicationJoseNotApplicationJwtContentTypeHeader =
+            bankRegistrationPostCustomBehaviour
+                ?.UseApplicationJoseNotApplicationJwtContentTypeHeader ?? false;
+        IApiPostRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
+            ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
+            ApiRequests(
+                dynamicClientRegistrationApiVersion,
+                processedSoftwareStatementProfile,
+                useApplicationJoseNotApplicationJwtContentTypeHeader,
+                string.Empty // not used for POST
+            );
+        var externalApiUrl = new Uri(registrationEndpoint);
+        ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest =
+            RegistrationClaimsFactory.CreateRegistrationClaims(
+                tokenEndpointAuthMethod,
+                new List<string>(otherRedirectUris) { defaultRedirectUri },
+                processedSoftwareStatementProfile,
+                registrationScope,
+                bankRegistrationPostCustomBehaviour,
+                bankFinancialId);
+        (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+            await apiRequests.PostAsync(
+                externalApiUrl,
+                externalApiRequest,
+                requestJsonSerializerSettings,
+                responseJsonSerializerSettings,
+                processedSoftwareStatementProfile.ApiClient,
+                _mapper);
+        nonErrorMessages.AddRange(newNonErrorMessages);
+        return externalApiResponse;
+    }
+
     private static TokenEndpointAuthMethod GetTokenEndpointAuthMethod(
-        BankRegistration request,
+        BankRegistrationRequest request,
         BankProfile? bankProfile,
         bool supportsSca,
         IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupported)
@@ -490,14 +621,14 @@ internal class
         return (defaultRedirectUri, otherRedirectUris);
     }
 
-    private static JsonSerializerSettings? GetRequestJsonSerializerSettings(CustomBehaviourClass? customBehaviour)
+    private static JsonSerializerSettings? GetRequestJsonSerializerSettings(
+        BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour)
     {
         JsonSerializerSettings? requestJsonSerializerSettings = null;
-        if (!(customBehaviour?.BankRegistrationPost is null))
+        if (!(bankRegistrationPostCustomBehaviour is null))
         {
             var optionsDict = new Dictionary<JsonConverterLabel, int>();
-            DelimitedStringConverterOptions? scopeClaimJsonConverter = customBehaviour
-                .BankRegistrationPost
+            DelimitedStringConverterOptions? scopeClaimJsonConverter = bankRegistrationPostCustomBehaviour
                 .ScopeClaimJsonConverter;
             if (scopeClaimJsonConverter is not null)
             {
@@ -515,15 +646,15 @@ internal class
         return requestJsonSerializerSettings;
     }
 
-    private static JsonSerializerSettings? GetResponseJsonSerializerSettings(CustomBehaviourClass? customBehaviour)
+    private static JsonSerializerSettings? GetResponseJsonSerializerSettings(
+        BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour)
     {
         JsonSerializerSettings? responseJsonSerializerSettings = null;
-        if (!(customBehaviour?.BankRegistrationPost is null))
+        if (!(bankRegistrationPostCustomBehaviour is null))
         {
             var optionsDict = new Dictionary<JsonConverterLabel, int>();
 
-            DateTimeOffsetConverter? clientIdIssuedAtClaimResponseJsonConverter = customBehaviour
-                .BankRegistrationPost
+            DateTimeOffsetConverter? clientIdIssuedAtClaimResponseJsonConverter = bankRegistrationPostCustomBehaviour
                 .ClientIdIssuedAtClaimResponseJsonConverter;
             if (clientIdIssuedAtClaimResponseJsonConverter is not null)
             {
@@ -532,8 +663,7 @@ internal class
                     (int) clientIdIssuedAtClaimResponseJsonConverter);
             }
 
-            DelimitedStringConverterOptions? scopeClaimJsonConverter = customBehaviour
-                .BankRegistrationPost
+            DelimitedStringConverterOptions? scopeClaimJsonConverter = bankRegistrationPostCustomBehaviour
                 .ScopeClaimResponseJsonConverter;
             if (scopeClaimJsonConverter is not null)
             {

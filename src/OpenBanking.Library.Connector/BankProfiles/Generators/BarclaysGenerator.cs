@@ -54,7 +54,10 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             {
                 UseRegistrationEndpoints = false,
                 TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt,
-                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
+                IdTokenSubClaimType = IdTokenSubClaimType.EndUserId,
+                BankRegistrationGroup = bank is BarclaysBank.Sandbox
+                    ? BankRegistrationGroup.Barclays_Sandbox
+                    : BankRegistrationGroup.Barclays_Production
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

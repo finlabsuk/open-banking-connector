@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -66,6 +67,7 @@ internal class BankRegistration :
         string externalApiId,
         string? externalApiSecret,
         string? registrationAccessToken,
+        BankRegistrationGroup? bankRegistrationGroup,
         string defaultRedirectUri,
         IList<string> otherRedirectUris,
         string softwareStatementProfileId,
@@ -78,6 +80,7 @@ internal class BankRegistration :
         _externalApiId = externalApiId;
         _externalApiSecret = externalApiSecret;
         _registrationAccessToken = registrationAccessToken;
+        BankRegistrationGroup = bankRegistrationGroup;
         DefaultRedirectUri = defaultRedirectUri;
         OtherRedirectUris = otherRedirectUris;
         SoftwareStatementProfileId = softwareStatementProfileId;
@@ -95,6 +98,12 @@ internal class BankRegistration :
         _externalApiId,
         _externalApiSecret,
         _registrationAccessToken);
+
+    /// <summary>
+    ///     Bank registration group. The same external API registration object is
+    ///     re-used by all members of a group.
+    /// </summary>
+    public BankRegistrationGroup? BankRegistrationGroup { get; }
 
     /// <summary>
     ///     Default redirect URI used for this registration.
