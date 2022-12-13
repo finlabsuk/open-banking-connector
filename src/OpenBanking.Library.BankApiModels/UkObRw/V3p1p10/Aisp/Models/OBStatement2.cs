@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -83,6 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="statementDateTime"></param>
         /// <param name="statementRate"></param>
         /// <param name="statementValue"></param>
+        [JsonConstructor]
         public OBStatement2(string accountId, string statementId, string statementReference, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime, IReadOnlyList<string> statementDescription, IReadOnlyList<OBStatement2StatementBenefitItem> statementBenefit, IReadOnlyList<OBStatement2StatementFeeItem> statementFee, IReadOnlyList<OBStatement2StatementInterestItem> statementInterest, IReadOnlyList<OBStatement2StatementAmountItem> statementAmount, IReadOnlyList<OBStatement2StatementDateTimeItem> statementDateTime, IReadOnlyList<OBStatement2StatementRateItem> statementRate, IReadOnlyList<OBStatement2StatementValueItem> statementValue)
         {
             AccountId = accountId;

@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -42,6 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// This is secondary identification of the account, as assigned by the account servicing institution. 
         /// This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
         /// </param>
+        [JsonConstructor]
         public OBCashAccount51(string schemeName, string identification, string name, string secondaryIdentification)
         {
             SchemeName = schemeName;

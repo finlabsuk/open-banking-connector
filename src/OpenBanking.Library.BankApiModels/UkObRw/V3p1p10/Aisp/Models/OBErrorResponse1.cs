@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -44,6 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="id"> A unique reference for the error instance, for audit purposes, in case of unknown/unclassified errors. </param>
         /// <param name="message"> Brief Error message, e.g., &apos;There is something wrong with the request parameters provided&apos;. </param>
         /// <param name="errors"></param>
+        [JsonConstructor]
         public OBErrorResponse1(string code, string id, string message, IReadOnlyList<OBError1> errors)
         {
             Code = code;

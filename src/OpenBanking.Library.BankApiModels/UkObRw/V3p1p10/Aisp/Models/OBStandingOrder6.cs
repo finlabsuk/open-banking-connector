@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -141,6 +142,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
         /// <param name="supplementaryData"> Additional information that can not be captured in the structured fields and/or any other specific block. </param>
+        [JsonConstructor]
         public OBStandingOrder6(string accountId, string standingOrderId, string frequency, string reference, DateTimeOffset? firstPaymentDateTime, DateTimeOffset? nextPaymentDateTime, DateTimeOffset? lastPaymentDateTime, DateTimeOffset? finalPaymentDateTime, string numberOfPayments, OBExternalStandingOrderStatus1CodeEnum? standingOrderStatusCode, OBActiveOrHistoricCurrencyAndAmount2 firstPaymentAmount, OBActiveOrHistoricCurrencyAndAmount3 nextPaymentAmount, OBActiveOrHistoricCurrencyAndAmount11 lastPaymentAmount, OBActiveOrHistoricCurrencyAndAmount4 finalPaymentAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount, IReadOnlyDictionary<string, object> supplementaryData)
         {
             AccountId = accountId;

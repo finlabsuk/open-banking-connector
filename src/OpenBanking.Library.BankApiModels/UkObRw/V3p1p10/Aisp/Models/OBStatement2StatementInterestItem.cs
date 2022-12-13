@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -47,6 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// <param name="rateType"> Description that may be available for the statement Interest rate type. </param>
         /// <param name="frequency"> Specifies the statement fee type requested. </param>
         /// <param name="amount"> Amount of money associated with the statement interest amount type. </param>
+        [JsonConstructor]
         public OBStatement2StatementInterestItem(string description, OBCreditDebitCode0Enum creditDebitIndicator, string type, float? rate, string rateType, string frequency, OBActiveOrHistoricCurrencyAndAmount7 amount)
         {
             Description = description;

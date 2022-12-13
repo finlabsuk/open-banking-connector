@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -42,6 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// </param>
         /// <param name="path"> Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency. </param>
         /// <param name="url"> URL to help remediate the problem, or provide more information, or to API Reference, or help etc. </param>
+        [JsonConstructor]
         public OBError1(string errorCode, string message, string path, string url)
         {
             ErrorCode = errorCode;

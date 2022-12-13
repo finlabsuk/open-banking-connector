@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -66,6 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// This is the servicer of the beneficiary account.
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
+        [JsonConstructor]
         public OBScheduledPayment3(string accountId, string scheduledPaymentId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, string reference, string debtorReference, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount)
         {
             AccountId = accountId;

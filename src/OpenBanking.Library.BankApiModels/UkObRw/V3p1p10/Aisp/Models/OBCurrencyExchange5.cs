@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
@@ -46,6 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// 2017-04-05T10:43:07+00:00
         /// </param>
         /// <param name="instructedAmount"> Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party. </param>
+        [JsonConstructor]
         public OBCurrencyExchange5(string sourceCurrency, string targetCurrency, string unitCurrency, float exchangeRate, string contractIdentification, DateTimeOffset? quotationDate, OBCurrencyExchange5InstructedAmount instructedAmount)
         {
             SourceCurrency = sourceCurrency;
