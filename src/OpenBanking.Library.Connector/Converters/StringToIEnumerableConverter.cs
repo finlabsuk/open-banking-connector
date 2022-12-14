@@ -8,11 +8,11 @@ using AutoMapper;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Converters
 {
-    public class StringToIEnumerableConverter : ITypeConverter<string, IEnumerable<string>>
+    public class StringToIListConverter : ITypeConverter<string, IList<string>>
     {
-        public IEnumerable<string> Convert(
+        public IList<string> Convert(
             string source,
-            IEnumerable<string> destination,
+            IList<string> destination,
             ResolutionContext context)
         {
             return source.Split(" ").ToList();

@@ -106,7 +106,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
 
         private void ApplyGenericTypeMaps(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<string, IEnumerable<string>>().ConvertUsing<StringToIEnumerableConverter>();
+            cfg.CreateMap<string, IList<string>>().ConvertUsing<StringToIListConverter>();
             cfg.CreateMap<IEnumerable<string>, string>().ConvertUsing<StringToIEnumerableReverseConverter>();
         }
 
