@@ -63,7 +63,7 @@ public class DomesticVrpConsentsController : ControllerBase
         Guid domesticVrpConsentId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)
     {
         string requestUrlWithoutQuery =
@@ -92,7 +92,7 @@ public class DomesticVrpConsentsController : ControllerBase
         Guid domesticVrpConsentId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)
     {
         // Operation

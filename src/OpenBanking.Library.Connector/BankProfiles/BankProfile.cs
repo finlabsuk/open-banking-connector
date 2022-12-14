@@ -28,6 +28,15 @@ public delegate DomesticVrpConsentRequest DomesticVrpConsentAdjustments(Domestic
 
 public class BankConfigurationApiSettings
 {
+    private bool _allowNullRegistrationEndpoint;
+    private bool _useRegistrationDeleteEndpoint;
+    private bool _useRegistrationGetEndpoint;
+
+    /// <summary>
+    ///     Bank registration group.
+    /// </summary>
+    public BankRegistrationGroup? BankRegistrationGroup = null;
+
     /// <summary>
     ///     Describes whether a registration scope should be used when testing with this bank.
     ///     By default, any registration scope can be used.
@@ -37,23 +46,60 @@ public class BankConfigurationApiSettings
     /// <summary>
     ///     Describes whether registration endpoints used when testing with this bank.
     /// </summary>
-    public bool UseRegistrationEndpoints { get; set; } = true;
+    public bool AllowNullRegistrationEndpoint
+    {
+        get => _allowNullRegistrationEndpoint;
+        init
+        {
+            if (value && (UseRegistrationDeleteEndpoint || UseRegistrationGetEndpoint))
+            {
+                throw new InvalidOperationException(
+                    $"Can't set {nameof(AllowNullRegistrationEndpoint)} " +
+                    $"to true when either {nameof(UseRegistrationDeleteEndpoint)} " +
+                    $"or {nameof(UseRegistrationGetEndpoint)} is true.");
+            }
+
+            _allowNullRegistrationEndpoint = value;
+        }
+    }
 
     /// <summary>
     ///     Describes whether DELETE /register/{ClientId} is used when testing with this bank.
     /// </summary>
-    public bool UseRegistrationDeleteEndpoint { get; set; } = false;
+    public bool UseRegistrationDeleteEndpoint
+    {
+        get => _useRegistrationDeleteEndpoint;
+        init
+        {
+            if (value && AllowNullRegistrationEndpoint)
+            {
+                throw new InvalidOperationException(
+                    $"Can't set {nameof(UseRegistrationDeleteEndpoint)} " +
+                    $"to true when {nameof(AllowNullRegistrationEndpoint)} is true.");
+            }
 
-    public bool ProcessedUseRegistrationDeleteEndpoint =>
-        UseRegistrationEndpoints && UseRegistrationDeleteEndpoint;
+            _useRegistrationDeleteEndpoint = value;
+        }
+    }
 
     /// <summary>
     ///     Describes whether GET /register/{ClientId} is used when testing with this bank.
     /// </summary>
-    public bool UseRegistrationGetEndpoint { get; set; } = false;
+    public bool UseRegistrationGetEndpoint
+    {
+        get => _useRegistrationGetEndpoint;
+        init
+        {
+            if (value && AllowNullRegistrationEndpoint)
+            {
+                throw new InvalidOperationException(
+                    $"Can't set {nameof(UseRegistrationGetEndpoint)} " +
+                    $"to true when {nameof(AllowNullRegistrationEndpoint)} is true.");
+            }
 
-    public bool ProcessedUseRegistrationGetEndpoint =>
-        UseRegistrationEndpoints && UseRegistrationGetEndpoint;
+            _useRegistrationGetEndpoint = value;
+        }
+    }
 
     public bool UseRegistrationAccessToken { get; set; } = false;
 
@@ -63,11 +109,6 @@ public class BankConfigurationApiSettings
     ///     ID token "sub" claim type.
     /// </summary>
     public IdTokenSubClaimType IdTokenSubClaimType { get; set; } = IdTokenSubClaimType.ConsentId;
-
-    /// <summary>
-    ///     Bank registration group.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup = null;
 }
 
 public class AccountAndTransactionApiSettings

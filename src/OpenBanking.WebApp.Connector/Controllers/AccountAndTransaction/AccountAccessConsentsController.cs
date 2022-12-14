@@ -63,7 +63,7 @@ public class AccountAccessConsentsController : ControllerBase
         Guid accountAccessConsentId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation)
     {
         string requestUrlWithoutQuery =
@@ -92,7 +92,7 @@ public class AccountAccessConsentsController : ControllerBase
         Guid accountAccessConsentId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation)
     {
         // Operation

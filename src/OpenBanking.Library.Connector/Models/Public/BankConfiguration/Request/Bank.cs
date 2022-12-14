@@ -62,8 +62,9 @@ public class Bank : Base, ISupportsValidation
     ///     Allow registration endpoint to set to null if none supplied and none available via OpenID Configuration
     ///     (IssuerUrl).
     ///     This is to allow for banks which do not support DCR.
+    ///     Normally null which means value obtained from BankProfile.
     /// </summary>
-    public bool AllowNullRegistrationEndpoint { get; set; } = false;
+    public bool? AllowNullRegistrationEndpoint { get; set; } = false;
 
     /// <summary>
     ///     Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).

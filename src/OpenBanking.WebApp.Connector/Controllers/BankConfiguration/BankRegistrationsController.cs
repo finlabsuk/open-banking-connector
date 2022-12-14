@@ -60,20 +60,13 @@ public class BankRegistrationsController : ControllerBase
         Guid bankRegistrationId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-use-registration-access-token")]
         bool? useRegistrationAccessToken,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-bank-profile")]
         BankProfileEnum? bankProfile)
     {
-
-        if (includeExternalApiOperation is null &&
-            bankProfile is null)
-        {
-            includeExternalApiOperation = false;
-        }
-        
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
             .BankConfiguration
@@ -103,19 +96,13 @@ public class BankRegistrationsController : ControllerBase
         Guid bankRegistrationId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-use-registration-access-token")]
         bool? useRegistrationAccessToken,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-bank-profile")]
         BankProfileEnum? bankProfile)
     {
-        if (includeExternalApiOperation is null &&
-            bankProfile is null)
-        {
-            includeExternalApiOperation = false;
-        }
-        
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .BankConfiguration

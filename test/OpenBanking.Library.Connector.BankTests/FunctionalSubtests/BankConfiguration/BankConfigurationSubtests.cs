@@ -34,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
                 CustomBehaviour = bankProfile.CustomBehaviour,
                 SupportsSca = bankProfile.SupportsSca,
-                AllowNullRegistrationEndpoint = !bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints
+                AllowNullRegistrationEndpoint = bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint
             };
             await testDataProcessorFluentRequestLogging
                 .AppendToPath("bank")
@@ -60,6 +60,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
             // Checks
             bankReadResponse.Should().NotBeNull();
+            if (bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint)
+            {
+                bankReadResponse.RegistrationEndpoint.Should().BeNull();
+            }
+
             bankReadResponse.Warnings.Should().BeNull();
 
             // Create bankRegistration or use existing
@@ -88,13 +93,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
                         RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
                     };
-            }
-            else if (!bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints)
-            {
-                throw new ArgumentException(
-                    $"BankProfile {bankProfile.BankProfileEnum} sets " +
-                    $"{nameof(bankProfile.BankConfigurationApiSettings)}.{nameof(bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoints)} " +
-                    $"to true so require {nameof(registrationRequest.ExternalApiObject)} to be specified.");
             }
 
             registrationRequest.BankId = bankId; // remove logging placeholder
@@ -142,7 +140,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
         {
             // Delete bankRegistration
             var includeExternalApiOperation = false;
-            if (bankProfile.BankConfigurationApiSettings.ProcessedUseRegistrationDeleteEndpoint)
+            if (bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint)
             {
                 includeExternalApiOperation = testType switch
                 {

@@ -386,7 +386,7 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation ??
-            bankProfile?.BankConfigurationApiSettings.ProcessedUseRegistrationGetEndpoint ??
+            bankProfile?.BankConfigurationApiSettings.UseRegistrationGetEndpoint ??
             throw new ArgumentNullException(
                 null,
                 "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");

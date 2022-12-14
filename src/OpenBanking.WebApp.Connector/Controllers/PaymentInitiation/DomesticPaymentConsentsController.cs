@@ -62,7 +62,7 @@ public class DomesticPaymentConsentsController : ControllerBase
         Guid domesticPaymentConsentId,
         [FromHeader]
         string? modifiedBy,
-        [FromHeader]
+        [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)
     {
         string requestUrlWithoutQuery =

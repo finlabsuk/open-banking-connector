@@ -74,6 +74,12 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             throw new InvalidOperationException(
                 "SupportsSca specified as null and cannot be obtained using specified BankProfile.");
 
+        bool allowNullRegistrationEndpoint =
+            request.AllowNullRegistrationEndpoint ??
+            bankProfile?.BankConfigurationApiSettings.AllowNullRegistrationEndpoint ??
+            throw new InvalidOperationException(
+                $"{nameof(request.AllowNullRegistrationEndpoint)} specified as null and cannot be obtained using specified BankProfile.");
+
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             request.DynamicClientRegistrationApiVersion ??
             bankProfile?.DynamicClientRegistrationApiVersion ??
@@ -98,12 +104,12 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
             request.RegistrationEndpoint ??
             openIdConfiguration?.RegistrationEndpoint;
         if (registrationEndpoint is null &&
-            !request.AllowNullRegistrationEndpoint)
+            !allowNullRegistrationEndpoint)
         {
             throw new ArgumentNullException(
                 nameof(request.RegistrationEndpoint),
                 $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. " +
-                $"Additionally {request.AllowNullRegistrationEndpoint} is false.");
+                $"Additionally {nameof(request.AllowNullRegistrationEndpoint)} is false.");
         }
 
         string tokenEndpoint =
