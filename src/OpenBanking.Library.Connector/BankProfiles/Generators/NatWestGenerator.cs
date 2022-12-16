@@ -28,26 +28,51 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             bank switch
             {
                 NatWestBank.NatWestSandbox => GetIssuerUrl(bank),
-                NatWestBank.RoyalBankOfScotlandSandbox => GetIssuerUrl(bank),
                 NatWestBank.NatWest =>
-                    "https://secure1.natwest.com", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/121798762/Implementation+Guide+National+Westminster+Bank+Plc
+                    "https://personal.secure1.natwest.com", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.NatWestBankline =>
+                    "https://corporate.secure1.natwest.com", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.NatWestClearSpend =>
+                    "https://clearspend.secure1.natwest.com", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.RoyalBankOfScotlandSandbox => GetIssuerUrl(bank),
                 NatWestBank.RoyalBankOfScotland =>
-                    "https://secure1.rbs.co.uk", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110264930/Implementation+Guide+Royal+Bank+of+Scotland
+                    "https://personal.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.RoyalBankOfScotlandBankline =>
+                    "https://corporate.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.RoyalBankOfScotlandClearSpend =>
+                    "https://clearspend.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.TheOne =>
+                    "https://toa.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.NatWestOne =>
+                    "https://noa.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.VirginOne =>
+                    "https://voa.secure1.rbs.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
                 NatWestBank.UlsterBankNi =>
-                    "https://secure1.ulsterbank.co.uk", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/121766033/Implementation+Guide+Ulster+Bank+Ltd
-                _ => throw new ArgumentOutOfRangeException()
+                    "https://personal.secure1.ulsterbank.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.UlsterBankNiBankline =>
+                    "https://corporate.secure1.ulsterbank.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.UlsterBankNiClearSpend =>
+                    "https://clearspend.secure1.ulsterbank.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
             bank switch
             {
-                NatWestBank.NatWestSandbox =>
+                NatWestBank.NatWestSandbox
+                    or NatWestBank.NatWest
+                    or NatWestBank.NatWestBankline
+                    or NatWestBank.NatWestClearSpend =>
                     "0015800000jfwxXAAQ", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                NatWestBank.RoyalBankOfScotlandSandbox =>
+                NatWestBank.RoyalBankOfScotlandSandbox
+                    or NatWestBank.RoyalBankOfScotland
+                    or NatWestBank.RoyalBankOfScotlandBankline
+                    or NatWestBank.RoyalBankOfScotlandClearSpend
+                    or NatWestBank.TheOne
+                    or NatWestBank.NatWestOne
+                    or NatWestBank.VirginOne =>
                     "0015800000jfwB4AAI", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                NatWestBank
-                    .NatWest => "0015800000jfwxXAAQ", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                NatWestBank.RoyalBankOfScotland =>
-                    "0015800000jfwB4AAI", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
-                NatWestBank.UlsterBankNi =>
+                NatWestBank.UlsterBankNi
+                    or NatWestBank.UlsterBankNiBankline
+                    or NatWestBank.UlsterBankNiClearSpend =>
                     "0015800000jfwxXAAQ", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
                 _ => throw new ArgumentOutOfRangeException()
             },
@@ -60,7 +85,30 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
-                TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt
+                TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt,
+                BankRegistrationGroup = bank switch
+                {
+                    NatWestBank.NatWestSandbox => 
+                        BankRegistrationGroup.NatWest_NatWestSandbox,
+                    NatWestBank.NatWest
+                        or NatWestBank.NatWestBankline
+                        or NatWestBank.NatWestClearSpend =>
+                        BankRegistrationGroup.NatWest_NatWestProduction,
+                    NatWestBank.RoyalBankOfScotlandSandbox =>
+                        BankRegistrationGroup.NatWest_RoyalBankOfScotlandSandbox,
+                    NatWestBank.RoyalBankOfScotland
+                        or NatWestBank.RoyalBankOfScotlandBankline
+                        or NatWestBank.RoyalBankOfScotlandClearSpend
+                        or NatWestBank.TheOne
+                        or NatWestBank.NatWestOne
+                        or NatWestBank.VirginOne =>
+                        BankRegistrationGroup.NatWest_RoyalBankOfScotlandProduction,
+                    NatWestBank.UlsterBankNi
+                        or NatWestBank.UlsterBankNiBankline
+                        or NatWestBank.UlsterBankNiClearSpend =>
+                        BankRegistrationGroup.NatWest_UlsterBankNiProduction,
+                    _ => throw new ArgumentOutOfRangeException()
+                }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -116,11 +164,20 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     NatWestBank.NatWestSandbox => GetAccountAndTransactionApiBaseUrl(bank),
                     NatWestBank.RoyalBankOfScotlandSandbox => GetAccountAndTransactionApiBaseUrl(bank),
-                    NatWestBank.NatWest =>
+                    NatWestBank.NatWest
+                        or NatWestBank.NatWestBankline
+                        or NatWestBank.NatWestClearSpend =>
                         "https://api.natwest.com/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/3.1.10
-                    NatWestBank.RoyalBankOfScotland =>
+                    NatWestBank.RoyalBankOfScotland
+                        or NatWestBank.RoyalBankOfScotlandBankline
+                        or NatWestBank.RoyalBankOfScotlandClearSpend
+                        or NatWestBank.TheOne
+                        or NatWestBank.NatWestOne
+                        or NatWestBank.VirginOne =>
                         "htpps://api.rbs.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/3.1.10
-                    NatWestBank.UlsterBankNi =>
+                    NatWestBank.UlsterBankNi
+                        or NatWestBank.UlsterBankNiBankline
+                        or NatWestBank.UlsterBankNiClearSpend =>
                         "https://api.ulsterbank.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/ubn/3.1.10
                     _ => throw new ArgumentOutOfRangeException()
                 }

@@ -16,6 +16,21 @@ public enum BankRegistrationGroup
     Barclays_Sandbox,
 
     [EnumMember(Value = "Barclays_Production")]
-    Barclays_Production
+    Barclays_Production,
+    
+    [EnumMember(Value = "NatWest_NatWestSandbox")]
+    NatWest_NatWestSandbox,
+    
+    [EnumMember(Value = "NatWest_NatWestProduction")]
+    NatWest_NatWestProduction,
+    
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandSandbox")]
+    NatWest_RoyalBankOfScotlandSandbox,
+    
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandProduction")]
+    NatWest_RoyalBankOfScotlandProduction,
+    
+    [EnumMember(Value = "NatWest_UlsterBankNiProduction")]
+    NatWest_UlsterBankNiProduction
 
 }

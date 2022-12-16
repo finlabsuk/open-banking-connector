@@ -21,17 +21,44 @@ public enum BankProfileEnum
     [EnumMember(Value = "NatWest_NatWestSandbox")]
     NatWest_NatWestSandbox,
 
-    [EnumMember(Value = "NatWest_RoyalBankOfScotlandSandbox")]
-    NatWest_RoyalBankOfScotlandSandbox,
-
     [EnumMember(Value = "NatWest_NatWest")]
     NatWest_NatWest,
+
+    [EnumMember(Value = "NatWest_NatWestBankline")]
+    NatWest_NatWestBankline,
+
+    [EnumMember(Value = "NatWest_NatWestClearSpend")]
+    NatWest_NatWestClearSpend,
+
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandSandbox")]
+    NatWest_RoyalBankOfScotlandSandbox,
 
     [EnumMember(Value = "NatWest_RoyalBankOfScotland")]
     NatWest_RoyalBankOfScotland,
 
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandBankline")]
+    NatWest_RoyalBankOfScotlandBankline,
+
+    [EnumMember(Value = "NatWest_RoyalBankOfScotlandClearSpend")]
+    NatWest_RoyalBankOfScotlandClearSpend,
+
+    [EnumMember(Value = "NatWest_TheOne")]
+    NatWest_TheOne,
+
+    [EnumMember(Value = "NatWest_NatWestOne")]
+    NatWest_NatWestOne,
+
+    [EnumMember(Value = "NatWest_VirginOne")]
+    NatWest_VirginOne,
+
     [EnumMember(Value = "NatWest_UlsterBankNI")]
     NatWest_UlsterBankNi,
+
+    [EnumMember(Value = "NatWest_UlsterBankNiBankline")]
+    NatWest_UlsterBankNiBankline,
+
+    [EnumMember(Value = "NatWest_UlsterBankNiClearSpend")]
+    NatWest_UlsterBankNiClearSpend,
 
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,

@@ -177,7 +177,9 @@ internal class
                 await _entityMethods
                     .DbSetNoTracking
                     .Include(o => o.BankNavigation)
-                    .Where(x => x.BankRegistrationGroup == bankRegistrationGroup)
+                    .Where(
+                        x => x.BankRegistrationGroup == bankRegistrationGroup &&
+                             x.SoftwareStatementProfileId == softwareStatementProfileId)
                     .OrderBy(x => x.Created)
                     .FirstOrDefaultAsync();
         }
@@ -195,15 +197,6 @@ internal class
                 Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
 
                 // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
-
-                if (softwareStatementProfileId != existingGroupRegistration.SoftwareStatementProfileId)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used software statement profile with ID {existingGroupRegistration.SoftwareStatementProfileId} " +
-                            $"which is different from expected {softwareStatementProfileId}.");
-                }
 
                 if (softwareStatementProfileOverrideCase != existingGroupRegistration.SoftwareStatementProfileOverride)
                 {
