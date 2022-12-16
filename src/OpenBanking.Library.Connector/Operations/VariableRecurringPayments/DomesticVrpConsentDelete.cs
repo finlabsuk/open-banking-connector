@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                 var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
                 // Get client credentials grant token
-                ClientCredentialsGrantResponse tokenEndpointResponse =
+                TokenEndpointResponseClientCredentialsGrant tokenEndpointResponse =
                     await _grantPost.PostClientCredentialsGrantAsync(
                         "payments",
                         processedSoftwareStatementProfile,

@@ -66,7 +66,7 @@ public class Jwks
     public List<JsonWebKey> Keys { get; set; } = null!;
 }
 
-public class IdTokenBase
+public abstract class IdTokenBase
 {
     /// <summary>
     ///     Gets or sets unique identifier for the TPP. Implemented as Base62

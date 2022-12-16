@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 {
     /// <summary>
-    /// OAuth2 parameters apart from refresh token.
+    ///     OAuth2 parameters apart from refresh token.
     /// </summary>
-    public abstract class GrantResponseBase
+    public abstract class TokenEndpointResponseBase
     {
         [JsonProperty("access_token", Required = Required.Always)]
         public string AccessToken { get; set; } = null!;
@@ -19,21 +19,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
 
         [JsonProperty("token_type", Required = Required.Always)]
         public string TokenType { get; set; } = null!;
-        
+
         public string? Scope { get; set; }
     }
 
-    public class ClientCredentialsGrantResponse : GrantResponseBase
+    public class TokenEndpointResponseClientCredentialsGrant : TokenEndpointResponseBase
     {
         /// <summary>
-        /// Allows checking for presence of ID token (not expected)
+        ///     Allows checking for presence of ID token (not expected)
         /// </summary>
         [JsonProperty("id_token")]
         public string? IdToken { get; set; }
-        
     }
 
-    public class AuthCodeGrantResponse : GrantResponseBase
+    public class TokenEndpointResponseAuthCodeGrant : TokenEndpointResponseBase
     {
         [JsonProperty("refresh_token")]
         public string? RefreshToken { get; set; }
@@ -42,12 +41,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
         public string IdToken { get; set; } = null!;
     }
 
-    public class RefreshTokenGrantResponse : GrantResponseBase
+    public class TokenEndpointResponseRefreshTokenGrant : TokenEndpointResponseBase
     {
         [JsonProperty("refresh_token", Required = Required.Always)]
         public string RefreshToken { get; set; } = null!;
 
-        [JsonProperty("id_token", Required = Required.Always)]
-        public string IdToken { get; set; } = null!;
+        [JsonProperty("id_token")]
+        public string? IdToken { get; set; }
     }
 }

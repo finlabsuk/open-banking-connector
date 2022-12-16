@@ -15,7 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal interface IGrantPost
 {
-    Task<ClientCredentialsGrantResponse> PostClientCredentialsGrantAsync(
+    Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
         string? scope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
@@ -24,7 +24,7 @@ internal interface IGrantPost
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient);
 
-    Task<AuthCodeGrantResponse> PostAuthCodeGrantAsync(
+    Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
         string authCode,
         string redirectUrl,
         string bankIssuerUrl,
@@ -40,7 +40,7 @@ internal interface IGrantPost
         IApiClient matlsApiClient,
         IInstrumentationClient instrumentationClient);
 
-    Task<RefreshTokenGrantResponse> PostRefreshTokenGrantAsync(
+    Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
         string redirectUrl,
         string bankIssuerUrl,

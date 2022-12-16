@@ -192,7 +192,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 
                 // Obtain token for consent
                 JsonSerializerSettings? jsonSerializerSettings = null;
-                AuthCodeGrantResponse tokenEndpointResponse =
+                TokenEndpointResponseAuthCodeGrant tokenEndpointResponse =
                     await _grantPost.PostAuthCodeGrantAsync(
                         request.RedirectData.Code,
                         redirectUrl,

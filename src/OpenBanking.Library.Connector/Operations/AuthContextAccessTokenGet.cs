@@ -83,7 +83,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             // Obtain token for consent
             string redirectUrl = bankRegistration.DefaultRedirectUri;
             JsonSerializerSettings? jsonSerializerSettings = null;
-            RefreshTokenGrantResponse tokenEndpointResponse =
+            TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
                     accessToken.RefreshToken,
                     redirectUrl,

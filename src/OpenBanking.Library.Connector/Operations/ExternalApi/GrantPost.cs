@@ -121,7 +121,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             return outputExternalApiUserId;
         }
 
-        public async Task<ClientCredentialsGrantResponse> PostClientCredentialsGrantAsync(
+        public async Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
             string? scope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
@@ -154,7 +154,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs["client_assertion"] = jwt;
             }
 
-            var response = await PostGrantAsync<ClientCredentialsGrantResponse>(
+            var response = await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
@@ -171,7 +171,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             return response;
         }
 
-        public async Task<AuthCodeGrantResponse> PostAuthCodeGrantAsync(
+        public async Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
             string authCode,
             string redirectUrl,
             string bankIssuerUrl,
@@ -208,7 +208,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs["client_assertion"] = jwt;
             }
 
-            var response = await PostGrantAsync<AuthCodeGrantResponse>(
+            var response = await PostGrantAsync<TokenEndpointResponseAuthCodeGrant>(
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
@@ -242,7 +242,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             return response;
         }
 
-        public async Task<RefreshTokenGrantResponse> PostRefreshTokenGrantAsync(
+        public async Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
             string refreshToken,
             string redirectUrl,
             string bankIssuerUrl,
@@ -278,7 +278,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 keyValuePairs["client_assertion"] = jwt;
             }
 
-            var response = await PostGrantAsync<RefreshTokenGrantResponse>(
+            var response = await PostGrantAsync<TokenEndpointResponseRefreshTokenGrant>(
                 keyValuePairs,
                 bankRegistration,
                 jsonSerializerSettings,
@@ -289,13 +289,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             GrantPostCustomBehaviour? customBehaviour =
                 bankRegistration.BankNavigation.CustomBehaviour?.RefreshTokenGrantPost;
             bool doNotValidateIdToken = customBehaviour?.DoNotValidateIdToken ?? false;
-            if (doNotValidateIdToken is false)
+            string? responseIdToken = response.IdToken;
+            if (doNotValidateIdToken is false &&
+                responseIdToken is not null)
             {
                 string jwksUri = bankRegistration.BankNavigation.JwksUri;
                 JwksGetCustomBehaviour? jwksGetCustomBehaviour =
                     bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
+
                 await ValidateIdTokenTokenEndpoint(
-                    response.IdToken,
+                    responseIdToken,
                     response.AccessToken,
                     customBehaviour,
                     jwksUri,
@@ -413,6 +416,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             IdTokenSubClaimType idTokenSubClaimType,
             string? externalApiUserId)
         {
+            // Decode ID token
             bool jwksGetResponseHasNoRootProperty =
                 jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
             string idTokenDecoded = await DecodeIdTokenAsync(jwksUri, jwksGetResponseHasNoRootProperty, idTokenEncoded);
@@ -553,20 +557,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             return Base64UrlEncoder.Encode(hashValue, 0, 16);
         }
 
-        private async Task<TGrantResponse> PostGrantAsync<TGrantResponse>(
+        private async Task<TokenEndpointResponse> PostGrantAsync<TokenEndpointResponse>(
             Dictionary<string, string> keyValuePairs,
             BankRegistration bankRegistration,
             JsonSerializerSettings? responseJsonSerializerSettings,
             IApiClient mtlsApiClient,
             string? requestScope,
             bool doNotValidateScopeResponse)
-            where TGrantResponse : GrantResponseBase
+            where TokenEndpointResponse : TokenEndpointResponseBase
         {
             // POST request
             var uri = new Uri(bankRegistration.BankNavigation.TokenEndpoint);
             IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
                 new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
-            var response = await postRequestProcessor.PostAsync<TGrantResponse>(
+            var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
                 uri,
                 keyValuePairs,
                 null,
