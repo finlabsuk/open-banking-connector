@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -104,7 +105,39 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
-                { UseRegistrationDeleteEndpoint = true, UseRegistrationAccessToken = bank is LloydsBank.Sandbox }
+            {
+                UseRegistrationDeleteEndpoint = bank is LloydsBank.Sandbox,
+                UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
+                BankRegistrationGroup = bank switch
+                {
+                    LloydsBank.Sandbox => BankRegistrationGroup.Lloyds_Sandbox,
+                    LloydsBank.LloydsPersonal
+                        or LloydsBank.LloydsBusiness
+                        or LloydsBank.LloydsCommerical => BankRegistrationGroup.Lloyds_LloydsProduction,
+                    LloydsBank.HalifaxPersonal => BankRegistrationGroup.Lloyds_HalifaxProduction,
+                    LloydsBank.BankOfScotlandPersonal
+                        or LloydsBank.BankOfScotlandBusiness
+                        or LloydsBank.BankOfScotlandCommerical => BankRegistrationGroup.Lloyds_BankOfScotlandProduction,
+                    LloydsBank.MbnaPersonal => BankRegistrationGroup.Lloyds_MbnaProduction,
+                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                }
+            },
+            AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
+            {
+                AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
+                {
+                    var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
+                    {
+                        OBReadConsent1DataPermissionsEnum.ReadPAN
+                    };
+                    foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
+                    {
+                        externalApiRequest.Data.Permissions.Remove(element);
+                    }
+
+                    return externalApiRequest;
+                }
+            }
         };
     }
 
@@ -121,14 +154,14 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     LloydsBank.Sandbox =>
                         "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.10/aisp", // from API discovery endpoint
                     LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
-                        "https://secure-api.lloydsbank.com/prod01/lbg", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.HalifaxPersonal =>
-                        "https://secure-api.halifax.co.uk/prod01/lbg", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.halifax.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
                         or LloydsBank.BankOfScotlandCommerical =>
-                        "https://secure-api.bankofscotland.co.uk/prod01/lbg", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.bankofscotland.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.MbnaPersonal =>
-                        "https://secure-api.mbna.co.uk/prod01/lbg", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.mbna.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                 }
         };

@@ -184,71 +184,101 @@ internal class
                     .FirstOrDefaultAsync();
         }
 
-        // Set external (bank) API parameters via DCR or directly
+        // Re-use external API (bank) registration, create new one (DCR), or use supplied one.
         string externalApiId;
         string? externalApiSecret;
         string? registrationAccessToken;
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
-        if (request.ExternalApiObject is null)
+        if (existingGroupRegistration is not null)
         {
-            // Re-use bank registration or create new one (DCR)
-            if (existingGroupRegistration is not null)
+            Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
+
+            // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
+
+            if (request.ExternalApiObject is not null)
             {
-                Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
-
-                // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
-
-                if (softwareStatementProfileOverrideCase != existingGroupRegistration.SoftwareStatementProfileOverride)
+                if (request.ExternalApiObject.ExternalApiId !=
+                    existingGroupRegistration.ExternalApiObject.ExternalApiId)
                 {
                     throw new
                         InvalidOperationException(
                             $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used software statement profile with override {existingGroupRegistration.SoftwareStatementProfileOverride} " +
-                            $"which is different from expected {softwareStatementProfileOverrideCase}.");
+                            $"used ExternalApiObject with ExternalApiId {existingGroupRegistration.ExternalApiObject.ExternalApiId} " +
+                            $"which is different from expected {request.ExternalApiObject.ExternalApiId}.");
                 }
 
-                if (registrationEndpoint != existingRegistrationBank.RegistrationEndpoint)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used bank registration endpoint {existingRegistrationBank.RegistrationEndpoint} " +
-                            $"which is different from expected {registrationEndpoint}.");
-                }
+                string warningMessage1 =
+                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    "exists whose ExternalApiId matches ExternalApiId from " +
+                    $"ExternalApiObject provided in request ({request.ExternalApiObject.ExternalApiId}). " +
+                    "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
+                    "previous registration re-used.";
+                nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage1));
+                _instrumentationClient.Warning(warningMessage1);
 
-                if (tokenEndpointAuthMethod != existingGroupRegistration.TokenEndpointAuthMethod)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used TokenEndpointAuthMethod {existingGroupRegistration.TokenEndpointAuthMethod} " +
-                            $"which is different from expected {tokenEndpointAuthMethod}.");
-                }
-
-                if (registrationScope != existingGroupRegistration.RegistrationScope)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used RegistrationScope {existingGroupRegistration.RegistrationScope} " +
-                            $"which is different from expected {registrationScope}.");
-                }
-
-                if (bankFinancialId != existingRegistrationBank.FinancialId)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used bank financial ID {existingRegistrationBank.FinancialId} " +
-                            $"which is different from expected {bankFinancialId}.");
-                }
-
-                externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;
-                externalApiSecret = existingGroupRegistration.ExternalApiObject.ExternalApiSecret;
-                registrationAccessToken = existingGroupRegistration.ExternalApiObject.RegistrationAccessToken;
-                externalApiResponse = null;
+                string warningMessage2 =
+                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    "exists whose ExternalApiId matches ExternalApiId from " +
+                    $"ExternalApiObject provided in request ({request.ExternalApiObject.ExternalApiId}). " +
+                    "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
+                    "previous registration re-used.";
+                nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage2));
+                _instrumentationClient.Warning(warningMessage2);
             }
-            else
+
+            if (softwareStatementProfileOverrideCase != existingGroupRegistration.SoftwareStatementProfileOverride)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used software statement profile with override {existingGroupRegistration.SoftwareStatementProfileOverride} " +
+                        $"which is different from expected {softwareStatementProfileOverrideCase}.");
+            }
+
+            if (registrationEndpoint != existingRegistrationBank.RegistrationEndpoint)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used bank registration endpoint {existingRegistrationBank.RegistrationEndpoint} " +
+                        $"which is different from expected {registrationEndpoint}.");
+            }
+
+            if (tokenEndpointAuthMethod != existingGroupRegistration.TokenEndpointAuthMethod)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used TokenEndpointAuthMethod {existingGroupRegistration.TokenEndpointAuthMethod} " +
+                        $"which is different from expected {tokenEndpointAuthMethod}.");
+            }
+
+            if (registrationScope != existingGroupRegistration.RegistrationScope)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used RegistrationScope {existingGroupRegistration.RegistrationScope} " +
+                        $"which is different from expected {registrationScope}.");
+            }
+
+            if (bankFinancialId != existingRegistrationBank.FinancialId)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used bank financial ID {existingRegistrationBank.FinancialId} " +
+                        $"which is different from expected {bankFinancialId}.");
+            }
+
+            externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;
+            externalApiSecret = existingGroupRegistration.ExternalApiObject.ExternalApiSecret;
+            registrationAccessToken = existingGroupRegistration.ExternalApiObject.RegistrationAccessToken;
+            externalApiResponse = null;
+        }
+        else
+        {
+            if (request.ExternalApiObject is null)
             {
                 BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
                     customBehaviour?.BankRegistrationPost;
@@ -276,21 +306,13 @@ internal class
                 externalApiSecret = externalApiResponse.ClientSecret;
                 registrationAccessToken = externalApiResponse.RegistrationAccessToken;
             }
-        }
-        else
-        {
-            if (existingGroupRegistration is not null)
+            else
             {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        "already exists so cannot accept ExternalApiObject.");
+                externalApiId = request.ExternalApiObject.ExternalApiId;
+                externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
+                registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
+                externalApiResponse = null;
             }
-
-            externalApiId = request.ExternalApiObject.ExternalApiId;
-            externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
-            registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
-            externalApiResponse = null;
         }
 
         // Create persisted entity

@@ -31,6 +31,21 @@ public enum BankRegistrationGroup
     NatWest_RoyalBankOfScotlandProduction,
     
     [EnumMember(Value = "NatWest_UlsterBankNiProduction")]
-    NatWest_UlsterBankNiProduction
+    NatWest_UlsterBankNiProduction,
+    
+    [EnumMember(Value = "Lloyds_Sandbox")]
+    Lloyds_Sandbox,
 
+    [EnumMember(Value = "Lloyds_LloydsProduction")]
+    Lloyds_LloydsProduction,
+
+    [EnumMember(Value = "Lloyds_HalifaxProduction")]
+    Lloyds_HalifaxProduction,
+
+    [EnumMember(Value = "Lloyds_BankOfScotlandProduction")]
+    Lloyds_BankOfScotlandProduction,
+    
+    [EnumMember(Value = "Lloyds_MbnaProduction")]
+    Lloyds_MbnaProduction,
+    
 }

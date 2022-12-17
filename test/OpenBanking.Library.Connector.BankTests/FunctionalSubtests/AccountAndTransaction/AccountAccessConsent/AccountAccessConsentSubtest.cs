@@ -180,6 +180,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAccessConsentGetResp.Warnings.Should().BeNull();
             accountAccessConsentGetResp.ExternalApiResponse.Should().NotBeNull();
 
+            // ObjectDeleteResponse accountAccessConsentResp4 = await requestBuilder
+            //     .AccountAndTransaction
+            //     .AccountAccessConsents
+            //     .DeleteAsync(accountAccessConsentId, modifiedBy, true);
+
             // POST auth context
             var authContextRequest = new AccountAccessConsentAuthContext
             {
@@ -285,15 +290,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 
                     // GET /accounts/{AccountId}/transactions
                     bool hasReadTransactionsBasicOrDetail =
-                        requestedPermissions.Contains(
-                            OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic) ||
-                        requestedPermissions.Contains(
-                            OBReadConsent1DataPermissionsEnum.ReadTransactionsDetail);
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic) ||
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDetail);
                     bool hasReadTransactionsCreditsOrDebits =
-                        requestedPermissions.Contains(
-                            OBReadConsent1DataPermissionsEnum.ReadTransactionsCredits) ||
-                        requestedPermissions.Contains(
-                            OBReadConsent1DataPermissionsEnum.ReadTransactionsDebits);
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsCredits) ||
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDebits);
                     bool testGetTransactions = hasReadTransactionsBasicOrDetail && hasReadTransactionsCreditsOrDebits;
                     if (testGetTransactions)
                     {

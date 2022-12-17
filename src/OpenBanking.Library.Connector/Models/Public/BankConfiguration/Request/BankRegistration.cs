@@ -91,14 +91,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public bool ForceNullBankRegistrationGroup { get; set; } = false;
 
         /// <summary>
-        ///     Bank registration group. When specified, the same external API (bank) registration object is
+        ///     Bank registration group. When specified, for a given SoftwareStatementProfileId, the same external API (bank)
+        ///     registration object is
         ///     re-used by all members of the group and DCR is only performed if required the first time the group is specified.
-        ///     This can be
-        ///     used to prevent multiple
+        ///     This can be used to prevent multiple
         ///     registrations which may disrupt an
         ///     existing registration depending on bank support for multiple registrations.
         ///     If null, the value will be obtained from the bank profile.
-        ///     Regardless of how this property is set, the value will be forced to be null when ForceNullBankRegistrationGroup is
+        ///     Regardless of setting, this value will be forced to be null when ForceNullBankRegistrationGroup is
         ///     true.
         /// </summary>
         public BankRegistrationGroup? BankRegistrationGroup { get; set; }
