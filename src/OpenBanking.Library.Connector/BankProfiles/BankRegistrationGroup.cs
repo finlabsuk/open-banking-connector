@@ -11,30 +11,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum BankRegistrationGroup
 {
-
     [EnumMember(Value = "Barclays_Sandbox")]
     Barclays_Sandbox,
 
     [EnumMember(Value = "Barclays_Production")]
     Barclays_Production,
-    
+
     [EnumMember(Value = "NatWest_NatWestSandbox")]
     NatWest_NatWestSandbox,
-    
+
     [EnumMember(Value = "NatWest_NatWestProduction")]
     NatWest_NatWestProduction,
-    
+
     [EnumMember(Value = "NatWest_RoyalBankOfScotlandSandbox")]
     NatWest_RoyalBankOfScotlandSandbox,
-    
+
     [EnumMember(Value = "NatWest_RoyalBankOfScotlandProduction")]
     NatWest_RoyalBankOfScotlandProduction,
-    
+
     [EnumMember(Value = "NatWest_UlsterBankNiProduction")]
     NatWest_UlsterBankNiProduction,
-    
+
     [EnumMember(Value = "Lloyds_Sandbox")]
     Lloyds_Sandbox,
+
+    [EnumMember(Value = "Lloyds_Production")]
+    Lloyds_Production,
 
     [EnumMember(Value = "Lloyds_LloydsProduction")]
     Lloyds_LloydsProduction,
@@ -44,8 +46,7 @@ public enum BankRegistrationGroup
 
     [EnumMember(Value = "Lloyds_BankOfScotlandProduction")]
     Lloyds_BankOfScotlandProduction,
-    
+
     [EnumMember(Value = "Lloyds_MbnaProduction")]
     Lloyds_MbnaProduction,
-    
 }

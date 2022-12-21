@@ -44,7 +44,7 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(BankProfileEnum), BankProfileEnum);
         info.AddValue(nameof(BankRegistrationExternalApiId), BankRegistrationExternalApiId);
         info.AddValue(nameof(BankRegistrationExternalApiSecret), BankRegistrationExternalApiSecret);
-        info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
+        info.AddValue(nameof(BankRegistrationRegistrationAccessToken), BankRegistrationRegistrationAccessToken);
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
         info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
     }

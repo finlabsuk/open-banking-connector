@@ -176,10 +176,10 @@ internal class
             existingGroupRegistration =
                 await _entityMethods
                     .DbSetNoTracking
-                    .Include(o => o.BankNavigation)
                     .Where(
                         x => x.BankRegistrationGroup == bankRegistrationGroup &&
                              x.SoftwareStatementProfileId == softwareStatementProfileId)
+                    .Include(o => o.BankNavigation)
                     .OrderBy(x => x.Created)
                     .FirstOrDefaultAsync();
         }
@@ -235,15 +235,6 @@ internal class
                         $"which is different from expected {softwareStatementProfileOverrideCase}.");
             }
 
-            if (registrationEndpoint != existingRegistrationBank.RegistrationEndpoint)
-            {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used bank registration endpoint {existingRegistrationBank.RegistrationEndpoint} " +
-                        $"which is different from expected {registrationEndpoint}.");
-            }
-
             if (tokenEndpointAuthMethod != existingGroupRegistration.TokenEndpointAuthMethod)
             {
                 throw new
@@ -260,15 +251,6 @@ internal class
                         $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
                         $"used RegistrationScope {existingGroupRegistration.RegistrationScope} " +
                         $"which is different from expected {registrationScope}.");
-            }
-
-            if (bankFinancialId != existingRegistrationBank.FinancialId)
-            {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used bank financial ID {existingRegistrationBank.FinancialId} " +
-                        $"which is different from expected {bankFinancialId}.");
             }
 
             externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;

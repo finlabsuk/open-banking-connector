@@ -50,7 +50,19 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     "https://authorise-api.mbna.co.uk/prod01/channel/mtls/mbn/personal", // from https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/technical_implementation_guide
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
-            "0015800000jf9GgAAI", // from https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/technical_implementation_guide_dcr.pdf?v=1631615723
+            bank switch
+            {
+                LloydsBank.Sandbox
+                    or LloydsBank.LloydsPersonal
+                    or LloydsBank.LloydsBusiness
+                    or LloydsBank.LloydsCommerical => GetFinancialId(LloydsBank.LloydsPersonal),
+                LloydsBank.HalifaxPersonal
+                    or LloydsBank.BankOfScotlandPersonal
+                    or LloydsBank.BankOfScotlandBusiness
+                    or LloydsBank.BankOfScotlandCommerical => GetFinancialId(LloydsBank.BankOfScotlandPersonal),
+                LloydsBank.MbnaPersonal => GetFinancialId(LloydsBank.MbnaPersonal),
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            },
             bank is not LloydsBank.Sandbox ? GetAccountAndTransactionApi(bank) : null,
             bank is LloydsBank.Sandbox
                 ? new PaymentInitiationApi
@@ -115,19 +127,9 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 UseRegistrationDeleteEndpoint = true,
                 UseRegistrationGetEndpoint = true,
                 UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
-                BankRegistrationGroup = bank switch
-                {
-                    LloydsBank.Sandbox => BankRegistrationGroup.Lloyds_Sandbox,
-                    LloydsBank.LloydsPersonal
-                        or LloydsBank.LloydsBusiness
-                        or LloydsBank.LloydsCommerical => BankRegistrationGroup.Lloyds_LloydsProduction,
-                    LloydsBank.HalifaxPersonal => BankRegistrationGroup.Lloyds_HalifaxProduction,
-                    LloydsBank.BankOfScotlandPersonal
-                        or LloydsBank.BankOfScotlandBusiness
-                        or LloydsBank.BankOfScotlandCommerical => BankRegistrationGroup.Lloyds_BankOfScotlandProduction,
-                    LloydsBank.MbnaPersonal => BankRegistrationGroup.Lloyds_MbnaProduction,
-                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                }
+                BankRegistrationGroup = bank is LloydsBank.Sandbox
+                    ? BankRegistrationGroup.Lloyds_Sandbox
+                    : BankRegistrationGroup.Lloyds_Production
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
@@ -163,12 +165,12 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     LloydsBank.LloydsPersonal or LloydsBank.LloydsBusiness or LloydsBank.LloydsCommerical =>
                         "https://secure-api.lloydsbank.com/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.HalifaxPersonal =>
-                        "https://secure-api.halifax.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.halifax.co.uk/prod01/lbg/hfx/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.BankOfScotlandPersonal or LloydsBank.BankOfScotlandBusiness
                         or LloydsBank.BankOfScotlandCommerical =>
-                        "https://secure-api.bankofscotland.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.bankofscotland.co.uk/prod01/lbg/bos/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     LloydsBank.MbnaPersonal =>
-                        "https://secure-api.mbna.co.uk/prod01/lbg/lyds/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
+                        "https://secure-api.mbna.co.uk/prod01/lbg/mbn/open-banking/v3.1/aisp", // from https://developer.lloydsbanking.com/node/4045
                     _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                 }
         };
