@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
@@ -66,6 +67,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                     .Include(o => o.BankNavigation)
                     .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
                 throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
+            CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
 
             if (includeExternalApiOperationValue)
             {
@@ -93,18 +95,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
                 var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
                 // Get appropriate token
-                string accessToken = useRegistrationAccessTokenValue
-                    ? entity.ExternalApiObject.RegistrationAccessToken ??
-                      throw new InvalidOperationException("No registration access token available")
-                    : (await _grantPost.PostClientCredentialsGrantAsync(
-                        null,
-                        processedSoftwareStatementProfile,
-                        entity,
-                        entity.BankNavigation.TokenEndpoint,
-                        null,
-                        apiClient,
-                        _instrumentationClient))
-                    .AccessToken;
+                string accessToken;
+                if (useRegistrationAccessTokenValue)
+                {
+                    accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
+                                  throw new InvalidOperationException("No registration access token available");
+                }
+                else
+                {
+                    string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
+                    accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
+                            scope,
+                            processedSoftwareStatementProfile,
+                            entity,
+                            entity.BankNavigation.TokenEndpoint,
+                            null,
+                            apiClient,
+                            _instrumentationClient))
+                        .AccessToken;
+                }
 
                 // Delete at API
                 IDeleteRequestProcessor deleteRequestProcessor =

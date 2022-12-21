@@ -95,6 +95,12 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         UseApplicationJoseNotApplicationJwtContentTypeHeader =
                             true // from https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/technical_implementation_guide_dcr.pdf?v=1631615723
                     },
+                BankRegistrationPut = bank is LloydsBank.Sandbox
+                    ? null
+                    : new BankRegistrationPutCustomBehaviour
+                    {
+                        CustomTokenScope = "openid"
+                    },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
@@ -106,7 +112,8 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
-                UseRegistrationDeleteEndpoint = bank is LloydsBank.Sandbox,
+                UseRegistrationDeleteEndpoint = true,
+                UseRegistrationGetEndpoint = true,
                 UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
                 BankRegistrationGroup = bank switch
                 {

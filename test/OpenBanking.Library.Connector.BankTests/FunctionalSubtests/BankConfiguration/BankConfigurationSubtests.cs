@@ -126,6 +126,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             bankRegistrationReadResponse.Should().NotBeNull();
             bankRegistrationReadResponse.Warnings.Should().BeNull();
 
+            // ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
+            //     .BankConfiguration
+            //     .BankRegistrations
+            //     .DeleteAsync(
+            //         bankRegistrationId,
+            //         modifiedBy,
+            //         bankProfile.BankProfileEnum);
+
             return (bankId, bankRegistrationId);
         }
 

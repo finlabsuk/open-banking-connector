@@ -427,18 +427,25 @@ internal class
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get client credentials grant access token if necessary
-            string accessToken = useRegistrationAccessTokenValue
-                ? entity.ExternalApiObject.RegistrationAccessToken ??
-                  throw new InvalidOperationException("No registration access token available")
-                : (await _grantPost.PostClientCredentialsGrantAsync(
-                    null,
-                    processedSoftwareStatementProfile,
-                    entity,
-                    entity.BankNavigation.TokenEndpoint,
-                    null,
-                    apiClient,
-                    _instrumentationClient))
-                .AccessToken;
+            string accessToken;
+            if (useRegistrationAccessTokenValue)
+            {
+                accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
+                              throw new InvalidOperationException("No registration access token available");
+            }
+            else
+            {
+                string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
+                accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
+                        scope,
+                        processedSoftwareStatementProfile,
+                        entity,
+                        entity.BankNavigation.TokenEndpoint,
+                        null,
+                        apiClient,
+                        _instrumentationClient))
+                    .AccessToken;
+            }
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings =

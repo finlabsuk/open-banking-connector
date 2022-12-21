@@ -17,6 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public OpenIdConfigurationGetCustomBehaviour? OpenIdConfigurationGet { get; set; }
         public BankRegistrationPostCustomBehaviour? BankRegistrationPost { get; set; }
 
+        public BankRegistrationPutCustomBehaviour? BankRegistrationPut { get; set; }
+
         // Client auth 
         public GrantPostCustomBehaviour? ClientCredentialsGrantPost { get; set; }
 
