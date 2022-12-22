@@ -132,7 +132,29 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             DelimitedStringConverterOptions.JsonIsStringArrayNotString
                     }
                 }
-                : null
+                : new CustomBehaviourClass
+                {
+                    AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
+                    {
+                        AudClaim = bank switch
+                        {
+                            NatWestBank.NatWest
+                                or NatWestBank.NatWestBankline
+                                or NatWestBank.NatWestClearSpend => "https://secure1.natwest.com",
+                            NatWestBank.RoyalBankOfScotland
+                                or NatWestBank.RoyalBankOfScotlandBankline
+                                or NatWestBank.RoyalBankOfScotlandClearSpend
+                                or NatWestBank.TheOne
+                                or NatWestBank.NatWestOne
+                                or NatWestBank.VirginOne => "https://secure1.rbs.co.uk",
+                            NatWestBank.UlsterBankNi
+                                or NatWestBank.UlsterBankNiBankline
+                                or NatWestBank.UlsterBankNiClearSpend =>
+                                "https://secure1.ulsterbank.co.uk",
+                            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                        }
+                    }
+                }
         };
     }
 
