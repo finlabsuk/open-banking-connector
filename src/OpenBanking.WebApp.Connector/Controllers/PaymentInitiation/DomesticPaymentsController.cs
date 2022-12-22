@@ -61,7 +61,7 @@ public class DomesticPaymentsController : ControllerBase
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
         Guid domesticPaymentConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation

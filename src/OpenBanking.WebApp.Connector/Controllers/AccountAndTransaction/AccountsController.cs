@@ -39,7 +39,7 @@ public class AccountsController : ControllerBase
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         string requestUrlWithoutQuery =

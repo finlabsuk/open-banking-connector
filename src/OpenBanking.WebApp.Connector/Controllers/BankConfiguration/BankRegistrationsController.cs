@@ -58,7 +58,7 @@ public class BankRegistrationsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BankRegistrationResponse))]
     public async Task<IActionResult> GetAsync(
         Guid bankRegistrationId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,
@@ -94,7 +94,7 @@ public class BankRegistrationsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid bankRegistrationId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,

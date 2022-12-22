@@ -61,7 +61,7 @@ public class DomesticVrpConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticVrpConsentReadResponse))]
     public async Task<IActionResult> GetAsync(
         Guid domesticVrpConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)
@@ -90,7 +90,7 @@ public class DomesticVrpConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid domesticVrpConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)

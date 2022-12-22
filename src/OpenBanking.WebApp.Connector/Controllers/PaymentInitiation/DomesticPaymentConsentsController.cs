@@ -60,7 +60,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentReadResponse))]
     public async Task<IActionResult> GetAsync(
         Guid domesticPaymentConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-include-external-api-operation")]
         bool? includeExternalApiOperation)

@@ -38,15 +38,4 @@ public enum BankRegistrationGroup
     [EnumMember(Value = "Lloyds_Production")]
     Lloyds_Production,
 
-    [EnumMember(Value = "Lloyds_LloydsProduction")]
-    Lloyds_LloydsProduction,
-
-    [EnumMember(Value = "Lloyds_HalifaxProduction")]
-    Lloyds_HalifaxProduction,
-
-    [EnumMember(Value = "Lloyds_BankOfScotlandProduction")]
-    Lloyds_BankOfScotlandProduction,
-
-    [EnumMember(Value = "Lloyds_MbnaProduction")]
-    Lloyds_MbnaProduction,
 }

@@ -72,7 +72,7 @@ public class PaymentInitiationApisController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid paymentInitiationApiId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation

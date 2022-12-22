@@ -72,7 +72,7 @@ public class AccountAndTransactionApisController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid accountAndTransactionApiId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation

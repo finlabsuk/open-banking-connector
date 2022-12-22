@@ -61,7 +61,7 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentReadResponse))]
     public async Task<IActionResult> GetAsync(
         Guid accountAccessConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation)
@@ -90,7 +90,7 @@ public class AccountAccessConsentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
     public async Task<IActionResult> DeleteAsync(
         Guid accountAccessConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation)

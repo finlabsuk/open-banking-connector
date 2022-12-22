@@ -60,7 +60,7 @@ public class DomesticVrpController : ControllerBase
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
         Guid domesticVrpConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation

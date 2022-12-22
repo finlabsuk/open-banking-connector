@@ -50,7 +50,7 @@ public class TransactionsController : ControllerBase
         string? externalApiStatementId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
-        [FromHeader]
+        [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromQuery]
         string? fromBookingDateTime,
