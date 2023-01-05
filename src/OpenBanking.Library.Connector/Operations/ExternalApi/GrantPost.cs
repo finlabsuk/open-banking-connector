@@ -370,10 +370,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 throw new Exception("Auth time is null.");
             }
 
-            if (supportsSca && idToken.Acr != Acr.Sca)
-            {
-                throw new Exception("Acr from ID token does not match expected Acr.");
-            }
+            // if (supportsSca && idToken.Acr != Acr.Sca)
+            // {
+            //     throw new Exception("Acr from ID token does not match expected Acr.");
+            // }
 
             if (!string.Equals(idToken.Issuer, bankIssuerUrl))
             {
