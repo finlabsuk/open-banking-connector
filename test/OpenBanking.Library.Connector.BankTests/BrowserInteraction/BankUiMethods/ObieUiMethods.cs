@@ -22,24 +22,35 @@ public class ObieUiMethods : IBankUiMethods
         IPage page,
         BankUser bankUser)
     {
-        await page.ClickAsync("#wizardContent > #loginForm #loginName");
-        await page.FillAsync("#wizardContent > #loginForm #loginName", bankUser.UserNameOrNumber);
+        await page.GetByLabel("* User Name").ClickAsync();
 
-        await page.ClickAsync("#wizardContent > #loginForm #password");
-        await page.FillAsync("#wizardContent > #loginForm #password", bankUser.Password);
+        await page.GetByLabel("* User Name").FillAsync(bankUser.UserNameOrNumber);
 
-        await page.ClickAsync(".col-md-9 > #wizardContent > .nav > .nav-item:nth-child(1) > .nav-link");
+        await page.GetByLabel("* Password").ClickAsync();
+
+        await page.GetByLabel("* Password").FillAsync(bankUser.Password);
+
+        await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { NameString = "Login" }).ClickAsync();
 
         if (consentVariety == ConsentVariety.AccountAccessConsent)
         {
-            await page.SelectOptionAsync("#selectAccountsPage > #loginForm #accounts", "700004000000000000000002");
-            await page.ClickAsync("#loginForm > .form-row > .form-group > #accounts > option:nth-child(2)");
+            await page.GetByRole(AriaRole.Listbox, new PageGetByRoleOptions { NameString = "* Accounts" })
+                .SelectOptionAsync(new[] { "700004000000000000000003" });
+
+            // Seems necessary for next click to register
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { NameString = "Confirm" }).ClickAsync();
         }
         else
         {
-            await page.ClickAsync("#selectAccountsPage > #loginForm #account");
-        }
+            await page.GetByRole(AriaRole.Combobox, new PageGetByRoleOptions { NameString = "* Select debtor account" })
+                .SelectOptionAsync(new[] { "700004000000000000000002" });
 
-        await page.ClickAsync("#wizardContent > #selectAccountsPage > .nav > .nav-item:nth-child(1) > .nav-link");
+            // Seems necessary for next click to register
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { NameString = "Confirm" }).ClickAsync();
+        }
     }
 }

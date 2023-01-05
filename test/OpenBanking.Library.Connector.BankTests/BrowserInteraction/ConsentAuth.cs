@@ -75,7 +75,7 @@ public class ConsentAuth
             IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
                 "window.pageStatus",
                 null,
-                new PageWaitForFunctionOptions { Timeout = 5000 });
+                new PageWaitForFunctionOptions { Timeout = 12000 });
 
             var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
             if (pageStatus is not "POST of fragment succeeded")
