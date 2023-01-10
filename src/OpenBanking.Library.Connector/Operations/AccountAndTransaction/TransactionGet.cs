@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Specialized;
-using System.Web;
+using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -59,7 +59,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
         private string ConstructedQuery(string? queryString, TransactionsReadParams readParams)
         {
-            NameValueCollection query = HttpUtility.ParseQueryString(queryString ?? new UriBuilder().Query);
+            var query = new NameValueCollection();
+
+            if (!string.IsNullOrEmpty(queryString))
+            {
+                IEnumerable<(string, string)> initialQueryStringParams =
+                    queryString
+                        .Substring(1) // remove '?'
+                        .Split('&') // split on '&'
+                        .Select(
+                            s =>
+                            {
+                                string[] z = s.Split('=', 2);
+                                return (z[0], z[1]);
+                            });
+
+                foreach ((string key, string value) in initialQueryStringParams)
+                {
+                    query[key] = value;
+                }
+            }
+
             if (!string.IsNullOrEmpty(readParams.FromBookingDateTime))
             {
                 query["fromBookingDateTime"] = readParams.FromBookingDateTime;
@@ -70,7 +90,35 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
                 query["toBookingDateTime"] = readParams.ToBookingDateTime;
             }
 
-            return query.ToString()!;
+            return ConvertToQueryString(query);
+        }
+
+        private string ConvertToQueryString(NameValueCollection nameValueCollection)
+        {
+            StringBuilder stringBuilder =
+                new StringBuilder()
+                    .Append('?');
+            var nonEmptyQuery = false;
+            foreach (string key in nameValueCollection)
+            {
+                if (string.IsNullOrEmpty(key))
+                {
+                    continue;
+                }
+
+                string value = nameValueCollection[key] ?? string.Empty;
+
+                stringBuilder
+                    .Append(key)
+                    .Append('=')
+                    .Append(value)
+                    .Append('&');
+                nonEmptyQuery = true;
+            }
+
+            return nonEmptyQuery
+                ? stringBuilder.ToString(0, stringBuilder.Length - 1) // remove trailing '&'
+                : string.Empty;
         }
 
         protected override TransactionsResponse PublicGetResponse(

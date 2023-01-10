@@ -62,7 +62,11 @@ public class TransactionsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Support pass-through of all query parameters
-        string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+        string? queryString = null;
+        if (!string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
+        {
+            queryString = HttpContext.Request.QueryString.Value;
+        }
 
         // Operation
         TransactionsResponse fluentResponse = await _requestBuilder

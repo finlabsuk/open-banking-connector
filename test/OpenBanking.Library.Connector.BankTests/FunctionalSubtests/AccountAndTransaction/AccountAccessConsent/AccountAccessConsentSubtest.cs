@@ -313,7 +313,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     {
                         const int maxPages = 30;
                         var page = 0;
-                        var queryString = "";
+                        string? queryString = null;
                         do
                         {
                             TransactionsResponse transactionsResp =
