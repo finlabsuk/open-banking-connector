@@ -4,9 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
@@ -60,12 +58,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             };
     }
 
+    public class EmailOptions
+    {
+        public string SmtpServer { get; set; } = string.Empty;
+
+        public int SmtpPort { get; set; } = 587;
+
+        public string FromEmailAddress { get; set; } = string.Empty;
+
+        public string FromEmailName { get; set; } = string.Empty;
+
+        public string FromEmailPassword { get; set; } = string.Empty;
+
+        public string ToEmailAddress { get; set; } = string.Empty;
+
+        public string ToEmailName { get; set; } = string.Empty;
+    }
+
     public class ConsentAuthoriserOptions
     {
         /// <summary>
         ///     User-supplied settings which are processed in <see cref="GetProcessedPuppeteerLaunch" />.
         /// </summary>
         public PlaywrightLaunchOptions PlaywrightLaunch { get; set; } = new();
+
+        public EmailOptions Email { get; set; } = new();
     }
 
     /// <summary>
@@ -106,7 +123,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (IDs in this property) to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (IDs in this property) to specify when using POST to create a
+        ///     new
         ///     BankRegistration
         ///     object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
@@ -116,7 +134,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (secrets in this property) to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (secrets in this property) to specify when using POST to
+        ///     create a new
         ///     BankRegistration
         ///     object. Secrets only used where corresponding ID specified.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
@@ -126,17 +145,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API BankRegistration objects (registration access tokens in this property) to specify when using POST to create a new
+        ///     Existing external (bank) API BankRegistration objects (registration access tokens in this property) to specify when
+        ///     using POST to create a new
         ///     BankRegistration
         ///     object. Registration access tokens only used where corresponding ID specified.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
-        /// </summary>f
+        /// </summary>
         public Dictionary<BankProfileEnum, string>
             BankRegistrationRegistrationAccessTokens { get; set; } =
             new();
 
         /// <summary>
-        ///     Existing external (bank) API AccountAccessConsent objects (IDs in this property) to specify when using POST to create a new
+        ///     Existing external (bank) API AccountAccessConsent objects (IDs in this property) to specify when using POST to
+        ///     create a new
         ///     AccountAccessConsent object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>
@@ -145,7 +166,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
             new();
 
         /// <summary>
-        ///     Existing external (bank) API AccountAccessConsent  (refresh tokens in this property)s to specify when using POST to create a new
+        ///     Existing external (bank) API AccountAccessConsent  (refresh tokens in this property)s to specify when using POST to
+        ///     create a new
         ///     AccountAccessConsent object.
         ///     Dictionary whose keys are bankProfileEnums and values are strings.
         /// </summary>

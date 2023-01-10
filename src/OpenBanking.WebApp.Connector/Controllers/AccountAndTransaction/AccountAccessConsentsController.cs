@@ -58,7 +58,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentReadResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentCreateResponse))]
     public async Task<IActionResult> GetAsync(
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
@@ -71,7 +71,7 @@ public class AccountAccessConsentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        AccountAccessConsentReadResponse fluentResponse = await _requestBuilder
+        AccountAccessConsentCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);

@@ -202,7 +202,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     authUrl,
                     bankProfile,
                     ConsentVariety.DomesticVrpConsent,
-                    bankUser);
+                    bankUser,
+                    () => Task.FromResult(true));
 
                 // Refresh scope to ensure user token acquired following consent is available
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();

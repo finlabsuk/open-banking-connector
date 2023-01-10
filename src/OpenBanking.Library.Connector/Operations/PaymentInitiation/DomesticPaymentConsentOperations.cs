@@ -97,7 +97,8 @@ internal class
     private string RelativePathBeforeId => "/domestic-payment-consents";
 
     public async
-        Task<(DomesticPaymentConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticPaymentConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+            )>
         CreateAsync(DomesticPaymentConsentRequest request, ConsentCreateParams createParams)
     {
         // Create non-error list
@@ -246,6 +247,8 @@ internal class
                 persistedConsent.BankRegistrationId,
                 persistedConsent.ExternalApiId,
                 persistedConsent.ExternalApiUserId,
+                persistedConsent.AuthContextModified,
+                persistedConsent.AuthContextModifiedBy,
                 persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
@@ -320,6 +323,8 @@ internal class
                 persistedObject.BankRegistrationId,
                 persistedObject.ExternalApiId,
                 persistedObject.ExternalApiUserId,
+                persistedObject.AuthContextModified,
+                persistedObject.AuthContextModifiedBy,
                 persistedObject.PaymentInitiationApiId,
                 externalApiResponse);
 
@@ -386,6 +391,8 @@ internal class
                 persistedObject.BankRegistrationId,
                 persistedObject.ExternalApiId,
                 persistedObject.ExternalApiUserId,
+                persistedObject.AuthContextModified,
+                persistedObject.AuthContextModifiedBy,
                 persistedObject.PaymentInitiationApiId,
                 externalApiResponse);
 

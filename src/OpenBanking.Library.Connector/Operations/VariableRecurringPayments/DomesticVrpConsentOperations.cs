@@ -240,6 +240,8 @@ internal class
                 persistedObject.BankRegistrationId,
                 persistedObject.ExternalApiId,
                 persistedObject.ExternalApiUserId,
+                persistedObject.AuthContextModified,
+                persistedObject.AuthContextModifiedBy,
                 persistedObject.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
@@ -318,6 +320,8 @@ internal class
                 persistedConsent.BankRegistrationId,
                 persistedConsent.ExternalApiId,
                 persistedConsent.ExternalApiUserId,
+                persistedConsent.AuthContextModified,
+                persistedConsent.AuthContextModifiedBy,
                 persistedConsent.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
@@ -383,6 +387,8 @@ internal class
                 persistedObject.BankRegistrationId,
                 persistedObject.ExternalApiId,
                 persistedObject.ExternalApiUserId,
+                persistedObject.AuthContextModified,
+                persistedObject.AuthContextModifiedBy,
                 persistedObject.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 

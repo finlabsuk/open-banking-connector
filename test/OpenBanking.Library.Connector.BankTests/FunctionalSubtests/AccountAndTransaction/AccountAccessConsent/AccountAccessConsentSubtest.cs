@@ -169,11 +169,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid accountAccessConsentId = accountAccessConsentResp.Id;
 
             // GET /account access consents/{consentId}
-            AccountAccessConsentReadResponse accountAccessConsentGetResp =
+            AccountAccessConsentCreateResponse accountAccessConsentGetResp =
                 await requestBuilder
                     .AccountAndTransaction
                     .AccountAccessConsents
-                    .ReadAsync(accountAccessConsentId);
+                    .ReadAsync(accountAccessConsentId, modifiedBy);
 
             // Checks
             accountAccessConsentGetResp.Should().NotBeNull();
@@ -223,11 +223,24 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 // Authorise consent in UI via Playwright
                 if (testData2.AccountAccessConsentRefreshToken is null)
                 {
+                    async Task<bool> AuthIsComplete()
+                    {
+                        AccountAccessConsentCreateResponse consentResponse =
+                            await requestBuilder
+                                .AccountAndTransaction
+                                .AccountAccessConsents
+                                .ReadAsync(accountAccessConsentId,
+                                modifiedBy,
+                                false);
+                        return consentResponse.Created < consentResponse.AuthContextModified;
+                    }
+
                     await consentAuth.AuthoriseAsync(
                         authUrl,
                         bankProfile,
                         ConsentVariety.AccountAccessConsent,
-                        bankUser);
+                        bankUser,
+                        AuthIsComplete);
                 }
 
                 // Refresh scope to ensure user token acquired following consent is available

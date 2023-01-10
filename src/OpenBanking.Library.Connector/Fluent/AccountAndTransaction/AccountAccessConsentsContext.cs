@@ -25,7 +25,7 @@ using AccountAccessConsentAuthContext =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction
 {
     public interface IAccountAccessConsentsContext :
-        IConsentContext<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentReadResponse>,
+        IConsentContext<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentCreateResponse>,
         IDeleteConsentContext
     {
         /// <summary>
@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
 
     internal interface IAccountAccessConsentsContextInternal :
         IAccountAccessConsentsContext,
-        IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentReadResponse>,
+        IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentCreateResponse>,
         IDeleteConsentContextInternal { }
 
     internal class AccountAccessConsentsConsentContext :
@@ -93,7 +93,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<AccountAccessConsentReadResponse, ConsentReadParams> ReadObject { get; }
+        public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
         public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>
             CreateObject { get; }

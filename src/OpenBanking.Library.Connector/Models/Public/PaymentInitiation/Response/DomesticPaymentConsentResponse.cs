@@ -40,6 +40,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid paymentInitiationApiId) : base(
             id,
             created,
@@ -48,7 +50,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             warnings,
             bankRegistrationId,
             externalApiId,
-            externalApiUserId)
+            externalApiUserId,
+            authContextModified,
+            authContextModifiedBy)
         {
             PaymentInitiationApiId = paymentInitiationApiId;
         }
@@ -73,6 +77,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse) : base(
             id,
@@ -83,6 +89,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -106,6 +114,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse) : base(
             id,
@@ -116,6 +126,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -139,6 +151,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid paymentInitiationApiId,
             PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
             id,
@@ -149,6 +163,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             paymentInitiationApiId)
         {
             ExternalApiResponse = externalApiResponse;

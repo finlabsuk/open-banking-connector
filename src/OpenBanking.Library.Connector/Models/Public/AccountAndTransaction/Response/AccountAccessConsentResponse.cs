@@ -27,6 +27,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid accountAndTransactionApiId) : base(
             id,
             created,
@@ -35,7 +37,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             warnings,
             bankRegistrationId,
             externalApiId,
-            externalApiUserId)
+            externalApiUserId,
+            authContextModified,
+            authContextModifiedBy)
         {
             AccountAndTransactionApiId = accountAndTransactionApiId;
         }
@@ -60,6 +64,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid accountAndTransactionApiId,
             OBReadConsentResponse1? externalApiResponse) : base(
             id,
@@ -70,6 +76,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             accountAndTransactionApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -83,44 +91,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
         ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
         /// </summary>
         public OBReadConsentResponse1? ExternalApiResponse { get; }
-    }
-
-    /// <summary>
-    ///     Response to AccountAccessConsent Read requests.
-    /// </summary>
-    public class AccountAccessConsentReadResponse : AccountAccessConsentBaseResponse
-    {
-        internal AccountAccessConsentReadResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            IList<string>? warnings,
-            Guid bankRegistrationId,
-            string externalApiId,
-            string? externalApiUserId,
-            Guid accountAndTransactionApiId,
-            OBReadConsentResponse1 externalApiResponse) : base(
-            id,
-            created,
-            createdBy,
-            reference,
-            warnings,
-            bankRegistrationId,
-            externalApiId,
-            externalApiUserId,
-            accountAndTransactionApiId)
-        {
-            ExternalApiResponse = externalApiResponse;
-        }
-
-        /// <summary>
-        ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
-        ///     <a
-        ///         href="https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.8r5/dist/openapi/account-info-openapi.yaml" />
-        ///     v3.1.9r5 <a />. Open Banking Connector will automatically
-        ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
-        /// </summary>
-        public OBReadConsentResponse1 ExternalApiResponse { get; }
     }
 }

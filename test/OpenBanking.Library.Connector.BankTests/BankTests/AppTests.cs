@@ -166,9 +166,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
             bool genericNotPlainAppTest)
         {
             // Set test name
-            string testName =
+            var testName =
                 $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData1.RegistrationScope.AbbreviatedName()}";
-            string testNameUnique = $"{testName}_{Guid.NewGuid()}";
+            var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
             // Set test type
             var testType = TestType.AllEndpoints;
@@ -238,7 +238,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     SlowMo = launchOptions.ProcessedSlowMo,
                     Timeout = launchOptions.TimeOut
                 };
-                consentAuth = new ConsentAuth(browserTypeLaunchOptions, bankProfileDefinitions);
+
+                EmailOptions emailOptions = bankTestSettings.ConsentAuth.Email;
+
+                consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
             }
             else
             {

@@ -66,6 +66,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
 
+            _instrumentationClient.Trace("Received ID token: " + request.RedirectData.IdToken);
+
             // Read auth context etc from DB
             string state = request.RedirectData.State;
             AuthContext authContext =

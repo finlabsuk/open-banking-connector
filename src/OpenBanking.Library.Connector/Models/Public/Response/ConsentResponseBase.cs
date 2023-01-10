@@ -14,12 +14,16 @@ public abstract class ConsentResponseBase : LocalObjectBaseResponse
         IList<string>? warnings,
         Guid bankRegistrationId,
         string externalApiId,
-        string? externalApiUserId) : base(id, created, createdBy, reference)
+        string? externalApiUserId,
+        DateTimeOffset authContextModified,
+        string? authContextModifiedBy) : base(id, created, createdBy, reference)
     {
         Warnings = warnings;
         BankRegistrationId = bankRegistrationId;
         ExternalApiId = externalApiId;
         ExternalApiUserId = externalApiUserId;
+        AuthContextModified = authContextModified;
+        AuthContextModifiedBy = authContextModifiedBy;
     }
 
     /// <summary>
@@ -37,10 +41,14 @@ public abstract class ConsentResponseBase : LocalObjectBaseResponse
     ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
     /// </summary>
     public string ExternalApiId { get; }
-    
+
     /// <summary>
     ///     User ID at external API (bank) which may or may not be available via ID token "sub" claim. If retrieved from ID
     ///     token or supplied on object creation, it will be stored here.
     /// </summary>
     public string? ExternalApiUserId { get; }
+
+    public DateTimeOffset AuthContextModified { get; }
+
+    public string? AuthContextModifiedBy { get; }
 }

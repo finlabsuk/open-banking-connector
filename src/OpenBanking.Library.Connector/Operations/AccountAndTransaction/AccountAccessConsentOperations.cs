@@ -27,7 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 internal class
     AccountAccessConsentOperations :
         IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
-        IObjectRead<AccountAccessConsentReadResponse, ConsentReadParams>
+        IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
 
@@ -228,6 +228,8 @@ internal class
                 persistedConsent.BankRegistrationId,
                 persistedConsent.ExternalApiId,
                 persistedConsent.ExternalApiUserId,
+                persistedConsent.AuthContextModified,
+                persistedConsent.AuthContextModifiedBy,
                 persistedConsent.AccountAndTransactionApiId,
                 externalApiResponse);
 
@@ -238,7 +240,7 @@ internal class
     }
 
     public async
-        Task<(AccountAccessConsentReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(AccountAccessConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         ReadAsync(ConsentReadParams readParams)
     {
         // Create non-error list
@@ -251,52 +253,62 @@ internal class
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await GetAccountAccessConsent(readParams.Id);
 
-        // Get client credentials grant access token
-        string ccGrantAccessToken =
-            (await _grantPost.PostClientCredentialsGrantAsync(
-                ClientCredentialsGrantScope,
-                processedSoftwareStatementProfile,
-                bankRegistration,
-                bankRegistration.BankNavigation.TokenEndpoint,
-                null,
-                processedSoftwareStatementProfile.ApiClient,
-                _instrumentationClient))
-            .AccessToken;
+        bool includeExternalApiOperation =
+            readParams.IncludeExternalApiOperation;
+        AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
+        if (includeExternalApiOperation)
+        {
+            // Get client credentials grant access token
+            string ccGrantAccessToken =
+                (await _grantPost.PostClientCredentialsGrantAsync(
+                    ClientCredentialsGrantScope,
+                    processedSoftwareStatementProfile,
+                    bankRegistration,
+                    bankRegistration.BankNavigation.TokenEndpoint,
+                    null,
+                    processedSoftwareStatementProfile.ApiClient,
+                    _instrumentationClient))
+                .AccessToken;
 
-        // Read object from external API
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
-            ApiRequests(
-                accountAndTransactionApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken,
-                processedSoftwareStatementProfile);
-        var externalApiUrl = new Uri(
-            accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
-        (AccountAndTransactionModelsPublic.OBReadConsentResponse1 externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
+            // Read object from external API
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
+            IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
+                ApiRequests(
+                    accountAndTransactionApi.ApiVersion,
+                    bankFinancialId,
+                    ccGrantAccessToken,
+                    processedSoftwareStatementProfile);
+            var externalApiUrl = new Uri(
+                accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
+            (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+                await apiRequests.GetAsync(
+                    externalApiUrl,
+                    responseJsonSerializerSettings,
+                    processedSoftwareStatementProfile.ApiClient,
+                    _mapper);
+            nonErrorMessages.AddRange(newNonErrorMessages);
+
+            // Transform links 
+            var validQueryParameters = new List<string>();
+            var linksUrlOperations = new LinksUrlOperations(
                 externalApiUrl,
-                responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
-                _mapper);
-        nonErrorMessages.AddRange(newNonErrorMessages);
-
-        // Transform links 
-        var validQueryParameters = new List<string>();
-        var linksUrlOperations = new LinksUrlOperations(
-            externalApiUrl,
-            readParams.PublicRequestUrlWithoutQuery,
-            true,
-            validQueryParameters);
-        externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
-        externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
-        externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
-        externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
-        externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+                readParams.PublicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
+            externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
+            externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
+            externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
+            externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+        }
+        else
+        {
+            externalApiResponse = null;
+        }
 
         // Create response
         var response =
-            new AccountAccessConsentReadResponse(
+            new AccountAccessConsentCreateResponse(
             persistedConsent.Id,
             persistedConsent.Created,
             persistedConsent.CreatedBy,
@@ -305,6 +317,8 @@ internal class
             persistedConsent.BankRegistrationId,
             persistedConsent.ExternalApiId,
             persistedConsent.ExternalApiUserId,
+            persistedConsent.AuthContextModified,
+            persistedConsent.AuthContextModifiedBy,
             persistedConsent.AccountAndTransactionApiId,
             externalApiResponse);
 

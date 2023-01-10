@@ -38,6 +38,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid variableRecurringPaymentsApiId) : base(
             id,
             created,
@@ -46,7 +48,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             warnings,
             bankRegistrationId,
             externalApiId,
-            externalApiUserId)
+            externalApiUserId,
+            authContextModified,
+            authContextModifiedBy)
         {
             VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
         }
@@ -72,6 +76,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse) : base(
             id,
@@ -82,6 +88,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -104,6 +112,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
             id,
@@ -114,6 +124,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
@@ -137,6 +149,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             Guid bankRegistrationId,
             string externalApiId,
             string? externalApiUserId,
+            DateTimeOffset authContextModified,
+            string? authContextModifiedBy,
             Guid variableRecurringPaymentsApiId,
             VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
             id,
@@ -147,6 +161,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
             bankRegistrationId,
             externalApiId,
             externalApiUserId,
+            authContextModified,
+            authContextModifiedBy,
             variableRecurringPaymentsApiId)
         {
             ExternalApiResponse = externalApiResponse;
