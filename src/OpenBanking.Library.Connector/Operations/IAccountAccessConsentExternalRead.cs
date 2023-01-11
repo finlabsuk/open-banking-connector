@@ -37,9 +37,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             string? externalApiAccountId,
             string? publicRequestUrlWithoutQuery,
             string? queryString,
-            string? externalApiStatementId,
-            string? fromBookingDateTime,
-            string? toBookingDateTime) : base(
+            string? externalApiStatementId) : base(
             consentId,
             modifiedBy,
             externalApiAccountId,
@@ -47,13 +45,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
             queryString)
         {
             ExternalApiStatementId = externalApiStatementId;
-            FromBookingDateTime = fromBookingDateTime;
-            ToBookingDateTime = toBookingDateTime;
         }
 
         public string? ExternalApiStatementId { get; }
-        public string? FromBookingDateTime { get; }
-        public string? ToBookingDateTime { get; }
     }
 
     internal interface IAccountAccessConsentExternalRead<TPublicResponse, TReadParams>

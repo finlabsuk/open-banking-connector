@@ -21,8 +21,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
         /// <param name="externalApiAccountId"></param>
         /// <param name="externalApiStatementId"></param>
         /// <param name="modifiedBy"></param>
-        /// <param name="fromBookingDateTime"></param>
-        /// <param name="toBookingDateTime"></param>
         /// <param name="queryString"></param>
         /// <param name="requestUrlWithoutQuery"></param>
         /// <returns></returns>
@@ -31,8 +29,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? externalApiAccountId = null,
             string? externalApiStatementId = null,
             string? modifiedBy = null,
-            string? fromBookingDateTime = null,
-            string? toBookingDateTime = null,
             string? queryString = null,
             string? requestUrlWithoutQuery = null);
     }
@@ -48,8 +44,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
             string? externalApiAccountId,
             string? externalApiStatementId,
             string? modifiedBy,
-            string? fromBookingDateTime,
-            string? toBookingDateTime,
             string? queryString,
             string? requestUrlWithoutQuery)
         {
@@ -59,9 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
                 externalApiAccountId,
                 requestUrlWithoutQuery,
                 queryString,
-                externalApiStatementId,
-                fromBookingDateTime,
-                toBookingDateTime);
+                externalApiStatementId);
             (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
                 await ReadObject.ReadAsync(transactionsReadParams);
 

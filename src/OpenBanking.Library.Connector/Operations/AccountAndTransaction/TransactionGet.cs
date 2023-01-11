@@ -2,166 +2,168 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Specialized;
-using System.Text;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
+using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using AccountAccessConsentPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
+using BankRegistrationPersisted =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
+
+internal class
+    TransactionGet : IAccountAccessConsentExternalRead<TransactionsResponse, TransactionsReadParams>
 {
-    internal class
-        TransactionGet : AccountAccessConsentExternalObject<TransactionsResponse,
-            AccountAndTransactionModelsPublic.OBReadTransaction6, TransactionsReadParams>
+    protected AuthContextAccessTokenGet _authContextAccessTokenGet;
+    protected IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+    protected IGrantPost _grantPost;
+    protected IInstrumentationClient _instrumentationClient;
+    protected IApiVariantMapper _mapper;
+    protected IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
+    private ITimeProvider _timeProvider;
+
+    public TransactionGet(
+        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
+        IInstrumentationClient instrumentationClient,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IApiVariantMapper mapper,
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IGrantPost grantPost,
+        AuthContextAccessTokenGet authContextAccessTokenGet)
     {
-        public TransactionGet(
-            IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
-            IInstrumentationClient instrumentationClient,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IApiVariantMapper mapper,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IGrantPost grantPost,
-            AuthContextAccessTokenGet authContextAccessTokenGet) : base(
-            entityMethods,
-            instrumentationClient,
-            softwareStatementProfileRepo,
-            mapper,
-            dbSaveChangesMethod,
-            timeProvider,
-            grantPost,
-            authContextAccessTokenGet) { }
+        _entityMethods = entityMethods;
+        _instrumentationClient = instrumentationClient;
+        _softwareStatementProfileRepo = softwareStatementProfileRepo;
+        _mapper = mapper;
+        _timeProvider = timeProvider;
+        _grantPost = grantPost;
+        _authContextAccessTokenGet = authContextAccessTokenGet;
+    }
 
-        protected override Uri GetApiRequestUrl(
-            string baseUrl,
-            TransactionsReadParams readParams)
+    public async Task<(TransactionsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        ReadAsync(TransactionsReadParams readParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        // Get consent and associated data
+        AccountAccessConsentPersisted persistedConsent =
+            await _entityMethods
+                .DbSet
+                .Include(o => o.AccountAccessConsentAuthContextsNavigation)
+                .Include(o => o.AccountAndTransactionApiNavigation)
+                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .SingleOrDefaultAsync(x => x.Id == readParams.ConsentId) ??
+            throw new KeyNotFoundException(
+                $"No record found for Account Access Consent with ID {readParams.ConsentId}.");
+        AccountAndTransactionApiEntity accountAndTransactionApiEntity =
+            persistedConsent.AccountAndTransactionApiNavigation;
+        var accountAndTransactionApi = new AccountAndTransactionApi
         {
-            string urlString = (externalAccountId: readParams.ExternalApiAccountId,
-                    externalStatementId: readParams.ExternalApiStatementId) switch
-                {
-                    (null, null) => $"{baseUrl}/transactions",
-                    ({ } extAccountId, null) => $"{baseUrl}/accounts/{extAccountId}/transactions",
-                    ({ } extAccountId, { } extStatementId) =>
-                        $"{baseUrl}/accounts/{extAccountId}/statements/{extStatementId}/transactions",
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            return new UriBuilder(urlString)
-            {
-                Query = ConstructedQuery(readParams.QueryString, readParams)
-            }.Uri;
-        }
+            AccountAndTransactionApiVersion = accountAndTransactionApiEntity.ApiVersion,
+            BaseUrl = accountAndTransactionApiEntity.BaseUrl
+        };
+        BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
+        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
-        private string ConstructedQuery(string? queryString, TransactionsReadParams readParams)
+        // Get API client
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+            await _softwareStatementProfileRepo.GetAsync(
+                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration.SoftwareStatementProfileOverride);
+        IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+
+        // Get access token
+        string? requestObjectAudClaim =
+            persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
+                ?.AccountAccessConsentAuthGet
+                ?.AudClaim;
+        string bankIssuerUrl =
+            requestObjectAudClaim ??
+            bankRegistration.BankNavigation.IssuerUrl ??
+            throw new Exception("Cannot determine issuer URL for bank");
+        string accessToken =
+            await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                persistedConsent,
+                bankIssuerUrl,
+                "openid accounts",
+                bankRegistration,
+                persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                readParams.ModifiedBy);
+
+        // Retrieve endpoint URL
+        string urlString = (externalAccountId: readParams.ExternalApiAccountId,
+                externalStatementId: readParams.ExternalApiStatementId) switch
+            {
+                (null, null) => $"{accountAndTransactionApi.BaseUrl}/transactions",
+                ({ } extAccountId, null) =>
+                    $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/transactions",
+                ({ } extAccountId, { } extStatementId) =>
+                    $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/statements/{extStatementId}/transactions",
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        Uri apiRequestUrl = new UriBuilder(urlString)
         {
-            var query = new NameValueCollection();
+            Query = readParams.QueryString ?? string.Empty
+        }.Uri;
 
-            if (!string.IsNullOrEmpty(queryString))
-            {
-                IEnumerable<(string, string)> initialQueryStringParams =
-                    queryString
-                        .Substring(1) // remove '?'
-                        .Split('&') // split on '&'
-                        .Select(
-                            s =>
-                            {
-                                string[] z = s.Split('=', 2);
-                                return (z[0], z[1]);
-                            });
-
-                foreach ((string key, string value) in initialQueryStringParams)
-                {
-                    query[key] = value;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(readParams.FromBookingDateTime))
-            {
-                query["fromBookingDateTime"] = readParams.FromBookingDateTime;
-            }
-
-            if (!string.IsNullOrEmpty(readParams.ToBookingDateTime))
-            {
-                query["toBookingDateTime"] = readParams.ToBookingDateTime;
-            }
-
-            return ConvertToQueryString(query);
-        }
-
-        private string ConvertToQueryString(NameValueCollection nameValueCollection)
-        {
-            StringBuilder stringBuilder =
-                new StringBuilder()
-                    .Append('?');
-            var nonEmptyQuery = false;
-            foreach (string key in nameValueCollection)
-            {
-                if (string.IsNullOrEmpty(key))
-                {
-                    continue;
-                }
-
-                string value = nameValueCollection[key] ?? string.Empty;
-
-                stringBuilder
-                    .Append(key)
-                    .Append('=')
-                    .Append(value)
-                    .Append('&');
-                nonEmptyQuery = true;
-            }
-
-            return nonEmptyQuery
-                ? stringBuilder.ToString(0, stringBuilder.Length - 1) // remove trailing '&'
-                : string.Empty;
-        }
-
-        protected override TransactionsResponse PublicGetResponse(
-            AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse,
-            Uri apiRequestUrl,
-            string? publicRequestUrlWithoutQuery,
-            bool allowValidQueryParametersOnly,
-            TransactionsReadParams readParams)
-        {
-            var validQueryParameters = new List<string>();
-
-            // Get link queries
-            var linksUrlOperations = new LinksUrlOperations(
-                apiRequestUrl,
-                publicRequestUrlWithoutQuery,
-                allowValidQueryParametersOnly,
-                validQueryParameters);
-            apiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Self);
-            apiResponse.Links.First = linksUrlOperations.TransformLinksUrl(apiResponse.Links.First);
-            apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
-            apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
-            apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
-
-            return new TransactionsResponse(apiResponse);
-        }
-
-        protected override IApiGetRequests<AccountAndTransactionModelsPublic.OBReadTransaction6> ApiRequests(
-            AccountAndTransactionApi accountAndTransactionApi,
-            string bankFinancialId,
-            string accessToken,
-            IInstrumentationClient instrumentationClient) =>
+        // Get external object from bank API
+        JsonSerializerSettings? jsonSerializerSettings = null;
+        IApiGetRequests<OBReadTransaction6> apiRequests =
             accountAndTransactionApi.AccountAndTransactionApiVersion switch
             {
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadTransaction6,
-                    AccountAndTransactionModelsV3p1p7.OBReadTransaction6>(
+                    OBReadTransaction6,
+                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadTransaction6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                    AccountAndTransactionModelsPublic.OBReadTransaction6,
-                    AccountAndTransactionModelsV3p1p10.OBReadTransaction6>(
-                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                    OBReadTransaction6,
+                    OBReadTransaction6>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")
             };
+        OBReadTransaction6 apiResponse;
+        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
+        (apiResponse, newNonErrorMessages) =
+            await apiRequests.GetAsync(
+                apiRequestUrl,
+                jsonSerializerSettings,
+                apiClient,
+                _mapper);
+        nonErrorMessages.AddRange(newNonErrorMessages);
+
+        // Create response
+        var validQueryParameters = new List<string>();
+
+        // Get link queries
+        var linksUrlOperations = new LinksUrlOperations(
+            apiRequestUrl,
+            readParams.PublicRequestUrlWithoutQuery,
+            false,
+            validQueryParameters);
+        apiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Self);
+        apiResponse.Links.First = linksUrlOperations.TransformLinksUrl(apiResponse.Links.First);
+        apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
+        apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
+        apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
+        var response = new TransactionsResponse(apiResponse);
+
+        return (response, nonErrorMessages);
     }
 }

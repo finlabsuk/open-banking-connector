@@ -325,8 +325,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                         externalAccountId,
                                         null,
                                         modifiedBy,
-                                        null,
-                                        null,
                                         queryString);
 
                             // Checks

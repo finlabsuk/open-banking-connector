@@ -77,8 +77,6 @@ public class TransactionsController : ControllerBase
                 externalApiAccountId,
                 externalApiStatementId,
                 modifiedBy,
-                null,
-                null,
                 queryString,
                 requestUrlWithoutQuery);
 
