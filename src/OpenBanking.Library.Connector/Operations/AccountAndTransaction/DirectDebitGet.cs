@@ -1,4 +1,4 @@
-// Licensed to Finnovation Labs Limited under one or more agreements.
+﻿// Licensed to Finnovation Labs Limited under one or more agreements.
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -6,27 +6,24 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Mode
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
-using AccountAccessConsentPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
-internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, ExternalEntityReadParams>
+internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsResponse, ExternalEntityReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
 
-    public AccountGet(
+    public DirectDebitGet(
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         ConsentAccessTokenGet consentAccessTokenGet,
@@ -38,7 +35,7 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
         _accountAccessConsentCommon = accountAccessConsentCommon;
     }
 
-    public async Task<(AccountsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+    public async Task<(DirectDebitsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         ReadAsync(ExternalEntityReadParams readParams)
     {
         // Create non-error list
@@ -46,8 +43,8 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get consent and associated data
-        (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-                AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistrationPersisted bankRegistration,
+        (AccountAccessConsent persistedConsent, string externalApiConsentId,
+                AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
                     bankTokenIssuerClaim) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
@@ -65,8 +62,8 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
         // Retrieve endpoint URL
         string urlString = readParams.ExternalApiAccountId switch
         {
-            null => $"{accountAndTransactionApi.BaseUrl}/accounts",
-            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}",
+            null => $"{accountAndTransactionApi.BaseUrl}/direct-debits",
+            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/direct-debits",
         };
         Uri apiRequestUrl = new UriBuilder(urlString)
         {
@@ -75,20 +72,20 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadAccount6> apiRequests =
+        IApiGetRequests<OBReadDirectDebit2> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    OBReadAccount6,
-                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadAccount6>(
+                    OBReadDirectDebit2,
+                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadDirectDebit2>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                    OBReadAccount6,
-                    OBReadAccount6>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                    OBReadDirectDebit2,
+                    OBReadDirectDebit2>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
             };
-        (OBReadAccount6 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+        (OBReadDirectDebit2 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,
@@ -99,7 +96,6 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
         // Create response
         var validQueryParameters = new List<string>();
 
-        // Get link queries
         var linksUrlOperations = new LinksUrlOperations(
             apiRequestUrl,
             readParams.PublicRequestUrlWithoutQuery,
@@ -110,7 +106,7 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
         apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
         apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
         apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
-        var response = new AccountsResponse(apiResponse, null);
+        var response = new DirectDebitsResponse(apiResponse, null);
 
         return (response, nonErrorMessages);
     }

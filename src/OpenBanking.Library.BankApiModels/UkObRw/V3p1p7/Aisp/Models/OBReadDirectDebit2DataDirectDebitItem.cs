@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models
 {
@@ -50,6 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.M
         /// </param>
         /// <param name="frequency"> Regularity with which direct debit instructions are to be created and processed. </param>
         /// <param name="previousPaymentAmount"> The amount of the most recent direct debit collection. </param>
+        [JsonConstructor]
         public OBReadDirectDebit2DataDirectDebitItem(string accountId, string directDebitId, string mandateIdentification, OBExternalDirectDebitStatus1CodeEnum? directDebitStatusCode, string name, DateTimeOffset? previousPaymentDateTime, string frequency, OBActiveOrHistoricCurrencyAndAmount0 previousPaymentAmount)
         {
             AccountId = accountId;

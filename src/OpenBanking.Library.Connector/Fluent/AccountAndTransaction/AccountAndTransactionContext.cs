@@ -43,6 +43,16 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         ///     API for Transaction objects.
         /// </summary>
         ITransactionsContext<TransactionsResponse> Transactions { get; }
+
+        /// <summary>
+        ///     API for Direct Debit objects.
+        /// </summary>
+        IReadOnlyExternalEntityContext<DirectDebitsResponse> DirectDebits { get; }
+
+        /// <summary>
+        ///     API for Standing Order objects.
+        /// </summary>
+        IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders { get; }
     }
 
     internal class AccountAndTransactionContext : IAccountAndTransactionContext
@@ -60,87 +70,107 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransac
         public IReadOnlyExternalEntityContext<AccountsResponse> Accounts =>
             new ReadOnlyExternalEntityContextInternal<AccountsResponse>(
                 new AccountGet(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation)));
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
 
         public IReadOnlyExternalEntityContext<BalancesResponse> Balances =>
             new ReadOnlyExternalEntityContextInternal<BalancesResponse>(
                 new BalanceGet(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation)));
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
 
         public IReadOnlyExternalEntityContext<PartiesResponse> Parties =>
             new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
                 new PartyGet(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation)));
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
 
         public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
             new ReadOnlyExternalEntityContextInternal<Parties2Response>(
                 new Party2Get(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation)));
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
 
         public ITransactionsContext<TransactionsResponse> Transactions =>
             new TransactionsContextInternal<TransactionsResponse>(
                 _sharedContext,
                 new TransactionGet(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.Instrumentation,
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.ApiVariantMapper,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation)));
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
+
+        public IReadOnlyExternalEntityContext<DirectDebitsResponse> DirectDebits =>
+            new ReadOnlyExternalEntityContextInternal<DirectDebitsResponse>(
+                new DirectDebitGet(
+                    _sharedContext.Instrumentation,
+                    _sharedContext.ApiVariantMapper,
+                    new ConsentAccessTokenGet(
+                        _sharedContext.SoftwareStatementProfileCachedRepo,
+                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                        _sharedContext.TimeProvider,
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
+
+        public IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders =>
+            new ReadOnlyExternalEntityContextInternal<StandingOrdersResponse>(
+                new StandingOrderGet(
+                    _sharedContext.Instrumentation,
+                    _sharedContext.ApiVariantMapper,
+                    new ConsentAccessTokenGet(
+                        _sharedContext.SoftwareStatementProfileCachedRepo,
+                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                        _sharedContext.TimeProvider,
+                        new GrantPost(_sharedContext.ApiClient),
+                        _sharedContext.Instrumentation),
+                    new AccountAccessConsentCommon(
+                        _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                        _sharedContext.SoftwareStatementProfileCachedRepo)));
     }
 }

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -29,6 +30,7 @@ internal class
         IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
         IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
+    private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
     private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
 
     private readonly IBankProfileService _bankProfileService;
@@ -36,15 +38,14 @@ internal class
     private readonly ConsentCommon<AccountAccessConsentPersisted,
         AccountAccessConsentRequest,
         AccountAccessConsentCreateResponse,
-        AccountAndTransactionModelsPublic.OBReadConsent1,
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
+        OBReadConsent1,
+        OBReadConsentResponse1> _consentCommon;
 
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentOperations(
@@ -62,15 +63,16 @@ internal class
         _bankApiSetMethods = bankApiSetMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
+        _accountAccessConsentCommon = new AccountAccessConsentCommon(entityMethods, softwareStatementProfileRepo);
         _entityMethods = entityMethods;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
         _consentCommon =
-            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest, AccountAccessConsentCreateResponse,
-                AccountAndTransactionModelsPublic.OBReadConsent1, AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+            new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest,
+                AccountAccessConsentCreateResponse,
+                OBReadConsent1, OBReadConsentResponse1>(
                 bankRegistrationMethods,
                 instrumentationClient,
                 softwareStatementProfileRepo);
@@ -101,7 +103,7 @@ internal class
         var entityId = Guid.NewGuid();
 
         // Create new or use existing external API object
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
+        OBReadConsentResponse1? externalApiResponse;
         string externalApiId;
         if (request.ExternalApiObject is null)
         {
@@ -115,7 +117,7 @@ internal class
                 await GetAccountAndTransactionApi(request.AccountAndTransactionApiId, bankRegistration.BankId);
 
             // Get client credentials grant access token
-            string ccGrantAccessToken = 
+            string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
@@ -129,15 +131,15 @@ internal class
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiPostRequests<AccountAndTransactionModelsPublic.OBReadConsent1, AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
+            IApiPostRequests<OBReadConsent1, OBReadConsentResponse1> apiRequests =
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
-            AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
-                    AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
+            OBReadConsent1 externalApiRequest =
+                AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
                     request.ExternalApiRequest,
                     request.TemplateRequest,
                     bankProfile);
@@ -202,7 +204,7 @@ internal class
             utcNow,
             request.CreatedBy,
             request.AccountAndTransactionApiId);
-        
+
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
         if (accessToken is not null)
         {
@@ -250,12 +252,13 @@ internal class
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
                 AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await GetAccountAccessConsent(readParams.Id);
+                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
+                    bankTokenIssuerClaim) =
+            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id);
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
-        AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
+        OBReadConsentResponse1? externalApiResponse;
         if (includeExternalApiOperation)
         {
             // Get client credentials grant access token
@@ -272,7 +275,7 @@ internal class
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
+            IApiGetRequests<OBReadConsentResponse1> apiRequests =
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
@@ -309,18 +312,18 @@ internal class
         // Create response
         var response =
             new AccountAccessConsentCreateResponse(
-            persistedConsent.Id,
-            persistedConsent.Created,
-            persistedConsent.CreatedBy,
-            persistedConsent.Reference,
-            null,
-            persistedConsent.BankRegistrationId,
-            persistedConsent.ExternalApiId,
-            persistedConsent.ExternalApiUserId,
-            persistedConsent.AuthContextModified,
-            persistedConsent.AuthContextModifiedBy,
-            persistedConsent.AccountAndTransactionApiId,
-            externalApiResponse);
+                persistedConsent.Id,
+                persistedConsent.Created,
+                persistedConsent.CreatedBy,
+                persistedConsent.Reference,
+                null,
+                persistedConsent.BankRegistrationId,
+                persistedConsent.ExternalApiId,
+                persistedConsent.ExternalApiUserId,
+                persistedConsent.AuthContextModified,
+                persistedConsent.AuthContextModifiedBy,
+                persistedConsent.AccountAndTransactionApiId,
+                externalApiResponse);
 
         return (response, nonErrorMessages);
     }
@@ -345,35 +348,7 @@ internal class
         return accountAndTransactionApi;
     }
 
-    private async Task<(AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-        AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistration bankRegistration, string
-        bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetAccountAccessConsent(
-        Guid consentId)
-    {
-        AccountAccessConsentPersisted persistedConsent =
-            await _entityMethods
-                .DbSetNoTracking
-                .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                .Include(o => o.AccountAndTransactionApiNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                .SingleOrDefaultAsync(x => x.Id == consentId) ??
-            throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
-        string externalApiConsentId = persistedConsent.ExternalApiId;
-        AccountAndTransactionApiEntity accountAndTransactionApi =
-            persistedConsent.AccountAndTransactionApiNavigation;
-        BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
-        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
-
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementProfileId,
-                bankRegistration.SoftwareStatementProfileOverride);
-        return (persistedConsent, externalApiConsentId, accountAndTransactionApi, bankRegistration, bankFinancialId,
-            processedSoftwareStatementProfile);
-    }
-
-    private IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1, AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
+    private IApiRequests<OBReadConsent1, OBReadConsentResponse1> ApiRequests(
         AccountAndTransactionApiVersion accountAndTransactionApiVersion,
         string bankFinancialId,
         string accessToken,
@@ -381,8 +356,8 @@ internal class
         accountAndTransactionApiVersion switch
         {
             AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                OBReadConsent1,
+                OBReadConsentResponse1,
                 BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadConsent1,
                 BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadConsentResponse1>(
                 new ApiGetRequestProcessor(bankFinancialId, accessToken),
@@ -392,13 +367,13 @@ internal class
                     accessToken,
                     _instrumentationClient)),
             AccountAndTransactionApiVersion.Version3p1p10 => new ApiRequests<
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
-                AccountAndTransactionModelsPublic.OBReadConsent1,
-                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
+                OBReadConsent1,
+                OBReadConsentResponse1,
+                OBReadConsent1,
+                OBReadConsentResponse1>(
                 new ApiGetRequestProcessor(bankFinancialId, accessToken),
                 new AccountAndTransactionPostRequestProcessor<
-                    AccountAndTransactionModelsPublic.OBReadConsent1>(
+                    OBReadConsent1>(
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient)),

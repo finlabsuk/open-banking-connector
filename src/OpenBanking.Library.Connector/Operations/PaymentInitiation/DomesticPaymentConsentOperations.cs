@@ -38,7 +38,7 @@ internal class
         IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> _apiEntityMethods;
-    private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
+    private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
     private readonly IBankProfileService _bankProfileService;
 
@@ -67,12 +67,12 @@ internal class
         IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> apiEntityMethods,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
         IBankProfileService bankProfileService,
-        AuthContextAccessTokenGet authContextAccessTokenGet)
+        ConsentAccessTokenGet consentAccessTokenGet)
     {
         _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
-        _authContextAccessTokenGet = authContextAccessTokenGet;
+        _consentAccessTokenGet = consentAccessTokenGet;
         _entityMethods = entityMethods;
         _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
             entityMethods,
@@ -353,7 +353,7 @@ internal class
                 ?.AudClaim ??
             bankRegistration.BankNavigation.IssuerUrl;
         string accessToken =
-            await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+            await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedObject,
                 bankIssuerUrl,
                 "openid payments",

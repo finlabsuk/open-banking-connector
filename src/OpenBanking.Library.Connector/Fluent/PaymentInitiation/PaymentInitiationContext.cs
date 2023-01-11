@@ -53,7 +53,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,

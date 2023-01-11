@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -11,33 +10,33 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
-[Tags("Accounts")]
-public class AccountsController : ControllerBase
+[Tags("StandingOrders")]
+public class StandingOrdersController : ControllerBase
 {
     private readonly LinkGenerator _linkGenerator;
     private readonly IRequestBuilder _requestBuilder;
 
-    public AccountsController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
+    public StandingOrdersController(IRequestBuilder requestBuilder, LinkGenerator linkGenerator)
     {
         _requestBuilder = requestBuilder;
         _linkGenerator = linkGenerator;
     }
 
     /// <summary>
-    ///     Read Account(s)
+    ///     Read Standing Orders.
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    [Route("aisp/accounts")]
-    [Route("aisp/accounts/{externalApiAccountId}")]
+    [Route("aisp/standing-orders")]
+    [Route("aisp/accounts/{externalApiAccountId}/standing-orders")]
     [HttpGet]
-    [ProducesResponseType(typeof(AccountsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StandingOrdersResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAsync(
         string? externalApiAccountId,
-        [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
+        [FromHeader(Name = "x-obc-account-access-consent-id")]
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
@@ -54,9 +53,9 @@ public class AccountsController : ControllerBase
         }
 
         // Operation
-        AccountsResponse fluentResponse = await _requestBuilder
+        StandingOrdersResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
-            .Accounts
+            .StandingOrders
             .ReadAsync(
                 accountAccessConsentId,
                 externalApiAccountId,

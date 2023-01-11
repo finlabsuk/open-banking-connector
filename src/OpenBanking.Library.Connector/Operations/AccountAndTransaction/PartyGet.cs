@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -12,10 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
@@ -26,31 +21,21 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, ExternalEntityReadParams>
 {
-    protected AuthContextAccessTokenGet _authContextAccessTokenGet;
-    protected IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
-    protected IGrantPost _grantPost;
-    protected IInstrumentationClient _instrumentationClient;
-    protected IApiVariantMapper _mapper;
-    protected IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
-    private ITimeProvider _timeProvider;
+    private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
+    private readonly ConsentAccessTokenGet _consentAccessTokenGet;
+    private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IApiVariantMapper _mapper;
 
     public PartyGet(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
         IInstrumentationClient instrumentationClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IApiVariantMapper mapper,
-        IDbSaveChangesMethod dbSaveChangesMethod,
-        ITimeProvider timeProvider,
-        IGrantPost grantPost,
-        AuthContextAccessTokenGet authContextAccessTokenGet)
+        ConsentAccessTokenGet consentAccessTokenGet,
+        AccountAccessConsentCommon accountAccessConsentCommon)
     {
-        _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _mapper = mapper;
-        _timeProvider = timeProvider;
-        _grantPost = grantPost;
-        _authContextAccessTokenGet = authContextAccessTokenGet;
+        _consentAccessTokenGet = consentAccessTokenGet;
+        _accountAccessConsentCommon = accountAccessConsentCommon;
     }
 
     public async Task<(PartiesResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -61,46 +46,17 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get consent and associated data
-        AccountAccessConsentPersisted persistedConsent =
-            await _entityMethods
-                .DbSet
-                .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                .Include(o => o.AccountAndTransactionApiNavigation)
-                .Include(o => o.BankRegistrationNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                .SingleOrDefaultAsync(x => x.Id == readParams.ConsentId) ??
-            throw new KeyNotFoundException(
-                $"No record found for Account Access Consent with ID {readParams.ConsentId}.");
-        AccountAndTransactionApiEntity accountAndTransactionApiEntity =
-            persistedConsent.AccountAndTransactionApiNavigation;
-        var accountAndTransactionApi = new AccountAndTransactionApi
-        {
-            AccountAndTransactionApiVersion = accountAndTransactionApiEntity.ApiVersion,
-            BaseUrl = accountAndTransactionApiEntity.BaseUrl
-        };
-        BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
-        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
-
-        // Get API client
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementProfileId,
-                bankRegistration.SoftwareStatementProfileOverride);
-        IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+        (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
+                AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistrationPersisted bankRegistration,
+                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
+                    bankTokenIssuerClaim) =
+            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
         // Get access token
-        string? requestObjectAudClaim =
-            persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                ?.AccountAccessConsentAuthGet
-                ?.AudClaim;
-        string bankIssuerUrl =
-            requestObjectAudClaim ??
-            bankRegistration.BankNavigation.IssuerUrl ??
-            throw new Exception("Cannot determine issuer URL for bank");
         string accessToken =
-            await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+            await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
-                bankIssuerUrl,
+                bankTokenIssuerClaim,
                 "openid accounts",
                 bankRegistration,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
@@ -119,7 +75,7 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadParty2> apiRequests = accountAndTransactionApi.AccountAndTransactionApiVersion switch
+        IApiGetRequests<OBReadParty2> apiRequests = accountAndTransactionApi.ApiVersion switch
         {
             AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
                 OBReadParty2,
@@ -129,15 +85,13 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
                 OBReadParty2,
                 OBReadParty2>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
             _ => throw new ArgumentOutOfRangeException(
-                $"AISP API version {accountAndTransactionApi.AccountAndTransactionApiVersion} not supported.")
+                $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
         };
-        OBReadParty2 apiResponse;
-        IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages;
-        (apiResponse, newNonErrorMessages) =
+        (OBReadParty2 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,
-                apiClient,
+                processedSoftwareStatementProfile.ApiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
@@ -155,7 +109,7 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
         apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
         apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
         apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
-        var response = new PartiesResponse(apiResponse);
+        var response = new PartiesResponse(apiResponse, null);
 
         return (response, nonErrorMessages);
     }

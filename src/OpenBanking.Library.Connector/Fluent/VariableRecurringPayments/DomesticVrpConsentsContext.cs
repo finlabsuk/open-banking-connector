@@ -64,7 +64,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                 sharedContext.DbService.GetDbEntityMethodsClass<VariableRecurringPaymentsApiEntity>(),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.BankProfileService,
-                new AuthContextAccessTokenGet(
+                new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,

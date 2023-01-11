@@ -3,25 +3,35 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.Json;
-using System.Threading.Tasks;
 using Azure.Core;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
 {
-    
-    public class EmptyClass: IUtf8JsonSerializable
+    public class EmptyClass : IUtf8JsonSerializable
     {
         public string? Test { get; set; }
+
         public void Write(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
             writer.WriteEndObject();
-
         }
     }
-    
+
     public partial class OBReadAccount6 : ISupportsValidation
+    {
+        public Task<ValidationResult> ValidateAsync() =>
+            Task.FromResult(new ValidationResult());
+    }
+
+    public partial class OBReadDirectDebit2 : ISupportsValidation
+    {
+        public Task<ValidationResult> ValidateAsync() =>
+            Task.FromResult(new ValidationResult());
+    }
+
+    public partial class OBReadStandingOrder6 : ISupportsValidation
     {
         public Task<ValidationResult> ValidateAsync() =>
             Task.FromResult(new ValidationResult());
@@ -44,7 +54,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         public Task<ValidationResult> ValidateAsync() =>
             Task.FromResult(new ValidationResult());
     }
-    
+
     public partial class OBReadTransaction6 : ISupportsValidation
     {
         public Task<ValidationResult> ValidateAsync() =>
@@ -66,13 +76,10 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
     {
         public Task<ValidationResult> ValidateAsync() =>
             Task.FromResult(new ValidationResult());
-        
+
         public void WriteObject(Utf8JsonWriter jsonWriter)
         {
             jsonWriter.WriteObjectValue(this);
         }
-
-        
-        
     }
 }

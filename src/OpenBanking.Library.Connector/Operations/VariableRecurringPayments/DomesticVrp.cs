@@ -30,7 +30,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         IExternalRead<DomesticVrpResponse>,
         IExternalCreate<DomesticVrpRequest, DomesticVrpResponse>
     {
-        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
+        private readonly ConsentAccessTokenGet _consentAccessTokenGet;
         private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
         private readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
@@ -45,13 +45,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IGrantPost grantPost,
-            AuthContextAccessTokenGet authContextAccessTokenGet)
+            ConsentAccessTokenGet consentAccessTokenGet)
         {
             _instrumentationClient = instrumentationClient;
             _mapper = mapper;
             _timeProvider = timeProvider;
             _grantPost = grantPost;
-            _authContextAccessTokenGet = authContextAccessTokenGet;
+            _consentAccessTokenGet = consentAccessTokenGet;
             _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
                 entityMethods,
                 instrumentationClient,
@@ -82,7 +82,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     ?.AudClaim ??
                 bankRegistration.BankNavigation.IssuerUrl;
             string accessToken =
-                await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
                     bankIssuerUrl,
                     "openid payments",

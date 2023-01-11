@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
 {
-    internal class AuthContextAccessTokenGet
+    internal class ConsentAccessTokenGet
     {
         private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
         private readonly IGrantPost _grantPost;
@@ -23,7 +23,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
         private readonly ITimeProvider _timeProvider;
 
-        public AuthContextAccessTokenGet(
+        public ConsentAccessTokenGet(
             IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
@@ -100,7 +100,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient);
 
-            // Update auth context with token
+            // Update consent with token
             consent.UpdateAccessToken(
                 tokenEndpointResponse.AccessToken,
                 tokenEndpointResponse.ExpiresIn,

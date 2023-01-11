@@ -229,9 +229,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             await requestBuilder
                                 .AccountAndTransaction
                                 .AccountAccessConsents
-                                .ReadAsync(accountAccessConsentId,
-                                modifiedBy,
-                                false);
+                                .ReadAsync(
+                                    accountAccessConsentId,
+                                    modifiedBy,
+                                    false);
                         return consentResponse.Created < consentResponse.AuthContextModified;
                     }
 
@@ -338,6 +339,27 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         } while (queryString is not null && page < maxPages);
                     }
 
+                    // GET /party
+                    bool testReadPartyPsu =
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadPartyPSU);
+
+                    if (testReadPartyPsu)
+                    {
+                        PartiesResponse partyResp =
+                            await requestBuilderNew
+                                .AccountAndTransaction
+                                .Parties
+                                .ReadAsync(
+                                    accountAccessConsentId,
+                                    null,
+                                    modifiedBy);
+
+                        // Checks
+                        partyResp.Should().NotBeNull();
+                        partyResp.Warnings.Should().BeNull();
+                        partyResp.ExternalApiResponse.Should().NotBeNull();
+                    }
+
                     // GET /accounts/{AccountId}/party
                     // GET /accounts/{AccountId}/parties
                     bool testGetParties =
@@ -375,6 +397,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         partiesResp.Warnings.Should().BeNull();
                         partiesResp.ExternalApiResponse.Should().NotBeNull();
                     }
+
+                    // GET /accounts/{AccountId}/direct-debits
+                    bool testGetDirectDebits =
+                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
+                    if (testGetDirectDebits)
+                    {
+                        DirectDebitsResponse directDebitsResp =
+                            await requestBuilderNew
+                                .AccountAndTransaction
+                                .DirectDebits
+                                .ReadAsync(
+                                    accountAccessConsentId,
+                                    externalAccountId,
+                                    modifiedBy);
+
+                        // Checks
+                        directDebitsResp.Should().NotBeNull();
+                        directDebitsResp.Warnings.Should().BeNull();
+                        directDebitsResp.ExternalApiResponse.Should().NotBeNull();
+                    }
+
+                    // GET /accounts/{AccountId}/standing-orders
+                    StandingOrdersResponse standingOrdersResp =
+                        await requestBuilderNew
+                            .AccountAndTransaction
+                            .StandingOrders
+                            .ReadAsync(
+                                accountAccessConsentId,
+                                externalAccountId,
+                                modifiedBy);
+
+                    // Checks
+                    standingOrdersResp.Should().NotBeNull();
+                    standingOrdersResp.Warnings.Should().BeNull();
+                    standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
                 }
 
                 // Delete AccountAccessConsent

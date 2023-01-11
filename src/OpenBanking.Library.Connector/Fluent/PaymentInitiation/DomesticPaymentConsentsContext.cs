@@ -61,7 +61,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
                 sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.BankProfileService,
-                new AuthContextAccessTokenGet(
+                new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,

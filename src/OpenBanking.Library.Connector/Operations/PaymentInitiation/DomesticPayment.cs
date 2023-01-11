@@ -32,7 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
         IExternalCreate<DomesticPaymentRequest, DomesticPaymentResponse>,
         IExternalRead<DomesticPaymentResponse>
     {
-        private readonly AuthContextAccessTokenGet _authContextAccessTokenGet;
+        private readonly ConsentAccessTokenGet _consentAccessTokenGet;
         private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
         private readonly IGrantPost _grantPost;
         private readonly IInstrumentationClient _instrumentationClient;
@@ -47,13 +47,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IGrantPost grantPost,
-            AuthContextAccessTokenGet authContextAccessTokenGet)
+            ConsentAccessTokenGet consentAccessTokenGet)
         {
             _instrumentationClient = instrumentationClient;
             _mapper = mapper;
             _timeProvider = timeProvider;
             _grantPost = grantPost;
-            _authContextAccessTokenGet = authContextAccessTokenGet;
+            _consentAccessTokenGet = consentAccessTokenGet;
             _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
                 entityMethods,
                 instrumentationClient,
@@ -85,7 +85,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     ?.AudClaim ??
                 bankRegistration.BankNavigation.IssuerUrl;
             string accessToken =
-                await _authContextAccessTokenGet.GetAccessTokenAndUpdateConsent(
+                await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                     persistedConsent,
                     bankIssuerUrl,
                     "openid payments",

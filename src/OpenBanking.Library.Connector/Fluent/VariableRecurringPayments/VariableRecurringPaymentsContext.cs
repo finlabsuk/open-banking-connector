@@ -55,7 +55,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient),
-                    new AuthContextAccessTokenGet(
+                    new ConsentAccessTokenGet(
                         _sharedContext.SoftwareStatementProfileCachedRepo,
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
