@@ -63,17 +63,15 @@ public class ConsentAuth
         Func<Task<bool>> authIsCompleteFcn)
     {
         bool useManualAuth = bankProfile.SupportsSca;
-        int maxWaitTimeForConsentMs;
         if (useManualAuth)
         {
-            maxWaitTimeForConsentMs = 180000;
             SendEmail(
                 "Open Banking Connector Test",
                 "This is the auth URL: " + authUrl);
+            EnsureTokenAvailable(authIsCompleteFcn, 180000);
         }
         else
         {
-            maxWaitTimeForConsentMs = 10000;
             IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
             using IPlaywright playwright = await Playwright.CreateAsync();
             await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
@@ -111,10 +109,13 @@ public class ConsentAuth
                 // Wait for network activity to complete
                 await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             }
+            EnsureTokenAvailable(authIsCompleteFcn, 10000);
         }
+    }
 
+    private static void EnsureTokenAvailable(Func<Task<bool>> authIsCompleteFcn, int maxWaitTimeForConsentMs)
+    {
         // Ensure token available
-        //var t = new Timer(o => { }, null, 0, 60000);
         Task checkAuthCompleteTask = Task.Run(
             async () =>
             {

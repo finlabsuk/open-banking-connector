@@ -17,15 +17,22 @@ public class BarclaysUiMethods : IBankUiMethods
         _barclaysBank = barclaysBank;
     }
 
-    public Task PerformConsentAuthUiInteractions(
+    public async Task PerformConsentAuthUiInteractions(
         ConsentVariety consentVariety,
         IPage page,
         BankUser bankUser)
     {
         if (_barclaysBank is BarclaysBank.Sandbox)
         {
+            await page.Locator("#api-type").SelectOptionAsync(new[] { "Account And Transactions" });
+
+            await page.Locator("#business-unit").SelectOptionAsync(new[] { "Barclays Personal" });
+
+            await page.Locator("#test-case").SelectOptionAsync(new[] { "ACC200" });
+
+            await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { NameString = "Run Test Case" })
+                .ClickAsync();
         }
 
-        return Task.CompletedTask;
     }
 }
