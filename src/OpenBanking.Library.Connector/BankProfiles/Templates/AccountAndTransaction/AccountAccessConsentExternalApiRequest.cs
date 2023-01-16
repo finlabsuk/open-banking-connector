@@ -4,9 +4,9 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.AccountAndTransaction;
 
-public static class TemplateRequests
+public static class AccountAccessTemplates
 {
     public static AccountAndTransactionModelsPublic.OBReadConsent1 AccountAccessConsentExternalApiRequest(
         AccountAccessConsentTemplateType accountAccessConsentTemplateType) =>

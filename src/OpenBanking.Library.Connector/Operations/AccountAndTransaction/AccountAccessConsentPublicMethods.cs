@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -18,7 +18,7 @@ public static class AccountAccessConsentPublicMethods
         // Resolve external API request
         AccountAndTransactionModelsPublic.OBReadConsent1 resolvedExternalApiRequest =
             externalApiRequest ??
-            TemplateRequests.AccountAccessConsentExternalApiRequest(
+            AccountAccessTemplates.AccountAccessConsentExternalApiRequest(
                 templateRequest?.Type ??
                 throw new InvalidOperationException(
                     "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));

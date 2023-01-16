@@ -58,7 +58,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation));
+                        _sharedContext.Instrumentation),
+                    _sharedContext.BankProfileService);
                 return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
                     domesticPayment,
                     domesticPayment);

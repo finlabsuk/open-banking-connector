@@ -60,7 +60,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
                         _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                         _sharedContext.TimeProvider,
                         new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation));
+                        _sharedContext.Instrumentation),
+                    _sharedContext.BankProfileService);
                 return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
                     domesticVrp,
                     domesticVrp);

@@ -4,6 +4,7 @@
 
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
@@ -45,6 +46,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 
     public class DomesticPaymentRequest : Base, ISupportsValidation
     {
+        /// <summary>
+        ///     BankProfile used to apply transformations to external API requests.
+        /// </summary>
+        public BankProfileEnum? BankProfile { get; set; }
+
         /// <summary>
         ///     Use external API request object created from template.
         ///     The first non-null of ExternalApiRequest and TemplateRequest (in that order) is used

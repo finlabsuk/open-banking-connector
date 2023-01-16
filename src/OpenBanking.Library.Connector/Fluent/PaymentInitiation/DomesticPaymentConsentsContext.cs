@@ -21,7 +21,8 @@ using BankRegistrationPersisted =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 {
     public interface IDomesticPaymentConsentsContext :
-        IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, DomesticPaymentConsentReadResponse>,
+        IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
+            DomesticPaymentConsentCreateResponse>,
         IDeleteLocalContext,
         IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
     {
@@ -38,7 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
 
     internal interface IDomesticPaymentConsentsContextInternal :
         IDomesticPaymentConsentsContext,
-        IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, DomesticPaymentConsentReadResponse>,
+        IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
+            DomesticPaymentConsentCreateResponse>,
         IDeleteLocalContextInternal,
         IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
 
@@ -59,14 +61,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                 sharedContext.ApiVariantMapper,
                 new GrantPost(_sharedContext.ApiClient),
                 sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
                 sharedContext.BankProfileService,
                 new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient),
-                    _sharedContext.Instrumentation));
+                    _sharedContext.Instrumentation),
+                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
             CreateObject = domesticPaymentConsentOperations;
             ReadObject = domesticPaymentConsentOperations;
             ReadFundsConfirmationObject = domesticPaymentConsentOperations;
@@ -96,7 +98,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.Instrumentation));
 
-        public IObjectRead<DomesticPaymentConsentReadResponse, ConsentReadParams> ReadObject { get; }
+        public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
         public IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
             ReadFundsConfirmationObject { get; }

@@ -58,7 +58,7 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticVrpConsentReadResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticVrpConsentCreateResponse))]
     public async Task<IActionResult> GetAsync(
         Guid domesticVrpConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
@@ -71,7 +71,7 @@ public class DomesticVrpConsentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        DomesticVrpConsentReadResponse fluentResponse = await _requestBuilder
+        DomesticVrpConsentCreateResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrpConsents
             .ReadAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);

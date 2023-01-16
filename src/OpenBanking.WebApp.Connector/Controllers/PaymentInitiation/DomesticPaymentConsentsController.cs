@@ -57,7 +57,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentReadResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentCreateResponse))]
     public async Task<IActionResult> GetAsync(
         Guid domesticPaymentConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
@@ -70,7 +70,7 @@ public class DomesticPaymentConsentsController : ControllerBase
             throw new InvalidOperationException("Can't generate calling URL.");
 
         // Operation
-        DomesticPaymentConsentReadResponse fluentResponse = await _requestBuilder
+        DomesticPaymentConsentCreateResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .ReadAsync(

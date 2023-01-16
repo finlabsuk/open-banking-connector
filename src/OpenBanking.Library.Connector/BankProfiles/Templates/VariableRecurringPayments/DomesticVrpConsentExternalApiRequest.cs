@@ -6,9 +6,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.VariableRecurringPayments;
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
 
-public static class TemplateRequests
+public static partial class DomesticVrpTemplates
 {
     public static VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
         DomesticVrpConsentExternalApiRequest(DomesticVrpTemplateRequest domesticVrpConsentTemplateRequest) =>

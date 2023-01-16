@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.RequestObjects.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Resolve external API request
             PaymentInitiationModelsPublic.OBWriteDomesticConsent4 resolvedExternalApiRequest =
                 externalApiRequest ??
-                TemplateRequests.DomesticPaymentConsentExternalApiRequest(
+                DomesticPaymentTemplates.DomesticPaymentConsentExternalApiRequest(
                     templateRequest ??
                     throw new InvalidOperationException(
                         "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));

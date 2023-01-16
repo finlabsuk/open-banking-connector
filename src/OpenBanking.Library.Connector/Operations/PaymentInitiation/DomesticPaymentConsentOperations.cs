@@ -34,13 +34,13 @@ internal class
     DomesticPaymentConsentOperations :
         IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
             ConsentCreateParams>,
-        IObjectRead<DomesticPaymentConsentReadResponse, ConsentReadParams>,
+        IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams>,
         IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> _apiEntityMethods;
-    private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
     private readonly IBankProfileService _bankProfileService;
+    private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
     private readonly ConsentCommon<DomesticPaymentConsentPersisted,
         DomesticPaymentConsentRequest,
@@ -65,15 +65,15 @@ internal class
         IApiVariantMapper mapper,
         IGrantPost grantPost,
         IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> apiEntityMethods,
-        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
         IBankProfileService bankProfileService,
-        ConsentAccessTokenGet consentAccessTokenGet)
+        ConsentAccessTokenGet consentAccessTokenGet,
+        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
+        _entityMethods = entityMethods;
         _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
-        _entityMethods = entityMethods;
         _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
             entityMethods,
             instrumentationClient,
@@ -233,9 +233,6 @@ internal class
         // Save entity
         await _entityMethods.AddAsync(persistedConsent);
 
-        // Persist updates (this happens last so as not to happen if there are any previous errors)
-        await _dbSaveChangesMethod.SaveChangesAsync();
-
         // Create response (may involve additional processing based on entity)
         var response =
             new DomesticPaymentConsentCreateResponse(
@@ -252,11 +249,15 @@ internal class
                 persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
+        // Persist updates (this happens last so as not to happen if there are any previous errors)
+        await _dbSaveChangesMethod.SaveChangesAsync();
+
         return (response, nonErrorMessages);
     }
 
     public async
-        Task<(DomesticPaymentConsentReadResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        Task<(DomesticPaymentConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+            )>
         ReadAsync(ConsentReadParams readParams)
     {
         // Create non-error list
@@ -264,68 +265,79 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedObject, string externalApiConsentId,
+        (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
                 PaymentInitiationApiEntity paymentInitiationApi, BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
 
-        // Get client credentials grant access token
-        string ccGrantAccessToken =
-            (await _grantPost.PostClientCredentialsGrantAsync(
-                ClientCredentialsGrantScope,
-                processedSoftwareStatementProfile,
-                bankRegistration,
-                bankRegistration.BankNavigation.TokenEndpoint,
-                null,
-                processedSoftwareStatementProfile.ApiClient,
-                _instrumentationClient))
-            .AccessToken;
+        bool includeExternalApiOperation =
+            readParams.IncludeExternalApiOperation;
+        PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
+        if (includeExternalApiOperation)
+        {
+            // Get client credentials grant access token
+            string ccGrantAccessToken =
+                (await _grantPost.PostClientCredentialsGrantAsync(
+                    ClientCredentialsGrantScope,
+                    processedSoftwareStatementProfile,
+                    bankRegistration,
+                    bankRegistration.BankNavigation.TokenEndpoint,
+                    null,
+                    processedSoftwareStatementProfile.ApiClient,
+                    _instrumentationClient))
+                .AccessToken;
 
-        // Read object from external API
-        JsonSerializerSettings? responseJsonSerializerSettings = null;
-        IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> apiRequests =
-            ApiRequests(
-                paymentInitiationApi.ApiVersion,
-                bankFinancialId,
-                ccGrantAccessToken,
-                processedSoftwareStatementProfile);
-        var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
-        (PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5 externalApiResponse,
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
-            await apiRequests.GetAsync(
+            // Read object from external API
+            JsonSerializerSettings? responseJsonSerializerSettings = null;
+            IApiGetRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> apiRequests =
+                ApiRequests(
+                    paymentInitiationApi.ApiVersion,
+                    bankFinancialId,
+                    ccGrantAccessToken,
+                    processedSoftwareStatementProfile);
+            var externalApiUrl = new Uri(
+                paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
+            (externalApiResponse,
+                    IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+                await apiRequests.GetAsync(
+                    externalApiUrl,
+                    responseJsonSerializerSettings,
+                    processedSoftwareStatementProfile.ApiClient,
+                    _mapper);
+            nonErrorMessages.AddRange(newNonErrorMessages);
+
+            // Transform links 
+            var validQueryParameters = new List<string>();
+            var linksUrlOperations = new LinksUrlOperations(
                 externalApiUrl,
-                responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
-                _mapper);
-        nonErrorMessages.AddRange(newNonErrorMessages);
-
-        // Transform links 
-        var validQueryParameters = new List<string>();
-        var linksUrlOperations = new LinksUrlOperations(
-            externalApiUrl,
-            readParams.PublicRequestUrlWithoutQuery,
-            true,
-            validQueryParameters);
-        externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
-        externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
-        externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
-        externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
-        externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+                readParams.PublicRequestUrlWithoutQuery,
+                true,
+                validQueryParameters);
+            externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
+            externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
+            externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
+            externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
+            externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+        }
+        else
+        {
+            externalApiResponse = null;
+        }
 
         // Create response
         var response =
-            new DomesticPaymentConsentReadResponse(
-                persistedObject.Id,
-                persistedObject.Created,
-                persistedObject.CreatedBy,
-                persistedObject.Reference,
+            new DomesticPaymentConsentCreateResponse(
+                persistedConsent.Id,
+                persistedConsent.Created,
+                persistedConsent.CreatedBy,
+                persistedConsent.Reference,
                 null,
-                persistedObject.BankRegistrationId,
-                persistedObject.ExternalApiId,
-                persistedObject.ExternalApiUserId,
-                persistedObject.AuthContextModified,
-                persistedObject.AuthContextModifiedBy,
-                persistedObject.PaymentInitiationApiId,
+                persistedConsent.BankRegistrationId,
+                persistedConsent.ExternalApiId,
+                persistedConsent.ExternalApiUserId,
+                persistedConsent.AuthContextModified,
+                persistedConsent.AuthContextModifiedBy,
+                persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);

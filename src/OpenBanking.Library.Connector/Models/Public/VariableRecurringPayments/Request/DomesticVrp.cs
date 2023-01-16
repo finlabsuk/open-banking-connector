@@ -2,20 +2,19 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ValidationResult = FluentValidation.Results.ValidationResult;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
 {
-    
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DomesticVrpTemplateType
     {
@@ -51,13 +50,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
     public class DomesticVrpRequest : Base, ISupportsValidation
     {
         /// <summary>
+        ///     BankProfile used to apply transformations to external API requests.
+        /// </summary>
+        public BankProfileEnum? BankProfile { get; set; }
+
+        /// <summary>
         ///     Use external API request object created from template.
         ///     The first non-null of ExternalApiRequest and TemplateRequest (in that order) is used
         ///     and the others are ignored. At least one of these must be non-null.
         ///     Specifies template used to create external API request object.
         /// </summary>
         public DomesticVrpTemplateRequest? TemplateRequest { get; set; }
-        
+
         /// <summary>
         ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
         ///     to translate this for banks supporting an earlier spec version.

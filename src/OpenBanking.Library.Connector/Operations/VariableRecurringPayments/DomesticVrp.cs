@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -30,6 +31,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
         IExternalRead<DomesticVrpResponse>,
         IExternalCreate<DomesticVrpRequest, DomesticVrpResponse>
     {
+        private readonly IBankProfileService _bankProfileService;
         private readonly ConsentAccessTokenGet _consentAccessTokenGet;
         private readonly DomesticVrpConsentCommon _domesticVrpConsentCommon;
         private readonly IGrantPost _grantPost;
@@ -45,13 +47,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IGrantPost grantPost,
-            ConsentAccessTokenGet consentAccessTokenGet)
+            ConsentAccessTokenGet consentAccessTokenGet,
+            IBankProfileService bankProfileService)
         {
             _instrumentationClient = instrumentationClient;
             _mapper = mapper;
             _timeProvider = timeProvider;
             _grantPost = grantPost;
             _consentAccessTokenGet = consentAccessTokenGet;
+            _bankProfileService = bankProfileService;
             _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
                 entityMethods,
                 instrumentationClient,
@@ -68,6 +72,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
+
+            // Resolve bank profile
+            BankProfile? bankProfile = null;
+            if (request.BankProfile is not null)
+            {
+                bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
+            }
 
             // Load DomesticVrpConsent and related
             (DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId,
@@ -100,9 +111,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     bankFinancialId,
                     accessToken,
                     processedSoftwareStatementProfile);
-            Uri externalApiUrl = new(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest = request.ExternalApiRequest;
-            if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
+            var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
+            VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest =
+                DomesticVrpPublicMethods.ResolveExternalApiRequest(
+                    request.ExternalApiRequest,
+                    request.TemplateRequest,
+                    externalApiConsentId,
+                    bankProfile);
+            if (string.IsNullOrEmpty(externalApiRequest.Data.ConsentId))
             {
                 externalApiRequest.Data.ConsentId = externalApiConsentId;
             }
@@ -162,7 +178,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
-            Uri externalApiUrl = new(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalId}");
+            var externalApiUrl =
+                new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalId}");
             (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(

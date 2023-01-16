@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -26,12 +27,13 @@ using PaymentInitiationModelsV3p1p4 =
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
 {
     /// <summary>
-    ///     DomesticPayment create and read operations.
+    ///     DomesticPayment operations.
     /// </summary>
     internal class DomesticPayment :
         IExternalCreate<DomesticPaymentRequest, DomesticPaymentResponse>,
         IExternalRead<DomesticPaymentResponse>
     {
+        private readonly IBankProfileService _bankProfileService;
         private readonly ConsentAccessTokenGet _consentAccessTokenGet;
         private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
         private readonly IGrantPost _grantPost;
@@ -47,13 +49,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             IDbSaveChangesMethod dbSaveChangesMethod,
             ITimeProvider timeProvider,
             IGrantPost grantPost,
-            ConsentAccessTokenGet consentAccessTokenGet)
+            ConsentAccessTokenGet consentAccessTokenGet,
+            IBankProfileService bankProfileService)
         {
             _instrumentationClient = instrumentationClient;
             _mapper = mapper;
             _timeProvider = timeProvider;
             _grantPost = grantPost;
             _consentAccessTokenGet = consentAccessTokenGet;
+            _bankProfileService = bankProfileService;
             _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
                 entityMethods,
                 instrumentationClient,
@@ -71,6 +75,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
             // Create non-error list
             var nonErrorMessages =
                 new List<IFluentResponseInfoOrWarningMessage>();
+
+            // Resolve bank profile
+            BankProfile? bankProfile = null;
+            if (request.BankProfile is not null)
+            {
+                bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
+            }
 
             // Load DomesticPaymentConsent and related
             (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
@@ -104,8 +115,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
                     accessToken,
                     processedSoftwareStatementProfile);
             var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
-            PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest = request.ExternalApiRequest;
-            if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
+            PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest =
+                DomesticPaymentPublicMethods.ResolveExternalApiRequest(
+                    request.ExternalApiRequest,
+                    request.TemplateRequest,
+                    externalApiConsentId,
+                    bankProfile);
+            if (string.IsNullOrEmpty(externalApiRequest.Data.ConsentId))
             {
                 externalApiRequest.Data.ConsentId = externalApiConsentId;
             }

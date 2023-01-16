@@ -31,7 +31,7 @@ internal class
         IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
-    private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _bankApiSetMethods;
+    private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _apiEntityMethods;
 
     private readonly IBankProfileService _bankProfileService;
 
@@ -56,15 +56,15 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
-        IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> bankApiSetMethods,
+        IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> apiEntityMethods,
         IBankProfileService bankProfileService,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
-        _bankApiSetMethods = bankApiSetMethods;
+        _entityMethods = entityMethods;
+        _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _accountAccessConsentCommon = new AccountAccessConsentCommon(entityMethods, softwareStatementProfileRepo);
-        _entityMethods = entityMethods;
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -78,9 +78,9 @@ internal class
                 softwareStatementProfileRepo);
     }
 
-    protected string ClientCredentialsGrantScope => "accounts";
+    private string ClientCredentialsGrantScope => "accounts";
 
-    protected string RelativePathBeforeId => "/account-access-consents";
+    private string RelativePathBeforeId => "/account-access-consents";
 
     public async Task<(AccountAccessConsentCreateResponse response, IList<IFluentResponseInfoOrWarningMessage>
             nonErrorMessages)>
@@ -333,7 +333,7 @@ internal class
         Guid bankId)
     {
         AccountAndTransactionApiEntity accountAndTransactionApi =
-            await _bankApiSetMethods
+            await _apiEntityMethods
                 .DbSetNoTracking
                 .SingleOrDefaultAsync(x => x.Id == accountAndTransactionApiId) ??
             throw new KeyNotFoundException(

@@ -158,7 +158,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             Guid domesticPaymentConsentId = domesticPaymentConsentResp.Id;
 
             // GET domestic payment consent
-            DomesticPaymentConsentReadResponse domesticPaymentConsentResp2 =
+            DomesticPaymentConsentCreateResponse domesticPaymentConsentResp2 =
                 await requestBuilder.PaymentInitiation.DomesticPaymentConsents
                     .ReadAsync(domesticPaymentConsentId);
 
@@ -199,13 +199,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Consent authorisation
             if (consentAuth is not null)
             {
+                async Task<bool> AuthIsComplete()
+                {
+                    DomesticPaymentConsentCreateResponse consentResponse =
+                        await requestBuilder
+                            .PaymentInitiation
+                            .DomesticPaymentConsents
+                            .ReadAsync(
+                                domesticPaymentConsentId,
+                                modifiedBy,
+                                false);
+                    return consentResponse.Created < consentResponse.AuthContextModified;
+                }
+
                 // Authorise consent in UI via Playwright
                 await consentAuth.AuthoriseAsync(
                     authUrl,
                     bankProfile,
                     ConsentVariety.DomesticPaymentConsent,
                     bankUser,
-                    () => Task.FromResult(true));
+                    AuthIsComplete);
 
                 // Refresh scope to ensure user token acquired following consent is available
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();

@@ -9,9 +9,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
+using VariableRecurringPaymentsModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
@@ -24,7 +25,17 @@ public delegate PaymentInitiationModelsPublic.OBWriteDomesticConsent4
     DomesticPaymentConsentExternalApiRequestAdjustments(
         PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest);
 
-public delegate DomesticVrpConsentRequest DomesticVrpConsentAdjustments(DomesticVrpConsentRequest domesticVrpConsent);
+public delegate PaymentInitiationModelsPublic.OBWriteDomestic2
+    DomesticPaymentExternalApiRequestAdjustments(
+        PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest);
+
+public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
+    DomesticVrpConsentExternalApiRequestAdjustments(
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest externalApiRequest);
+
+public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
+    DomesticVrpExternalApiRequestAdjustments(
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest);
 
 public class BankConfigurationApiSettings
 {
@@ -128,14 +139,22 @@ public class PaymentInitiationApiSettings
 
     public DomesticPaymentConsentExternalApiRequestAdjustments
         DomesticPaymentConsentExternalApiRequestAdjustments { get; set; } = x => x;
+    
+    public DomesticPaymentExternalApiRequestAdjustments
+        DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
+
 }
 
 public class VariableRecurringPaymentsApiSettings
 {
     public bool UseConsentGetFundsConfirmationEndpoint { get; set; } = true;
 
-    public DomesticVrpConsentAdjustments
-        DomesticVrpConsentAdjustments { get; set; } = x => x;
+    public DomesticVrpConsentExternalApiRequestAdjustments
+        DomesticVrpConsentExternalApiRequestAdjustments { get; set; } = x => x;
+    
+    public DomesticVrpExternalApiRequestAdjustments
+        DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
+
 }
 
 /// <summary>

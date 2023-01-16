@@ -63,7 +63,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 
 
     /// <summary>
-    ///     Response to DomesticVrpConsent Create requests.
+    ///     Response to DomesticVrpConsent Create and Read requests.
     /// </summary>
     public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
     {
@@ -96,42 +96,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
         }
 
         public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; }
-    }
-
-    /// <summary>
-    ///     Response to DomesticVrpConsent Read requests.
-    /// </summary>
-    public class DomesticVrpConsentReadResponse : DomesticVrpConsentBaseResponse
-    {
-        internal DomesticVrpConsentReadResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            IList<string>? warnings,
-            Guid bankRegistrationId,
-            string externalApiId,
-            string? externalApiUserId,
-            DateTimeOffset authContextModified,
-            string? authContextModifiedBy,
-            Guid variableRecurringPaymentsApiId,
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse externalApiResponse) : base(
-            id,
-            created,
-            createdBy,
-            reference,
-            warnings,
-            bankRegistrationId,
-            externalApiId,
-            externalApiUserId,
-            authContextModified,
-            authContextModifiedBy,
-            variableRecurringPaymentsApiId)
-        {
-            ExternalApiResponse = externalApiResponse;
-        }
-
-        public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse ExternalApiResponse { get; }
     }
 
     /// <summary>

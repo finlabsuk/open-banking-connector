@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 using FluentAssertions;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -116,6 +117,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                     }
                 }
             };
+
+            domesticVrpConsentRequest.ExternalApiRequest =
+                DomesticVrpConsentPublicMethods.ResolveExternalApiRequest(
+                    domesticVrpConsentRequest.ExternalApiRequest,
+                    domesticVrpConsentRequest.TemplateRequest,
+                    bankProfile); // Resolve for fuller logging
+
             await vrpFluentRequestLogging
                 .AppendToPath("domesticVrpConsent")
                 .AppendToPath("postRequest")
@@ -156,8 +164,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             domesticVrpConsentResp.ExternalApiResponse.Should().NotBeNull();
             Guid domesticVrpConsentId = domesticVrpConsentResp.Id;
 
-            // GET domestic payment consent
-            DomesticVrpConsentReadResponse domesticVrpConsentResp2 =
+            // GET domestic VRP consent
+            DomesticVrpConsentCreateResponse domesticVrpConsentResp2 =
                 await requestBuilder.VariableRecurringPayments.DomesticVrpConsents
                     .ReadAsync(domesticVrpConsentId);
 
@@ -197,13 +205,26 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Consent authorisation
             if (consentAuth is not null)
             {
+                async Task<bool> AuthIsComplete()
+                {
+                    DomesticVrpConsentCreateResponse consentResponse =
+                        await requestBuilder
+                            .VariableRecurringPayments
+                            .DomesticVrpConsents
+                            .ReadAsync(
+                                domesticVrpConsentId,
+                                modifiedBy,
+                                false);
+                    return consentResponse.Created < consentResponse.AuthContextModified;
+                }
+
                 // Authorise consent in UI via Playwright
                 await consentAuth.AuthoriseAsync(
                     authUrl,
                     bankProfile,
                     ConsentVariety.DomesticVrpConsent,
                     bankUser,
-                    () => Task.FromResult(true));
+                    AuthIsComplete);
 
                 // Refresh scope to ensure user token acquired following consent is available
                 using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
