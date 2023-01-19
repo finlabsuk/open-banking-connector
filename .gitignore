@@ -468,3 +468,6 @@ user.test.settings.json
 
 # Documentation website
 /site/
+
+# VS Code
+.vscode/

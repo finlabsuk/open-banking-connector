@@ -8,23 +8,23 @@ internal class LinksUrlOperations
 {
     private readonly bool _allowValidQueryParametersOnly;
 
-    private readonly Uri _apiRequestUrl;
-    private readonly string? _publicRequestUrlWithoutQuery;
+    private readonly Uri _expectedLinkUrlWithoutQuery;
+    private readonly string? _publicUrlWithoutQuery;
     private readonly IList<string> _validQueryParameters;
 
     public LinksUrlOperations(
-        Uri apiRequestUrl,
-        string? publicRequestUrlWithoutQuery,
+        Uri expectedLinkUrlWithoutQuery,
+        string? publicUrlWithoutQuery,
         bool allowValidQueryParametersOnly,
         IList<string> validQueryParameters)
     {
-        _apiRequestUrl = apiRequestUrl;
-        _publicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
+        _expectedLinkUrlWithoutQuery = expectedLinkUrlWithoutQuery;
+        _publicUrlWithoutQuery = publicUrlWithoutQuery;
         _allowValidQueryParametersOnly = allowValidQueryParametersOnly;
         _validQueryParameters = validQueryParameters;
     }
 
-    public string? TransformLinksUrl(string? linkUrlString)
+    public string? ValidateAndTransformUrl(string? linkUrlString)
     {
         if (linkUrlString is null)
         {
@@ -35,7 +35,7 @@ internal class LinksUrlOperations
 
         int urlsMatch = Uri.Compare(
             linkUrl,
-            _apiRequestUrl,
+            _expectedLinkUrlWithoutQuery,
             UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path,
             UriFormat.Unescaped,
             StringComparison.InvariantCulture);
@@ -44,7 +44,7 @@ internal class LinksUrlOperations
         if (urlsMatch != 0)
         {
             throw new InvalidOperationException(
-                $"Request URL {_apiRequestUrl} and link URL {linkUrl} have different base URLs!");
+                $"Request URL {_expectedLinkUrlWithoutQuery} and link URL {linkUrl} have different base URLs!");
         }
 
         // Check there are no fragment parameters
@@ -70,13 +70,13 @@ internal class LinksUrlOperations
         }
 
         // Return relative URL
-        if (_publicRequestUrlWithoutQuery is null)
+        if (_publicUrlWithoutQuery is null)
         {
             return linkUrl.Query;
         }
 
         // Return absolute URL
-        var uriBuilder = new UriBuilder(_publicRequestUrlWithoutQuery);
+        var uriBuilder = new UriBuilder(_publicUrlWithoutQuery);
         uriBuilder.Query = linkUrl.Query;
         Uri fullUri = uriBuilder.Uri;
         return fullUri.ToString();

@@ -144,7 +144,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             ? null
                             : new AccessToken
                             {
+                                Token = "",
+                                ExpiresIn = 0, // to trigger use of refresh token
                                 RefreshToken = testData2.AccountAccessConsentRefreshToken,
+                                ModifiedBy = modifiedBy
+                            },
+                        AuthContext = testData2.AccountAccessConsentAuthContextNonce is null
+                            ? null
+                            : new AuthContextRequest
+                            {
+                                State = "",
+                                Nonce = testData2.AccountAccessConsentAuthContextNonce,
                                 ModifiedBy = modifiedBy
                             }
                     };

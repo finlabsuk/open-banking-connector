@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -37,12 +38,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
         }
 
         public async
-            Task<(
-                BankRegistrationPersisted bankRegistration,
-                string bankFinancialId,
-                string tokenEndpoint,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetBankRegistration(
-                Guid bankRegistrationId)
+            Task<(BankRegistrationPersisted bankRegistration, string bankFinancialId, string tokenEndpoint,
+                CustomBehaviourClass? customBehaviour, ProcessedSoftwareStatementProfile
+                processedSoftwareStatementProfile)> GetBankRegistration(Guid bankRegistrationId)
         {
             // Load BankRegistration
             BankRegistrationPersisted bankRegistration =
@@ -54,6 +52,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
             string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
             string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
+            CustomBehaviourClass? customBehaviour = bankRegistration.BankNavigation.CustomBehaviour;
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -61,7 +60,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                     bankRegistration.SoftwareStatementProfileId,
                     bankRegistration.SoftwareStatementProfileOverride);
 
-            return (bankRegistration, bankFinancialId, tokenEndpoint, processedSoftwareStatementProfile);
+            return (bankRegistration, bankFinancialId, tokenEndpoint, customBehaviour,
+                processedSoftwareStatementProfile);
         }
     }
 }

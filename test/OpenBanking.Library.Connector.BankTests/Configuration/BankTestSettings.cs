@@ -174,6 +174,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration
         public Dictionary<BankProfileEnum, string>
             AccountAccessConsentRefreshTokens { get; set; } =
             new();
+
+        /// <summary>
+        ///     Existing external (bank) API AccountAccessConsent (auth context nonce values in this property)s to specify when
+        ///     using POST to
+        ///     create a new
+        ///     AccountAccessConsent object.
+        ///     Dictionary whose keys are bankProfileEnums and values are strings.
+        /// </summary>
+        public Dictionary<BankProfileEnum, string>
+            AccountAccessConsentAuthContextNonces { get; set; } =
+            new();
     }
 
     /// <summary>

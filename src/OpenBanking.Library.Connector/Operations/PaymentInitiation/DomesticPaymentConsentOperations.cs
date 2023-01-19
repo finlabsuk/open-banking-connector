@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -122,6 +123,7 @@ internal class
         {
             // Load BankRegistration and related
             (BankRegistration bankRegistration, string bankFinancialId, string tokenEndpoint,
+                    CustomBehaviourClass? customBehaviour,
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
@@ -181,11 +183,12 @@ internal class
                 publicGetRequestUrlWithoutQuery,
                 true,
                 validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+            externalApiResponse.Links.First =
+                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
         }
         else
         {
@@ -227,7 +230,17 @@ internal class
                 accessToken.ExpiresIn,
                 accessToken.RefreshToken,
                 utcNow,
-                request.CreatedBy);
+                accessToken.ModifiedBy);
+        }
+
+        AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
+        if (authContext is not null)
+        {
+            persistedConsent.UpdateAuthContext(
+                authContext.State,
+                authContext.Nonce,
+                utcNow,
+                authContext.ModifiedBy);
         }
 
         // Save entity
@@ -313,11 +326,12 @@ internal class
                 readParams.PublicRequestUrlWithoutQuery,
                 true,
                 validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(externalApiResponse.Links.Last);
+            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+            externalApiResponse.Links.First =
+                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
         }
         else
         {

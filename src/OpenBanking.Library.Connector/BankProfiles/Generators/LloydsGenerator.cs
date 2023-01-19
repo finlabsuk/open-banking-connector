@@ -120,7 +120,19 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         // missing from OpenID configuration
                         OAuth2ResponseMode.Fragment
                     }
-                }
+                },
+                AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
+                    ? null
+                    : new ConsentAuthGetCustomBehaviour
+                    {
+                        IdTokenNonceClaimIsPreviousValue = true
+                    },
+                AccountAccessConsentPost = bank is LloydsBank.Sandbox
+                    ? null
+                    : new AccountAccessConsentPostCustomBehaviour
+                    {
+                        ResponseLinksOmitId = true
+                    }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

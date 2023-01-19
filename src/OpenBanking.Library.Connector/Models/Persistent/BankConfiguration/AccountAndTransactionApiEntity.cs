@@ -48,7 +48,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
             new List<AccountAccessConsent>();
 
         public Guid BankId { get; }
-        public AccountAndTransactionApiVersion ApiVersion { get; }
+        public AccountAndTransactionApiVersion ApiVersion { get; set; }
 
         public string BaseUrl { get; }
     }

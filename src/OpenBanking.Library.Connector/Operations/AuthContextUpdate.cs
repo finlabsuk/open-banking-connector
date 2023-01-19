@@ -84,7 +84,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                             .BankRegistrationNavigation.BankNavigation)
                     .SingleOrDefault(x => x.State == state) ??
                 throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
-            string nonce = authContext.Nonce;
+            string currentAuthContextNonce = authContext.Nonce;
 
             // Get consent info
             (ConsentType consentType, Guid consentId, string externalApiConsentId, BaseConsent consent,
@@ -134,6 +134,18 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                 throw new InvalidOperationException(
                     "Auth context exists but now stale (more than 10 mins old) so will not process redirect. " +
                     "Please create a new auth context and authenticate again.");
+            }
+
+            // Determine nonce
+            bool nonceClaimIsInitialValue = consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
+            string nonce;
+            if (nonceClaimIsInitialValue && consent.AuthContextNonce is not null)
+            {
+                nonce = consent.AuthContextNonce;
+            }
+            else
+            {
+                nonce = currentAuthContextNonce;
             }
 
             // Validate ID token including nonce

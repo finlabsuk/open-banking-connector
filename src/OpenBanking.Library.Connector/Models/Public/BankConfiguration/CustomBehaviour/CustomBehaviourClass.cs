@@ -29,5 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
         public ConsentAuthGetCustomBehaviour? DomesticVrpConsentAuthGet { get; set; }
         public GrantPostCustomBehaviour? AuthCodeGrantPost { get; set; }
         public GrantPostCustomBehaviour? RefreshTokenGrantPost { get; set; }
+
+        // Account and Transaction API endpoints
+        public AccountAccessConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
     }
 }

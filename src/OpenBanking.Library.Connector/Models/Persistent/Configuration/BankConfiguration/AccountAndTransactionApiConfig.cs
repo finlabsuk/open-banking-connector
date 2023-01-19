@@ -27,8 +27,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property(e => e.BankId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.ApiVersion)
-                .HasConversion(new EnumToStringConverter<AccountAndTransactionApiVersion>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                .HasConversion(new EnumToStringConverter<AccountAndTransactionApiVersion>());
             builder.Property(e => e.BaseUrl)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         }

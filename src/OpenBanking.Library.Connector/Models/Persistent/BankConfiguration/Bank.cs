@@ -106,7 +106,7 @@ internal partial class Bank :
     ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
     ///     For a well-behaved bank, normally this object should be null.
     /// </summary>
-    public CustomBehaviourClass? CustomBehaviour { get; }
+    public CustomBehaviourClass? CustomBehaviour { get; set; }
 }
 
 internal partial class Bank :

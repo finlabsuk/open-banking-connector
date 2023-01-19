@@ -3,9 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using Newtonsoft.Json;
 using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
@@ -21,22 +18,25 @@ public class BankTestData2 : IXunitSerializable
     public string? BankRegistrationExternalApiId { get; set; }
 
     public string? BankRegistrationExternalApiSecret { get; set; }
-    
+
     public string? BankRegistrationRegistrationAccessToken { get; set; }
 
     public string? AccountAccessConsentExternalApiId { get; set; }
 
     public string? AccountAccessConsentRefreshToken { get; set; }
 
+    public string? AccountAccessConsentAuthContextNonce { get; set; }
+
     public void Deserialize(IXunitSerializationInfo info)
     {
         BankProfileEnum = info.GetValue<BankProfileEnum>(nameof(BankProfileEnum));
         BankRegistrationExternalApiId = info.GetValue<string?>(nameof(BankRegistrationExternalApiId));
         BankRegistrationExternalApiSecret = info.GetValue<string?>(nameof(BankRegistrationExternalApiSecret));
-        BankRegistrationRegistrationAccessToken = info.GetValue<string?>(nameof(BankRegistrationRegistrationAccessToken));
+        BankRegistrationRegistrationAccessToken =
+            info.GetValue<string?>(nameof(BankRegistrationRegistrationAccessToken));
         AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
-        AccountAccessConsentRefreshToken =
-            info.GetValue<string?>(nameof(AccountAccessConsentRefreshToken));
+        AccountAccessConsentRefreshToken = info.GetValue<string?>(nameof(AccountAccessConsentRefreshToken));
+        AccountAccessConsentAuthContextNonce = info.GetValue<string?>(nameof(AccountAccessConsentAuthContextNonce));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -47,6 +47,7 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(BankRegistrationRegistrationAccessToken), BankRegistrationRegistrationAccessToken);
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
         info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
+        info.AddValue(nameof(AccountAccessConsentAuthContextNonce), AccountAccessConsentAuthContextNonce);
     }
 
     public override string ToString()

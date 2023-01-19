@@ -103,27 +103,32 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                     // Get external API BankRegistration ID
                     testGroup
                         .BankRegistrationExternalApiIds
-                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationId);
+                        .TryGetValue(bankProfileEnum, out string? bankRegistrationExternalApiId);
 
                     // Get external API BankRegistration secret
                     testGroup
                         .BankRegistrationExternalApiSecrets
-                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationSecret);
+                        .TryGetValue(bankProfileEnum, out string? bankRegistrationExternalApiSecret);
 
                     // Get external API BankRegistration registration access token
                     testGroup
                         .BankRegistrationRegistrationAccessTokens
-                        .TryGetValue(bankProfileEnum, out string? externalApiBankRegistrationRegistrationAccessToken);
+                        .TryGetValue(bankProfileEnum, out string? bankRegistrationRegistrationAccessToken);
 
                     // Get external API AccountAccessConsent ID
                     testGroup
                         .AccountAccessConsentExternalApiIds
-                        .TryGetValue(bankProfileEnum, out string? externalApiAccountAccessConsentId);
+                        .TryGetValue(bankProfileEnum, out string? accountAccessConsentExternalApiId);
 
                     // Get external API AccountAccessConsent refresh token
                     testGroup
                         .AccountAccessConsentRefreshTokens
-                        .TryGetValue(bankProfileEnum, out string? externalApiAccountAccessConsentRefreshToken);
+                        .TryGetValue(bankProfileEnum, out string? accountAccessConsentRefreshToken);
+
+                    // Get external API AccountAccessConsent refresh token
+                    testGroup
+                        .AccountAccessConsentAuthContextNonces
+                        .TryGetValue(bankProfileEnum, out string? accountAccessConsentAuthContextNonce);
 
                     // Determine whether test case should be skipped based on registration scope
                     BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
@@ -145,12 +150,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
                             new BankTestData2
                             {
                                 BankProfileEnum = bankProfileEnum,
-                                BankRegistrationExternalApiId = externalApiBankRegistrationId,
-                                BankRegistrationExternalApiSecret = externalApiBankRegistrationSecret,
+                                BankRegistrationExternalApiId = bankRegistrationExternalApiId,
+                                BankRegistrationExternalApiSecret = bankRegistrationExternalApiSecret,
                                 BankRegistrationRegistrationAccessToken =
-                                    externalApiBankRegistrationRegistrationAccessToken,
-                                AccountAccessConsentExternalApiId = externalApiAccountAccessConsentId,
-                                AccountAccessConsentRefreshToken = externalApiAccountAccessConsentRefreshToken
+                                    bankRegistrationRegistrationAccessToken,
+                                AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
+                                AccountAccessConsentRefreshToken = accountAccessConsentRefreshToken,
+                                AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce
                             });
                     }
                 }

@@ -7,18 +7,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 public class AccessToken
 {
     /// <summary>
-    ///     Token. Default value is placeholder with expires_in set to zero in order to trigger use
-    ///     of refresh token.
+    ///     Token.
     /// </summary>
-    public string Token { get; set; } = "expired_token";
+    public string Token { get; init; } = null!;
 
     /// <summary>
-    ///     Token "expires_in". Default token is placeholder with expires_in set to zero in order to trigger use
-    ///     of refresh token.
+    ///     Token "expires_in".
     /// </summary>
-    public int ExpiresIn { get; set; } = 0;
+    public int ExpiresIn { get; set; }
 
     public string? RefreshToken { get; set; }
+
+    public string? ModifiedBy { get; set; }
+}
+
+public class AuthContextRequest
+{
+    /// <summary>
+    ///     OAuth2 "state".
+    /// </summary>
+    public string State { get; set; } = null!;
+
+    /// <summary>
+    ///     OpenID Connect "nonce".
+    /// </summary>
+    public string Nonce { get; set; } = null!;
 
     public string? ModifiedBy { get; set; }
 }
@@ -32,4 +45,6 @@ public class ExternalApiConsent
     public string ExternalApiId { get; set; } = null!;
 
     public AccessToken? AccessToken { get; set; }
+
+    public AuthContextRequest? AuthContext { get; set; }
 }

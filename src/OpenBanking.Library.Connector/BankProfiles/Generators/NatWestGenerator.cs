@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Mode
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -152,7 +153,12 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                                 or NatWestBank.UlsterBankNiClearSpend =>
                                 "https://secure1.ulsterbank.co.uk",
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                        }
+                        },
+                        IdTokenAcrClaim = Acr.Ca
+                    },
+                    AuthCodeGrantPost = new GrantPostCustomBehaviour
+                    {
+                        IdTokenAcrClaim = Acr.Ca
                     }
                 }
         };

@@ -41,7 +41,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
-            string nonce,
+            string expectedNonce,
             bool supportsSca,
             IdTokenSubClaimType idTokenSubClaimType,
             string? externalApiUserId)
@@ -63,14 +63,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     idTokenDecoded,
                     jsonSerializerSettings) ??
                 throw new Exception("Can't deserialise ID token.");
-
+            Acr expectedAcr =
+                consentAuthGetCustomBehaviour?.IdTokenAcrClaim
+                ?? (supportsSca ? Acr.Sca : Acr.Ca);
             ValidateIdTokenCommon(
                 idToken,
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
-                nonce,
-                supportsSca);
+                expectedNonce,
+                supportsSca,
+                expectedAcr);
 
             // Validate ID token subject claim
             string? outputExternalApiUserId = externalApiUserId; // unchanged by default
@@ -178,7 +181,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string? externalApiUserId,
-            string nonce,
+            string expectedNonce,
             string? requestScope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
@@ -233,7 +236,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     bankIssuerUrl,
                     externalApiClientId,
                     externalApiConsentId,
-                    nonce,
+                    expectedNonce,
                     bankRegistration.BankNavigation.SupportsSca,
                     bankRegistration.BankNavigation.IdTokenSubClaimType,
                     externalApiUserId);
@@ -249,7 +252,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiClientId,
             string externalApiConsentId,
             string? externalApiUserId,
-            string nonce,
+            string expectedNonce,
             string? requestScope,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
             BankRegistration bankRegistration,
@@ -306,7 +309,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     bankIssuerUrl,
                     externalApiClientId,
                     externalApiConsentId,
-                    nonce,
+                    expectedNonce,
                     bankRegistration.BankNavigation.SupportsSca,
                     bankRegistration.BankNavigation.IdTokenSubClaimType,
                     externalApiUserId);
@@ -347,8 +350,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
-            string nonce,
-            bool supportsSca)
+            string expectedNonce,
+            bool supportsSca,
+            Acr expectedAcr)
         {
             if (idToken.Exp < DateTimeOffset.UtcNow)
             {
@@ -360,7 +364,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 throw new Exception("Consent ID from ID token does not match expected consent ID.");
             }
 
-            if (!string.Equals(idToken.Nonce, nonce))
+            if (!string.Equals(idToken.Nonce, expectedNonce))
             {
                 throw new Exception("Nonce from ID token does not match expected nonce.");
             }
@@ -370,10 +374,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 throw new Exception("Auth time is null.");
             }
 
-            // if (supportsSca && idToken.Acr != Acr.Sca)
-            // {
-            //     throw new Exception("Acr from ID token does not match expected Acr.");
-            // }
+            if (supportsSca && idToken.Acr != expectedAcr)
+            {
+                throw new Exception("Acr from ID token does not match expected Acr.");
+            }
 
             if (!string.Equals(idToken.Issuer, bankIssuerUrl))
             {
@@ -411,7 +415,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string bankIssuerUrl,
             string externalApiClientId,
             string externalApiConsentId,
-            string nonce,
+            string expectedNonce,
             bool supportsSca,
             IdTokenSubClaimType idTokenSubClaimType,
             string? externalApiUserId)
@@ -434,13 +438,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     jsonSerializerSettings) ??
                 throw new Exception("Can't deserialise ID token.");
 
+            Acr expectedAcr =
+                grantPostCustomBehaviour?.IdTokenAcrClaim
+                ?? (supportsSca ? Acr.Sca : Acr.Ca);
             ValidateIdTokenCommon(
                 idToken,
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
-                nonce,
-                supportsSca);
+                expectedNonce,
+                supportsSca,
+                expectedAcr);
 
             // Validate ID token subject claim
             switch (idTokenSubClaimType)

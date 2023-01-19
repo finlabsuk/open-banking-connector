@@ -130,11 +130,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
                         _processedSoftwareStatementProfileStore,
                         _logger);
 
+                await new AccountAndTransactionApiCleanup().Cleanup(
+                    postgreSqlDbContext,
+                    _logger);
+
                 await new AccountAccessConsentCleanup()
                     .Cleanup(
                         postgreSqlDbContext,
                         _processedSoftwareStatementProfileStore,
                         _logger);
+
+                //postgreSqlDbContext.ChangeTracker.DetectChanges();
 
                 await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
             }

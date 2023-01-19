@@ -40,7 +40,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
             builder.Property("_registrationAccessToken")
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.DefaultRedirectUri);
-                //.Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.OtherRedirectUris)
                 .HasConversion(
                     v =>
@@ -48,12 +47,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                             v,
                             _jsonFormatting,
                             new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-                    v =>
-                        JsonConvert.DeserializeObject<List<string>>(v)!, new ValueComparer<IList<string>>(
+                    v => JsonConvert.DeserializeObject<List<string>>(v)!,
+                    new ValueComparer<IList<string>>(
                         (c1, c2) => c1!.SequenceEqual(c2!),
                         c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                         c => (IList<string>) c.ToList())); // NB: cast is required to avoid error and not redundant))
-                //.Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.SoftwareStatementProfileId)
                 .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
             builder.Property(e => e.SoftwareStatementProfileOverride)

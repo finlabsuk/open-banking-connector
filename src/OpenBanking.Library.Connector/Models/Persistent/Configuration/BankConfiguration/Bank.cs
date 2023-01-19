@@ -52,8 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Config
                         _jsonFormatting,
                         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                     v =>
-                        JsonConvert.DeserializeObject<CustomBehaviourClass>(v))
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+                        JsonConvert.DeserializeObject<CustomBehaviourClass>(v));
+
             if (_dbProvider is DbProvider.PostgreSql)
             {
                 builder.Property(e => e.CustomBehaviour).HasColumnType("jsonb");

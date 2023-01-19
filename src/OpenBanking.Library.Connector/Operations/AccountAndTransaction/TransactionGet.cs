@@ -111,11 +111,11 @@ internal class
             readParams.PublicRequestUrlWithoutQuery,
             false,
             validQueryParameters);
-        apiResponse.Links.Self = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Self);
-        apiResponse.Links.First = linksUrlOperations.TransformLinksUrl(apiResponse.Links.First);
-        apiResponse.Links.Prev = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Prev);
-        apiResponse.Links.Next = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Next);
-        apiResponse.Links.Last = linksUrlOperations.TransformLinksUrl(apiResponse.Links.Last);
+        apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
+        apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
+        apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
+        apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
+        apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
         var response = new TransactionsResponse(apiResponse, null);
 
         return (response, nonErrorMessages);

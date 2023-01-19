@@ -2,11 +2,16 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
 
@@ -18,7 +23,9 @@ public class BankRegistrationCleanup
         ILogger logger)
     {
         IQueryable<BankRegistration> entityList =
-            postgreSqlDbContext.Set<BankRegistration>();
+            postgreSqlDbContext
+                .BankRegistration
+                .Include(x => x.BankNavigation);
 
         foreach (BankRegistration bankRegistration in entityList)
         {
@@ -74,6 +81,108 @@ public class BankRegistrationCleanup
                     $"{nameof(bankRegistration.OtherRedirectUris)} as part of database cleanup.";
                 logger.LogInformation(message);
             }
+
+            // Update Lloyds custom behaviour
+            if (bankRegistration.BankRegistrationGroup is BankRegistrationGroup.Lloyds_Production)
+            {
+                bool? idTokenNonceClaimIsPreviousValue =
+                    bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentAuthGet
+                        ?.IdTokenNonceClaimIsPreviousValue;
+                bool? responseLinksOmitId = bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentPost
+                    ?.ResponseLinksOmitId;
+                var changeMade = false;
+
+                CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
+
+                if (idTokenNonceClaimIsPreviousValue is null)
+                {
+                    newCustomBehaviour.AccountAccessConsentAuthGet ??=
+                        new ConsentAuthGetCustomBehaviour();
+                    newCustomBehaviour.AccountAccessConsentAuthGet
+                        .IdTokenNonceClaimIsPreviousValue = true;
+                    changeMade = true;
+                }
+
+                if (responseLinksOmitId is null)
+                {
+                    newCustomBehaviour.AccountAccessConsentPost ??=
+                        new AccountAccessConsentPostCustomBehaviour();
+                    newCustomBehaviour.AccountAccessConsentPost.ResponseLinksOmitId = true;
+                    changeMade = true;
+                }
+
+                if (changeMade)
+                {
+                    bankRegistration.BankNavigation.CustomBehaviour = newCustomBehaviour;
+                    string message =
+                        $"In its database record, BankRegistration with ID {bankRegistration.Id} and BankRegistrationGroup {bankRegistration.BankRegistrationGroup} specifies " +
+                        $"use of bank with ID {bankRegistration.BankId}. ";
+                    message +=
+                        "The custom_behaviour field of this bank record has been updated " +
+                        "as part of database cleanup.";
+                    logger.LogInformation(message);
+                }
+            }
+
+            // Update NatWest custom behaviour
+            if (bankRegistration.BankRegistrationGroup is BankRegistrationGroup.NatWest_NatWestProduction
+                or BankRegistrationGroup.NatWest_RoyalBankOfScotlandProduction
+                or BankRegistrationGroup.NatWest_UlsterBankNiProduction)
+            {
+                Acr? idTokenAcrClaim =
+                    bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentAuthGet?.IdTokenAcrClaim;
+                Acr? idTokenAcrClaim2 =
+                    bankRegistration.BankNavigation.CustomBehaviour?.AuthCodeGrantPost?.IdTokenAcrClaim;
+                var changeMade = false;
+
+                CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
+                if (idTokenAcrClaim is null)
+                {
+                    newCustomBehaviour.AccountAccessConsentAuthGet ??=
+                        new ConsentAuthGetCustomBehaviour();
+                    newCustomBehaviour.AccountAccessConsentAuthGet.IdTokenAcrClaim =
+                        Acr.Ca;
+                    changeMade = true;
+                }
+
+                if (idTokenAcrClaim2 is null)
+                {
+                    newCustomBehaviour.AuthCodeGrantPost ??=
+                        new GrantPostCustomBehaviour();
+                    newCustomBehaviour.AuthCodeGrantPost.IdTokenAcrClaim = Acr.Ca;
+                    changeMade = true;
+                }
+
+                if (changeMade)
+                {
+                    bankRegistration.BankNavigation.CustomBehaviour = newCustomBehaviour;
+                    string message =
+                        $"In its database record, BankRegistration with ID {bankRegistration.Id} and BankRegistrationGroup {bankRegistration.BankRegistrationGroup} specifies " +
+                        $"use of bank with ID {bankRegistration.BankId}. ";
+                    message +=
+                        "The custom_behaviour field of this bank record has been updated " +
+                        "as part of database cleanup.";
+                    logger.LogInformation(message);
+                }
+            }
         }
+    }
+
+    private static CustomBehaviourClass GetNewCustomBehaviour(BankRegistration bankRegistration)
+    {
+        CustomBehaviourClass newCustomBehaviour;
+        if (bankRegistration.BankNavigation.CustomBehaviour is null)
+        {
+            newCustomBehaviour = new CustomBehaviourClass();
+        }
+        else
+        {
+            newCustomBehaviour = JsonConvert.DeserializeObject<CustomBehaviourClass>(
+                JsonConvert.SerializeObject(
+                    bankRegistration.BankNavigation.CustomBehaviour,
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }))!;
+        }
+
+        return newCustomBehaviour;
     }
 }
