@@ -165,6 +165,36 @@ public class BankRegistrationCleanup
                     logger.LogInformation(message);
                 }
             }
+
+            // Update Barclays custom behaviour
+            if (bankRegistration.BankRegistrationGroup is BankRegistrationGroup.Barclays_Production)
+            {
+                bool? responseLinksOmitId = bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentPost
+                    ?.ResponseLinksOmitId;
+                var changeMade = false;
+
+                CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
+
+                if (responseLinksOmitId is null)
+                {
+                    newCustomBehaviour.AccountAccessConsentPost ??=
+                        new AccountAccessConsentPostCustomBehaviour();
+                    newCustomBehaviour.AccountAccessConsentPost.ResponseLinksOmitId = true;
+                    changeMade = true;
+                }
+
+                if (changeMade)
+                {
+                    bankRegistration.BankNavigation.CustomBehaviour = newCustomBehaviour;
+                    string message =
+                        $"In its database record, BankRegistration with ID {bankRegistration.Id} and BankRegistrationGroup {bankRegistration.BankRegistrationGroup} specifies " +
+                        $"use of bank with ID {bankRegistration.BankId}. ";
+                    message +=
+                        "The custom_behaviour field of this bank record has been updated " +
+                        "as part of database cleanup.";
+                    logger.LogInformation(message);
+                }
+            }
         }
     }
 

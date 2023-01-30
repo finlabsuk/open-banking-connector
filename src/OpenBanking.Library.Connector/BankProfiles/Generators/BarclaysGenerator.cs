@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -100,6 +101,14 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     return externalApiRequest;
                 },
                 UseGetPartyEndpoint = false
+            },
+            CustomBehaviour = new CustomBehaviourClass
+            {
+                AccountAccessConsentPost =
+                    new AccountAccessConsentPostCustomBehaviour
+                    {
+                        ResponseLinksOmitId = true
+                    }
             }
         };
     }

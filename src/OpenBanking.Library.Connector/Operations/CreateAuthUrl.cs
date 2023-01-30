@@ -72,7 +72,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
                         }))
                 .AppendLine("#### JWT (Request Object)")
                 .Append(requestObjectJwt);
-            instrumentationClient.Info(requestTraceSb.ToString());
+            instrumentationClient.Trace(requestTraceSb.ToString());
 
             // Create auth URL
             var keyValuePairs = new Dictionary<string, string>
