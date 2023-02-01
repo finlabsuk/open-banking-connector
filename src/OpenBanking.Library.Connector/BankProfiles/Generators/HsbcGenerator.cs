@@ -71,7 +71,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators
                         : null,
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        ClientIdIssuedAtClaimResponseJsonConverter = DateTimeOffsetConverter.UnixMilliSecondsJsonFormat,
+                        ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
                         AudClaim = issuerUrl,
                         UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                     },

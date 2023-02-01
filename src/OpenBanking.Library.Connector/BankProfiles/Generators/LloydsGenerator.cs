@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
@@ -132,6 +133,12 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : new AccountAccessConsentPostCustomBehaviour
                     {
                         ResponseLinksOmitId = true
+                    },
+                DirectDebitGet = bank is LloydsBank.Sandbox
+                    ? null
+                    : new DirectDebitGetCustomBehaviour
+                    {
+                        PreviousPaymentDateTimeJsonConverter = DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
                     }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings

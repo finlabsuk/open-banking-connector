@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models
@@ -79,6 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </summary>
+        [JsonConverter(
+            typeof(DateTimeOffsetNullableConverter),
+            JsonConverterLabel.DirectDebitPreviousPaymentDateTime)]
         public DateTimeOffset? PreviousPaymentDateTime { get; }
         /// <summary> Regularity with which direct debit instructions are to be created and processed. </summary>
         public string Frequency { get; }

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -90,6 +91,8 @@ public class BankRegistrationCleanup
                         ?.IdTokenNonceClaimIsPreviousValue;
                 bool? responseLinksOmitId = bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentPost
                     ?.ResponseLinksOmitId;
+                DateTimeOffsetConverterEnum? previousPaymentDateTimeJsonConverter = bankRegistration.BankNavigation.CustomBehaviour?.DirectDebitGet
+                    ?.PreviousPaymentDateTimeJsonConverter;
                 var changeMade = false;
 
                 CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
@@ -108,6 +111,15 @@ public class BankRegistrationCleanup
                     newCustomBehaviour.AccountAccessConsentPost ??=
                         new AccountAccessConsentPostCustomBehaviour();
                     newCustomBehaviour.AccountAccessConsentPost.ResponseLinksOmitId = true;
+                    changeMade = true;
+                }
+
+                if (previousPaymentDateTimeJsonConverter is null)
+                {
+                    newCustomBehaviour.DirectDebitGet ??=
+                        new DirectDebitGetCustomBehaviour();
+                    newCustomBehaviour.DirectDebitGet.PreviousPaymentDateTimeJsonConverter =
+                        DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull;
                     changeMade = true;
                 }
 

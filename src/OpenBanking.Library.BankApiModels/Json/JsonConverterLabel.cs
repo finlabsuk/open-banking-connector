@@ -15,6 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
     public enum JsonConverterLabel
     {
         DcrRegClientIdIssuedAt,
-        DcrRegScope
+        DcrRegScope,
+        DirectDebitPreviousPaymentDateTime
     }
 }

@@ -169,7 +169,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
                     {
                         AuthorisationType = PaymentInitiationModelsPublic
                             .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
-                        CompletionDateTime = DateTime.UtcNow
+                        CompletionDateTime = DateTimeOffset.UtcNow
                     },
                     SCASupportData = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataSCASupportData
                     {

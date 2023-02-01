@@ -17,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
     public class BankRegistrationPostCustomBehaviour
     {
         // JsonConverter to use for ClientIdIssuedAt claim response
-        public DateTimeOffsetConverter? ClientIdIssuedAtClaimResponseJsonConverter { get; set; }
+        public DateTimeOffsetUnixConverterEnum? ClientIdIssuedAtClaimResponseJsonConverter { get; set; }
 
         // JsonConverter to use for scope claim
         public DelimitedStringConverterOptions? ScopeClaimJsonConverter { get; set; }

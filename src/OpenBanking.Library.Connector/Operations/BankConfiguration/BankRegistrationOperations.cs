@@ -658,8 +658,9 @@ internal class
         {
             var optionsDict = new Dictionary<JsonConverterLabel, int>();
 
-            DateTimeOffsetConverter? clientIdIssuedAtClaimResponseJsonConverter = bankRegistrationPostCustomBehaviour
-                .ClientIdIssuedAtClaimResponseJsonConverter;
+            DateTimeOffsetUnixConverterEnum? clientIdIssuedAtClaimResponseJsonConverter =
+                bankRegistrationPostCustomBehaviour
+                    .ClientIdIssuedAtClaimResponseJsonConverter;
             if (clientIdIssuedAtClaimResponseJsonConverter is not null)
             {
                 optionsDict.Add(

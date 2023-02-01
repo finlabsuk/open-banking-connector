@@ -32,5 +32,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
         // Account and Transaction API endpoints
         public AccountAccessConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
+
+        public DirectDebitGetCustomBehaviour? DirectDebitGet { get; set; }
     }
 }

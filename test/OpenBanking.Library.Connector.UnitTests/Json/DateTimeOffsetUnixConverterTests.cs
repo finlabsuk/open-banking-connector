@@ -78,7 +78,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Json
                 // Set up converter and JSON serialiser settings
                 var converter = new DateTimeOffsetUnixConverter(JsonConverterLabel.DcrRegScope);
                 var optionsDict = new Dictionary<JsonConverterLabel, int>
-                    { [JsonConverterLabel.DcrRegScope] = (int) DateTimeOffsetConverter.UnixSecondsJsonFormat };
+                    { [JsonConverterLabel.DcrRegScope] = (int) DateTimeOffsetUnixConverterEnum.UnixSecondsJsonFormat };
                 var jsonSerializerSettings = new JsonSerializerSettings
                 {
                     Context = new StreamingContext(StreamingContextStates.All, optionsDict)

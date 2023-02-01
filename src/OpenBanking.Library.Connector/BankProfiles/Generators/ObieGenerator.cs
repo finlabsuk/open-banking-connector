@@ -45,7 +45,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
                         ClientIdIssuedAtClaimResponseJsonConverter =
-                            DateTimeOffsetConverter.UnixMilliSecondsJsonFormat
+                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
                     }
                 },
                 BankConfigurationApiSettings = new BankConfigurationApiSettings

@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Runtime.Serialization;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -11,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAnd
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
@@ -49,6 +52,8 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
                     bankTokenIssuerClaim) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
+        DirectDebitGetCustomBehaviour?
+            directDebitGetCustomBehaviour = bankRegistration.BankNavigation.CustomBehaviour?.DirectDebitGet;
 
         // Get access token
         string accessToken =
@@ -72,7 +77,25 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
         }.Uri;
 
         // Get external object from bank API
-        JsonSerializerSettings? jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
+        JsonSerializerSettings jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
+        if (directDebitGetCustomBehaviour is not null)
+        {
+            var optionsDict = new Dictionary<JsonConverterLabel, int>();
+            DateTimeOffsetConverterEnum? previousPaymentDateTimeJsonConverter =
+                directDebitGetCustomBehaviour.PreviousPaymentDateTimeJsonConverter;
+            if (previousPaymentDateTimeJsonConverter is not null)
+            {
+                optionsDict.Add(
+                    JsonConverterLabel.DirectDebitPreviousPaymentDateTime,
+                    (int) previousPaymentDateTimeJsonConverter);
+            }
+
+            jsonSerializerSettings.Context =
+                new StreamingContext(
+                    StreamingContextStates.All,
+                    optionsDict);
+        }
+
         IApiGetRequests<OBReadDirectDebit2> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {

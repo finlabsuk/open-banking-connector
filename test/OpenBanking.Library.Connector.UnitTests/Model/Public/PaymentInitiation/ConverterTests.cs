@@ -87,7 +87,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                         {
                             AuthorisationType = PaymentInitiationModelsPublic
                                 .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
-                            CompletionDateTime = DateTime.UtcNow
+                            CompletionDateTime = DateTimeOffset.UtcNow
                         },
                         SCASupportData = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataSCASupportData
                         {
@@ -245,7 +245,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
                 {
                     AuthorisationType = PaymentInitiationModelsPublic
                         .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
-                    CompletionDateTime = DateTime.UtcNow
+                    CompletionDateTime = DateTimeOffset.UtcNow
                 };
 
             _apiVariantMapper.Map(
