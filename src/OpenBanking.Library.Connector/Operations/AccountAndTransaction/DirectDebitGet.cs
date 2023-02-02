@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -71,7 +72,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
         }.Uri;
 
         // Get external object from bank API
-        JsonSerializerSettings? jsonSerializerSettings = null;
+        JsonSerializerSettings? jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
         IApiGetRequests<OBReadDirectDebit2> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {

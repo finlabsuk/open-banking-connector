@@ -77,6 +77,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
             _httpClient = httpClient.ArgNotNull(nameof(httpClient));
         }
 
+        public static JsonSerializerSettings GetDefaultJsonSerializerSettings => new()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            DateParseHandling = DateParseHandling.None
+        };
 
         public async Task<T> SendExpectingJsonResponseAsync<T>(
             HttpRequestMessage request,
