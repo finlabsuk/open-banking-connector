@@ -59,16 +59,20 @@ public class NatWestUiMethods : IBankUiMethods
             await page.ClickAsync(textBoxes[elements.Count - 1]); // seems necessary
             await page.ClickAsync("#login-button");
 
-            // Select accounts then confirm access
-            string selector = _natWestBank switch
+            if (consentVariety is ConsentVariety.DomesticPaymentConsent)
             {
-                NatWestBank.NatWestSandbox => "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
-                NatWestBank.RoyalBankOfScotlandSandbox =>
-                    "#account-list > .row-element:nth-child(2) > dl > .action > button",
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            await page.ClickAsync(selector);
-            await page.ClickAsync("#approveButton");
+                // Select accounts then confirm access
+                string selector = _natWestBank switch
+                {
+                    NatWestBank.NatWestSandbox =>
+                        "#account-list > li:nth-child(2) > dl > dd.action.col-size-1 > button",
+                    NatWestBank.RoyalBankOfScotlandSandbox =>
+                        "#account-list > .row-element:nth-child(2) > dl > .action > button",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                await page.ClickAsync(selector);
+                await page.ClickAsync("#approveButton");
+            }
         }
     }
 }
