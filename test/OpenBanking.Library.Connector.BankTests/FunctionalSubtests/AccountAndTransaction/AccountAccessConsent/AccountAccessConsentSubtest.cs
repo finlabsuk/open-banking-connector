@@ -53,28 +53,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             IRequestBuilder requestBuilder = requestBuilderIn;
 
             // Create AccountAndTransactionApi
-            var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
-            {
-                BankProfile = bankProfile.BankProfileEnum,
-                BankId = Guid.Empty,
-                ApiVersion =
-                    bankProfile.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
-                    throw new InvalidOperationException("No AccountAndTransactionApi specified in bank profile."),
-                BaseUrl = bankProfile.AccountAndTransactionApi.BaseUrl
-            };
-            await configFluentRequestLogging
-                .AppendToPath("accountAndTransactionApi")
-                .AppendToPath("postRequest")
-                .WriteFile(accountAndTransactionApiRequest);
-            accountAndTransactionApiRequest.BankId = bankId;
-            accountAndTransactionApiRequest.Reference = testNameUnique;
-            accountAndTransactionApiRequest.CreatedBy = modifiedBy;
-
+            AccountAndTransactionApiRequest accountAndTransactionApiRequest =
+                await GetAccountAndTransactionApiRequest(
+                    bankProfile,
+                    bankId,
+                    testNameUnique,
+                    modifiedBy,
+                    configFluentRequestLogging);
             AccountAndTransactionApiResponse accountAndTransactionApiResponse =
                 await requestBuilder
                     .BankConfiguration
                     .AccountAndTransactionApis
                     .CreateLocalAsync(accountAndTransactionApiRequest);
+
+            // Checks
             accountAndTransactionApiResponse.Should().NotBeNull();
             accountAndTransactionApiResponse.Warnings.Should().BeNull();
             Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Id;
@@ -91,49 +83,37 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             accountAndTransactionApiReadResponse.Warnings.Should().BeNull();
 
             // Create AccountAccessConsent
-            var accountAccessConsentRequest =
-                new AccountAccessConsentRequest
-                {
-                    BankProfile = bankProfile.BankProfileEnum,
-                    BankRegistrationId = default, // substitute logging placeholder
-                    AccountAndTransactionApiId = default, // substitute logging placeholder
-                    TemplateRequest = new AccountAccessConsentTemplateRequest
-                    {
-                        Type = AccountAccessConsentSubtestHelper
-                            .GetAccountAccessConsentTemplateType(subtestEnum)
-                    }
-                };
+            (AccountAccessConsentRequest accountAccessConsentRequest,
+                IList<OBReadConsent1DataPermissionsEnum> requestedPermissions) = await GetAccountAccessConsentRequest(
+                subtestEnum,
+                bankProfile,
+                bankRegistrationId,
+                testNameUnique,
+                modifiedBy,
+                aispFluentRequestLogging,
+                accountAndTransactionApiId);
+            AccountAccessConsentCreateResponse accountAccessConsentCreateResp =
+                await requestBuilder
+                    .AccountAndTransaction
+                    .AccountAccessConsents
+                    .CreateAsync(accountAccessConsentRequest);
 
-            accountAccessConsentRequest.ExternalApiRequest =
-                AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
-                    accountAccessConsentRequest.ExternalApiRequest,
-                    accountAccessConsentRequest.TemplateRequest,
-                    bankProfile); // Resolve for fuller logging
-            IList<OBReadConsent1DataPermissionsEnum> requestedPermissions =
-                accountAccessConsentRequest.ExternalApiRequest.Data.Permissions;
-            DateTimeOffset?
-                expDateTime =
-                    accountAccessConsentRequest.ExternalApiRequest!.Data
-                        .ExpirationDateTime; // ExternalApiRequest always non-null in low-level request
-            if (expDateTime is not null)
-            {
-                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
-                    default(DateTimeOffset); // substitute logging placeholder
-            }
+            // Checks
+            accountAccessConsentCreateResp.Should().NotBeNull();
+            accountAccessConsentCreateResp.Warnings.Should().BeNull();
+            accountAccessConsentCreateResp.ExternalApiResponse.Should().NotBeNull();
 
-            await aispFluentRequestLogging
-                .AppendToPath("accountAccessConsent")
-                .AppendToPath("postRequest")
-                .WriteFile(accountAccessConsentRequest);
-            accountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
-            accountAccessConsentRequest.AccountAndTransactionApiId =
-                accountAndTransactionApiId; // remove logging placeholder
-            if (expDateTime is not null)
-            {
-                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
-                    expDateTime; // remove logging placeholder
-            }
+            // Delete AccountAccessConsent
+            ObjectDeleteResponse accountAccessConsentDeleteResp = await requestBuilder
+                .AccountAndTransaction
+                .AccountAccessConsents
+                .DeleteAsync(accountAccessConsentCreateResp.Id, modifiedBy);
 
+            // Checks
+            accountAccessConsentDeleteResp.Should().NotBeNull();
+            accountAccessConsentDeleteResp.Warnings.Should().BeNull();
+
+            // Use existing AccountAccessConsent for further testing (to avoid creating orphan object at bank if test terminates)
             if (testData2.AccountAccessConsentExternalApiId is not null)
             {
                 accountAccessConsentRequest.ExternalApiObject =
@@ -158,225 +138,199 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                 ModifiedBy = modifiedBy
                             }
                     };
-            }
 
-            accountAccessConsentRequest.Reference = testNameUnique;
-            accountAccessConsentRequest.CreatedBy = modifiedBy;
-            AccountAccessConsentCreateResponse accountAccessConsentResp =
-                await requestBuilder
-                    .AccountAndTransaction
-                    .AccountAccessConsents
-                    .CreateAsync(accountAccessConsentRequest);
-
-            // Checks
-            accountAccessConsentResp.Should().NotBeNull();
-            accountAccessConsentResp.Warnings.Should().BeNull();
-            if (testData2.AccountAccessConsentExternalApiId is null)
-            {
-                accountAccessConsentResp.ExternalApiResponse.Should().NotBeNull();
-            }
-
-            Guid accountAccessConsentId = accountAccessConsentResp.Id;
-
-            // GET /account access consents/{consentId}
-            AccountAccessConsentCreateResponse accountAccessConsentGetResp =
-                await requestBuilder
-                    .AccountAndTransaction
-                    .AccountAccessConsents
-                    .ReadAsync(accountAccessConsentId, modifiedBy);
-
-            // Checks
-            accountAccessConsentGetResp.Should().NotBeNull();
-            accountAccessConsentGetResp.Warnings.Should().BeNull();
-            accountAccessConsentGetResp.ExternalApiResponse.Should().NotBeNull();
-
-            // ObjectDeleteResponse accountAccessConsentResp4 = await requestBuilder
-            //     .AccountAndTransaction
-            //     .AccountAccessConsents
-            //     .DeleteAsync(accountAccessConsentId, modifiedBy, true);
-
-            // POST auth context
-            var authContextRequest = new AccountAccessConsentAuthContext
-            {
-                AccountAccessConsentId = accountAccessConsentId,
-                Reference = testNameUnique + "_AccountAccessConsent",
-                CreatedBy = modifiedBy
-            };
-            AccountAccessConsentAuthContextCreateResponse authContextResponse =
-                await requestBuilder
-                    .AccountAndTransaction
-                    .AccountAccessConsents
-                    .AuthContexts
-                    .CreateLocalAsync(authContextRequest);
-
-            // Checks
-            authContextResponse.Should().NotBeNull();
-            authContextResponse.Warnings.Should().BeNull();
-            authContextResponse.AuthUrl.Should().NotBeNull();
-            Guid authContextId = authContextResponse.Id;
-            string authUrl = authContextResponse.AuthUrl!;
-
-            // GET auth context
-            AccountAccessConsentAuthContextReadResponse authContextResponse2 =
-                await requestBuilder.AccountAndTransaction
-                    .AccountAccessConsents
-                    .AuthContexts
-                    .ReadLocalAsync(authContextId);
-
-            // Checks
-            authContextResponse2.Should().NotBeNull();
-            authContextResponse2.Warnings.Should().BeNull();
-
-            // Consent authorisation
-            if (consentAuth is not null)
-            {
-                // Authorise consent in UI via Playwright
-                if (testData2.AccountAccessConsentRefreshToken is null)
-                {
-                    async Task<bool> AuthIsComplete()
-                    {
-                        AccountAccessConsentCreateResponse consentResponse =
-                            await requestBuilder
-                                .AccountAndTransaction
-                                .AccountAccessConsents
-                                .ReadAsync(
-                                    accountAccessConsentId,
-                                    modifiedBy,
-                                    false);
-                        return consentResponse.Created < consentResponse.AuthContextModified;
-                    }
-
-                    await consentAuth.AuthoriseAsync(
-                        authUrl,
-                        bankProfile,
-                        ConsentVariety.AccountAccessConsent,
-                        bankUser,
-                        AuthIsComplete);
-                }
-
-                // Refresh scope to ensure user token acquired following consent is available
-                using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
-                IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
-
-                // GET /accounts
-                AccountsResponse accountsResp =
-                    await requestBuilderNew
+                // Create AccountAccessConsent using existing external API consent
+                AccountAccessConsentCreateResponse accountAccessConsentCreateResp2 =
+                    await requestBuilder
                         .AccountAndTransaction
-                        .Accounts
-                        .ReadAsync(
-                            accountAccessConsentId,
-                            null,
-                            modifiedBy);
+                        .AccountAccessConsents
+                        .CreateAsync(accountAccessConsentRequest);
 
                 // Checks
-                accountsResp.Should().NotBeNull();
-                accountsResp.Warnings.Should().BeNull();
-                accountsResp.ExternalApiResponse.Should().NotBeNull();
+                accountAccessConsentCreateResp2.Should().NotBeNull();
+                accountAccessConsentCreateResp2.Warnings.Should().BeNull();
+                accountAccessConsentCreateResp2.ExternalApiResponse.Should().BeNull();
 
-                foreach (OBAccount6 account in accountsResp.ExternalApiResponse.Data.Account)
+                Guid accountAccessConsentId = accountAccessConsentCreateResp2.Id;
+
+                // GET /account access consents/{consentId}
+                AccountAccessConsentCreateResponse accountAccessConsentGetResp =
+                    await requestBuilder
+                        .AccountAndTransaction
+                        .AccountAccessConsents
+                        .ReadAsync(accountAccessConsentId, modifiedBy);
+
+                // Checks
+                accountAccessConsentGetResp.Should().NotBeNull();
+                accountAccessConsentGetResp.Warnings.Should().BeNull();
+                accountAccessConsentGetResp.ExternalApiResponse.Should().NotBeNull();
+
+                // ObjectDeleteResponse accountAccessConsentDeleteResp2 = await requestBuilder
+                //     .AccountAndTransaction
+                //     .AccountAccessConsents
+                //     .DeleteAsync(accountAccessConsentId, modifiedBy, true);
+
+                // POST auth context
+                var authContextRequest = new AccountAccessConsentAuthContext
                 {
-                    string externalAccountId = account.AccountId;
+                    AccountAccessConsentId = accountAccessConsentId,
+                    Reference = testNameUnique + "_AccountAccessConsent",
+                    CreatedBy = modifiedBy
+                };
+                AccountAccessConsentAuthContextCreateResponse authContextResponse =
+                    await requestBuilder
+                        .AccountAndTransaction
+                        .AccountAccessConsents
+                        .AuthContexts
+                        .CreateLocalAsync(authContextRequest);
 
-                    // GET /accounts/{accountId}
-                    AccountsResponse accountsResp2 =
+                // Checks
+                authContextResponse.Should().NotBeNull();
+                authContextResponse.Warnings.Should().BeNull();
+                authContextResponse.AuthUrl.Should().NotBeNull();
+                
+                Guid authContextId = authContextResponse.Id;
+                string authUrl = authContextResponse.AuthUrl;
+
+                // GET auth context
+                AccountAccessConsentAuthContextReadResponse authContextResponse2 =
+                    await requestBuilder.AccountAndTransaction
+                        .AccountAccessConsents
+                        .AuthContexts
+                        .ReadLocalAsync(authContextId);
+
+                // Checks
+                authContextResponse2.Should().NotBeNull();
+                authContextResponse2.Warnings.Should().BeNull();
+
+                // Consent authorisation
+                if (consentAuth is not null)
+                {
+                    // Authorise consent in UI via Playwright
+                    if (testData2.AccountAccessConsentRefreshToken is null)
+                    {
+                        async Task<bool> AuthIsComplete()
+                        {
+                            AccountAccessConsentCreateResponse consentResponse =
+                                await requestBuilder
+                                    .AccountAndTransaction
+                                    .AccountAccessConsents
+                                    .ReadAsync(
+                                        accountAccessConsentId,
+                                        modifiedBy,
+                                        false);
+                            return consentResponse.Created < consentResponse.AuthContextModified;
+                        }
+
+                        await consentAuth.AuthoriseAsync(
+                            authUrl,
+                            bankProfile,
+                            ConsentVariety.AccountAccessConsent,
+                            bankUser,
+                            AuthIsComplete);
+                    }
+
+                    // Refresh scope to ensure user token acquired following consent is available
+                    using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
+                    IRequestBuilder requestBuilderNew = scopedRequestBuilderNew.RequestBuilder;
+
+                    // GET /accounts
+                    AccountsResponse accountsResp =
                         await requestBuilderNew
                             .AccountAndTransaction
                             .Accounts
                             .ReadAsync(
                                 accountAccessConsentId,
-                                externalAccountId,
+                                null,
                                 modifiedBy);
 
                     // Checks
-                    accountsResp2.Should().NotBeNull();
-                    accountsResp2.Warnings.Should().BeNull();
-                    accountsResp2.ExternalApiResponse.Should().NotBeNull();
+                    accountsResp.Should().NotBeNull();
+                    accountsResp.Warnings.Should().BeNull();
+                    accountsResp.ExternalApiResponse.Should().NotBeNull();
 
-                    // GET /accounts/{AccountId}/balances
-                    bool testGetBalances =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadBalances);
-                    if (testGetBalances)
+                    foreach (OBAccount6 account in accountsResp.ExternalApiResponse.Data.Account)
                     {
-                        BalancesResponse balancesResp =
+                        string externalAccountId = account.AccountId;
+
+                        // GET /accounts/{accountId}
+                        AccountsResponse accountsResp2 =
                             await requestBuilderNew
                                 .AccountAndTransaction
-                                .Balances
+                                .Accounts
                                 .ReadAsync(
                                     accountAccessConsentId,
                                     externalAccountId,
                                     modifiedBy);
 
                         // Checks
-                        balancesResp.Should().NotBeNull();
-                        balancesResp.Warnings.Should().BeNull();
-                        balancesResp.ExternalApiResponse.Should().NotBeNull();
-                    }
+                        accountsResp2.Should().NotBeNull();
+                        accountsResp2.Warnings.Should().BeNull();
+                        accountsResp2.ExternalApiResponse.Should().NotBeNull();
 
-                    // GET /accounts/{AccountId}/transactions
-                    bool hasReadTransactionsBasicOrDetail =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic) ||
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDetail);
-                    bool hasReadTransactionsCreditsOrDebits =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsCredits) ||
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDebits);
-                    bool testGetTransactions = hasReadTransactionsBasicOrDetail && hasReadTransactionsCreditsOrDebits;
-                    if (testGetTransactions)
-                    {
-                        const int maxPages = 30;
-                        var page = 0;
-                        string? queryString = null;
-                        do
+                        // GET /accounts/{AccountId}/balances
+                        bool testGetBalances =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadBalances);
+                        if (testGetBalances)
                         {
-                            TransactionsResponse transactionsResp =
+                            BalancesResponse balancesResp =
                                 await requestBuilderNew
                                     .AccountAndTransaction
-                                    .Transactions
+                                    .Balances
                                     .ReadAsync(
                                         accountAccessConsentId,
                                         externalAccountId,
-                                        null,
-                                        modifiedBy,
-                                        queryString);
+                                        modifiedBy);
 
                             // Checks
-                            transactionsResp.Should().NotBeNull();
-                            transactionsResp.Warnings.Should().BeNull();
-                            transactionsResp.ExternalApiResponse.Should().NotBeNull();
+                            balancesResp.Should().NotBeNull();
+                            balancesResp.Warnings.Should().BeNull();
+                            balancesResp.ExternalApiResponse.Should().NotBeNull();
+                        }
 
-                            // Update query string based on "Next" link
-                            queryString = transactionsResp.ExternalApiResponse.Links.Next;
-                            page++;
-                        } while (queryString is not null && page < maxPages);
-                    }
+                        // GET /accounts/{AccountId}/transactions
+                        bool hasReadTransactionsBasicOrDetail =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic) ||
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDetail);
+                        bool hasReadTransactionsCreditsOrDebits =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsCredits) ||
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadTransactionsDebits);
+                        bool testGetTransactions =
+                            hasReadTransactionsBasicOrDetail && hasReadTransactionsCreditsOrDebits;
+                        if (testGetTransactions)
+                        {
+                            const int maxPages = 30;
+                            var page = 0;
+                            string? queryString = null;
+                            do
+                            {
+                                TransactionsResponse transactionsResp =
+                                    await requestBuilderNew
+                                        .AccountAndTransaction
+                                        .Transactions
+                                        .ReadAsync(
+                                            accountAccessConsentId,
+                                            externalAccountId,
+                                            null,
+                                            modifiedBy,
+                                            queryString);
 
-                    // GET /party
-                    bool testReadPartyPsu =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadPartyPSU);
+                                // Checks
+                                transactionsResp.Should().NotBeNull();
+                                transactionsResp.Warnings.Should().BeNull();
+                                transactionsResp.ExternalApiResponse.Should().NotBeNull();
 
-                    if (testReadPartyPsu)
-                    {
-                        PartiesResponse partyResp =
-                            await requestBuilderNew
-                                .AccountAndTransaction
-                                .Parties
-                                .ReadAsync(
-                                    accountAccessConsentId,
-                                    null,
-                                    modifiedBy);
+                                // Update query string based on "Next" link
+                                queryString = transactionsResp.ExternalApiResponse.Links.Next;
+                                page++;
+                            } while (queryString is not null && page < maxPages);
+                        }
 
-                        // Checks
-                        partyResp.Should().NotBeNull();
-                        partyResp.Warnings.Should().BeNull();
-                        partyResp.ExternalApiResponse.Should().NotBeNull();
-                    }
+                        // GET /party
+                        bool testReadPartyPsu =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadPartyPSU);
 
-                    // GET /accounts/{AccountId}/party
-                    // GET /accounts/{AccountId}/parties
-                    bool testGetParties =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadParty);
-                    if (testGetParties)
-                    {
-                        if (bankProfile.AccountAndTransactionApiSettings.UseGetPartyEndpoint)
+                        if (testReadPartyPsu)
                         {
                             PartiesResponse partyResp =
                                 await requestBuilderNew
@@ -384,7 +338,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                                     .Parties
                                     .ReadAsync(
                                         accountAccessConsentId,
-                                        externalAccountId,
+                                        null,
                                         modifiedBy);
 
                             // Checks
@@ -393,67 +347,80 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                             partyResp.ExternalApiResponse.Should().NotBeNull();
                         }
 
-                        Parties2Response partiesResp =
+                        // GET /accounts/{AccountId}/party
+                        // GET /accounts/{AccountId}/parties
+                        bool testGetParties =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadParty);
+                        if (testGetParties)
+                        {
+                            if (bankProfile.AccountAndTransactionApiSettings.UseGetPartyEndpoint)
+                            {
+                                PartiesResponse partyResp =
+                                    await requestBuilderNew
+                                        .AccountAndTransaction
+                                        .Parties
+                                        .ReadAsync(
+                                            accountAccessConsentId,
+                                            externalAccountId,
+                                            modifiedBy);
+
+                                // Checks
+                                partyResp.Should().NotBeNull();
+                                partyResp.Warnings.Should().BeNull();
+                                partyResp.ExternalApiResponse.Should().NotBeNull();
+                            }
+
+                            Parties2Response partiesResp =
+                                await requestBuilderNew
+                                    .AccountAndTransaction
+                                    .Parties2
+                                    .ReadAsync(
+                                        accountAccessConsentId,
+                                        externalAccountId,
+                                        modifiedBy);
+
+                            // Checks
+                            partiesResp.Should().NotBeNull();
+                            partiesResp.Warnings.Should().BeNull();
+                            partiesResp.ExternalApiResponse.Should().NotBeNull();
+                        }
+
+                        // GET /accounts/{AccountId}/direct-debits
+                        bool testGetDirectDebits =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
+                        if (testGetDirectDebits)
+                        {
+                            DirectDebitsResponse directDebitsResp =
+                                await requestBuilderNew
+                                    .AccountAndTransaction
+                                    .DirectDebits
+                                    .ReadAsync(
+                                        accountAccessConsentId,
+                                        externalAccountId,
+                                        modifiedBy);
+
+                            // Checks
+                            directDebitsResp.Should().NotBeNull();
+                            directDebitsResp.Warnings.Should().BeNull();
+                            directDebitsResp.ExternalApiResponse.Should().NotBeNull();
+                        }
+
+                        // GET /accounts/{AccountId}/standing-orders
+                        StandingOrdersResponse standingOrdersResp =
                             await requestBuilderNew
                                 .AccountAndTransaction
-                                .Parties2
+                                .StandingOrders
                                 .ReadAsync(
                                     accountAccessConsentId,
                                     externalAccountId,
                                     modifiedBy);
 
                         // Checks
-                        partiesResp.Should().NotBeNull();
-                        partiesResp.Warnings.Should().BeNull();
-                        partiesResp.ExternalApiResponse.Should().NotBeNull();
+                        standingOrdersResp.Should().NotBeNull();
+                        standingOrdersResp.Warnings.Should().BeNull();
+                        standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
                     }
-
-                    // GET /accounts/{AccountId}/direct-debits
-                    bool testGetDirectDebits =
-                        requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
-                    if (testGetDirectDebits)
-                    {
-                        DirectDebitsResponse directDebitsResp =
-                            await requestBuilderNew
-                                .AccountAndTransaction
-                                .DirectDebits
-                                .ReadAsync(
-                                    accountAccessConsentId,
-                                    externalAccountId,
-                                    modifiedBy);
-
-                        // Checks
-                        directDebitsResp.Should().NotBeNull();
-                        directDebitsResp.Warnings.Should().BeNull();
-                        directDebitsResp.ExternalApiResponse.Should().NotBeNull();
-                    }
-
-                    // GET /accounts/{AccountId}/standing-orders
-                    StandingOrdersResponse standingOrdersResp =
-                        await requestBuilderNew
-                            .AccountAndTransaction
-                            .StandingOrders
-                            .ReadAsync(
-                                accountAccessConsentId,
-                                externalAccountId,
-                                modifiedBy);
-
-                    // Checks
-                    standingOrdersResp.Should().NotBeNull();
-                    standingOrdersResp.Warnings.Should().BeNull();
-                    standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
                 }
-
-                // Delete AccountAccessConsent
-                bool includeExternalApiOperation = testData2.AccountAccessConsentExternalApiId is null;
-                ObjectDeleteResponse accountAccessConsentResp3 = await requestBuilderNew
-                    .AccountAndTransaction
-                    .AccountAccessConsents
-                    .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation);
-
-                // Checks
-                accountAccessConsentResp3.Should().NotBeNull();
-                accountAccessConsentResp3.Warnings.Should().BeNull();
             }
 
             // Delete AccountAndTransactionApi
@@ -465,6 +432,92 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
             // Checks
             apiResponse.Should().NotBeNull();
             apiResponse.Warnings.Should().BeNull();
+        }
+
+        private static async Task<AccountAndTransactionApiRequest> GetAccountAndTransactionApiRequest(
+            BankProfile bankProfile,
+            Guid bankId,
+            string testNameUnique,
+            string modifiedBy,
+            FilePathBuilder configFluentRequestLogging)
+        {
+            var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
+            {
+                BankProfile = bankProfile.BankProfileEnum,
+                BankId = Guid.Empty,
+                ApiVersion =
+                    bankProfile.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
+                    throw new InvalidOperationException("No AccountAndTransactionApi specified in bank profile."),
+                BaseUrl = bankProfile.AccountAndTransactionApi.BaseUrl
+            };
+            await configFluentRequestLogging
+                .AppendToPath("accountAndTransactionApi")
+                .AppendToPath("postRequest")
+                .WriteFile(accountAndTransactionApiRequest);
+            accountAndTransactionApiRequest.BankId = bankId;
+            accountAndTransactionApiRequest.Reference = testNameUnique;
+            accountAndTransactionApiRequest.CreatedBy = modifiedBy;
+            return accountAndTransactionApiRequest;
+        }
+
+        private static async
+            Task<(AccountAccessConsentRequest accountAccessConsentRequest, IList<OBReadConsent1DataPermissionsEnum>
+                requestedPermissions)> GetAccountAccessConsentRequest(
+                AccountAccessConsentSubtestEnum subtestEnum,
+                BankProfile bankProfile,
+                Guid bankRegistrationId,
+                string testNameUnique,
+                string modifiedBy,
+                FilePathBuilder aispFluentRequestLogging,
+                Guid accountAndTransactionApiId)
+        {
+            var accountAccessConsentRequest =
+                new AccountAccessConsentRequest
+                {
+                    BankProfile = bankProfile.BankProfileEnum,
+                    BankRegistrationId = default, // substitute logging placeholder
+                    AccountAndTransactionApiId = default, // substitute logging placeholder
+                    TemplateRequest = new AccountAccessConsentTemplateRequest
+                    {
+                        Type = AccountAccessConsentSubtestHelper
+                            .GetAccountAccessConsentTemplateType(subtestEnum)
+                    }
+                };
+
+            accountAccessConsentRequest.ExternalApiRequest =
+                AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
+                    accountAccessConsentRequest.ExternalApiRequest,
+                    accountAccessConsentRequest.TemplateRequest,
+                    bankProfile); // Resolve for fuller logging
+            DateTimeOffset?
+                expDateTime =
+                    accountAccessConsentRequest.ExternalApiRequest!.Data
+                        .ExpirationDateTime; // ExternalApiRequest always non-null in low-level request
+            if (expDateTime is not null)
+            {
+                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                    default(DateTimeOffset); // substitute logging placeholder
+            }
+
+            await aispFluentRequestLogging
+                .AppendToPath("accountAccessConsent")
+                .AppendToPath("postRequest")
+                .WriteFile(accountAccessConsentRequest);
+            accountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
+            accountAccessConsentRequest.AccountAndTransactionApiId =
+                accountAndTransactionApiId; // remove logging placeholder
+            if (expDateTime is not null)
+            {
+                accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =
+                    expDateTime; // remove logging placeholder
+            }
+
+            accountAccessConsentRequest.Reference = testNameUnique; // remove logging placeholder
+            accountAccessConsentRequest.CreatedBy = modifiedBy; // remove logging placeholder
+
+            IList<OBReadConsent1DataPermissionsEnum> requestedPermissions =
+                accountAccessConsentRequest.ExternalApiRequest.Data.Permissions;
+            return (accountAccessConsentRequest, requestedPermissions);
         }
     }
 }
