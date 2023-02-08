@@ -197,7 +197,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         or NatWestBank.TheOne
                         or NatWestBank.NatWestOne
                         or NatWestBank.VirginOne =>
-                        "htpps://api.rbs.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/3.1.10
+                        "https://api.rbs.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/rbs/3.1.10
                     NatWestBank.UlsterBankNi
                         or NatWestBank.UlsterBankNiBankline
                         or NatWestBank.UlsterBankNiClearSpend =>
