@@ -43,7 +43,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration
         ///     At application start-up, apply pending migrations. Only supported
         ///     for database providers with migration support (i.e. only PostgreSql at this time).
         /// </summary>
-        public bool EnsureDatabaseMigrated { get; set; } = false;
+        public bool EnsureDatabaseMigrated { get; set; } = true;
 
         public string SettingsGroupName => "OpenBankingConnector:Database";
 
