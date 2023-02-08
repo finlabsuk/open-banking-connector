@@ -36,8 +36,7 @@ public class LloydsUiMethods : IBankUiMethods
             await page.Locator("[placeholder=\"Password\"]").FillAsync(bankUser.Password);
 
             // Next
-            await page.RunAndWaitForNavigationAsync(
-                async () => { await page.Locator("button:has-text(\"NEXT\")").ClickAsync(); });
+            await page.Locator("button:has-text(\"NEXT\")").ClickAsync();
 
             // Select account
             await page.Locator(

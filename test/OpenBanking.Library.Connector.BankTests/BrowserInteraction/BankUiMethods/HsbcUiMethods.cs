@@ -37,8 +37,7 @@ public class HsbcUiMethods : IBankUiMethods
             await page.Locator("input[name=\"otp\"]").FillAsync(bankUser.Password);
 
             // Click button:has-text("Continue")
-            await page.RunAndWaitForNavigationAsync(
-                async () => { await page.Locator("button:has-text(\"Continue\")").ClickAsync(); });
+            await page.Locator("button:has-text(\"Continue\")").ClickAsync();
 
             // Click .mat-checkbox-inner-container >> nth=0
             await page.WaitForTimeoutAsync(
@@ -54,8 +53,7 @@ public class HsbcUiMethods : IBankUiMethods
             //         Path = "screenshot.png",
             //         FullPage = true
             //     });
-            await page.RunAndWaitForNavigationAsync(
-                async () => { await page.Locator("button:has-text(\"Finish\")").ClickAsync(); });
+            await page.Locator("button:has-text(\"Finish\")").ClickAsync();
         }
     }
 }
