@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -45,9 +44,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             },
             GetFinancialId(bank),
             GetAccountAndTransactionApi(bank),
-            bank is BarclaysBank.Sandbox
-                ? GetPaymentInitiationApi(bank)
-                : null,
+            null,
             null,
             bank is not BarclaysBank.Sandbox)
         {
@@ -64,36 +61,69 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
-                    var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
-                    {
-                        OBReadConsent1DataPermissionsEnum.ReadPAN,
-                        OBReadConsent1DataPermissionsEnum.ReadPartyPSU
-                    };
+                    var elementsToRemove =
+                        new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                        {
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN,
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU
+                        };
                     if (bank is not BarclaysBank.Barclaycard)
                     {
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadOffers);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadStatementsBasic);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadStatementsDetail);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsDetail);
                     }
 
                     if (bank is BarclaysBank.Barclaycard or BarclaysBank.BarclaycardCommercialPayments
                         or BarclaysBank.Corporate)
                     {
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadParty);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadBeneficiariesBasic);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadBeneficiariesDetail);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadBeneficiariesBasic);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadBeneficiariesDetail);
                     }
 
                     if (bank is BarclaysBank.Barclaycard or BarclaysBank.BarclaycardCommercialPayments)
                     {
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersDetail);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadScheduledPaymentsBasic);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadScheduledPaymentsDetail);
-                        elementsToRemove.Add(OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadStandingOrdersBasic);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadStandingOrdersDetail);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadScheduledPaymentsBasic);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadScheduledPaymentsDetail);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
                     }
 
-                    foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
+                    if (bank is BarclaysBank.Sandbox)
+                    {
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadStandingOrdersBasic);
+                        elementsToRemove.Add(
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                .ReadStandingOrdersDetail);
+                    }
+
+                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                             elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);
                     }
@@ -108,7 +138,19 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     new AccountAccessConsentPostCustomBehaviour
                     {
                         ResponseLinksOmitId = true
+                    },
+                AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
+                    ? new ConsentAuthGetCustomBehaviour
+                    {
+                        DoNotValidateIdToken = true
                     }
+                    : null,
+                AuthCodeGrantPost = bank is BarclaysBank.Sandbox
+                    ? new GrantPostCustomBehaviour
+                    {
+                        DoNotValidateIdToken = true
+                    }
+                    : null
             }
         };
     }

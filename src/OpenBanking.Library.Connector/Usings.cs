@@ -6,7 +6,5 @@
 
 global using AccountAndTransactionModelsV3p1p7 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
-global using AccountAndTransactionModelsV3p1p10 =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 global using AccountAndTransactionModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;

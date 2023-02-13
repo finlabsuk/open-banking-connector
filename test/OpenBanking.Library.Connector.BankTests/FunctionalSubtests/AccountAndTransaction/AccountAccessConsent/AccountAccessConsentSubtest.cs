@@ -188,7 +188,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                 authContextResponse.Should().NotBeNull();
                 authContextResponse.Warnings.Should().BeNull();
                 authContextResponse.AuthUrl.Should().NotBeNull();
-                
+
                 Guid authContextId = authContextResponse.Id;
                 string authUrl = authContextResponse.AuthUrl;
 
@@ -406,19 +406,25 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
                         }
 
                         // GET /accounts/{AccountId}/standing-orders
-                        StandingOrdersResponse standingOrdersResp =
-                            await requestBuilderNew
-                                .AccountAndTransaction
-                                .StandingOrders
-                                .ReadAsync(
-                                    accountAccessConsentId,
-                                    externalAccountId,
-                                    modifiedBy);
+                        bool testGetStandingOrders =
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic) ||
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersDetail);
+                        if (testGetStandingOrders)
+                        {
+                            StandingOrdersResponse standingOrdersResp =
+                                await requestBuilderNew
+                                    .AccountAndTransaction
+                                    .StandingOrders
+                                    .ReadAsync(
+                                        accountAccessConsentId,
+                                        externalAccountId,
+                                        modifiedBy);
 
-                        // Checks
-                        standingOrdersResp.Should().NotBeNull();
-                        standingOrdersResp.Warnings.Should().BeNull();
-                        standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
+                            // Checks
+                            standingOrdersResp.Should().NotBeNull();
+                            standingOrdersResp.Warnings.Should().BeNull();
+                            standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
+                        }
                     }
                 }
             }

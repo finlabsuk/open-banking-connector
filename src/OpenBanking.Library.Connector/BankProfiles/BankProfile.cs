@@ -26,8 +26,7 @@ public delegate PaymentInitiationModelsPublic.OBWriteDomesticConsent4
         PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest);
 
 public delegate PaymentInitiationModelsPublic.OBWriteDomestic2
-    DomesticPaymentExternalApiRequestAdjustments(
-        PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest);
+    DomesticPaymentExternalApiRequestAdjustments(PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest);
 
 public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
     DomesticVrpConsentExternalApiRequestAdjustments(
@@ -39,9 +38,9 @@ public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
 
 public class BankConfigurationApiSettings
 {
-    private bool _allowNullRegistrationEndpoint;
-    private bool _useRegistrationDeleteEndpoint;
-    private bool _useRegistrationGetEndpoint;
+    private readonly bool _allowNullRegistrationEndpoint;
+    private readonly bool _useRegistrationDeleteEndpoint;
+    private readonly bool _useRegistrationGetEndpoint;
 
     /// <summary>
     ///     Bank registration group.
@@ -139,10 +138,9 @@ public class PaymentInitiationApiSettings
 
     public DomesticPaymentConsentExternalApiRequestAdjustments
         DomesticPaymentConsentExternalApiRequestAdjustments { get; set; } = x => x;
-    
+
     public DomesticPaymentExternalApiRequestAdjustments
         DomesticPaymentExternalApiRequestAdjustments { get; set; } = x => x;
-
 }
 
 public class VariableRecurringPaymentsApiSettings
@@ -151,10 +149,9 @@ public class VariableRecurringPaymentsApiSettings
 
     public DomesticVrpConsentExternalApiRequestAdjustments
         DomesticVrpConsentExternalApiRequestAdjustments { get; set; } = x => x;
-    
+
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;
-
 }
 
 /// <summary>
