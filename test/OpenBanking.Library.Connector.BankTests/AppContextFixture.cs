@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using MartinCostello.Logging.XUnit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -48,13 +49,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 
         private IHostBuilder CreateHostBuilder(string[] args) =>
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(p => p.AddXUnit(this))
+                .AddGenericHostConfiguration(args)
                 .ConfigureWebHostDefaults(
                     webBuilder =>
                     {
                         webBuilder
                             .UseStartup<Startup>();
-                    });
+                    })
+                .ConfigureLogging(p => p.AddXUnit(this));
 
         [CollectionDefinition("App context collection")]
         public class AppContextCollection : ICollectionFixture<AppContextFixture>
