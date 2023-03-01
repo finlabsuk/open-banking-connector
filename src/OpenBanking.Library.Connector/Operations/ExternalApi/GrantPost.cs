@@ -63,9 +63,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     idTokenDecoded,
                     jsonSerializerSettings) ??
                 throw new Exception("Can't deserialise ID token.");
-            Acr expectedAcr =
-                consentAuthGetCustomBehaviour?.IdTokenAcrClaim
-                ?? (supportsSca ? Acr.Sca : Acr.Ca);
+            bool doNotValidateIdTokenAcrClaim =
+                consentAuthGetCustomBehaviour?.DoNotValidateIdTokenAcrClaim
+                ?? false;
             ValidateIdTokenCommon(
                 idToken,
                 bankIssuerUrl,
@@ -73,7 +73,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 externalApiConsentId,
                 expectedNonce,
                 supportsSca,
-                expectedAcr);
+                !doNotValidateIdTokenAcrClaim);
 
             // Validate ID token subject claim
             string? outputExternalApiUserId = externalApiUserId; // unchanged by default
@@ -352,7 +352,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
             string externalApiConsentId,
             string expectedNonce,
             bool supportsSca,
-            Acr expectedAcr)
+            bool validateAcr)
         {
             if (idToken.Exp < DateTimeOffset.UtcNow)
             {
@@ -374,7 +374,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 throw new Exception("Auth time is null.");
             }
 
-            if (supportsSca && idToken.Acr != expectedAcr)
+            if (supportsSca &&
+                validateAcr &&
+                idToken.Acr is not Acr.Sca)
             {
                 throw new Exception("Acr from ID token does not match expected Acr.");
             }
@@ -438,9 +440,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                     jsonSerializerSettings) ??
                 throw new Exception("Can't deserialise ID token.");
 
-            Acr expectedAcr =
-                grantPostCustomBehaviour?.IdTokenAcrClaim
-                ?? (supportsSca ? Acr.Sca : Acr.Ca);
+            bool doNotValidateIdTokenAcrClaim =
+                grantPostCustomBehaviour?.DoNotValidateIdTokenAcrClaim
+                ?? false;
+
             ValidateIdTokenCommon(
                 idToken,
                 bankIssuerUrl,
@@ -448,7 +451,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
                 externalApiConsentId,
                 expectedNonce,
                 supportsSca,
-                expectedAcr);
+                !doNotValidateIdTokenAcrClaim);
 
             // Validate ID token subject claim
             switch (idTokenSubClaimType)

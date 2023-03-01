@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -110,13 +108,15 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
-                    var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
-                    {
-                        OBReadConsent1DataPermissionsEnum.ReadParty,
-                        OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
-                        OBReadConsent1DataPermissionsEnum.ReadPAN
-                    };
-                    foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
+                    var elementsToRemove =
+                        new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                        {
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty,
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
+                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN
+                        };
+                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                             elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);
                     }
@@ -154,11 +154,11 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                                 "https://secure1.ulsterbank.co.uk",
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                         },
-                        IdTokenAcrClaim = Acr.Ca
+                        DoNotValidateIdTokenAcrClaim = true
                     },
                     AuthCodeGrantPost = new GrantPostCustomBehaviour
                     {
-                        IdTokenAcrClaim = Acr.Ca
+                        DoNotValidateIdTokenAcrClaim = true
                     }
                 }
         };

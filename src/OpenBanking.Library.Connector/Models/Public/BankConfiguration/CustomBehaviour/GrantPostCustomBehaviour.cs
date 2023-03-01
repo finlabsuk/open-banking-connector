@@ -12,5 +12,10 @@ public class GrantPostCustomBehaviour
 
     public bool? DoNotValidateScopeResponse { get; set; }
 
+    /// <summary>
+    ///     Deprecated
+    /// </summary>
     public Acr? IdTokenAcrClaim { get; set; }
+
+    public bool? DoNotValidateIdTokenAcrClaim { get; set; }
 }

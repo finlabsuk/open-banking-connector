@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -89,10 +88,12 @@ public class BankRegistrationCleanup
                 bool? idTokenNonceClaimIsPreviousValue =
                     bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentAuthGet
                         ?.IdTokenNonceClaimIsPreviousValue;
-                bool? responseLinksOmitId = bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentPost
-                    ?.ResponseLinksOmitId;
-                DateTimeOffsetConverterEnum? previousPaymentDateTimeJsonConverter = bankRegistration.BankNavigation.CustomBehaviour?.DirectDebitGet
-                    ?.PreviousPaymentDateTimeJsonConverter;
+                bool? responseLinksOmitId =
+                    bankRegistration.BankNavigation.CustomBehaviour?
+                        .AccountAccessConsentPost?.ResponseLinksOmitId;
+                DateTimeOffsetConverterEnum? previousPaymentDateTimeJsonConverter =
+                    bankRegistration.BankNavigation.CustomBehaviour?
+                        .DirectDebitGet?.PreviousPaymentDateTimeJsonConverter;
                 var changeMade = false;
 
                 CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
@@ -141,27 +142,29 @@ public class BankRegistrationCleanup
                 or BankRegistrationGroup.NatWest_RoyalBankOfScotlandProduction
                 or BankRegistrationGroup.NatWest_UlsterBankNiProduction)
             {
-                Acr? idTokenAcrClaim =
-                    bankRegistration.BankNavigation.CustomBehaviour?.AccountAccessConsentAuthGet?.IdTokenAcrClaim;
-                Acr? idTokenAcrClaim2 =
-                    bankRegistration.BankNavigation.CustomBehaviour?.AuthCodeGrantPost?.IdTokenAcrClaim;
+                bool? doNotValidateIdTokenAcrClaim =
+                    bankRegistration.BankNavigation.CustomBehaviour?
+                        .AccountAccessConsentAuthGet?.DoNotValidateIdTokenAcrClaim;
+                bool? doNotValidateIdTokenAcrClaim2 =
+                    bankRegistration.BankNavigation.CustomBehaviour?
+                        .AuthCodeGrantPost?.DoNotValidateIdTokenAcrClaim;
                 var changeMade = false;
 
                 CustomBehaviourClass newCustomBehaviour = GetNewCustomBehaviour(bankRegistration);
-                if (idTokenAcrClaim is null)
+                if (doNotValidateIdTokenAcrClaim is null)
                 {
                     newCustomBehaviour.AccountAccessConsentAuthGet ??=
                         new ConsentAuthGetCustomBehaviour();
-                    newCustomBehaviour.AccountAccessConsentAuthGet.IdTokenAcrClaim =
-                        Acr.Ca;
+                    newCustomBehaviour.AccountAccessConsentAuthGet.DoNotValidateIdTokenAcrClaim =
+                        true;
                     changeMade = true;
                 }
 
-                if (idTokenAcrClaim2 is null)
+                if (doNotValidateIdTokenAcrClaim2 is null)
                 {
                     newCustomBehaviour.AuthCodeGrantPost ??=
                         new GrantPostCustomBehaviour();
-                    newCustomBehaviour.AuthCodeGrantPost.IdTokenAcrClaim = Acr.Ca;
+                    newCustomBehaviour.AuthCodeGrantPost.DoNotValidateIdTokenAcrClaim = true;
                     changeMade = true;
                 }
 

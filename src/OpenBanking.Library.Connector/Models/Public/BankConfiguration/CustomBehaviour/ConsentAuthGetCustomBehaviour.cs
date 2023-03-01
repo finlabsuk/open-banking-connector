@@ -16,7 +16,12 @@ public class ConsentAuthGetCustomBehaviour
 
     public bool? DoNotValidateIdToken { get; set; }
 
+    /// <summary>
+    ///     Deprecated
+    /// </summary>
     public Acr? IdTokenAcrClaim { get; set; }
+
+    public bool? DoNotValidateIdTokenAcrClaim { get; set; }
 
     public bool? IdTokenNonceClaimIsPreviousValue { get; set; }
 }
