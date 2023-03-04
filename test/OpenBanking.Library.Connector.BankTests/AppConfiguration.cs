@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -46,14 +47,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
         private static IConfiguration Configuration { get; set; } = null!;
 
         public static TSettings GetSettings<TSettings>()
-            where TSettings : ISettings<TSettings>, new()
-        {
-            TSettings settings =
-                Configuration
-                    .GetSection(new TSettings().SettingsGroupName)
-                    .Get<TSettings>() ??
-                new TSettings();
-            return settings;
-        }
+            where TSettings : class, ISettings<TSettings>, new() =>
+            ServiceCollectionExtensions.GetSettings<TSettings>(Configuration);
     }
 }

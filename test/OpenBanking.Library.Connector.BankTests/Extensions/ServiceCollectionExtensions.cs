@@ -21,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
         {
             // Add settings groups
             services
-                .AddSettingsGroup<BankTestSettings>(configuration);
+                .AddSettingsGroup<BankTestSettings>();
 
             // Set up bank users
             services.AddSingleton(

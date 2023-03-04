@@ -73,7 +73,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests
         {
             // Get bank test settings
             var bankTestSettings = AppConfiguration.GetSettings<BankTestSettings>();
-            bankTestSettings.Validate();
             //var env = AppConfiguration.EnvironmentName;
 
             // Get bank profile definitions
