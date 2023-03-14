@@ -109,6 +109,7 @@ public class ConsentAuth
                 // Wait for network activity to complete
                 await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             }
+
             EnsureTokenAvailable(authIsCompleteFcn, 10000);
         }
     }

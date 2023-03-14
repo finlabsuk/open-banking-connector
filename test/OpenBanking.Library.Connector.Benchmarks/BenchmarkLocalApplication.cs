@@ -6,46 +6,45 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
+namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks;
+
+[InProcess]
+[MemoryDiagnoser]
+[RankColumn]
+[MinColumn]
+[MaxColumn]
+[Q1Column]
+[Q3Column]
+[AllStatisticsColumn]
+[JsonExporterAttribute.Full]
+[CsvMeasurementsExporter]
+[CsvExporter(CsvSeparator.Comma)]
+[HtmlExporter]
+[MarkdownExporterAttribute.GitHub]
+[GcServer(true)]
+public class BenchmarkLocalApplication
 {
-    [InProcess]
-    [MemoryDiagnoser]
-    [RankColumn]
-    [MinColumn]
-    [MaxColumn]
-    [Q1Column]
-    [Q3Column]
-    [AllStatisticsColumn]
-    [JsonExporterAttribute.Full]
-    [CsvMeasurementsExporter]
-    [CsvExporter(CsvSeparator.Comma)]
-    [HtmlExporter]
-    [MarkdownExporterAttribute.GitHub]
-    [GcServer(true)]
-    public class BenchmarkLocalApplication
+    [Params(1, 2)]
+    public int Params { get; set; }
+
+    [Benchmark]
+    public void RunLocalPayment()
     {
-        [Params(1, 2)]
-        public int Params { get; set; }
+        /* TODO: We'll execute a simple payment here, using the parameters above. We'll have set up in-memory mocks for HTTP.
+        We're not interested in the results (other than exceptions) we're only interested in execution profiles.
+        */
+    }
 
-        [Benchmark]
-        public void RunLocalPayment()
-        {
-            /* TODO: We'll execute a simple payment here, using the parameters above. We'll have set up in-memory mocks for HTTP.
-            We're not interested in the results (other than exceptions) we're only interested in execution profiles.
-            */
-        }
+    [Benchmark]
+    public void RunLocalConsent()
+    {
+        /* TODO: We'll execute a simple consent here, using the parameters above. We'll have set up in-memory mocks for HTTP.
+        We're not interested in the results (other than exceptions) we're only interested in execution profiles.
+        */
+    }
 
-        [Benchmark]
-        public void RunLocalConsent()
-        {
-            /* TODO: We'll execute a simple consent here, using the parameters above. We'll have set up in-memory mocks for HTTP.
-            We're not interested in the results (other than exceptions) we're only interested in execution profiles.
-            */
-        }
-
-        private void OnExecute()
-        {
-            BenchmarkRunner.Run<BenchmarkLocalApplication>();
-        }
+    private void OnExecute()
+    {
+        BenchmarkRunner.Run<BenchmarkLocalApplication>();
     }
 }

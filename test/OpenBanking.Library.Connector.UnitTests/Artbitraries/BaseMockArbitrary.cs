@@ -5,16 +5,15 @@
 using FsCheck;
 using NSubstitute;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
-{
-    public static class BaseMockArbitrary<T>
-        where T : class
-    {
-        public static Arbitrary<T> GetArbitrary()
-        {
-            T[] elements = { Substitute.For<T>() };
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
-            return Gen.Elements(elements).ToArbitrary();
-        }
+public static class BaseMockArbitrary<T>
+    where T : class
+{
+    public static Arbitrary<T> GetArbitrary()
+    {
+        T[] elements = { Substitute.For<T>() };
+
+        return Gen.Elements(elements).ToArbitrary();
     }
 }

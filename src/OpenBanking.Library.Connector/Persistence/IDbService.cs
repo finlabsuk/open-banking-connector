@@ -4,13 +4,12 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
-{
-    public interface IDbService
-    {
-        IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
-            where TEntity : class, IEntity;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-        IDbSaveChangesMethod GetDbSaveChangesMethodClass();
-    }
+public interface IDbService
+{
+    IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
+        where TEntity : class, IEntity;
+
+    IDbSaveChangesMethod GetDbSaveChangesMethodClass();
 }

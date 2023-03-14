@@ -18,34 +18,33 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.ObInteractions;
+
+public class CreateBankTests
 {
-    public class CreateBankTests
+    [Fact]
+    public async Task Create_IdReturned()
     {
-        [Fact]
-        public async Task Create_IdReturned()
+        var interaction =
+            new AccountAndTransactionApiPost(
+                Substitute.For<IDbEntityMethods<AccountAndTransactionApiEntity>>(),
+                Substitute.For<IDbSaveChangesMethod>(),
+                Substitute.For<ITimeProvider>(),
+                Substitute.For<IProcessedSoftwareStatementProfileStore>(),
+                Substitute.For<IInstrumentationClient>(),
+                Substitute.For<IBankProfileService>());
+
+        var newBank = new AccountAndTransactionApiRequest
         {
-            var interaction =
-                new AccountAndTransactionApiPost(
-                    Substitute.For<IDbEntityMethods<AccountAndTransactionApiEntity>>(),
-                    Substitute.For<IDbSaveChangesMethod>(),
-                    Substitute.For<ITimeProvider>(),
-                    Substitute.For<IProcessedSoftwareStatementProfileStore>(),
-                    Substitute.For<IInstrumentationClient>(),
-                    Substitute.For<IBankProfileService>());
+            Reference = "c",
+            BankId = default,
+            ApiVersion = AccountAndTransactionApiVersion.Version3p1p7,
+            BaseUrl = "www.example.com"
+        };
 
-            var newBank = new AccountAndTransactionApiRequest
-            {
-                Reference = "c",
-                BankId = default,
-                ApiVersion = AccountAndTransactionApiVersion.Version3p1p7,
-                BaseUrl = "www.example.com"
-            };
+        (AccountAndTransactionApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
+            await interaction.CreateAsync(newBank, new LocalCreateParams());
 
-            (AccountAndTransactionApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages) =
-                await interaction.CreateAsync(newBank, new LocalCreateParams());
-
-            response.Should().NotBeNull();
-        }
+        response.Should().NotBeNull();
     }
 }

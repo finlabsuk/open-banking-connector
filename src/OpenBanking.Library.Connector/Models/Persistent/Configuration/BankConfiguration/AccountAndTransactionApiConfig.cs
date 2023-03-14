@@ -10,26 +10,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+
+internal class AccountAndTransactionApiConfig : BaseConfig<AccountAndTransactionApiEntity>
 {
-    internal class AccountAndTransactionApiConfig : BaseConfig<AccountAndTransactionApiEntity>
+    public AccountAndTransactionApiConfig(
+        DbProvider dbProvider,
+        bool supportsGlobalQueryFilter,
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<AccountAndTransactionApiEntity> builder)
     {
-        public AccountAndTransactionApiConfig(
-            DbProvider dbProvider,
-            bool supportsGlobalQueryFilter,
-            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(EntityTypeBuilder<AccountAndTransactionApiEntity> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.BankId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.ApiVersion)
-                .HasConversion(new EnumToStringConverter<AccountAndTransactionApiVersion>());
-            builder.Property(e => e.BaseUrl)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.BankId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.ApiVersion)
+            .HasConversion(new EnumToStringConverter<AccountAndTransactionApiVersion>());
+        builder.Property(e => e.BaseUrl)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

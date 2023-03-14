@@ -4,21 +4,20 @@
 
 using System.Collections.Concurrent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+
+public enum ObieBank
 {
-    public enum ObieBank
-    {
-        Modelo
-    }
+    Modelo
+}
 
-    public class Obie : BankGroupBase<ObieBank>
-    {
-        public Obie(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
+public class Obie : BankGroupBase<ObieBank>
+{
+    public Obie(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
-        protected override ConcurrentDictionary<BankProfileEnum, ObieBank> BankProfileToBank { get; } =
-            new()
-            {
-                [BankProfileEnum.Obie_Modelo] = ObieBank.Modelo
-            };
-    }
+    protected override ConcurrentDictionary<BankProfileEnum, ObieBank> BankProfileToBank { get; } =
+        new()
+        {
+            [BankProfileEnum.Obie_Modelo] = ObieBank.Modelo
+        };
 }

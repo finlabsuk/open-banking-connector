@@ -12,72 +12,71 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+
+internal class VariableRecurringPaymentsApiPost : LocalEntityCreate<VariableRecurringPaymentsApiEntity,
+    VariableRecurringPaymentsApiRequest, VariableRecurringPaymentsApiResponse>
 {
-    internal class VariableRecurringPaymentsApiPost : LocalEntityCreate<VariableRecurringPaymentsApiEntity,
-        VariableRecurringPaymentsApiRequest, VariableRecurringPaymentsApiResponse>
+    private readonly IBankProfileService _bankProfileService;
+
+    public VariableRecurringPaymentsApiPost(
+        IDbReadWriteEntityMethods<VariableRecurringPaymentsApiEntity> entityMethods,
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
     {
-        private readonly IBankProfileService _bankProfileService;
+        _bankProfileService = bankProfileService;
+    }
 
-        public VariableRecurringPaymentsApiPost(
-            IDbReadWriteEntityMethods<VariableRecurringPaymentsApiEntity> entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient,
-            IBankProfileService bankProfileService) : base(
-            entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
+    protected override async Task<VariableRecurringPaymentsApiResponse> AddEntity(
+        VariableRecurringPaymentsApiRequest request,
+        ITimeProvider timeProvider)
+    {
+        // Get bank profile if available
+        BankProfile? bankProfile = null;
+        if (request.BankProfile is not null)
         {
-            _bankProfileService = bankProfileService;
+            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
         }
 
-        protected override async Task<VariableRecurringPaymentsApiResponse> AddEntity(
-            VariableRecurringPaymentsApiRequest request,
-            ITimeProvider timeProvider)
-        {
-            // Get bank profile if available
-            BankProfile? bankProfile = null;
-            if (request.BankProfile is not null)
-            {
-                bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-            }
+        // Get API version
+        VariableRecurringPaymentsApiVersion apiVersion =
+            request.ApiVersion ??
+            bankProfile?.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+            throw new InvalidOperationException(
+                "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
 
-            // Get API version
-            VariableRecurringPaymentsApiVersion apiVersion =
-                request.ApiVersion ??
-                bankProfile?.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
-                throw new InvalidOperationException(
-                    "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
+        // Get base URL
+        string baseUrl =
+            request.BaseUrl ??
+            bankProfile?.VariableRecurringPaymentsApi?.BaseUrl ??
+            throw new InvalidOperationException(
+                "BaseUrl specified as null and cannot be obtained from specified BankProfile.");
 
-            // Get base URL
-            string baseUrl =
-                request.BaseUrl ??
-                bankProfile?.VariableRecurringPaymentsApi?.BaseUrl ??
-                throw new InvalidOperationException(
-                    "BaseUrl specified as null and cannot be obtained from specified BankProfile.");
+        DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+        var entity = new VariableRecurringPaymentsApiEntity(
+            request.Reference,
+            Guid.NewGuid(),
+            false,
+            utcNow,
+            request.CreatedBy,
+            utcNow,
+            request.CreatedBy,
+            request.BankId,
+            apiVersion,
+            baseUrl.TrimEnd('/'));
 
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new VariableRecurringPaymentsApiEntity(
-                request.Reference,
-                Guid.NewGuid(),
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                request.BankId,
-                apiVersion,
-                baseUrl.TrimEnd('/'));
+        // Add entity
+        await _entityMethods.AddAsync(entity);
 
-            // Add entity
-            await _entityMethods.AddAsync(entity);
-
-            // Create response
-            return entity.PublicGetLocalResponse;
-        }
+        // Create response
+        return entity.PublicGetLocalResponse;
     }
 }

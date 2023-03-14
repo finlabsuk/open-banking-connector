@@ -4,39 +4,38 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+
+/// <summary>
+///     Persisted type.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+[Index(nameof(State), IsUnique = true)]
+[Index(nameof(Nonce), IsUnique = true)]
+internal class AuthContext : BaseEntity
 {
-    /// <summary>
-    ///     Persisted type.
-    ///     Internal to help ensure public request and response types used on public API.
-    /// </summary>
-    [Index(nameof(State), IsUnique = true)]
-    [Index(nameof(Nonce), IsUnique = true)]
-    internal class AuthContext : BaseEntity
+    public AuthContext(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        string state,
+        string nonce) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
     {
-        public AuthContext(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string state,
-            string nonce) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
-        {
-            State = state;
-            Nonce = nonce;
-        }
-
-        /// <summary>
-        ///     OAuth2 "state".
-        /// </summary>
-        public string State { get; }
-
-        /// <summary>
-        ///     OpenID Connect "nonce".
-        /// </summary>
-        public string Nonce { get; }
+        State = state;
+        Nonce = nonce;
     }
+
+    /// <summary>
+    ///     OAuth2 "state".
+    /// </summary>
+    public string State { get; }
+
+    /// <summary>
+    ///     OpenID Connect "nonce".
+    /// </summary>
+    public string Nonce { get; }
 }

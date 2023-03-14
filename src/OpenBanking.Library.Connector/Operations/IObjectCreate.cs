@@ -4,28 +4,26 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+internal class LocalCreateParams { }
+
+internal class BankRegistrationCreateParams : LocalCreateParams { }
+
+internal class ConsentCreateParams : LocalCreateParams
 {
-    internal class LocalCreateParams { }
-
-    internal class BankRegistrationCreateParams : LocalCreateParams { }
-
-    internal class ConsentCreateParams : LocalCreateParams
+    public ConsentCreateParams(string? publicRequestUrlWithoutQuery)
     {
-        public ConsentCreateParams(string? publicRequestUrlWithoutQuery)
-        {
-            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
-        }
-
-        public string? PublicRequestUrlWithoutQuery { get; }
+        PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
     }
 
+    public string? PublicRequestUrlWithoutQuery { get; }
+}
 
-    internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateParams>
-        where TCreateParams : LocalCreateParams
-    {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
-            TPublicRequest request,
-            TCreateParams createParams);
-    }
+internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateParams>
+    where TCreateParams : LocalCreateParams
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
+        TPublicRequest request,
+        TCreateParams createParams);
 }

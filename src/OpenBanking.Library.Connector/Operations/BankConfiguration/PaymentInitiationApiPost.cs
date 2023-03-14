@@ -12,72 +12,71 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+
+internal class PaymentInitiationApiPost : LocalEntityCreate<PaymentInitiationApiEntity,
+    PaymentInitiationApiRequest, PaymentInitiationApiResponse>
 {
-    internal class PaymentInitiationApiPost : LocalEntityCreate<PaymentInitiationApiEntity,
-        PaymentInitiationApiRequest, PaymentInitiationApiResponse>
+    private readonly IBankProfileService _bankProfileService;
+
+    public PaymentInitiationApiPost(
+        IDbReadWriteEntityMethods<PaymentInitiationApiEntity> entityMethods,
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
     {
-        private readonly IBankProfileService _bankProfileService;
+        _bankProfileService = bankProfileService;
+    }
 
-        public PaymentInitiationApiPost(
-            IDbReadWriteEntityMethods<PaymentInitiationApiEntity> entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient,
-            IBankProfileService bankProfileService) : base(
-            entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
+    protected override async Task<PaymentInitiationApiResponse> AddEntity(
+        PaymentInitiationApiRequest request,
+        ITimeProvider timeProvider)
+    {
+        // Get bank profile if available
+        BankProfile? bankProfile = null;
+        if (request.BankProfile is not null)
         {
-            _bankProfileService = bankProfileService;
+            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
         }
 
-        protected override async Task<PaymentInitiationApiResponse> AddEntity(
-            PaymentInitiationApiRequest request,
-            ITimeProvider timeProvider)
-        {
-            // Get bank profile if available
-            BankProfile? bankProfile = null;
-            if (request.BankProfile is not null)
-            {
-                bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-            }
+        // Get API version
+        PaymentInitiationApiVersion apiVersion =
+            request.ApiVersion ??
+            bankProfile?.PaymentInitiationApi?.PaymentInitiationApiVersion ??
+            throw new InvalidOperationException(
+                "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
 
-            // Get API version
-            PaymentInitiationApiVersion apiVersion =
-                request.ApiVersion ??
-                bankProfile?.PaymentInitiationApi?.PaymentInitiationApiVersion ??
-                throw new InvalidOperationException(
-                    "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
+        // Get base URL
+        string baseUrl =
+            request.BaseUrl ??
+            bankProfile?.PaymentInitiationApi?.BaseUrl ??
+            throw new InvalidOperationException(
+                "BaseUrl specified as null and cannot be obtained from specified BankProfile.");
 
-            // Get base URL
-            string baseUrl =
-                request.BaseUrl ??
-                bankProfile?.PaymentInitiationApi?.BaseUrl ??
-                throw new InvalidOperationException(
-                    "BaseUrl specified as null and cannot be obtained from specified BankProfile.");
+        DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+        var entity = new PaymentInitiationApiEntity(
+            request.Reference,
+            Guid.NewGuid(),
+            false,
+            utcNow,
+            request.CreatedBy,
+            utcNow,
+            request.CreatedBy,
+            request.BankId,
+            apiVersion,
+            baseUrl.TrimEnd('/'));
 
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new PaymentInitiationApiEntity(
-                request.Reference,
-                Guid.NewGuid(),
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                request.BankId,
-                apiVersion,
-                baseUrl.TrimEnd('/'));
+        // Add entity
+        await _entityMethods.AddAsync(entity);
 
-            // Add entity
-            await _entityMethods.AddAsync(entity);
-
-            // Create response
-            return entity.PublicGetLocalResponse;
-        }
+        // Create response
+        return entity.PublicGetLocalResponse;
     }
 }

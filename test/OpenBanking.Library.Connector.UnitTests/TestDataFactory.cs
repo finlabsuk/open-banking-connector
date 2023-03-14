@@ -12,34 +12,33 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using NSubstitute;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests;
+
+internal static class TestDataFactory
 {
-    internal static class TestDataFactory
+    public static SharedContext CreateMockOpenBankingContext()
     {
-        public static SharedContext CreateMockOpenBankingContext()
-        {
-            return new SharedContext(
-                Substitute.For<ITimeProvider>(),
-                Substitute.For<IApiClient>(),
-                Substitute.For<IInstrumentationClient>(),
-                Substitute.For<IDbService>(),
-                Substitute
-                    .For<IProcessedSoftwareStatementProfileStore>(),
-                Substitute.For<IApiVariantMapper>(),
-                Substitute.For<IBankProfileService>());
-        }
+        return new SharedContext(
+            Substitute.For<ITimeProvider>(),
+            Substitute.For<IApiClient>(),
+            Substitute.For<IInstrumentationClient>(),
+            Substitute.For<IDbService>(),
+            Substitute
+                .For<IProcessedSoftwareStatementProfileStore>(),
+            Substitute.For<IApiVariantMapper>(),
+            Substitute.For<IBankProfileService>());
+    }
 
 
-        public static RequestBuilder CreateMockRequestBuilder()
-        {
-            return new RequestBuilder(
-                Substitute.For<ITimeProvider>(),
-                new ApiVariantMapper(),
-                Substitute.For<IInstrumentationClient>(),
-                Substitute.For<IApiClient>(),
-                Substitute.For<IProcessedSoftwareStatementProfileStore>(),
-                Substitute.For<IDbService>(),
-                Substitute.For<IBankProfileService>());
-        }
+    public static RequestBuilder CreateMockRequestBuilder()
+    {
+        return new RequestBuilder(
+            Substitute.For<ITimeProvider>(),
+            new ApiVariantMapper(),
+            Substitute.For<IInstrumentationClient>(),
+            Substitute.For<IApiClient>(),
+            Substitute.For<IProcessedSoftwareStatementProfileStore>(),
+            Substitute.For<IDbService>(),
+            Substitute.For<IBankProfileService>());
     }
 }

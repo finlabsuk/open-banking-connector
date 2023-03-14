@@ -5,31 +5,30 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+
+/// <summary>
+///     Fluent context for entity created in external (i.e. bank) database only.
+/// </summary>
+/// <typeparam name="TPublicResponse"></typeparam>
+public interface IReadOnlyExternalEntityContext<TPublicResponse> :
+    IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
+    where TPublicResponse : class { }
+
+internal interface IReadOnlyExternalEntityContextInternal<TPublicResponse> :
+    IReadOnlyExternalEntityContext<TPublicResponse>,
+    IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse>
+    where TPublicResponse : class { }
+
+internal class ReadOnlyExternalEntityContextInternal<TPublicResponse> :
+    IReadOnlyExternalEntityContextInternal<TPublicResponse>
+    where TPublicResponse : class
 {
-    /// <summary>
-    ///     Fluent context for entity created in external (i.e. bank) database only.
-    /// </summary>
-    /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadOnlyExternalEntityContext<TPublicResponse> :
-        IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
-        where TPublicResponse : class { }
-
-    internal interface IReadOnlyExternalEntityContextInternal<TPublicResponse> :
-        IReadOnlyExternalEntityContext<TPublicResponse>,
-        IReadAccountAccessConsentExternalEntityContextInternal<TPublicResponse>
-        where TPublicResponse : class { }
-
-    internal class ReadOnlyExternalEntityContextInternal<TPublicResponse> :
-        IReadOnlyExternalEntityContextInternal<TPublicResponse>
-        where TPublicResponse : class
+    public ReadOnlyExternalEntityContextInternal(
+        IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> readObject)
     {
-        public ReadOnlyExternalEntityContextInternal(
-            IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> readObject)
-        {
-            ReadObject = readObject;
-        }
-
-        public IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
+        ReadObject = readObject;
     }
+
+    public IAccountAccessConsentExternalRead<TPublicResponse, ExternalEntityReadParams> ReadObject { get; }
 }

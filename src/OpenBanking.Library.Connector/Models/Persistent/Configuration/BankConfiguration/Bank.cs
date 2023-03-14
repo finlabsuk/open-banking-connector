@@ -11,53 +11,52 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+
+internal class Bank : BaseConfig<Persistent.BankConfiguration.Bank>
 {
-    internal class Bank : BaseConfig<Persistent.BankConfiguration.Bank>
+    public Bank(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) : base(
+        dbProvider,
+        supportsGlobalQueryFilter,
+        jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.Bank> builder)
     {
-        public Bank(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) : base(
-            dbProvider,
-            supportsGlobalQueryFilter,
-            jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.Bank> builder)
+        // Top-level read-only properties
+        builder.Property(e => e.JwksUri)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.SupportsSca)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.IssuerUrl)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.FinancialId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.RegistrationEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.TokenEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.AuthorizationEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DcrApiVersion)
+            .HasConversion(new EnumToStringConverter<DynamicClientRegistrationApiVersion>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.IdTokenSubClaimType)
+            .HasConversion(new EnumToStringConverter<IdTokenSubClaimType>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.CustomBehaviour)
+            .HasConversion(
+                v => JsonConvert.SerializeObject(
+                    v,
+                    _jsonFormatting,
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                v =>
+                    JsonConvert.DeserializeObject<CustomBehaviourClass>(v));
+
+        if (_dbProvider is DbProvider.PostgreSql)
         {
-            base.Configure(builder);
-
-            // Top-level read-only properties
-            builder.Property(e => e.JwksUri)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.SupportsSca)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.IssuerUrl)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.FinancialId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.RegistrationEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.TokenEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.AuthorizationEndpoint)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.DcrApiVersion)
-                .HasConversion(new EnumToStringConverter<DynamicClientRegistrationApiVersion>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.IdTokenSubClaimType)
-                .HasConversion(new EnumToStringConverter<IdTokenSubClaimType>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.CustomBehaviour)
-                .HasConversion(
-                    v => JsonConvert.SerializeObject(
-                        v,
-                        _jsonFormatting,
-                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-                    v =>
-                        JsonConvert.DeserializeObject<CustomBehaviourClass>(v));
-
-            if (_dbProvider is DbProvider.PostgreSql)
-            {
-                builder.Property(e => e.CustomBehaviour).HasColumnType("jsonb");
-            }
+            builder.Property(e => e.CustomBehaviour).HasColumnType("jsonb");
         }
     }
 }

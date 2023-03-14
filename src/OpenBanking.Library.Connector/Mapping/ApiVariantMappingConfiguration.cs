@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
@@ -17,168 +14,167 @@ using ClientRegistrationModelsPublic =
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping
+namespace FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+
+internal class ApiVariantMappingConfiguration
 {
-    internal class ApiVariantMappingConfiguration
+    private static readonly Type ClientRegistrationModelsRootType =
+        typeof(ClientRegistrationModelsPublic.OBClientRegistration1);
+
+    private static readonly Type AccountAndTransactionModelsRootType =
+        typeof(AccountAndTransactionModelsPublic.OBReadConsent1);
+
+    private static readonly Type PaymentInitiationModelsRootType = typeof(PaymentInitiationModelsPublic.Meta);
+
+    private static readonly Type VariableRecurringPaymentsModelsRootType =
+        typeof(VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest);
+
+    public IEnumerable<Type> GetPublicApiModelsTypes()
     {
-        private static readonly Type ClientRegistrationModelsRootType =
-            typeof(ClientRegistrationModelsPublic.OBClientRegistration1);
+        IEnumerable<Type> clientRegistrationTypes = ClientRegistrationModelsRootType.Assembly.GetTypes()
+            .Where(t => t.IsClass && IsInNamespace(ClientRegistrationModelsRootType, t));
 
-        private static readonly Type AccountAndTransactionModelsRootType = typeof(AccountAndTransactionModelsPublic.OBReadConsent1);
-        
-        private static readonly Type PaymentInitiationModelsRootType = typeof(PaymentInitiationModelsPublic.Meta);
+        IEnumerable<Type> accountAndTransactionTypes = AccountAndTransactionModelsRootType.Assembly.GetTypes()
+            .Where(t => t.IsClass && IsInNamespace(AccountAndTransactionModelsRootType, t));
 
-        private static readonly Type VariableRecurringPaymentsModelsRootType =
-            typeof(VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest);
+        IEnumerable<Type> paymentInitiationTypes = PaymentInitiationModelsRootType.Assembly.GetTypes()
+            .Where(t => t.IsClass && IsInNamespace(PaymentInitiationModelsRootType, t));
 
-        public IEnumerable<Type> GetPublicApiModelsTypes()
+        IEnumerable<Type> variableRecurringPaymentsTypes = VariableRecurringPaymentsModelsRootType.Assembly
+            .GetTypes()
+            .Where(t => t.IsClass && IsInNamespace(VariableRecurringPaymentsModelsRootType, t));
+
+        return clientRegistrationTypes
+            .Concat(accountAndTransactionTypes)
+            .Concat(paymentInitiationTypes)
+            .Concat(variableRecurringPaymentsTypes);
+    }
+
+    public IEnumerable<TypeMapping> GetTypesWithTargetApiEquivalent(Type type)
+    {
+        IEnumerable<TargetApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
+            .GetCustomAttributes(typeof(TargetApiEquivalentAttribute))
+            .OfType<TargetApiEquivalentAttribute>();
+
+        foreach (TargetApiEquivalentAttribute attr in attrs)
         {
-            IEnumerable<Type> clientRegistrationTypes = ClientRegistrationModelsRootType.Assembly.GetTypes()
-                .Where(t => t.IsClass && IsInNamespace(ClientRegistrationModelsRootType, t));
-
-            IEnumerable<Type> accountAndTransactionTypes = AccountAndTransactionModelsRootType.Assembly.GetTypes()
-                .Where(t => t.IsClass && IsInNamespace(AccountAndTransactionModelsRootType, t));
-            
-            IEnumerable<Type> paymentInitiationTypes = PaymentInitiationModelsRootType.Assembly.GetTypes()
-                .Where(t => t.IsClass && IsInNamespace(PaymentInitiationModelsRootType, t));
-
-            IEnumerable<Type> variableRecurringPaymentsTypes = VariableRecurringPaymentsModelsRootType.Assembly
-                .GetTypes()
-                .Where(t => t.IsClass && IsInNamespace(VariableRecurringPaymentsModelsRootType, t));
-
-            return clientRegistrationTypes
-                .Concat(accountAndTransactionTypes)
-                .Concat(paymentInitiationTypes)
-                .Concat(variableRecurringPaymentsTypes);
+            yield return new TypeMapping(
+                type,
+                attr.EquivalentType,
+                attr.TypeConverter,
+                attr.ValueMappingSourceMembers,
+                attr.ValueMappingDestinationMembers,
+                attr.ValueMappings);
         }
+    }
 
-        public IEnumerable<TypeMapping> GetTypesWithTargetApiEquivalent(Type type)
+    public IEnumerable<TypeMapping> GetTypesWithSourceApiEquivalent(Type type)
+    {
+        IEnumerable<SourceApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
+            .GetCustomAttributes(typeof(SourceApiEquivalentAttribute))
+            .OfType<SourceApiEquivalentAttribute>();
+
+        foreach (SourceApiEquivalentAttribute attr in attrs)
         {
-            IEnumerable<TargetApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
-                .GetCustomAttributes(typeof(TargetApiEquivalentAttribute))
-                .OfType<TargetApiEquivalentAttribute>();
+            yield return new TypeMapping(
+                attr.EquivalentType,
+                type,
+                attr.TypeConverter,
+                attr.ValueMappingSourceMembers,
+                attr.ValueMappingDestinationMembers,
+                attr.ValueMappings);
+        }
+    }
 
-            foreach (TargetApiEquivalentAttribute attr in attrs)
+    public MapperConfiguration CreateMapperConfiguration()
+    {
+        return new MapperConfiguration(
+            cfg =>
             {
-                yield return new TypeMapping(
-                    type,
-                    attr.EquivalentType,
-                    attr.TypeConverter,
-                    attr.ValueMappingSourceMembers,
-                    attr.ValueMappingDestinationMembers,
-                    attr.ValueMappings);
-            }
-        }
+                // Faithfully map null collections
+                cfg.AllowNullCollections = true;
 
-        public IEnumerable<TypeMapping> GetTypesWithSourceApiEquivalent(Type type)
-        {
-            IEnumerable<SourceApiEquivalentAttribute> attrs = type.ArgNotNull(nameof(type))
-                .GetCustomAttributes(typeof(SourceApiEquivalentAttribute))
-                .OfType<SourceApiEquivalentAttribute>();
+                // Generic mappings
+                ApplyGenericTypeMaps(cfg);
 
-            foreach (SourceApiEquivalentAttribute attr in attrs)
-            {
-                yield return new TypeMapping(
-                    attr.EquivalentType,
-                    type,
-                    attr.TypeConverter,
-                    attr.ValueMappingSourceMembers,
-                    attr.ValueMappingDestinationMembers,
-                    attr.ValueMappings);
-            }
-        }
+                // Discovered mappings
+                ApplyApiVariantTypeMaps(cfg);
+            });
+    }
 
-        public MapperConfiguration CreateMapperConfiguration()
-        {
-            return new MapperConfiguration(
-                cfg =>
+    private void ApplyGenericTypeMaps(IMapperConfigurationExpression cfg)
+    {
+        cfg.CreateMap<string, IList<string>>().ConvertUsing<StringToIListConverter>();
+        cfg.CreateMap<IEnumerable<string>, string>().ConvertUsing<StringToIEnumerableReverseConverter>();
+    }
+
+    private void ApplyApiVariantTypeMaps(IMapperConfigurationExpression config)
+    {
+        IEnumerable<Type> publicModelsTypes = GetPublicApiModelsTypes();
+
+        IEnumerable<TypeMapping> typePairs =
+            publicModelsTypes.SelectMany(
+                t =>
                 {
-                    // Faithfully map null collections
-                    cfg.AllowNullCollections = true;
-
-                    // Generic mappings
-                    ApplyGenericTypeMaps(cfg);
-
-                    // Discovered mappings
-                    ApplyApiVariantTypeMaps(cfg);
+                    IEnumerable<TypeMapping> x = GetTypesWithTargetApiEquivalent(t);
+                    IEnumerable<TypeMapping> y = GetTypesWithSourceApiEquivalent(t);
+                    return x.Concat(y);
                 });
-        }
 
-        private void ApplyGenericTypeMaps(IMapperConfigurationExpression cfg)
+        foreach (TypeMapping typeMapping in typePairs)
         {
-            cfg.CreateMap<string, IList<string>>().ConvertUsing<StringToIListConverter>();
-            cfg.CreateMap<IEnumerable<string>, string>().ConvertUsing<StringToIEnumerableReverseConverter>();
-        }
+            IMappingExpression mappingExpression = config.CreateMap(
+                typeMapping.SourceType,
+                typeMapping.DestinationType);
 
-        private void ApplyApiVariantTypeMaps(IMapperConfigurationExpression config)
-        {
-            IEnumerable<Type> publicModelsTypes = GetPublicApiModelsTypes();
-
-            IEnumerable<TypeMapping> typePairs =
-                publicModelsTypes.SelectMany(
-                    t =>
-                    {
-                        IEnumerable<TypeMapping> x = GetTypesWithTargetApiEquivalent(t);
-                        IEnumerable<TypeMapping> y = GetTypesWithSourceApiEquivalent(t);
-                        return x.Concat(y);
-                    });
-
-            foreach (TypeMapping typeMapping in typePairs)
+            if (!(typeMapping.TypeConverter is null))
             {
-                IMappingExpression mappingExpression = config.CreateMap(
-                    typeMapping.SourceType,
-                    typeMapping.DestinationType);
+                mappingExpression.ConvertUsing(typeMapping.TypeConverter);
+            }
 
-                if (!(typeMapping.TypeConverter is null))
+            if (typeMapping.ValueConverters.Any())
+            {
+                foreach ((string? sourceMember, string destinationMember,
+                             ValueMapping valueMapping) in typeMapping
+                             .ValueConverters)
                 {
-                    mappingExpression.ConvertUsing(typeMapping.TypeConverter);
-                }
-
-                if (typeMapping.ValueConverters.Any())
-                {
-                    foreach ((string? sourceMember, string destinationMember,
-                                 ValueMapping valueMapping) in typeMapping
-                                 .ValueConverters)
-                    {
-                        mappingExpression.ForMember(
-                            destinationMember,
-                            valueMapping switch
+                    mappingExpression.ForMember(
+                        destinationMember,
+                        valueMapping switch
+                        {
+                            ValueMapping.StringIdentityValueConverter => delegate(IMemberConfigurationExpression opt)
                             {
-                                ValueMapping.StringIdentityValueConverter => delegate(
-                                    IMemberConfigurationExpression opt)
-                                {
-                                    opt.ConvertUsing(
-                                        new IdentityValueConverter<string>(),
-                                        sourceMember);
-                                },
-                                ValueMapping.SetNull => delegate(IMemberConfigurationExpression opt)
-                                {
-                                    opt.MapFrom(src => (object?) null);
-                                },
-                                ValueMapping.CommaDelimitedStringToIEnumerable => delegate(
-                                    IMemberConfigurationExpression opt)
-                                {
-                                    opt.ConvertUsing(
-                                        new CommaDelimitedStringToIEnumerableValueConverter(),
-                                        sourceMember);
-                                },
-                                ValueMapping.CommaDelimitedStringToIEnumerableReverse => delegate(
-                                    IMemberConfigurationExpression opt)
-                                {
-                                    opt.ConvertUsing(
-                                        new CommaDelimitedStringToIEnumerableReverseValueConverter(),
-                                        sourceMember);
-                                },
-                                _ => throw new ArgumentOutOfRangeException()
-                            });
-                    }
+                                opt.ConvertUsing(
+                                    new IdentityValueConverter<string>(),
+                                    sourceMember);
+                            },
+                            ValueMapping.SetNull => delegate(IMemberConfigurationExpression opt)
+                            {
+                                opt.MapFrom(src => (object?) null);
+                            },
+                            ValueMapping.CommaDelimitedStringToIEnumerable => delegate(
+                                IMemberConfigurationExpression opt)
+                            {
+                                opt.ConvertUsing(
+                                    new CommaDelimitedStringToIEnumerableValueConverter(),
+                                    sourceMember);
+                            },
+                            ValueMapping.CommaDelimitedStringToIEnumerableReverse => delegate(
+                                IMemberConfigurationExpression opt)
+                            {
+                                opt.ConvertUsing(
+                                    new CommaDelimitedStringToIEnumerableReverseValueConverter(),
+                                    sourceMember);
+                            },
+                            _ => throw new ArgumentOutOfRangeException()
+                        });
                 }
             }
         }
+    }
 
-        private bool IsInNamespace(Type rootType, Type type)
-        {
-            return rootType.Namespace != null && type.Namespace.Maybe(n => n.StartsWith(rootType.Namespace));
-        }
+    private bool IsInNamespace(Type rootType, Type type)
+    {
+        return rootType.Namespace != null && type.Namespace.Maybe(n => n.StartsWith(rootType.Namespace));
     }
 }

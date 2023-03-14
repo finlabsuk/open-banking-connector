@@ -12,60 +12,59 @@ using DomesticVrpOperations =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments.DomesticVrp;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments
-{
-    public interface IVariableRecurringPaymentsContext
-    {
-        /// <summary>
-        ///     API for DomesticVrpConsent objects.
-        ///     A DomesticVrpConsent is an Open Banking object and corresponds to an "intended" domestic variable recurring
-        ///     payment.
-        /// </summary>
-        IDomesticVrpConsentsContext DomesticVrpConsents { get; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPayments;
 
-        /// <summary>
-        ///     API for DomesticVrp objects.
-        ///     A DomesticVrp corresponds to a domestic variable recurring payment and may be created once a DomesticVrpConsent is
-        ///     approved by a user.
-        /// </summary>
-        IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps { get; }
+public interface IVariableRecurringPaymentsContext
+{
+    /// <summary>
+    ///     API for DomesticVrpConsent objects.
+    ///     A DomesticVrpConsent is an Open Banking object and corresponds to an "intended" domestic variable recurring
+    ///     payment.
+    /// </summary>
+    IDomesticVrpConsentsContext DomesticVrpConsents { get; }
+
+    /// <summary>
+    ///     API for DomesticVrp objects.
+    ///     A DomesticVrp corresponds to a domestic variable recurring payment and may be created once a DomesticVrpConsent is
+    ///     approved by a user.
+    /// </summary>
+    IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps { get; }
+}
+
+internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsContext
+{
+    private readonly ISharedContext _sharedContext;
+
+    public VariableRecurringPaymentsContext(ISharedContext sharedContext)
+    {
+        _sharedContext = sharedContext;
     }
 
-    internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsContext
+    public IDomesticVrpConsentsContext DomesticVrpConsents =>
+        new DomesticVrpConsentsContext(_sharedContext);
+
+    public IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps
     {
-        private readonly ISharedContext _sharedContext;
-
-        public VariableRecurringPaymentsContext(ISharedContext sharedContext)
+        get
         {
-            _sharedContext = sharedContext;
-        }
-
-        public IDomesticVrpConsentsContext DomesticVrpConsents =>
-            new DomesticVrpConsentsContext(_sharedContext);
-
-        public IExternalEntityContext<DomesticVrpRequest, DomesticVrpResponse> DomesticVrps
-        {
-            get
-            {
-                var domesticVrp = new DomesticVrpOperations(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                    _sharedContext.Instrumentation,
+            var domesticVrp = new DomesticVrpOperations(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.ApiVariantMapper,
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                new GrantPost(_sharedContext.ApiClient),
+                new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient),
-                    new ConsentAccessTokenGet(
-                        _sharedContext.SoftwareStatementProfileCachedRepo,
-                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                        _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation),
-                    _sharedContext.BankProfileService);
-                return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
-                    domesticVrp,
-                    domesticVrp);
-            }
+                    _sharedContext.Instrumentation),
+                _sharedContext.BankProfileService);
+            return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
+                domesticVrp,
+                domesticVrp);
         }
     }
 }

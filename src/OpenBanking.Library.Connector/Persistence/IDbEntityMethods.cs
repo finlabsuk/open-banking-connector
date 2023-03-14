@@ -4,8 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
-{
-    public interface IDbEntityMethods<TEntity> : IDbReadWriteEntityMethods<TEntity>, IDbReadOnlyEntityMethods<TEntity>
-        where TEntity : class, IEntity { }
-}
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+
+public interface IDbEntityMethods<TEntity> : IDbReadWriteEntityMethods<TEntity>, IDbReadOnlyEntityMethods<TEntity>
+    where TEntity : class, IEntity { }

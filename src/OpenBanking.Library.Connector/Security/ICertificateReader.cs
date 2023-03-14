@@ -4,14 +4,12 @@
 
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+public interface ICertificateReader
 {
-    public interface ICertificateReader
-    {
-        Task<X509Certificate2?> GetCertificateAsync(string value);
+    Task<X509Certificate2?> GetCertificateAsync(string value);
 
-        Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password);
-    }
+    Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password);
 }

@@ -5,29 +5,28 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
+
+public class BankUserDictionary : Dictionary<BankProfileEnum, List<BankUser>> { }
+
+public partial class BankUserStore
 {
-    public class BankUserDictionary : Dictionary<BankProfileEnum, List<BankUser>> { }
+    private readonly BankUserDictionary _bankUserDictionary;
 
-    public partial class BankUserStore
+    public BankUserStore(BankUserDictionary bankUserDictionary)
     {
-        private readonly BankUserDictionary _bankUserDictionary;
+        _bankUserDictionary = bankUserDictionary;
+    }
 
-        public BankUserStore(BankUserDictionary bankUserDictionary)
+    public List<BankUser> GetRequiredBankUserList(BankProfileEnum bankProfileEnum)
+    {
+        if (!_bankUserDictionary.TryGetValue(bankProfileEnum, out List<BankUser>? bankUserList))
         {
-            _bankUserDictionary = bankUserDictionary;
+            throw new ArgumentNullException(
+                $"At least one bank user must be defined for bank profile {bankProfileEnum} "
+                + "and none can be found.");
         }
 
-        public List<BankUser> GetRequiredBankUserList(BankProfileEnum bankProfileEnum)
-        {
-            if (!_bankUserDictionary.TryGetValue(bankProfileEnum, out List<BankUser>? bankUserList))
-            {
-                throw new ArgumentNullException(
-                    $"At least one bank user must be defined for bank profile {bankProfileEnum} "
-                    + "and none can be found.");
-            }
-
-            return bankUserList;
-        }
+        return bankUserList;
     }
 }

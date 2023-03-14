@@ -5,121 +5,120 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+
+public interface IBankPublicQuery : IBaseQuery
 {
-    public interface IBankPublicQuery : IBaseQuery
+    public string JwksUri { get; }
+
+    public bool SupportsSca { get; }
+
+    public string IssuerUrl { get; }
+    public string FinancialId { get; }
+
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
+
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
+
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
+
+    /// <summary>
+    ///     API version used for DCR requests (POST, GET etc)
+    /// </summary>
+    public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
+
+    /// <summary>
+    ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
+    ///     For a well-behaved bank, normally this object should be null.
+    /// </summary>
+    public CustomBehaviourClass? CustomBehaviour { get; }
+}
+
+/// <summary>
+///     Response to GetLocal
+/// </summary>
+public class BankResponse : LocalObjectBaseResponse, IBankPublicQuery
+{
+    internal BankResponse(
+        Guid id,
+        DateTimeOffset created,
+        string? createdBy,
+        string? reference,
+        IList<string>? warnings,
+        IdTokenSubClaimType idTokenSubClaimType,
+        string jwksUri,
+        bool supportsSca,
+        string issuerUrl,
+        string financialId,
+        string? registrationEndpoint,
+        string tokenEndpoint,
+        string authorizationEndpoint,
+        DynamicClientRegistrationApiVersion dcrApiVersion,
+        CustomBehaviourClass? customBehaviour) : base(id, created, createdBy, reference)
     {
-        public string JwksUri { get; }
-
-        public bool SupportsSca { get; }
-
-        public string IssuerUrl { get; }
-        public string FinancialId { get; }
-
-        /// <summary>
-        ///     Registration endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string? RegistrationEndpoint { get; }
-
-        /// <summary>
-        ///     Token endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string TokenEndpoint { get; }
-
-        /// <summary>
-        ///     Authorization endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string AuthorizationEndpoint { get; }
-
-        /// <summary>
-        ///     API version used for DCR requests (POST, GET etc)
-        /// </summary>
-        public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
-
-        /// <summary>
-        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
-        /// </summary>
-        public CustomBehaviourClass? CustomBehaviour { get; }
+        Warnings = warnings;
+        IdTokenSubClaimType = idTokenSubClaimType;
+        JwksUri = jwksUri;
+        SupportsSca = supportsSca;
+        IssuerUrl = issuerUrl;
+        FinancialId = financialId;
+        RegistrationEndpoint = registrationEndpoint;
+        TokenEndpoint = tokenEndpoint;
+        AuthorizationEndpoint = authorizationEndpoint;
+        DcrApiVersion = dcrApiVersion;
+        CustomBehaviour = customBehaviour;
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public class BankResponse : LocalObjectBaseResponse, IBankPublicQuery
-    {
-        internal BankResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            IList<string>? warnings,
-            IdTokenSubClaimType idTokenSubClaimType,
-            string jwksUri,
-            bool supportsSca,
-            string issuerUrl,
-            string financialId,
-            string? registrationEndpoint,
-            string tokenEndpoint,
-            string authorizationEndpoint,
-            DynamicClientRegistrationApiVersion dcrApiVersion,
-            CustomBehaviourClass? customBehaviour) : base(id, created, createdBy, reference)
-        {
-            Warnings = warnings;
-            IdTokenSubClaimType = idTokenSubClaimType;
-            JwksUri = jwksUri;
-            SupportsSca = supportsSca;
-            IssuerUrl = issuerUrl;
-            FinancialId = financialId;
-            RegistrationEndpoint = registrationEndpoint;
-            TokenEndpoint = tokenEndpoint;
-            AuthorizationEndpoint = authorizationEndpoint;
-            DcrApiVersion = dcrApiVersion;
-            CustomBehaviour = customBehaviour;
-        }
+    public IList<string>? Warnings { get; set; }
 
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
+    /// <summary>
+    ///     ID token "sub" claim type. Determined by how bank uses ID token.
+    /// </summary>
+    public IdTokenSubClaimType IdTokenSubClaimType { get; }
 
-        /// <summary>
-        ///     ID token "sub" claim type. Determined by how bank uses ID token.
-        /// </summary>
-        public IdTokenSubClaimType IdTokenSubClaimType { get; }
-
-        public string JwksUri { get; }
+    public string JwksUri { get; }
 
 
-        public bool SupportsSca { get; }
+    public bool SupportsSca { get; }
 
-        public string IssuerUrl { get; }
-        public string FinancialId { get; }
+    public string IssuerUrl { get; }
+    public string FinancialId { get; }
 
-        /// <summary>
-        ///     Registration endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string? RegistrationEndpoint { get; }
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
 
-        /// <summary>
-        ///     Token endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string TokenEndpoint { get; }
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
 
-        /// <summary>
-        ///     Authorization endpoint (normally supplied from OpenID Configuration)
-        /// </summary>
-        public string AuthorizationEndpoint { get; }
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
 
-        /// <summary>
-        ///     API version used for DCR requests (POST, GET etc)
-        /// </summary>
-        public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
+    /// <summary>
+    ///     API version used for DCR requests (POST, GET etc)
+    /// </summary>
+    public DynamicClientRegistrationApiVersion DcrApiVersion { get; }
 
-        /// <summary>
-        ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
-        ///     For a well-behaved bank, normally this object should be null.
-        /// </summary>
-        public CustomBehaviourClass? CustomBehaviour { get; }
-    }
+    /// <summary>
+    ///     Custom behaviour, usually bank-specific, to handle quirks, formatting issues, etc.
+    ///     For a well-behaved bank, normally this object should be null.
+    /// </summary>
+    public CustomBehaviourClass? CustomBehaviour { get; }
 }

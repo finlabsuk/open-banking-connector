@@ -2,28 +2,25 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions
-{
-    public static class StringExtensions
-    {
-        public static string PascalOrCamelToKebabCase(this string value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
-            MatchCollection matches = Regex.Matches(
-                value,
-                @"\G(.[^A-Z]*)", // one possibly capital followed by optional non-capitals for each group
-                RegexOptions.Compiled);
-            IEnumerable<string> stringMatches = from Match match in matches select match.Value;
-            string returnString = string.Join("-", stringMatches).ToLower();
-            return returnString;
+public static class StringExtensions
+{
+    public static string PascalOrCamelToKebabCase(this string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return value;
         }
+
+        MatchCollection matches = Regex.Matches(
+            value,
+            @"\G(.[^A-Z]*)", // one possibly capital followed by optional non-capitals for each group
+            RegexOptions.Compiled);
+        IEnumerable<string> stringMatches = from Match match in matches select match.Value;
+        string returnString = string.Join("-", stringMatches).ToLower();
+        return returnString;
     }
 }

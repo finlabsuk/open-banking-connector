@@ -2,68 +2,65 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+internal class FileCertificateReader : ICertificateReader
 {
-    internal class FileCertificateReader : ICertificateReader
+    private readonly IIoFacade _ioFacade;
+
+    public FileCertificateReader() : this(new IoFacade()) { }
+
+    public FileCertificateReader(string rootFolder) : this(new IoFacade(() => rootFolder)) { }
+
+    internal FileCertificateReader(IIoFacade ioFacade)
     {
-        private readonly IIoFacade _ioFacade;
+        _ioFacade = ioFacade.ArgNotNull(nameof(ioFacade));
+    }
 
-        public FileCertificateReader() : this(new IoFacade()) { }
+    public Task<X509Certificate2?> GetCertificateAsync(string fileName)
+    {
+        X509Certificate2? result = GetX509Certificate2(fileName, new SecureString());
 
-        public FileCertificateReader(string rootFolder) : this(new IoFacade(() => rootFolder)) { }
+        return result.ToTaskResult();
+    }
 
-        internal FileCertificateReader(IIoFacade ioFacade)
+
+    public Task<X509Certificate2?> GetCertificateAsync(string fileName, SecureString password)
+    {
+        X509Certificate2? result = GetX509Certificate2(fileName, password);
+
+        return result.ToTaskResult();
+    }
+
+    private X509Certificate2? GetX509Certificate2(string fileName, SecureString password)
+    {
+        X509Certificate2? result = null;
+        if (!string.IsNullOrEmpty(fileName))
         {
-            _ioFacade = ioFacade.ArgNotNull(nameof(ioFacade));
-        }
+            string appdata = _ioFacade.GetContentPath();
 
-        public Task<X509Certificate2?> GetCertificateAsync(string fileName)
-        {
-            X509Certificate2? result = GetX509Certificate2(fileName, new SecureString());
-
-            return result.ToTaskResult();
-        }
-
-
-        public Task<X509Certificate2?> GetCertificateAsync(string fileName, SecureString password)
-        {
-            X509Certificate2? result = GetX509Certificate2(fileName, password);
-
-            return result.ToTaskResult();
-        }
-
-        private X509Certificate2? GetX509Certificate2(string fileName, SecureString password)
-        {
-            X509Certificate2? result = null;
-            if (!string.IsNullOrEmpty(fileName))
+            string? certFile = _ioFacade.GetDirectoryFiles(appdata, fileName).FirstOrDefault();
+            if (!string.IsNullOrEmpty(certFile))
             {
-                string appdata = _ioFacade.GetContentPath();
-
-                string? certFile = _ioFacade.GetDirectoryFiles(appdata, fileName).FirstOrDefault();
-                if (!string.IsNullOrEmpty(certFile))
-                {
-                    result = GetCertificateFromFileAsync(certFile, password);
-                }
+                result = GetCertificateFromFileAsync(certFile, password);
             }
-
-            return result;
         }
 
+        return result;
+    }
 
-        private X509Certificate2 GetCertificateFromFileAsync(string certFile, SecureString password)
-        {
-            return new X509Certificate2(
-                certFile,
-                password,
-                X509KeyStorageFlags.MachineKeySet |
-                X509KeyStorageFlags.PersistKeySet |
-                X509KeyStorageFlags.Exportable);
-        }
+
+    private X509Certificate2 GetCertificateFromFileAsync(string certFile, SecureString password)
+    {
+        return new X509Certificate2(
+            certFile,
+            password,
+            X509KeyStorageFlags.MachineKeySet |
+            X509KeyStorageFlags.PersistKeySet |
+            X509KeyStorageFlags.Exportable);
     }
 }

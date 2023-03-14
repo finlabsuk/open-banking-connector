@@ -9,44 +9,43 @@ using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests;
+
+public class ExtensionsTests
 {
-    public class ExtensionsTests
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("  ", 0)]
+    [InlineData(".", 1)]
+    [InlineData("...", 3)]
+    [InlineData(" . . . ", 3)]
+    [InlineData(" abc ", 0)]
+    [InlineData(" ab. ", 1)]
+    [InlineData(" .ab ", 1)]
+    public void DelimiterCount(string value, int expectedCount)
     {
-        [Theory]
-        [InlineData("", 0)]
-        [InlineData("  ", 0)]
-        [InlineData(".", 1)]
-        [InlineData("...", 3)]
-        [InlineData(" . . . ", 3)]
-        [InlineData(" abc ", 0)]
-        [InlineData(" ab. ", 1)]
-        [InlineData(" .ab ", 1)]
-        public void DelimiterCount(string value, int expectedCount)
-        {
-            int result = value.DelimiterCount('.');
+        int result = value.DelimiterCount('.');
 
-            result.Should().Be(expectedCount);
-        }
+        result.Should().Be(expectedCount);
+    }
 
-        [Fact]
-        public void ToObjectDictionary_ScratchTest()
-        {
-            var value =
-                new ClientRegistrationModelsPublic.OBClientRegistration1
-                {
-                    Aud = "some aud",
-                    ApplicationType = ClientRegistrationModelsPublic.OBRegistrationProperties1applicationTypeEnum.Web,
-                    ClientId = "some clientId"
-                };
+    [Fact]
+    public void ToObjectDictionary_ScratchTest()
+    {
+        var value =
+            new ClientRegistrationModelsPublic.OBClientRegistration1
+            {
+                Aud = "some aud",
+                ApplicationType = ClientRegistrationModelsPublic.OBRegistrationProperties1applicationTypeEnum.Web,
+                ClientId = "some clientId"
+            };
 
-            Dictionary<string, object?> result = value.ToObjectDictionary();
+        Dictionary<string, object?> result = value.ToObjectDictionary();
 
-            result.Should().NotBeNull();
-            result["aud"].Should().Be(value.Aud);
-            result["application_type"].Should().Be(value.ApplicationType);
-            result["client_id"].Should().Be(value.ClientId);
-            result["token_endpoint_auth_signing_alg"].Should().BeNull();
-        }
+        result.Should().NotBeNull();
+        result["aud"].Should().Be(value.Aud);
+        result["application_type"].Should().Be(value.ApplicationType);
+        result["client_id"].Should().Be(value.ClientId);
+        result["token_endpoint_auth_signing_alg"].Should().BeNull();
     }
 }

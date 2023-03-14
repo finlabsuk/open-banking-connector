@@ -8,31 +8,30 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+
+public static class DomesticPaymentConsentPublicMethods
 {
-    public static class DomesticPaymentConsentPublicMethods
+    public static PaymentInitiationModelsPublic.OBWriteDomesticConsent4 ResolveExternalApiRequest(
+        PaymentInitiationModelsPublic.OBWriteDomesticConsent4? externalApiRequest,
+        DomesticPaymentTemplateRequest? templateRequest,
+        BankProfile? bankProfile)
     {
-        public static PaymentInitiationModelsPublic.OBWriteDomesticConsent4 ResolveExternalApiRequest(
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4? externalApiRequest,
-            DomesticPaymentTemplateRequest? templateRequest,
-            BankProfile? bankProfile)
+        // Resolve external API request
+        PaymentInitiationModelsPublic.OBWriteDomesticConsent4 resolvedExternalApiRequest =
+            externalApiRequest ??
+            DomesticPaymentTemplates.DomesticPaymentConsentExternalApiRequest(
+                templateRequest ??
+                throw new InvalidOperationException(
+                    "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));
+
+        // Customise external API request using bank profile
+        if (bankProfile is not null)
         {
-            // Resolve external API request
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 resolvedExternalApiRequest =
-                externalApiRequest ??
-                DomesticPaymentTemplates.DomesticPaymentConsentExternalApiRequest(
-                    templateRequest ??
-                    throw new InvalidOperationException(
-                        "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));
-
-            // Customise external API request using bank profile
-            if (bankProfile is not null)
-            {
-                resolvedExternalApiRequest = bankProfile.PaymentInitiationApiSettings
-                    .DomesticPaymentConsentExternalApiRequestAdjustments(resolvedExternalApiRequest);
-            }
-
-            return resolvedExternalApiRequest;
+            resolvedExternalApiRequest = bankProfile.PaymentInitiationApiSettings
+                .DomesticPaymentConsentExternalApiRequestAdjustments(resolvedExternalApiRequest);
         }
+
+        return resolvedExternalApiRequest;
     }
 }

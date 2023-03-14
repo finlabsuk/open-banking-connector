@@ -4,54 +4,52 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
+
+public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
 {
-    public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
+    public Guid DomesticVrpConsentId { get; }
+}
+
+/// <summary>
+///     Response to DomesticVrpConsentAuthContext Read requests.
+/// </summary>
+public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse,
+    IDomesticVrpConsentAuthContextPublicQuery
+{
+    internal DomesticVrpConsentAuthContextReadResponse(
+        Guid id,
+        DateTimeOffset created,
+        string? createdBy,
+        string? reference,
+        Guid domesticVrpConsentId) : base(id, created, createdBy, reference)
     {
-        public Guid DomesticVrpConsentId { get; }
+        DomesticVrpConsentId = domesticVrpConsentId;
     }
 
     /// <summary>
-    ///     Response to DomesticVrpConsentAuthContext Read requests.
+    ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse,
-        IDomesticVrpConsentAuthContextPublicQuery
+    public IList<string>? Warnings { get; set; }
+
+    public Guid DomesticVrpConsentId { get; }
+}
+
+/// <summary>
+///     Response to DomesticVrpConsentAuthContext Create requests.
+/// </summary>
+public class DomesticVrpConsentAuthContextCreateResponse : DomesticVrpConsentAuthContextReadResponse
+{
+    internal DomesticVrpConsentAuthContextCreateResponse(
+        Guid id,
+        DateTimeOffset created,
+        string? createdBy,
+        string? reference,
+        Guid domesticVrpConsentId,
+        string authUrl) : base(id, created, createdBy, reference, domesticVrpConsentId)
     {
-        internal DomesticVrpConsentAuthContextReadResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            Guid domesticVrpConsentId) : base(id, created, createdBy, reference)
-        {
-            DomesticVrpConsentId = domesticVrpConsentId;
-        }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
-
-        public Guid DomesticVrpConsentId { get; }
+        AuthUrl = authUrl;
     }
 
-    /// <summary>
-    ///     Response to DomesticVrpConsentAuthContext Create requests.
-    /// </summary>
-    public class DomesticVrpConsentAuthContextCreateResponse : DomesticVrpConsentAuthContextReadResponse
-    {
-        internal DomesticVrpConsentAuthContextCreateResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            Guid domesticVrpConsentId,
-            string authUrl) : base(id, created, createdBy, reference, domesticVrpConsentId)
-        {
-            AuthUrl = authUrl;
-        }
-
-        public string AuthUrl { get; }
-
-    }
+    public string AuthUrl { get; }
 }

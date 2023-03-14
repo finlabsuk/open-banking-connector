@@ -9,16 +9,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRe
 using Newtonsoft.Json;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request
-{
-    public class DomesticVrpConsentAuthContext : Base, ISupportsValidation
-    {
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public Guid DomesticVrpConsentId { get; set; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
-        public async Task<ValidationResult> ValidateAsync() =>
-            await new DomesticVrpConsentAuthContextValidator()
-                .ValidateAsync(this)!;
-    }
+public class DomesticVrpConsentAuthContext : Base, ISupportsValidation
+{
+    [Required]
+    [JsonProperty(Required = Required.Always)]
+    public Guid DomesticVrpConsentId { get; set; }
+
+    public async Task<ValidationResult> ValidateAsync() =>
+        await new DomesticVrpConsentAuthContextValidator()
+            .ValidateAsync(this)!;
 }

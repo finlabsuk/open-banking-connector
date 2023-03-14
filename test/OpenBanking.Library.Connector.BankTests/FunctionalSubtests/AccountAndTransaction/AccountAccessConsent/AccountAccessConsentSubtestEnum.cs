@@ -5,34 +5,33 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
-    AccountAccessConsent
+    AccountAccessConsent;
+
+/// <summary>
+///     Account access consent functional subtest
+/// </summary>
+public enum AccountAccessConsentSubtestEnum
 {
-    /// <summary>
-    ///     Account access consent functional subtest
-    /// </summary>
-    public enum AccountAccessConsentSubtestEnum
+    MaximumPermissionsSubtest
+}
+
+public static class AccountAccessConsentSubtestHelper
+{
+    static AccountAccessConsentSubtestHelper()
     {
-        MaximumPermissionsSubtest
+        AllAccountAccessConsentSubtests = Enum.GetValues(typeof(AccountAccessConsentSubtestEnum))
+            .Cast<AccountAccessConsentSubtestEnum>().ToHashSet();
     }
 
-    public static class AccountAccessConsentSubtestHelper
-    {
-        static AccountAccessConsentSubtestHelper()
+    public static ISet<AccountAccessConsentSubtestEnum> AllAccountAccessConsentSubtests { get; }
+
+    public static AccountAccessConsentTemplateType GetAccountAccessConsentTemplateType(
+        AccountAccessConsentSubtestEnum subtestEnum) =>
+        subtestEnum switch
         {
-            AllAccountAccessConsentSubtests = Enum.GetValues(typeof(AccountAccessConsentSubtestEnum))
-                .Cast<AccountAccessConsentSubtestEnum>().ToHashSet();
-        }
-
-        public static ISet<AccountAccessConsentSubtestEnum> AllAccountAccessConsentSubtests { get; }
-
-        public static AccountAccessConsentTemplateType GetAccountAccessConsentTemplateType(
-            AccountAccessConsentSubtestEnum subtestEnum) =>
-            subtestEnum switch
-            {
-                AccountAccessConsentSubtestEnum.MaximumPermissionsSubtest => AccountAccessConsentTemplateType
-                    .MaximumPermissions,
-                _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(AccountAccessConsentSubtestEnum)} or needs to be added to this switch statement.")
-            };
-    }
+            AccountAccessConsentSubtestEnum.MaximumPermissionsSubtest => AccountAccessConsentTemplateType
+                .MaximumPermissions,
+            _ => throw new ArgumentException(
+                $"{nameof(subtestEnum)} is not valid {nameof(AccountAccessConsentSubtestEnum)} or needs to be added to this switch statement.")
+        };
 }

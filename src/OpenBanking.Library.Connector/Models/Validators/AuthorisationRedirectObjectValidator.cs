@@ -6,26 +6,25 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+
+public class AuthorisationRedirectObjectValidator : AbstractValidator<AuthResult>
 {
-    public class AuthorisationRedirectObjectValidator : AbstractValidator<AuthResult>
+    public AuthorisationRedirectObjectValidator()
     {
-        public AuthorisationRedirectObjectValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
 
-            CreateRules();
-        }
+        CreateRules();
+    }
 
-        private void CreateRules()
-        {
-            RuleFor(x => x.RedirectData)
-                .Must(ValidationRules.IsNotNull)
-                .WithMessage($"Missing {nameof(AuthResult.RedirectData)}.");
+    private void CreateRules()
+    {
+        RuleFor(x => x.RedirectData)
+            .Must(ValidationRules.IsNotNull)
+            .WithMessage($"Missing {nameof(AuthResult.RedirectData)}.");
 
-            RuleFor(x => x.RedirectData)
-                .SetValidator(new AuthResultValidator());
-        }
+        RuleFor(x => x.RedirectData)
+            .SetValidator(new AuthResultValidator());
     }
 }

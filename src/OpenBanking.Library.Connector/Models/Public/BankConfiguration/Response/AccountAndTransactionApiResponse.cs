@@ -5,52 +5,51 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+
+public interface IAccountAndTransactionApiQuery : IBaseQuery
 {
-    public interface IAccountAndTransactionApiQuery : IBaseQuery
+    Guid BankId { get; }
+    AccountAndTransactionApiVersion ApiVersion { get; }
+    string BaseUrl { get; }
+}
+
+/// <summary>
+///     Response to GetLocal
+/// </summary>
+public class AccountAndTransactionApiResponse : LocalObjectBaseResponse, IAccountAndTransactionApiQuery
+{
+    internal AccountAndTransactionApiResponse(
+        Guid id,
+        DateTimeOffset created,
+        string? createdBy,
+        string? reference,
+        Guid bankId,
+        AccountAndTransactionApiVersion apiVersion,
+        string baseUrl) : base(id, created, createdBy, reference)
     {
-        Guid BankId { get; }
-        AccountAndTransactionApiVersion ApiVersion { get; }
-        string BaseUrl { get; }
+        BankId = bankId;
+        ApiVersion = apiVersion;
+        BaseUrl = baseUrl;
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public class AccountAndTransactionApiResponse : LocalObjectBaseResponse, IAccountAndTransactionApiQuery
-    {
-        internal AccountAndTransactionApiResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            Guid bankId,
-            AccountAndTransactionApiVersion apiVersion,
-            string baseUrl) : base(id, created, createdBy, reference)
-        {
-            BankId = bankId;
-            ApiVersion = apiVersion;
-            BaseUrl = baseUrl;
-        }
+    public IList<string>? Warnings { get; set; }
 
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
+    /// <summary>
+    ///     Bank with which this API is associated.
+    /// </summary>
+    public Guid BankId { get; }
 
-        /// <summary>
-        ///     Bank with which this API is associated.
-        /// </summary>
-        public Guid BankId { get; }
+    /// <summary>
+    ///     Version of UK Open Banking Account and Transaction API.
+    /// </summary>
+    public AccountAndTransactionApiVersion ApiVersion { get; }
 
-        /// <summary>
-        ///     Version of UK Open Banking Account and Transaction API.
-        /// </summary>
-        public AccountAndTransactionApiVersion ApiVersion { get; }
-
-        /// <summary>
-        ///     Base URL for UK Open Banking Account and Transaction API.
-        /// </summary>
-        public string BaseUrl { get; }
-    }
+    /// <summary>
+    ///     Base URL for UK Open Banking Account and Transaction API.
+    /// </summary>
+    public string BaseUrl { get; }
 }

@@ -9,16 +9,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAnd
 using Newtonsoft.Json;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request
-{
-    public class AccountAccessConsentAuthContext : Base, ISupportsValidation
-    {
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public Guid AccountAccessConsentId { get; set; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
-        public async Task<ValidationResult> ValidateAsync() =>
-            await new AccountAccessConsentAuthContextValidator()
-                .ValidateAsync(this)!;
-    }
+public class AccountAccessConsentAuthContext : Base, ISupportsValidation
+{
+    [Required]
+    [JsonProperty(Required = Required.Always)]
+    public Guid AccountAccessConsentId { get; set; }
+
+    public async Task<ValidationResult> ValidateAsync() =>
+        await new AccountAccessConsentAuthContextValidator()
+            .ValidateAsync(this)!;
 }

@@ -4,20 +4,19 @@
 
 using FsCheck;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
-{
-    public static class InvalidUriArbitrary
-    {
-        public static Arbitrary<string> GetArbitrary()
-        {
-            return Arb.Default.String().Generator
-                .Where(s => !string.IsNullOrEmpty(s) && !IsUrl(s))
-                .ToArbitrary();
-        }
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
-        private static bool IsUrl(string value)
-        {
-            return Uri.TryCreate(value, UriKind.Absolute, out _);
-        }
+public static class InvalidUriArbitrary
+{
+    public static Arbitrary<string> GetArbitrary()
+    {
+        return Arb.Default.String().Generator
+            .Where(s => !string.IsNullOrEmpty(s) && !IsUrl(s))
+            .ToArbitrary();
+    }
+
+    private static bool IsUrl(string value)
+    {
+        return Uri.TryCreate(value, UriKind.Absolute, out _);
     }
 }

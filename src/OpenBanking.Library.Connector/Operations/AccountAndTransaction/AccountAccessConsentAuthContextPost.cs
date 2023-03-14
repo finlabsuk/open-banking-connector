@@ -19,103 +19,103 @@ using AccountAccessConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
     AccountAccessConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
+
+internal class
+    AccountAccessConsentAuthContextPost : LocalEntityCreate<
+        AccountAccessConsentAuthContextPersisted,
+        AccountAccessConsentAuthContextRequest,
+        AccountAccessConsentAuthContextCreateResponse>
 {
-    internal class
-        AccountAccessConsentAuthContextPost : LocalEntityCreate<
-            AccountAccessConsentAuthContextPersisted,
-            AccountAccessConsentAuthContextRequest,
-            AccountAccessConsentAuthContextCreateResponse>
-    {
-        protected readonly IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> _accountAccessConsentMethods;
+    protected readonly IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> _accountAccessConsentMethods;
 
-        public AccountAccessConsentAuthContextPost(
-            IDbReadWriteEntityMethods<AccountAccessConsentAuthContextPersisted>
-                entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> accountAccessConsentMethods,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
+    public AccountAccessConsentAuthContextPost(
+        IDbReadWriteEntityMethods<AccountAccessConsentAuthContextPersisted>
             entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
-        {
-            _accountAccessConsentMethods = accountAccessConsentMethods;
-        }
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> accountAccessConsentMethods,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
+    {
+        _accountAccessConsentMethods = accountAccessConsentMethods;
+    }
 
-        protected override async Task<AccountAccessConsentAuthContextCreateResponse> AddEntity(
-            AccountAccessConsentAuthContextRequest request,
-            ITimeProvider timeProvider)
-        {
-            // Load relevant data objects
-            AccountAccessConsentPersisted accountAccessConsent =
-                _accountAccessConsentMethods
-                    .DbSetNoTracking
-                    .Include(o => o.BankRegistrationNavigation)
-                    .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == request.AccountAccessConsentId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for Account Access Consent with ID {request.AccountAccessConsentId}.");
-            CustomBehaviourClass? customBehaviour =
-                accountAccessConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
-            string authorizationEndpoint =
-                accountAccessConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-            string issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-            bool supportsSca = accountAccessConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
+    protected override async Task<AccountAccessConsentAuthContextCreateResponse> AddEntity(
+        AccountAccessConsentAuthContextRequest request,
+        ITimeProvider timeProvider)
+    {
+        // Load relevant data objects
+        AccountAccessConsentPersisted accountAccessConsent =
+            _accountAccessConsentMethods
+                .DbSetNoTracking
+                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .SingleOrDefault(x => x.Id == request.AccountAccessConsentId) ??
+            throw new KeyNotFoundException(
+                $"No record found for Account Access Consent with ID {request.AccountAccessConsentId}.");
+        CustomBehaviourClass? customBehaviour =
+            accountAccessConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+        string authorizationEndpoint =
+            accountAccessConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+        string issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+        bool supportsSca = accountAccessConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    accountAccessConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                    accountAccessConsent.BankRegistrationNavigation
-                        .SoftwareStatementProfileOverride);
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+            await _softwareStatementProfileRepo.GetAsync(
+                accountAccessConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
+                accountAccessConsent.BankRegistrationNavigation
+                    .SoftwareStatementProfileOverride);
 
-            // Create auth URL
-            string consentAuthGetAudClaim =
-                customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
-                issuerUrl;
+        // Create auth URL
+        string consentAuthGetAudClaim =
+            customBehaviour?.AccountAccessConsentAuthGet?.AudClaim ??
+            issuerUrl;
 
-            (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
-                accountAccessConsent.ExternalApiId,
-                processedSoftwareStatementProfile,
-                accountAccessConsent.BankRegistrationNavigation,
-                accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                customBehaviour?.AccountAccessConsentAuthGet,
-                authorizationEndpoint,
-                consentAuthGetAudClaim,
-                supportsSca,
-                "accounts",
-                _instrumentationClient);
+        (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
+            accountAccessConsent.ExternalApiId,
+            processedSoftwareStatementProfile,
+            accountAccessConsent.BankRegistrationNavigation,
+            accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            customBehaviour?.AccountAccessConsentAuthGet,
+            authorizationEndpoint,
+            consentAuthGetAudClaim,
+            supportsSca,
+            "accounts",
+            _instrumentationClient);
 
-            // Create persisted entity
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new AccountAccessConsentAuthContextPersisted(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                state,
-                nonce,
-                request.AccountAccessConsentId);
+        // Create persisted entity
+        DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+        var entity = new AccountAccessConsentAuthContextPersisted(
+            Guid.NewGuid(),
+            request.Reference,
+            false,
+            utcNow,
+            request.CreatedBy,
+            utcNow,
+            request.CreatedBy,
+            state,
+            nonce,
+            request.AccountAccessConsentId);
 
-            // Add entity
-            await _entityMethods.AddAsync(entity);
+        // Add entity
+        await _entityMethods.AddAsync(entity);
 
-            var response =
-                new AccountAccessConsentAuthContextCreateResponse(
-                    entity.Id,
-                    entity.Created,
-                    entity.CreatedBy,
-                    entity.Reference,
-                    entity.AccountAccessConsentId,
-                    authUrl, state);
+        var response =
+            new AccountAccessConsentAuthContextCreateResponse(
+                entity.Id,
+                entity.Created,
+                entity.CreatedBy,
+                entity.Reference,
+                entity.AccountAccessConsentId,
+                authUrl,
+                state);
 
-            return response;
-        }
+        return response;
     }
 }

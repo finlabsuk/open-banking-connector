@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -39,8 +38,8 @@ internal class
     private readonly ConsentCommon<AccountAccessConsentPersisted,
         AccountAccessConsentRequest,
         AccountAccessConsentCreateResponse,
-        OBReadConsent1,
-        OBReadConsentResponse1> _consentCommon;
+        AccountAndTransactionModelsPublic.OBReadConsent1,
+        AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
@@ -73,7 +72,8 @@ internal class
         _consentCommon =
             new ConsentCommon<AccountAccessConsentPersisted, AccountAccessConsentRequest,
                 AccountAccessConsentCreateResponse,
-                OBReadConsent1, OBReadConsentResponse1>(
+                AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
                 bankRegistrationMethods,
                 instrumentationClient,
                 softwareStatementProfileRepo);
@@ -104,7 +104,7 @@ internal class
         var entityId = Guid.NewGuid();
 
         // Create new or use existing external API object
-        OBReadConsentResponse1? externalApiResponse;
+        AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
         string externalApiId;
         if (request.ExternalApiObject is null)
         {
@@ -133,14 +133,15 @@ internal class
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiPostRequests<OBReadConsent1, OBReadConsentResponse1> apiRequests =
+            IApiPostRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
-            OBReadConsent1 externalApiRequest =
+            AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
                 AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
                     request.ExternalApiRequest,
                     request.TemplateRequest,
@@ -274,7 +275,7 @@ internal class
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
-        OBReadConsentResponse1? externalApiResponse;
+        AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
         if (includeExternalApiOperation)
         {
             // Get client credentials grant access token
@@ -291,7 +292,7 @@ internal class
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
-            IApiGetRequests<OBReadConsentResponse1> apiRequests =
+            IApiGetRequests<AccountAndTransactionModelsPublic.OBReadConsentResponse1> apiRequests =
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
@@ -365,7 +366,8 @@ internal class
         return accountAndTransactionApi;
     }
 
-    private IApiRequests<OBReadConsent1, OBReadConsentResponse1> ApiRequests(
+    private IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,
+        AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
         AccountAndTransactionApiVersion accountAndTransactionApiVersion,
         string bankFinancialId,
         string accessToken,
@@ -373,24 +375,24 @@ internal class
         accountAndTransactionApiVersion switch
         {
             AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<
-                OBReadConsent1,
-                OBReadConsentResponse1,
-                BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadConsent1,
-                BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadConsentResponse1>(
+                AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                AccountAndTransactionModelsV3p1p7.OBReadConsent1,
+                AccountAndTransactionModelsV3p1p7.OBReadConsentResponse1>(
                 new ApiGetRequestProcessor(bankFinancialId, accessToken),
                 new AccountAndTransactionPostRequestProcessor<
-                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadConsent1>(
+                    AccountAndTransactionModelsV3p1p7.OBReadConsent1>(
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient)),
             AccountAndTransactionApiVersion.Version3p1p10 => new ApiRequests<
-                OBReadConsent1,
-                OBReadConsentResponse1,
-                OBReadConsent1,
-                OBReadConsentResponse1>(
+                AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionModelsPublic.OBReadConsentResponse1,
+                AccountAndTransactionModelsPublic.OBReadConsent1,
+                AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
                 new ApiGetRequestProcessor(bankFinancialId, accessToken),
                 new AccountAndTransactionPostRequestProcessor<
-                    OBReadConsent1>(
+                    AccountAndTransactionModelsPublic.OBReadConsent1>(
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient)),

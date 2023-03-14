@@ -5,84 +5,83 @@
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Http
+namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
+
+internal static class HttpRequestInfoExtensions
 {
-    internal static class HttpRequestInfoExtensions
+    public static HttpRequestMessage CreateRequestMessage(this HttpRequestInfo info)
     {
-        public static HttpRequestMessage CreateRequestMessage(this HttpRequestInfo info)
-        {
-            HttpRequestMessage result = new HttpRequestMessage(
-                    new HttpMethod(info.Method),
-                    info.RequestUri.ToString())
-                .ApplyAcceptEncoding()
-                .ApplyAcceptContentTypes(info)
-                .AddHeaders(info)
-                .ApplyContent(info)
-                .ApplyUserAgent(info);
+        HttpRequestMessage result = new HttpRequestMessage(
+                new HttpMethod(info.Method),
+                info.RequestUri.ToString())
+            .ApplyAcceptEncoding()
+            .ApplyAcceptContentTypes(info)
+            .AddHeaders(info)
+            .ApplyContent(info)
+            .ApplyUserAgent(info);
 
-            return result;
+        return result;
+    }
+
+    private static HttpRequestMessage ApplyAcceptEncoding(this HttpRequestMessage request)
+    {
+        request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
+
+        return request;
+    }
+
+    private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)
+    {
+        var acceptableContentTypes = new List<string> { "application/json" };
+
+        foreach (string contentType in acceptableContentTypes)
+        {
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(contentType));
         }
 
-        private static HttpRequestMessage ApplyAcceptEncoding(this HttpRequestMessage request)
-        {
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
+        return request;
+    }
 
-            return request;
+
+    private static HttpRequestMessage ApplyUserAgent(this HttpRequestMessage request, HttpRequestInfo info)
+    {
+        if (!string.IsNullOrEmpty(info.UserAgent))
+        {
+            request.Headers.UserAgent.ParseAdd(info.UserAgent);
         }
 
-        private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)
-        {
-            var acceptableContentTypes = new List<string> { "application/json" };
+        return request;
+    }
 
-            foreach (string contentType in acceptableContentTypes)
+    private static HttpRequestMessage ApplyContent(this HttpRequestMessage request, HttpRequestInfo info)
+    {
+        if (!string.IsNullOrWhiteSpace(info.Content))
+        {
+            HttpContent content = new StringContent(info.Content, Encoding.UTF8);
+            string? contentType = info.ContentTypes.FirstOrDefault();
+            if (contentType != null)
             {
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(contentType));
+                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue(contentType);
             }
 
-            return request;
+            request.Content = content;
         }
 
+        return request;
+    }
 
-        private static HttpRequestMessage ApplyUserAgent(this HttpRequestMessage request, HttpRequestInfo info)
+    private static HttpRequestMessage AddHeaders(this HttpRequestMessage request, HttpRequestInfo info)
+    {
+        if (info.Headers.Count > 0)
         {
-            if (!string.IsNullOrEmpty(info.UserAgent))
+            IEnumerable<IGrouping<string, HttpHeader>> headers = info.Headers.GroupBy(h => h.Name);
+            foreach (IGrouping<string, HttpHeader> headerGroup in headers)
             {
-                request.Headers.UserAgent.ParseAdd(info.UserAgent);
+                IEnumerable<string> values = headerGroup.Select(h => h.Value);
+                request.Headers.Add(headerGroup.Key, values);
             }
-
-            return request;
         }
 
-        private static HttpRequestMessage ApplyContent(this HttpRequestMessage request, HttpRequestInfo info)
-        {
-            if (!string.IsNullOrWhiteSpace(info.Content))
-            {
-                HttpContent content = new StringContent(info.Content, Encoding.UTF8);
-                string? contentType = info.ContentTypes.FirstOrDefault();
-                if (contentType != null)
-                {
-                    content.Headers.ContentType = new MediaTypeWithQualityHeaderValue(contentType);
-                }
-
-                request.Content = content;
-            }
-
-            return request;
-        }
-
-        private static HttpRequestMessage AddHeaders(this HttpRequestMessage request, HttpRequestInfo info)
-        {
-            if (info.Headers.Count > 0)
-            {
-                IEnumerable<IGrouping<string, HttpHeader>> headers = info.Headers.GroupBy(h => h.Name);
-                foreach (IGrouping<string, HttpHeader> headerGroup in headers)
-                {
-                    IEnumerable<string> values = headerGroup.Select(h => h.Value);
-                    request.Headers.Add(headerGroup.Key, values);
-                }
-            }
-
-            return request;
-        }
+        return request;
     }
 }

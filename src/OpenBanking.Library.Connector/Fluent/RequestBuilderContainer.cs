@@ -10,42 +10,41 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+
+public interface IRequestBuilderContainer : IDisposable
 {
-    public interface IRequestBuilderContainer : IDisposable
+    IRequestBuilder RequestBuilder { get; }
+}
+
+public class RequestBuilderContainer : IRequestBuilderContainer
+{
+    private readonly BaseDbContext _dbContext;
+
+    public RequestBuilderContainer(
+        ITimeProvider timeProvider,
+        IApiVariantMapper apiVariantMapper,
+        IInstrumentationClient instrumentationClient,
+        IApiClient apiClient,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
+        BaseDbContext dbContext,
+        IBankProfileService bankProfileService)
     {
-        IRequestBuilder RequestBuilder { get; }
+        _dbContext = dbContext;
+        RequestBuilder = new RequestBuilder(
+            timeProvider,
+            apiVariantMapper,
+            instrumentationClient,
+            apiClient,
+            softwareStatementProfilesRepository,
+            new DbService(dbContext),
+            bankProfileService);
     }
 
-    public class RequestBuilderContainer : IRequestBuilderContainer
+    public void Dispose()
     {
-        private readonly BaseDbContext _dbContext;
-
-        public RequestBuilderContainer(
-            ITimeProvider timeProvider,
-            IApiVariantMapper apiVariantMapper,
-            IInstrumentationClient instrumentationClient,
-            IApiClient apiClient,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
-            BaseDbContext dbContext,
-            IBankProfileService bankProfileService)
-        {
-            _dbContext = dbContext;
-            RequestBuilder = new RequestBuilder(
-                timeProvider,
-                apiVariantMapper,
-                instrumentationClient,
-                apiClient,
-                softwareStatementProfilesRepository,
-                new DbService(dbContext),
-                bankProfileService);
-        }
-
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-        }
-
-        public IRequestBuilder RequestBuilder { get; }
+        _dbContext.Dispose();
     }
+
+    public IRequestBuilder RequestBuilder { get; }
 }

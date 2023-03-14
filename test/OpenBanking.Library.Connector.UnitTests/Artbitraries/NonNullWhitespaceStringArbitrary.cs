@@ -4,15 +4,14 @@
 
 using FsCheck;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
+
+public static class NonNullWhitespaceStringArbitrary
 {
-    public static class NonNullWhitespaceStringArbitrary
+    public static Arbitrary<string> GetArbitrary()
     {
-        public static Arbitrary<string> GetArbitrary()
-        {
-            return Arb.Default.String().Generator
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToArbitrary();
-        }
+        return Arb.Default.String().Generator
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .ToArbitrary();
     }
 }

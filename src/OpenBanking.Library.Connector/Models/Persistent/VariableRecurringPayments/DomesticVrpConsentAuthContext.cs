@@ -9,57 +9,56 @@ using DomesticVrpConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request.
     DomesticVrpConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+
+/// <summary>
+///     Persisted type.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal partial class DomesticVrpConsentAuthContext :
+    AuthContext,
+    IDomesticVrpConsentAuthContextPublicQuery
 {
-    /// <summary>
-    ///     Persisted type.
-    ///     Internal to help ensure public request and response types used on public API.
-    /// </summary>
-    internal partial class DomesticVrpConsentAuthContext :
-        AuthContext,
-        IDomesticVrpConsentAuthContextPublicQuery
+    public DomesticVrpConsentAuthContext(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        string state,
+        string nonce,
+        Guid domesticVrpConsentId) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy,
+        state,
+        nonce)
     {
-        public DomesticVrpConsentAuthContext(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string state,
-            string nonce,
-            Guid domesticVrpConsentId) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy,
-            state,
-            nonce)
-        {
-            DomesticVrpConsentId = domesticVrpConsentId;
-        }
-
-
-        // Parent consent (optional to avoid warning due to non-support of global query filter)
-        [ForeignKey("DomesticVrpConsentId")]
-        public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
-
-        public Guid DomesticVrpConsentId { get; }
+        DomesticVrpConsentId = domesticVrpConsentId;
     }
 
-    internal partial class DomesticVrpConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadResponse>
-    {
-        public DomesticVrpConsentAuthContextReadResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                DomesticVrpConsentId);
-    }
+
+    // Parent consent (optional to avoid warning due to non-support of global query filter)
+    [ForeignKey("DomesticVrpConsentId")]
+    public DomesticVrpConsent DomesticVrpConsentNavigation { get; set; } = null!;
+
+    public Guid DomesticVrpConsentId { get; }
+}
+
+internal partial class DomesticVrpConsentAuthContext :
+    ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadResponse>
+{
+    public DomesticVrpConsentAuthContextReadResponse PublicGetLocalResponse =>
+        new(
+            Id,
+            Created,
+            CreatedBy,
+            Reference,
+            DomesticVrpConsentId);
 }

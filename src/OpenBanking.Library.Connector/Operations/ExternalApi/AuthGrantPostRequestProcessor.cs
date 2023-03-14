@@ -10,50 +10,49 @@ using Newtonsoft.Json;
 using BankRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+
+internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<TRequest>
+    where TRequest : Dictionary<string, string>
 {
-    internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<TRequest>
-        where TRequest : Dictionary<string, string>
+    private readonly BankRegistration _bankRegistration;
+
+    public AuthGrantPostRequestProcessor(BankRegistration bankRegistration)
     {
-        private readonly BankRegistration _bankRegistration;
+        _bankRegistration = bankRegistration;
+    }
 
-        public AuthGrantPostRequestProcessor(BankRegistration bankRegistration)
+    (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
+        TRequest variantRequest,
+        JsonSerializerSettings? requestJsonSerializerSettings,
+        string requestDescription)
+    {
+        // Assemble headers and body
+        var headers = new List<HttpHeader>();
+        switch (_bankRegistration.TokenEndpointAuthMethod)
         {
-            _bankRegistration = bankRegistration;
-        }
-
-        (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
-            TRequest variantRequest,
-            JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription)
-        {
-            // Assemble headers and body
-            var headers = new List<HttpHeader>();
-            switch (_bankRegistration.TokenEndpointAuthMethod)
+            case TokenEndpointAuthMethod.TlsClientAuth:
+                variantRequest["client_id"] = _bankRegistration.ExternalApiObject.ExternalApiId;
+                break;
+            case TokenEndpointAuthMethod.ClientSecretBasic:
             {
-                case TokenEndpointAuthMethod.TlsClientAuth:
-                    variantRequest["client_id"] = _bankRegistration.ExternalApiObject.ExternalApiId;
-                    break;
-                case TokenEndpointAuthMethod.ClientSecretBasic:
-                {
-                    string clientSecret =
-                        _bankRegistration.ExternalApiObject.ExternalApiSecret ??
-                        throw new InvalidOperationException("No client secret available.");
-                    string authString = _bankRegistration.ExternalApiObject.ExternalApiId + ":" + clientSecret;
-                    byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
-                    string authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
-                    headers.Add(new HttpHeader("Authorization", authHeader));
-                    break;
-                }
-                case TokenEndpointAuthMethod.PrivateKeyJwt:
-                    break;
-                default:
-                    throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
+                string clientSecret =
+                    _bankRegistration.ExternalApiObject.ExternalApiSecret ??
+                    throw new InvalidOperationException("No client secret available.");
+                string authString = _bankRegistration.ExternalApiObject.ExternalApiId + ":" + clientSecret;
+                byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
+                string authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
+                headers.Add(new HttpHeader("Authorization", authHeader));
+                break;
             }
-
-            string content = variantRequest.ToUrlEncoded();
-
-            return (headers, content, "application/x-www-form-urlencoded");
+            case TokenEndpointAuthMethod.PrivateKeyJwt:
+                break;
+            default:
+                throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
         }
+
+        string content = variantRequest.ToUrlEncoded();
+
+        return (headers, content, "application/x-www-form-urlencoded");
     }
 }

@@ -10,22 +10,20 @@ using Newtonsoft.Json;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
+
+internal class DomesticVrpConsent : BaseConsentConfig<Persistent.VariableRecurringPayments.DomesticVrpConsent>
 {
-    internal class DomesticVrpConsent : BaseConsentConfig<Persistent.VariableRecurringPayments.DomesticVrpConsent>
+    public DomesticVrpConsent(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrpConsent> builder)
     {
-        public DomesticVrpConsent(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(
-            EntityTypeBuilder<Persistent.VariableRecurringPayments.DomesticVrpConsent> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.VariableRecurringPaymentsApiId)
-                .HasColumnOrder(10)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.VariableRecurringPaymentsApiId)
+            .HasColumnOrder(10)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

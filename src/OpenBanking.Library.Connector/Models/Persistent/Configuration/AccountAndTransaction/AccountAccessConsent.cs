@@ -10,21 +10,20 @@ using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
+
+internal class AccountAccessConsent : BaseConsentConfig<Persistent.AccountAndTransaction.AccountAccessConsent>
 {
-    internal class AccountAccessConsent : BaseConsentConfig<Persistent.AccountAndTransaction.AccountAccessConsent>
+    public AccountAccessConsent(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<Persistent.AccountAndTransaction.AccountAccessConsent> builder)
     {
-        public AccountAccessConsent(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(EntityTypeBuilder<Persistent.AccountAndTransaction.AccountAccessConsent> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.AccountAndTransactionApiId)
-                .HasColumnOrder(10)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.AccountAndTransactionApiId)
+            .HasColumnOrder(10)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

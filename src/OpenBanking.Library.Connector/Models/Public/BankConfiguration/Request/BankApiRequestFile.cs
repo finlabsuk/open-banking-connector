@@ -2,15 +2,14 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
-{
-    public class BankApiRequestFile
-    {
-        public BankApiRequestFile(string requestFile)
-        {
-            RequestFile = requestFile;
-        }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
-        public string RequestFile { get; }
+public class BankApiRequestFile
+{
+    public BankApiRequestFile(string requestFile)
+    {
+        RequestFile = requestFile;
     }
+
+    public string RequestFile { get; }
 }

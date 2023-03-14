@@ -2,18 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
+namespace FinnovationLabs.OpenBanking.Library.Connector;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector
+internal interface IIoFacade
 {
-    internal interface IIoFacade
-    {
-        string GetContentPath();
+    string GetContentPath();
 
-        IEnumerable<string> GetDirectoryFiles(string path, string filter);
+    IEnumerable<string> GetDirectoryFiles(string path, string filter);
 
-        bool FileExists(string path);
+    bool FileExists(string path);
 
-        void WriteFile(string path, byte[] bytes);
-    }
+    void WriteFile(string path, byte[] bytes);
 }

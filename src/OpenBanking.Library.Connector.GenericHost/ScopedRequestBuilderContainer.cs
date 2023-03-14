@@ -5,26 +5,25 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost
+namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost;
+
+/// <summary>
+///     Scoped request builder source
+/// </summary>
+public class ScopedRequestBuilderContainer : IRequestBuilderContainer
 {
-    /// <summary>
-    ///     Scoped request builder source
-    /// </summary>
-    public class ScopedRequestBuilderContainer : IRequestBuilderContainer
+    private readonly IServiceScope _serviceScope;
+
+    public ScopedRequestBuilderContainer(IServiceProvider serviceProvider)
     {
-        private readonly IServiceScope _serviceScope;
+        _serviceScope = serviceProvider.CreateScope();
+        RequestBuilder = _serviceScope.ServiceProvider.GetRequiredService<IRequestBuilder>();
+    }
 
-        public ScopedRequestBuilderContainer(IServiceProvider serviceProvider)
-        {
-            _serviceScope = serviceProvider.CreateScope();
-            RequestBuilder = _serviceScope.ServiceProvider.GetRequiredService<IRequestBuilder>();
-        }
+    public IRequestBuilder RequestBuilder { get; }
 
-        public IRequestBuilder RequestBuilder { get; }
-
-        public void Dispose()
-        {
-            _serviceScope.Dispose();
-        }
+    public void Dispose()
+    {
+        _serviceScope.Dispose();
     }
 }

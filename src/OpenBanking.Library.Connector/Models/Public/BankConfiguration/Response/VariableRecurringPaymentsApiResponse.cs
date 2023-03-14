@@ -5,52 +5,51 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+
+public interface IVariableRecurringPaymentsApiQuery : IBaseQuery
 {
-    public interface IVariableRecurringPaymentsApiQuery : IBaseQuery
+    Guid BankId { get; }
+    VariableRecurringPaymentsApiVersion ApiVersion { get; }
+    string BaseUrl { get; }
+}
+
+/// <summary>
+///     Response to GetLocal
+/// </summary>
+public class VariableRecurringPaymentsApiResponse : LocalObjectBaseResponse, IVariableRecurringPaymentsApiQuery
+{
+    internal VariableRecurringPaymentsApiResponse(
+        Guid id,
+        DateTimeOffset created,
+        string? createdBy,
+        string? reference,
+        Guid bankId,
+        VariableRecurringPaymentsApiVersion apiVersion,
+        string baseUrl) : base(id, created, createdBy, reference)
     {
-        Guid BankId { get; }
-        VariableRecurringPaymentsApiVersion ApiVersion { get; }
-        string BaseUrl { get; }
+        BankId = bankId;
+        ApiVersion = apiVersion;
+        BaseUrl = baseUrl;
     }
 
     /// <summary>
-    ///     Response to GetLocal
+    ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public class VariableRecurringPaymentsApiResponse : LocalObjectBaseResponse, IVariableRecurringPaymentsApiQuery
-    {
-        internal VariableRecurringPaymentsApiResponse(
-            Guid id,
-            DateTimeOffset created,
-            string? createdBy,
-            string? reference,
-            Guid bankId,
-            VariableRecurringPaymentsApiVersion apiVersion,
-            string baseUrl) : base(id, created, createdBy, reference)
-        {
-            BankId = bankId;
-            ApiVersion = apiVersion;
-            BaseUrl = baseUrl;
-        }
+    public IList<string>? Warnings { get; set; }
 
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
+    /// <summary>
+    ///     Bank with which this API is associated.
+    /// </summary>
+    public Guid BankId { get; }
 
-        /// <summary>
-        ///     Bank with which this API is associated.
-        /// </summary>
-        public Guid BankId { get; }
+    /// <summary>
+    ///     Version of UK Open Banking Account and Transaction API.
+    /// </summary>
+    public VariableRecurringPaymentsApiVersion ApiVersion { get; }
 
-        /// <summary>
-        ///     Version of UK Open Banking Account and Transaction API.
-        /// </summary>
-        public VariableRecurringPaymentsApiVersion ApiVersion { get; }
-
-        /// <summary>
-        ///     Base URL for UK Open Banking Account and Transaction API.
-        /// </summary>
-        public string BaseUrl { get; }
-    }
+    /// <summary>
+    ///     Base URL for UK Open Banking Account and Transaction API.
+    /// </summary>
+    public string BaseUrl { get; }
 }

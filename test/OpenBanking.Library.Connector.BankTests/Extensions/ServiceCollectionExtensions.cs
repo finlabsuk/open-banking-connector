@@ -11,35 +11,34 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static IServiceCollection AddBankTestingServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddBankTestingServices(
-            this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            // Add settings groups
-            services
-                .AddSettingsGroup<BankTestSettings>();
+        // Add settings groups
+        services
+            .AddSettingsGroup<BankTestSettings>();
 
-            // Set up bank users
-            services.AddSingleton(
-                sp =>
-                {
-                    BankTestSettings bankTestSettings =
-                        sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
-                    string bankUsersFile = Path.Combine(
-                        bankTestSettings.GetDataDirectoryForCurrentOs(),
-                        "bankUsers.json");
-                    var bankUsers = new BankUserStore(
-                        DataFile.ReadFile<BankUserDictionary>(
-                            bankUsersFile,
-                            new JsonSerializerSettings()).GetAwaiter().GetResult());
-                    return bankUsers;
-                });
+        // Set up bank users
+        services.AddSingleton(
+            sp =>
+            {
+                BankTestSettings bankTestSettings =
+                    sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
+                string bankUsersFile = Path.Combine(
+                    bankTestSettings.GetDataDirectoryForCurrentOs(),
+                    "bankUsers.json");
+                var bankUsers = new BankUserStore(
+                    DataFile.ReadFile<BankUserDictionary>(
+                        bankUsersFile,
+                        new JsonSerializerSettings()).GetAwaiter().GetResult());
+                return bankUsers;
+            });
 
-            return services;
-        }
+        return services;
     }
 }

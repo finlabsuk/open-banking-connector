@@ -8,23 +8,22 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FsCheck.Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Http;
+
+public class HttpRequestInfoPropertyAttribute : PropertyAttribute
 {
-    public class HttpRequestInfoPropertyAttribute : PropertyAttribute
+    public HttpRequestInfoPropertyAttribute()
     {
-        public HttpRequestInfoPropertyAttribute()
+        Verbose = PropertyTests.VerboseTests;
+        Arbitrary = new[]
         {
-            Verbose = PropertyTests.VerboseTests;
-            Arbitrary = new[]
-            {
-                typeof(BaseUrlArbitrary),
-                typeof(BaseMockArbitrary<ICredentials>),
-                typeof(BaseArbitrary<Cookie>),
-                typeof(BaseArbitrary<HttpHeader>),
-                typeof(BaseArbitrary<X509Certificate>),
-                typeof(BaseMockArbitrary<IWebProxy>),
-                typeof(BaseMockArbitrary<IServerCertificateValidator>)
-            };
-        }
+            typeof(BaseUrlArbitrary),
+            typeof(BaseMockArbitrary<ICredentials>),
+            typeof(BaseArbitrary<Cookie>),
+            typeof(BaseArbitrary<HttpHeader>),
+            typeof(BaseArbitrary<X509Certificate>),
+            typeof(BaseMockArbitrary<IWebProxy>),
+            typeof(BaseMockArbitrary<IServerCertificateValidator>)
+        };
     }
 }

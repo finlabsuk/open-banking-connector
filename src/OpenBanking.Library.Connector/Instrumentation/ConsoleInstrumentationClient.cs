@@ -6,109 +6,108 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+
+public class ConsoleInstrumentationClient : IInstrumentationClient
 {
-    public class ConsoleInstrumentationClient : IInstrumentationClient
+    private readonly TextWriter _outWriter;
+
+    [ExcludeFromCodeCoverage]
+    public ConsoleInstrumentationClient()
+        : this(Console.Out) { }
+
+    public ConsoleInstrumentationClient(TextWriter outWriter)
     {
-        private readonly TextWriter _outWriter;
+        _outWriter = outWriter.ArgNotNull(nameof(outWriter));
+    }
 
-        [ExcludeFromCodeCoverage]
-        public ConsoleInstrumentationClient()
-            : this(Console.Out) { }
+    public void Info(string message)
+    {
+        Write(_outWriter, message, ConsoleColor.White);
+    }
 
-        public ConsoleInstrumentationClient(TextWriter outWriter)
+    public void Warning(string message)
+    {
+        Write(_outWriter, message, ConsoleColor.Yellow);
+    }
+
+    public void Error(string message)
+    {
+        Write(_outWriter, message, ConsoleColor.Red);
+    }
+
+    public void Trace(string message)
+    {
+        Write(_outWriter, message, ConsoleColor.Gray);
+    }
+
+    public void Exception(Exception exception)
+    {
+        Exception(exception, "");
+    }
+
+    public void Exception(Exception exception, string message)
+    {
+        IEnumerable<string> lines = exception.WalkRecursive(e => e.InnerException)
+            .Select(e => e.Message);
+        if (!string.IsNullOrWhiteSpace(message))
         {
-            _outWriter = outWriter.ArgNotNull(nameof(outWriter));
+            lines = new[] { message }.Concat(lines);
         }
 
-        public void StartTrace(TraceInfo info)
+        string msg = lines.JoinString(Environment.NewLine);
+
+        Write(_outWriter, msg, ConsoleColor.Red);
+    }
+
+    public void StartTrace(TraceInfo info)
+    {
+        StringBuilder msg = GetTraceInfoMessage(info);
+
+        Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
+    }
+
+
+    public void EndTrace(TraceInfo info)
+    {
+        StringBuilder msg = GetTraceInfoMessage(info);
+
+        Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
+    }
+
+    private void Write(TextWriter target, string message, ConsoleColor? color)
+    {
+        lock (Console.Out)
         {
-            StringBuilder msg = GetTraceInfoMessage(info);
-
-            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
-        }
-
-
-        public void EndTrace(TraceInfo info)
-        {
-            StringBuilder msg = GetTraceInfoMessage(info);
-
-            Write(_outWriter, msg.ToString(), ConsoleColor.Gray);
-        }
-
-        public void Info(string message)
-        {
-            Write(_outWriter, message, ConsoleColor.White);
-        }
-
-        public void Warning(string message)
-        {
-            Write(_outWriter, message, ConsoleColor.Yellow);
-        }
-
-        public void Error(string message)
-        {
-            Write(_outWriter, message, ConsoleColor.Red);
-        }
-
-        public void Trace(string message)
-        {
-            Write(_outWriter, message, ConsoleColor.Gray);
-        }
-
-        public void Exception(Exception exception)
-        {
-            Exception(exception, "");
-        }
-
-        public void Exception(Exception exception, string message)
-        {
-            IEnumerable<string> lines = exception.WalkRecursive(e => e.InnerException)
-                .Select(e => e.Message);
-            if (!string.IsNullOrWhiteSpace(message))
+            if (color is { } value)
             {
-                lines = new[] { message }.Concat(lines);
+                Console.ForegroundColor = value;
             }
 
-            string msg = lines.JoinString(Environment.NewLine);
-
-            Write(_outWriter, msg, ConsoleColor.Red);
+            target.WriteLine(message);
+            Console.ResetColor();
         }
+    }
 
-        private void Write(TextWriter target, string message, ConsoleColor? color)
+
+    private StringBuilder GetTraceInfoMessage(TraceInfo info)
+    {
+        StringBuilder sb = new StringBuilder().AppendLine(info.Message);
+
+        foreach (KeyValuePair<string, string> kvp in info.Values)
         {
-            lock (Console.Out)
-            {
-                if (color is { } value)
-                {
-                    Console.ForegroundColor = value;
-                }
-
-                target.WriteLine(message);
-                Console.ResetColor();
-            }
+            sb.AppendLine($"{kvp.Key} - {kvp.Value}");
         }
 
-
-        private StringBuilder GetTraceInfoMessage(TraceInfo info)
+        if (info is HttpTraceInfo httpInfo)
         {
-            StringBuilder sb = new StringBuilder().AppendLine(info.Message);
-
-            foreach (KeyValuePair<string, string> kvp in info.Values)
+            sb.AppendLine($"Url: {httpInfo.Url}");
+            if (httpInfo.StatusCode.HasValue)
             {
-                sb.AppendLine($"{kvp.Key} - {kvp.Value}");
+                sb.Append($"Status: {httpInfo.StatusCode}");
             }
-
-            if (info is HttpTraceInfo httpInfo)
-            {
-                sb.AppendLine($"Url: {httpInfo.Url}");
-                if (httpInfo.StatusCode.HasValue)
-                {
-                    sb.Append($"Status: {httpInfo.StatusCode}");
-                }
-            }
-
-            return sb;
         }
+
+        return sb;
     }
 }

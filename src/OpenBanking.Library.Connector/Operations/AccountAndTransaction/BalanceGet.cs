@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -75,20 +74,22 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadBalance1> apiRequests =
+        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadBalance1> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    OBReadBalance1,
-                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadBalance1>(
+                    AccountAndTransactionModelsPublic.OBReadBalance1,
+                    AccountAndTransactionModelsV3p1p7.OBReadBalance1>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                    OBReadBalance1,
-                    OBReadBalance1>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                    AccountAndTransactionModelsPublic.OBReadBalance1,
+                    AccountAndTransactionModelsPublic.OBReadBalance1>(
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
             };
-        (OBReadBalance1 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+        (AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse,
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,

@@ -2,25 +2,22 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+/// <summary>
+///     Non entity- (type-) specific DB methods
+/// </summary>
+public class DbSaveChangesMethod : IDbSaveChangesMethod
 {
-    /// <summary>
-    ///     Non entity- (type-) specific DB methods
-    /// </summary>
-    public class DbSaveChangesMethod : IDbSaveChangesMethod
+    private readonly BaseDbContext _db;
+
+    public DbSaveChangesMethod(BaseDbContext db)
     {
-        private readonly BaseDbContext _db;
+        _db = db;
+    }
 
-        public DbSaveChangesMethod(BaseDbContext db)
-        {
-            _db = db;
-        }
-
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _db.SaveChangesAsync();
-        }
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _db.SaveChangesAsync();
     }
 }

@@ -5,19 +5,18 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
+
+public interface ITestConfigurationProvider
 {
-    public interface ITestConfigurationProvider
-    {
-        bool? GetBooleanValue(string key);
+    bool? GetBooleanValue(string key);
 
-        string? GetValue(string key);
+    string? GetValue(string key);
 
-        T? GetEnumValue<T>(string key)
-            where T : struct;
+    T? GetEnumValue<T>(string key)
+        where T : struct;
 
-        BankRegistrationPostCustomBehaviour? GetOpenBankingClientRegistrationClaimsOverrides();
+    BankRegistrationPostCustomBehaviour? GetOpenBankingClientRegistrationClaimsOverrides();
 
-        OpenIdConfiguration? GetOpenBankingOpenIdConfiguration();
-    }
+    OpenIdConfiguration? GetOpenBankingOpenIdConfiguration();
 }

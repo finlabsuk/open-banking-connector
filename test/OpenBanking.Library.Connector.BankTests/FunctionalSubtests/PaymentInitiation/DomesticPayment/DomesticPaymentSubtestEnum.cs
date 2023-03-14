@@ -4,36 +4,34 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
+
+/// <summary>
+///     Domestic payment functional subtest
+/// </summary>
+public enum DomesticPaymentSubtestEnum
 {
-    /// <summary>
-    ///     Domestic payment functional subtest
-    /// </summary>
-    public enum DomesticPaymentSubtestEnum
+    PersonToPersonSubtest,
+    PersonToMerchantSubtest
+}
+
+public static class DomesticPaymentSubtestHelper
+{
+    static DomesticPaymentSubtestHelper()
     {
-        PersonToPersonSubtest,
-        PersonToMerchantSubtest
+        AllDomesticPaymentSubtests = Enum.GetValues(typeof(DomesticPaymentSubtestEnum))
+            .Cast<DomesticPaymentSubtestEnum>().ToHashSet();
     }
 
-    public static class DomesticPaymentSubtestHelper
-    {
-        static DomesticPaymentSubtestHelper()
+    public static ISet<DomesticPaymentSubtestEnum> AllDomesticPaymentSubtests { get; }
+
+    public static DomesticPaymentTemplateType GetDomesticPaymentTemplateType(DomesticPaymentSubtestEnum subtestEnum) =>
+        subtestEnum switch
         {
-            AllDomesticPaymentSubtests = Enum.GetValues(typeof(DomesticPaymentSubtestEnum))
-                .Cast<DomesticPaymentSubtestEnum>().ToHashSet();
-        }
-
-        public static ISet<DomesticPaymentSubtestEnum> AllDomesticPaymentSubtests { get; }
-
-        public static DomesticPaymentTemplateType GetDomesticPaymentTemplateType(
-            DomesticPaymentSubtestEnum subtestEnum) =>
-            subtestEnum switch
-            {
-                DomesticPaymentSubtestEnum.PersonToPersonSubtest => DomesticPaymentTemplateType.PersonToPersonExample,
-                DomesticPaymentSubtestEnum.PersonToMerchantSubtest => DomesticPaymentTemplateType
-                    .PersonToMerchantExample,
-                _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(DomesticPaymentSubtestEnum)} or needs to be added to this switch statement.")
-            };
-    }
+            DomesticPaymentSubtestEnum.PersonToPersonSubtest => DomesticPaymentTemplateType.PersonToPersonExample,
+            DomesticPaymentSubtestEnum.PersonToMerchantSubtest => DomesticPaymentTemplateType
+                .PersonToMerchantExample,
+            _ => throw new ArgumentException(
+                $"{nameof(subtestEnum)} is not valid {nameof(DomesticPaymentSubtestEnum)} or needs to be added to this switch statement.")
+        };
 }

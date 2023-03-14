@@ -2,116 +2,112 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
+/// <summary>
+///     Fluent response for request that does not return data
+/// </summary>
+public interface IFluentResponse
 {
-    /// <summary>
-    ///     Fluent response for request that does not return data
-    /// </summary>
-    public interface IFluentResponse
-    {
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
 
-        public bool HasInfos => Messages.OfType<FluentResponseInfoMessage>().Any();
-        public bool HasWarnings => Messages.OfType<FluentResponseWarningMessage>().Any();
-        public bool HasErrors => Messages.OfType<IFluentResponseErrorMessage>().Any();
+    public bool HasInfos => Messages.OfType<FluentResponseInfoMessage>().Any();
+    public bool HasWarnings => Messages.OfType<FluentResponseWarningMessage>().Any();
+    public bool HasErrors => Messages.OfType<IFluentResponseErrorMessage>().Any();
+}
+
+/// <summary>
+///     Fluent response for request that returns data
+/// </summary>
+public interface IFluentResponse<out TData> : IFluentResponse
+    where TData : class
+{
+    public TData? Data { get; }
+}
+
+/// <summary>
+///     Fluent success response for request that does not return data
+/// </summary>
+public sealed class FluentSuccessResponse : IFluentResponse
+{
+    internal FluentSuccessResponse(IReadOnlyList<IFluentSuccessResponseMessage> messages)
+    {
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent response for request that returns data
-    /// </summary>
-    public interface IFluentResponse<out TData> : IFluentResponse
-        where TData : class
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+}
+
+/// <summary>
+///     Fluent success response for request that returns data
+/// </summary>
+public sealed class FluentSuccessResponse<TData> : IFluentResponse<TData>
+    where TData : class
+{
+    internal FluentSuccessResponse(
+        TData data,
+        IReadOnlyList<IFluentSuccessResponseMessage> messages)
     {
-        public TData? Data { get; }
+        Data = data;
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent success response for request that does not return data
-    /// </summary>
-    public sealed class FluentSuccessResponse : IFluentResponse
-    {
-        internal FluentSuccessResponse(IReadOnlyList<IFluentSuccessResponseMessage> messages)
-        {
-            Messages = messages;
-        }
+    public TData? Data { get; }
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+}
 
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+/// <summary>
+///     Fluent bad request error response for request that does not return data
+/// </summary>
+public sealed class FluentBadRequestErrorResponse : IFluentResponse
+{
+    internal FluentBadRequestErrorResponse(IReadOnlyList<IFluentBadRequestErrorResponseMessage> messages)
+    {
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent success response for request that returns data
-    /// </summary>
-    public sealed class FluentSuccessResponse<TData> : IFluentResponse<TData>
-        where TData : class
-    {
-        internal FluentSuccessResponse(
-            TData data,
-            IReadOnlyList<IFluentSuccessResponseMessage> messages)
-        {
-            Data = data;
-            Messages = messages;
-        }
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+}
 
-        public TData? Data { get; }
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+/// <summary>
+///     Fluent bad request error response for request that returns data
+/// </summary>
+public sealed class FluentBadRequestErrorResponse<TData> : IFluentResponse<TData>
+    where TData : class
+{
+    internal FluentBadRequestErrorResponse(IReadOnlyList<IFluentBadRequestErrorResponseMessage> messages)
+    {
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent bad request error response for request that does not return data
-    /// </summary>
-    public sealed class FluentBadRequestErrorResponse : IFluentResponse
-    {
-        internal FluentBadRequestErrorResponse(IReadOnlyList<IFluentBadRequestErrorResponseMessage> messages)
-        {
-            Messages = messages;
-        }
+    public TData? Data => null;
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+}
 
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+/// <summary>
+///     Fluent other error response for request that does not return data
+/// </summary>
+public sealed class FluentOtherErrorResponse : IFluentResponse
+{
+    internal FluentOtherErrorResponse(IReadOnlyList<IFluentOtherErrorResponseMessage> messages)
+    {
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent bad request error response for request that returns data
-    /// </summary>
-    public sealed class FluentBadRequestErrorResponse<TData> : IFluentResponse<TData>
-        where TData : class
-    {
-        internal FluentBadRequestErrorResponse(IReadOnlyList<IFluentBadRequestErrorResponseMessage> messages)
-        {
-            Messages = messages;
-        }
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+}
 
-        public TData? Data => null;
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
+/// <summary>
+///     Fluent other error response for request that returns data
+/// </summary>
+public sealed class FluentOtherErrorResponse<TData> : IFluentResponse<TData>
+    where TData : class
+{
+    internal FluentOtherErrorResponse(IReadOnlyList<IFluentOtherErrorResponseMessage> messages)
+    {
+        Messages = messages;
     }
 
-    /// <summary>
-    ///     Fluent other error response for request that does not return data
-    /// </summary>
-    public sealed class FluentOtherErrorResponse : IFluentResponse
-    {
-        internal FluentOtherErrorResponse(IReadOnlyList<IFluentOtherErrorResponseMessage> messages)
-        {
-            Messages = messages;
-        }
-
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
-    }
-
-    /// <summary>
-    ///     Fluent other error response for request that returns data
-    /// </summary>
-    public sealed class FluentOtherErrorResponse<TData> : IFluentResponse<TData>
-        where TData : class
-    {
-        internal FluentOtherErrorResponse(IReadOnlyList<IFluentOtherErrorResponseMessage> messages)
-        {
-            Messages = messages;
-        }
-
-        public TData? Data => null;
-        public IReadOnlyList<IFluentResponseMessage> Messages { get; }
-    }
+    public TData? Data => null;
+    public IReadOnlyList<IFluentResponseMessage> Messages { get; }
 }

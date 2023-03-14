@@ -19,103 +19,102 @@ using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
+
+internal class
+    DomesticVrpConsentAuthContextPost : LocalEntityCreate<
+        DomesticVrpConsentAuthContextPersisted,
+        DomesticVrpConsentAuthContextRequest,
+        DomesticVrpConsentAuthContextCreateResponse>
 {
-    internal class
-        DomesticVrpConsentAuthContextPost : LocalEntityCreate<
-            DomesticVrpConsentAuthContextPersisted,
-            DomesticVrpConsentAuthContextRequest,
-            DomesticVrpConsentAuthContextCreateResponse>
-    {
-        protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
+    protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
 
-        public DomesticVrpConsentAuthContextPost(
-            IDbReadWriteEntityMethods<DomesticVrpConsentAuthContextPersisted>
-                entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticPaymentConsentMethods,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
+    public DomesticVrpConsentAuthContextPost(
+        IDbReadWriteEntityMethods<DomesticVrpConsentAuthContextPersisted>
             entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
-        {
-            _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
-        }
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticPaymentConsentMethods,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
+    {
+        _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+    }
 
-        protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
-            DomesticVrpConsentAuthContextRequest request,
-            ITimeProvider timeProvider)
-        {
-            // Load relevant data objects
-            DomesticVrpConsentPersisted domesticVrpConsent =
-                _domesticPaymentConsentMethods
-                    .DbSetNoTracking
-                    .Include(o => o.BankRegistrationNavigation)
-                    .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
-            CustomBehaviourClass? customBehaviour =
-                domesticVrpConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
-            string authorizationEndpoint =
-                domesticVrpConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-            string issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-            bool supportsSca = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
+    protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
+        DomesticVrpConsentAuthContextRequest request,
+        ITimeProvider timeProvider)
+    {
+        // Load relevant data objects
+        DomesticVrpConsentPersisted domesticVrpConsent =
+            _domesticPaymentConsentMethods
+                .DbSetNoTracking
+                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
+            throw new KeyNotFoundException(
+                $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
+        CustomBehaviourClass? customBehaviour =
+            domesticVrpConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+        string authorizationEndpoint =
+            domesticVrpConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+        string issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+        bool supportsSca = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    domesticVrpConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                    domesticVrpConsent.BankRegistrationNavigation
-                        .SoftwareStatementProfileOverride);
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+            await _softwareStatementProfileRepo.GetAsync(
+                domesticVrpConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
+                domesticVrpConsent.BankRegistrationNavigation
+                    .SoftwareStatementProfileOverride);
 
-            // Create auth URL
-            string consentAuthGetAudClaim =
-                customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
-                issuerUrl;
+        // Create auth URL
+        string consentAuthGetAudClaim =
+            customBehaviour?.DomesticVrpConsentAuthGet?.AudClaim ??
+            issuerUrl;
 
-            (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
-                domesticVrpConsent.ExternalApiId,
-                processedSoftwareStatementProfile,
-                domesticVrpConsent.BankRegistrationNavigation,
-                domesticVrpConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                customBehaviour?.DomesticVrpConsentAuthGet,
-                authorizationEndpoint,
-                consentAuthGetAudClaim,
-                supportsSca,
-                "payments",
-                _instrumentationClient);
+        (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
+            domesticVrpConsent.ExternalApiId,
+            processedSoftwareStatementProfile,
+            domesticVrpConsent.BankRegistrationNavigation,
+            domesticVrpConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            customBehaviour?.DomesticVrpConsentAuthGet,
+            authorizationEndpoint,
+            consentAuthGetAudClaim,
+            supportsSca,
+            "payments",
+            _instrumentationClient);
 
-            // Create persisted entity
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
-            var entity = new DomesticVrpConsentAuthContextPersisted(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                state,
-                nonce,
-                request.DomesticVrpConsentId);
+        // Create persisted entity
+        DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+        var entity = new DomesticVrpConsentAuthContextPersisted(
+            Guid.NewGuid(),
+            request.Reference,
+            false,
+            utcNow,
+            request.CreatedBy,
+            utcNow,
+            request.CreatedBy,
+            state,
+            nonce,
+            request.DomesticVrpConsentId);
 
-            // Add entity
-            await _entityMethods.AddAsync(entity);
+        // Add entity
+        await _entityMethods.AddAsync(entity);
 
-            var response =
-                new DomesticVrpConsentAuthContextCreateResponse(
-                    entity.Id,
-                    entity.Created,
-                    entity.CreatedBy,
-                    entity.Reference,
-                    entity.DomesticVrpConsentId,
-                    authUrl);
+        var response =
+            new DomesticVrpConsentAuthContextCreateResponse(
+                entity.Id,
+                entity.Created,
+                entity.CreatedBy,
+                entity.Reference,
+                entity.DomesticVrpConsentId,
+                authUrl);
 
-            return response;
-        }
+        return response;
     }
 }

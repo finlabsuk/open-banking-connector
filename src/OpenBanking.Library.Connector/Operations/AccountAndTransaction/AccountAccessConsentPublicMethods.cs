@@ -22,7 +22,7 @@ public static class AccountAccessConsentPublicMethods
                 templateRequest?.Type ??
                 throw new InvalidOperationException(
                     "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));
-                
+
         // Customise external API request using bank profile
         if (bankProfile is not null)
         {
@@ -31,6 +31,5 @@ public static class AccountAccessConsentPublicMethods
         }
 
         return resolvedExternalApiRequest;
-
     }
 }

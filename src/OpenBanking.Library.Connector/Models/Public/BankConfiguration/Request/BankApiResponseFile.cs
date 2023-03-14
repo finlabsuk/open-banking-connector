@@ -6,27 +6,26 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+
+public class BankApiResponseFile
 {
-    public class BankApiResponseFile
+    public BankApiResponseFile(string responseFile, bool useResponseFileAsApiResponse)
     {
-        public BankApiResponseFile(string responseFile, bool useResponseFileAsApiResponse)
-        {
-            ResponseFile = responseFile;
-            UseResponseFileAsApiResponse = useResponseFileAsApiResponse;
-        }
-
-        /// <summary>
-        ///     Allows to use existing bank registration instead of creating new one. Response
-        ///     should be of type <see cref="ClientRegistrationModelsPublic.OBClientRegistration1" /> but is supplied as JSON text
-        ///     file
-        ///     so can be de-serialised and validated in same way as response from bank.
-        ///     Settings in <see cref="BankRegistrationPostCustomBehaviour" /> will be used.
-        ///     This argument is intended for use in testing scenarios where you want to test
-        ///     creation of a new registration but cannot re-POST one to bank for whatever reason.
-        /// </summary>
-        public string ResponseFile { get; }
-
-        public bool UseResponseFileAsApiResponse { get; }
+        ResponseFile = responseFile;
+        UseResponseFileAsApiResponse = useResponseFileAsApiResponse;
     }
+
+    /// <summary>
+    ///     Allows to use existing bank registration instead of creating new one. Response
+    ///     should be of type <see cref="ClientRegistrationModelsPublic.OBClientRegistration1" /> but is supplied as JSON text
+    ///     file
+    ///     so can be de-serialised and validated in same way as response from bank.
+    ///     Settings in <see cref="BankRegistrationPostCustomBehaviour" /> will be used.
+    ///     This argument is intended for use in testing scenarios where you want to test
+    ///     creation of a new registration but cannot re-POST one to bank for whatever reason.
+    /// </summary>
+    public string ResponseFile { get; }
+
+    public bool UseResponseFileAsApiResponse { get; }
 }

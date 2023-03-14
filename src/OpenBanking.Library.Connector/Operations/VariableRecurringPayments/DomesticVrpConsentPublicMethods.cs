@@ -15,31 +15,30 @@ using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
+
+public static class DomesticVrpConsentPublicMethods
 {
-    public static class DomesticVrpConsentPublicMethods
+    public static VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest ResolveExternalApiRequest(
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest? externalApiRequest,
+        DomesticVrpTemplateRequest? templateRequest,
+        BankProfile? bankProfile)
     {
-        public static VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest ResolveExternalApiRequest(
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest? externalApiRequest,
-            DomesticVrpTemplateRequest? templateRequest,
-            BankProfile? bankProfile)
+        // Resolve external API request
+        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest resolvedExternalApiRequest =
+            externalApiRequest ??
+            DomesticVrpTemplates.DomesticVrpConsentExternalApiRequest(
+                templateRequest ??
+                throw new InvalidOperationException(
+                    "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));
+
+        // Customise external API request using bank profile
+        if (bankProfile is not null)
         {
-            // Resolve external API request
-            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest resolvedExternalApiRequest =
-                externalApiRequest ??
-                DomesticVrpTemplates.DomesticVrpConsentExternalApiRequest(
-                    templateRequest ??
-                    throw new InvalidOperationException(
-                        "Both ExternalApiRequest and TemplateRequest specified as null so not possible to create external API request."));
-
-            // Customise external API request using bank profile
-            if (bankProfile is not null)
-            {
-                resolvedExternalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
-                    .DomesticVrpConsentExternalApiRequestAdjustments(resolvedExternalApiRequest);
-            }
-
-            return resolvedExternalApiRequest;
+            resolvedExternalApiRequest = bankProfile.VariableRecurringPaymentsApiSettings
+                .DomesticVrpConsentExternalApiRequestAdjustments(resolvedExternalApiRequest);
         }
+
+        return resolvedExternalApiRequest;
     }
 }

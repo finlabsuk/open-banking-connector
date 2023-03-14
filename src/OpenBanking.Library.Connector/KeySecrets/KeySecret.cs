@@ -2,29 +2,28 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
+
+/// <summary>
+///     Key secret object used by <see cref="IKeySecretProvider" />
+/// </summary>
+public class KeySecret
 {
-    /// <summary>
-    ///     Key secret object used by <see cref="IKeySecretProvider" />
-    /// </summary>
-    public class KeySecret
+    public const string DefaultVaultName = "OpenBankingConnector";
+
+    public KeySecret(string key, string value)
+        : this(DefaultVaultName, key, value) { }
+
+    public KeySecret(string vaultName, string key, string value)
     {
-        public const string DefaultVaultName = "OpenBankingConnector";
-
-        public KeySecret(string key, string value)
-            : this(DefaultVaultName, key, value) { }
-
-        public KeySecret(string vaultName, string key, string value)
-        {
-            VaultName = vaultName.ArgNotNull(nameof(vaultName));
-            Key = key.ArgNotNull(nameof(key));
-            Value = value.ArgNotNull(nameof(value));
-        }
-
-        public string Key { get; }
-
-        public string VaultName { get; }
-
-        public string Value { get; }
+        VaultName = vaultName.ArgNotNull(nameof(vaultName));
+        Key = key.ArgNotNull(nameof(key));
+        Value = value.ArgNotNull(nameof(value));
     }
+
+    public string Key { get; }
+
+    public string VaultName { get; }
+
+    public string Value { get; }
 }

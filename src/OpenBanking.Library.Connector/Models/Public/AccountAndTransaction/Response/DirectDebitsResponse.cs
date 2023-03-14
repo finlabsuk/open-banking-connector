@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 
 /// <summary>
@@ -11,7 +9,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 /// </summary>
 public class DirectDebitsResponse
 {
-    internal DirectDebitsResponse(OBReadDirectDebit2 externalApiResponse, IList<string>? warnings)
+    internal DirectDebitsResponse(
+        AccountAndTransactionModelsPublic.OBReadDirectDebit2 externalApiResponse,
+        IList<string>? warnings)
     {
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
@@ -24,7 +24,7 @@ public class DirectDebitsResponse
     ///     v3.1.10 <a />. Open Banking Connector will automatically
     ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
     /// </summary>
-    public OBReadDirectDebit2 ExternalApiResponse { get; }
+    public AccountAndTransactionModelsPublic.OBReadDirectDebit2 ExternalApiResponse { get; }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.

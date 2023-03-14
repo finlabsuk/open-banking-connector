@@ -5,77 +5,76 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
+
+public class TestConfigurationProvider : ITestConfigurationProvider
 {
-    public class TestConfigurationProvider : ITestConfigurationProvider
+    private readonly ITestConfigurationProvider[] _providers;
+
+    public TestConfigurationProvider()
     {
-        private readonly ITestConfigurationProvider[] _providers;
-
-        public TestConfigurationProvider()
+        _providers = new ITestConfigurationProvider[]
         {
-            _providers = new ITestConfigurationProvider[]
-            {
-                new LocalFileTestConfigurationProvider("user"),
-                new LocalFileTestConfigurationProvider(null)
-            };
-        }
+            new LocalFileTestConfigurationProvider("user"),
+            new LocalFileTestConfigurationProvider(null)
+        };
+    }
 
-        public bool? GetBooleanValue(string key)
+    public bool? GetBooleanValue(string key)
+    {
+        IEnumerable<bool?> results = _providers.Select(p => p.GetBooleanValue(key))
+            .Where(v => v.HasValue);
+
+        return results.FirstOrDefault();
+    }
+
+    public string? GetValue(string key)
+    {
+        IEnumerable<string> results = _providers
+            .Select(p => p.GetValue(key))
+            .Where(v => v != null)
+            .Select(v => v!);
+
+        return results.FirstOrDefault();
+    }
+
+    public T? GetEnumValue<T>(string key)
+        where T : struct
+    {
+        IEnumerable<T?> results = _providers
+            .Select(p => p.GetEnumValue<T>(key))
+            .Where(v => v.HasValue);
+
+        return results.FirstOrDefault();
+    }
+
+    public BankRegistrationPostCustomBehaviour GetOpenBankingClientRegistrationClaimsOverrides()
+    {
+        IEnumerable<BankRegistrationPostCustomBehaviour> results = _providers
+            .Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
+            .Where(v => v != null)
+            .Select(v => v!);
+
+        // Populate default instance
+        return results.FirstOrDefault() ?? new BankRegistrationPostCustomBehaviour();
+    }
+
+    public OpenIdConfiguration GetOpenBankingOpenIdConfiguration()
+    {
+        IEnumerable<OpenIdConfiguration> results = _providers
+            .Select(p => p.GetOpenBankingOpenIdConfiguration())
+            .Where(v => v != null)
+            .Select(v => v!);
+
+        return results.FirstOrDefault() ?? new OpenIdConfiguration
         {
-            IEnumerable<bool?> results = _providers.Select(p => p.GetBooleanValue(key))
-                .Where(v => v.HasValue);
-
-            return results.FirstOrDefault();
-        }
-
-        public string? GetValue(string key)
-        {
-            IEnumerable<string> results = _providers
-                .Select(p => p.GetValue(key))
-                .Where(v => v != null)
-                .Select(v => v!);
-
-            return results.FirstOrDefault();
-        }
-
-        public T? GetEnumValue<T>(string key)
-            where T : struct
-        {
-            IEnumerable<T?> results = _providers
-                .Select(p => p.GetEnumValue<T>(key))
-                .Where(v => v.HasValue);
-
-            return results.FirstOrDefault();
-        }
-
-        public BankRegistrationPostCustomBehaviour GetOpenBankingClientRegistrationClaimsOverrides()
-        {
-            IEnumerable<BankRegistrationPostCustomBehaviour> results = _providers
-                .Select(p => p.GetOpenBankingClientRegistrationClaimsOverrides())
-                .Where(v => v != null)
-                .Select(v => v!);
-
-            // Populate default instance
-            return results.FirstOrDefault() ?? new BankRegistrationPostCustomBehaviour();
-        }
-
-        public OpenIdConfiguration GetOpenBankingOpenIdConfiguration()
-        {
-            IEnumerable<OpenIdConfiguration> results = _providers
-                .Select(p => p.GetOpenBankingOpenIdConfiguration())
-                .Where(v => v != null)
-                .Select(v => v!);
-
-            return results.FirstOrDefault() ?? new OpenIdConfiguration
-            {
-                Issuer = "issuser name",
-                ResponseModesSupported = new List<OAuth2ResponseMode>(),
-                ScopesSupported = new List<string>(),
-                ResponseTypesSupported = new List<string>(),
-                AuthorizationEndpoint = "https://authorization_endpoint",
-                RegistrationEndpoint = "https://registration_endpoint",
-                TokenEndpoint = "https://token_endpoint"
-            };
-        }
+            Issuer = "issuser name",
+            ResponseModesSupported = new List<OAuth2ResponseMode>(),
+            ScopesSupported = new List<string>(),
+            ResponseTypesSupported = new List<string>(),
+            AuthorizationEndpoint = "https://authorization_endpoint",
+            RegistrationEndpoint = "https://registration_endpoint",
+            TokenEndpoint = "https://token_endpoint"
+        };
     }
 }

@@ -4,47 +4,46 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+
+/// <summary>
+///     Fluent interface methods for Read.
+/// </summary>
+/// <typeparam name="TPublicResponse"></typeparam>
+public interface IReadExternalEntityContext<TPublicResponse>
+    where TPublicResponse : class
 {
     /// <summary>
-    ///     Fluent interface methods for Read.
+    ///     READ objects using consent ID (includes GETing objects from bank API).
+    ///     Objects will be read from bank database only.
     /// </summary>
-    /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadExternalEntityContext<TPublicResponse>
-        where TPublicResponse : class
+    /// <param name="externalId"></param>
+    /// <param name="consentId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <returns></returns>
+    Task<TPublicResponse> ReadAsync(
+        string externalId,
+        Guid consentId,
+        string? modifiedBy = null);
+}
+
+internal interface
+    IReadExternalEntityContextInternal<TPublicResponse> : IReadExternalEntityContext<TPublicResponse>
+    where TPublicResponse : class
+{
+    IExternalRead<TPublicResponse> ReadObject { get; }
+
+    async Task<TPublicResponse> IReadExternalEntityContext<TPublicResponse>.ReadAsync(
+        string externalId,
+        Guid consentId,
+        string? modifiedBy)
     {
-        /// <summary>
-        ///     READ objects using consent ID (includes GETing objects from bank API).
-        ///     Objects will be read from bank database only.
-        /// </summary>
-        /// <param name="externalId"></param>
-        /// <param name="consentId"></param>
-        /// <param name="modifiedBy"></param>
-        /// <returns></returns>
-        Task<TPublicResponse> ReadAsync(
-            string externalId,
-            Guid consentId,
-            string? modifiedBy = null);
-    }
+        (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+            await ReadObject.ReadAsync(
+                externalId,
+                consentId,
+                modifiedBy);
 
-    internal interface
-        IReadExternalEntityContextInternal<TPublicResponse> : IReadExternalEntityContext<TPublicResponse>
-        where TPublicResponse : class
-    {
-        IExternalRead<TPublicResponse> ReadObject { get; }
-
-        async Task<TPublicResponse> IReadExternalEntityContext<TPublicResponse>.ReadAsync(
-            string externalId,
-            Guid consentId,
-            string? modifiedBy)
-        {
-            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadObject.ReadAsync(
-                    externalId,
-                    consentId,
-                    modifiedBy);
-
-            return response;
-        }
+        return response;
     }
 }

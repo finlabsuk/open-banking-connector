@@ -7,42 +7,41 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+
+public class OBSigningCertificateProfileValidator : AbstractValidator<SigningCertificateProfile>
 {
-    public class OBSigningCertificateProfileValidator : AbstractValidator<SigningCertificateProfile>
+    public OBSigningCertificateProfileValidator()
     {
-        public OBSigningCertificateProfileValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            
-            CreateRules();
-        }
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
 
-        internal static bool HasDelimiters<T>(
-            T arg1,
-            string? arg2,
-            ValidationContext<T> arg3,
-            char delimiter,
-            int maxLength)
-        {
-            return arg2 != null && arg2.DelimiterCount(delimiter) == maxLength;
-        }
+        CreateRules();
+    }
+
+    internal static bool HasDelimiters<T>(
+        T arg1,
+        string? arg2,
+        ValidationContext<T> arg3,
+        char delimiter,
+        int maxLength)
+    {
+        return arg2 != null && arg2.DelimiterCount(delimiter) == maxLength;
+    }
 
 
-        private void CreateRules()
-        {
-            RuleFor(p => p.AssociatedKeyId)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage("Please provide a Signing Key ID.");
+    private void CreateRules()
+    {
+        RuleFor(p => p.AssociatedKeyId)
+            .Must(ValidationRules.IsNonWhitespace)
+            .WithMessage("Please provide a Signing Key ID.");
 
-            RuleFor(p => p.AssociatedKey)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage("Please provide a SigningKey.");
+        RuleFor(p => p.AssociatedKey)
+            .Must(ValidationRules.IsNonWhitespace)
+            .WithMessage("Please provide a SigningKey.");
 
-            RuleFor(p => p.Certificate)
-                .Must(ValidationRules.IsNonWhitespace)
-                .WithMessage("Please provide a SigningCertificate.");
-        }
+        RuleFor(p => p.Certificate)
+            .Must(ValidationRules.IsNonWhitespace)
+            .WithMessage("Please provide a SigningCertificate.");
     }
 }

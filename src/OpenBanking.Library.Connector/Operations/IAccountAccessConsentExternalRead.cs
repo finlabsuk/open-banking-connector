@@ -4,56 +4,55 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+internal class ExternalEntityReadParams
 {
-    internal class ExternalEntityReadParams
+    public ExternalEntityReadParams(
+        Guid consentId,
+        string? modifiedBy,
+        string? externalApiAccountId,
+        string? publicRequestUrlWithoutQuery,
+        string? queryString)
     {
-        public ExternalEntityReadParams(
-            Guid consentId,
-            string? modifiedBy,
-            string? externalApiAccountId,
-            string? publicRequestUrlWithoutQuery,
-            string? queryString)
-        {
-            ConsentId = consentId;
-            ModifiedBy = modifiedBy;
-            ExternalApiAccountId = externalApiAccountId;
-            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
-            QueryString = queryString;
-        }
-
-        public Guid ConsentId { get; }
-        public string? ModifiedBy { get; }
-        public string? ExternalApiAccountId { get; }
-        public string? PublicRequestUrlWithoutQuery { get; }
-        public string? QueryString { get; }
+        ConsentId = consentId;
+        ModifiedBy = modifiedBy;
+        ExternalApiAccountId = externalApiAccountId;
+        PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
+        QueryString = queryString;
     }
 
-    internal class TransactionsReadParams : ExternalEntityReadParams
-    {
-        public TransactionsReadParams(
-            Guid consentId,
-            string? modifiedBy,
-            string? externalApiAccountId,
-            string? publicRequestUrlWithoutQuery,
-            string? queryString,
-            string? externalApiStatementId) : base(
-            consentId,
-            modifiedBy,
-            externalApiAccountId,
-            publicRequestUrlWithoutQuery,
-            queryString)
-        {
-            ExternalApiStatementId = externalApiStatementId;
-        }
+    public Guid ConsentId { get; }
+    public string? ModifiedBy { get; }
+    public string? ExternalApiAccountId { get; }
+    public string? PublicRequestUrlWithoutQuery { get; }
+    public string? QueryString { get; }
+}
 
-        public string? ExternalApiStatementId { get; }
+internal class TransactionsReadParams : ExternalEntityReadParams
+{
+    public TransactionsReadParams(
+        Guid consentId,
+        string? modifiedBy,
+        string? externalApiAccountId,
+        string? publicRequestUrlWithoutQuery,
+        string? queryString,
+        string? externalApiStatementId) : base(
+        consentId,
+        modifiedBy,
+        externalApiAccountId,
+        publicRequestUrlWithoutQuery,
+        queryString)
+    {
+        ExternalApiStatementId = externalApiStatementId;
     }
 
-    internal interface IAccountAccessConsentExternalRead<TPublicResponse, TReadParams>
-        where TReadParams : ExternalEntityReadParams
-    {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
-            TReadParams readParams);
-    }
+    public string? ExternalApiStatementId { get; }
+}
+
+internal interface IAccountAccessConsentExternalRead<TPublicResponse, TReadParams>
+    where TReadParams : ExternalEntityReadParams
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
+        TReadParams readParams);
 }

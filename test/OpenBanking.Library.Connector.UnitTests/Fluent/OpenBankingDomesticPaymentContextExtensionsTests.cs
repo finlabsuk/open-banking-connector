@@ -7,28 +7,27 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentIni
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Fluent;
+
+public class OpenBankingDomesticPaymentContextExtensionsTests
 {
-    public class OpenBankingDomesticPaymentContextExtensionsTests
+    [Fact]
+    public void ConsentId_NullData_ValueSet()
     {
-        [Fact]
-        public void ConsentId_NullData_ValueSet()
-        {
-            SharedContext ctx =
-                TestDataFactory.CreateMockOpenBankingContext();
+        SharedContext ctx =
+            TestDataFactory.CreateMockOpenBankingContext();
 
-            var x = new LocalEntityDelete<DomesticPaymentConsent, ConsentDeleteParams>(
-                ctx.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                ctx.DbService.GetDbSaveChangesMethodClass(),
-                ctx.TimeProvider,
-                ctx.SoftwareStatementProfileCachedRepo,
-                ctx.Instrumentation);
+        var x = new LocalEntityDelete<DomesticPaymentConsent, ConsentDeleteParams>(
+            ctx.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+            ctx.DbService.GetDbSaveChangesMethodClass(),
+            ctx.TimeProvider,
+            ctx.SoftwareStatementProfileCachedRepo,
+            ctx.Instrumentation);
 
-            // var consentIdValue = "abc";
-            //
-            // ctx.ConsentId(consentIdValue);
-            //
-            // ctx.ConsentId.Should().Be(consentIdValue);
-        }
+        // var consentIdValue = "abc";
+        //
+        // ctx.ConsentId(consentIdValue);
+        //
+        // ctx.ConsentId.Should().Be(consentIdValue);
     }
 }

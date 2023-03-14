@@ -5,44 +5,42 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.
-    DomesticVrp
+    DomesticVrp;
+
+/// <summary>
+///     Domestic VRP functional subtest
+/// </summary>
+public enum DomesticVrpSubtestEnum
 {
-    /// <summary>
-    ///     Domestic VRP functional subtest
-    /// </summary>
-    public enum DomesticVrpSubtestEnum
+    VrpWithDebtorAccountSpecifiedByPisp,
+    VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
+    VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
+}
+
+public static class DomesticVrpSubtestHelper
+{
+    static DomesticVrpSubtestHelper()
     {
-        VrpWithDebtorAccountSpecifiedByPisp,
-        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
-        VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
+        AllDomesticVrpSubtests = Enum.GetValues(typeof(DomesticVrpSubtestEnum))
+            .Cast<DomesticVrpSubtestEnum>().ToHashSet();
     }
 
-    public static class DomesticVrpSubtestHelper
-    {
-        static DomesticVrpSubtestHelper()
+    public static ISet<DomesticVrpSubtestEnum> AllDomesticVrpSubtests { get; }
+
+    public static DomesticVrpTemplateType GetDomesticVrpConsentTemplateType(DomesticVrpSubtestEnum subtestEnum) =>
+        subtestEnum switch
         {
-            AllDomesticVrpSubtests = Enum.GetValues(typeof(DomesticVrpSubtestEnum))
-                .Cast<DomesticVrpSubtestEnum>().ToHashSet();
-        }
-
-        public static ISet<DomesticVrpSubtestEnum> AllDomesticVrpSubtests { get; }
-
-        public static DomesticVrpTemplateType GetDomesticVrpConsentTemplateType(
-            DomesticVrpSubtestEnum subtestEnum) =>
-            subtestEnum switch
-            {
-                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp =>
-                    DomesticVrpTemplateType.VrpWithDebtorAccountSpecifiedByPisp,
-                DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation =>
-                    DomesticVrpTemplateType
-                        .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
-                DomesticVrpSubtestEnum
-                        .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
-                    =>
-                    DomesticVrpTemplateType
-                        .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation,
-                _ => throw new ArgumentException(
-                    $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
-            };
-    }
+            DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedByPisp =>
+                DomesticVrpTemplateType.VrpWithDebtorAccountSpecifiedByPisp,
+            DomesticVrpSubtestEnum.VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation =>
+                DomesticVrpTemplateType
+                    .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation,
+            DomesticVrpSubtestEnum
+                    .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
+                =>
+                DomesticVrpTemplateType
+                    .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation,
+            _ => throw new ArgumentException(
+                $"{nameof(subtestEnum)} is not valid {nameof(DomesticVrpSubtestEnum)} or needs to be added to this switch statement.")
+        };
 }

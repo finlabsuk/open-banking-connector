@@ -6,23 +6,22 @@ using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+
+/// <summary>
+///     Response to Read and Create requests
+/// </summary>
+public class DomesticPaymentResponse
 {
-    /// <summary>
-    ///     Response to Read and Create requests
-    /// </summary>
-    public class DomesticPaymentResponse
+    public DomesticPaymentResponse(PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse)
     {
-        public DomesticPaymentResponse(PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse)
-        {
-            ExternalApiResponse = externalApiResponse;
-        }
-
-        public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
+        ExternalApiResponse = externalApiResponse;
     }
+
+    public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
+
+    /// <summary>
+    ///     Optional list of warning messages from Open Banking Connector.
+    /// </summary>
+    public IList<string>? Warnings { get; set; }
 }

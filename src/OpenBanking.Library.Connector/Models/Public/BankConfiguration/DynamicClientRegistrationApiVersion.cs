@@ -6,18 +6,17 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum DynamicClientRegistrationApiVersion
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum DynamicClientRegistrationApiVersion
-    {
-        [EnumMember(Value = "Version3p1")]
-        Version3p1,
+    [EnumMember(Value = "Version3p1")]
+    Version3p1,
 
-        [EnumMember(Value = "Version3p2")]
-        Version3p2,
+    [EnumMember(Value = "Version3p2")]
+    Version3p2,
 
-        [EnumMember(Value = "Version3p3")]
-        Version3p3
-    }
+    [EnumMember(Value = "Version3p3")]
+    Version3p3
 }

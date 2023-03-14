@@ -6,36 +6,35 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
+
+public class BankValidator : AbstractValidator<Bank>
 {
-    public class BankValidator : AbstractValidator<Bank>
+    public BankValidator()
     {
-        public BankValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            CreateRules();
-        }
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
+        CreateRules();
+    }
 
-        private void CreateRules()
-        {
-            When(
-                x => !string.IsNullOrEmpty(x.IssuerUrl),
-                () =>
-                {
-                    RuleFor(x => x.IssuerUrl)
-                        .Must(ValidationRules.IsUrl)
-                        .WithMessage($"Missing or invalid {nameof(Bank.IssuerUrl)}.");
-                });
+    private void CreateRules()
+    {
+        When(
+            x => !string.IsNullOrEmpty(x.IssuerUrl),
+            () =>
+            {
+                RuleFor(x => x.IssuerUrl)
+                    .Must(ValidationRules.IsUrl)
+                    .WithMessage($"Missing or invalid {nameof(Bank.IssuerUrl)}.");
+            });
 
-            When(
-                x => !string.IsNullOrEmpty(x.FinancialId),
-                () =>
-                {
-                    RuleFor(x => x.FinancialId)
-                        .Must(ValidationRules.IsNotNullOrEmpty)
-                        .WithMessage($"Missing or invalid {nameof(Bank.FinancialId)}.");
-                });
-        }
+        When(
+            x => !string.IsNullOrEmpty(x.FinancialId),
+            () =>
+            {
+                RuleFor(x => x.FinancialId)
+                    .Must(ValidationRules.IsNotNullOrEmpty)
+                    .WithMessage($"Missing or invalid {nameof(Bank.FinancialId)}.");
+            });
     }
 }

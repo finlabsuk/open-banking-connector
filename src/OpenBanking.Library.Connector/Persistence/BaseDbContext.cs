@@ -40,90 +40,87 @@ using BankRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+
+// DB provider-independent DB context
+public abstract class BaseDbContext : DbContext
 {
-    // DB provider-independent DB context
-    public abstract class BaseDbContext : DbContext
+    protected BaseDbContext(DbContextOptions options) : base(options) { }
+
+    // Formatting choice for JSON fields
+    protected virtual Formatting JsonFormatting { get; } = Formatting.None;
+
+    // Set DB Provider
+    protected abstract DbProvider DbProvider { get; }
+
+    // Bank configuration
+    internal DbSet<Bank> Bank => Set<Bank>();
+    internal DbSet<BankRegistration> BankRegistration => Set<BankRegistration>();
+
+    internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApi =>
+        Set<AccountAndTransactionApiEntity>();
+
+    internal DbSet<PaymentInitiationApiEntity> PaymentInitiationApi =>
+        Set<PaymentInitiationApiEntity>();
+
+    internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApi =>
+        Set<VariableRecurringPaymentsApiEntity>();
+
+    // Auth contexts
+    internal DbSet<AuthContext> AuthContext => Set<AuthContext>();
+
+    internal DbSet<AccountAccessConsentAuthContext> AccountAccessConsentAuthContext =>
+        Set<AccountAccessConsentAuthContext>();
+
+    internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContext =>
+        Set<DomesticPaymentConsentAuthContext>();
+
+    internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContext =>
+        Set<DomesticVrpConsentAuthContext>();
+
+    // Consents
+    internal DbSet<AccountAccessConsent> AccountAccessConsent => Set<AccountAccessConsent>();
+    internal DbSet<DomesticPaymentConsent> DomesticPaymentConsent => Set<DomesticPaymentConsent>();
+    internal DbSet<DomesticVrpConsent> DomesticVrpConsent => Set<DomesticVrpConsent>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        protected BaseDbContext(DbContextOptions options) : base(options) { }
-
-        // Formatting choice for JSON fields
-        protected virtual Formatting JsonFormatting { get; } = Formatting.None;
-
-        // Set DB Provider
-        protected abstract DbProvider DbProvider { get; }
-
         // Bank configuration
-        internal DbSet<Bank> Bank => Set<Bank>();
-        internal DbSet<BankRegistration> BankRegistration => Set<BankRegistration>();
+        modelBuilder.ApplyConfiguration(new BankConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new BankRegistrationConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(DbProvider, true, JsonFormatting));
 
-        internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApi =>
-            Set<AccountAndTransactionApiEntity>();
-
-        internal DbSet<PaymentInitiationApiEntity> PaymentInitiationApi =>
-            Set<PaymentInitiationApiEntity>();
-
-        internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApi =>
-            Set<VariableRecurringPaymentsApiEntity>();
-
-        // Auth contexts
-        internal DbSet<AuthContext> AuthContext => Set<AuthContext>();
-
-        internal DbSet<AccountAccessConsentAuthContext> AccountAccessConsentAuthContext =>
-            Set<AccountAccessConsentAuthContext>();
-
-        internal DbSet<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContext =>
-            Set<DomesticPaymentConsentAuthContext>();
-
-        internal DbSet<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContext =>
-            Set<DomesticVrpConsentAuthContext>();
+        // Auth contexts (note global query filter not supported for inherited types)
+        modelBuilder.ApplyConfiguration(new AuthContextConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new AccountAccessConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(DbProvider, false, JsonFormatting));
 
         // Consents
-        internal DbSet<AccountAccessConsent> AccountAccessConsent => Set<AccountAccessConsent>();
-        internal DbSet<DomesticPaymentConsent> DomesticPaymentConsent => Set<DomesticPaymentConsent>();
-        internal DbSet<DomesticVrpConsent> DomesticVrpConsent => Set<DomesticVrpConsent>();
+        modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            // Bank configuration
-            modelBuilder.ApplyConfiguration(new BankConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new BankRegistrationConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(DbProvider, true, JsonFormatting));
+        base.OnModelCreating(modelBuilder);
+    }
 
-            // Auth contexts (note global query filter not supported for inherited types)
-            modelBuilder.ApplyConfiguration(new AuthContextConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(
-                new AccountAccessConsentAuthContextConfig(DbProvider, false, JsonFormatting));
-            modelBuilder.ApplyConfiguration(
-                new DomesticPaymentConsentAuthContextConfig(DbProvider, false, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentAuthContextConfig(DbProvider, false, JsonFormatting));
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // Configuration common to all DB contexts. Use*() method for provider selection
+        // requires connection string so is specified in e.g. services.AddDbContext() method rather than
+        // OnConfiguring() override.
+        optionsBuilder
+            .ConfigureWarnings(
+                warnings =>
+                    // Suppress warnings relating to non-root auth context entities since can manually apply
+                    // unsupported global query filter to entity queries
+                    warnings.Ignore(
+                        CoreEventId
+                            .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
+            .UseSnakeCaseNamingConvention();
 
-            // Consents
-            modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(DbProvider, true, JsonFormatting));
-            modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
-
-            base.OnModelCreating(modelBuilder);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // Configuration common to all DB contexts. Use*() method for provider selection
-            // requires connection string so is specified in e.g. services.AddDbContext() method rather than
-            // OnConfiguring() override.
-            optionsBuilder
-                .ConfigureWarnings(
-                    warnings =>
-                        // Suppress warnings relating to non-root auth context entities since can manually apply
-                        // unsupported global query filter to entity queries
-                        warnings.Ignore(
-                            CoreEventId
-                                .PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning))
-                .UseSnakeCaseNamingConvention();
-
-            base.OnConfiguring(optionsBuilder);
-        }
+        base.OnConfiguring(optionsBuilder);
     }
 }

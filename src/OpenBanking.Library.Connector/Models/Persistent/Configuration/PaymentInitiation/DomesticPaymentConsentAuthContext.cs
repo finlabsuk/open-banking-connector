@@ -9,25 +9,24 @@ using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
+
+internal class
+    DomesticPaymentConsentAuthContext : AuthContextConfig<
+        Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>
 {
-    internal class
-        DomesticPaymentConsentAuthContext : AuthContextConfig<
-            Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext>
+    public DomesticPaymentConsentAuthContext(
+        DbProvider dbProvider,
+        bool supportsGlobalQueryFilter,
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(
+        EntityTypeBuilder<Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext> builder)
     {
-        public DomesticPaymentConsentAuthContext(
-            DbProvider dbProvider,
-            bool supportsGlobalQueryFilter,
-            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(
-            EntityTypeBuilder<Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.DomesticPaymentConsentId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.DomesticPaymentConsentId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

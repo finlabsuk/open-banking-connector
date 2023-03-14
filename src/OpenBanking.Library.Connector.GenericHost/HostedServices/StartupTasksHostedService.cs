@@ -16,136 +16,135 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices
+namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
+
+public class StartupTasksHostedService : IHostedService
 {
-    public class StartupTasksHostedService : IHostedService
+    // Ensures this set up at application start-up
+    private readonly IBankProfileService _bankProfileService;
+
+    private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
+
+    private readonly ILogger<StartupTasksHostedService> _logger;
+
+    // Ensures this set up at application start-up
+    private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
+
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    public StartupTasksHostedService(
+        ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
+        IServiceScopeFactory serviceScopeFactory,
+        IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
+        IBankProfileService bankProfileService,
+        ILogger<StartupTasksHostedService> logger)
     {
-        // Ensures this set up at application start-up
-        private readonly IBankProfileService _bankProfileService;
+        _databaseSettingsProvider =
+            databaseSettingsProvider ??
+            throw new ArgumentNullException(nameof(databaseSettingsProvider));
+        _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+        _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
+        _bankProfileService = bankProfileService;
+        _logger = logger;
+    }
 
-        private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        // Load database settings
+        DatabaseSettings databaseSettings = _databaseSettingsProvider.GetSettings();
 
-        private readonly ILogger<StartupTasksHostedService> _logger;
-
-        // Ensures this set up at application start-up
-        private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
-
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public StartupTasksHostedService(
-            ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
-            IServiceScopeFactory serviceScopeFactory,
-            IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
-            IBankProfileService bankProfileService,
-            ILogger<StartupTasksHostedService> logger)
         {
-            _databaseSettingsProvider =
-                databaseSettingsProvider ??
-                throw new ArgumentNullException(nameof(databaseSettingsProvider));
-            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-            _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
-            _bankProfileService = bankProfileService;
-            _logger = logger;
+            // Get scope
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+
+            // Database startup tasks
+            switch (databaseSettings.Provider)
+            {
+                case DbProvider.Sqlite:
+                    var sqliteDbContext = scope.ServiceProvider.GetRequiredService<SqliteDbContext>();
+                    bool sqliteDbExists =
+                        sqliteDbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
+                    if (!sqliteDbExists)
+                    {
+                        if (databaseSettings.EnsureDatabaseCreated)
+                        {
+                            // Create database
+                            sqliteDbContext.Database.EnsureCreated();
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
+                        }
+                    }
+
+                    break;
+                case DbProvider.PostgreSql:
+                    var postgreSqlDbContext = scope.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
+                    bool postgreSqlExists =
+                        postgreSqlDbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
+                    if (!postgreSqlExists)
+                    {
+                        if (databaseSettings.EnsureDatabaseCreated)
+                        {
+                            // Create database
+                            postgreSqlDbContext.Database.Migrate();
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
+                        }
+                    }
+                    else if (postgreSqlDbContext.Database.GetPendingMigrations().Any())
+                    {
+                        if (databaseSettings.EnsureDatabaseMigrated)
+                        {
+                            // Apply pending migrations
+                            postgreSqlDbContext.Database.Migrate();
+                        }
+                        else
+                        {
+                            throw new ApplicationException(
+                                "Pending migrations have not been applied. Note: set \"Database:EnsureDatabaseMigrated\" to \"true\" to apply pending migrations at application start-up.");
+                        }
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        // Database checks and cleanup
+        if (databaseSettings.Provider is DbProvider.PostgreSql)
         {
-            // Load database settings
-            DatabaseSettings databaseSettings = _databaseSettingsProvider.GetSettings();
+            // Get scope
+            using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
 
-            {
-                // Get scope
-                using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
 
-                // Database startup tasks
-                switch (databaseSettings.Provider)
-                {
-                    case DbProvider.Sqlite:
-                        var sqliteDbContext = scope.ServiceProvider.GetRequiredService<SqliteDbContext>();
-                        bool sqliteDbExists =
-                            sqliteDbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
-                        if (!sqliteDbExists)
-                        {
-                            if (databaseSettings.EnsureDatabaseCreated)
-                            {
-                                // Create database
-                                sqliteDbContext.Database.EnsureCreated();
-                            }
-                            else
-                            {
-                                throw new ApplicationException(
-                                    "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
-                            }
-                        }
-
-                        break;
-                    case DbProvider.PostgreSql:
-                        var postgreSqlDbContext = scope.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
-                        bool postgreSqlExists =
-                            postgreSqlDbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
-                        if (!postgreSqlExists)
-                        {
-                            if (databaseSettings.EnsureDatabaseCreated)
-                            {
-                                // Create database
-                                postgreSqlDbContext.Database.Migrate();
-                            }
-                            else
-                            {
-                                throw new ApplicationException(
-                                    "No database found. Note: set \"Database:EnsureDatabaseCreated\" to \"true\" to create database at application start-up.");
-                            }
-                        }
-                        else if (postgreSqlDbContext.Database.GetPendingMigrations().Any())
-                        {
-                            if (databaseSettings.EnsureDatabaseMigrated)
-                            {
-                                // Apply pending migrations
-                                postgreSqlDbContext.Database.Migrate();
-                            }
-                            else
-                            {
-                                throw new ApplicationException(
-                                    "Pending migrations have not been applied. Note: set \"Database:EnsureDatabaseMigrated\" to \"true\" to apply pending migrations at application start-up.");
-                            }
-                        }
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            // Database checks and cleanup
-            if (databaseSettings.Provider is DbProvider.PostgreSql)
-            {
-                // Get scope
-                using IServiceScope scope2 = _serviceScopeFactory.CreateScope();
-
-                var postgreSqlDbContext = scope2.ServiceProvider.GetRequiredService<PostgreSqlDbContext>();
-
-                await new BankRegistrationCleanup()
-                    .Cleanup(
-                        postgreSqlDbContext,
-                        _processedSoftwareStatementProfileStore,
-                        _logger);
-
-                await new AccountAndTransactionApiCleanup().Cleanup(
+            await new BankRegistrationCleanup()
+                .Cleanup(
                     postgreSqlDbContext,
+                    _processedSoftwareStatementProfileStore,
                     _logger);
 
-                await new AccountAccessConsentCleanup()
-                    .Cleanup(
-                        postgreSqlDbContext,
-                        _processedSoftwareStatementProfileStore,
-                        _logger);
+            await new AccountAndTransactionApiCleanup().Cleanup(
+                postgreSqlDbContext,
+                _logger);
 
-                //postgreSqlDbContext.ChangeTracker.DetectChanges();
+            await new AccountAccessConsentCleanup()
+                .Cleanup(
+                    postgreSqlDbContext,
+                    _processedSoftwareStatementProfileStore,
+                    _logger);
 
-                await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
-            }
+            //postgreSqlDbContext.ChangeTracker.DetectChanges();
+
+            await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
         }
-
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

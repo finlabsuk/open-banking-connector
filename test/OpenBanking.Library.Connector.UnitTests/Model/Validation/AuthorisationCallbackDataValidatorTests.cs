@@ -9,64 +9,63 @@ using FluentAssertions;
 using FluentValidation.Results;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation;
+
+public class AuthorisationCallbackDataValidatorTests
 {
-    public class AuthorisationCallbackDataValidatorTests
+    [Fact]
+    public void Validate_ModeIsNull()
     {
-        [Fact]
-        public void Validate_ModeIsNull()
-        {
-            var validator = new AuthorisationRedirectObjectValidator();
+        var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
+        var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
 
-            IList<ValidationFailure>? results = validator.Validate(data).Errors;
+        IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-            results.Should().HaveCount(1);
-        }
+        results.Should().HaveCount(1);
+    }
 
-        [Fact]
-        public void Validate_BodyIsNull()
-        {
-            var validator = new AuthorisationRedirectObjectValidator();
+    [Fact]
+    public void Validate_BodyIsNull()
+    {
+        var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
+        var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
 
-            IList<ValidationFailure>? results = validator.Validate(data).Errors;
+        IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-            results.Should().HaveCount(1);
-        }
+        results.Should().HaveCount(1);
+    }
 
 
-        [Fact]
-        public void Validate_BodyIsDefault()
-        {
-            var validator = new AuthorisationRedirectObjectValidator();
+    [Fact]
+    public void Validate_BodyIsDefault()
+    {
+        var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(
-                OAuth2ResponseMode.Fragment,
-                new OAuth2RedirectData("", "", ""),
-                null);
+        var data = new AuthResult(
+            OAuth2ResponseMode.Fragment,
+            new OAuth2RedirectData("", "", ""),
+            null);
 
-            IList<ValidationFailure>? results = validator.Validate(data).Errors;
+        IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-            results.Should().HaveCountGreaterThan(1);
-        }
+        results.Should().HaveCountGreaterThan(1);
+    }
 
 
-        [Fact]
-        public void Validate_BodyIsValid()
-        {
-            var validator = new AuthorisationRedirectObjectValidator();
+    [Fact]
+    public void Validate_BodyIsValid()
+    {
+        var validator = new AuthorisationRedirectObjectValidator();
 
-            var data = new AuthResult(
-                OAuth2ResponseMode.Fragment,
-                new OAuth2RedirectData("a", "a", "a"),
-                null);
+        var data = new AuthResult(
+            OAuth2ResponseMode.Fragment,
+            new OAuth2RedirectData("a", "a", "a"),
+            null);
 
-            IList<ValidationFailure>? results = validator.Validate(data).Errors;
+        IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
-            results.Should().HaveCount(0);
-        }
+        results.Should().HaveCount(0);
     }
 }

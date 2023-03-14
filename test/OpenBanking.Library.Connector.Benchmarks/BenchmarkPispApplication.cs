@@ -6,31 +6,30 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks
+namespace FinnovationLabs.OpenBanking.Library.Connector.Benchmarks;
+
+[InProcess]
+[MemoryDiagnoser]
+[RankColumn]
+[MinColumn]
+[MaxColumn]
+[Q1Column]
+[Q3Column]
+[AllStatisticsColumn]
+[JsonExporterAttribute.Full]
+[CsvMeasurementsExporter]
+[CsvExporter(CsvSeparator.Comma)]
+[HtmlExporter]
+[MarkdownExporterAttribute.GitHub]
+[GcServer(true)]
+public class BenchmarkPispApplication
 {
-    [InProcess]
-    [MemoryDiagnoser]
-    [RankColumn]
-    [MinColumn]
-    [MaxColumn]
-    [Q1Column]
-    [Q3Column]
-    [AllStatisticsColumn]
-    [JsonExporterAttribute.Full]
-    [CsvMeasurementsExporter]
-    [CsvExporter(CsvSeparator.Comma)]
-    [HtmlExporter]
-    [MarkdownExporterAttribute.GitHub]
-    [GcServer(true)]
-    public class BenchmarkPispApplication
+    [Benchmark]
+    public void RunPispPayment() { }
+
+
+    public void OnExecute()
     {
-        [Benchmark]
-        public void RunPispPayment() { }
-
-
-        public void OnExecute()
-        {
-            BenchmarkRunner.Run<BenchmarkPispApplication>();
-        }
+        BenchmarkRunner.Run<BenchmarkPispApplication>();
     }
 }

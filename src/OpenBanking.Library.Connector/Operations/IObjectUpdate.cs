@@ -4,12 +4,11 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+internal interface IObjectUpdate<in TPublicRequest, TPublicResponse>
 {
-    internal interface IObjectUpdate<in TPublicRequest, TPublicResponse>
-    {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
-            TPublicRequest request,
-            string? modifiedBy);
-    }
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
+        TPublicRequest request,
+        string? modifiedBy);
 }

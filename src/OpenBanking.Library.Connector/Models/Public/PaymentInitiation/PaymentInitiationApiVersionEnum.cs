@@ -11,15 +11,14 @@ using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation
-{
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum PaymentInitiationApiVersion
-    {
-        [EnumMember(Value = "Version3p1p4")]
-        Version3p1p4,
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
-        [EnumMember(Value = "Version3p1p6")]
-        Version3p1p6,
-    }
+[JsonConverter(typeof(StringEnumConverter))]
+public enum PaymentInitiationApiVersion
+{
+    [EnumMember(Value = "Version3p1p4")]
+    Version3p1p4,
+
+    [EnumMember(Value = "Version3p1p6")]
+    Version3p1p6,
 }

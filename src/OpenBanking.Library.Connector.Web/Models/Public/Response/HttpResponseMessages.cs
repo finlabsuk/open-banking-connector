@@ -4,29 +4,28 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
+
+/// <summary>
+///     Messages from Open Banking Connector.
+/// </summary>
+public class HttpResponseMessages
 {
     /// <summary>
-    ///     Messages from Open Banking Connector.
+    ///     Information messages.
     /// </summary>
-    public class HttpResponseMessages
-    {
-        /// <summary>
-        ///     Information messages.
-        /// </summary>
-        [JsonProperty("Info", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public IList<string>? InformationMessages { get; set; }
+    [JsonProperty("Info", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public IList<string>? InformationMessages { get; set; }
 
-        /// <summary>
-        ///     Warning messages.
-        /// </summary>
-        [JsonProperty("Warnings", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public IList<string>? WarningMessages { get; set; }
+    /// <summary>
+    ///     Warning messages.
+    /// </summary>
+    [JsonProperty("Warnings", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public IList<string>? WarningMessages { get; set; }
 
-        /// <summary>
-        ///     Error messages.
-        /// </summary>
-        [JsonProperty("Errors", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public IList<string>? ErrorMessages { get; set; }
-    }
+    /// <summary>
+    ///     Error messages.
+    /// </summary>
+    [JsonProperty("Errors", DefaultValueHandling = DefaultValueHandling.Ignore)]
+    public IList<string>? ErrorMessages { get; set; }
 }

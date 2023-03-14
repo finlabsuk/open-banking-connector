@@ -29,6 +29,6 @@ public enum OpenIdConfigurationTokenEndpointAuthMethodEnum
     [EnumMember(Value = "tls_client_auth")]
     TlsClientAuth,
 
-    [EnumMember(Value = "none")]    
+    [EnumMember(Value = "none")]
     None
 }

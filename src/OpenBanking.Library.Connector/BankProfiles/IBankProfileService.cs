@@ -10,6 +10,7 @@ public interface IBankProfileService
 {
     BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
     BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum);
+
     TBank GetBank<TBank>(BankProfileEnum bankProfileEnum)
         where TBank : struct, Enum;
 }

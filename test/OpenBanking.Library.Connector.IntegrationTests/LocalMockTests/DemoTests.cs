@@ -5,18 +5,17 @@
 using TestStack.BDDfy;
 using TestStack.BDDfy.Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMockTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.LocalMockTests;
+
+public class DemoTests : BaseLocalMockTest
 {
-    public class DemoTests : BaseLocalMockTest
+    [BddfyFact]
+    public void DemoBddTest()
     {
-        [BddfyFact]
-        public void DemoBddTest()
-        {
-            // TODO: A demo test. Backing xStory tests would provide
-            this.Given("A PSU consent")
-                .When("A payment is made")
-                .Then("The successful payment response is verified")
-                .BDDfy();
-        }
+        // TODO: A demo test. Backing xStory tests would provide
+        this.Given("A PSU consent")
+            .When("A payment is made")
+            .Then("The successful payment response is verified")
+            .BDDfy();
     }
 }

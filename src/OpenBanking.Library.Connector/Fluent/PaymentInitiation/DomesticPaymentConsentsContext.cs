@@ -18,94 +18,93 @@ using DomesticPaymentConsentAuthContextPersisted =
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
+
+public interface IDomesticPaymentConsentsContext :
+    IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
+        DomesticPaymentConsentCreateResponse>,
+    IDeleteLocalContext,
+    IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
 {
-    public interface IDomesticPaymentConsentsContext :
-        IConsentContext<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
-            DomesticPaymentConsentCreateResponse>,
-        IDeleteLocalContext,
-        IReadFundsConfirmationContext<DomesticPaymentConsentReadFundsConfirmationResponse>
-    {
-        /// <summary>
-        ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
-        ///     authorisation of consent.
-        /// </summary>
-        ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
-                IDomesticPaymentConsentAuthContextPublicQuery,
-                DomesticPaymentConsentAuthContextCreateResponse,
-                DomesticPaymentConsentAuthContextReadResponse>
-            AuthContexts { get; }
-    }
-
-    internal interface IDomesticPaymentConsentsContextInternal :
-        IDomesticPaymentConsentsContext,
-        IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
-            DomesticPaymentConsentCreateResponse>,
-        IDeleteLocalContextInternal,
-        IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
-
-    internal class DomesticPaymentConsentsConsentContext :
-        IDomesticPaymentConsentsContextInternal
-    {
-        private readonly ISharedContext _sharedContext;
-
-        public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext)
-        {
-            _sharedContext = sharedContext;
-            var domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                new GrantPost(_sharedContext.ApiClient),
-                sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
-                sharedContext.BankProfileService,
-                new ConsentAccessTokenGet(
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient),
-                    _sharedContext.Instrumentation),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
-            CreateObject = domesticPaymentConsentOperations;
-            ReadObject = domesticPaymentConsentOperations;
-            ReadFundsConfirmationObject = domesticPaymentConsentOperations;
-            DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
-                sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation);
-        }
-
-        public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
+    /// <summary>
+    ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
+    ///     authorisation of consent.
+    /// </summary>
+    ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
             IDomesticPaymentConsentAuthContextPublicQuery,
             DomesticPaymentConsentAuthContextCreateResponse,
-            DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
-            new LocalEntityContextInternal<DomesticPaymentConsentAuthContextPersisted,
-                DomesticPaymentConsentAuthContextRequest,
-                IDomesticPaymentConsentAuthContextPublicQuery,
-                DomesticPaymentConsentAuthContextCreateResponse,
-                DomesticPaymentConsentAuthContextReadResponse>(
-                _sharedContext,
-                new DomesticPaymentConsentAuthContextPost(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.Instrumentation));
+            DomesticPaymentConsentAuthContextReadResponse>
+        AuthContexts { get; }
+}
 
-        public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
+internal interface IDomesticPaymentConsentsContextInternal :
+    IDomesticPaymentConsentsContext,
+    IConsentContextInternal<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse,
+        DomesticPaymentConsentCreateResponse>,
+    IDeleteLocalContextInternal,
+    IReadFundsConfirmationContextInternal<DomesticPaymentConsentReadFundsConfirmationResponse> { }
 
-        public IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
-            ReadFundsConfirmationObject { get; }
+internal class DomesticPaymentConsentsConsentContext :
+    IDomesticPaymentConsentsContextInternal
+{
+    private readonly ISharedContext _sharedContext;
 
-        public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, ConsentCreateParams>
-            CreateObject { get; }
-
-        public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
+    public DomesticPaymentConsentsConsentContext(ISharedContext sharedContext)
+    {
+        _sharedContext = sharedContext;
+        var domesticPaymentConsentOperations = new DomesticPaymentConsentOperations(
+            sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.TimeProvider,
+            sharedContext.SoftwareStatementProfileCachedRepo,
+            sharedContext.Instrumentation,
+            sharedContext.ApiVariantMapper,
+            new GrantPost(_sharedContext.ApiClient),
+            sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
+            sharedContext.BankProfileService,
+            new ConsentAccessTokenGet(
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                new GrantPost(_sharedContext.ApiClient),
+                _sharedContext.Instrumentation),
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+        CreateObject = domesticPaymentConsentOperations;
+        ReadObject = domesticPaymentConsentOperations;
+        ReadFundsConfirmationObject = domesticPaymentConsentOperations;
+        DeleteLocalObject = new LocalEntityDelete<DomesticPaymentConsent, LocalDeleteParams>(
+            sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.TimeProvider,
+            sharedContext.SoftwareStatementProfileCachedRepo,
+            sharedContext.Instrumentation);
     }
+
+    public ILocalEntityContext<DomesticPaymentConsentAuthContextRequest,
+        IDomesticPaymentConsentAuthContextPublicQuery,
+        DomesticPaymentConsentAuthContextCreateResponse,
+        DomesticPaymentConsentAuthContextReadResponse> AuthContexts =>
+        new LocalEntityContextInternal<DomesticPaymentConsentAuthContextPersisted,
+            DomesticPaymentConsentAuthContextRequest,
+            IDomesticPaymentConsentAuthContextPublicQuery,
+            DomesticPaymentConsentAuthContextCreateResponse,
+            DomesticPaymentConsentAuthContextReadResponse>(
+            _sharedContext,
+            new DomesticPaymentConsentAuthContextPost(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentAuthContextPersisted>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.Instrumentation));
+
+    public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
+
+    public IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
+        ReadFundsConfirmationObject { get; }
+
+    public IObjectCreate<DomesticPaymentConsentRequest, DomesticPaymentConsentCreateResponse, ConsentCreateParams>
+        CreateObject { get; }
+
+    public IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 }

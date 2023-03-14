@@ -5,55 +5,54 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+internal class LocalDeleteParams
 {
-    internal class LocalDeleteParams
+    public LocalDeleteParams(Guid id, string? modifiedBy)
     {
-        public LocalDeleteParams(Guid id, string? modifiedBy)
-        {
-            Id = id;
-            ModifiedBy = modifiedBy;
-        }
-
-        public Guid Id { get; }
-        public string? ModifiedBy { get; }
+        Id = id;
+        ModifiedBy = modifiedBy;
     }
 
-    internal class BankRegistrationDeleteParams : LocalDeleteParams
-    {
-        public BankRegistrationDeleteParams(
-            Guid id,
-            string? modifiedBy,
-            bool? includeExternalApiOperation,
-            bool? useRegistrationAccessToken,
-            BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
-        {
-            IncludeExternalApiOperation = includeExternalApiOperation;
-            UseRegistrationAccessToken = useRegistrationAccessToken;
-            BankProfileEnum = bankProfileEnum;
-        }
+    public Guid Id { get; }
+    public string? ModifiedBy { get; }
+}
 
-        public bool? IncludeExternalApiOperation { get; }
-        public bool? UseRegistrationAccessToken { get; }
-        public BankProfileEnum? BankProfileEnum { get; }
+internal class BankRegistrationDeleteParams : LocalDeleteParams
+{
+    public BankRegistrationDeleteParams(
+        Guid id,
+        string? modifiedBy,
+        bool? includeExternalApiOperation,
+        bool? useRegistrationAccessToken,
+        BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
+    {
+        IncludeExternalApiOperation = includeExternalApiOperation;
+        UseRegistrationAccessToken = useRegistrationAccessToken;
+        BankProfileEnum = bankProfileEnum;
     }
 
-    internal class ConsentDeleteParams : LocalDeleteParams
-    {
-        public ConsentDeleteParams(
-            Guid id,
-            string? modifiedBy,
-            bool includeExternalApiOperation) : base(id, modifiedBy)
-        {
-            IncludeExternalApiOperation = includeExternalApiOperation;
-        }
+    public bool? IncludeExternalApiOperation { get; }
+    public bool? UseRegistrationAccessToken { get; }
+    public BankProfileEnum? BankProfileEnum { get; }
+}
 
-        public bool IncludeExternalApiOperation { get; }
+internal class ConsentDeleteParams : LocalDeleteParams
+{
+    public ConsentDeleteParams(
+        Guid id,
+        string? modifiedBy,
+        bool includeExternalApiOperation) : base(id, modifiedBy)
+    {
+        IncludeExternalApiOperation = includeExternalApiOperation;
     }
 
-    internal interface IObjectDelete<in TDeleteParams>
-        where TDeleteParams : LocalDeleteParams
-    {
-        Task<IList<IFluentResponseInfoOrWarningMessage>> DeleteAsync(TDeleteParams deleteParams);
-    }
+    public bool IncludeExternalApiOperation { get; }
+}
+
+internal interface IObjectDelete<in TDeleteParams>
+    where TDeleteParams : LocalDeleteParams
+{
+    Task<IList<IFluentResponseInfoOrWarningMessage>> DeleteAsync(TDeleteParams deleteParams);
 }

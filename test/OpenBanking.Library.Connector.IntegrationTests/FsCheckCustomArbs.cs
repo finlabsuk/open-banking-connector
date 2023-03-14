@@ -4,25 +4,24 @@
 
 using FsCheck;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests
-{
-    public class StringNotNullAndContainsNoNulls
-    {
-        public StringNotNullAndContainsNoNulls(string s)
-        {
-            Item = s;
-        }
+namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests;
 
-        public string Item { get; }
+public class StringNotNullAndContainsNoNulls
+{
+    public StringNotNullAndContainsNoNulls(string s)
+    {
+        Item = s;
     }
 
-    public class FsCheckCustomArbs
+    public string Item { get; }
+}
+
+public class FsCheckCustomArbs
+{
+    public static Arbitrary<StringNotNullAndContainsNoNulls> GetArbStringNotNullAndContainsNoNulls()
     {
-        public static Arbitrary<StringNotNullAndContainsNoNulls> GetArbStringNotNullAndContainsNoNulls()
-        {
-            return Arb.Default.String()
-                .Filter(s => !(s is null) && !s.Contains("\0"))
-                .Convert(s => new StringNotNullAndContainsNoNulls(s), ans => ans.Item);
-        }
+        return Arb.Default.String()
+            .Filter(s => !(s is null) && !s.Contains("\0"))
+            .Convert(s => new StringNotNullAndContainsNoNulls(s), ans => ans.Item);
     }
 }

@@ -7,34 +7,33 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+
+public static class ApplicationBuilderExtensions
 {
-    public static class ApplicationBuilderExtensions
+    public static IApplicationBuilder UseWebHostStaticFiles(this IApplicationBuilder app)
     {
-        public static IApplicationBuilder UseWebHostStaticFiles(this IApplicationBuilder app)
-        {
-            // Standardised URL without ".html"
-            RewriteOptions rewriterOptions = new RewriteOptions()
-                .AddRedirect(
-                    @"^auth/fragment-redirect.html$",
-                    "auth/fragment-redirect")
-                .AddRewrite(
-                    @"^auth/fragment-redirect$",
-                    "auth/fragment-redirect.html",
-                    false);
-            app.UseRewriter(rewriterOptions);
+        // Standardised URL without ".html"
+        RewriteOptions rewriterOptions = new RewriteOptions()
+            .AddRedirect(
+                @"^auth/fragment-redirect.html$",
+                "auth/fragment-redirect")
+            .AddRewrite(
+                @"^auth/fragment-redirect$",
+                "auth/fragment-redirect.html",
+                false);
+        app.UseRewriter(rewriterOptions);
 
-            // Add shared static files from this assembly
-            var webHostAssembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions))!;
-            app.UseStaticFiles(
-                new StaticFileOptions
-                {
-                    FileProvider = new ManifestEmbeddedFileProvider(
-                        webHostAssembly,
-                        "wwwroot")
-                });
+        // Add shared static files from this assembly
+        var webHostAssembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions))!;
+        app.UseStaticFiles(
+            new StaticFileOptions
+            {
+                FileProvider = new ManifestEmbeddedFileProvider(
+                    webHostAssembly,
+                    "wwwroot")
+            });
 
-            return app;
-        }
+        return app;
     }
 }

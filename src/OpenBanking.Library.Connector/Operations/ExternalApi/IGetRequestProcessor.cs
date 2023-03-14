@@ -2,41 +2,36 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+
+internal interface IGetRequestProcessor
 {
-    internal interface IGetRequestProcessor
+    protected (List<HttpHeader> headers, string acceptType) HttpGetRequestData(string requestDescription);
+
+    public async Task<TResponse> GetAsync<TResponse>(
+        Uri uri,
+        JsonSerializerSettings? jsonSerializerSettings,
+        IApiClient apiClient)
+        where TResponse : class
     {
-        protected (List<HttpHeader> headers, string acceptType) HttpGetRequestData(string requestDescription);
+        // Process request
+        (List<HttpHeader> headers, string acceptType) = HttpGetRequestData($"GET {uri})");
 
-        public async Task<TResponse> GetAsync<TResponse>(
-            Uri uri,
-            JsonSerializerSettings? jsonSerializerSettings,
-            IApiClient apiClient)
-            where TResponse : class
-        {
-            // Process request
-            (List<HttpHeader> headers, string acceptType) = HttpGetRequestData($"GET {uri})");
+        // POST request
+        var response = await new HttpRequestBuilder()
+            .SetMethod(HttpMethod.Get)
+            .SetUri(uri)
+            .SetHeaders(headers)
+            //.SetContentType(contentType)
+            //.SetContent(content)
+            .Create()
+            .RequestJsonAsync<TResponse>(
+                apiClient,
+                jsonSerializerSettings);
 
-            // POST request
-            var response = await new HttpRequestBuilder()
-                .SetMethod(HttpMethod.Get)
-                .SetUri(uri)
-                .SetHeaders(headers)
-                //.SetContentType(contentType)
-                //.SetContent(content)
-                .Create()
-                .RequestJsonAsync<TResponse>(
-                    apiClient,
-                    jsonSerializerSettings);
-
-            return response;
-        }
+        return response;
     }
 }

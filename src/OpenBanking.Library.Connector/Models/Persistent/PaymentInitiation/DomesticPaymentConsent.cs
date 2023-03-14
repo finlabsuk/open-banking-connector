@@ -8,73 +8,72 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+
+/// <summary>
+///     Persisted type.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal class DomesticPaymentConsent :
+    BaseConsent,
+    IDomesticPaymentConsentPublicQuery
 {
-    /// <summary>
-    ///     Persisted type.
-    ///     Internal to help ensure public request and response types used on public API.
-    /// </summary>
-    internal class DomesticPaymentConsent :
-        BaseConsent,
-        IDomesticPaymentConsentPublicQuery
+    public DomesticPaymentConsent(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        string? accessTokenAccessToken,
+        int accessTokenExpiresIn,
+        DateTimeOffset accessTokenModified,
+        string? accessTokenModifiedBy,
+        string? accessTokenRefreshToken,
+        Guid bankRegistrationId,
+        string externalApiId,
+        string? authContextState,
+        string? authContextNonce,
+        DateTimeOffset authContextModified,
+        string? authContextModifiedBy,
+        string? externalApiUserId,
+        DateTimeOffset externalApiUserIdModified,
+        string? externalApiUserIdModifiedBy,
+        Guid paymentInitiationApiId) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy,
+        accessTokenAccessToken,
+        accessTokenExpiresIn,
+        accessTokenModified,
+        accessTokenModifiedBy,
+        accessTokenRefreshToken,
+        bankRegistrationId,
+        externalApiId,
+        authContextState,
+        authContextNonce,
+        authContextModified,
+        authContextModifiedBy,
+        externalApiUserId,
+        externalApiUserIdModified,
+        externalApiUserIdModifiedBy)
     {
-        public DomesticPaymentConsent(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string? accessTokenAccessToken,
-            int accessTokenExpiresIn,
-            DateTimeOffset accessTokenModified,
-            string? accessTokenModifiedBy,
-            string? accessTokenRefreshToken,
-            Guid bankRegistrationId,
-            string externalApiId,
-            string? authContextState,
-            string? authContextNonce,
-            DateTimeOffset authContextModified,
-            string? authContextModifiedBy,
-            string? externalApiUserId,
-            DateTimeOffset externalApiUserIdModified,
-            string? externalApiUserIdModifiedBy,
-            Guid paymentInitiationApiId) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy,
-            accessTokenAccessToken,
-            accessTokenExpiresIn,
-            accessTokenModified,
-            accessTokenModifiedBy,
-            accessTokenRefreshToken,
-            bankRegistrationId,
-            externalApiId,
-            authContextState,
-            authContextNonce,
-            authContextModified,
-            authContextModifiedBy,
-            externalApiUserId,
-            externalApiUserIdModified,
-            externalApiUserIdModifiedBy)
-        {
-            PaymentInitiationApiId = paymentInitiationApiId;
-        }
-
-        [ForeignKey("PaymentInitiationApiId")]
-        public PaymentInitiationApiEntity PaymentInitiationApiNavigation { get; set; } = null!;
-
-        public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; } =
-            new List<DomesticPaymentConsentAuthContext>();
-
-        /// <summary>
-        ///     Associated PaymentInitiationApi object
-        /// </summary>
-        public Guid PaymentInitiationApiId { get; }
+        PaymentInitiationApiId = paymentInitiationApiId;
     }
+
+    [ForeignKey("PaymentInitiationApiId")]
+    public PaymentInitiationApiEntity PaymentInitiationApiNavigation { get; set; } = null!;
+
+    public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; } =
+        new List<DomesticPaymentConsentAuthContext>();
+
+    /// <summary>
+    ///     Associated PaymentInitiationApi object
+    /// </summary>
+    public Guid PaymentInitiationApiId { get; }
 }

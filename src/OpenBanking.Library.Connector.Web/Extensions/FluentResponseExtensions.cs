@@ -5,46 +5,45 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.Models.Public.Response;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
+
+public static class FluentResponseExtensions
 {
-    public static class FluentResponseExtensions
+    public static HttpResponse ToHttpResponse(this IFluentResponse value) =>
+        new(messages: value.GetHttpResponseMessages());
+
+    public static HttpResponse<TData> ToHttpResponse<TData>(this IFluentResponse<TData> value)
+        where TData : class => new(value.GetHttpResponseMessages(), value.Data);
+
+    public static HttpResponseMessages? GetHttpResponseMessages(this IFluentResponse value)
     {
-        public static HttpResponse ToHttpResponse(this IFluentResponse value) =>
-            new(messages: value.GetHttpResponseMessages());
-
-        public static HttpResponse<TData> ToHttpResponse<TData>(this IFluentResponse<TData> value)
-            where TData : class => new(value.GetHttpResponseMessages(), value.Data);
-
-        public static HttpResponseMessages? GetHttpResponseMessages(this IFluentResponse value)
+        HttpResponseMessages? messages = null;
+        if (value.Messages.Any())
         {
-            HttpResponseMessages? messages = null;
-            if (value.Messages.Any())
+            messages = new HttpResponseMessages();
+
+            List<string> infos = value.Messages.OfType<FluentResponseInfoMessage>().Select(m => m.Message)
+                .ToList();
+            if (infos.Count > 0)
             {
-                messages = new HttpResponseMessages();
-
-                List<string> infos = value.Messages.OfType<FluentResponseInfoMessage>().Select(m => m.Message)
-                    .ToList();
-                if (infos.Count > 0)
-                {
-                    messages.InformationMessages = infos;
-                }
-
-                List<string> warnings = value.Messages.OfType<FluentResponseWarningMessage>().Select(m => m.Message)
-                    .ToList();
-                if (warnings.Count > 0)
-                {
-                    messages.WarningMessages = warnings;
-                }
-
-                List<string> errors = value.Messages.OfType<IFluentResponseErrorMessage>().Select(m => m.Message)
-                    .ToList();
-                if (errors.Count > 0)
-                {
-                    messages.ErrorMessages = errors;
-                }
+                messages.InformationMessages = infos;
             }
 
-            return messages;
+            List<string> warnings = value.Messages.OfType<FluentResponseWarningMessage>().Select(m => m.Message)
+                .ToList();
+            if (warnings.Count > 0)
+            {
+                messages.WarningMessages = warnings;
+            }
+
+            List<string> errors = value.Messages.OfType<IFluentResponseErrorMessage>().Select(m => m.Message)
+                .ToList();
+            if (errors.Count > 0)
+            {
+                messages.ErrorMessages = errors;
+            }
         }
+
+        return messages;
     }
 }

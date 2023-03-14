@@ -5,29 +5,28 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
-{
-    /// <summary>
-    ///     Fluent context for entity created in local database only.
-    /// </summary>
-    /// <typeparam name="TPublicRequest"></typeparam>
-    /// <typeparam name="TPublicQuery"></typeparam>
-    /// <typeparam name="TPublicCreateLocalResponse"></typeparam>
-    /// <typeparam name="TPublicReadLocalResponse"></typeparam>
-    public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-        TPublicReadLocalResponse> :
-        ICreateLocalContext<TPublicRequest, TPublicCreateLocalResponse>,
-        IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>,
-        IDeleteLocalContext
-        where TPublicCreateLocalResponse : class
-        where TPublicReadLocalResponse : class { }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-    internal interface ILocalEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-        TPublicReadLocalResponse> :
-        ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>,
-        ICreateLocalContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
-        IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
-        where TPublicCreateLocalResponse : class
-        where TPublicReadLocalResponse : class
-        where TPublicRequest : class, ISupportsValidation { }
-}
+/// <summary>
+///     Fluent context for entity created in local database only.
+/// </summary>
+/// <typeparam name="TPublicRequest"></typeparam>
+/// <typeparam name="TPublicQuery"></typeparam>
+/// <typeparam name="TPublicCreateLocalResponse"></typeparam>
+/// <typeparam name="TPublicReadLocalResponse"></typeparam>
+public interface ILocalEntityContext<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+    TPublicReadLocalResponse> :
+    ICreateLocalContext<TPublicRequest, TPublicCreateLocalResponse>,
+    IReadLocalContext<TPublicQuery, TPublicReadLocalResponse>,
+    IDeleteLocalContext
+    where TPublicCreateLocalResponse : class
+    where TPublicReadLocalResponse : class { }
+
+internal interface ILocalEntityContextInternal<in TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+    TPublicReadLocalResponse> :
+    ILocalEntityContext<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse, TPublicReadLocalResponse>,
+    ICreateLocalContextInternal<TPublicRequest, TPublicCreateLocalResponse>,
+    IReadLocalContextInternal<TPublicQuery, TPublicReadLocalResponse>
+    where TPublicCreateLocalResponse : class
+    where TPublicReadLocalResponse : class
+    where TPublicRequest : class, ISupportsValidation { }

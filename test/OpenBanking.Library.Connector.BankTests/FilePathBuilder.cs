@@ -5,59 +5,58 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
+
+public class FilePathBuilder
 {
-    public class FilePathBuilder
+    private readonly string _fileNameExtension;
+    private readonly string _fileNameWithoutExtension;
+    private readonly string _filePath;
+
+
+    public FilePathBuilder(string filePath, string fileNameWithoutExtension, string fileNameExtension)
     {
-        private readonly string _fileNameExtension;
-        private readonly string _fileNameWithoutExtension;
-        private readonly string _filePath;
+        _filePath = filePath;
+        _fileNameWithoutExtension = fileNameWithoutExtension;
+        _fileNameExtension = fileNameExtension;
+    }
 
+    public FilePathBuilder AppendToPath(string subfolder)
+    {
+        string newPath = Path.Combine(_filePath, subfolder);
 
-        public FilePathBuilder(string filePath, string fileNameWithoutExtension, string fileNameExtension)
-        {
-            _filePath = filePath;
-            _fileNameWithoutExtension = fileNameWithoutExtension;
-            _fileNameExtension = fileNameExtension;
-        }
+        // Create directory if doesn't exist
+        Directory.CreateDirectory(newPath);
 
-        public FilePathBuilder AppendToPath(string subfolder)
-        {
-            string newPath = Path.Combine(_filePath, subfolder);
+        return new FilePathBuilder(
+            newPath,
+            _fileNameWithoutExtension,
+            _fileNameExtension);
+    }
 
-            // Create directory if doesn't exist
-            Directory.CreateDirectory(newPath);
-
-            return new FilePathBuilder(
-                newPath,
-                _fileNameWithoutExtension,
-                _fileNameExtension);
-        }
-
-        public FilePathBuilder AppendToFileName(string text) =>
-            new(
-                _filePath,
-                _fileNameWithoutExtension + text,
-                _fileNameExtension);
-
-        public string GetFilePath() => Path.Combine(
+    public FilePathBuilder AppendToFileName(string text) =>
+        new(
             _filePath,
-            _fileNameWithoutExtension +
+            _fileNameWithoutExtension + text,
             _fileNameExtension);
 
-        public async Task WriteFile<TData>(TData data)
-            where TData : class
-        {
-            await DataFile.WriteFile(
-                data,
-                GetFilePath(),
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore // NULLs in C# map to JSON undefined to support
-                    // compatibility with potential Node-JS
-                    // port of OBC with TypeScript and use of undefined
-                    // in "nullable" types
-                });
-        }
+    public string GetFilePath() => Path.Combine(
+        _filePath,
+        _fileNameWithoutExtension +
+        _fileNameExtension);
+
+    public async Task WriteFile<TData>(TData data)
+        where TData : class
+    {
+        await DataFile.WriteFile(
+            data,
+            GetFilePath(),
+            new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore // NULLs in C# map to JSON undefined to support
+                // compatibility with potential Node-JS
+                // port of OBC with TypeScript and use of undefined
+                // in "nullable" types
+            });
     }
 }

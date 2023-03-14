@@ -6,58 +6,57 @@ using System.Security.Cryptography;
 using Jose;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+public static class JwtFactory
 {
-    public static class JwtFactory
+    public static string CreateJwt<TClaims>(
+        Dictionary<string, object> headers,
+        TClaims claims,
+        string signingKey,
+        JsonSerializerSettings? jsonSerializerSettingsOverride = null)
+        where TClaims : class
     {
-        public static string CreateJwt<TClaims>(
-            Dictionary<string, object> headers,
-            TClaims claims,
-            string signingKey,
-            JsonSerializerSettings? jsonSerializerSettingsOverride = null)
-            where TClaims : class
+        claims.ArgNotNull(nameof(claims));
+        signingKey.ArgNotNull(nameof(signingKey));
+
+        // Create JSON serialiser settings
+        JsonSerializerSettings jsonSerializerSettings =
+            jsonSerializerSettingsOverride ?? new JsonSerializerSettings();
+        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+
+        string payloadJson = JsonConvert.SerializeObject(
+            claims,
+            jsonSerializerSettings);
+
+        var rsa = RSA.Create();
+        try
         {
-            claims.ArgNotNull(nameof(claims));
-            signingKey.ArgNotNull(nameof(signingKey));
+            CertificateFactories.ImportPrivateKey(signingKey, ref rsa);
 
-            // Create JSON serialiser settings
-            JsonSerializerSettings jsonSerializerSettings =
-                jsonSerializerSettingsOverride ?? new JsonSerializerSettings();
-            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-
-            string payloadJson = JsonConvert.SerializeObject(
-                claims,
-                jsonSerializerSettings);
-
-            var rsa = RSA.Create();
-            try
-            {
-                CertificateFactories.ImportPrivateKey(signingKey, ref rsa);
-
-                string result = JWT.Encode(
-                    payloadJson,
-                    rsa,
-                    JwsAlgorithm.PS256,
-                    headers);
-                return result;
-            }
-            finally
-            {
-                rsa.Dispose();
-            }
+            string result = JWT.Encode(
+                payloadJson,
+                rsa,
+                JwsAlgorithm.PS256,
+                headers);
+            return result;
         }
-
-        public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>
-            new()
-            {
-                { "kid", signingId.ArgNotNull(nameof(signingId)) }
-            };
-
-        public static Dictionary<string, object> DefaultJwtHeadersIncludingTyp(string signingId) =>
-            new()
-            {
-                { "typ", "JWT" },
-                { "kid", signingId.ArgNotNull(nameof(signingId)) }
-            };
+        finally
+        {
+            rsa.Dispose();
+        }
     }
+
+    public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>
+        new()
+        {
+            { "kid", signingId.ArgNotNull(nameof(signingId)) }
+        };
+
+    public static Dictionary<string, object> DefaultJwtHeadersIncludingTyp(string signingId) =>
+        new()
+        {
+            { "typ", "JWT" },
+            { "kid", signingId.ArgNotNull(nameof(signingId)) }
+        };
 }

@@ -7,27 +7,24 @@ using FluentValidation;
 using PaymentInitiationValidatorsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
+
+public class DomesticPaymentConsentValidator : AbstractValidator<DomesticPaymentConsentRequest>
 {
-    public class DomesticPaymentConsentValidator : AbstractValidator<DomesticPaymentConsentRequest>
+    public DomesticPaymentConsentValidator()
     {
-        public DomesticPaymentConsentValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            CreateRules();
-        }
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
+        CreateRules();
+    }
 
-        private void CreateRules()
-        {
-            
-            // ExternalApiRequest
-            When(
-                x => x.ExternalApiRequest is not null,
-                () =>
-                    RuleFor(x => x.ExternalApiRequest!)
-                        .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator()));
-
-        }
+    private void CreateRules()
+    {
+        // ExternalApiRequest
+        When(
+            x => x.ExternalApiRequest is not null,
+            () =>
+                RuleFor(x => x.ExternalApiRequest!)
+                    .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator()));
     }
 }

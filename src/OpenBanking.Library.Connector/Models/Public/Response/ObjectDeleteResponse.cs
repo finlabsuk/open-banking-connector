@@ -2,13 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+
+public class ObjectDeleteResponse
 {
-    public class ObjectDeleteResponse
-    {
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; set; }
-    }
+    /// <summary>
+    ///     Optional list of warning messages from Open Banking Connector.
+    /// </summary>
+    public IList<string>? Warnings { get; set; }
 }

@@ -5,18 +5,17 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
+
+public class AccountAccessConsentAuthContextValidator : AbstractValidator<AccountAccessConsentAuthContext>
 {
-    public class AccountAccessConsentAuthContextValidator : AbstractValidator<AccountAccessConsentAuthContext>
+    public AccountAccessConsentAuthContextValidator()
     {
-        public AccountAccessConsentAuthContextValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
 
-            CreateRules();
-        }
-
-        private void CreateRules() { }
+        CreateRules();
     }
+
+    private void CreateRules() { }
 }

@@ -4,29 +4,28 @@
 
 using System.Collections.Concurrent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+
+public enum HsbcBank
 {
-    public enum HsbcBank
-    {
-        FirstDirect,
-        Sandbox,
-        UkBusiness,
-        UkKinetic,
-        UkPersonal
-    }
+    FirstDirect,
+    Sandbox,
+    UkBusiness,
+    UkKinetic,
+    UkPersonal
+}
 
-    public class Hsbc : BankGroupBase<HsbcBank>
-    {
-        public Hsbc(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
+public class Hsbc : BankGroupBase<HsbcBank>
+{
+    public Hsbc(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
-        protected override ConcurrentDictionary<BankProfileEnum, HsbcBank> BankProfileToBank { get; } =
-            new()
-            {
-                [BankProfileEnum.Hsbc_FirstDirect] = HsbcBank.FirstDirect,
-                [BankProfileEnum.Hsbc_Sandbox] = HsbcBank.Sandbox,
-                [BankProfileEnum.Hsbc_UkBusiness] = HsbcBank.UkBusiness,
-                [BankProfileEnum.Hsbc_UkKinetic] = HsbcBank.UkKinetic,
-                [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal
-            };
-    }
+    protected override ConcurrentDictionary<BankProfileEnum, HsbcBank> BankProfileToBank { get; } =
+        new()
+        {
+            [BankProfileEnum.Hsbc_FirstDirect] = HsbcBank.FirstDirect,
+            [BankProfileEnum.Hsbc_Sandbox] = HsbcBank.Sandbox,
+            [BankProfileEnum.Hsbc_UkBusiness] = HsbcBank.UkBusiness,
+            [BankProfileEnum.Hsbc_UkKinetic] = HsbcBank.UkKinetic,
+            [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal
+        };
 }

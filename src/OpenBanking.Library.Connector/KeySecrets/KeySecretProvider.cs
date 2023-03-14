@@ -2,28 +2,23 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
+public enum KeySecretProvider
 {
-    public enum KeySecretProvider
+    Azure
+}
+
+public static class KeySecretProviderHelper
+{
+    static KeySecretProviderHelper()
     {
-        Azure
+        AllKeySecretProviders = Enum.GetValues(typeof(KeySecretProvider))
+            .Cast<KeySecretProvider>();
     }
 
-    public static class KeySecretProviderHelper
-    {
-        static KeySecretProviderHelper()
-        {
-            AllKeySecretProviders = Enum.GetValues(typeof(KeySecretProvider))
-                .Cast<KeySecretProvider>();
-        }
+    public static IEnumerable<KeySecretProvider> AllKeySecretProviders { get; }
 
-        public static IEnumerable<KeySecretProvider> AllKeySecretProviders { get; }
-
-        public static KeySecretProvider KeySecretProvider(string keySecretsProviderString) =>
-            Enum.Parse<KeySecretProvider>(keySecretsProviderString);
-    }
+    public static KeySecretProvider KeySecretProvider(string keySecretsProviderString) =>
+        Enum.Parse<KeySecretProvider>(keySecretsProviderString);
 }

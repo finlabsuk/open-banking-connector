@@ -16,63 +16,62 @@ using Newtonsoft.Json;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+
+internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRegistration>
 {
-    internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRegistration>
+    public BankRegistration(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.BankRegistration> builder)
     {
-        public BankRegistration(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-            base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.BankRegistration> builder)
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.Id)
+            .HasColumnOrder(1);
+        builder.Property(e => e.BankId)
+            .HasColumnOrder(2)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property("_externalApiId")
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property("_externalApiSecret")
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property("_registrationAccessToken")
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DefaultRedirectUri);
+        builder.Property(e => e.OtherRedirectUris)
+            .HasConversion(
+                v =>
+                    JsonConvert.SerializeObject(
+                        v,
+                        _jsonFormatting,
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                v => JsonConvert.DeserializeObject<List<string>>(v)!,
+                new ValueComparer<IList<string>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => (IList<string>) c.ToList())); // NB: cast is required to avoid error and not redundant))
+        builder.Property(e => e.SoftwareStatementProfileId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.SoftwareStatementProfileOverride)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.RegistrationScope)
+            .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.TokenEndpointAuthMethod)
+            .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DefaultResponseMode)
+            .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BankRegistrationGroup)
+            .HasConversion(new EnumToStringConverter<BankRegistrationGroup>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+
+        if (_dbProvider is DbProvider.PostgreSql)
         {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.Id)
-                .HasColumnOrder(1);
-            builder.Property(e => e.BankId)
-                .HasColumnOrder(2)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property("_externalApiId")
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property("_externalApiSecret")
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property("_registrationAccessToken")
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.DefaultRedirectUri);
-            builder.Property(e => e.OtherRedirectUris)
-                .HasConversion(
-                    v =>
-                        JsonConvert.SerializeObject(
-                            v,
-                            _jsonFormatting,
-                            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-                    v => JsonConvert.DeserializeObject<List<string>>(v)!,
-                    new ValueComparer<IList<string>>(
-                        (c1, c2) => c1!.SequenceEqual(c2!),
-                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                        c => (IList<string>) c.ToList())); // NB: cast is required to avoid error and not redundant))
-            builder.Property(e => e.SoftwareStatementProfileId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.SoftwareStatementProfileOverride)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.RegistrationScope)
-                .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.TokenEndpointAuthMethod)
-                .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.DefaultResponseMode)
-                .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BankRegistrationGroup)
-                .HasConversion(new EnumToStringConverter<BankRegistrationGroup>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-
-            if (_dbProvider is DbProvider.PostgreSql)
-            {
-                builder.Property(e => e.OtherRedirectUris).HasColumnType("jsonb");
-            }
+            builder.Property(e => e.OtherRedirectUris).HasColumnType("jsonb");
         }
     }
 }

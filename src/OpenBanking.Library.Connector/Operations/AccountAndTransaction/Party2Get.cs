@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -75,19 +74,22 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadParty3> apiRequests = accountAndTransactionApi.ApiVersion switch
-        {
-            AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                OBReadParty3,
-                BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadParty3>(
-                new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-            AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                OBReadParty3,
-                OBReadParty3>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-            _ => throw new ArgumentOutOfRangeException(
-                $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
-        };
-        (OBReadParty3 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadParty3> apiRequests =
+            accountAndTransactionApi.ApiVersion switch
+            {
+                AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
+                    AccountAndTransactionModelsPublic.OBReadParty3,
+                    AccountAndTransactionModelsV3p1p7.OBReadParty3>(
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                    AccountAndTransactionModelsPublic.OBReadParty3,
+                    AccountAndTransactionModelsPublic.OBReadParty3>(
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
+            };
+        (AccountAndTransactionModelsPublic.OBReadParty3 apiResponse,
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,

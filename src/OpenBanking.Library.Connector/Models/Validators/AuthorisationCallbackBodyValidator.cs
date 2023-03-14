@@ -6,27 +6,26 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+
+public class AuthResultValidator : AbstractValidator<OAuth2RedirectData>
 {
-    public class AuthResultValidator : AbstractValidator<OAuth2RedirectData>
+    public AuthResultValidator()
     {
-        public AuthResultValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
 
-            CreateRules();
-        }
+        CreateRules();
+    }
 
-        private void CreateRules()
-        {
-            RuleFor(x => x.Code)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.Code)}.");
+    private void CreateRules()
+    {
+        RuleFor(x => x.Code)
+            .Must(ValidationRules.IsNotNullOrEmpty)
+            .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.Code)}.");
 
-            RuleFor(x => x.State)
-                .Must(ValidationRules.IsNotNullOrEmpty)
-                .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.State)}.");
-        }
+        RuleFor(x => x.State)
+            .Must(ValidationRules.IsNotNullOrEmpty)
+            .WithMessage($"Missing or invalid {nameof(OAuth2RedirectData.State)}.");
     }
 }

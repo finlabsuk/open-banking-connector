@@ -4,13 +4,12 @@
 
 using AutoMapper;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Converters
+namespace FinnovationLabs.OpenBanking.Library.Connector.Converters;
+
+public class IdentityValueConverter<TValue> : IValueConverter<TValue, TValue>
 {
-    public class IdentityValueConverter<TValue> : IValueConverter<TValue, TValue>
+    public TValue Convert(TValue sourceMember, ResolutionContext context)
     {
-        public TValue Convert(TValue sourceMember, ResolutionContext context)
-        {
-            return sourceMember;
-        }
+        return sourceMember;
     }
 }

@@ -4,21 +4,20 @@
 
 using System.Collections.Concurrent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+
+public enum MonzoBank
 {
-    public enum MonzoBank
-    {
-        Monzo
-    }
+    Monzo
+}
 
-    public class Monzo : BankGroupBase<MonzoBank>
-    {
-        public Monzo(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
+public class Monzo : BankGroupBase<MonzoBank>
+{
+    public Monzo(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
-        protected override ConcurrentDictionary<BankProfileEnum, MonzoBank> BankProfileToBank { get; } =
-            new()
-            {
-                [BankProfileEnum.Monzo] = MonzoBank.Monzo
-            };
-    }
+    protected override ConcurrentDictionary<BankProfileEnum, MonzoBank> BankProfileToBank { get; } =
+        new()
+        {
+            [BankProfileEnum.Monzo] = MonzoBank.Monzo
+        };
 }

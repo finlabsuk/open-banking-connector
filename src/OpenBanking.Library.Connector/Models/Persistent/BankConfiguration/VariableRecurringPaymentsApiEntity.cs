@@ -8,61 +8,60 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+
+/// <summary>
+///     Persisted type for Bank API Set
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal partial class VariableRecurringPaymentsApiEntity :
+    BaseEntity, IVariableRecurringPaymentsApiQuery
 {
-    /// <summary>
-    ///     Persisted type for Bank API Set
-    ///     Internal to help ensure public request and response types used on public API.
-    /// </summary>
-    internal partial class VariableRecurringPaymentsApiEntity :
-        BaseEntity, IVariableRecurringPaymentsApiQuery
+    public VariableRecurringPaymentsApiEntity(
+        string? reference,
+        Guid id,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        Guid bankId,
+        VariableRecurringPaymentsApiVersion apiVersion,
+        string baseUrl) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy)
     {
-        public VariableRecurringPaymentsApiEntity(
-            string? reference,
-            Guid id,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            Guid bankId,
-            VariableRecurringPaymentsApiVersion apiVersion,
-            string baseUrl) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy)
-        {
-            BankId = bankId;
-            ApiVersion = apiVersion;
-            BaseUrl = baseUrl;
-        }
-
-        [ForeignKey("BankId")]
-        public Bank BankNavigation { get; set; } = null!;
-
-        public IList<DomesticVrpConsent> DomesticVrpConsentsNavigation { get; } =
-            new List<DomesticVrpConsent>();
-
-        public Guid BankId { get; }
-        public VariableRecurringPaymentsApiVersion ApiVersion { get; }
-        public string BaseUrl { get; }
+        BankId = bankId;
+        ApiVersion = apiVersion;
+        BaseUrl = baseUrl;
     }
 
-    internal partial class VariableRecurringPaymentsApiEntity :
-        ISupportsFluentLocalEntityGet<VariableRecurringPaymentsApiResponse>
-    {
-        public VariableRecurringPaymentsApiResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                BankId,
-                ApiVersion,
-                BaseUrl);
-    }
+    [ForeignKey("BankId")]
+    public Bank BankNavigation { get; set; } = null!;
+
+    public IList<DomesticVrpConsent> DomesticVrpConsentsNavigation { get; } =
+        new List<DomesticVrpConsent>();
+
+    public Guid BankId { get; }
+    public VariableRecurringPaymentsApiVersion ApiVersion { get; }
+    public string BaseUrl { get; }
+}
+
+internal partial class VariableRecurringPaymentsApiEntity :
+    ISupportsFluentLocalEntityGet<VariableRecurringPaymentsApiResponse>
+{
+    public VariableRecurringPaymentsApiResponse PublicGetLocalResponse =>
+        new(
+            Id,
+            Created,
+            CreatedBy,
+            Reference,
+            BankId,
+            ApiVersion,
+            BaseUrl);
 }

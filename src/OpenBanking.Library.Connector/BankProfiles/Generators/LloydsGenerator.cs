@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -154,11 +153,12 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
-                    var elementsToRemove = new List<OBReadConsent1DataPermissionsEnum>
+                    var elementsToRemove = new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
                     {
-                        OBReadConsent1DataPermissionsEnum.ReadPAN
+                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN
                     };
-                    foreach (OBReadConsent1DataPermissionsEnum element in elementsToRemove)
+                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                             elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);
                     }

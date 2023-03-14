@@ -6,15 +6,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+public class BankApiSet2
 {
-    public class BankApiSet2
-    {
-        public AccountAndTransactionApi? AccountAndTransactionApi { get; set; }
+    public AccountAndTransactionApi? AccountAndTransactionApi { get; set; }
 
 
-        public PaymentInitiationApi? PaymentInitiationApi { get; set; }
+    public PaymentInitiationApi? PaymentInitiationApi { get; set; }
 
-        public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; set; }
-    }
+    public VariableRecurringPaymentsApi? VariableRecurringPaymentsApi { get; set; }
 }

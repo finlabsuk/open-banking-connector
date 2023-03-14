@@ -7,34 +7,33 @@ using FluentValidation;
 using VariableRecurringPaymentsValidatorsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Validators;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
+
+public class DomesticVrpValidator : AbstractValidator<DomesticVrpRequest>
 {
-    public class DomesticVrpValidator : AbstractValidator<DomesticVrpRequest>
+    public DomesticVrpValidator()
     {
-        public DomesticVrpValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            CreateRules();
-        }
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
+        CreateRules();
+    }
 
-        private void CreateRules()
-        {
-            // RuleFor(x => x.DomesticVrpConsentId)
-            //     .NotEmpty()
-            //     .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
+    private void CreateRules()
+    {
+        // RuleFor(x => x.DomesticVrpConsentId)
+        //     .NotEmpty()
+        //     .WithMessage($"Missing or invalid {nameof(DomesticVrp.DomesticVrpConsentId)}.");
 
-            // ExternalApiRequest
-            When(
-                x => x.ExternalApiRequest is not null,
-                () =>
-                    RuleFor(x => x.ExternalApiRequest!)
-                        .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator()));
+        // ExternalApiRequest
+        When(
+            x => x.ExternalApiRequest is not null,
+            () =>
+                RuleFor(x => x.ExternalApiRequest!)
+                    .SetValidator(new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPRequestValidator()));
 
-            // RuleFor(x => x.RedirectUrl)
-            //     .Must(ValidationRules.IsNotNull)
-            //     .Must(ValidationRules.IsAbsoluteUrl)
-            //     .WithMessage($"Missing or invalid {nameof(DomesticPaymentRequest.RedirectUrl)}.");
-        }
+        // RuleFor(x => x.RedirectUrl)
+        //     .Must(ValidationRules.IsNotNull)
+        //     .Must(ValidationRules.IsAbsoluteUrl)
+        //     .WithMessage($"Missing or invalid {nameof(DomesticPaymentRequest.RedirectUrl)}.");
     }
 }

@@ -10,27 +10,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+
+internal class VariableRecurringPaymentsApiConfig : BaseConfig<VariableRecurringPaymentsApiEntity>
 {
-    internal class VariableRecurringPaymentsApiConfig : BaseConfig<VariableRecurringPaymentsApiEntity>
+    public VariableRecurringPaymentsApiConfig(
+        DbProvider dbProvider,
+        bool supportsGlobalQueryFilter,
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(EntityTypeBuilder<VariableRecurringPaymentsApiEntity> builder)
     {
-        public VariableRecurringPaymentsApiConfig(
-            DbProvider dbProvider,
-            bool supportsGlobalQueryFilter,
-            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(EntityTypeBuilder<VariableRecurringPaymentsApiEntity> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.BankId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.ApiVersion)
-                .HasConversion(new EnumToStringConverter<VariableRecurringPaymentsApiVersion>())
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-            builder.Property(e => e.BaseUrl)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.BankId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.ApiVersion)
+            .HasConversion(new EnumToStringConverter<VariableRecurringPaymentsApiVersion>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BaseUrl)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

@@ -4,44 +4,43 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+
+/// <summary>
+///     Fluent interface methods for Read.
+/// </summary>
+/// <typeparam name="TPublicResponse"></typeparam>
+public interface IReadFundsConfirmationContext<TPublicResponse>
+    where TPublicResponse : class
 {
     /// <summary>
-    ///     Fluent interface methods for Read.
+    ///     READ funds confirmation by ID (includes GETing object from bank API).
     /// </summary>
-    /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadFundsConfirmationContext<TPublicResponse>
-        where TPublicResponse : class
-    {
-        /// <summary>
-        ///     READ funds confirmation by ID (includes GETing object from bank API).
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifiedBy"></param>
-        /// <param name="publicRequestUrlWithoutQuery"></param>
-        /// <returns></returns>
-        Task<TPublicResponse> ReadFundsConfirmationAsync(
+    /// <param name="id"></param>
+    /// <param name="modifiedBy"></param>
+    /// <param name="publicRequestUrlWithoutQuery"></param>
+    /// <returns></returns>
+    Task<TPublicResponse> ReadFundsConfirmationAsync(
+        Guid id,
+        string? modifiedBy = null,
+        string? publicRequestUrlWithoutQuery = null);
+}
+
+internal interface
+    IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>
+    where TPublicResponse : class
+{
+    IObjectReadFundsConfirmation<TPublicResponse, ConsentBaseReadParams> ReadFundsConfirmationObject { get; }
+
+    async Task<TPublicResponse> IReadFundsConfirmationContext<TPublicResponse>.
+        ReadFundsConfirmationAsync(
             Guid id,
-            string? modifiedBy = null,
-            string? publicRequestUrlWithoutQuery = null);
-    }
-
-    internal interface
-        IReadFundsConfirmationContextInternal<TPublicResponse> : IReadFundsConfirmationContext<TPublicResponse>
-        where TPublicResponse : class
+            string? modifiedBy,
+            string? publicRequestUrlWithoutQuery)
     {
-        IObjectReadFundsConfirmation<TPublicResponse, ConsentBaseReadParams> ReadFundsConfirmationObject { get; }
-
-        async Task<TPublicResponse> IReadFundsConfirmationContext<TPublicResponse>.
-            ReadFundsConfirmationAsync(
-                Guid id,
-                string? modifiedBy,
-                string? publicRequestUrlWithoutQuery)
-        {
-            var readParams = new ConsentBaseReadParams(id, modifiedBy, publicRequestUrlWithoutQuery);
-            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadFundsConfirmationObject.ReadFundsConfirmationAsync(readParams);
-            return response;
-        }
+        var readParams = new ConsentBaseReadParams(id, modifiedBy, publicRequestUrlWithoutQuery);
+        (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+            await ReadFundsConfirmationObject.ReadFundsConfirmationAsync(readParams);
+        return response;
     }
 }

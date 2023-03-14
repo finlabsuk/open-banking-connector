@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -81,20 +80,22 @@ internal class
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadTransaction6> apiRequests =
+        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadTransaction6> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    OBReadTransaction6,
-                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadTransaction6>(
+                    AccountAndTransactionModelsPublic.OBReadTransaction6,
+                    AccountAndTransactionModelsV3p1p7.OBReadTransaction6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                    OBReadTransaction6,
-                    OBReadTransaction6>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                    AccountAndTransactionModelsPublic.OBReadTransaction6,
+                    AccountAndTransactionModelsPublic.OBReadTransaction6>(
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
             };
-        (OBReadTransaction6 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+        (AccountAndTransactionModelsPublic.OBReadTransaction6 apiResponse,
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,

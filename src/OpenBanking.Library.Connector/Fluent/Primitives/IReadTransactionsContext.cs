@@ -4,60 +4,59 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+
+/// <summary>
+///     Fluent interface methods for Read.
+/// </summary>
+/// <typeparam name="TPublicResponse"></typeparam>
+public interface IReadTransactionsContext<TPublicResponse>
+    where TPublicResponse : class
 {
     /// <summary>
-    ///     Fluent interface methods for Read.
+    ///     READ objects using consent ID (includes GETing objects from bank API).
+    ///     Objects will be read from bank database only.
     /// </summary>
-    /// <typeparam name="TPublicResponse"></typeparam>
-    public interface IReadTransactionsContext<TPublicResponse>
-        where TPublicResponse : class
+    /// <param name="consentId"></param>
+    /// <param name="externalApiAccountId"></param>
+    /// <param name="externalApiStatementId"></param>
+    /// <param name="modifiedBy"></param>
+    /// <param name="queryString"></param>
+    /// <param name="requestUrlWithoutQuery"></param>
+    /// <returns></returns>
+    Task<TPublicResponse> ReadAsync(
+        Guid consentId,
+        string? externalApiAccountId = null,
+        string? externalApiStatementId = null,
+        string? modifiedBy = null,
+        string? queryString = null,
+        string? requestUrlWithoutQuery = null);
+}
+
+internal interface
+    IReadTransactionsContextInternal<TPublicResponse> : IReadTransactionsContext<TPublicResponse>
+    where TPublicResponse : class
+{
+    IAccountAccessConsentExternalRead<TPublicResponse, TransactionsReadParams> ReadObject { get; }
+
+    async Task<TPublicResponse> IReadTransactionsContext<TPublicResponse>.ReadAsync(
+        Guid consentId,
+        string? externalApiAccountId,
+        string? externalApiStatementId,
+        string? modifiedBy,
+        string? queryString,
+        string? requestUrlWithoutQuery)
     {
-        /// <summary>
-        ///     READ objects using consent ID (includes GETing objects from bank API).
-        ///     Objects will be read from bank database only.
-        /// </summary>
-        /// <param name="consentId"></param>
-        /// <param name="externalApiAccountId"></param>
-        /// <param name="externalApiStatementId"></param>
-        /// <param name="modifiedBy"></param>
-        /// <param name="queryString"></param>
-        /// <param name="requestUrlWithoutQuery"></param>
-        /// <returns></returns>
-        Task<TPublicResponse> ReadAsync(
-            Guid consentId,
-            string? externalApiAccountId = null,
-            string? externalApiStatementId = null,
-            string? modifiedBy = null,
-            string? queryString = null,
-            string? requestUrlWithoutQuery = null);
-    }
+        var transactionsReadParams = new TransactionsReadParams(
+            consentId,
+            modifiedBy,
+            externalApiAccountId,
+            requestUrlWithoutQuery,
+            queryString,
+            externalApiStatementId);
+        (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
+            await ReadObject.ReadAsync(transactionsReadParams);
 
-    internal interface
-        IReadTransactionsContextInternal<TPublicResponse> : IReadTransactionsContext<TPublicResponse>
-        where TPublicResponse : class
-    {
-        IAccountAccessConsentExternalRead<TPublicResponse, TransactionsReadParams> ReadObject { get; }
-
-        async Task<TPublicResponse> IReadTransactionsContext<TPublicResponse>.ReadAsync(
-            Guid consentId,
-            string? externalApiAccountId,
-            string? externalApiStatementId,
-            string? modifiedBy,
-            string? queryString,
-            string? requestUrlWithoutQuery)
-        {
-            var transactionsReadParams = new TransactionsReadParams(
-                consentId,
-                modifiedBy,
-                externalApiAccountId,
-                requestUrlWithoutQuery,
-                queryString,
-                externalApiStatementId);
-            (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-                await ReadObject.ReadAsync(transactionsReadParams);
-
-            return response;
-        }
+        return response;
     }
 }

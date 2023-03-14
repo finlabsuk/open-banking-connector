@@ -5,17 +5,16 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments
-{
-    public class DomesticVrpConsentAuthContextValidator : AbstractValidator<DomesticVrpConsentAuthContext>
-    {
-        public DomesticVrpConsentAuthContextValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            CreateRules();
-        }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
 
-        private void CreateRules() { }
+public class DomesticVrpConsentAuthContextValidator : AbstractValidator<DomesticVrpConsentAuthContext>
+{
+    public DomesticVrpConsentAuthContextValidator()
+    {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
+        CreateRules();
     }
+
+    private void CreateRules() { }
 }

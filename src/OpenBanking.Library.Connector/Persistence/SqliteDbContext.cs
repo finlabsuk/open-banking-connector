@@ -5,15 +5,14 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
-{
-    // SQLite DB context
-    public class SqliteDbContext : BaseDbContext
-    {
-        public SqliteDbContext(DbContextOptions<SqliteDbContext> options) : base(options) { }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-        // Use indenting to aid visualisation (SQLite context mainly used for debug).
-        protected override Formatting JsonFormatting => Formatting.Indented;
-        protected override DbProvider DbProvider => DbProvider.Sqlite;
-    }
+// SQLite DB context
+public class SqliteDbContext : BaseDbContext
+{
+    public SqliteDbContext(DbContextOptions<SqliteDbContext> options) : base(options) { }
+
+    // Use indenting to aid visualisation (SQLite context mainly used for debug).
+    protected override Formatting JsonFormatting => Formatting.Indented;
+    protected override DbProvider DbProvider => DbProvider.Sqlite;
 }

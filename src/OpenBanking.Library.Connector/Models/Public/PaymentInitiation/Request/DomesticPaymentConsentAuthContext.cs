@@ -9,16 +9,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentIni
 using Newtonsoft.Json;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request
-{
-    public class DomesticPaymentConsentAuthContext : Base, ISupportsValidation
-    {
-        [Required]
-        [JsonProperty(Required = Required.Always)]
-        public Guid DomesticPaymentConsentId { get; set; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
-        public async Task<ValidationResult> ValidateAsync() =>
-            await new DomesticPaymentConsentAuthContextValidator()
-                .ValidateAsync(this)!;
-    }
+public class DomesticPaymentConsentAuthContext : Base, ISupportsValidation
+{
+    [Required]
+    [JsonProperty(Required = Required.Always)]
+    public Guid DomesticPaymentConsentId { get; set; }
+
+    public async Task<ValidationResult> ValidateAsync() =>
+        await new DomesticPaymentConsentAuthContextValidator()
+            .ValidateAsync(this)!;
 }

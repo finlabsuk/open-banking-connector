@@ -6,12 +6,11 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum VariableRecurringPaymentsApiVersion
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum VariableRecurringPaymentsApiVersion
-    {
-        [EnumMember(Value = "Version3p1p8")]
-        Version3p1p8
-    }
+    [EnumMember(Value = "Version3p1p8")]
+    Version3p1p8
 }

@@ -2,9 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
@@ -12,174 +9,173 @@ using FluentValidation.Results;
 using FsCheck;
 using FsCheck.Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validation;
+
+public class SoftwareStatementProfileValidatorTests
 {
-    public class SoftwareStatementProfileValidatorTests
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_SoftwareStatement(string value)
     {
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_SoftwareStatement(string value)
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new SoftwareStatementProfile
             {
-                var profile = new SoftwareStatementProfile
-                {
-                    DefaultFragmentRedirectUrl = "http://test.com",
-                    SoftwareStatement = $"{value}.{value}.{value}"
-                };
-
-                List<ValidationFailure> results =
-                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                DefaultFragmentRedirectUrl = "http://test.com",
+                SoftwareStatement = $"{value}.{value}.{value}"
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value) && !value.Contains('.'));
-        }
+            List<ValidationFailure> results =
+                new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_ObSigningKey(string value)
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value) && !value.Contains('.'));
+    }
+
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_ObSigningKey(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new SigningCertificateProfile
             {
-                var profile = new SigningCertificateProfile
-                {
-                    AssociatedKey = value,
-                    AssociatedKeyId = "a",
-                    Certificate = "a",
-                };
-
-                List<ValidationFailure> results =
-                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                AssociatedKey = value,
+                AssociatedKeyId = "a",
+                Certificate = "a",
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value));
-        }
+            List<ValidationFailure> results =
+                new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
+
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value));
+    }
 
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_ObSigningKid(string value)
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_ObSigningKid(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new SigningCertificateProfile
             {
-                var profile = new SigningCertificateProfile
-                {
-                    CertificateType = SigningCertificateType.OBLegacy,
-                    AssociatedKey = "a",
-                    AssociatedKeyId = value,
-                    Certificate = "a",
-                };
-
-                List<ValidationFailure> results =
-                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                CertificateType = SigningCertificateType.OBLegacy,
+                AssociatedKey = "a",
+                AssociatedKeyId = value,
+                Certificate = "a",
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value));
-        }
+            List<ValidationFailure> results =
+                new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_ObSigningPem(string value)
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value));
+    }
+
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_ObSigningPem(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new SigningCertificateProfile
             {
-                var profile = new SigningCertificateProfile
-                {
-                    AssociatedKey = "a",
-                    AssociatedKeyId = "a",
-                    Certificate = value,
-                };
-
-                List<ValidationFailure> results =
-                    new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                AssociatedKey = "a",
+                AssociatedKeyId = "a",
+                Certificate = value,
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value));
-        }
+            List<ValidationFailure> results =
+                new OBSigningCertificateProfileValidator().Validate(profile).Errors.ToList();
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_ObTransportKey(string value)
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value));
+    }
+
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_ObTransportKey(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new TransportCertificateProfile
             {
-                var profile = new TransportCertificateProfile
-                {
-                    AssociatedKey = value,
-                    Certificate = "a",
-                };
-
-                List<ValidationFailure> results =
-                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                AssociatedKey = value,
+                Certificate = "a",
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value));
-        }
+            List<ValidationFailure> results =
+                new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
 
-        [Property(Verbose = PropertyTests.VerboseTests)]
-        public Property Validate_ObTransportPem(string value)
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value));
+    }
+
+    [Property(Verbose = PropertyTests.VerboseTests)]
+    public Property Validate_ObTransportPem(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new TransportCertificateProfile
             {
-                var profile = new TransportCertificateProfile
-                {
-                    AssociatedKey = "a",
-                    Certificate = value,
-                };
-
-                List<ValidationFailure> results =
-                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                AssociatedKey = "a",
+                Certificate = value,
             };
 
-            return rule.When(!string.IsNullOrWhiteSpace(value));
-        }
+            List<ValidationFailure> results =
+                new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
 
-        [Property(Arbitrary = new[] { typeof(BaseUrlArbitrary) })]
-        public Property Validate_DefaultFragmentRedirectUrl(Uri value)
+            return results.Count == 0;
+        };
+
+        return rule.When(!string.IsNullOrWhiteSpace(value));
+    }
+
+    [Property(Arbitrary = new[] { typeof(BaseUrlArbitrary) })]
+    public Property Validate_DefaultFragmentRedirectUrl(Uri value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new TransportCertificateProfile
             {
-                var profile = new TransportCertificateProfile
-                {
-                    AssociatedKey = "a",
-                    Certificate = "a",
-                };
-
-                List<ValidationFailure> results =
-                    new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 0;
+                AssociatedKey = "a",
+                Certificate = "a",
             };
 
-            return rule.ToProperty();
-        }
+            List<ValidationFailure> results =
+                new OBTransportCertificateProfileValidator().Validate(profile).Errors.ToList();
+
+            return results.Count == 0;
+        };
+
+        return rule.ToProperty();
+    }
 
 
-        [Property(Arbitrary = new[] { typeof(InvalidUriArbitrary) })]
-        public Property Validate_DefaultFragmentRedirectUrl_InvalidString(string value)
+    [Property(Arbitrary = new[] { typeof(InvalidUriArbitrary) })]
+    public Property Validate_DefaultFragmentRedirectUrl_InvalidString(string value)
+    {
+        Func<bool> rule = () =>
         {
-            Func<bool> rule = () =>
+            var profile = new SoftwareStatementProfile
             {
-                var profile = new SoftwareStatementProfile
-                {
-                    DefaultFragmentRedirectUrl = value,
-                    SoftwareStatement = "a.b.c"
-                };
-
-                List<ValidationFailure> results =
-                    new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
-
-                return results.Count == 1;
+                DefaultFragmentRedirectUrl = value,
+                SoftwareStatement = "a.b.c"
             };
 
-            return rule.ToProperty();
-        }
+            List<ValidationFailure> results =
+                new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
+
+            return results.Count == 1;
+        };
+
+        return rule.ToProperty();
     }
 }

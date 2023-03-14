@@ -2,15 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Services
+public class TimeProvider : ITimeProvider
 {
-    public class TimeProvider : ITimeProvider
+    public DateTimeOffset GetUtcNow()
     {
-        public DateTimeOffset GetUtcNow()
-        {
-            return DateTimeOffset.UtcNow;
-        }
+        return DateTimeOffset.UtcNow;
     }
 }

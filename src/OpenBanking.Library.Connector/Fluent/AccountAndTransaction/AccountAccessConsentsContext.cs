@@ -22,82 +22,83 @@ using BankRegistrationPersisted =
 using AccountAccessConsentAuthContext =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction.AccountAccessConsentAuthContextPost;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
+
+public interface IAccountAccessConsentsContext :
+    IConsentContext<AccountAccessConsentRequest, AccountAccessConsentCreateResponse,
+        AccountAccessConsentCreateResponse>,
+    IDeleteConsentContext
 {
-    public interface IAccountAccessConsentsContext :
-        IConsentContext<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentCreateResponse>,
-        IDeleteConsentContext
+    /// <summary>
+    ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
+    ///     authorisation of consent.
+    /// </summary>
+    ILocalEntityContext<AccountAccessConsentAuthContextRequest,
+            IAccountAccessConsentAuthContextPublicQuery,
+            AccountAccessConsentAuthContextCreateResponse,
+            AccountAccessConsentAuthContextReadResponse>
+        AuthContexts { get; }
+}
+
+internal interface IAccountAccessConsentsContextInternal :
+    IAccountAccessConsentsContext,
+    IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse,
+        AccountAccessConsentCreateResponse>,
+    IDeleteConsentContextInternal { }
+
+internal class AccountAccessConsentsConsentContext :
+    IAccountAccessConsentsContextInternal
+{
+    private readonly ISharedContext _sharedContext;
+
+    public AccountAccessConsentsConsentContext(ISharedContext sharedContext)
     {
-        /// <summary>
-        ///     API for AuthorisationRedirectObject which corresponds to data received from bank following user
-        ///     authorisation of consent.
-        /// </summary>
-        ILocalEntityContext<AccountAccessConsentAuthContextRequest,
-                IAccountAccessConsentAuthContextPublicQuery,
-                AccountAccessConsentAuthContextCreateResponse,
-                AccountAccessConsentAuthContextReadResponse>
-            AuthContexts { get; }
-    }
-
-    internal interface IAccountAccessConsentsContextInternal :
-        IAccountAccessConsentsContext,
-        IConsentContextInternal<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, AccountAccessConsentCreateResponse>,
-        IDeleteConsentContextInternal { }
-
-    internal class AccountAccessConsentsConsentContext :
-        IAccountAccessConsentsContextInternal
-    {
-        private readonly ISharedContext _sharedContext;
-
-        public AccountAccessConsentsConsentContext(ISharedContext sharedContext)
-        {
-            _sharedContext = sharedContext;
-            var accountAccessConsentOperations = new AccountAccessConsentOperations(
+        _sharedContext = sharedContext;
+        var accountAccessConsentOperations = new AccountAccessConsentOperations(
+            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.TimeProvider,
+            sharedContext.SoftwareStatementProfileCachedRepo,
+            sharedContext.Instrumentation,
+            sharedContext.ApiVariantMapper,
+            new GrantPost(_sharedContext.ApiClient),
+            sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
+            sharedContext.BankProfileService,
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+        CreateObject = accountAccessConsentOperations;
+        ReadObject = accountAccessConsentOperations;
+        DeleteObject =
+            new AccountAccessConsentDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                new GrantPost(_sharedContext.ApiClient),
-                sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
-                sharedContext.BankProfileService,
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
-            CreateObject = accountAccessConsentOperations;
-            ReadObject = accountAccessConsentOperations;
-            DeleteObject =
-                new AccountAccessConsentDelete(
-                    sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    sharedContext.TimeProvider,
-                    sharedContext.SoftwareStatementProfileCachedRepo,
-                    sharedContext.Instrumentation,
-                    new GrantPost(_sharedContext.ApiClient));
-        }
+                new GrantPost(_sharedContext.ApiClient));
+    }
 
-        public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
+    public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
+        IAccountAccessConsentAuthContextPublicQuery,
+        AccountAccessConsentAuthContextCreateResponse,
+        AccountAccessConsentAuthContextReadResponse> AuthContexts =>
+        new LocalEntityContextInternal<AccountAccessConsentAuthContextPersisted,
+            AccountAccessConsentAuthContextRequest,
             IAccountAccessConsentAuthContextPublicQuery,
             AccountAccessConsentAuthContextCreateResponse,
-            AccountAccessConsentAuthContextReadResponse> AuthContexts =>
-            new LocalEntityContextInternal<AccountAccessConsentAuthContextPersisted,
-                AccountAccessConsentAuthContextRequest,
-                IAccountAccessConsentAuthContextPublicQuery,
-                AccountAccessConsentAuthContextCreateResponse,
-                AccountAccessConsentAuthContextReadResponse>(
-                _sharedContext,
-                new AccountAccessConsentAuthContext(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAuthContextPersisted>(),
-                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                    _sharedContext.TimeProvider,
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.Instrumentation));
+            AccountAccessConsentAuthContextReadResponse>(
+            _sharedContext,
+            new AccountAccessConsentAuthContext(
+                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAuthContextPersisted>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.Instrumentation));
 
-        public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
+    public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 
-        public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>
-            CreateObject { get; }
+    public IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>
+        CreateObject { get; }
 
-        public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
-    }
+    public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 }

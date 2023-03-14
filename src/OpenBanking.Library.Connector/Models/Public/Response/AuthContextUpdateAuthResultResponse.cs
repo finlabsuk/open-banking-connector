@@ -2,31 +2,30 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
+
+public enum ConsentType
 {
-    public enum ConsentType
+    AccountAccessConsent,
+    DomesticPaymentConsent,
+    DomesticVrpConsent
+}
+
+public class AuthContextUpdateAuthResultResponse
+{
+    public AuthContextUpdateAuthResultResponse(ConsentType consentType, Guid consentId, IList<string>? warnings)
     {
-        AccountAccessConsent,
-        DomesticPaymentConsent,
-        DomesticVrpConsent
+        ConsentType = consentType;
+        ConsentId = consentId;
+        Warnings = warnings;
     }
 
-    public class AuthContextUpdateAuthResultResponse
-    {
-        public AuthContextUpdateAuthResultResponse(ConsentType consentType, Guid consentId, IList<string>? warnings)
-        {
-            ConsentType = consentType;
-            ConsentId = consentId;
-            Warnings = warnings;
-        }
+    public ConsentType ConsentType { get; }
 
-        public ConsentType ConsentType { get; }
+    public Guid ConsentId { get; }
 
-        public Guid ConsentId { get; }
-
-        /// <summary>
-        ///     Optional list of warning messages from Open Banking Connector.
-        /// </summary>
-        public IList<string>? Warnings { get; }
-    }
+    /// <summary>
+    ///     Optional list of warning messages from Open Banking Connector.
+    /// </summary>
+    public IList<string>? Warnings { get; }
 }

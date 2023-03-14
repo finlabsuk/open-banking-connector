@@ -37,10 +37,9 @@ public enum JsonWebKeyAlg
 {
     [EnumMember(Value = "PS256")]
     Ps256,
-    
+
     [EnumMember(Value = "RS256")]
     Rs256
-
 }
 
 public class JsonWebKey

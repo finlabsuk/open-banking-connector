@@ -11,212 +11,243 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Http
+namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
+
+public class ApiClient : IApiClient
 {
-    public class ApiClient : IApiClient
+    private readonly HttpClient _httpClient;
+    private readonly IInstrumentationClient _instrumentation;
+
+    public ApiClient(
+        IInstrumentationClient instrumentationClient,
+        IList<X509Certificate2>? clientCertificates = null,
+        IServerCertificateValidator? serverCertificateValidator = null)
     {
-        private readonly HttpClient _httpClient;
-        private readonly IInstrumentationClient _instrumentation;
-
-        public ApiClient(
-            IInstrumentationClient instrumentationClient,
-            IList<X509Certificate2>? clientCertificates = null,
-            IServerCertificateValidator? serverCertificateValidator = null)
+        var clientHandler = new SocketsHttpHandler
         {
-            var clientHandler = new SocketsHttpHandler
-            {
-                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-            };
-
-            const int maxRedirects = 50;
-            clientHandler.AllowAutoRedirect = true;
-            clientHandler.MaxAutomaticRedirections = maxRedirects;
-
-            // SSL settings
-            var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
-            {
-                EnabledSslProtocols = SslProtocols.Tls12
-            };
-
-            // Limit cipher suites on Linux
-            var cipherSuites = new[]
-            {
-                TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-                TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
-                TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-            };
-            if (OsPlatformEnumHelper.GetCurrentOsPlatform() is OsPlatformEnum.Linux)
-            {
-                sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
-            }
-
-            // Add client certs
-            if (clientCertificates is not null &&
-                clientCertificates.Count > 0)
-            {
-                X509Certificate2[] y = clientCertificates.ToArray();
-                sslClientAuthenticationOptions.ClientCertificates = new X509Certificate2Collection(y);
-            }
-
-            // Add custom remote cert validation
-            if (serverCertificateValidator is not null)
-            {
-                sslClientAuthenticationOptions.RemoteCertificateValidationCallback = serverCertificateValidator.IsOk;
-            }
-
-            clientHandler.SslOptions = sslClientAuthenticationOptions;
-
-            _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-            _httpClient = new HttpClient(new LoggingHandler(clientHandler));
-        }
-
-        public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
-        {
-            _instrumentation = instrumentation.ArgNotNull(nameof(instrumentation));
-            _httpClient = httpClient.ArgNotNull(nameof(httpClient));
-        }
-
-        public static JsonSerializerSettings GetDefaultJsonSerializerSettings => new()
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            DateParseHandling = DateParseHandling.None
+            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
         };
 
-        public async Task<T> SendExpectingJsonResponseAsync<T>(
-            HttpRequestMessage request,
-            JsonSerializerSettings? jsonSerializerSettings)
-            where T : class
+        const int maxRedirects = 50;
+        clientHandler.AllowAutoRedirect = true;
+        clientHandler.MaxAutomaticRedirections = maxRedirects;
+
+        // SSL settings
+        var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
         {
-            request.ArgNotNull(nameof(request));
+            EnabledSslProtocols = SslProtocols.Tls12
+        };
 
-            (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+        // Limit cipher suites on Linux
+        var cipherSuites = new[]
+        {
+            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+            TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
+            TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        };
+        if (OsPlatformEnumHelper.GetCurrentOsPlatform() is OsPlatformEnum.Linux)
+        {
+            sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
+        }
 
-            // Check body not null
-            if (responseBody is null)
+        // Add client certs
+        if (clientCertificates is not null &&
+            clientCertificates.Count > 0)
+        {
+            X509Certificate2[] y = clientCertificates.ToArray();
+            sslClientAuthenticationOptions.ClientCertificates = new X509Certificate2Collection(y);
+        }
+
+        // Add custom remote cert validation
+        if (serverCertificateValidator is not null)
+        {
+            sslClientAuthenticationOptions.RemoteCertificateValidationCallback = serverCertificateValidator.IsOk;
+        }
+
+        clientHandler.SslOptions = sslClientAuthenticationOptions;
+
+        _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
+        _httpClient = new HttpClient(new LoggingHandler(clientHandler));
+    }
+
+    public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
+    {
+        _instrumentation = instrumentation.ArgNotNull(nameof(instrumentation));
+        _httpClient = httpClient.ArgNotNull(nameof(httpClient));
+    }
+
+    public static JsonSerializerSettings GetDefaultJsonSerializerSettings => new()
+    {
+        NullValueHandling = NullValueHandling.Ignore,
+        DateParseHandling = DateParseHandling.None
+    };
+
+    public async Task<T> SendExpectingJsonResponseAsync<T>(
+        HttpRequestMessage request,
+        JsonSerializerSettings? jsonSerializerSettings)
+        where T : class
+    {
+        request.ArgNotNull(nameof(request));
+
+        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+
+        // Check body not null
+        if (responseBody is null)
+        {
+            throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
+        }
+
+        T? responseBodyTyped;
+        try
+        {
+            // De-serialise body
+            responseBodyTyped = JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings);
+        }
+        catch (Exception ex)
+        {
+            throw new ExternalApiResponseDeserialisationException(
+                statusCode,
+                $"{request.Method}",
+                $"{request.RequestUri}",
+                responseBody,
+                xFapiInteractionId,
+                ex.Message);
+        }
+
+        if (responseBodyTyped is null)
+        {
+            throw new HttpRequestException("Could not de-serialise HTTP body");
+        }
+
+        return responseBodyTyped;
+    }
+
+    public async Task SendExpectingNoResponseAsync(HttpRequestMessage request)
+    {
+        request.ArgNotNull(nameof(request));
+
+        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+
+        // Check body not null
+        if (!string.IsNullOrEmpty(responseBody))
+        {
+            throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
+        }
+    }
+
+    private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
+        HttpRequestMessage request)
+    {
+        HttpResponseMessage? response = null;
+
+        int statusCode;
+        string? responseBody = null;
+        string? xFapiInteractionId = null;
+        try
+        {
+            // Make HTTP call
+            response = await _httpClient.SendAsync(request);
+            responseBody = await GetStringResponseAsync(response);
+
+            // Get selected headers
+            if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
             {
-                throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
+                xFapiInteractionId = values.First();
             }
 
-            T? responseBodyTyped;
-            try
+            // Check HTTP status code
+            statusCode = (int) response.StatusCode;
+            if (statusCode >= 400)
             {
-                // De-serialise body
-                responseBodyTyped = JsonConvert.DeserializeObject<T>(responseBody, jsonSerializerSettings);
-            }
-            catch (Exception ex)
-            {
-                throw new ExternalApiResponseDeserialisationException(
+                throw new ExternalApiHttpErrorException(
                     statusCode,
                     $"{request.Method}",
                     $"{request.RequestUri}",
-                    responseBody,
-                    xFapiInteractionId,
-                    ex.Message);
+                    responseBody ?? "",
+                    xFapiInteractionId);
             }
 
-            if (responseBodyTyped is null)
-            {
-                throw new HttpRequestException("Could not de-serialise HTTP body");
-            }
-
-            return responseBodyTyped;
+            HttpResponseMessage _ = response.EnsureSuccessStatusCode();
         }
-
-        public async Task SendExpectingNoResponseAsync(HttpRequestMessage request)
+        catch (Exception ex)
         {
-            request.ArgNotNull(nameof(request));
-
-            (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
-
-            // Check body not null
-            if (!string.IsNullOrEmpty(responseBody))
-            {
-                throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
-            }
+            _instrumentation.Exception(ex, request.RequestUri!.ToString());
+            throw;
         }
-
-        private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
-            HttpRequestMessage request)
+        finally
         {
-            HttpResponseMessage? response = null;
-
-            int statusCode;
-            string? responseBody = null;
-            string? xFapiInteractionId = null;
-            try
-            {
-                // Make HTTP call
-                response = await _httpClient.SendAsync(request);
-                responseBody = await GetStringResponseAsync(response);
-
-                // Get selected headers
-                if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
-                {
-                    xFapiInteractionId = values.First();
-                }
-
-                // Check HTTP status code
-                statusCode = (int) response.StatusCode;
-                if (statusCode >= 400)
-                {
-                    throw new ExternalApiHttpErrorException(
-                        statusCode,
-                        $"{request.Method}",
-                        $"{request.RequestUri}",
-                        responseBody ?? "",
-                        xFapiInteractionId);
-                }
-
-                HttpResponseMessage _ = response.EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                _instrumentation.Exception(ex, request.RequestUri!.ToString());
-                throw;
-            }
-            finally
-            {
-                await LogRequest(request, response, responseBody);
-                response?.Dispose();
-            }
-
-
-            return (statusCode, responseBody, xFapiInteractionId);
+            await LogRequest(request, response, responseBody);
+            response?.Dispose();
         }
 
-        public async Task<HttpResponseMessage> LowLevelSendAsync(HttpRequestMessage request)
+
+        return (statusCode, responseBody, xFapiInteractionId);
+    }
+
+    public async Task<HttpResponseMessage> LowLevelSendAsync(HttpRequestMessage request)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _instrumentation.Exception(ex, request.RequestUri!.ToString());
+
+            throw;
+        }
+    }
+
+    private async Task LogRequest(
+        HttpRequestMessage request,
+        HttpResponseMessage? response,
+        string? responseBody)
+    {
+        string jsonFormatted;
+
+        // Generate HTTP request info trace
+        StringBuilder requestTraceSb = new StringBuilder()
+            .AppendLine("#### HTTP REQUEST")
+            .AppendLine("######## REQUEST")
+            .AppendLine($"{request}")
+            .AppendLine("######## REQUEST BODY");
+
+        string? requestBody = await GetStringRequestAsync(request);
+        if (string.IsNullOrEmpty(requestBody))
+        {
+            requestTraceSb.AppendLine("<No Body>");
+        }
+        else
         {
             try
             {
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-                return response;
+                dynamic parsedJson =
+                    JsonConvert.DeserializeObject(requestBody) ??
+                    throw new NullReferenceException();
+                jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
             }
-            catch (Exception ex)
+            catch
             {
-                _instrumentation.Exception(ex, request.RequestUri!.ToString());
-
-                throw;
+                jsonFormatted = requestBody;
             }
+
+            requestTraceSb.AppendLine(jsonFormatted);
         }
 
-        private async Task LogRequest(
-            HttpRequestMessage request,
-            HttpResponseMessage? response,
-            string? responseBody)
+        requestTraceSb.AppendLine("######## RESPONSE");
+        if (response is null)
         {
-            string jsonFormatted;
-
-            // Generate HTTP request info trace
-            StringBuilder requestTraceSb = new StringBuilder()
-                .AppendLine("#### HTTP REQUEST")
-                .AppendLine("######## REQUEST")
-                .AppendLine($"{request}")
-                .AppendLine("######## REQUEST BODY");
-
-            string? requestBody = await GetStringRequestAsync(request);
-            if (string.IsNullOrEmpty(requestBody))
+            requestTraceSb.AppendLine("<No Response>");
+        }
+        else
+        {
+            requestTraceSb
+                .AppendLine($"{response}")
+                .AppendLine("######## RESPONSE BODY");
+            if (string.IsNullOrEmpty(responseBody))
             {
                 requestTraceSb.AppendLine("<No Body>");
             }
@@ -225,73 +256,41 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http
                 try
                 {
                     dynamic parsedJson =
-                        JsonConvert.DeserializeObject(requestBody) ??
+                        JsonConvert.DeserializeObject(responseBody) ??
                         throw new NullReferenceException();
                     jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
                 }
                 catch
                 {
-                    jsonFormatted = requestBody;
+                    jsonFormatted = responseBody;
                 }
 
                 requestTraceSb.AppendLine(jsonFormatted);
             }
-
-            requestTraceSb.AppendLine("######## RESPONSE");
-            if (response is null)
-            {
-                requestTraceSb.AppendLine("<No Response>");
-            }
-            else
-            {
-                requestTraceSb
-                    .AppendLine($"{response}")
-                    .AppendLine("######## RESPONSE BODY");
-                if (string.IsNullOrEmpty(responseBody))
-                {
-                    requestTraceSb.AppendLine("<No Body>");
-                }
-                else
-                {
-                    try
-                    {
-                        dynamic parsedJson =
-                            JsonConvert.DeserializeObject(responseBody) ??
-                            throw new NullReferenceException();
-                        jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-                    }
-                    catch
-                    {
-                        jsonFormatted = responseBody;
-                    }
-
-                    requestTraceSb.AppendLine(jsonFormatted);
-                }
-            }
-
-            requestTraceSb.AppendLine("####");
-            _instrumentation.Trace(requestTraceSb.ToString());
         }
 
-        private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
+        requestTraceSb.AppendLine("####");
+        _instrumentation.Trace(requestTraceSb.ToString());
+    }
+
+    private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
+    {
+        using (response.Content)
         {
-            using (response.Content)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
+            return await response.Content.ReadAsStringAsync();
+        }
+    }
+
+    private static async Task<string?> GetStringRequestAsync(HttpRequestMessage request)
+    {
+        if (request.Content is null)
+        {
+            return null;
         }
 
-        private static async Task<string?> GetStringRequestAsync(HttpRequestMessage request)
+        using (request.Content)
         {
-            if (request.Content is null)
-            {
-                return null;
-            }
-
-            using (request.Content)
-            {
-                return await request.Content.ReadAsStringAsync();
-            }
+            return await request.Content.ReadAsStringAsync();
         }
     }
 }

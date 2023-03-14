@@ -12,52 +12,49 @@ using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
+
+public interface IBankRegistrationsContext :
+    ICreateBankRegistrationContext<BankRegistration, BankRegistrationResponse>,
+    IReadBankRegistrationContext<BankRegistrationResponse>,
+    IDeleteBankRegistrationContext { }
+
+internal interface IBankRegistrationsContextInternal :
+    IBankRegistrationsContext,
+    ICreateBankRegistrationContextInternal<BankRegistration, BankRegistrationResponse>,
+    IReadBankRegistrationContextInternal<BankRegistrationResponse>,
+    IDeleteBankRegistrationContextInternal { }
+
+internal class BankRegistrationsContextInternal :
+    IBankRegistrationsContextInternal
 {
-    public interface IBankRegistrationsContext :
-        ICreateBankRegistrationContext<BankRegistration, BankRegistrationResponse>,
-        IReadBankRegistrationContext<BankRegistrationResponse>,
-        IDeleteBankRegistrationContext { }
-
-    internal interface IBankRegistrationsContextInternal :
-        IBankRegistrationsContext,
-        ICreateBankRegistrationContextInternal<BankRegistration, BankRegistrationResponse>,
-        IReadBankRegistrationContextInternal<BankRegistrationResponse>,
-        IDeleteBankRegistrationContextInternal { }
-
-    internal class BankRegistrationsContextInternal :
-        IBankRegistrationsContextInternal
+    public BankRegistrationsContextInternal(ISharedContext sharedContext)
     {
-        public BankRegistrationsContextInternal(ISharedContext sharedContext)
-        {
-            var bankRegistrationOperations = new BankRegistrationOperations(
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.ApiVariantMapper,
-                new OpenIdConfigurationRead(sharedContext.ApiClient),
-                sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
-                sharedContext.BankProfileService,new GrantPost(sharedContext.ApiClient));
-            ReadObject = bankRegistrationOperations;
-            DeleteObject = new BankRegistrationDelete(
-                sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
-                sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
-                sharedContext.Instrumentation,
-                sharedContext.BankProfileService,
-                new GrantPost(sharedContext.ApiClient));
-            CreateObject = bankRegistrationOperations;
-        }
-
-        public IObjectCreate<BankRegistration, BankRegistrationResponse, BankRegistrationCreateParams> CreateObject
-        {
-            get;
-        }
-
-        public IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
-        public IObjectRead<BankRegistrationResponse, BankRegistrationReadParams> ReadObject { get; }
+        var bankRegistrationOperations = new BankRegistrationOperations(
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.TimeProvider,
+            sharedContext.SoftwareStatementProfileCachedRepo,
+            sharedContext.Instrumentation,
+            sharedContext.ApiVariantMapper,
+            new OpenIdConfigurationRead(sharedContext.ApiClient),
+            sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
+            sharedContext.BankProfileService,
+            new GrantPost(sharedContext.ApiClient));
+        ReadObject = bankRegistrationOperations;
+        DeleteObject = new BankRegistrationDelete(
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+            sharedContext.DbService.GetDbSaveChangesMethodClass(),
+            sharedContext.TimeProvider,
+            sharedContext.SoftwareStatementProfileCachedRepo,
+            sharedContext.Instrumentation,
+            sharedContext.BankProfileService,
+            new GrantPost(sharedContext.ApiClient));
+        CreateObject = bankRegistrationOperations;
     }
+
+    public IObjectCreate<BankRegistration, BankRegistrationResponse, BankRegistrationCreateParams> CreateObject { get; }
+
+    public IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
+    public IObjectRead<BankRegistrationResponse, BankRegistrationReadParams> ReadObject { get; }
 }

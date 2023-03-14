@@ -6,37 +6,36 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+public static class CertificateFactories
 {
-    public static class CertificateFactories
+    public static void ImportPrivateKey(string privateKey, ref RSA rsaContainer)
     {
-        public static void ImportPrivateKey(string privateKey, ref RSA rsaContainer)
-        {
-            string cleanedPrivateKey = CleanPem(privateKey);
-            rsaContainer.ImportFromPem(cleanedPrivateKey);
-        }
+        string cleanedPrivateKey = CleanPem(privateKey);
+        rsaContainer.ImportFromPem(cleanedPrivateKey);
+    }
 
-        public static X509Certificate2 CreateCertWithKey(string certPem, string keyPem)
-        {
-            string cleanedKeyPem = CleanPem(keyPem);
-            string cleanedCertPem = CleanPem(certPem);
-            var initialCert = X509Certificate2.CreateFromPem(cleanedCertPem, cleanedKeyPem);
-            return new X509Certificate2(initialCert.Export(X509ContentType.Pkcs12));
-        }
+    public static X509Certificate2 CreateCertWithKey(string certPem, string keyPem)
+    {
+        string cleanedKeyPem = CleanPem(keyPem);
+        string cleanedCertPem = CleanPem(certPem);
+        var initialCert = X509Certificate2.CreateFromPem(cleanedCertPem, cleanedKeyPem);
+        return new X509Certificate2(initialCert.Export(X509ContentType.Pkcs12));
+    }
 
-        private static string CleanPem(string pem)
-        {
-            // In Bash environment variables (not sure about Windows), "\n" does not represent a newline (it's not an escape sequence) and so
-            // gets converted to "\\n" in C#. We convert these back. This problem does not occur with .NET secrets where values
-            // contain "\n".
-            string cleanedPem = Regex.Replace(pem, @"\\n", "\n");
-            return cleanedPem;
-        }
+    private static string CleanPem(string pem)
+    {
+        // In Bash environment variables (not sure about Windows), "\n" does not represent a newline (it's not an escape sequence) and so
+        // gets converted to "\\n" in C#. We convert these back. This problem does not occur with .NET secrets where values
+        // contain "\n".
+        string cleanedPem = Regex.Replace(pem, @"\\n", "\n");
+        return cleanedPem;
+    }
 
-        public static X509Certificate2 CreateCert(string certPem)
-        {
-            string cleanedCertPem = CleanPem(certPem);
-            return X509Certificate2.CreateFromPem(cleanedCertPem);
-        }
+    public static X509Certificate2 CreateCert(string certPem)
+    {
+        string cleanedCertPem = CleanPem(certPem);
+        return X509Certificate2.CreateFromPem(cleanedCertPem);
     }
 }

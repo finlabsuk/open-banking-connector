@@ -4,11 +4,10 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
-{
-    internal interface IApiRequests<in TApiRequest, TApiResponse> :
-        IApiGetRequests<TApiResponse>,
-        IApiPostRequests<TApiRequest, TApiResponse>
-        where TApiResponse : class, ISupportsValidation
-        where TApiRequest : class, ISupportsValidation { }
-}
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+
+internal interface IApiRequests<in TApiRequest, TApiResponse> :
+    IApiGetRequests<TApiResponse>,
+    IApiPostRequests<TApiRequest, TApiResponse>
+    where TApiResponse : class, ISupportsValidation
+    where TApiRequest : class, ISupportsValidation { }

@@ -6,34 +6,33 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentAssertions;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Security;
+
+public class CertificateExtensionsTests
 {
-    public class CertificateExtensionsTests
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("  ")]
+    [InlineData("THUMBPRINT")]
+    [InlineData("PEM")]
+    [InlineData("begin CERTIFICATE")]
+    [InlineData(" BEGIN CERTIFICATE")]
+    public void IsPemThumbprint_False(string tp)
     {
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        [InlineData("  ")]
-        [InlineData("THUMBPRINT")]
-        [InlineData("PEM")]
-        [InlineData("begin CERTIFICATE")]
-        [InlineData(" BEGIN CERTIFICATE")]
-        public void IsPemThumbprint_False(string tp)
-        {
-            bool result = tp.IsPemThumbprint();
+        bool result = tp.IsPemThumbprint();
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Theory]
-        [InlineData("-----BEGIN CERTIFICATE-----")]
-        [InlineData("-----BEGIN CERTIFICATE------")]
-        public void IsPemThumbprint_True(string tp)
-        {
-            bool result = tp.IsPemThumbprint();
+    [Theory]
+    [InlineData("-----BEGIN CERTIFICATE-----")]
+    [InlineData("-----BEGIN CERTIFICATE------")]
+    public void IsPemThumbprint_True(string tp)
+    {
+        bool result = tp.IsPemThumbprint();
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
     }
 }

@@ -4,16 +4,15 @@
 
 using FsCheck;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
-{
-    public static class BaseArbitrary<T>
-        where T : new()
-    {
-        public static Arbitrary<T> GetArbitrary()
-        {
-            T[] elements = { new T() };
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
-            return Gen.Elements(elements).ToArbitrary();
-        }
+public static class BaseArbitrary<T>
+    where T : new()
+{
+    public static Arbitrary<T> GetArbitrary()
+    {
+        T[] elements = { new() };
+
+        return Gen.Elements(elements).ToArbitrary();
     }
 }

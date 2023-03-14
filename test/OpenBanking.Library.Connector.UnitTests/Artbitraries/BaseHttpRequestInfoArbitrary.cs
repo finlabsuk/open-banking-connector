@@ -5,15 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FsCheck;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries
-{
-    public static class BaseHttpRequestInfoArbitrary
-    {
-        public static Arbitrary<HttpRequestInfo> GetArbitrary()
-        {
-            HttpRequestInfo[] elements = { new HttpRequestInfo() };
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
-            return Gen.Elements(elements).ToArbitrary();
-        }
+public static class BaseHttpRequestInfoArbitrary
+{
+    public static Arbitrary<HttpRequestInfo> GetArbitrary()
+    {
+        HttpRequestInfo[] elements = { new() };
+
+        return Gen.Elements(elements).ToArbitrary();
     }
 }

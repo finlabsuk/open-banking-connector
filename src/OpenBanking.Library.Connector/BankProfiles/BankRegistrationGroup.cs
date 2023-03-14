@@ -37,5 +37,4 @@ public enum BankRegistrationGroup
 
     [EnumMember(Value = "Lloyds_Production")]
     Lloyds_Production,
-
 }

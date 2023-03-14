@@ -4,21 +4,20 @@
 
 using System.Collections.Concurrent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+
+public enum DanskeBank
 {
-    public enum DanskeBank
-    {
-        Danske
-    }
+    Danske
+}
 
-    public class Danske : BankGroupBase<DanskeBank>
-    {
-        public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
+public class Danske : BankGroupBase<DanskeBank>
+{
+    public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
-        protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
-            new()
-            {
-                [BankProfileEnum.Danske] = DanskeBank.Danske
-            };
-    }
+    protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
+        new()
+        {
+            [BankProfileEnum.Danske] = DanskeBank.Danske
+        };
 }

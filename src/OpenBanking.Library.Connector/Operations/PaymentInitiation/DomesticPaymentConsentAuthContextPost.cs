@@ -18,104 +18,103 @@ using DomesticPaymentConsentPersisted =
 using DomesticPaymentConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
+
+internal class
+    DomesticPaymentConsentAuthContextPost : LocalEntityCreate<
+        DomesticPaymentConsentAuthContextPersisted,
+        DomesticPaymentConsentAuthContextRequest,
+        DomesticPaymentConsentAuthContextCreateResponse>
 {
-    internal class
-        DomesticPaymentConsentAuthContextPost : LocalEntityCreate<
-            DomesticPaymentConsentAuthContextPersisted,
-            DomesticPaymentConsentAuthContextRequest,
-            DomesticPaymentConsentAuthContextCreateResponse>
-    {
-        protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
+    protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
-        public DomesticPaymentConsentAuthContextPost(
-            IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
-                entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient) : base(
+    public DomesticPaymentConsentAuthContextPost(
+        IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
             entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
-        {
-            _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
-        }
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
+    {
+        _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+    }
 
-        protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
-            DomesticPaymentConsentAuthContextRequest request,
-            ITimeProvider timeProvider)
-        {
-            // Load relevant data objects
-            DomesticPaymentConsentPersisted domesticPaymentConsent =
-                _domesticPaymentConsentMethods
-                    .DbSetNoTracking
-                    .Include(o => o.BankRegistrationNavigation)
-                    .Include(o => o.BankRegistrationNavigation.BankNavigation)
-                    .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
-                throw new KeyNotFoundException(
-                    $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
-            CustomBehaviourClass? customBehaviour =
-                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
-            string authorizationEndpoint =
-                domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-            string issuerUrl = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-            bool supportsSca = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
+    protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
+        DomesticPaymentConsentAuthContextRequest request,
+        ITimeProvider timeProvider)
+    {
+        // Load relevant data objects
+        DomesticPaymentConsentPersisted domesticPaymentConsent =
+            _domesticPaymentConsentMethods
+                .DbSetNoTracking
+                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
+            throw new KeyNotFoundException(
+                $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
+        CustomBehaviourClass? customBehaviour =
+            domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+        string authorizationEndpoint =
+            domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
+        string issuerUrl = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
+        bool supportsSca = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                    domesticPaymentConsent.BankRegistrationNavigation
-                        .SoftwareStatementProfileOverride);
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+            await _softwareStatementProfileRepo.GetAsync(
+                domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
+                domesticPaymentConsent.BankRegistrationNavigation
+                    .SoftwareStatementProfileOverride);
 
-            // Create auth URL
-            string consentAuthGetAudClaim =
-                customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
-                issuerUrl;
+        // Create auth URL
+        string consentAuthGetAudClaim =
+            customBehaviour?.DomesticPaymentConsentAuthGet?.AudClaim ??
+            issuerUrl;
 
-            (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
-                domesticPaymentConsent.ExternalApiId,
-                processedSoftwareStatementProfile,
-                domesticPaymentConsent.BankRegistrationNavigation,
-                domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
-                customBehaviour?.DomesticPaymentConsentAuthGet,
-                authorizationEndpoint,
-                consentAuthGetAudClaim,
-                supportsSca,
-                "payments",
-                _instrumentationClient);
+        (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
+            domesticPaymentConsent.ExternalApiId,
+            processedSoftwareStatementProfile,
+            domesticPaymentConsent.BankRegistrationNavigation,
+            domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            customBehaviour?.DomesticPaymentConsentAuthGet,
+            authorizationEndpoint,
+            consentAuthGetAudClaim,
+            supportsSca,
+            "payments",
+            _instrumentationClient);
 
-            // Create persisted entity
-            DateTimeOffset utcNow = _timeProvider.GetUtcNow();
+        // Create persisted entity
+        DateTimeOffset utcNow = _timeProvider.GetUtcNow();
 
-            var entity = new DomesticPaymentConsentAuthContextPersisted(
-                Guid.NewGuid(),
-                request.Reference,
-                false,
-                utcNow,
-                request.CreatedBy,
-                utcNow,
-                request.CreatedBy,
-                state,
-                nonce,
-                request.DomesticPaymentConsentId);
+        var entity = new DomesticPaymentConsentAuthContextPersisted(
+            Guid.NewGuid(),
+            request.Reference,
+            false,
+            utcNow,
+            request.CreatedBy,
+            utcNow,
+            request.CreatedBy,
+            state,
+            nonce,
+            request.DomesticPaymentConsentId);
 
-            // Add entity
-            await _entityMethods.AddAsync(entity);
+        // Add entity
+        await _entityMethods.AddAsync(entity);
 
-            var response =
-                new DomesticPaymentConsentAuthContextCreateResponse(
-                    entity.Id,
-                    entity.Created,
-                    entity.CreatedBy,
-                    entity.Reference,
-                    entity.DomesticPaymentConsentId,
-                    authUrl);
+        var response =
+            new DomesticPaymentConsentAuthContextCreateResponse(
+                entity.Id,
+                entity.Created,
+                entity.CreatedBy,
+                entity.Reference,
+                entity.DomesticPaymentConsentId,
+                authUrl);
 
-            return response;
-        }
+        return response;
     }
 }

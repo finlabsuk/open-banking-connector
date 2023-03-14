@@ -7,25 +7,24 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
+
+internal class
+    AccountAccessConsentAuthContext : AuthContextConfig<
+        Persistent.AccountAndTransaction.AccountAccessConsentAuthContext>
 {
-    internal class
-        AccountAccessConsentAuthContext : AuthContextConfig<
-            Persistent.AccountAndTransaction.AccountAccessConsentAuthContext>
+    public AccountAccessConsentAuthContext(
+        DbProvider dbProvider,
+        bool supportsGlobalQueryFilter,
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+
+    public override void Configure(
+        EntityTypeBuilder<Persistent.AccountAndTransaction.AccountAccessConsentAuthContext> builder)
     {
-        public AccountAccessConsentAuthContext(
-            DbProvider dbProvider,
-            bool supportsGlobalQueryFilter,
-            Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        base.Configure(builder);
 
-        public override void Configure(
-            EntityTypeBuilder<Persistent.AccountAndTransaction.AccountAccessConsentAuthContext> builder)
-        {
-            base.Configure(builder);
-
-            // Top-level property info: read-only, JSON conversion, etc
-            builder.Property(e => e.AccountAccessConsentId)
-                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        }
+        // Top-level property info: read-only, JSON conversion, etc
+        builder.Property(e => e.AccountAccessConsentId)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

@@ -5,14 +5,13 @@
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json.Converters;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Json
+namespace FinnovationLabs.OpenBanking.Library.Connector.Json;
+
+[ExcludeFromCodeCoverage]
+public class OpenApiDateConverter : IsoDateTimeConverter
 {
-    [ExcludeFromCodeCoverage]
-    public class OpenApiDateConverter : IsoDateTimeConverter
+    public OpenApiDateConverter()
     {
-        public OpenApiDateConverter()
-        {
-            DateTimeFormat = "yyyy-MM-dd";
-        }
+        DateTimeFormat = "yyyy-MM-dd";
     }
 }

@@ -9,56 +9,55 @@ using DomesticPaymentConsentAuthContextRequest =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request.
     DomesticPaymentConsentAuthContext;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
+
+/// <summary>
+///     Persisted type.
+///     Internal to help ensure public request and response types used on public API.
+/// </summary>
+internal partial class DomesticPaymentConsentAuthContext :
+    AuthContext,
+    IDomesticPaymentConsentAuthContextPublicQuery
 {
-    /// <summary>
-    ///     Persisted type.
-    ///     Internal to help ensure public request and response types used on public API.
-    /// </summary>
-    internal partial class DomesticPaymentConsentAuthContext :
-        AuthContext,
-        IDomesticPaymentConsentAuthContextPublicQuery
+    public DomesticPaymentConsentAuthContext(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy,
+        string state,
+        string nonce,
+        Guid domesticPaymentConsentId) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy,
+        state,
+        nonce)
     {
-        public DomesticPaymentConsentAuthContext(
-            Guid id,
-            string? reference,
-            bool isDeleted,
-            DateTimeOffset isDeletedModified,
-            string? isDeletedModifiedBy,
-            DateTimeOffset created,
-            string? createdBy,
-            string state,
-            string nonce,
-            Guid domesticPaymentConsentId) : base(
-            id,
-            reference,
-            isDeleted,
-            isDeletedModified,
-            isDeletedModifiedBy,
-            created,
-            createdBy,
-            state,
-            nonce)
-        {
-            DomesticPaymentConsentId = domesticPaymentConsentId;
-        }
-
-        // Parent consent (optional to avoid warning due to non-support of global query filter)
-        [ForeignKey("DomesticPaymentConsentId")]
-        public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
-
-        public Guid DomesticPaymentConsentId { get; }
+        DomesticPaymentConsentId = domesticPaymentConsentId;
     }
 
-    internal partial class DomesticPaymentConsentAuthContext :
-        ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextReadResponse>
-    {
-        public DomesticPaymentConsentAuthContextReadResponse PublicGetLocalResponse =>
-            new(
-                Id,
-                Created,
-                CreatedBy,
-                Reference,
-                DomesticPaymentConsentId);
-    }
+    // Parent consent (optional to avoid warning due to non-support of global query filter)
+    [ForeignKey("DomesticPaymentConsentId")]
+    public DomesticPaymentConsent DomesticPaymentConsentNavigation { get; set; } = null!;
+
+    public Guid DomesticPaymentConsentId { get; }
+}
+
+internal partial class DomesticPaymentConsentAuthContext :
+    ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextReadResponse>
+{
+    public DomesticPaymentConsentAuthContextReadResponse PublicGetLocalResponse =>
+        new(
+            Id,
+            Created,
+            CreatedBy,
+            Reference,
+            DomesticPaymentConsentId);
 }

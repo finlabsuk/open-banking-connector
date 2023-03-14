@@ -3,38 +3,35 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+[ExcludeFromCodeCoverage]
+public class LocalStoreCertificateReader : ICertificateReader
 {
-    [ExcludeFromCodeCoverage]
-    public class LocalStoreCertificateReader : ICertificateReader
+    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint)
     {
-        public Task<X509Certificate2?> GetCertificateAsync(string thumbprint)
-        {
-            return GetCertificateInner(thumbprint, null).ToTaskResult();
-        }
+        return GetCertificateInner(thumbprint, null).ToTaskResult();
+    }
 
-        public Task<X509Certificate2?> GetCertificateAsync(string thumbprint, SecureString password)
-        {
-            return GetCertificateInner(thumbprint, password).ToTaskResult();
-        }
+    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint, SecureString password)
+    {
+        return GetCertificateInner(thumbprint, password).ToTaskResult();
+    }
 
-        private X509Certificate2? GetCertificateInner(string value, SecureString? password)
-        {
-            using var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
-            store.Open(OpenFlags.ReadOnly);
+    private X509Certificate2? GetCertificateInner(string value, SecureString? password)
+    {
+        using var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+        store.Open(OpenFlags.ReadOnly);
 
-            return store.Certificates.Find(
-                    X509FindType.FindByThumbprint,
-                    value,
-                    false)
-                .OfType<X509Certificate2>()
-                .FirstOrDefault();
-        }
+        return store.Certificates.Find(
+                X509FindType.FindByThumbprint,
+                value,
+                false)
+            .OfType<X509Certificate2>()
+            .FirstOrDefault();
     }
 }

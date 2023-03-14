@@ -4,25 +4,24 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+
+/// <summary>
+///     Base DB service which depends on DB Context and provides method classes
+///     allowing access to DB entities in a controlled manner.
+/// </summary>
+public class DbService : IDbService
 {
-    /// <summary>
-    ///     Base DB service which depends on DB Context and provides method classes
-    ///     allowing access to DB entities in a controlled manner.
-    /// </summary>
-    public class DbService : IDbService
+    private readonly BaseDbContext _db;
+
+    public DbService(BaseDbContext db)
     {
-        private readonly BaseDbContext _db;
-
-        public DbService(BaseDbContext db)
-        {
-            _db = db;
-        }
-
-        public IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
-            where TEntity : class, IEntity =>
-            new DbEntityMethods<TEntity>(_db);
-
-        public IDbSaveChangesMethod GetDbSaveChangesMethodClass() => new DbSaveChangesMethod(_db);
+        _db = db;
     }
+
+    public IDbEntityMethods<TEntity> GetDbEntityMethodsClass<TEntity>()
+        where TEntity : class, IEntity =>
+        new DbEntityMethods<TEntity>(_db);
+
+    public IDbSaveChangesMethod GetDbSaveChangesMethodClass() => new DbSaveChangesMethod(_db);
 }

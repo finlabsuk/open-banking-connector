@@ -33,6 +33,5 @@ public class BarclaysUiMethods : IBankUiMethods
             await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { NameString = "Run Test Case" })
                 .ClickAsync();
         }
-
     }
 }

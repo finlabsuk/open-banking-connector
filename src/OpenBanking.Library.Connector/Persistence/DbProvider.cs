@@ -2,26 +2,21 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+public enum DbProvider
 {
-    public enum DbProvider
+    Sqlite,
+    PostgreSql
+}
+
+public static class DbProviderHelper
+{
+    static DbProviderHelper()
     {
-        Sqlite,
-        PostgreSql
+        AllDbProviders = Enum.GetValues(typeof(DbProvider))
+            .Cast<DbProvider>();
     }
 
-    public static class DbProviderHelper
-    {
-        static DbProviderHelper()
-        {
-            AllDbProviders = Enum.GetValues(typeof(DbProvider))
-                .Cast<DbProvider>();
-        }
-
-        public static IEnumerable<DbProvider> AllDbProviders { get; }
-    }
+    public static IEnumerable<DbProvider> AllDbProviders { get; }
 }

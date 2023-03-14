@@ -11,59 +11,58 @@ using DomesticPaymentOperations =
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation
-{
-    public interface IPaymentInitiationContext
-    {
-        /// <summary>
-        ///     API for DomesticPaymentConsent objects.
-        ///     A DomesticPaymentConsent is an Open Banking object and corresponds to an "intended" domestic payment.
-        /// </summary>
-        IDomesticPaymentConsentsContext DomesticPaymentConsents { get; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
 
-        /// <summary>
-        ///     API for DomesticPayment objects.
-        ///     A DomesticPayment corresponds to a domestic payment and may be created once a DomesticPaymentConsent is approved by
-        ///     a user.
-        /// </summary>
-        IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments { get; }
+public interface IPaymentInitiationContext
+{
+    /// <summary>
+    ///     API for DomesticPaymentConsent objects.
+    ///     A DomesticPaymentConsent is an Open Banking object and corresponds to an "intended" domestic payment.
+    /// </summary>
+    IDomesticPaymentConsentsContext DomesticPaymentConsents { get; }
+
+    /// <summary>
+    ///     API for DomesticPayment objects.
+    ///     A DomesticPayment corresponds to a domestic payment and may be created once a DomesticPaymentConsent is approved by
+    ///     a user.
+    /// </summary>
+    IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments { get; }
+}
+
+internal class PaymentInitiationContext : IPaymentInitiationContext
+{
+    private readonly ISharedContext _sharedContext;
+
+    public PaymentInitiationContext(ISharedContext sharedContext)
+    {
+        _sharedContext = sharedContext;
     }
 
-    internal class PaymentInitiationContext : IPaymentInitiationContext
+    public IDomesticPaymentConsentsContext DomesticPaymentConsents =>
+        new DomesticPaymentConsentsConsentContext(_sharedContext);
+
+    public IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments
     {
-        private readonly ISharedContext _sharedContext;
-
-        public PaymentInitiationContext(ISharedContext sharedContext)
+        get
         {
-            _sharedContext = sharedContext;
-        }
-
-        public IDomesticPaymentConsentsContext DomesticPaymentConsents =>
-            new DomesticPaymentConsentsConsentContext(_sharedContext);
-
-        public IExternalEntityContext<DomesticPaymentRequest, DomesticPaymentResponse> DomesticPayments
-        {
-            get
-            {
-                var domesticPayment = new DomesticPaymentOperations(
-                    _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
-                    _sharedContext.Instrumentation,
+            var domesticPayment = new DomesticPaymentOperations(
+                _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
+                _sharedContext.Instrumentation,
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.ApiVariantMapper,
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                new GrantPost(_sharedContext.ApiClient),
+                new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
-                    _sharedContext.ApiVariantMapper,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(_sharedContext.ApiClient),
-                    new ConsentAccessTokenGet(
-                        _sharedContext.SoftwareStatementProfileCachedRepo,
-                        _sharedContext.DbService.GetDbSaveChangesMethodClass(),
-                        _sharedContext.TimeProvider,
-                        new GrantPost(_sharedContext.ApiClient),
-                        _sharedContext.Instrumentation),
-                    _sharedContext.BankProfileService);
-                return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
-                    domesticPayment,
-                    domesticPayment);
-            }
+                    _sharedContext.Instrumentation),
+                _sharedContext.BankProfileService);
+            return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
+                domesticPayment,
+                domesticPayment);
         }
     }
 }

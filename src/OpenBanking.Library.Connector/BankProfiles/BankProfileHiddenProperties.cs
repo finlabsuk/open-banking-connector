@@ -7,58 +7,56 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+
+public class AccountAndTransactionApiHiddenProperties
 {
-    public class AccountAndTransactionApiHiddenProperties
-    {
-        public AccountAndTransactionApiVersion? ApiVersion { get; set; }
+    public AccountAndTransactionApiVersion? ApiVersion { get; set; }
 
-        public string? BaseUrl { get; set; }
-    }
-    
-    /// <summary>
-    ///     Describes <see cref="PaymentInitiationApi" /> hidden properties object in bankProfileHiddenProperties.json
-    ///     Properties are nullable versions (since optional) of those in <see cref="PaymentInitiationApi" />.
-    /// </summary>
-    public class PaymentInitiationApiHiddenProperties
-    {
-        public PaymentInitiationApiVersion? ApiVersion { get; set; }
+    public string? BaseUrl { get; set; }
+}
 
-        public string? BaseUrl { get; set; }
-    }
+/// <summary>
+///     Describes <see cref="PaymentInitiationApi" /> hidden properties object in bankProfileHiddenProperties.json
+///     Properties are nullable versions (since optional) of those in <see cref="PaymentInitiationApi" />.
+/// </summary>
+public class PaymentInitiationApiHiddenProperties
+{
+    public PaymentInitiationApiVersion? ApiVersion { get; set; }
 
-    /// <summary>
-    ///     Describes <see cref="VariableRecurringPaymentsApi" /> hidden properties object in bankProfileHiddenProperties.json
-    ///     Properties are nullable versions (since optional) of those in <see cref="VariableRecurringPaymentsApi" />.
-    /// </summary>
-    public class VariableRecurringPaymentsApiHiddenProperties
-    {
-        public VariableRecurringPaymentsApiVersion? ApiVersion { get; set; }
+    public string? BaseUrl { get; set; }
+}
 
-        public string? BaseUrl { get; set; }
-    }
+/// <summary>
+///     Describes <see cref="VariableRecurringPaymentsApi" /> hidden properties object in bankProfileHiddenProperties.json
+///     Properties are nullable versions (since optional) of those in <see cref="VariableRecurringPaymentsApi" />.
+/// </summary>
+public class VariableRecurringPaymentsApiHiddenProperties
+{
+    public VariableRecurringPaymentsApiVersion? ApiVersion { get; set; }
 
-    /// <summary>
-    ///     Describes <see cref="BankProfile" /> hidden properties object in bankProfileHiddenProperties.json.
-    ///     Properties are nullable versions (since optional) of those in <see cref="BankProfile" />.
-    /// </summary>
-    public class BankProfileHiddenProperties
-    {
-        public string? IssuerUrl { get; set; }
+    public string? BaseUrl { get; set; }
+}
 
-        public string? FinancialId { get; set; }
+/// <summary>
+///     Describes <see cref="BankProfile" /> hidden properties object in bankProfileHiddenProperties.json.
+///     Properties are nullable versions (since optional) of those in <see cref="BankProfile" />.
+/// </summary>
+public class BankProfileHiddenProperties
+{
+    public string? IssuerUrl { get; set; }
 
-        public DynamicClientRegistrationApiVersion? DefaultClientRegistrationApiVersion { get; set; }
+    public string? FinancialId { get; set; }
 
-        public AccountAndTransactionApiHiddenProperties? AccountAndTransactionApi { get; set; }
+    public DynamicClientRegistrationApiVersion? DefaultClientRegistrationApiVersion { get; set; }
 
-        public PaymentInitiationApiHiddenProperties? PaymentInitiationApi { get; set; }
+    public AccountAndTransactionApiHiddenProperties? AccountAndTransactionApi { get; set; }
 
-        public VariableRecurringPaymentsApiHiddenProperties? VariableRecurringPaymentsApi { get; set; }
+    public PaymentInitiationApiHiddenProperties? PaymentInitiationApi { get; set; }
 
-        public string? Extra1 { get; set; }
+    public VariableRecurringPaymentsApiHiddenProperties? VariableRecurringPaymentsApi { get; set; }
 
-        public string? Extra2 { get; set; }
+    public string? Extra1 { get; set; }
 
-    }
+    public string? Extra2 { get; set; }
 }

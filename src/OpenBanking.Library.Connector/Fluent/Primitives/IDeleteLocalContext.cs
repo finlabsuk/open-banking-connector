@@ -5,38 +5,37 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+
+/// <summary>
+///     Fluent interface methods for DeleteLocal.
+/// </summary>
+public interface IDeleteLocalContext
 {
     /// <summary>
-    ///     Fluent interface methods for DeleteLocal.
+    ///     DELETE local object by ID (does not include DELETE-ing object from bank API).
+    ///     Object will be deleted from local database only.
+    ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
     /// </summary>
-    public interface IDeleteLocalContext
-    {
-        /// <summary>
-        ///     DELETE local object by ID (does not include DELETE-ing object from bank API).
-        ///     Object will be deleted from local database only.
-        ///     Note: deletions from local database are implemented via soft delete (i.e. a flag is set).
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
-        /// <returns></returns>
-        Task<ObjectDeleteResponse> DeleteLocalAsync(
-            Guid id,
-            string? modifiedBy = null);
-    }
+    /// <param name="id"></param>
+    /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
+    /// <returns></returns>
+    Task<ObjectDeleteResponse> DeleteLocalAsync(
+        Guid id,
+        string? modifiedBy = null);
+}
 
-    internal interface IDeleteLocalContextInternal : IDeleteLocalContext
-    {
-        IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
+internal interface IDeleteLocalContextInternal : IDeleteLocalContext
+{
+    IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 
-        async Task<ObjectDeleteResponse> IDeleteLocalContext.DeleteLocalAsync(
-            Guid id,
-            string? modifiedBy)
-        {
-            var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
-            IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
-                await DeleteLocalObject.DeleteAsync(localDeleteParams);
-            return new ObjectDeleteResponse();
-        }
+    async Task<ObjectDeleteResponse> IDeleteLocalContext.DeleteLocalAsync(
+        Guid id,
+        string? modifiedBy)
+    {
+        var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
+        IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
+            await DeleteLocalObject.DeleteAsync(localDeleteParams);
+        return new ObjectDeleteResponse();
     }
 }

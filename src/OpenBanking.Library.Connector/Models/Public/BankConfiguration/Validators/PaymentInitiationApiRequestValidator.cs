@@ -6,27 +6,26 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators
-{
-    public class PaymentInitiationApiRequestValidator : AbstractValidator<PaymentInitiationApiRequest>
-    {
-        public PaymentInitiationApiRequestValidator()
-        {
-            ClassLevelCascadeMode = CascadeMode.Continue;
-            RuleLevelCascadeMode = CascadeMode.Continue;
-            CreateRules();
-        }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 
-        private void CreateRules()
-        {
-            When(
-                x => !string.IsNullOrEmpty(x.BaseUrl),
-                () =>
-                {
-                    RuleFor(x => x.BaseUrl)
-                        .Must(ValidationRules.IsUrl)
-                        .WithMessage($"Invalid {nameof(PaymentInitiationApiRequest.BaseUrl)}: must be a URL.");
-                });
-        }
+public class PaymentInitiationApiRequestValidator : AbstractValidator<PaymentInitiationApiRequest>
+{
+    public PaymentInitiationApiRequestValidator()
+    {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Continue;
+        CreateRules();
+    }
+
+    private void CreateRules()
+    {
+        When(
+            x => !string.IsNullOrEmpty(x.BaseUrl),
+            () =>
+            {
+                RuleFor(x => x.BaseUrl)
+                    .Must(ValidationRules.IsUrl)
+                    .WithMessage($"Invalid {nameof(PaymentInitiationApiRequest.BaseUrl)}: must be a URL.");
+            });
     }
 }

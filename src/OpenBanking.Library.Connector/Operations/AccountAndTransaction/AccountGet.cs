@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p10.Aisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -75,20 +74,22 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;
-        IApiGetRequests<OBReadAccount6> apiRequests =
+        IApiGetRequests<AccountAndTransactionModelsPublic.OBReadAccount6> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {
                 AccountAndTransactionApiVersion.Version3p1p7 => new ApiGetRequests<
-                    OBReadAccount6,
-                    BankApiModels.UkObRw.V3p1p7.Aisp.Models.OBReadAccount6>(
+                    AccountAndTransactionModelsPublic.OBReadAccount6,
+                    AccountAndTransactionModelsV3p1p7.OBReadAccount6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
-                    OBReadAccount6,
-                    OBReadAccount6>(new ApiGetRequestProcessor(bankFinancialId, accessToken)),
+                    AccountAndTransactionModelsPublic.OBReadAccount6,
+                    AccountAndTransactionModelsPublic.OBReadAccount6>(
+                    new ApiGetRequestProcessor(bankFinancialId, accessToken)),
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
             };
-        (OBReadAccount6 apiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
+        (AccountAndTransactionModelsPublic.OBReadAccount6 apiResponse,
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,

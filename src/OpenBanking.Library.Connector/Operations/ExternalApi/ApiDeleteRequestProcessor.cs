@@ -4,29 +4,28 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+
+public class ApiDeleteRequestProcessor : IDeleteRequestProcessor
 {
-    public class ApiDeleteRequestProcessor : IDeleteRequestProcessor
+    private readonly string _accessToken;
+    private readonly string _financialId;
+
+    public ApiDeleteRequestProcessor(string accessToken, string financialId)
     {
-        private readonly string _accessToken;
-        private readonly string _financialId;
+        _accessToken = accessToken;
+        _financialId = financialId;
+    }
 
-        public ApiDeleteRequestProcessor(string accessToken, string financialId)
+    List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(string requestDescription)
+    {
+        // Assemble headers and body
+        var headers = new List<HttpHeader>
         {
-            _accessToken = accessToken;
-            _financialId = financialId;
-        }
+            new("Authorization", "Bearer " + _accessToken),
+            new("x-fapi-financial-id", _financialId)
+        };
 
-        List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(string requestDescription)
-        {
-            // Assemble headers and body
-            var headers = new List<HttpHeader>
-            {
-                new("Authorization", "Bearer " + _accessToken),
-                new("x-fapi-financial-id", _financialId)
-            };
-
-            return headers;
-        }
+        return headers;
     }
 }

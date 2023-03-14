@@ -4,36 +4,35 @@
 
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+
+public class OpenIdConfiguration
 {
-    public class OpenIdConfiguration
-    {
-        [JsonProperty("issuer")]
-        public string Issuer { get; set; } = null!;
+    [JsonProperty("issuer")]
+    public string Issuer { get; set; } = null!;
 
-        [JsonProperty("response_types_supported")]
-        public IList<string> ResponseTypesSupported { get; set; } = null!;
+    [JsonProperty("response_types_supported")]
+    public IList<string> ResponseTypesSupported { get; set; } = null!;
 
-        [JsonProperty("scopes_supported")]
-        public IList<string> ScopesSupported { get; set; } = null!;
+    [JsonProperty("scopes_supported")]
+    public IList<string> ScopesSupported { get; set; } = null!;
 
-        [JsonProperty("response_modes_supported")]
-        public IList<OAuth2ResponseMode> ResponseModesSupported { get; set; } = null!;
+    [JsonProperty("response_modes_supported")]
+    public IList<OAuth2ResponseMode> ResponseModesSupported { get; set; } = null!;
 
-        [JsonProperty("token_endpoint")]
-        public string TokenEndpoint { get; set; } = null!;
+    [JsonProperty("token_endpoint")]
+    public string TokenEndpoint { get; set; } = null!;
 
-        [JsonProperty("authorization_endpoint")]
-        public string AuthorizationEndpoint { get; set; } = null!;
+    [JsonProperty("authorization_endpoint")]
+    public string AuthorizationEndpoint { get; set; } = null!;
 
-        [JsonProperty("registration_endpoint")]
-        public string? RegistrationEndpoint { get; set; }
+    [JsonProperty("registration_endpoint")]
+    public string? RegistrationEndpoint { get; set; }
 
-        [JsonProperty("jwks_uri")]
-        public string JwksUri { get; set; } = null!;
+    [JsonProperty("jwks_uri")]
+    public string JwksUri { get; set; } = null!;
 
-        [JsonProperty("token_endpoint_auth_methods_supported")]
-        public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
-            new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>();
-    }
+    [JsonProperty("token_endpoint_auth_methods_supported")]
+    public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
+        new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>();
 }

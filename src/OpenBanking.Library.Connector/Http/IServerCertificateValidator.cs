@@ -5,10 +5,9 @@
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Http
+namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
+
+public interface IServerCertificateValidator
 {
-    public interface IServerCertificateValidator
-    {
-        bool IsOk(object stateInfo, X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors);
-    }
+    bool IsOk(object stateInfo, X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors);
 }

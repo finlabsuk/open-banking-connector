@@ -4,53 +4,51 @@
 
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Security
+namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
+
+internal sealed class CertificateReader : ICertificateReader
 {
-    internal sealed class CertificateReader : ICertificateReader
+    private readonly ICertificateReader _fileCertReader;
+    private readonly ICertificateReader _pemReader;
+
+    public CertificateReader(ICertificateReader fileCertReader, ICertificateReader pemReader)
     {
-        private readonly ICertificateReader _fileCertReader;
-        private readonly ICertificateReader _pemReader;
+        _fileCertReader = fileCertReader.ArgNotNull(nameof(fileCertReader));
+        _pemReader = pemReader.ArgNotNull(nameof(pemReader));
+    }
 
-        public CertificateReader(ICertificateReader fileCertReader, ICertificateReader pemReader)
+    public async Task<X509Certificate2?> GetCertificateAsync(string value)
+    {
+        value.ArgNotNull(nameof(value));
+
+        X509Certificate2? result;
+        if (value.IsPemThumbprint())
         {
-            _fileCertReader = fileCertReader.ArgNotNull(nameof(fileCertReader));
-            _pemReader = pemReader.ArgNotNull(nameof(pemReader));
+            result = await _pemReader.GetCertificateAsync(value);
+        }
+        else
+        {
+            result = await _fileCertReader.GetCertificateAsync(value);
         }
 
-        public async Task<X509Certificate2?> GetCertificateAsync(string value)
+        return result;
+    }
+
+    public async Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password)
+    {
+        value.ArgNotNull(nameof(value));
+
+        X509Certificate2? result;
+        if (value.IsPemThumbprint())
         {
-            value.ArgNotNull(nameof(value));
-
-            X509Certificate2? result;
-            if (value.IsPemThumbprint())
-            {
-                result = await _pemReader.GetCertificateAsync(value);
-            }
-            else
-            {
-                result = await _fileCertReader.GetCertificateAsync(value);
-            }
-
-            return result;
+            result = await _pemReader.GetCertificateAsync(value, password);
+        }
+        else
+        {
+            result = await _fileCertReader.GetCertificateAsync(value, password);
         }
 
-        public async Task<X509Certificate2?> GetCertificateAsync(string value, SecureString password)
-        {
-            value.ArgNotNull(nameof(value));
-
-            X509Certificate2? result;
-            if (value.IsPemThumbprint())
-            {
-                result = await _pemReader.GetCertificateAsync(value, password);
-            }
-            else
-            {
-                result = await _fileCertReader.GetCertificateAsync(value, password);
-            }
-
-            return result;
-        }
+        return result;
     }
 }

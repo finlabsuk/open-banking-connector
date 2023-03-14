@@ -16,112 +16,111 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+
+internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistrationDeleteParams>
 {
-    internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistrationDeleteParams>
+    private readonly IBankProfileService _bankProfileService;
+    private readonly IGrantPost _grantPost;
+
+    public BankRegistrationDelete(
+        IDbReadWriteEntityMethods<BankRegistration> entityMethods,
+        IDbSaveChangesMethod dbSaveChangesMethod,
+        ITimeProvider timeProvider,
+        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService,
+        IGrantPost grantPost) : base(
+        entityMethods,
+        dbSaveChangesMethod,
+        timeProvider,
+        softwareStatementProfileRepo,
+        instrumentationClient)
     {
-        private readonly IBankProfileService _bankProfileService;
-        private readonly IGrantPost _grantPost;
+        _bankProfileService = bankProfileService;
+        _grantPost = grantPost;
+    }
 
-        public BankRegistrationDelete(
-            IDbReadWriteEntityMethods<BankRegistration> entityMethods,
-            IDbSaveChangesMethod dbSaveChangesMethod,
-            ITimeProvider timeProvider,
-            IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-            IInstrumentationClient instrumentationClient,
-            IBankProfileService bankProfileService,
-            IGrantPost grantPost) : base(
-            entityMethods,
-            dbSaveChangesMethod,
-            timeProvider,
-            softwareStatementProfileRepo,
-            instrumentationClient)
+    protected override async
+        Task<(BankRegistration persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        ApiDelete(BankRegistrationDeleteParams deleteParams)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        BankProfile? bankProfile = deleteParams.BankProfileEnum is not null
+            ? _bankProfileService.GetBankProfile(deleteParams.BankProfileEnum.Value)
+            : null;
+
+        bool includeExternalApiOperationValue =
+            deleteParams.IncludeExternalApiOperation ??
+            bankProfile?.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint ??
+            throw new ArgumentNullException(
+                null,
+                "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
+
+        // Load object
+        BankRegistration entity =
+            await _entityMethods
+                .DbSet
+                .Include(o => o.BankNavigation)
+                .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
+            throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
+        CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
+
+        if (includeExternalApiOperationValue)
         {
-            _bankProfileService = bankProfileService;
-            _grantPost = grantPost;
-        }
+            string registrationEndpoint =
+                entity.BankNavigation.RegistrationEndpoint ??
+                throw new InvalidOperationException(
+                    $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
 
-        protected override async
-            Task<(BankRegistration persistedObject, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ApiDelete(BankRegistrationDeleteParams deleteParams)
-        {
-            // Create non-error list
-            var nonErrorMessages =
-                new List<IFluentResponseInfoOrWarningMessage>();
-
-            BankProfile? bankProfile = deleteParams.BankProfileEnum is not null
-                ? _bankProfileService.GetBankProfile(deleteParams.BankProfileEnum.Value)
-                : null;
-
-            bool includeExternalApiOperationValue =
-                deleteParams.IncludeExternalApiOperation ??
-                bankProfile?.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint ??
+            bool useRegistrationAccessTokenValue =
+                deleteParams.UseRegistrationAccessToken ??
+                bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
                 throw new ArgumentNullException(
                     null,
-                    "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
+                    "useRegistrationAccessToken specified as null and cannot be obtained using specified BankProfile (also null).");
 
-            // Load object
-            BankRegistration entity =
-                await _entityMethods
-                    .DbSet
-                    .Include(o => o.BankNavigation)
-                    .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
-                throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
-            CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
+            // Get API client
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                await _softwareStatementProfileRepo.GetAsync(
+                    entity.SoftwareStatementProfileId,
+                    entity.SoftwareStatementProfileOverride);
+            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
-            if (includeExternalApiOperationValue)
+            // Get URI
+            string bankApiId = entity.ExternalApiObject.ExternalApiId;
+            var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
+
+            // Get appropriate token
+            string accessToken;
+            if (useRegistrationAccessTokenValue)
             {
-                string registrationEndpoint =
-                    entity.BankNavigation.RegistrationEndpoint ??
-                    throw new InvalidOperationException(
-                        $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
-
-                bool useRegistrationAccessTokenValue =
-                    deleteParams.UseRegistrationAccessToken ??
-                    bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
-                    throw new ArgumentNullException(
+                accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
+                              throw new InvalidOperationException("No registration access token available");
+            }
+            else
+            {
+                string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
+                accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
+                        scope,
+                        processedSoftwareStatementProfile,
+                        entity,
+                        entity.BankNavigation.TokenEndpoint,
                         null,
-                        "useRegistrationAccessToken specified as null and cannot be obtained using specified BankProfile (also null).");
-
-                // Get API client
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                    await _softwareStatementProfileRepo.GetAsync(
-                        entity.SoftwareStatementProfileId,
-                        entity.SoftwareStatementProfileOverride);
-                IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
-
-                // Get URI
-                string bankApiId = entity.ExternalApiObject.ExternalApiId;
-                var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
-
-                // Get appropriate token
-                string accessToken;
-                if (useRegistrationAccessTokenValue)
-                {
-                    accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
-                                  throw new InvalidOperationException("No registration access token available");
-                }
-                else
-                {
-                    string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
-                    accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
-                            scope,
-                            processedSoftwareStatementProfile,
-                            entity,
-                            entity.BankNavigation.TokenEndpoint,
-                            null,
-                            apiClient,
-                            _instrumentationClient))
-                        .AccessToken;
-                }
-
-                // Delete at API
-                IDeleteRequestProcessor deleteRequestProcessor =
-                    new BankRegistrationDeleteRequestProcessor(accessToken);
-                await deleteRequestProcessor.DeleteAsync(apiRequestUrl, apiClient);
+                        apiClient,
+                        _instrumentationClient))
+                    .AccessToken;
             }
 
-            return (entity, nonErrorMessages);
+            // Delete at API
+            IDeleteRequestProcessor deleteRequestProcessor =
+                new BankRegistrationDeleteRequestProcessor(accessToken);
+            await deleteRequestProcessor.DeleteAsync(apiRequestUrl, apiClient);
         }
+
+        return (entity, nonErrorMessages);
     }
 }

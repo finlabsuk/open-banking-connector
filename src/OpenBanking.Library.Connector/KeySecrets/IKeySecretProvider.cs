@@ -2,18 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
+namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.KeySecrets
+/// <summary>
+///     Basic abstraction for provider of key secrets when IConfiguration not used to provide
+///     key secrets.
+/// </summary>
+public interface IKeySecretProvider
 {
-    /// <summary>
-    ///     Basic abstraction for provider of key secrets when IConfiguration not used to provide
-    ///     key secrets.
-    /// </summary>
-    public interface IKeySecretProvider
-    {
-        Task<KeySecret?> GetKeySecretAsync(string vaultName, string key);
+    Task<KeySecret?> GetKeySecretAsync(string vaultName, string key);
 
-        Task<KeySecret?> GetKeySecretAsync(string key);
-    }
+    Task<KeySecret?> GetKeySecretAsync(string key);
 }

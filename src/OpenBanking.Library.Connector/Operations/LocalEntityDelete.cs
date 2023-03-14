@@ -17,7 +17,7 @@ internal class LocalEntityDelete<TEntity, TDeleteParams> : BaseDelete<TEntity, T
     where TDeleteParams : LocalDeleteParams
 {
     /// <summary>
-    /// Delete operations on local entities (objects stored in local database only).
+    ///     Delete operations on local entities (objects stored in local database only).
     /// </summary>
     /// <param name="entityMethods"></param>
     /// <param name="dbSaveChangesMethod"></param>

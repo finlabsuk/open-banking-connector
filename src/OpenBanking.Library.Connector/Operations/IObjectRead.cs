@@ -6,85 +6,84 @@ using System.Linq.Expressions;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
+
+internal class LocalReadParams
 {
-    internal class LocalReadParams
+    public LocalReadParams(Guid id, string? modifiedBy)
     {
-        public LocalReadParams(Guid id, string? modifiedBy)
-        {
-            Id = id;
-            ModifiedBy = modifiedBy;
-        }
-
-        public Guid Id { get; }
-        public string? ModifiedBy { get; }
+        Id = id;
+        ModifiedBy = modifiedBy;
     }
 
-    internal class BankRegistrationReadParams : LocalReadParams
-    {
-        public BankRegistrationReadParams(
-            Guid id,
-            string? modifiedBy,
-            bool? useRegistrationAccessToken,
-            bool? includeExternalApiOperation,
-            BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
-        {
-            UseRegistrationAccessToken = useRegistrationAccessToken;
-            IncludeExternalApiOperation = includeExternalApiOperation;
-            BankProfileEnum = bankProfileEnum;
-        }
+    public Guid Id { get; }
+    public string? ModifiedBy { get; }
+}
 
-        public bool? UseRegistrationAccessToken { get; }
-        public bool? IncludeExternalApiOperation { get; }
-        public BankProfileEnum? BankProfileEnum { get; }
+internal class BankRegistrationReadParams : LocalReadParams
+{
+    public BankRegistrationReadParams(
+        Guid id,
+        string? modifiedBy,
+        bool? useRegistrationAccessToken,
+        bool? includeExternalApiOperation,
+        BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
+    {
+        UseRegistrationAccessToken = useRegistrationAccessToken;
+        IncludeExternalApiOperation = includeExternalApiOperation;
+        BankProfileEnum = bankProfileEnum;
     }
 
-    internal class ConsentBaseReadParams : LocalReadParams
-    {
-        public ConsentBaseReadParams(Guid id, string? modifiedBy, string? publicRequestUrlWithoutQuery) : base(
-            id,
-            modifiedBy)
-        {
-            PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
-        }
+    public bool? UseRegistrationAccessToken { get; }
+    public bool? IncludeExternalApiOperation { get; }
+    public BankProfileEnum? BankProfileEnum { get; }
+}
 
-        public string? PublicRequestUrlWithoutQuery { get; }
+internal class ConsentBaseReadParams : LocalReadParams
+{
+    public ConsentBaseReadParams(Guid id, string? modifiedBy, string? publicRequestUrlWithoutQuery) : base(
+        id,
+        modifiedBy)
+    {
+        PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
     }
 
-    internal class ConsentReadParams : ConsentBaseReadParams
-    {
-        public ConsentReadParams(
-            Guid id,
-            string? modifiedBy,
-            string? publicRequestUrlWithoutQuery,
-            bool includeExternalApiOperation) : base(id, modifiedBy, publicRequestUrlWithoutQuery)
-        {
-            IncludeExternalApiOperation = includeExternalApiOperation;
-        }
+    public string? PublicRequestUrlWithoutQuery { get; }
+}
 
-        public bool IncludeExternalApiOperation { get; }
+internal class ConsentReadParams : ConsentBaseReadParams
+{
+    public ConsentReadParams(
+        Guid id,
+        string? modifiedBy,
+        string? publicRequestUrlWithoutQuery,
+        bool includeExternalApiOperation) : base(id, modifiedBy, publicRequestUrlWithoutQuery)
+    {
+        IncludeExternalApiOperation = includeExternalApiOperation;
     }
 
-    internal interface IObjectRead<TPublicResponse, in TReadParams>
-        where TReadParams : LocalReadParams
-    {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
-            TReadParams readParams);
-    }
+    public bool IncludeExternalApiOperation { get; }
+}
 
-    internal interface IObjectReadFundsConfirmation<TPublicResponse, in TReadParams>
-        where TReadParams : ConsentBaseReadParams
-    {
-        Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-            ReadFundsConfirmationAsync(TReadParams readParams);
-    }
+internal interface IObjectRead<TPublicResponse, in TReadParams>
+    where TReadParams : LocalReadParams
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
+        TReadParams readParams);
+}
 
-    internal interface
-        IObjectReadWithSearch<TPublicQuery, TPublicResponse, in TReadParams> : IObjectRead<TPublicResponse, TReadParams>
-        where TReadParams : LocalReadParams
-    {
-        Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
-                )>
-            ReadAsync(Expression<Func<TPublicQuery, bool>> predicate);
-    }
+internal interface IObjectReadFundsConfirmation<TPublicResponse, in TReadParams>
+    where TReadParams : ConsentBaseReadParams
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        ReadFundsConfirmationAsync(TReadParams readParams);
+}
+
+internal interface
+    IObjectReadWithSearch<TPublicQuery, TPublicResponse, in TReadParams> : IObjectRead<TPublicResponse, TReadParams>
+    where TReadParams : LocalReadParams
+{
+    Task<(IQueryable<TPublicResponse> response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages
+            )>
+        ReadAsync(Expression<Func<TPublicQuery, bool>> predicate);
 }

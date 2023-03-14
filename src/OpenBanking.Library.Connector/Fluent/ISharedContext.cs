@@ -10,18 +10,17 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent
-{
-    public interface ISharedContext
-    {
-        DateTimeOffset Created { get; set; }
-        IApiClient ApiClient { get; }
-        IInstrumentationClient Instrumentation { get; }
+namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
-        IBankProfileService BankProfileService { get; }
-        IDbService DbService { get; }
-        IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
-        IApiVariantMapper ApiVariantMapper { get; }
-        ITimeProvider TimeProvider { get; }
-    }
+public interface ISharedContext
+{
+    DateTimeOffset Created { get; set; }
+    IApiClient ApiClient { get; }
+    IInstrumentationClient Instrumentation { get; }
+
+    IBankProfileService BankProfileService { get; }
+    IDbService DbService { get; }
+    IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
+    IApiVariantMapper ApiVariantMapper { get; }
+    ITimeProvider TimeProvider { get; }
 }

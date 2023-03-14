@@ -5,16 +5,15 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence
+namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
+
+// PostgreSql DB context
+public class PostgreSqlDbContext : BaseDbContext
 {
-    // PostgreSql DB context
-    public class PostgreSqlDbContext : BaseDbContext
-    {
-        public PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options) : base(options) { }
+    public PostgreSqlDbContext(DbContextOptions<PostgreSqlDbContext> options) : base(options) { }
 
-        // Use indenting to aid visualisation
-        protected override Formatting JsonFormatting => Formatting.None;
+    // Use indenting to aid visualisation
+    protected override Formatting JsonFormatting => Formatting.None;
 
-        protected override DbProvider DbProvider => DbProvider.PostgreSql;
-    }
+    protected override DbProvider DbProvider => DbProvider.PostgreSql;
 }

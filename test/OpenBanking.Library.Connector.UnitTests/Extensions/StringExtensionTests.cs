@@ -6,27 +6,26 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FluentAssertions;
 using Xunit;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Extensions
+namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Extensions;
+
+public class StringExtensionTests
 {
-    public class StringExtensionTests
+    [Theory]
+    [InlineData("one", "one")]
+    [InlineData("One", "one")]
+    [InlineData("TwoWords", "two-words")]
+    [InlineData("twoWords", "two-words")]
+    [InlineData("NowThreeWords", "now-three-words")]
+    [InlineData("nowThreeWords", "now-three-words")]
+    [InlineData("ABC", "a-b-c")]
+    public void PascalOrCamelToKebabCase_String_ReturnsString(string input, string expectedOutput)
     {
-        [Theory]
-        [InlineData("one", "one")]
-        [InlineData("One", "one")]
-        [InlineData("TwoWords", "two-words")]
-        [InlineData("twoWords", "two-words")]
-        [InlineData("NowThreeWords", "now-three-words")]
-        [InlineData("nowThreeWords", "now-three-words")]
-        [InlineData("ABC", "a-b-c")]
-        public void PascalOrCamelToKebabCase_String_ReturnsString(string input, string expectedOutput)
-        {
-            // Arrange
+        // Arrange
 
-            // Act
-            string output = input.PascalOrCamelToKebabCase();
+        // Act
+        string output = input.PascalOrCamelToKebabCase();
 
-            // Assert 
-            output.Should().Be(expectedOutput);
-        }
+        // Assert 
+        output.Should().Be(expectedOutput);
     }
 }

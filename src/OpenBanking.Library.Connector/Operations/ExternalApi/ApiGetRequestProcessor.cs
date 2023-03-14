@@ -4,30 +4,29 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi
+namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
+
+internal class ApiGetRequestProcessor : IGetRequestProcessor
 {
-    internal class ApiGetRequestProcessor : IGetRequestProcessor
+    private readonly string _accessToken;
+    private readonly string _financialId;
+
+
+    public ApiGetRequestProcessor(string financialId, string accessToken)
     {
-        private readonly string _accessToken;
-        private readonly string _financialId;
+        _financialId = financialId;
+        _accessToken = accessToken;
+    }
 
-
-        public ApiGetRequestProcessor(string financialId, string accessToken)
+    (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
+    {
+        // Assemble headers and body
+        var headers = new List<HttpHeader>
         {
-            _financialId = financialId;
-            _accessToken = accessToken;
-        }
+            new("x-fapi-financial-id", _financialId),
+            new("Authorization", "Bearer " + _accessToken),
+        };
 
-        (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
-        {
-            // Assemble headers and body
-            var headers = new List<HttpHeader>
-            {
-                new("x-fapi-financial-id", _financialId),
-                new("Authorization", "Bearer " + _accessToken),
-            };
-
-            return (headers, "application/json");
-        }
+        return (headers, "application/json");
     }
 }

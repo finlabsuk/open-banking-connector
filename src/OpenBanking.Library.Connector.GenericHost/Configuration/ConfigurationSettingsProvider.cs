@@ -5,25 +5,24 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration
+namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
+
+/// <summary>
+///     Settings provider that gets settings via ISettings from .NET Generic Host configuration
+/// </summary>
+/// <typeparam name="TSettings"></typeparam>
+public class ConfigurationSettingsProvider<TSettings> : ISettingsProvider<TSettings>
+    where TSettings : class, ISettings<TSettings>, new()
 {
-    /// <summary>
-    ///     Settings provider that gets settings via ISettings from .NET Generic Host configuration
-    /// </summary>
-    /// <typeparam name="TSettings"></typeparam>
-    public class ConfigurationSettingsProvider<TSettings> : ISettingsProvider<TSettings>
-        where TSettings : class, ISettings<TSettings>, new()
+    private readonly TSettings _settings;
+
+    public ConfigurationSettingsProvider(IOptions<TSettings> options)
     {
-        private readonly TSettings _settings;
+        _settings = options.Value;
+    }
 
-        public ConfigurationSettingsProvider(IOptions<TSettings> options)
-        {
-            _settings = options.Value;
-        }
-
-        public TSettings GetSettings()
-        {
-            return _settings;
-        }
+    public TSettings GetSettings()
+    {
+        return _settings;
     }
 }
