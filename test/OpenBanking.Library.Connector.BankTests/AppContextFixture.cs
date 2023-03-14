@@ -2,66 +2,110 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
+using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
+using FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 using MartinCostello.Logging.XUnit;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Xunit;
 using Xunit.Abstractions;
+using ServiceCollectionExtensions =
+    FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions.ServiceCollectionExtensions;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
+namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests;
+
+public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
 {
-    public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
+    private readonly AsyncLocal<ITestOutputHelper?>
+        _asyncLocalOutputHelper = new(); // to debug, can replace with "private ITestOutputHelper? _outputHelper" 
+
+    public AppContextFixture()
     {
-        private readonly AsyncLocal<ITestOutputHelper?>
-            _asyncLocalOutputHelper = new(); // to debug, can replace with "private ITestOutputHelper? _outputHelper" 
+        // Create builder
+        string[] args = Array.Empty<string>();
 
-        public AppContextFixture()
+        WebApplicationBuilder builder =
+            WebApplication.CreateBuilder(
+                new WebApplicationOptions
+                {
+                    Args = args,
+                    // Ensure correct application name to allow loading of user secrets                
+                    ApplicationName = typeof(AppContextFixture).GetTypeInfo().Assembly.GetName().Name
+                });
+
+        // Update configuration
+        builder.Host.AddGenericHostConfiguration(args);
+
+        // Add services
+        Assembly webHostAssembly = typeof(ServiceCollectionExtensions).Assembly;
+
+        builder.Services
+            // Add .NET generic host app services 
+            .AddGenericHostServices(builder.Configuration)
+            // Add .NET web host app services
+            .AddWebHostServices(builder.Configuration)
+            // Add bank testing services
+            .AddBankTestingServices(builder.Configuration)
+            // Add controllers
+            .AddControllers()
+            // Add controllers from web host library (explicit add apparently required since not using Microsoft.NET.Sdk.Web)
+            .AddApplicationPart(webHostAssembly)
+            // Add JSON support
+            .AddNewtonsoftJson(
+                options =>
+                {
+                    options.SerializerSettings.ContractResolver =
+                        new DefaultContractResolver(); // no to CamelCase
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                });
+
+        // Add test logging
+        builder.Host.ConfigureLogging(p => p.AddXUnit(this));
+
+        // Build app
+        WebApplication app = builder.Build();
+
+        // Errors
+        if (!app.Environment.IsDevelopment())
         {
-            // Create/identify data folder for reference test data logging.
-            // Folder is subfolder of project folder to allow Git repo storage of reference test data.
-            string projectRoot = FolderPaths.ProjectRoot;
-            DataFolder = Path.Join(projectRoot, "data");
-            Directory.CreateDirectory(DataFolder); // Create if doesn't exist
-
-            // Create and start .NET Generic Host
-            Host =
-                CreateHostBuilder(Array.Empty<string>())
-                    .Build();
-            Host.Start();
+            app.UseExceptionHandler("/error");
+            app.UseHsts();
         }
 
-        public IHost Host { get; }
+        // Add web host static files
+        app.UseWebHostStaticFiles();
 
-        public string DataFolder { get; }
+        // Add controller endpoints
+        app.MapControllers();
 
-        public void Dispose()
-        {
-            Host.Dispose();
-        }
+        // Create and start .NET Generic Host
+        app.Start();
 
-        public ITestOutputHelper? OutputHelper
-        {
-            get => _asyncLocalOutputHelper.Value;
-            set => _asyncLocalOutputHelper.Value = value;
-        }
+        Host = app;
+    }
 
-        private IHostBuilder CreateHostBuilder(string[] args) =>
-            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .AddGenericHostConfiguration(args)
-                .ConfigureWebHostDefaults(
-                    webBuilder =>
-                    {
-                        webBuilder
-                            .UseStartup<Startup>();
-                    })
-                .ConfigureLogging(p => p.AddXUnit(this));
+    public IHost Host { get; }
 
-        [CollectionDefinition("App context collection")]
-        public class AppContextCollection : ICollectionFixture<AppContextFixture>
-        {
-            // Class solely for [CollectionDefinition] purpose.
-        }
+    public void Dispose()
+    {
+        Host.Dispose();
+    }
+
+    public ITestOutputHelper? OutputHelper
+    {
+        get => _asyncLocalOutputHelper.Value;
+        set => _asyncLocalOutputHelper.Value = value;
+    }
+
+    [CollectionDefinition("App context collection")]
+    public class AppContextCollection : ICollectionFixture<AppContextFixture>
+    {
+        // Class solely for [CollectionDefinition] purpose.
     }
 }

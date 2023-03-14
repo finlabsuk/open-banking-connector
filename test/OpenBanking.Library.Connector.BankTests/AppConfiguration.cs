@@ -5,9 +5,8 @@
 using System.Reflection;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
 {
@@ -20,31 +19,22 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests
     {
         static AppConfiguration()
         {
-            // Build dummy host to extract configuration etc
-            _ = Host.CreateDefaultBuilder(new string[0])
-                .ConfigureWebHostDefaults(
-                    webBuilder =>
+            // Create dummy builder to get configuration
+            string[] args = Array.Empty<string>();
+
+            WebApplicationBuilder builder =
+                WebApplication.CreateBuilder(
+                    new WebApplicationOptions
                     {
-                        webBuilder
-                            //.UseStartup<Startup>()
-                            // Ensure correct application name to allow loading of user secrets
-                            .UseSetting(
-                                WebHostDefaults.ApplicationKey,
-                                typeof(AppContextFixture).GetTypeInfo().Assembly.GetName().Name);
-                    })
-                .ConfigureAppConfiguration(
-                    (context, builder) =>
-                    {
-                        EnvironmentName = context.HostingEnvironment.EnvironmentName;
-                        //var appAssembly = Assembly.Load(new AssemblyName(context.HostingEnvironment.ApplicationName));
-                        Configuration = builder.Build();
-                    })
-                .Build();
+                        Args = args,
+                        // Ensure correct application name to allow loading of user secrets
+                        ApplicationName = typeof(AppContextFixture).GetTypeInfo().Assembly.GetName().Name
+                    });
+
+            Configuration = builder.Configuration;
         }
 
-        public static string EnvironmentName { get; set; } = null!;
-
-        private static IConfiguration Configuration { get; set; } = null!;
+        private static IConfiguration Configuration { get; }
 
         public static TSettings GetSettings<TSettings>()
             where TSettings : class, ISettings<TSettings>, new() =>

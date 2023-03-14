@@ -30,8 +30,6 @@ builder.Services
     .AddGenericHostServices(builder.Configuration)
     // Add .NET web host app services
     .AddWebHostServices(builder.Configuration)
-    // Add web app services
-    .AddWebAppServices(builder.Configuration)
     // Configure Swagger
     .AddSwaggerGen(
         options =>
@@ -106,7 +104,8 @@ builder.Services
     .AddNewtonsoftJson(
         options =>
         {
-            options.SerializerSettings.ContractResolver = new DefaultContractResolver(); // no to CamelCase
+            options.SerializerSettings.ContractResolver =
+                new DefaultContractResolver(); // no to CamelCase
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         });
 
