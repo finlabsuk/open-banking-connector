@@ -14,20 +14,12 @@ internal static class HttpRequestInfoExtensions
         HttpRequestMessage result = new HttpRequestMessage(
                 new HttpMethod(info.Method),
                 info.RequestUri.ToString())
-            .ApplyAcceptEncoding()
             .ApplyAcceptContentTypes(info)
             .AddHeaders(info)
             .ApplyContent(info)
             .ApplyUserAgent(info);
 
         return result;
-    }
-
-    private static HttpRequestMessage ApplyAcceptEncoding(this HttpRequestMessage request)
-    {
-        request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("utf-8"));
-
-        return request;
     }
 
     private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)

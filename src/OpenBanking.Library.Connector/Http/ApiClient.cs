@@ -25,7 +25,8 @@ public class ApiClient : IApiClient
     {
         var clientHandler = new SocketsHttpHandler
         {
-            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
+            ActivityHeadersPropagator = null // ensures no traceparent HTTP header
         };
 
         const int maxRedirects = 50;
