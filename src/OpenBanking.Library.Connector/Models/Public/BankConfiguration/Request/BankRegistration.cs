@@ -16,10 +16,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 public class BankRegistration : Base, ISupportsValidation
 {
     /// <summary>
-    ///     BankProfile used to supply default values for unspecified properties and apply transformations to external API
-    ///     requests. Use null to not specify a bank profile.
+    ///     BankProfile used to specify bank configuration and supply default values for unspecified properties.
     /// </summary>
-    public BankProfileEnum? BankProfile { get; set; }
+    public BankProfileEnum BankProfile { get; set; }
 
     /// <summary>
     ///     Target bank for registration.

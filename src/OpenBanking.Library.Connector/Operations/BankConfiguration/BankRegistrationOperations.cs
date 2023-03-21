@@ -83,15 +83,11 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        BankProfile? bankProfile = request.BankProfile is { } bankProfileEnum
-            ? _bankProfileService.GetBankProfile(bankProfileEnum)
-            : null;
-
+        BankProfile bankProfile =
+            _bankProfileService.GetBankProfile(request.BankProfile);
         OAuth2ResponseMode defaultResponseMode =
             request.DefaultResponseMode ??
-            bankProfile?.DefaultResponseMode ??
-            throw new ArgumentException(
-                $"Request property {nameof(request.DefaultResponseMode)} is null and cannot be obtained using request property {request.BankProfile}.");
+            bankProfile.DefaultResponseMode;
 
         // Load bank from DB and check for existing bank registrations
         Guid bankId = request.BankId;
@@ -127,10 +123,9 @@ internal class
         RegistrationScopeEnum registrationScope =
             request.RegistrationScope ??
             processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
-        RegistrationScopeIsValid? registrationScopeIsValidFcn =
-            bankProfile?.BankConfigurationApiSettings.RegistrationScopeIsValid;
-        if (registrationScopeIsValidFcn is not null &&
-            !registrationScopeIsValidFcn(registrationScope))
+        RegistrationScopeIsValid registrationScopeIsValidFcn =
+            bankProfile.BankConfigurationApiSettings.RegistrationScopeIsValid;
+        if (!registrationScopeIsValidFcn(registrationScope))
         {
             throw new ArgumentException(
                 $"Request property {nameof(request.RegistrationScope)} or default value from SoftwareStatementProfile fails RegistrationScopeIsValid check from BankProfile");
@@ -155,18 +150,10 @@ internal class
         BankRegistrationGroup? bankRegistrationGroup = null;
         if (!request.ForceNullBankRegistrationGroup)
         {
-            if (request.BankRegistrationGroup is null &&
-                bankProfile is null)
-            {
-                throw new ArgumentException(
-                    $"Request property {nameof(request.BankRegistrationGroup)} is null and cannot " +
-                    $"be obtained using request property {request.BankProfile}. " +
-                    $"Set {nameof(request.BankRegistrationGroup)} to null to force value to null.");
-            }
 
             bankRegistrationGroup =
                 request.BankRegistrationGroup ??
-                bankProfile?.BankConfigurationApiSettings.BankRegistrationGroup;
+                bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         }
 
         // Check for existing bank registration(s) in bank registration group
@@ -310,6 +297,7 @@ internal class
             externalApiId,
             externalApiSecret,
             registrationAccessToken,
+            request.BankProfile,
             bankRegistrationGroup,
             defaultRedirectUri,
             otherRedirectUris,

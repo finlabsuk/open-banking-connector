@@ -67,6 +67,7 @@ internal class BankRegistration :
         string externalApiId,
         string? externalApiSecret,
         string? registrationAccessToken,
+        BankProfileEnum bankProfile,
         BankRegistrationGroup? bankRegistrationGroup,
         string defaultRedirectUri,
         IList<string> otherRedirectUris,
@@ -80,6 +81,7 @@ internal class BankRegistration :
         _externalApiId = externalApiId;
         _externalApiSecret = externalApiSecret;
         _registrationAccessToken = registrationAccessToken;
+        BankProfile = bankProfile;
         BankRegistrationGroup = bankRegistrationGroup;
         DefaultRedirectUri = defaultRedirectUri;
         OtherRedirectUris = otherRedirectUris;
@@ -98,6 +100,11 @@ internal class BankRegistration :
         _externalApiId,
         _externalApiSecret,
         _registrationAccessToken);
+
+    /// <summary>
+    ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
+    /// </summary>
+    public BankProfileEnum BankProfile { get; set; }
 
     /// <summary>
     ///     Bank registration group. The same external API registration object is

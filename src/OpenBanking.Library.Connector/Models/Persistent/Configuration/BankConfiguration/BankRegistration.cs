@@ -65,6 +65,8 @@ internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRe
         builder.Property(e => e.DefaultResponseMode)
             .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BankProfile)
+            .HasConversion(new EnumToStringConverter<BankProfileEnum>());
         builder.Property(e => e.BankRegistrationGroup)
             .HasConversion(new EnumToStringConverter<BankRegistrationGroup>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
