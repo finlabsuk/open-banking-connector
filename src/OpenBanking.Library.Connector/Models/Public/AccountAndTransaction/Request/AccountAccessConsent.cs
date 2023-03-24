@@ -41,14 +41,6 @@ public class AccountAccessConsentTemplateRequest
 /// </summary>
 public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidation
 {
-    /// <summary>
-    ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
-    ///     Both AccountAndTransactionApiId and BankRegistrationId properties must refer
-    ///     to objects with the same parent Bank object.
-    /// </summary>
-    [Required]
-    [JsonProperty(Required = Required.Always)]
-    public Guid AccountAndTransactionApiId { get; set; }
 
     /// <summary>
     ///     Use external API request object created from template.

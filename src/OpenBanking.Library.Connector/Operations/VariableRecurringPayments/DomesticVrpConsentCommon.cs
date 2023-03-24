@@ -30,23 +30,19 @@ internal class DomesticVrpConsentCommon
     }
 
     public async
-        Task<(DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId,
-            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi, BankRegistration bankRegistration, string
-            bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)>
-        GetDomesticVrpConsent(Guid consentId)
+        Task<(DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId, BankRegistration
+            bankRegistration, string bankFinancialId, ProcessedSoftwareStatementProfile
+            processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId)
     {
         // Load DomesticVrpConsent and related
         DomesticVrpConsentPersisted persistedConsent =
             await _entityMethods
                 .DbSetNoTracking
                 .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
-                .Include(o => o.VariableRecurringPaymentsApiNavigation)
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi =
-            persistedConsent.VariableRecurringPaymentsApiNavigation;
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
         string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
@@ -56,7 +52,7 @@ internal class DomesticVrpConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, externalApiConsentId, variableRecurringPaymentsApi, bankRegistration, bankFinancialId,
+        return (persistedConsent, externalApiConsentId, bankRegistration, bankFinancialId,
             processedSoftwareStatementProfile);
     }
 }

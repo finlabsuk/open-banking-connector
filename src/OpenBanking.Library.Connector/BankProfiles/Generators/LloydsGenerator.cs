@@ -67,7 +67,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             bank is LloydsBank.Sandbox
                 ? new PaymentInitiationApi
                 {
-                    PaymentInitiationApiVersion =
+                    ApiVersion =
                         PaymentInitiationApiVersion.Version3p1p6, // from API discovery endpoint
                     BaseUrl =
                         "https://matls.rs.aspsp.sandbox.lloydsbanking.com/open-banking/v3.1.10/pisp" // from API discovery endpoint
@@ -173,7 +173,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
     {
         return new AccountAndTransactionApi
         {
-            AccountAndTransactionApiVersion =
+            ApiVersion =
                 AccountAndTransactionApiVersion
                     .Version3p1p10, // from https://developer.lloydsbanking.com/node/4045
             BaseUrl =

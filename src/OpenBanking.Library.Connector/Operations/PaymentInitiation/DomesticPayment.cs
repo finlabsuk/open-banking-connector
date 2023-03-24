@@ -76,16 +76,9 @@ internal class DomesticPayment :
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Resolve bank profile
-        BankProfile? bankProfile = null;
-        if (request.BankProfile is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-        }
-
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
-                PaymentInitiationApiEntity paymentInitiationApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
 
@@ -103,6 +96,10 @@ internal class DomesticPayment :
                 bankRegistration,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 createdBy);
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -158,7 +155,7 @@ internal class DomesticPayment :
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, string _,
-                PaymentInitiationApiEntity paymentInitiationApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
 
@@ -173,6 +170,10 @@ internal class DomesticPayment :
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient))
             .AccessToken;
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

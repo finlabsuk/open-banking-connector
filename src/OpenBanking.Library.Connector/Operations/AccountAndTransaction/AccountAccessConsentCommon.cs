@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -28,9 +27,9 @@ internal class AccountAccessConsentCommon
     }
 
     public async Task<(AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-        AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistrationPersisted bankRegistration, string
-        bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
-        bankTokenIssuerClaim)> GetAccountAccessConsent(
+        BankRegistrationPersisted
+        bankRegistration, string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        string bankTokenIssuerClaim)> GetAccountAccessConsent(
         Guid consentId,
         bool dbTracking = false)
     {
@@ -41,13 +40,10 @@ internal class AccountAccessConsentCommon
         AccountAccessConsentPersisted persistedConsent =
             await db
                 .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                .Include(o => o.AccountAndTransactionApiNavigation)
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        AccountAndTransactionApiEntity accountAndTransactionApi =
-            persistedConsent.AccountAndTransactionApiNavigation;
         BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
         string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
@@ -66,7 +62,7 @@ internal class AccountAccessConsentCommon
             requestObjectAudienceClaim ??
             bankRegistration.BankNavigation.IssuerUrl;
 
-        return (persistedConsent, externalApiConsentId, accountAndTransactionApi, bankRegistration, bankFinancialId,
+        return (persistedConsent, externalApiConsentId, bankRegistration, bankFinancialId,
             processedSoftwareStatementProfile, bankTokenIssuerClaim);
     }
 }

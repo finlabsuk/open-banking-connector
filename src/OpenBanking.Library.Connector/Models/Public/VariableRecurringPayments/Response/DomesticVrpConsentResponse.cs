@@ -16,11 +16,6 @@ public interface IDomesticVrpConsentPublicQuery : IBaseQuery
     public Guid BankRegistrationId { get; }
 
     /// <summary>
-    ///     Associated VariableRecurringPaymentsApi object
-    /// </summary>
-    public Guid VariableRecurringPaymentsApiId { get; }
-
-    /// <summary>
     ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
     ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
     /// </summary>
@@ -39,8 +34,7 @@ public abstract class DomesticVrpConsentBaseResponse : ConsentResponseBase, IDom
         string externalApiId,
         string? externalApiUserId,
         DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        Guid variableRecurringPaymentsApiId) : base(
+        string? authContextModifiedBy) : base(
         id,
         created,
         createdBy,
@@ -50,15 +44,7 @@ public abstract class DomesticVrpConsentBaseResponse : ConsentResponseBase, IDom
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy)
-    {
-        VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
-    }
-
-    /// <summary>
-    ///     Associated VariableRecurringPaymentsApi object
-    /// </summary>
-    public Guid VariableRecurringPaymentsApiId { get; }
+        authContextModifiedBy) { }
 }
 
 /// <summary>
@@ -77,7 +63,6 @@ public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
         string? externalApiUserId,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
-        Guid variableRecurringPaymentsApiId,
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse) : base(
         id,
         created,
@@ -88,8 +73,7 @@ public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy,
-        variableRecurringPaymentsApiId)
+        authContextModifiedBy)
     {
         ExternalApiResponse = externalApiResponse;
     }
@@ -114,7 +98,6 @@ public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsen
         string? externalApiUserId,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
-        Guid variableRecurringPaymentsApiId,
         VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
         id,
         created,
@@ -125,8 +108,7 @@ public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsen
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy,
-        variableRecurringPaymentsApiId)
+        authContextModifiedBy)
     {
         ExternalApiResponse = externalApiResponse;
     }

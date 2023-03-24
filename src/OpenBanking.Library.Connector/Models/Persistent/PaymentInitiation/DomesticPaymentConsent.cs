@@ -40,7 +40,7 @@ internal class DomesticPaymentConsent :
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
-        Guid paymentInitiationApiId) : base(
+        Guid? paymentInitiationApiId) : base(
         id,
         reference,
         isDeleted,
@@ -75,5 +75,5 @@ internal class DomesticPaymentConsent :
     /// <summary>
     ///     Associated PaymentInitiationApi object
     /// </summary>
-    public Guid PaymentInitiationApiId { get; }
+    public Guid? PaymentInitiationApiId { get; }
 }

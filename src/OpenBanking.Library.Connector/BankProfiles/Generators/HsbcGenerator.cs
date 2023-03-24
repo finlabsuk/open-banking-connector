@@ -53,7 +53,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             GetFinancialId(bank),
             new AccountAndTransactionApi
             {
-                AccountAndTransactionApiVersion = GetAccountAndTransactionApiVersion(bank),
+                ApiVersion = GetAccountAndTransactionApiVersion(bank),
                 BaseUrl = accountAndTransactionApiBaseUrl
             },
             null,

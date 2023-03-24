@@ -73,16 +73,9 @@ internal class DomesticVrp :
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Resolve bank profile
-        BankProfile? bankProfile = null;
-        if (request.BankProfile is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-        }
-
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId,
-                VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
@@ -100,6 +93,11 @@ internal class DomesticVrp :
                 bankRegistration,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 createdBy);
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -154,7 +152,7 @@ internal class DomesticVrp :
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, string _,
-                VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
@@ -169,6 +167,11 @@ internal class DomesticVrp :
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient))
             .AccessToken;
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

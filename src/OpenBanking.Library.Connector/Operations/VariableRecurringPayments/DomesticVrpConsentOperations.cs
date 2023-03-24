@@ -18,7 +18,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.Payme
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -37,8 +36,6 @@ internal class
         IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse,
             ConsentBaseReadParams>
 {
-    private readonly IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> _apiEntityMethods;
-
     private readonly IBankProfileService _bankProfileService;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
@@ -64,13 +61,11 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
-        IDbReadOnlyEntityMethods<VariableRecurringPaymentsApiEntity> apiEntityMethods,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
         _entityMethods = entityMethods;
-        _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
@@ -103,13 +98,6 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Resolve bank profile
-        BankProfile? bankProfile = null;
-        if (request.BankProfile is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-        }
-
         // Determine entity ID
         var entityId = Guid.NewGuid();
 
@@ -124,12 +112,6 @@ internal class
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
-            // Load VariableRecurringPaymentsApi
-            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi =
-                await GetVariableRecurringPaymentsApi(
-                    request.VariableRecurringPaymentsApiId,
-                    bankRegistration.BankId);
-
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
@@ -141,6 +123,11 @@ internal class
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
+
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+                bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -219,7 +206,7 @@ internal class
             request.ExternalApiUserId,
             utcNow,
             request.CreatedBy,
-            request.VariableRecurringPaymentsApiId);
+            null);
 
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
         if (accessToken is not null)
@@ -258,7 +245,6 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -277,7 +263,7 @@ internal class
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId,
-                VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
 
@@ -297,6 +283,11 @@ internal class
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
+
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+                bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -349,7 +340,6 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
@@ -365,7 +355,7 @@ internal class
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedObject, string bankApiId,
-                VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
 
@@ -383,6 +373,11 @@ internal class
                 bankRegistration,
                 persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 readParams.ModifiedBy);
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -416,30 +411,9 @@ internal class
                 persistedObject.ExternalApiUserId,
                 persistedObject.AuthContextModified,
                 persistedObject.AuthContextModifiedBy,
-                persistedObject.VariableRecurringPaymentsApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
-    }
-
-    private async Task<VariableRecurringPaymentsApiEntity> GetVariableRecurringPaymentsApi(
-        Guid variableRecurringPaymentsApiId,
-        Guid bankId)
-    {
-        VariableRecurringPaymentsApiEntity variableRecurringPaymentsApiEntity =
-            await _apiEntityMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == variableRecurringPaymentsApiId) ??
-            throw new KeyNotFoundException(
-                $"No record found for VariableRecurringPaymentsApi {variableRecurringPaymentsApiId} specified by request.");
-
-        if (variableRecurringPaymentsApiEntity.BankId != bankId)
-        {
-            throw new ArgumentException(
-                "Specified VariableRecurringPaymentsApi and BankRegistration objects do not share same BankId.");
-        }
-
-        return variableRecurringPaymentsApiEntity;
     }
 
     private IApiRequests<VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,

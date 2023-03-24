@@ -6,7 +6,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentIni
 
 public class PaymentInitiationApi
 {
-    public PaymentInitiationApiVersion PaymentInitiationApiVersion { get; set; }
+    private readonly string _baseUrl = null!;
+    public PaymentInitiationApiVersion ApiVersion { get; init; }
 
-    public string BaseUrl { get; set; } = null!;
+    public string BaseUrl
+    {
+        get => _baseUrl;
+        init => _baseUrl = value.TrimEnd('/');
+    }
 }

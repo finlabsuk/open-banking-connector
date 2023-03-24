@@ -10,8 +10,6 @@ public interface IAccountAccessConsentPublicQuery : IBaseQuery
 {
     Guid BankRegistrationId { get; }
 
-    Guid AccountAndTransactionApiId { get; }
-
     public string ExternalApiId { get; }
 }
 
@@ -27,8 +25,7 @@ public abstract class AccountAccessConsentBaseResponse : ConsentResponseBase, IA
         string externalApiId,
         string? externalApiUserId,
         DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        Guid accountAndTransactionApiId) : base(
+        string? authContextModifiedBy) : base(
         id,
         created,
         createdBy,
@@ -38,15 +35,7 @@ public abstract class AccountAccessConsentBaseResponse : ConsentResponseBase, IA
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy)
-    {
-        AccountAndTransactionApiId = accountAndTransactionApiId;
-    }
-
-    /// <summary>
-    ///     ID of associated AccountAndTransactionApiEntity object
-    /// </summary>
-    public Guid AccountAndTransactionApiId { get; }
+        authContextModifiedBy) { }
 }
 
 /// <summary>
@@ -65,7 +54,6 @@ public class AccountAccessConsentCreateResponse : AccountAccessConsentBaseRespon
         string? externalApiUserId,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
-        Guid accountAndTransactionApiId,
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse) : base(
         id,
         created,
@@ -76,8 +64,7 @@ public class AccountAccessConsentCreateResponse : AccountAccessConsentBaseRespon
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy,
-        accountAndTransactionApiId)
+        authContextModifiedBy)
     {
         ExternalApiResponse = externalApiResponse;
     }

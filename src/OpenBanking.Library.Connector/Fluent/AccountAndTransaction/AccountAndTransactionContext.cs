@@ -80,7 +80,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public IReadOnlyExternalEntityContext<BalancesResponse> Balances =>
         new ReadOnlyExternalEntityContextInternal<BalancesResponse>(
@@ -95,7 +96,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public IReadOnlyExternalEntityContext<PartiesResponse> Parties =>
         new ReadOnlyExternalEntityContextInternal<PartiesResponse>(
@@ -110,7 +112,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public IReadOnlyExternalEntityContext<Parties2Response> Parties2 =>
         new ReadOnlyExternalEntityContextInternal<Parties2Response>(
@@ -125,7 +128,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public ITransactionsContext<TransactionsResponse> Transactions =>
         new TransactionsContextInternal<TransactionsResponse>(
@@ -141,7 +145,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public IReadOnlyExternalEntityContext<DirectDebitsResponse> DirectDebits =>
         new ReadOnlyExternalEntityContextInternal<DirectDebitsResponse>(
@@ -156,7 +161,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 
     public IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders =>
         new ReadOnlyExternalEntityContextInternal<StandingOrdersResponse>(
@@ -171,5 +177,6 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                     _sharedContext.Instrumentation),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                    _sharedContext.SoftwareStatementProfileCachedRepo)));
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
 }

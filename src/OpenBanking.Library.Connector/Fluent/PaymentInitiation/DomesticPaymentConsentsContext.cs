@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -60,7 +59,6 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new GrantPost(_sharedContext.ApiClient),
-            sharedContext.DbService.GetDbEntityMethodsClass<PaymentInitiationApiEntity>(),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
                 _sharedContext.SoftwareStatementProfileCachedRepo,

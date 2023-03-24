@@ -17,11 +17,6 @@ public interface IDomesticPaymentConsentPublicQuery : IBaseQuery
     Guid BankRegistrationId { get; }
 
     /// <summary>
-    ///     Associated PaymentInitiationApi object
-    /// </summary>
-    Guid PaymentInitiationApiId { get; }
-
-    /// <summary>
     ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
     ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
     /// </summary>
@@ -41,8 +36,7 @@ public abstract class DomesticPaymentConsentBaseResponse : ConsentResponseBase,
         string externalApiId,
         string? externalApiUserId,
         DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        Guid paymentInitiationApiId) : base(
+        string? authContextModifiedBy) : base(
         id,
         created,
         createdBy,
@@ -52,15 +46,7 @@ public abstract class DomesticPaymentConsentBaseResponse : ConsentResponseBase,
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy)
-    {
-        PaymentInitiationApiId = paymentInitiationApiId;
-    }
-
-    /// <summary>
-    ///     Associated PaymentInitiationApi object
-    /// </summary>
-    public Guid PaymentInitiationApiId { get; }
+        authContextModifiedBy) { }
 }
 
 /// <summary>
@@ -79,7 +65,6 @@ public class DomesticPaymentConsentCreateResponse : DomesticPaymentConsentBaseRe
         string? externalApiUserId,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
-        Guid paymentInitiationApiId,
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse) : base(
         id,
         created,
@@ -90,12 +75,10 @@ public class DomesticPaymentConsentCreateResponse : DomesticPaymentConsentBaseRe
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy,
-        paymentInitiationApiId)
+        authContextModifiedBy)
     {
         ExternalApiResponse = externalApiResponse;
     }
-
 
     public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
 }
@@ -116,7 +99,6 @@ public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPayme
         string? externalApiUserId,
         DateTimeOffset authContextModified,
         string? authContextModifiedBy,
-        Guid paymentInitiationApiId,
         PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
         id,
         created,
@@ -127,8 +109,7 @@ public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPayme
         externalApiId,
         externalApiUserId,
         authContextModified,
-        authContextModifiedBy,
-        paymentInitiationApiId)
+        authContextModifiedBy)
     {
         ExternalApiResponse = externalApiResponse;
     }

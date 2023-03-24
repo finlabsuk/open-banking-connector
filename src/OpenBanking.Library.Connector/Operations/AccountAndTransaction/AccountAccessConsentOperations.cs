@@ -18,7 +18,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.Accou
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
@@ -31,7 +30,6 @@ internal class
         IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
-    private readonly IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> _apiEntityMethods;
 
     private readonly IBankProfileService _bankProfileService;
 
@@ -56,12 +54,10 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
-        IDbReadOnlyEntityMethods<AccountAndTransactionApiEntity> apiEntityMethods,
         IBankProfileService bankProfileService,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
         _entityMethods = entityMethods;
-        _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _accountAccessConsentCommon = new AccountAccessConsentCommon(entityMethods, softwareStatementProfileRepo);
@@ -93,13 +89,6 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Resolve bank profile
-        BankProfile? bankProfile = null;
-        if (request.BankProfile is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-        }
-
         // Determine entity ID
         var entityId = Guid.NewGuid();
 
@@ -114,9 +103,9 @@ internal class
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
-            // Load AccountAndTransactionApi
-            AccountAndTransactionApiEntity accountAndTransactionApi =
-                await GetAccountAndTransactionApi(request.AccountAndTransactionApiId, bankRegistration.BankId);
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -210,7 +199,7 @@ internal class
             request.ExternalApiUserId,
             utcNow,
             request.CreatedBy,
-            request.AccountAndTransactionApiId);
+            null);
 
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
         if (accessToken is not null)
@@ -249,7 +238,6 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.AccountAndTransactionApiId,
                 externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -268,7 +256,7 @@ internal class
 
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-                AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
                     bankTokenIssuerClaim) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id);
@@ -278,6 +266,10 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1? externalApiResponse;
         if (includeExternalApiOperation)
         {
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
@@ -340,30 +332,9 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.AccountAndTransactionApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
-    }
-
-    private async Task<AccountAndTransactionApiEntity> GetAccountAndTransactionApi(
-        Guid accountAndTransactionApiId,
-        Guid bankId)
-    {
-        AccountAndTransactionApiEntity accountAndTransactionApi =
-            await _apiEntityMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == accountAndTransactionApiId) ??
-            throw new KeyNotFoundException(
-                $"No record found for AccountAndTransactionApi {accountAndTransactionApiId} specified by request.");
-
-        if (accountAndTransactionApi.BankId != bankId)
-        {
-            throw new ArgumentException(
-                "Specified AccountAndTransactionApi and BankRegistration objects do not share same BankId.");
-        }
-
-        return accountAndTransactionApi;
     }
 
     private IApiRequests<AccountAndTransactionModelsPublic.OBReadConsent1,

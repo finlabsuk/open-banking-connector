@@ -451,10 +451,8 @@ public class AccountAccessConsentSubtest
         {
             BankProfile = bankProfile.BankProfileEnum,
             BankId = Guid.Empty,
-            ApiVersion =
-                bankProfile.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
-                throw new InvalidOperationException("No AccountAndTransactionApi specified in bank profile."),
-            BaseUrl = bankProfile.AccountAndTransactionApi.BaseUrl
+            ApiVersion = bankProfile.GetRequiredAccountAndTransactionApi().ApiVersion,
+            BaseUrl = bankProfile.GetRequiredAccountAndTransactionApi().BaseUrl
         };
         await configFluentRequestLogging
             .AppendToPath("accountAndTransactionApi")
@@ -480,9 +478,7 @@ public class AccountAccessConsentSubtest
         var accountAccessConsentRequest =
             new AccountAccessConsentRequest
             {
-                BankProfile = bankProfile.BankProfileEnum,
                 BankRegistrationId = default, // substitute logging placeholder
-                AccountAndTransactionApiId = default, // substitute logging placeholder
                 TemplateRequest = new AccountAccessConsentTemplateRequest
                 {
                     Type = AccountAccessConsentSubtestHelper
@@ -510,8 +506,6 @@ public class AccountAccessConsentSubtest
             .AppendToPath("postRequest")
             .WriteFile(accountAccessConsentRequest);
         accountAccessConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
-        accountAccessConsentRequest.AccountAndTransactionApiId =
-            accountAndTransactionApiId; // remove logging placeholder
         if (expDateTime is not null)
         {
             accountAccessConsentRequest.ExternalApiRequest!.Data.ExpirationDateTime =

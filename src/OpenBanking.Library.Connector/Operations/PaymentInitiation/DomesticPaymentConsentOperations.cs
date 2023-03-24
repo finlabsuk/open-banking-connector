@@ -18,7 +18,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.Payme
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
@@ -38,8 +37,6 @@ internal class
         IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams>,
         IObjectReadFundsConfirmation<DomesticPaymentConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
 {
-    private readonly IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> _apiEntityMethods;
-
     private readonly IBankProfileService _bankProfileService;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
 
@@ -65,13 +62,11 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
-        IDbReadOnlyEntityMethods<PaymentInitiationApiEntity> apiEntityMethods,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
     {
         _entityMethods = entityMethods;
-        _apiEntityMethods = apiEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
@@ -106,13 +101,6 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        // Resolve bank profile
-        BankProfile? bankProfile = null;
-        if (request.BankProfile is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(request.BankProfile.Value);
-        }
-
         // Determine entity ID
         var entityId = Guid.NewGuid();
 
@@ -127,10 +115,6 @@ internal class
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
-            // Load PaymentInitiationApi
-            PaymentInitiationApiEntity paymentInitiationApi =
-                await GetPaymentInitiationApi(request.PaymentInitiationApiId, bankRegistration.BankId);
-
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
@@ -142,6 +126,10 @@ internal class
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
+
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -220,7 +208,7 @@ internal class
             request.ExternalApiUserId,
             utcNow,
             request.CreatedBy,
-            request.PaymentInitiationApiId);
+            null);
 
         AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
         if (accessToken is not null)
@@ -259,7 +247,6 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
@@ -279,7 +266,7 @@ internal class
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
-                PaymentInitiationApiEntity paymentInitiationApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
 
@@ -299,6 +286,10 @@ internal class
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
+
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -351,7 +342,6 @@ internal class
                 persistedConsent.ExternalApiUserId,
                 persistedConsent.AuthContextModified,
                 persistedConsent.AuthContextModifiedBy,
-                persistedConsent.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
@@ -368,7 +358,7 @@ internal class
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedObject, string bankApiId,
-                PaymentInitiationApiEntity paymentInitiationApi, BankRegistration bankRegistration,
+                BankRegistration bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
 
@@ -386,6 +376,10 @@ internal class
                 bankRegistration,
                 persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 readParams.ModifiedBy);
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -419,30 +413,9 @@ internal class
                 persistedObject.ExternalApiUserId,
                 persistedObject.AuthContextModified,
                 persistedObject.AuthContextModifiedBy,
-                persistedObject.PaymentInitiationApiId,
                 externalApiResponse);
 
         return (response, nonErrorMessages);
-    }
-
-    private async Task<PaymentInitiationApiEntity> GetPaymentInitiationApi(
-        Guid paymentInitiationApiId,
-        Guid bankId)
-    {
-        PaymentInitiationApiEntity paymentInitiationApi =
-            await _apiEntityMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == paymentInitiationApiId) ??
-            throw new KeyNotFoundException(
-                $"No record found for PaymentInitiationApi {paymentInitiationApiId} specified by request.");
-
-        if (paymentInitiationApi.BankId != bankId)
-        {
-            throw new ArgumentException(
-                "Specified PaymentInitiationApi and BankRegistration objects do not share same BankId.");
-        }
-
-        return paymentInitiationApi;
     }
 
     private IApiRequests<PaymentInitiationModelsPublic.OBWriteDomesticConsent4,

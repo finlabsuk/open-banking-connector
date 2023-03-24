@@ -168,7 +168,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     {
         return new VariableRecurringPaymentsApi
         {
-            VariableRecurringPaymentsApiVersion =
+            ApiVersion =
                 VariableRecurringPaymentsApiVersion
                     .Version3p1p8, // from https://www.bankofapis.com/products/natwest-group-open-banking/vrp/documentation/nwb/3.1.8
             BaseUrl = GetVariableRecurringPaymentsApiBaseUrl(bank)
@@ -179,7 +179,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     {
         return new AccountAndTransactionApi
         {
-            AccountAndTransactionApiVersion =
+            ApiVersion =
                 AccountAndTransactionApiVersion
                     .Version3p1p10, // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/3.1.10
             BaseUrl =
@@ -211,7 +211,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     {
         return new PaymentInitiationApi
         {
-            PaymentInitiationApiVersion =
+            ApiVersion =
                 PaymentInitiationApiVersion
                     .Version3p1p6, // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.6
             BaseUrl = GetPaymentInitiationApiBaseUrl(bank)

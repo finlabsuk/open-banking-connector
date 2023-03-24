@@ -40,7 +40,7 @@ internal class DomesticVrpConsent :
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
-        Guid variableRecurringPaymentsApiId) : base(
+        Guid? variableRecurringPaymentsApiId) : base(
         id,
         reference,
         isDeleted,
@@ -75,5 +75,5 @@ internal class DomesticVrpConsent :
     /// <summary>
     ///     Associated VariableRecurringPaymentsApi object
     /// </summary>
-    public Guid VariableRecurringPaymentsApiId { get; }
+    public Guid? VariableRecurringPaymentsApiId { get; }
 }

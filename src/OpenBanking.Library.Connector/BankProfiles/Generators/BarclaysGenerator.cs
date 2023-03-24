@@ -159,7 +159,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
     {
         return new AccountAndTransactionApi
         {
-            AccountAndTransactionApiVersion =
+            ApiVersion =
                 AccountAndTransactionApiVersion
                     .Version3p1p10, // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
             BaseUrl = bank is BarclaysBank.Sandbox
@@ -172,7 +172,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
     {
         return new PaymentInitiationApi
         {
-            PaymentInitiationApiVersion =
+            ApiVersion =
                 PaymentInitiationApiVersion
                     .Version3p1p6, // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
             BaseUrl = bank is BarclaysBank.Sandbox

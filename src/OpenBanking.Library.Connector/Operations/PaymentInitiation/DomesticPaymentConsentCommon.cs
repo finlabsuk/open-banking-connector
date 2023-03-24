@@ -30,23 +30,19 @@ internal class DomesticPaymentConsentCommon
     }
 
     public async
-        Task<(DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId, PaymentInitiationApiEntity
-            paymentInitiationApi, BankRegistration bankRegistration, string bankFinancialId,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
-            Guid consentId)
+        Task<(DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId, BankRegistration
+            bankRegistration, string bankFinancialId, ProcessedSoftwareStatementProfile
+            processedSoftwareStatementProfile)> GetDomesticPaymentConsent(Guid consentId)
     {
         // Load DomesticPaymentConsent and related
         DomesticPaymentConsentPersisted persistedConsent =
             await _entityMethods
                 .DbSetNoTracking
                 .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
-                .Include(o => o.PaymentInitiationApiNavigation)
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
         string externalApiConsentId = persistedConsent.ExternalApiId;
-        PaymentInitiationApiEntity paymentInitiationApi =
-            persistedConsent.PaymentInitiationApiNavigation;
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
         string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
@@ -56,7 +52,7 @@ internal class DomesticPaymentConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, externalApiConsentId, paymentInitiationApi, bankRegistration, bankFinancialId,
+        return (persistedConsent, externalApiConsentId, bankRegistration, bankFinancialId,
             processedSoftwareStatementProfile);
     }
 }

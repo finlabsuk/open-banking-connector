@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -62,7 +61,6 @@ internal class AccountAccessConsentsConsentContext :
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new GrantPost(_sharedContext.ApiClient),
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAndTransactionApiEntity>(),
             sharedContext.BankProfileService,
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = accountAccessConsentOperations;
@@ -74,7 +72,8 @@ internal class AccountAccessConsentsConsentContext :
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                new GrantPost(_sharedContext.ApiClient));
+                new GrantPost(_sharedContext.ApiClient),
+                _sharedContext.BankProfileService);
     }
 
     public ILocalEntityContext<AccountAccessConsentAuthContextRequest,

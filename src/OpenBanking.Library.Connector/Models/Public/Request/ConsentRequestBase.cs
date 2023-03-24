@@ -3,18 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
 public class ConsentRequestBase : Base
 {
-    /// <summary>
-    ///     BankProfile used to apply transformations to external API requests.
-    /// </summary>
-    public BankProfileEnum? BankProfile { get; set; }
-
     /// <summary>
     ///     Specifies BankRegistration object to use when creating the consent.
     /// </summary>

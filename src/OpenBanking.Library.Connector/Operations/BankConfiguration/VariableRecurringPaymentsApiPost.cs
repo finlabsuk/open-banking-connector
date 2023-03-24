@@ -49,7 +49,7 @@ internal class VariableRecurringPaymentsApiPost : LocalEntityCreate<VariableRecu
         // Get API version
         VariableRecurringPaymentsApiVersion apiVersion =
             request.ApiVersion ??
-            bankProfile?.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
+            bankProfile?.VariableRecurringPaymentsApi?.ApiVersion ??
             throw new InvalidOperationException(
                 "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
 

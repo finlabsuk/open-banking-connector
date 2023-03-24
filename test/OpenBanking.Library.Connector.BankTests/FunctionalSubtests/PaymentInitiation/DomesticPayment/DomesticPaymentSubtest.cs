@@ -68,10 +68,8 @@ public class DomesticPaymentSubtest
             {
                 BankProfile = bankProfile.BankProfileEnum,
                 BankId = Guid.Empty,
-                ApiVersion =
-                    bankProfile.PaymentInitiationApi?.PaymentInitiationApiVersion ??
-                    throw new InvalidOperationException("No PaymentInitiationApi specified in bank profile."),
-                BaseUrl = bankProfile.PaymentInitiationApi.BaseUrl
+                ApiVersion = bankProfile.GetRequiredPaymentInitiationApi().ApiVersion,
+                BaseUrl = bankProfile.GetRequiredPaymentInitiationApi().BaseUrl
             };
         await configFluentRequestLogging
             .AppendToPath("paymentInitiationApi")
@@ -103,9 +101,7 @@ public class DomesticPaymentSubtest
         // Create DomesticPaymentConsent
         var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
         {
-            BankProfile = bankProfile.BankProfileEnum,
             BankRegistrationId = default, // substitute logging placeholder
-            PaymentInitiationApiId = default, // substitute logging placeholder
             TemplateRequest = new DomesticPaymentTemplateRequest
             {
                 Type = DomesticPaymentSubtestHelper
@@ -140,7 +136,6 @@ public class DomesticPaymentSubtest
             };
 
         domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
-        domesticPaymentConsentRequest.PaymentInitiationApiId = paymentInitiationApiId; // remove logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
             Guid.NewGuid().ToString("N"); // remove logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =

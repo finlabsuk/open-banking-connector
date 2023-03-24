@@ -2,12 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
-using Newtonsoft.Json;
-using ValidationResult = FluentValidation.Results.ValidationResult;
+using FluentValidation.Results;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
@@ -15,15 +13,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 
 public class DomesticVrpConsentRequest : ConsentRequestBase, ISupportsValidation
 {
-    /// <summary>
-    ///     Specifies AccountAndTransactionApi object (bank functional API info) to use when creating the consent.
-    ///     Both VariableRecurringPaymentsApiId and BankRegistrationId properties must refer
-    ///     to objects with the same parent Bank object.
-    /// </summary>
-    [Required]
-    [JsonProperty(Required = Required.Always)]
-    public Guid VariableRecurringPaymentsApiId { get; set; }
-
     /// <summary>
     ///     Use external API request object created from template.
     ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used

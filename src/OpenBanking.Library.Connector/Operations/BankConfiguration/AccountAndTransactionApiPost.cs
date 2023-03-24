@@ -49,14 +49,14 @@ internal class AccountAndTransactionApiPost : LocalEntityCreate<AccountAndTransa
         // Get API version
         AccountAndTransactionApiVersion apiVersion =
             request.ApiVersion ??
-            bankProfile?.AccountAndTransactionApi?.AccountAndTransactionApiVersion ??
+            bankProfile?.GetRequiredAccountAndTransactionApi().ApiVersion ??
             throw new InvalidOperationException(
                 "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
 
         // Get base URL
         string baseUrl =
             request.BaseUrl ??
-            bankProfile?.AccountAndTransactionApi?.BaseUrl ??
+            bankProfile?.GetRequiredAccountAndTransactionApi().BaseUrl ??
             throw new InvalidOperationException(
                 "BaseUrl specified as null and cannot be obtained from specified BankProfile.");
 

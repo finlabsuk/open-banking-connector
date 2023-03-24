@@ -36,7 +36,7 @@ internal class AccountAccessConsent :
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
         string? externalApiUserIdModifiedBy,
-        Guid accountAndTransactionApiId) : base(
+        Guid? accountAndTransactionApiId) : base(
         id,
         reference,
         isDeleted,
@@ -71,5 +71,5 @@ internal class AccountAccessConsent :
     /// <summary>
     ///     Associated AccountAndTransactionApi object
     /// </summary>
-    public Guid AccountAndTransactionApiId { get; }
+    public Guid? AccountAndTransactionApiId { get; }
 }

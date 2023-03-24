@@ -25,7 +25,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             null,
             new PaymentInitiationApi
             {
-                PaymentInitiationApiVersion = GetPaymentInitiationApiVersion(bank),
+                ApiVersion = GetPaymentInitiationApiVersion(bank),
                 BaseUrl =
                     "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" //from https://docs.monzo.com/#well-known-endpoints58
             },

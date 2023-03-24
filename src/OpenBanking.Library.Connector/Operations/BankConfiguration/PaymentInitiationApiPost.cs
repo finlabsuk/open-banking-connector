@@ -49,7 +49,7 @@ internal class PaymentInitiationApiPost : LocalEntityCreate<PaymentInitiationApi
         // Get API version
         PaymentInitiationApiVersion apiVersion =
             request.ApiVersion ??
-            bankProfile?.PaymentInitiationApi?.PaymentInitiationApiVersion ??
+            bankProfile?.PaymentInitiationApi?.ApiVersion ??
             throw new InvalidOperationException(
                 "ApiVersion specified as null and cannot be obtained from specified BankProfile.");
 

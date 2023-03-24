@@ -243,4 +243,19 @@ public partial class BankProfile
     /// </summary>
     public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; set; } =
         new();
+
+    public AccountAndTransactionApi GetRequiredAccountAndTransactionApi() =>
+        AccountAndTransactionApi ??
+        throw new InvalidOperationException(
+            $"No Open Banking Account and Transaction (AISP) API associated with BankProfile ${BankProfileEnum}.");
+
+    public PaymentInitiationApi GetRequiredPaymentInitiationApi() =>
+        PaymentInitiationApi ??
+        throw new InvalidOperationException(
+            $"No Open Banking Payment Initiation (PISP) API associated with BankProfile ${BankProfileEnum}.");
+
+    public VariableRecurringPaymentsApi GetRequiredVariableRecurringPaymentsApi() =>
+        VariableRecurringPaymentsApi ??
+        throw new InvalidOperationException(
+            $"No Open Banking Variable Recurring Payments (VRP) API associated with BankProfile ${BankProfileEnum}.");
 }

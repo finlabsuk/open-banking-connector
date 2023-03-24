@@ -27,7 +27,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
             null,
             new PaymentInitiationApi
             {
-                PaymentInitiationApiVersion =
+                ApiVersion =
                     PaymentInitiationApiVersion
                         .Version3p1p6, // from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
                 BaseUrl =

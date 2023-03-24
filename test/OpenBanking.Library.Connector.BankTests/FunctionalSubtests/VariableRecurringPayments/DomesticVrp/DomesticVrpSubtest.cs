@@ -68,10 +68,8 @@ public class DomesticVrpSubtest
             {
                 BankProfile = bankProfile.BankProfileEnum,
                 BankId = Guid.Empty,
-                ApiVersion =
-                    bankProfile.VariableRecurringPaymentsApi?.VariableRecurringPaymentsApiVersion ??
-                    throw new InvalidOperationException("No VariableRecurringPaymentsApi specified in bank profile."),
-                BaseUrl = bankProfile.VariableRecurringPaymentsApi.BaseUrl,
+                ApiVersion = bankProfile.GetRequiredVariableRecurringPaymentsApi().ApiVersion,
+                BaseUrl = bankProfile.GetRequiredVariableRecurringPaymentsApi().BaseUrl
             };
         await configFluentRequestLogging
             .AppendToPath("variableRecurringPaymentsApi")
@@ -103,9 +101,7 @@ public class DomesticVrpSubtest
         // Basic request object for domestic payment consent
         var domesticVrpConsentRequest = new DomesticVrpConsentRequest
         {
-            BankProfile = bankProfile.BankProfileEnum,
             BankRegistrationId = default, // substitute logging placeholder
-            VariableRecurringPaymentsApiId = default, // substitute logging placeholder
             TemplateRequest = new DomesticVrpTemplateRequest
             {
                 Type = DomesticVrpSubtestHelper.GetDomesticVrpConsentTemplateType(subtestEnum),
@@ -151,7 +147,6 @@ public class DomesticVrpSubtest
                 .SecondaryIdentification =
             creditorAccount.SecondaryIdentification;
         domesticVrpConsentRequest.BankRegistrationId = bankRegistrationId;
-        domesticVrpConsentRequest.VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
         domesticVrpConsentRequest.Reference = testNameUnique;
         DomesticVrpConsentCreateResponse domesticVrpConsentResp =
             await requestBuilder.VariableRecurringPayments.DomesticVrpConsents

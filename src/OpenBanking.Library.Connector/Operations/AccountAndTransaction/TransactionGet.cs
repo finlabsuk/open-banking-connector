@@ -2,10 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -22,6 +22,7 @@ internal class
     TransactionGet : IAccountAccessConsentExternalRead<TransactionsResponse, TransactionsReadParams>
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
+    private readonly IBankProfileService _bankProfileService;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -30,12 +31,14 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         ConsentAccessTokenGet consentAccessTokenGet,
-        AccountAccessConsentCommon accountAccessConsentCommon)
+        AccountAccessConsentCommon accountAccessConsentCommon,
+        IBankProfileService bankProfileService)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
         _consentAccessTokenGet = consentAccessTokenGet;
         _accountAccessConsentCommon = accountAccessConsentCommon;
+        _bankProfileService = bankProfileService;
     }
 
     public async Task<(TransactionsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -47,10 +50,14 @@ internal class
 
         // Get consent and associated data
         (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-                AccountAndTransactionApiEntity accountAndTransactionApi, BankRegistrationPersisted bankRegistration,
+                BankRegistrationPersisted bankRegistration,
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
                     bankTokenIssuerClaim) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
 
         // Get access token
         string accessToken =
