@@ -6,8 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -61,42 +59,6 @@ public class DomesticVrpSubtest
         BankUser bankUser = bankUserList[0];
 
         IRequestBuilder requestBuilder = requestBuilderIn;
-
-        // Create VariableRecurringPaymentsApi
-        var variableRecurringPaymentsApiRequest =
-            new VariableRecurringPaymentsApiRequest
-            {
-                BankProfile = bankProfile.BankProfileEnum,
-                BankId = Guid.Empty,
-                ApiVersion = bankProfile.GetRequiredVariableRecurringPaymentsApi().ApiVersion,
-                BaseUrl = bankProfile.GetRequiredVariableRecurringPaymentsApi().BaseUrl
-            };
-        await configFluentRequestLogging
-            .AppendToPath("variableRecurringPaymentsApi")
-            .AppendToPath("postRequest")
-            .WriteFile(variableRecurringPaymentsApiRequest);
-        variableRecurringPaymentsApiRequest.BankId = bankId;
-        variableRecurringPaymentsApiRequest.Reference = testNameUnique;
-        variableRecurringPaymentsApiRequest.CreatedBy = modifiedBy;
-        VariableRecurringPaymentsApiResponse variableRecurringPaymentsApiResponse =
-            await requestBuilder
-                .BankConfiguration
-                .VariableRecurringPaymentsApis
-                .CreateLocalAsync(variableRecurringPaymentsApiRequest);
-        variableRecurringPaymentsApiResponse.Should().NotBeNull();
-        variableRecurringPaymentsApiResponse.Warnings.Should().BeNull();
-        Guid variableRecurringPaymentsApiId = variableRecurringPaymentsApiResponse.Id;
-
-        // Read VariableRecurringPaymentsApi
-        VariableRecurringPaymentsApiResponse variableRecurringPaymentsApiReadResponse =
-            await requestBuilder
-                .BankConfiguration
-                .VariableRecurringPaymentsApis
-                .ReadLocalAsync(variableRecurringPaymentsApiId);
-
-        // Checks
-        variableRecurringPaymentsApiReadResponse.Should().NotBeNull();
-        variableRecurringPaymentsApiReadResponse.Warnings.Should().BeNull();
 
         // Basic request object for domestic payment consent
         var domesticVrpConsentRequest = new DomesticVrpConsentRequest
@@ -273,15 +235,5 @@ public class DomesticVrpSubtest
             domesticVrpConsentResp3.Should().NotBeNull();
             domesticVrpConsentResp3.Warnings.Should().BeNull();
         }
-
-        // DELETE API object
-        ObjectDeleteResponse apiResponse = await requestBuilder
-            .BankConfiguration
-            .VariableRecurringPaymentsApis
-            .DeleteLocalAsync(variableRecurringPaymentsApiId, modifiedBy);
-
-        // Checks
-        apiResponse.Should().NotBeNull();
-        apiResponse.Warnings.Should().BeNull();
     }
 }

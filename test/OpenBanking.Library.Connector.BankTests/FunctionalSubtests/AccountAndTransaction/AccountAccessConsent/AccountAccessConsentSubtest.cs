@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -52,36 +51,6 @@ public class AccountAccessConsentSubtest
 
         IRequestBuilder requestBuilder = requestBuilderIn;
 
-        // Create AccountAndTransactionApi
-        AccountAndTransactionApiRequest accountAndTransactionApiRequest =
-            await GetAccountAndTransactionApiRequest(
-                bankProfile,
-                bankId,
-                testNameUnique,
-                modifiedBy,
-                configFluentRequestLogging);
-        AccountAndTransactionApiResponse accountAndTransactionApiResponse =
-            await requestBuilder
-                .BankConfiguration
-                .AccountAndTransactionApis
-                .CreateLocalAsync(accountAndTransactionApiRequest);
-
-        // Checks
-        accountAndTransactionApiResponse.Should().NotBeNull();
-        accountAndTransactionApiResponse.Warnings.Should().BeNull();
-        Guid accountAndTransactionApiId = accountAndTransactionApiResponse.Id;
-
-        // Read AccountAndTransactionApi
-        AccountAndTransactionApiResponse accountAndTransactionApiReadResponse =
-            await requestBuilder
-                .BankConfiguration
-                .AccountAndTransactionApis
-                .ReadLocalAsync(accountAndTransactionApiId);
-
-        // Checks
-        accountAndTransactionApiReadResponse.Should().NotBeNull();
-        accountAndTransactionApiReadResponse.Warnings.Should().BeNull();
-
         // Create AccountAccessConsent
         (AccountAccessConsentRequest accountAccessConsentRequest,
             IList<OBReadConsent1DataPermissionsEnum> requestedPermissions) = await GetAccountAccessConsentRequest(
@@ -90,8 +59,7 @@ public class AccountAccessConsentSubtest
             bankRegistrationId,
             testNameUnique,
             modifiedBy,
-            aispFluentRequestLogging,
-            accountAndTransactionApiId);
+            aispFluentRequestLogging);
         AccountAccessConsentCreateResponse accountAccessConsentCreateResp =
             await requestBuilder
                 .AccountAndTransaction
@@ -428,16 +396,6 @@ public class AccountAccessConsentSubtest
                 }
             }
         }
-
-        // Delete AccountAndTransactionApi
-        ObjectDeleteResponse apiResponse = await requestBuilder
-            .BankConfiguration
-            .AccountAndTransactionApis
-            .DeleteLocalAsync(accountAndTransactionApiId, modifiedBy);
-
-        // Checks
-        apiResponse.Should().NotBeNull();
-        apiResponse.Warnings.Should().BeNull();
     }
 
     private static async Task<AccountAndTransactionApiRequest> GetAccountAndTransactionApiRequest(
@@ -472,8 +430,7 @@ public class AccountAccessConsentSubtest
             Guid bankRegistrationId,
             string testNameUnique,
             string modifiedBy,
-            FilePathBuilder aispFluentRequestLogging,
-            Guid accountAndTransactionApiId)
+            FilePathBuilder aispFluentRequestLogging)
     {
         var accountAccessConsentRequest =
             new AccountAccessConsentRequest

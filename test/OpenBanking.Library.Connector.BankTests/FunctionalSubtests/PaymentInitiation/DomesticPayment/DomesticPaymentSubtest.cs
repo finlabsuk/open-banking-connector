@@ -7,8 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -61,42 +59,6 @@ public class DomesticPaymentSubtest
         BankUser bankUser = bankUserList[0];
 
         IRequestBuilder requestBuilder = requestBuilderIn;
-
-        // Create PaymentInitiationApi
-        var paymentInitiationApiRequest =
-            new PaymentInitiationApiRequest
-            {
-                BankProfile = bankProfile.BankProfileEnum,
-                BankId = Guid.Empty,
-                ApiVersion = bankProfile.GetRequiredPaymentInitiationApi().ApiVersion,
-                BaseUrl = bankProfile.GetRequiredPaymentInitiationApi().BaseUrl
-            };
-        await configFluentRequestLogging
-            .AppendToPath("paymentInitiationApi")
-            .AppendToPath("postRequest")
-            .WriteFile(paymentInitiationApiRequest);
-        paymentInitiationApiRequest.BankId = bankId;
-        paymentInitiationApiRequest.Reference = testNameUnique;
-        paymentInitiationApiRequest.CreatedBy = modifiedBy;
-        PaymentInitiationApiResponse paymentInitiationApiResponse =
-            await requestBuilder
-                .BankConfiguration
-                .PaymentInitiationApis
-                .CreateLocalAsync(paymentInitiationApiRequest);
-        paymentInitiationApiResponse.Should().NotBeNull();
-        paymentInitiationApiResponse.Warnings.Should().BeNull();
-        Guid paymentInitiationApiId = paymentInitiationApiResponse.Id;
-
-        // Read PaymentInitiationApi
-        PaymentInitiationApiResponse paymentInitiationApiReadResponse =
-            await requestBuilder
-                .BankConfiguration
-                .PaymentInitiationApis
-                .ReadLocalAsync(paymentInitiationApiId);
-
-        // Checks
-        paymentInitiationApiReadResponse.Should().NotBeNull();
-        paymentInitiationApiReadResponse.Warnings.Should().BeNull();
 
         // Create DomesticPaymentConsent
         var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
@@ -273,15 +235,5 @@ public class DomesticPaymentSubtest
         // Checks
         domesticPaymentConsentResp3.Should().NotBeNull();
         domesticPaymentConsentResp3.Warnings.Should().BeNull();
-
-        // DELETE API object
-        ObjectDeleteResponse apiResponse = await requestBuilder
-            .BankConfiguration
-            .PaymentInitiationApis
-            .DeleteLocalAsync(paymentInitiationApiId, modifiedBy);
-
-        // Checks
-        apiResponse.Should().NotBeNull();
-        apiResponse.Warnings.Should().BeNull();
     }
 }
