@@ -75,10 +75,7 @@ public static class BankConfigurationSubtests
             SoftwareStatementProfileId = testData1.SoftwareStatementProfileId,
             SoftwareStatementProfileOverrideCase =
                 testData1.SoftwareStatementAndCertificateProfileOverride,
-            RegistrationScope = testData1.RegistrationScope,
-            TokenEndpointAuthMethod = bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod,
-            DefaultResponseMode = bankProfile.DefaultResponseMode,
-            BankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup
+            RegistrationScope = testData1.RegistrationScope
         };
         await testDataProcessorFluentRequestLogging
             .AppendToPath("bankRegistration")
@@ -119,8 +116,7 @@ public static class BankConfigurationSubtests
             .BankRegistrations
             .ReadAsync(
                 bankRegistrationId,
-                modifiedBy,
-                bankProfile.BankProfileEnum);
+                modifiedBy);
 
         // Checks
         bankRegistrationReadResponse.Should().NotBeNull();
@@ -171,7 +167,6 @@ public static class BankConfigurationSubtests
             .DeleteAsync(
                 bankRegistrationId,
                 modifiedBy,
-                null,
                 includeExternalApiOperation,
                 bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken);
 

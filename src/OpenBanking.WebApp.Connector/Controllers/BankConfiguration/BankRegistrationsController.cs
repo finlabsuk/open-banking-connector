@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
@@ -51,7 +50,6 @@ public class BankRegistrationsController : ControllerBase
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <param name="useRegistrationAccessToken"></param>
-    /// <param name="bankProfile"></param>
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -63,9 +61,7 @@ public class BankRegistrationsController : ControllerBase
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,
         [FromHeader(Name = "x-obc-use-registration-access-token")]
-        bool? useRegistrationAccessToken,
-        [FromHeader(Name = "x-obc-bank-profile")]
-        BankProfileEnum? bankProfile)
+        bool? useRegistrationAccessToken)
     {
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
@@ -74,7 +70,6 @@ public class BankRegistrationsController : ControllerBase
             .ReadAsync(
                 bankRegistrationId,
                 modifiedBy,
-                bankProfile,
                 includeExternalApiOperation,
                 useRegistrationAccessToken);
 
@@ -88,7 +83,6 @@ public class BankRegistrationsController : ControllerBase
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <param name="useRegistrationAccessToken"></param>
-    /// <param name="bankProfile"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
@@ -99,9 +93,7 @@ public class BankRegistrationsController : ControllerBase
         [FromHeader(Name = "x-obc-include-external-api-operation")]
         bool? includeExternalApiOperation,
         [FromHeader(Name = "x-obc-use-registration-access-token")]
-        bool? useRegistrationAccessToken,
-        [FromHeader(Name = "x-obc-bank-profile")]
-        BankProfileEnum? bankProfile)
+        bool? useRegistrationAccessToken)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
@@ -110,7 +102,6 @@ public class BankRegistrationsController : ControllerBase
             .DeleteAsync(
                 bankRegistrationId,
                 modifiedBy,
-                bankProfile,
                 includeExternalApiOperation,
                 useRegistrationAccessToken);
 

@@ -2,15 +2,16 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -20,6 +21,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -30,6 +33,7 @@ internal class AuthContextUpdate :
         IDbReadWriteEntityMethods<AuthContext>
         _authContextMethods;
 
+    private readonly IBankProfileService _bankProfileService;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
@@ -43,7 +47,8 @@ internal class AuthContextUpdate :
             authContextMethods,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
-        IGrantPost grantPost)
+        IGrantPost grantPost,
+        IBankProfileService bankProfileService)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -51,6 +56,7 @@ internal class AuthContextUpdate :
         _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
         _grantPost = grantPost;
+        _bankProfileService = bankProfileService;
     }
 
     public async
@@ -193,8 +199,14 @@ internal class AuthContextUpdate :
                 }
             }
 
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
+
             // Validate response mode
-            if (request.ResponseMode != bankRegistration.DefaultResponseMode)
+            if (request.ResponseMode != defaultResponseMode)
             {
                 throw new Exception("Response mode supplied does not match that which was expected");
             }
@@ -218,6 +230,7 @@ internal class AuthContextUpdate :
                     requestScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     tokenEndpoint,
                     jsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient,

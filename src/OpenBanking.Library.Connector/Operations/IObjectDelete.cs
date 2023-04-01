@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -25,17 +24,14 @@ internal class BankRegistrationDeleteParams : LocalDeleteParams
         Guid id,
         string? modifiedBy,
         bool? includeExternalApiOperation,
-        bool? useRegistrationAccessToken,
-        BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
+        bool? useRegistrationAccessToken) : base(id, modifiedBy)
     {
         IncludeExternalApiOperation = includeExternalApiOperation;
         UseRegistrationAccessToken = useRegistrationAccessToken;
-        BankProfileEnum = bankProfileEnum;
     }
 
     public bool? IncludeExternalApiOperation { get; }
     public bool? UseRegistrationAccessToken { get; }
-    public BankProfileEnum? BankProfileEnum { get; }
 }
 
 internal class ConsentDeleteParams : LocalDeleteParams

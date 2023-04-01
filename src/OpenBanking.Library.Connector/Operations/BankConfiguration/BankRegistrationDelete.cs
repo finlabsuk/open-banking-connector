@@ -6,8 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
@@ -15,6 +15,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 
@@ -49,18 +51,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        BankProfile? bankProfile = deleteParams.BankProfileEnum is not null
-            ? _bankProfileService.GetBankProfile(deleteParams.BankProfileEnum.Value)
-            : null;
-
-        bool includeExternalApiOperationValue =
-            deleteParams.IncludeExternalApiOperation ??
-            bankProfile?.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint ??
-            throw new ArgumentNullException(
-                null,
-                "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
-
-        // Load object
+        // Load BankRegistration
         BankRegistration entity =
             await _entityMethods
                 .DbSet
@@ -69,6 +60,14 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
         CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
+        bool includeExternalApiOperationValue =
+            deleteParams.IncludeExternalApiOperation ??
+            bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint;
         if (includeExternalApiOperationValue)
         {
             string registrationEndpoint =
@@ -98,8 +97,9 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             string accessToken;
             if (useRegistrationAccessTokenValue)
             {
-                accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
-                              throw new InvalidOperationException("No registration access token available");
+                accessToken =
+                    entity.ExternalApiObject.RegistrationAccessToken ??
+                    throw new InvalidOperationException("No registration access token available");
             }
             else
             {
@@ -108,6 +108,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                         scope,
                         processedSoftwareStatementProfile,
                         entity,
+                        tokenEndpointAuthMethod,
                         entity.BankNavigation.TokenEndpoint,
                         null,
                         apiClient,

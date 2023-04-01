@@ -128,6 +128,7 @@ internal class GrantPost : IGrantPost
         string? scope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient mtlsApiClient,
@@ -143,7 +144,7 @@ internal class GrantPost : IGrantPost
             keyValuePairs["scope"] = scope;
         }
 
-        if (bankRegistration.TokenEndpointAuthMethod is
+        if (tokenEndpointAuthMethod is
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
@@ -160,6 +161,7 @@ internal class GrantPost : IGrantPost
         var response = await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
             keyValuePairs,
             bankRegistration,
+            tokenEndpointAuthMethod,
             jsonSerializerSettings,
             mtlsApiClient,
             scope,
@@ -185,6 +187,7 @@ internal class GrantPost : IGrantPost
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient matlsApiClient,
@@ -197,7 +200,7 @@ internal class GrantPost : IGrantPost
             { "code", authCode }
         };
 
-        if (bankRegistration.TokenEndpointAuthMethod is
+        if (tokenEndpointAuthMethod is
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
@@ -214,6 +217,7 @@ internal class GrantPost : IGrantPost
         var response = await PostGrantAsync<TokenEndpointResponseAuthCodeGrant>(
             keyValuePairs,
             bankRegistration,
+            tokenEndpointAuthMethod,
             jsonSerializerSettings,
             matlsApiClient,
             requestScope,
@@ -256,6 +260,7 @@ internal class GrantPost : IGrantPost
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient mtlsApiClient,
@@ -267,7 +272,7 @@ internal class GrantPost : IGrantPost
             { "refresh_token", refreshToken }
         };
 
-        if (bankRegistration.TokenEndpointAuthMethod is
+        if (tokenEndpointAuthMethod is
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
@@ -284,6 +289,7 @@ internal class GrantPost : IGrantPost
         var response = await PostGrantAsync<TokenEndpointResponseRefreshTokenGrant>(
             keyValuePairs,
             bankRegistration,
+            tokenEndpointAuthMethod,
             jsonSerializerSettings,
             mtlsApiClient,
             requestScope,
@@ -571,6 +577,7 @@ internal class GrantPost : IGrantPost
     private async Task<TokenEndpointResponse> PostGrantAsync<TokenEndpointResponse>(
         Dictionary<string, string> keyValuePairs,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient mtlsApiClient,
         string? requestScope,
@@ -580,7 +587,9 @@ internal class GrantPost : IGrantPost
         // POST request
         var uri = new Uri(bankRegistration.BankNavigation.TokenEndpoint);
         IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
-            new AuthGrantPostRequestProcessor<Dictionary<string, string>>(bankRegistration);
+            new AuthGrantPostRequestProcessor<Dictionary<string, string>>(
+                bankRegistration,
+                tokenEndpointAuthMethod);
         var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
             uri,
             keyValuePairs,

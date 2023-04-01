@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -17,6 +17,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 using VariableRecurringPaymentsModelsPublic =
@@ -79,6 +81,13 @@ internal class DomesticVrp :
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
         // Get access token
         string bankIssuerUrl =
             persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
@@ -91,13 +100,10 @@ internal class DomesticVrp :
                 bankIssuerUrl,
                 "openid payments",
                 bankRegistration,
+                tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 createdBy);
 
-        // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-            bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -156,22 +162,26 @@ internal class DomesticVrp :
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+            bankProfile.GetRequiredVariableRecurringPaymentsApi();
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
         // Get client credentials grant access token
         string ccGrantAccessToken =
             (await _grantPost.PostClientCredentialsGrantAsync(
                 ClientCredentialsGrantScope,
                 processedSoftwareStatementProfile,
                 bankRegistration,
+                tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 null,
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient))
             .AccessToken;
 
-        // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        VariableRecurringPaymentsApi variableRecurringPaymentsApi =
-            bankProfile.GetRequiredVariableRecurringPaymentsApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

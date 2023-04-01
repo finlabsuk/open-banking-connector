@@ -86,7 +86,6 @@ internal class
         BankProfile bankProfile =
             _bankProfileService.GetBankProfile(request.BankProfile);
         OAuth2ResponseMode defaultResponseMode =
-            request.DefaultResponseMode ??
             bankProfile.DefaultResponseMode;
 
         // Load bank from DB and check for existing bank registrations
@@ -141,7 +140,6 @@ internal class
 
         // Determine TokenEndpointAuthMethod
         TokenEndpointAuthMethod tokenEndpointAuthMethod = GetTokenEndpointAuthMethod(
-            request,
             bankProfile,
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
@@ -150,9 +148,7 @@ internal class
         BankRegistrationGroup? bankRegistrationGroup = null;
         if (!request.ForceNullBankRegistrationGroup)
         {
-
             bankRegistrationGroup =
-                request.BankRegistrationGroup ??
                 bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         }
 
@@ -179,6 +175,8 @@ internal class
         if (existingGroupRegistration is not null)
         {
             Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
+            BankProfile existingRegistrationBankProfile =
+                _bankProfileService.GetBankProfile(existingGroupRegistration.BankProfile);
 
             // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
 
@@ -222,12 +220,13 @@ internal class
                         $"which is different from expected {softwareStatementProfileOverrideCase}.");
             }
 
-            if (tokenEndpointAuthMethod != existingGroupRegistration.TokenEndpointAuthMethod)
+            if (tokenEndpointAuthMethod !=
+                existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod)
             {
                 throw new
                     InvalidOperationException(
                         $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used TokenEndpointAuthMethod {existingGroupRegistration.TokenEndpointAuthMethod} " +
+                        $"used TokenEndpointAuthMethod {existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod} " +
                         $"which is different from expected {tokenEndpointAuthMethod}.");
             }
 
@@ -331,10 +330,8 @@ internal class
             null,
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
-            entity.TokenEndpointAuthMethod,
             entity.RegistrationScope,
             entity.BankId,
-            entity.DefaultResponseMode,
             entity.DefaultRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);
@@ -350,12 +347,6 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        BankProfile? bankProfile = null;
-        if (readParams.BankProfileEnum is not null)
-        {
-            bankProfile = _bankProfileService.GetBankProfile(readParams.BankProfileEnum.Value);
-        }
-
         // Load BankRegistration
         BankRegistrationPersisted entity =
             await _entityMethods
@@ -368,13 +359,15 @@ internal class
             entity.BankNavigation.DcrApiVersion;
         string externalApiId = entity.ExternalApiObject.ExternalApiId;
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation ??
-            bankProfile?.BankConfigurationApiSettings.UseRegistrationGetEndpoint ??
-            throw new ArgumentNullException(
-                null,
-                "includeExternalApiOperation specified as null and cannot be obtained using specified BankProfile (also null).");
+            bankProfile.BankConfigurationApiSettings.UseRegistrationGetEndpoint;
         if (includeExternalApiOperation)
         {
             string registrationEndpoint =
@@ -410,6 +403,7 @@ internal class
                         scope,
                         processedSoftwareStatementProfile,
                         entity,
+                        tokenEndpointAuthMethod,
                         entity.BankNavigation.TokenEndpoint,
                         null,
                         apiClient,
@@ -457,10 +451,8 @@ internal class
             null,
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
-            entity.TokenEndpointAuthMethod,
             entity.RegistrationScope,
             entity.BankId,
-            entity.DefaultResponseMode,
             entity.DefaultRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);
@@ -519,23 +511,18 @@ internal class
     }
 
     private static TokenEndpointAuthMethod GetTokenEndpointAuthMethod(
-        BankRegistrationRequest request,
-        BankProfile? bankProfile,
+        BankProfile bankProfile,
         bool supportsSca,
         IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupported)
     {
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
-            request.TokenEndpointAuthMethod ??
-            bankProfile?.BankConfigurationApiSettings.TokenEndpointAuthMethod ??
-            throw new ArgumentException(
-                $"Request property {nameof(request.TokenEndpointAuthMethod)} is null " +
-                $"and cannot be obtained using request property {request.BankProfile}.");
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
 
         if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.ClientSecretBasic &&
             !supportsSca)
         {
-            throw new ArgumentException(
-                $"Request property {nameof(request.TokenEndpointAuthMethod)} resolves to " +
+            throw new InvalidOperationException(
+                $"TokenEndpointAuthMethod resolves to " +
                 $"{TokenEndpointAuthMethod.ClientSecretBasic} for bank supporting SCA which is not supported.");
         }
 
@@ -560,8 +547,8 @@ internal class
 
             if (!methodsSupportedFilter.Contains(tokenEndpointAuthMethod))
             {
-                throw new ArgumentException(
-                    $"Request property {nameof(request.TokenEndpointAuthMethod)} resolves to " +
+                throw new InvalidOperationException(
+                    $"TokenEndpointAuthMethod resolves to " +
                     $"{tokenEndpointAuthMethod} which is not specified as supported by OpenID Configuration for Bank's IssuerUrl.");
             }
         }

@@ -16,10 +16,14 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
     where TRequest : Dictionary<string, string>
 {
     private readonly BankRegistration _bankRegistration;
+    private readonly TokenEndpointAuthMethod _tokenEndpointAuthMethod;
 
-    public AuthGrantPostRequestProcessor(BankRegistration bankRegistration)
+    public AuthGrantPostRequestProcessor(
+        BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod)
     {
         _bankRegistration = bankRegistration;
+        _tokenEndpointAuthMethod = tokenEndpointAuthMethod;
     }
 
     (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
@@ -29,7 +33,7 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
     {
         // Assemble headers and body
         var headers = new List<HttpHeader>();
-        switch (_bankRegistration.TokenEndpointAuthMethod)
+        switch (_tokenEndpointAuthMethod)
         {
             case TokenEndpointAuthMethod.TlsClientAuth:
                 variantRequest["client_id"] = _bankRegistration.ExternalApiObject.ExternalApiId;

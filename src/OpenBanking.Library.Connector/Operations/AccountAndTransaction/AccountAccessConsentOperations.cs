@@ -6,11 +6,11 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -21,6 +21,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -106,6 +108,8 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -113,6 +117,7 @@ internal class
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     tokenEndpoint,
                     null,
                     processedSoftwareStatementProfile.ApiClient,
@@ -269,6 +274,8 @@ internal class
             // Get bank profile
             BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -276,6 +283,7 @@ internal class
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     bankRegistration.BankNavigation.TokenEndpoint,
                     null,
                     processedSoftwareStatementProfile.ApiClient,

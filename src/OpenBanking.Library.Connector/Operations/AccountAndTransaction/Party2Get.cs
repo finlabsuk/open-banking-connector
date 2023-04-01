@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
@@ -57,6 +58,8 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
 
         // Get access token
         string accessToken =
@@ -65,6 +68,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
                 bankTokenIssuerClaim,
                 "openid accounts",
                 bankRegistration,
+                tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 readParams.ModifiedBy);
 

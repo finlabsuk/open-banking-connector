@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -26,17 +25,14 @@ internal class BankRegistrationReadParams : LocalReadParams
         Guid id,
         string? modifiedBy,
         bool? useRegistrationAccessToken,
-        bool? includeExternalApiOperation,
-        BankProfileEnum? bankProfileEnum) : base(id, modifiedBy)
+        bool? includeExternalApiOperation) : base(id, modifiedBy)
     {
         UseRegistrationAccessToken = useRegistrationAccessToken;
         IncludeExternalApiOperation = includeExternalApiOperation;
-        BankProfileEnum = bankProfileEnum;
     }
 
     public bool? UseRegistrationAccessToken { get; }
     public bool? IncludeExternalApiOperation { get; }
-    public BankProfileEnum? BankProfileEnum { get; }
 }
 
 internal class ConsentBaseReadParams : LocalReadParams

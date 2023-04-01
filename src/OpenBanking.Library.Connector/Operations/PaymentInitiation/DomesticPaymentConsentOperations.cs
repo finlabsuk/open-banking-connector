@@ -6,8 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -19,6 +19,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using PaymentInitiationModelsV3p1p4 =
@@ -115,21 +117,25 @@ internal class
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     tokenEndpoint,
                     null,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
 
-            // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -275,21 +281,25 @@ internal class
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse;
         if (includeExternalApiOperation)
         {
+            // Get bank profile
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     bankRegistration.BankNavigation.TokenEndpoint,
                     null,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
 
-            // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -362,6 +372,12 @@ internal class
                 string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+
         // Get access token
         string bankIssuerUrl =
             persistedObject.BankRegistrationNavigation.BankNavigation.CustomBehaviour
@@ -374,12 +390,10 @@ internal class
                 bankIssuerUrl,
                 "openid payments",
                 bankRegistration,
+                tokenEndpointAuthMethod,
                 persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                 readParams.ModifiedBy);
 
-        // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-        PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

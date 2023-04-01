@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -39,11 +37,6 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
 
     string? SoftwareStatementProfileOverride { get; }
 
-    /// <summary>
-    ///     Token endpoint authorisation method
-    /// </summary>
-    TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
 
     /// <summary>
     ///     Functional APIs used for bank registration.
@@ -55,11 +48,6 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     ///     Bank with which this BankRegistration is associated.
     /// </summary>
     Guid BankId { get; }
-
-    /// <summary>
-    ///     Default response mode for OpenID auth request.
-    /// </summary>
-    public OAuth2ResponseMode DefaultResponseMode { get; }
 
     /// <summary>
     ///     Default redirect URI to use for this registration. This redirect URI must
@@ -98,10 +86,8 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         IList<string>? warnings,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope,
         Guid bankId,
-        OAuth2ResponseMode defaultResponseMode,
         string defaultRedirectUri,
         IList<string> otherRedirectUris,
         BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
@@ -111,10 +97,8 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         Warnings = warnings;
         SoftwareStatementProfileId = softwareStatementProfileId;
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
-        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         RegistrationScope = registrationScope;
         BankId = bankId;
-        DefaultResponseMode = defaultResponseMode;
         DefaultRedirectUri = defaultRedirectUri;
         OtherRedirectUris = otherRedirectUris;
         BankRegistrationGroup = bankRegistrationGroup;
@@ -137,11 +121,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     public string? SoftwareStatementProfileOverride { get; }
 
     /// <summary>
-    ///     Token endpoint authorisation method
-    /// </summary>
-    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
-    /// <summary>
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
@@ -150,11 +129,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Bank with which this BankRegistration is associated.
     /// </summary>
     public Guid BankId { get; }
-
-    /// <summary>
-    ///     Default response mode for OpenID auth request.
-    /// </summary>
-    public OAuth2ResponseMode DefaultResponseMode { get; }
 
     /// <summary>
     ///     Default redirect URI to use for this registration. This redirect URI must

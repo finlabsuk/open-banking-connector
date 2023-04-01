@@ -5,7 +5,6 @@
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using Newtonsoft.Json;
@@ -16,8 +15,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 public class BankRegistration : Base, ISupportsValidation
 {
     /// <summary>
-    ///     BankProfile used to specify bank configuration and supply default values for unspecified properties.
+    ///     BankProfile used to specify bank configuration and apply transformations to external API (bank) requests.
     /// </summary>
+    [Required]
+    [JsonProperty(Required = Required.Always)]
     public BankProfileEnum BankProfile { get; set; }
 
     /// <summary>
@@ -43,22 +44,10 @@ public class BankRegistration : Base, ISupportsValidation
     public string? SoftwareStatementProfileOverrideCase { get; set; }
 
     /// <summary>
-    ///     Token endpoint authorisation method.
-    ///     Specify null to use value from BankProfile.
-    /// </summary>
-    public TokenEndpointAuthMethod? TokenEndpointAuthMethod { get; set; }
-
-    /// <summary>
     ///     Functional APIs specified in bank registration "scope".
     ///     If null, registration scope implied by software statement profile will be used.
     /// </summary>
     public RegistrationScopeEnum? RegistrationScope { get; set; }
-
-    /// <summary>
-    ///     Default response mode for OpenID auth request.
-    ///     Normally null which means value obtained from BankProfile.
-    /// </summary>
-    public OAuth2ResponseMode? DefaultResponseMode { get; set; }
 
     /// <summary>
     ///     Default redirect URI to use for this registration. This redirect URI must
@@ -84,23 +73,20 @@ public class BankRegistration : Base, ISupportsValidation
     public ExternalApiBankRegistration? ExternalApiObject { get; set; }
 
     /// <summary>
-    ///     Forces BankRegistrationGroup to be null regardless of what it is set to. This can be used to force
-    ///     a null value when the BankProfile is null or to ignore the BankProfile value.
+    ///     Forces BankRegistrationGroup to be null (i.e. no BankRegistrationGroup) rather than the value automatically
+    ///     determined by the BankProfile and RegistrationScope.
+    ///     For each BankRegistrationGroup, the same external API (bank)
+    ///     registration is
+    ///     re-used and DCR will only be performed the first time the BankRegistrationGroup is used.
+    ///     This is to prevent unnecessary duplicate
+    ///     external API (bank) registrations which may disrupt/overwrite an
+    ///     existing such registration depending on bank behaviour.
+    ///     The safeguard of the auto-determined BankRegistrationGroup can be removed, and the use of DCR forced, when
+    ///     ForceNullBankRegistrationGroup is true. Please use this setting with care, and it is suggested to delete any
+    ///     unwanted external API
+    ///     registrations at the bank possibly via a support ticket if API support for this is not provided.
     /// </summary>
     public bool ForceNullBankRegistrationGroup { get; set; } = false;
-
-    /// <summary>
-    ///     Bank registration group. When specified, for a given SoftwareStatementProfileId, the same external API (bank)
-    ///     registration object is
-    ///     re-used by all members of the group and DCR is only performed if required the first time the group is specified.
-    ///     This can be used to prevent multiple
-    ///     registrations which may disrupt an
-    ///     existing registration depending on bank support for multiple registrations.
-    ///     If null, the value will be obtained from the bank profile.
-    ///     Regardless of setting, this value will be forced to be null when ForceNullBankRegistrationGroup is
-    ///     true.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup { get; set; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new BankRegistrationValidator()

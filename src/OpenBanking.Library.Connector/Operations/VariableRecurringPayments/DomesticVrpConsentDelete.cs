@@ -7,20 +7,24 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 
 internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, ConsentDeleteParams>
 {
-    protected readonly IGrantPost _grantPost;
+    private readonly IBankProfileService _bankProfileService;
+    private readonly IGrantPost _grantPost;
 
     public DomesticVrpConsentDelete(
         IDbReadWriteEntityMethods<DomesticVrpConsent> entityMethods,
@@ -37,6 +41,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         instrumentationClient)
     {
         _grantPost = grantPost;
+        _bankProfileService = bankProfileService;
     }
 
     protected string RelativePathBeforeId => "/domestic-vrp-consents";
@@ -56,19 +61,23 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             await _entityMethods
                 .DbSet
                 .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
-                .Include(o => o.BankRegistrationNavigation)
-                .Include(o => o.BankRegistrationNavigation)
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
-            throw new KeyNotFoundException($"No record found for Domestic Vrp Consent with ID {deleteParams.Id}.");
+            throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {deleteParams.Id}.");
 
         if (deleteParams.IncludeExternalApiOperation)
         {
-            VariableRecurringPaymentsApiEntity variableRecurringPaymentsApi =
-                persistedObject.VariableRecurringPaymentsApiNavigation;
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
             string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
+
+            // Get bank profile
+            BankProfile bankProfile =
+                _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            VariableRecurringPaymentsApi variableRecurringPaymentsApi =
+                bankProfile.GetRequiredVariableRecurringPaymentsApi();
+            TokenEndpointAuthMethod tokenEndpointAuthMethod =
+                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -87,6 +96,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
                     "payments",
                     processedSoftwareStatementProfile,
                     bankRegistration,
+                    tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
                     null,
                     apiClient,

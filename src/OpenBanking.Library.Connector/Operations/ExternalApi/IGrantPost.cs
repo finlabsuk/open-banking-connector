@@ -5,11 +5,13 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
@@ -19,6 +21,7 @@ internal interface IGrantPost
         string? scope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient mtlsApiClient,
@@ -35,6 +38,7 @@ internal interface IGrantPost
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient matlsApiClient,
@@ -51,6 +55,7 @@ internal interface IGrantPost
         string? requestScope,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         BankRegistration bankRegistration,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient mtlsApiClient,
