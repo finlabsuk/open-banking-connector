@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -28,6 +30,7 @@ internal class
         AccountAccessConsentAuthContextCreateResponse>
 {
     protected readonly IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> _accountAccessConsentMethods;
+    private readonly IBankProfileService _bankProfileService;
 
     public AccountAccessConsentAuthContextPost(
         IDbReadWriteEntityMethods<AccountAccessConsentAuthContextPersisted>
@@ -36,7 +39,8 @@ internal class
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> accountAccessConsentMethods,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-        IInstrumentationClient instrumentationClient) : base(
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -44,6 +48,7 @@ internal class
         instrumentationClient)
     {
         _accountAccessConsentMethods = accountAccessConsentMethods;
+        _bankProfileService = bankProfileService;
     }
 
     protected override async Task<AccountAccessConsentAuthContextCreateResponse> AddEntity(
@@ -59,17 +64,21 @@ internal class
                 .SingleOrDefault(x => x.Id == request.AccountAccessConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Account Access Consent with ID {request.AccountAccessConsentId}.");
-        CustomBehaviourClass? customBehaviour =
-            accountAccessConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
-        string authorizationEndpoint =
-            accountAccessConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-        string issuerUrl = accountAccessConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-        bool supportsSca = accountAccessConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
 
+        BankRegistration bankRegistration = accountAccessConsent.BankRegistrationNavigation;
+        string authorizationEndpoint = bankRegistration.BankNavigation.AuthorizationEndpoint;
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+
+        // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
-                accountAccessConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                accountAccessConsent.BankRegistrationNavigation
+                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration
                     .SoftwareStatementProfileOverride);
 
         // Create auth URL
@@ -80,8 +89,8 @@ internal class
         (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
             accountAccessConsent.ExternalApiId,
             processedSoftwareStatementProfile,
-            accountAccessConsent.BankRegistrationNavigation,
-            accountAccessConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            bankRegistration,
+            bankRegistration.ExternalApiObject.ExternalApiId,
             customBehaviour?.AccountAccessConsentAuthGet,
             authorizationEndpoint,
             consentAuthGetAudClaim,

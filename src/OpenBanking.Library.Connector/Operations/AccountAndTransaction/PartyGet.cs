@@ -8,6 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -50,10 +52,8 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get consent and associated data
-        (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-                BankRegistrationPersisted bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
-                    bankTokenIssuerClaim) =
+        (AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
         // Get bank profile
@@ -61,8 +61,16 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
         AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        string bankFinancialId = bankProfile.FinancialId;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get access token
+        string bankTokenIssuerClaim = AccountAccessConsentCommon.GetBankTokenIssuerClaim(
+            customBehaviour,
+            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
@@ -71,6 +79,10 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
+                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.JwksGet,
                 readParams.ModifiedBy);
 
         // Retrieve endpoint URL

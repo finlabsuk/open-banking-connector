@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -27,6 +29,7 @@ internal class
         DomesticVrpConsentAuthContextRequest,
         DomesticVrpConsentAuthContextCreateResponse>
 {
+    private readonly IBankProfileService _bankProfileService;
     protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
 
     public DomesticVrpConsentAuthContextPost(
@@ -36,7 +39,8 @@ internal class
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> domesticPaymentConsentMethods,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-        IInstrumentationClient instrumentationClient) : base(
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -44,6 +48,7 @@ internal class
         instrumentationClient)
     {
         _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        _bankProfileService = bankProfileService;
     }
 
     protected override async Task<DomesticVrpConsentAuthContextCreateResponse> AddEntity(
@@ -59,17 +64,21 @@ internal class
                 .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
-        CustomBehaviourClass? customBehaviour =
-            domesticVrpConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+        BankRegistration bankRegistration = domesticVrpConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
-            domesticVrpConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-        string issuerUrl = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-        bool supportsSca = domesticVrpConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
+            bankRegistration.BankNavigation.AuthorizationEndpoint;
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+
+        // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
-                domesticVrpConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                domesticVrpConsent.BankRegistrationNavigation
+                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration
                     .SoftwareStatementProfileOverride);
 
         // Create auth URL
@@ -80,8 +89,8 @@ internal class
         (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
             domesticVrpConsent.ExternalApiId,
             processedSoftwareStatementProfile,
-            domesticVrpConsent.BankRegistrationNavigation,
-            domesticVrpConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            bankRegistration,
+            bankRegistration.ExternalApiObject.ExternalApiId,
             customBehaviour?.DomesticVrpConsentAuthGet,
             authorizationEndpoint,
             consentAuthGetAudClaim,

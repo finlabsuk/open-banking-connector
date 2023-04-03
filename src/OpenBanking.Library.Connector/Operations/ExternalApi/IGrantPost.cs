@@ -23,7 +23,9 @@ internal interface IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient);
 
@@ -40,7 +42,11 @@ internal interface IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient matlsApiClient,
         IInstrumentationClient instrumentationClient);
 
@@ -57,7 +63,11 @@ internal interface IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient);
 

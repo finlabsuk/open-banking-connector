@@ -6,6 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -76,10 +78,10 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
+        string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -87,23 +89,29 @@ internal class DomesticVrp :
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        string issuerUrl = bankProfile.IssuerUrl;
+        string bankFinancialId = bankProfile.FinancialId;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get access token
-        string bankIssuerUrl =
-            persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                ?.DomesticVrpConsentAuthGet
-                ?.AudClaim ??
-            bankRegistration.BankNavigation.IssuerUrl;
+        string bankTokenIssuerClaim = DomesticVrpConsentCommon.GetBankTokenIssuerClaim(
+            customBehaviour,
+            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
-                bankIssuerUrl,
+                bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
+                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.JwksGet,
                 createdBy);
-
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -157,9 +165,8 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, string _,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
         // Get bank profile
@@ -168,6 +175,9 @@ internal class DomesticVrp :
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        string bankFinancialId = bankProfile.FinancialId;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         // Get client credentials grant access token
         string ccGrantAccessToken =
@@ -177,7 +187,9 @@ internal class DomesticVrp :
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
                 null,
+                customBehaviour?.ClientCredentialsGrantPost,
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient))
             .AccessToken;

@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -112,8 +113,7 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistration bankRegistration, string bankFinancialId, string tokenEndpoint,
-                    CustomBehaviourClass? customBehaviour,
+            (BankRegistration bankRegistration, string tokenEndpoint,
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
@@ -122,6 +122,9 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethod tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            bool supportsSca = bankProfile.SupportsSca;
+            string bankFinancialId = bankProfile.FinancialId;
+            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -131,11 +134,12 @@ internal class
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
+                    supportsSca,
                     null,
+                    customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
-
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -271,9 +275,8 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
 
         bool includeExternalApiOperation =
@@ -286,6 +289,9 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethod tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            bool supportsSca = bankProfile.SupportsSca;
+            string bankFinancialId = bankProfile.FinancialId;
+            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -295,11 +301,12 @@ internal class
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     bankRegistration.BankNavigation.TokenEndpoint,
+                    supportsSca,
                     null,
+                    customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
-
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -309,6 +316,7 @@ internal class
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
+            string externalApiConsentId = persistedConsent.ExternalApiId;
             var externalApiUrl = new Uri(
                 paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             (externalApiResponse,
@@ -367,33 +375,39 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedObject, string bankApiId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticPaymentConsentPersisted persistedObject, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
+        string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        string bankFinancialId = bankProfile.FinancialId;
+        string issuerUrl = bankProfile.IssuerUrl;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get access token
-        string bankIssuerUrl =
-            persistedObject.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                ?.DomesticPaymentConsentAuthGet
-                ?.AudClaim ??
-            bankRegistration.BankNavigation.IssuerUrl;
+        string bankTokenIssuerClaim = DomesticPaymentConsentCommon.GetBankTokenIssuerClaim(
+            customBehaviour,
+            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedObject,
-                bankIssuerUrl,
+                bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
+                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.JwksGet,
                 readParams.ModifiedBy);
-
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -404,7 +418,7 @@ internal class
                 accessToken,
                 processedSoftwareStatementProfile);
         var externalApiUrl = new Uri(
-            paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{bankApiId}" + "/funds-confirmation");
+            paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}" + "/funds-confirmation");
         (PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(

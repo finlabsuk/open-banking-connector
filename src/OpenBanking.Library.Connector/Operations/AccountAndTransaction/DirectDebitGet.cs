@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -52,21 +53,27 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get consent and associated data
-        (AccountAccessConsent persistedConsent, string externalApiConsentId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
-                    bankTokenIssuerClaim) =
+        (AccountAccessConsent persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
-        DirectDebitGetCustomBehaviour?
-            directDebitGetCustomBehaviour = bankRegistration.BankNavigation.CustomBehaviour?.DirectDebitGet;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        string bankFinancialId = bankProfile.FinancialId;
+        DirectDebitGetCustomBehaviour?
+            directDebitGetCustomBehaviour = customBehaviour?.DirectDebitGet;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get access token
+        string bankTokenIssuerClaim = AccountAccessConsentCommon.GetBankTokenIssuerClaim(
+            customBehaviour,
+            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
@@ -75,6 +82,10 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
+                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.JwksGet,
                 readParams.ModifiedBy);
 
         // Retrieve endpoint URL

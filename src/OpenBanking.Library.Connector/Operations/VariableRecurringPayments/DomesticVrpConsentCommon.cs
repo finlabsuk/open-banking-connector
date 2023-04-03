@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -30,8 +31,8 @@ internal class DomesticVrpConsentCommon
     }
 
     public async
-        Task<(DomesticVrpConsentPersisted persistedConsent, string externalApiConsentId, BankRegistration
-            bankRegistration, string bankFinancialId, ProcessedSoftwareStatementProfile
+        Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistration
+            bankRegistration, ProcessedSoftwareStatementProfile
             processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId)
     {
         // Load DomesticVrpConsent and related
@@ -42,9 +43,7 @@ internal class DomesticVrpConsentCommon
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
-        string externalApiConsentId = persistedConsent.ExternalApiId;
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
-        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -52,7 +51,11 @@ internal class DomesticVrpConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, externalApiConsentId, bankRegistration, bankFinancialId,
-            processedSoftwareStatementProfile);
+        return (persistedConsent, bankRegistration, processedSoftwareStatementProfile);
     }
+
+    public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>
+        customBehaviour
+            ?.DomesticVrpConsentAuthGet
+            ?.AudClaim ?? issuerUrl;
 }

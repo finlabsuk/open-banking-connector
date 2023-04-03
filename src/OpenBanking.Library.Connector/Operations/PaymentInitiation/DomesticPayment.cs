@@ -6,6 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
@@ -79,31 +81,38 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
+        string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        string issuerUrl = bankProfile.IssuerUrl;
+        string bankFinancialId = bankProfile.FinancialId;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
         // Get access token
-        string bankIssuerUrl =
-            persistedConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                ?.DomesticPaymentConsentAuthGet
-                ?.AudClaim ??
-            bankRegistration.BankNavigation.IssuerUrl;
+        string bankTokenIssuerClaim = DomesticPaymentConsentCommon.GetBankTokenIssuerClaim(
+            customBehaviour,
+            issuerUrl); // Get bank token issuer ("iss") claim
         string accessToken =
             await _consentAccessTokenGet.GetAccessTokenAndUpdateConsent(
                 persistedConsent,
-                bankIssuerUrl,
+                bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
+                customBehaviour?.RefreshTokenGrantPost,
+                customBehaviour?.JwksGet,
                 createdBy);
 
         // Create external object at bank API
@@ -159,9 +168,8 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, string _,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
 
         // Get bank profile
@@ -169,6 +177,9 @@ internal class DomesticPayment :
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        string bankFinancialId = bankProfile.FinancialId;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         // Get client credentials grant access token
         string ccGrantAccessToken =
@@ -178,11 +189,12 @@ internal class DomesticPayment :
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                supportsSca,
                 null,
+                customBehaviour?.ClientCredentialsGrantPost,
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient))
             .AccessToken;
-
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

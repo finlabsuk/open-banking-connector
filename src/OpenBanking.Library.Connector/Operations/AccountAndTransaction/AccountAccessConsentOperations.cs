@@ -100,8 +100,7 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistration bankRegistration, string bankFinancialId, string tokenEndpoint,
-                    CustomBehaviourClass? customBehaviour,
+            (BankRegistration bankRegistration, string tokenEndpoint,
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
@@ -110,6 +109,9 @@ internal class
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethod tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            bool supportsSca = bankProfile.SupportsSca;
+            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+            string bankFinancialId = bankProfile.FinancialId;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -119,7 +121,9 @@ internal class
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
+                    supportsSca,
                     null,
+                    customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
@@ -260,10 +264,8 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load AccountAccessConsent and related
-        (AccountAccessConsentPersisted persistedConsent, string externalApiConsentId,
-                BankRegistration bankRegistration,
-                string bankFinancialId, ProcessedSoftwareStatementProfile processedSoftwareStatementProfile, string
-                    bankTokenIssuerClaim) =
+        (AccountAccessConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id);
 
         bool includeExternalApiOperation =
@@ -276,6 +278,9 @@ internal class
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethod tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            bool supportsSca = bankProfile.SupportsSca;
+            string bankFinancialId = bankProfile.FinancialId;
+            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -285,7 +290,9 @@ internal class
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     bankRegistration.BankNavigation.TokenEndpoint,
+                    supportsSca,
                     null,
+                    customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient))
                 .AccessToken;
@@ -298,6 +305,7 @@ internal class
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
+            string externalApiConsentId = persistedConsent.ExternalApiId;
             var externalApiUrl = new Uri(
                 accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =

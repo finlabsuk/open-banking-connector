@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -69,7 +70,6 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         {
             BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
-            string bankFinancialId = persistedObject.BankRegistrationNavigation.BankNavigation.FinancialId;
 
             // Get bank profile
             BankProfile bankProfile =
@@ -78,6 +78,9 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                 bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethod tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+            bool supportsSca = bankProfile.SupportsSca;
+            string bankFinancialId = bankProfile.FinancialId;
+            CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -98,7 +101,9 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                    supportsSca,
                     null,
+                    customBehaviour?.ClientCredentialsGrantPost,
                     apiClient,
                     _instrumentationClient);
             IDeleteRequestProcessor deleteRequestProcessor =

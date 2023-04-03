@@ -92,7 +92,8 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.BankProfileService));
 
     public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 

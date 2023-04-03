@@ -83,10 +83,15 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        BankProfile bankProfile =
-            _bankProfileService.GetBankProfile(request.BankProfile);
-        OAuth2ResponseMode defaultResponseMode =
-            bankProfile.DefaultResponseMode;
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
+        OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        string bankFinancialId = bankProfile.FinancialId;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
+            bankProfile.DynamicClientRegistrationApiVersion;
 
         // Load bank from DB and check for existing bank registrations
         Guid bankId = request.BankId;
@@ -96,12 +101,6 @@ internal class
                 .SingleOrDefaultAsync(x => x.Id == bankId) ??
             throw new ArgumentException(
                 $"No Bank record found for request property {nameof(request.BankId)} = {request.BankId}.");
-        CustomBehaviourClass? customBehaviour = bank.CustomBehaviour;
-        DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
-            bank.DcrApiVersion;
-        string issuerUrl = bank.IssuerUrl;
-        string bankFinancialId = bank.FinancialId;
-        bool supportsSca = bank.SupportsSca;
         string? registrationEndpoint = bank.RegistrationEndpoint;
 
         // Load processed software statement profile
@@ -354,15 +353,17 @@ internal class
                 .Include(o => o.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.ModifiedBy}.");
-        CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
-        DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
-            entity.BankNavigation.DcrApiVersion;
         string externalApiId = entity.ExternalApiObject.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+        DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
+            bankProfile.DynamicClientRegistrationApiVersion;
+
 
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         bool includeExternalApiOperation =
@@ -405,7 +406,9 @@ internal class
                         entity,
                         tokenEndpointAuthMethod,
                         entity.BankNavigation.TokenEndpoint,
+                        supportsSca,
                         null,
+                        customBehaviour?.ClientCredentialsGrantPost,
                         apiClient,
                         _instrumentationClient))
                     .AccessToken;

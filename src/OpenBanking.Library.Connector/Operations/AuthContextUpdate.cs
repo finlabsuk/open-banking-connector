@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -94,42 +95,44 @@ internal class AuthContextUpdate :
 
         // Get consent info
         (ConsentType consentType, Guid consentId, string externalApiConsentId, BaseConsent consent,
-                BankRegistration bankRegistration, ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
-                string? requestScope) =
+                BankRegistration bankRegistration, string? requestScope) =
             authContext switch
             {
-                AccountAccessConsentAuthContext ac => (
+                AccountAccessConsentAuthContext ac1 => (
                     ConsentType.AccountAccessConsent,
-                    ac.AccountAccessConsentId,
-                    ac.AccountAccessConsentNavigation.ExternalApiId,
-                    ac.AccountAccessConsentNavigation,
-                    ac.AccountAccessConsentNavigation.BankRegistrationNavigation,
-                    ac.AccountAccessConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                        ?.AccountAccessConsentAuthGet, "openid accounts"),
-                DomesticPaymentConsentAuthContext ac => (
+                    ac1.AccountAccessConsentId,
+                    ac1.AccountAccessConsentNavigation.ExternalApiId,
+                    ac1.AccountAccessConsentNavigation,
+                    ac1.AccountAccessConsentNavigation.BankRegistrationNavigation,
+                    "openid accounts"),
+                DomesticPaymentConsentAuthContext ac2 => (
                     ConsentType.DomesticPaymentConsent,
-                    ac.DomesticPaymentConsentId,
-                    ac.DomesticPaymentConsentNavigation.ExternalApiId,
-                    (BaseConsent) ac.DomesticPaymentConsentNavigation,
-                    ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
-                    ac.DomesticPaymentConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                        ?.DomesticPaymentConsentAuthGet, "openid payments"),
-                DomesticVrpConsentAuthContext ac => (
+                    ac2.DomesticPaymentConsentId,
+                    ac2.DomesticPaymentConsentNavigation.ExternalApiId,
+                    (BaseConsent) ac2.DomesticPaymentConsentNavigation,
+                    ac2.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
+                    "openid payments"),
+                DomesticVrpConsentAuthContext ac3 => (
                     ConsentType.DomesticVrpConsent,
-                    ac.DomesticVrpConsentId,
-                    ac.DomesticVrpConsentNavigation.ExternalApiId,
-                    (BaseConsent) ac.DomesticVrpConsentNavigation,
-                    ac.DomesticVrpConsentNavigation.BankRegistrationNavigation,
-                    ac.DomesticVrpConsentNavigation.BankRegistrationNavigation.BankNavigation.CustomBehaviour
-                        ?.DomesticVrpConsentAuthGet, "openid payments"),
+                    ac3.DomesticVrpConsentId,
+                    ac3.DomesticVrpConsentNavigation.ExternalApiId,
+                    (BaseConsent) ac3.DomesticVrpConsentNavigation,
+                    ac3.DomesticVrpConsentNavigation.BankRegistrationNavigation,
+                    "openid payments"),
                 _ => throw new ArgumentOutOfRangeException()
             };
-        string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
-        string bankIssuerUrl =
-            requestObjectAudClaim ??
-            bankRegistration.BankNavigation.IssuerUrl;
         string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
+
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         // Only accept redirects within 10 mins of auth context (session) creation
         const int authContextExpiryIntervalInSeconds = 10 * 60;
@@ -143,6 +146,13 @@ internal class AuthContextUpdate :
         }
 
         // Determine nonce
+        ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour = authContext switch
+        {
+            AccountAccessConsentAuthContext ac => customBehaviour?.AccountAccessConsentAuthGet,
+            DomesticPaymentConsentAuthContext ac => customBehaviour?.DomesticPaymentConsentAuthGet,
+            DomesticVrpConsentAuthContext ac => customBehaviour?.DomesticVrpConsentAuthGet,
+            _ => throw new ArgumentOutOfRangeException()
+        };
         bool nonceClaimIsInitialValue = consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
         string nonce;
         if (nonceClaimIsInitialValue && consent.AuthContextNonce is not null)
@@ -155,24 +165,26 @@ internal class AuthContextUpdate :
         }
 
         // Validate ID token including nonce
+        string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
+        string bankTokenIssuerClaim =
+            requestObjectAudClaim ??
+            issuerUrl;
         DateTimeOffset modified = _timeProvider.GetUtcNow();
         bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
             string jwksUri = bankRegistration.BankNavigation.JwksUri;
-            JwksGetCustomBehaviour? jwksGetCustomBehaviour =
-                bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
             string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
                 request.RedirectData,
                 consentAuthGetCustomBehaviour,
                 jwksUri,
-                jwksGetCustomBehaviour,
-                bankIssuerUrl,
+                customBehaviour?.JwksGet,
+                bankTokenIssuerClaim,
                 externalApiClientId,
                 externalApiConsentId,
                 nonce,
-                bankRegistration.BankNavigation.SupportsSca,
-                bankRegistration.BankNavigation.IdTokenSubClaimType,
+                supportsSca,
+                idTokenSubClaimType,
                 consent.ExternalApiUserId);
             if (newExternalApiUserId != consent.ExternalApiUserId)
             {
@@ -199,12 +211,6 @@ internal class AuthContextUpdate :
                 }
             }
 
-            // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
-            TokenEndpointAuthMethod tokenEndpointAuthMethod =
-                bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
-
             // Validate response mode
             if (request.ResponseMode != defaultResponseMode)
             {
@@ -222,7 +228,7 @@ internal class AuthContextUpdate :
                 await _grantPost.PostAuthCodeGrantAsync(
                     request.RedirectData.Code,
                     redirectUrl,
-                    bankIssuerUrl,
+                    bankTokenIssuerClaim,
                     externalApiClientId,
                     externalApiConsentId,
                     consent.ExternalApiUserId,
@@ -232,7 +238,11 @@ internal class AuthContextUpdate :
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
+                    supportsSca,
+                    idTokenSubClaimType,
                     jsonSerializerSettings,
+                    customBehaviour?.AuthCodeGrantPost,
+                    customBehaviour?.JwksGet,
                     processedSoftwareStatementProfile.ApiClient,
                     _instrumentationClient);
 

@@ -130,7 +130,9 @@ internal class GrantPost : IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient)
     {
@@ -162,10 +164,11 @@ internal class GrantPost : IGrantPost
             keyValuePairs,
             bankRegistration,
             tokenEndpointAuthMethod,
+            supportsSca,
             jsonSerializerSettings,
             mtlsApiClient,
             scope,
-            bankRegistration.BankNavigation.CustomBehaviour?.ClientCredentialsGrantPost
+            clientCredentialsGrantPostCustomBehaviour
                 ?.DoNotValidateScopeResponse ?? false);
 
         if (response.IdToken is not null)
@@ -189,7 +192,11 @@ internal class GrantPost : IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient matlsApiClient,
         IInstrumentationClient instrumentationClient)
     {
@@ -218,31 +225,28 @@ internal class GrantPost : IGrantPost
             keyValuePairs,
             bankRegistration,
             tokenEndpointAuthMethod,
+            supportsSca,
             jsonSerializerSettings,
             matlsApiClient,
             requestScope,
             false);
 
-        GrantPostCustomBehaviour? grantPostCustomBehaviour =
-            bankRegistration.BankNavigation.CustomBehaviour?.AuthCodeGrantPost;
-        bool doNotValidateIdToken = grantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
+        bool doNotValidateIdToken = authCodeGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
             string jwksUri = bankRegistration.BankNavigation.JwksUri;
-            JwksGetCustomBehaviour? jwksGetCustomBehaviour =
-                bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
             await ValidateIdTokenTokenEndpoint(
                 response.IdToken,
                 response.AccessToken,
-                grantPostCustomBehaviour,
+                authCodeGrantPostCustomBehaviour,
                 jwksUri,
                 jwksGetCustomBehaviour,
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
                 expectedNonce,
-                bankRegistration.BankNavigation.SupportsSca,
-                bankRegistration.BankNavigation.IdTokenSubClaimType,
+                supportsSca,
+                idTokenSubClaimType,
                 externalApiUserId);
         }
 
@@ -262,7 +266,11 @@ internal class GrantPost : IGrantPost
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
+        GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient,
         IInstrumentationClient instrumentationClient)
     {
@@ -290,34 +298,31 @@ internal class GrantPost : IGrantPost
             keyValuePairs,
             bankRegistration,
             tokenEndpointAuthMethod,
+            supportsSca,
             jsonSerializerSettings,
             mtlsApiClient,
             requestScope,
             false);
 
-        GrantPostCustomBehaviour? customBehaviour =
-            bankRegistration.BankNavigation.CustomBehaviour?.RefreshTokenGrantPost;
-        bool doNotValidateIdToken = customBehaviour?.DoNotValidateIdToken ?? false;
+        bool doNotValidateIdToken = refreshTokenGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         string? responseIdToken = response.IdToken;
         if (doNotValidateIdToken is false &&
             responseIdToken is not null)
         {
             string jwksUri = bankRegistration.BankNavigation.JwksUri;
-            JwksGetCustomBehaviour? jwksGetCustomBehaviour =
-                bankRegistration.BankNavigation.CustomBehaviour?.JwksGet;
 
             await ValidateIdTokenTokenEndpoint(
                 responseIdToken,
                 response.AccessToken,
-                customBehaviour,
+                refreshTokenGrantPostCustomBehaviour,
                 jwksUri,
                 jwksGetCustomBehaviour,
                 bankIssuerUrl,
                 externalApiClientId,
                 externalApiConsentId,
                 expectedNonce,
-                bankRegistration.BankNavigation.SupportsSca,
-                bankRegistration.BankNavigation.IdTokenSubClaimType,
+                supportsSca,
+                idTokenSubClaimType,
                 externalApiUserId);
         }
 
@@ -578,6 +583,7 @@ internal class GrantPost : IGrantPost
         Dictionary<string, string> keyValuePairs,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        bool supportsSca,
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient mtlsApiClient,
         string? requestScope,
@@ -598,7 +604,7 @@ internal class GrantPost : IGrantPost
             mtlsApiClient);
 
         // Check token endpoint response
-        StringComparison stringComparison = bankRegistration.BankNavigation.SupportsSca
+        StringComparison stringComparison = supportsSca
             ? StringComparison.Ordinal
             : StringComparison.OrdinalIgnoreCase;
 

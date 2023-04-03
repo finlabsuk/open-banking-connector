@@ -94,7 +94,8 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
                 _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.BankProfileService));
 
     public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 

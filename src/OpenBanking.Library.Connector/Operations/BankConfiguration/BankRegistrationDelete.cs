@@ -58,12 +58,13 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                 .Include(o => o.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
-        CustomBehaviourClass? customBehaviour = entity.BankNavigation.CustomBehaviour;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        bool supportsSca = bankProfile.SupportsSca;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         bool includeExternalApiOperationValue =
             deleteParams.IncludeExternalApiOperation ??
@@ -110,7 +111,9 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                         entity,
                         tokenEndpointAuthMethod,
                         entity.BankNavigation.TokenEndpoint,
+                        supportsSca,
                         null,
+                        customBehaviour?.ClientCredentialsGrantPost,
                         apiClient,
                         _instrumentationClient))
                     .AccessToken;

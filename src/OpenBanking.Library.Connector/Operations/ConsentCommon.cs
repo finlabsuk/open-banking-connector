@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -38,8 +37,8 @@ internal class
     }
 
     public async
-        Task<(BankRegistrationPersisted bankRegistration, string bankFinancialId, string tokenEndpoint,
-            CustomBehaviourClass? customBehaviour, ProcessedSoftwareStatementProfile
+        Task<(BankRegistrationPersisted bankRegistration, string tokenEndpoint,
+            ProcessedSoftwareStatementProfile
             processedSoftwareStatementProfile)> GetBankRegistration(Guid bankRegistrationId)
     {
         // Load BankRegistration
@@ -50,9 +49,7 @@ internal class
                 .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
             throw new KeyNotFoundException(
                 $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
         string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
-        CustomBehaviourClass? customBehaviour = bankRegistration.BankNavigation.CustomBehaviour;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -60,7 +57,6 @@ internal class
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (bankRegistration, bankFinancialId, tokenEndpoint, customBehaviour,
-            processedSoftwareStatementProfile);
+        return (bankRegistration, tokenEndpoint, processedSoftwareStatementProfile);
     }
 }

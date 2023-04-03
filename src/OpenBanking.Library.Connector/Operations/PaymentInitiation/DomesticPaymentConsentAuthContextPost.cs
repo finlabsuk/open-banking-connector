@@ -2,7 +2,9 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -26,6 +28,7 @@ internal class
         DomesticPaymentConsentAuthContextRequest,
         DomesticPaymentConsentAuthContextCreateResponse>
 {
+    private readonly IBankProfileService _bankProfileService;
     protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
 
     public DomesticPaymentConsentAuthContextPost(
@@ -35,7 +38,8 @@ internal class
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
-        IInstrumentationClient instrumentationClient) : base(
+        IInstrumentationClient instrumentationClient,
+        IBankProfileService bankProfileService) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
@@ -43,6 +47,7 @@ internal class
         instrumentationClient)
     {
         _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
+        _bankProfileService = bankProfileService;
     }
 
     protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
@@ -58,17 +63,21 @@ internal class
                 .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
-        CustomBehaviourClass? customBehaviour =
-            domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.CustomBehaviour;
+        BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
-            domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.AuthorizationEndpoint;
-        string issuerUrl = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.IssuerUrl;
-        bool supportsSca = domesticPaymentConsent.BankRegistrationNavigation.BankNavigation.SupportsSca;
+            bankRegistration.BankNavigation.AuthorizationEndpoint;
 
+        // Get bank profile
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        bool supportsSca = bankProfile.SupportsSca;
+        string issuerUrl = bankProfile.IssuerUrl;
+        CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+
+        // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
-                domesticPaymentConsent.BankRegistrationNavigation.SoftwareStatementProfileId,
-                domesticPaymentConsent.BankRegistrationNavigation
+                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration
                     .SoftwareStatementProfileOverride);
 
         // Create auth URL
@@ -79,8 +88,8 @@ internal class
         (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
             processedSoftwareStatementProfile,
-            domesticPaymentConsent.BankRegistrationNavigation,
-            domesticPaymentConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+            bankRegistration,
+            bankRegistration.ExternalApiObject.ExternalApiId,
             customBehaviour?.DomesticPaymentConsentAuthGet,
             authorizationEndpoint,
             consentAuthGetAudClaim,

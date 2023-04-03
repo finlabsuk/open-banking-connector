@@ -101,7 +101,8 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.BankProfileService));
 
     public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }

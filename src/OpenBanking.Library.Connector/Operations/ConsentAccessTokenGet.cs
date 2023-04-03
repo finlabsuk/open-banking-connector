@@ -5,6 +5,8 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -46,6 +48,10 @@ internal class ConsentAccessTokenGet
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
+        bool supportsSca,
+        IdTokenSubClaimType idTokenSubClaimType,
+        GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string? modifiedBy)
         where TConsentEntity : BaseConsent
     {
@@ -100,7 +106,11 @@ internal class ConsentAccessTokenGet
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 tokenEndpoint,
+                supportsSca,
+                idTokenSubClaimType,
                 jsonSerializerSettings,
+                refreshTokenGrantPostCustomBehaviour,
+                jwksGetCustomBehaviour,
                 processedSoftwareStatementProfile.ApiClient,
                 _instrumentationClient);
 

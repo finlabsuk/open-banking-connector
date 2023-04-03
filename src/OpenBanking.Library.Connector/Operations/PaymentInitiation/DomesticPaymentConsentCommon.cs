@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -30,9 +31,9 @@ internal class DomesticPaymentConsentCommon
     }
 
     public async
-        Task<(DomesticPaymentConsentPersisted persistedConsent, string externalApiConsentId, BankRegistration
-            bankRegistration, string bankFinancialId, ProcessedSoftwareStatementProfile
-            processedSoftwareStatementProfile)> GetDomesticPaymentConsent(Guid consentId)
+        Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
+            Guid consentId)
     {
         // Load DomesticPaymentConsent and related
         DomesticPaymentConsentPersisted persistedConsent =
@@ -42,9 +43,7 @@ internal class DomesticPaymentConsentCommon
                 .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
-        string externalApiConsentId = persistedConsent.ExternalApiId;
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
-        string bankFinancialId = bankRegistration.BankNavigation.FinancialId;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -52,7 +51,11 @@ internal class DomesticPaymentConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, externalApiConsentId, bankRegistration, bankFinancialId,
-            processedSoftwareStatementProfile);
+        return (persistedConsent, bankRegistration, processedSoftwareStatementProfile);
     }
+
+    public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>
+        customBehaviour
+            ?.DomesticPaymentConsentAuthGet
+            ?.AudClaim ?? issuerUrl;
 }
