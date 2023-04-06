@@ -11,7 +11,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -42,6 +41,7 @@ public class AccountAccessConsentSubtest
         FilePathBuilder aispFluentRequestLogging,
         ConsentAuth? consentAuth,
         List<BankUser> bankUserList,
+        AppTests.AccountAccessConsentOptions accountAccessConsentOptions,
         IApiClient apiClient)
     {
         // For now, we just use first bank user in list. Maybe later we can use different users for
@@ -50,7 +50,6 @@ public class AccountAccessConsentSubtest
 
         IRequestBuilder requestBuilder = requestBuilderIn;
 
-        // Create AccountAccessConsent
         (AccountAccessConsentRequest accountAccessConsentRequest,
             IList<OBReadConsent1DataPermissionsEnum> requestedPermissions) = await GetAccountAccessConsentRequest(
             subtestEnum,
@@ -59,66 +58,48 @@ public class AccountAccessConsentSubtest
             testNameUnique,
             modifiedBy,
             aispFluentRequestLogging);
-        AccountAccessConsentCreateResponse accountAccessConsentCreateResp =
-            await requestBuilder
-                .AccountAndTransaction
-                .AccountAccessConsents
-                .CreateAsync(accountAccessConsentRequest);
 
-        // Checks
-        accountAccessConsentCreateResp.Should().NotBeNull();
-        accountAccessConsentCreateResp.Warnings.Should().BeNull();
-        accountAccessConsentCreateResp.ExternalApiResponse.Should().NotBeNull();
-
-        // Delete AccountAccessConsent
-        ObjectDeleteResponse accountAccessConsentDeleteResp = await requestBuilder
-            .AccountAndTransaction
-            .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentCreateResp.Id, modifiedBy);
-
-        // Checks
-        accountAccessConsentDeleteResp.Should().NotBeNull();
-        accountAccessConsentDeleteResp.Warnings.Should().BeNull();
-
-        // Use existing AccountAccessConsent for further testing (to avoid creating orphan object at bank if test terminates)
-        if (testData2.AccountAccessConsentExternalApiId is not null)
+        // Handle "only delete" case
+        if (accountAccessConsentOptions is AppTests.AccountAccessConsentOptions.OnlyDeleteConsent)
         {
+            // Create AccountAccessConsent using existing external API consent
             accountAccessConsentRequest.ExternalApiObject =
-                new ExternalApiConsent
-                {
-                    ExternalApiId = testData2.AccountAccessConsentExternalApiId,
-                    AccessToken = testData2.AccountAccessConsentRefreshToken is null
-                        ? null
-                        : new AccessToken
-                        {
-                            Token = "",
-                            ExpiresIn = 0, // to trigger use of refresh token
-                            RefreshToken = testData2.AccountAccessConsentRefreshToken,
-                            ModifiedBy = modifiedBy
-                        },
-                    AuthContext = testData2.AccountAccessConsentAuthContextNonce is null
-                        ? null
-                        : new AuthContextRequest
-                        {
-                            State = "",
-                            Nonce = testData2.AccountAccessConsentAuthContextNonce,
-                            ModifiedBy = modifiedBy
-                        }
-                };
+                GetExternalApiConsent(testData2, modifiedBy);
+            Guid accountAccessConsentId =
+                await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
+
+            // Delete AccountAccessConsent (includes external API delete)
+            await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId, true);
+
+            return;
+        }
+
+        // Handle "only create" case
+        if (accountAccessConsentOptions is AppTests.AccountAccessConsentOptions.OnlyCreateConsent)
+        {
+            // Create fresh AccountAccessConsent
+            Guid _ =
+                await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
+
+            return;
+        }
+
+        // Handle "normal" case
+        {
+            // Create fresh AccountAccessConsent
+            Guid accountAccessConsentId2 =
+                await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
+
+            // Delete AccountAccessConsent (includes external API delete)
+            await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId2, true);
+
+            // Use existing AccountAccessConsent for further testing (to avoid creating orphan object at bank if test terminates)
 
             // Create AccountAccessConsent using existing external API consent
-            AccountAccessConsentCreateResponse accountAccessConsentCreateResp2 =
-                await requestBuilder
-                    .AccountAndTransaction
-                    .AccountAccessConsents
-                    .CreateAsync(accountAccessConsentRequest);
-
-            // Checks
-            accountAccessConsentCreateResp2.Should().NotBeNull();
-            accountAccessConsentCreateResp2.Warnings.Should().BeNull();
-            accountAccessConsentCreateResp2.ExternalApiResponse.Should().BeNull();
-
-            Guid accountAccessConsentId = accountAccessConsentCreateResp2.Id;
+            accountAccessConsentRequest.ExternalApiObject =
+                GetExternalApiConsent(testData2, modifiedBy);
+            Guid accountAccessConsentId =
+                await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
 
             // GET /account access consents/{consentId}
             AccountAccessConsentCreateResponse accountAccessConsentGetResp =
@@ -131,11 +112,6 @@ public class AccountAccessConsentSubtest
             accountAccessConsentGetResp.Should().NotBeNull();
             accountAccessConsentGetResp.Warnings.Should().BeNull();
             accountAccessConsentGetResp.ExternalApiResponse.Should().NotBeNull();
-
-            // ObjectDeleteResponse accountAccessConsentDeleteResp2 = await requestBuilder
-            //     .AccountAndTransaction
-            //     .AccountAccessConsents
-            //     .DeleteAsync(accountAccessConsentId, modifiedBy, true);
 
             // POST auth context
             var authContextRequest = new AccountAccessConsentAuthContext
@@ -394,32 +370,79 @@ public class AccountAccessConsentSubtest
                     }
                 }
             }
+
+            // Delete AccountAccessConsent (excludes external API delete)
+            await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId, false);
         }
     }
 
-    private static async Task<AccountAndTransactionApiRequest> GetAccountAndTransactionApiRequest(
-        BankProfile bankProfile,
-        Guid bankId,
-        string testNameUnique,
+    private static async Task DeleteAccountAccessConsent(
         string modifiedBy,
-        FilePathBuilder configFluentRequestLogging)
+        IRequestBuilder requestBuilder,
+        Guid accountAccessConsentId,
+        bool includeExternalApiOperation)
     {
-        var accountAndTransactionApiRequest = new AccountAndTransactionApiRequest
-        {
-            BankProfile = bankProfile.BankProfileEnum,
-            BankId = Guid.Empty,
-            ApiVersion = bankProfile.GetRequiredAccountAndTransactionApi().ApiVersion,
-            BaseUrl = bankProfile.GetRequiredAccountAndTransactionApi().BaseUrl
-        };
-        await configFluentRequestLogging
-            .AppendToPath("accountAndTransactionApi")
-            .AppendToPath("postRequest")
-            .WriteFile(accountAndTransactionApiRequest);
-        accountAndTransactionApiRequest.BankId = bankId;
-        accountAndTransactionApiRequest.Reference = testNameUnique;
-        accountAndTransactionApiRequest.CreatedBy = modifiedBy;
-        return accountAndTransactionApiRequest;
+        // Delete AccountAccessConsent
+        ObjectDeleteResponse accountAccessConsentDeleteResp2 = await requestBuilder
+            .AccountAndTransaction
+            .AccountAccessConsents
+            .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation);
+
+        // Checks
+        accountAccessConsentDeleteResp2.Should().NotBeNull();
+        accountAccessConsentDeleteResp2.Warnings.Should().BeNull();
     }
+
+    private static async Task<Guid> CreateAccountAccessConsent(
+        AccountAccessConsentRequest accountAccessConsentRequest,
+        IRequestBuilder requestBuilder)
+    {
+        AccountAccessConsentCreateResponse accountAccessConsentCreateResp2 =
+            await requestBuilder
+                .AccountAndTransaction
+                .AccountAccessConsents
+                .CreateAsync(accountAccessConsentRequest);
+
+        // Checks
+        accountAccessConsentCreateResp2.Should().NotBeNull();
+        accountAccessConsentCreateResp2.Warnings.Should().BeNull();
+        if (accountAccessConsentRequest.ExternalApiObject is not null)
+        {
+            accountAccessConsentCreateResp2.ExternalApiResponse.Should().BeNull();
+        }
+        else
+        {
+            accountAccessConsentCreateResp2.ExternalApiResponse.Should().NotBeNull();
+        }
+
+        Guid accountAccessConsentId = accountAccessConsentCreateResp2.Id;
+        return accountAccessConsentId;
+    }
+
+    private static ExternalApiConsent GetExternalApiConsent(BankTestData2 testData2, string modifiedBy) =>
+        new()
+        {
+            ExternalApiId =
+                testData2.AccountAccessConsentExternalApiId ??
+                throw new InvalidOperationException("No external API AccountAccessConsent ID provided."),
+            AccessToken = testData2.AccountAccessConsentRefreshToken is null
+                ? null
+                : new AccessToken
+                {
+                    Token = "",
+                    ExpiresIn = 0, // to trigger use of refresh token
+                    RefreshToken = testData2.AccountAccessConsentRefreshToken,
+                    ModifiedBy = modifiedBy
+                },
+            AuthContext = testData2.AccountAccessConsentAuthContextNonce is null
+                ? null
+                : new AuthContextRequest
+                {
+                    State = "",
+                    Nonce = testData2.AccountAccessConsentAuthContextNonce,
+                    ModifiedBy = modifiedBy
+                }
+        };
 
     private static async
         Task<(AccountAccessConsentRequest accountAccessConsentRequest, IList<OBReadConsent1DataPermissionsEnum>

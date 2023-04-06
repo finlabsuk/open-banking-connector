@@ -94,24 +94,24 @@ public static class BankConfigurationSubtests
         string modifiedBy,
         Guid bankRegistrationId,
         BankProfile bankProfile,
-        AppTests.TestType testType)
+        AppTests.BankRegistrationOptions bankRegistrationOptions)
     {
         // Delete bankRegistration
         var includeExternalApiOperation = false;
         if (bankProfile.BankConfigurationApiSettings.UseRegistrationDeleteEndpoint)
         {
-            includeExternalApiOperation = testType switch
+            includeExternalApiOperation = bankRegistrationOptions switch
             {
                 // Never delete at API when creating reg
-                AppTests.TestType.CreateRegistration => false,
+                AppTests.BankRegistrationOptions.OnlyCreateRegistration => false,
 
                 // Always delete at API when deleting reg
-                AppTests.TestType.DeleteRegistration => true,
+                AppTests.BankRegistrationOptions.OnlyDeleteRegistration => true,
 
                 // Normally delete based on whether external API reg supplied or created
-                AppTests.TestType.AllEndpoints => testData2.BankRegistrationExternalApiId is null,
+                AppTests.BankRegistrationOptions.TestRegistration => testData2.BankRegistrationExternalApiId is null,
 
-                _ => throw new ArgumentOutOfRangeException(nameof(testType), testType, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(bankRegistrationOptions), bankRegistrationOptions, null)
             };
         }
 

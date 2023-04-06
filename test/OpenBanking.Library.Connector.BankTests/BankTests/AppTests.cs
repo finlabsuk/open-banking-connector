@@ -28,24 +28,31 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 public abstract class AppTests
 {
-    public enum TestType
+    public enum AccountAccessConsentOptions
+    {
+        OnlyCreateConsent,
+        TestConsent,
+        OnlyDeleteConsent
+    }
+
+    public enum BankRegistrationOptions
     {
         /// <summary>
         ///     Test creation of bank registration.
         /// </summary>
-        CreateRegistration,
+        OnlyCreateRegistration,
 
         /// <summary>
         ///     Test creation then deletion of bank registration.
         ///     If possible, force external bank registration deletion even if
         ///     ExternalApi registration supplied via BankRegistrationExternalApiIds rather than created.
         /// </summary>
-        DeleteRegistration,
+        OnlyDeleteRegistration,
 
         /// <summary>
         ///     Test all possible endpoints (maximal test).
         /// </summary>
-        AllEndpoints
+        TestRegistration
     }
 
     private readonly AppContextFixture _appContextFixture;
@@ -176,7 +183,7 @@ public abstract class AppTests
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Set test type
-        var testType = TestType.AllEndpoints;
+        var testType = BankRegistrationOptions.TestRegistration;
 
         // Get bank test settings
         BankTestSettings bankTestSettings =
@@ -223,7 +230,7 @@ public abstract class AppTests
 
         // Create consent auth if in use
         ConsentAuth? consentAuth;
-        bool useConsentAuth = genericNotPlainAppTest && testType is TestType.AllEndpoints;
+        bool useConsentAuth = genericNotPlainAppTest && testType is BankRegistrationOptions.TestRegistration;
         if (useConsentAuth)
         {
             PlaywrightLaunchOptions launchOptions =
@@ -267,7 +274,7 @@ public abstract class AppTests
                 testDataProcessorFluentRequestLogging
                     .AppendToPath("config"));
 
-        if (testType is TestType.AllEndpoints)
+        if (testType is BankRegistrationOptions.TestRegistration)
         {
             // Run account access consent subtests
             if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
@@ -292,6 +299,7 @@ public abstract class AppTests
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
                         bankUserList,
+                        AccountAccessConsentOptions.TestConsent,
                         apiClient);
                 }
             }
