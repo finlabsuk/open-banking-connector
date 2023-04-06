@@ -41,7 +41,7 @@ public class SoftwareStatementPayload
     public string SoftwareClientDescription { get; set; } = null!;
 
     [JsonProperty("software_version")]
-    public float SoftwareVersion { get; set; }
+    public string SoftwareVersion { get; set; } = null!;
 
     [JsonProperty("software_client_uri")]
     public string SoftwareClientUri { get; set; } = null!;
