@@ -93,16 +93,6 @@ internal class
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bankProfile.DynamicClientRegistrationApiVersion;
 
-        // Load bank from DB and check for existing bank registrations
-        Guid bankId = request.BankId;
-        Bank bank =
-            await _bankMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == bankId) ??
-            throw new ArgumentException(
-                $"No Bank record found for request property {nameof(request.BankId)} = {request.BankId}.");
-        string? registrationEndpoint = bank.RegistrationEndpoint;
-
         // Load processed software statement profile
         string softwareStatementProfileId = request.SoftwareStatementProfileId;
         string? softwareStatementProfileOverrideCase = request.SoftwareStatementProfileOverrideCase;
@@ -137,6 +127,45 @@ internal class
                 customBehaviour?.OpenIdConfigurationGet);
         nonErrorMessages.AddRange(newNonErrorMessages1);
 
+        // Determine registration endpoint
+        string? registrationEndpoint =
+            request.RegistrationEndpoint ??
+            openIdConfiguration?.RegistrationEndpoint;
+        bool allowNullRegistrationEndpoint =
+            bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint;
+        if (registrationEndpoint is null &&
+            !allowNullRegistrationEndpoint)
+        {
+            throw new ArgumentNullException(
+                nameof(request.RegistrationEndpoint),
+                $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
+                $"Additionally AllowNullRegistrationEndpoint from BankProfile is false.");
+        }
+
+        // Determine token endpoint
+        string tokenEndpoint =
+            request.TokenEndpoint ??
+            openIdConfiguration?.TokenEndpoint ??
+            throw new ArgumentNullException(
+                nameof(request.TokenEndpoint),
+                $"{nameof(request.TokenEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+
+        // Determine auth endpoint
+        string authorizationEndpoint =
+            request.AuthorizationEndpoint ??
+            openIdConfiguration?.AuthorizationEndpoint ??
+            throw new ArgumentNullException(
+                nameof(request.AuthorizationEndpoint),
+                $"{nameof(request.AuthorizationEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+
+        // Determine JWKS URI
+        string jwksUri =
+            request.JwksUri ??
+            openIdConfiguration?.JwksUri ??
+            throw new ArgumentNullException(
+                nameof(request.JwksUri),
+                $"{nameof(request.JwksUri)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+
         // Determine TokenEndpointAuthMethod
         TokenEndpointAuthMethod tokenEndpointAuthMethod = GetTokenEndpointAuthMethod(
             bankProfile,
@@ -161,7 +190,6 @@ internal class
                     .Where(
                         x => x.BankRegistrationGroup == bankRegistrationGroup &&
                              x.SoftwareStatementProfileId == softwareStatementProfileId)
-                    .Include(o => o.BankNavigation)
                     .OrderBy(x => x.Created)
                     .FirstOrDefaultAsync();
         }
@@ -173,7 +201,6 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         if (existingGroupRegistration is not null)
         {
-            Bank existingRegistrationBank = existingGroupRegistration.BankNavigation;
             BankProfile existingRegistrationBankProfile =
                 _bankProfileService.GetBankProfile(existingGroupRegistration.BankProfile);
 
@@ -247,16 +274,18 @@ internal class
         {
             if (request.ExternalApiObject is null)
             {
-                BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
-                    customBehaviour?.BankRegistrationPost;
+                // Perform DCR
                 if (registrationEndpoint is null)
                 {
                     throw new InvalidOperationException(
-                        $"Bank with ID {bank.Id} does not have a registration endpoint configured. " +
+                        $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
+                        "Thus DCR cannot be used. " +
                         "Please create a registration e.g. using the bank's portal and then try again using " +
                         "ExternalApiObject to specify the registration.");
                 }
 
+                BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
+                    customBehaviour?.BankRegistrationPost;
                 externalApiResponse = await PerformDynamicClientRegistration(
                     bankRegistrationPostCustomBehaviour,
                     dynamicClientRegistrationApiVersion,
@@ -295,16 +324,20 @@ internal class
             externalApiId,
             externalApiSecret,
             registrationAccessToken,
+            tokenEndpointAuthMethod,
+            defaultResponseMode,
             request.BankProfile,
+            jwksUri,
+            registrationEndpoint,
+            tokenEndpoint,
+            authorizationEndpoint,
             bankRegistrationGroup,
             defaultRedirectUri,
             otherRedirectUris,
             softwareStatementProfileId,
             softwareStatementProfileOverrideCase,
-            tokenEndpointAuthMethod,
             registrationScope,
-            defaultResponseMode,
-            bankId);
+            null);
 
         // Save entity
         await _entityMethods.AddAsync(entity);
@@ -327,10 +360,14 @@ internal class
             new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
+            entity.BankProfile,
+            entity.JwksUri,
+            entity.RegistrationEndpoint,
+            entity.TokenEndpoint,
+            entity.AuthorizationEndpoint,
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
-            entity.BankId,
             entity.DefaultRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);
@@ -350,7 +387,6 @@ internal class
         BankRegistrationPersisted entity =
             await _entityMethods
                 .DbSetNoTracking
-                .Include(o => o.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.ModifiedBy}.");
         string externalApiId = entity.ExternalApiObject.ExternalApiId;
@@ -364,7 +400,6 @@ internal class
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bankProfile.DynamicClientRegistrationApiVersion;
 
-
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation ??
@@ -372,9 +407,9 @@ internal class
         if (includeExternalApiOperation)
         {
             string registrationEndpoint =
-                entity.BankNavigation.RegistrationEndpoint ??
+                entity.RegistrationEndpoint ??
                 throw new InvalidOperationException(
-                    $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
+                    $"BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
                 readParams.UseRegistrationAccessToken ??
@@ -405,7 +440,7 @@ internal class
                         processedSoftwareStatementProfile,
                         entity,
                         tokenEndpointAuthMethod,
-                        entity.BankNavigation.TokenEndpoint,
+                        entity.TokenEndpoint,
                         supportsSca,
                         null,
                         customBehaviour?.ClientCredentialsGrantPost,
@@ -452,10 +487,14 @@ internal class
             new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
+            entity.BankProfile,
+            entity.JwksUri,
+            entity.RegistrationEndpoint,
+            entity.TokenEndpoint,
+            entity.AuthorizationEndpoint,
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
-            entity.BankId,
             entity.DefaultRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);

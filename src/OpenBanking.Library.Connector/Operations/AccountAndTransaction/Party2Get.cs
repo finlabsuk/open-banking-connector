@@ -77,7 +77,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
                 "openid accounts",
                 bankRegistration,
                 tokenEndpointAuthMethod,
-                persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,

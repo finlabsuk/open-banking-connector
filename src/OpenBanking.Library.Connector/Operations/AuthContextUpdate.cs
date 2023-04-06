@@ -82,13 +82,13 @@ internal class AuthContextUpdate :
                 .DbSet
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o).AccountAccessConsentNavigation
-                        .BankRegistrationNavigation.BankNavigation)
+                        .BankRegistrationNavigation)
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o).DomesticPaymentConsentNavigation
-                        .BankRegistrationNavigation.BankNavigation)
+                        .BankRegistrationNavigation)
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o).DomesticVrpConsentNavigation
-                        .BankRegistrationNavigation.BankNavigation)
+                        .BankRegistrationNavigation)
                 .SingleOrDefault(x => x.State == state) ??
             throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
         string currentAuthContextNonce = authContext.Nonce;
@@ -121,7 +121,7 @@ internal class AuthContextUpdate :
                     "openid payments"),
                 _ => throw new ArgumentOutOfRangeException()
             };
-        string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
+        string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
         // Get bank profile
@@ -173,7 +173,7 @@ internal class AuthContextUpdate :
         bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
-            string jwksUri = bankRegistration.BankNavigation.JwksUri;
+            string jwksUri = bankRegistration.JwksUri;
             string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
                 request.RedirectData,
                 consentAuthGetCustomBehaviour,

@@ -41,7 +41,7 @@ internal class AccountAccessConsentCommon
         AccountAccessConsentPersisted persistedConsent =
             await db
                 .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .Include(o => o.BankRegistrationNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
         BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;

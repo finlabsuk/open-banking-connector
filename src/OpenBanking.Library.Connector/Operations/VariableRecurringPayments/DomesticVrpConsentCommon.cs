@@ -40,7 +40,7 @@ internal class DomesticVrpConsentCommon
             await _entityMethods
                 .DbSetNoTracking
                 .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
+                .Include(o => o.BankRegistrationNavigation)
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;

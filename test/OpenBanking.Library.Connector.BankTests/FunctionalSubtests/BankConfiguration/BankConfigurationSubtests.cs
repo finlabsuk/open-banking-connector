@@ -15,8 +15,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubt
 public static class BankConfigurationSubtests
 {
     public static async
-        Task<(Guid bankId, Guid bankRegistrationId)>
-        PostAndGetObjects(
+        Task<Guid> PostAndGetObjects(
             BankTestData1 testData1,
             BankTestData2 testData2,
             IRequestBuilder requestBuilder,
@@ -25,53 +24,10 @@ public static class BankConfigurationSubtests
             string modifiedBy,
             FilePathBuilder testDataProcessorFluentRequestLogging)
     {
-        // Create bank
-        var bankRequest = new Bank
-        {
-            BankProfile = bankProfile.BankProfileEnum,
-            IssuerUrl = bankProfile.IssuerUrl,
-            FinancialId = bankProfile.FinancialId,
-            DynamicClientRegistrationApiVersion = bankProfile.DynamicClientRegistrationApiVersion,
-            CustomBehaviour = bankProfile.CustomBehaviour,
-            SupportsSca = bankProfile.SupportsSca,
-            AllowNullRegistrationEndpoint = bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint
-        };
-        await testDataProcessorFluentRequestLogging
-            .AppendToPath("bank")
-            .AppendToPath("postRequest")
-            .WriteFile(bankRequest);
-        bankRequest.Reference = testNameUnique;
-        bankRequest.CreatedBy = modifiedBy;
-        BankResponse bankCreateResponse = await requestBuilder
-            .BankConfiguration
-            .Banks
-            .CreateLocalAsync(bankRequest);
-
-        // Checks and assignments
-        bankCreateResponse.Should().NotBeNull();
-        bankCreateResponse.Warnings.Should().BeNull();
-        Guid bankId = bankCreateResponse.Id;
-
-        // Read bank
-        BankResponse bankReadResponse = await requestBuilder
-            .BankConfiguration
-            .Banks
-            .ReadLocalAsync(bankId);
-
-        // Checks
-        bankReadResponse.Should().NotBeNull();
-        if (bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint)
-        {
-            bankReadResponse.RegistrationEndpoint.Should().BeNull();
-        }
-
-        bankReadResponse.Warnings.Should().BeNull();
-
         // Create bankRegistration or use existing
         var registrationRequest = new BankRegistration
         {
             BankProfile = bankProfile.BankProfileEnum,
-            BankId = default, // substitute logging placeholder
             SoftwareStatementProfileId = testData1.SoftwareStatementProfileId,
             SoftwareStatementProfileOverrideCase =
                 testData1.SoftwareStatementAndCertificateProfileOverride,
@@ -92,7 +48,6 @@ public static class BankConfigurationSubtests
                 };
         }
 
-        registrationRequest.BankId = bankId; // remove logging placeholder
         registrationRequest.Reference = testNameUnique;
         registrationRequest.CreatedBy = modifiedBy;
         BankRegistrationResponse registrationResp = await requestBuilder
@@ -130,7 +85,7 @@ public static class BankConfigurationSubtests
         //         modifiedBy,
         //         bankProfile.BankProfileEnum);
 
-        return (bankId, bankRegistrationId);
+        return bankRegistrationId;
     }
 
     public static async Task DeleteObjects(
@@ -138,7 +93,6 @@ public static class BankConfigurationSubtests
         IRequestBuilder requestBuilder,
         string modifiedBy,
         Guid bankRegistrationId,
-        Guid bankId,
         BankProfile bankProfile,
         AppTests.TestType testType)
     {
@@ -173,15 +127,5 @@ public static class BankConfigurationSubtests
         // Checks
         bankRegistrationDeleteResponse.Should().NotBeNull();
         bankRegistrationDeleteResponse.Warnings.Should().BeNull();
-
-        // Delete bank
-        ObjectDeleteResponse bankDeleteResponse = await requestBuilder
-            .BankConfiguration
-            .Banks
-            .DeleteLocalAsync(bankId, modifiedBy);
-
-        // Checks
-        bankDeleteResponse.Should().NotBeNull();
-        bankDeleteResponse.Warnings.Should().BeNull();
     }
 }

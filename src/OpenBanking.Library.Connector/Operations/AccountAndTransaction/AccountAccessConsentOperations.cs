@@ -289,7 +289,7 @@ internal class
                     processedSoftwareStatementProfile,
                     bankRegistration,
                     tokenEndpointAuthMethod,
-                    bankRegistration.BankNavigation.TokenEndpoint,
+                    bankRegistration.TokenEndpoint,
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,

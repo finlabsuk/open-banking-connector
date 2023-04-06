@@ -256,7 +256,7 @@ public abstract class AppTests
         var modifiedBy = "Automated bank tests";
 
         // CREATE and READ bank configuration objects
-        (Guid bankId, Guid bankRegistrationId) =
+        Guid bankRegistrationId =
             await BankConfigurationSubtests.PostAndGetObjects(
                 testData1,
                 testData2,
@@ -279,7 +279,6 @@ public abstract class AppTests
                         subTest,
                         bankProfile,
                         testData2,
-                        bankId,
                         bankRegistrationId,
                         bankProfile.AccountAndTransactionApiSettings,
                         requestBuilder,
@@ -306,7 +305,6 @@ public abstract class AppTests
                     await DomesticPaymentSubtest.RunTest(
                         subTest,
                         bankProfile,
-                        bankId,
                         bankRegistrationId,
                         bankProfile.PaymentInitiationApiSettings,
                         requestBuilder,
@@ -330,7 +328,6 @@ public abstract class AppTests
                     await DomesticVrpSubtest.RunTest(
                         subTest,
                         bankProfile,
-                        bankId,
                         bankRegistrationId,
                         bankProfile.VariableRecurringPaymentsApiSettings,
                         requestBuilder,
@@ -355,7 +352,6 @@ public abstract class AppTests
             requestBuilder,
             modifiedBy,
             bankRegistrationId,
-            bankId,
             bankProfile,
             testType);
     }

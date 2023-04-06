@@ -81,7 +81,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 "openid accounts",
                 bankRegistration,
                 tokenEndpointAuthMethod,
-                persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,

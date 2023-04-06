@@ -28,7 +28,6 @@ public class DomesticPaymentSubtest
     public static async Task RunTest(
         DomesticPaymentSubtestEnum subtestEnum,
         BankProfile bankProfile,
-        Guid bankId,
         Guid bankRegistrationId,
         PaymentInitiationApiSettings paymentInitiationApiSettings,
         IRequestBuilder requestBuilderIn,

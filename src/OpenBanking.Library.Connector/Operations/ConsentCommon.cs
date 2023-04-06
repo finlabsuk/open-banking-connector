@@ -45,11 +45,10 @@ internal class
         BankRegistrationPersisted bankRegistration =
             await _bankRegistrationMethods
                 .DbSetNoTracking
-                .Include(o => o.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
             throw new KeyNotFoundException(
                 $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
-        string tokenEndpoint = bankRegistration.BankNavigation.TokenEndpoint;
+        string tokenEndpoint = bankRegistration.TokenEndpoint;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =

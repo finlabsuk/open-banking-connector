@@ -60,13 +60,12 @@ internal class
             _accountAccessConsentMethods
                 .DbSetNoTracking
                 .Include(o => o.BankRegistrationNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefault(x => x.Id == request.AccountAccessConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Account Access Consent with ID {request.AccountAccessConsentId}.");
 
         BankRegistration bankRegistration = accountAccessConsent.BankRegistrationNavigation;
-        string authorizationEndpoint = bankRegistration.BankNavigation.AuthorizationEndpoint;
+        string authorizationEndpoint = bankRegistration.AuthorizationEndpoint;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

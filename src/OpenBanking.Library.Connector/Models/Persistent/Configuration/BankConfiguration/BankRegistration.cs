@@ -70,6 +70,14 @@ internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRe
         builder.Property(e => e.BankRegistrationGroup)
             .HasConversion(new EnumToStringConverter<BankRegistrationGroup>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.JwksUri)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.RegistrationEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.TokenEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.AuthorizationEndpoint)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
 
         if (_dbProvider is DbProvider.PostgreSql)
         {

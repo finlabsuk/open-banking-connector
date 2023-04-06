@@ -27,7 +27,6 @@ public class DomesticVrpSubtest
     public static async Task RunTest(
         DomesticVrpSubtestEnum subtestEnum,
         BankProfile bankProfile,
-        Guid bankId,
         Guid bankRegistrationId,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings,
         IRequestBuilder requestBuilderIn,

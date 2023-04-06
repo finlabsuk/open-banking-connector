@@ -59,13 +59,12 @@ internal class
             _domesticPaymentConsentMethods
                 .DbSetNoTracking
                 .Include(o => o.BankRegistrationNavigation)
-                .Include(o => o.BankRegistrationNavigation.BankNavigation)
                 .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
         BankRegistration bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
-            bankRegistration.BankNavigation.AuthorizationEndpoint;
+            bankRegistration.AuthorizationEndpoint;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

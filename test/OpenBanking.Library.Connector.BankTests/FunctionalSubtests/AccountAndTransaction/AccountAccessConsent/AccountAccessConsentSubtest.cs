@@ -32,7 +32,6 @@ public class AccountAccessConsentSubtest
         AccountAccessConsentSubtestEnum subtestEnum,
         BankProfile bankProfile,
         BankTestData2 testData2,
-        Guid bankId,
         Guid bankRegistrationId,
         AccountAndTransactionApiSettings accountAndTransactionApiSettings,
         IRequestBuilder requestBuilderIn,

@@ -55,7 +55,6 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
         BankRegistration entity =
             await _entityMethods
                 .DbSet
-                .Include(o => o.BankNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
 
@@ -72,9 +71,9 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
         if (includeExternalApiOperationValue)
         {
             string registrationEndpoint =
-                entity.BankNavigation.RegistrationEndpoint ??
+                entity.RegistrationEndpoint ??
                 throw new InvalidOperationException(
-                    $"Bank with ID {entity.BankId} does not have a registration endpoint configured.");
+                    $"BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
                 deleteParams.UseRegistrationAccessToken ??
@@ -110,7 +109,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                         processedSoftwareStatementProfile,
                         entity,
                         tokenEndpointAuthMethod,
-                        entity.BankNavigation.TokenEndpoint,
+                        entity.TokenEndpoint,
                         supportsSca,
                         null,
                         customBehaviour?.ClientCredentialsGrantPost,

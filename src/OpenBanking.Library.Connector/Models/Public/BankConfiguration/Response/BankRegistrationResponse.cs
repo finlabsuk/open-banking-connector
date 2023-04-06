@@ -37,17 +37,35 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
 
     string? SoftwareStatementProfileOverride { get; }
 
-
     /// <summary>
     ///     Functional APIs used for bank registration.
     /// </summary>
     RegistrationScopeEnum RegistrationScope { get; }
 
+    /// <summary>
+    ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
+    /// </summary>
+    public BankProfileEnum BankProfile { get; }
 
     /// <summary>
-    ///     Bank with which this BankRegistration is associated.
+    ///     JWK Set URI (normally supplied from OpenID Configuration)
     /// </summary>
-    Guid BankId { get; }
+    public string JwksUri { get; }
+
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
+
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
+
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
 
     /// <summary>
     ///     Default redirect URI to use for this registration. This redirect URI must
@@ -84,10 +102,14 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         ExternalApiObjectResponse externalApiObject,
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
         IList<string>? warnings,
+        BankProfileEnum bankProfile,
+        string jwksUri,
+        string? registrationEndpoint,
+        string tokenEndpoint,
+        string authorizationEndpoint,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope,
-        Guid bankId,
         string defaultRedirectUri,
         IList<string> otherRedirectUris,
         BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
@@ -95,10 +117,14 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         ExternalApiObject = externalApiObject;
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
+        BankProfile = bankProfile;
+        JwksUri = jwksUri;
+        RegistrationEndpoint = registrationEndpoint;
+        TokenEndpoint = tokenEndpoint;
+        AuthorizationEndpoint = authorizationEndpoint;
         SoftwareStatementProfileId = softwareStatementProfileId;
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
-        BankId = bankId;
         DefaultRedirectUri = defaultRedirectUri;
         OtherRedirectUris = otherRedirectUris;
         BankRegistrationGroup = bankRegistrationGroup;
@@ -114,6 +140,31 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     public IList<string>? Warnings { get; }
 
     /// <summary>
+    ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
+    /// </summary>
+    public BankProfileEnum BankProfile { get; }
+
+    /// <summary>
+    ///     JWK Set URI (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string JwksUri { get; }
+
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
+
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
+
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
+
+    /// <summary>
     ///     ID of SoftwareStatementProfile to use in association with BankRegistration
     /// </summary>
     public string SoftwareStatementProfileId { get; }
@@ -124,11 +175,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
-
-    /// <summary>
-    ///     Bank with which this BankRegistration is associated.
-    /// </summary>
-    public Guid BankId { get; }
 
     /// <summary>
     ///     Default redirect URI to use for this registration. This redirect URI must

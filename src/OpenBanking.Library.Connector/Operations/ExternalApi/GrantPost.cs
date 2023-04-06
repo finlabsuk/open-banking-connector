@@ -234,7 +234,7 @@ internal class GrantPost : IGrantPost
         bool doNotValidateIdToken = authCodeGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
-            string jwksUri = bankRegistration.BankNavigation.JwksUri;
+            string jwksUri = bankRegistration.JwksUri;
             await ValidateIdTokenTokenEndpoint(
                 response.IdToken,
                 response.AccessToken,
@@ -309,7 +309,7 @@ internal class GrantPost : IGrantPost
         if (doNotValidateIdToken is false &&
             responseIdToken is not null)
         {
-            string jwksUri = bankRegistration.BankNavigation.JwksUri;
+            string jwksUri = bankRegistration.JwksUri;
 
             await ValidateIdTokenTokenEndpoint(
                 responseIdToken,
@@ -591,7 +591,7 @@ internal class GrantPost : IGrantPost
         where TokenEndpointResponse : TokenEndpointResponseBase
     {
         // POST request
-        var uri = new Uri(bankRegistration.BankNavigation.TokenEndpoint);
+        var uri = new Uri(bankRegistration.TokenEndpoint);
         IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
             new AuthGrantPostRequestProcessor<Dictionary<string, string>>(
                 bankRegistration,

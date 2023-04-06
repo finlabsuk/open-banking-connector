@@ -77,7 +77,7 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
                 "openid accounts",
                 bankRegistration,
                 tokenEndpointAuthMethod,
-                persistedConsent.BankRegistrationNavigation.BankNavigation.TokenEndpoint,
+                persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,

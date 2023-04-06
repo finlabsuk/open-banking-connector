@@ -67,29 +67,37 @@ internal class BankRegistration :
         string externalApiId,
         string? externalApiSecret,
         string? registrationAccessToken,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        OAuth2ResponseMode defaultResponseMode,
         BankProfileEnum bankProfile,
+        string jwksUri,
+        string? registrationEndpoint,
+        string tokenEndpoint,
+        string authorizationEndpoint,
         BankRegistrationGroup? bankRegistrationGroup,
         string defaultRedirectUri,
         IList<string> otherRedirectUris,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope,
-        OAuth2ResponseMode defaultResponseMode,
-        Guid bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
+        Guid? bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
     {
         _externalApiId = externalApiId;
         _externalApiSecret = externalApiSecret;
         _registrationAccessToken = registrationAccessToken;
+        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
+        DefaultResponseMode = defaultResponseMode;
         BankProfile = bankProfile;
+        JwksUri = jwksUri;
+        RegistrationEndpoint = registrationEndpoint;
+        TokenEndpoint = tokenEndpoint;
+        AuthorizationEndpoint = authorizationEndpoint;
         BankRegistrationGroup = bankRegistrationGroup;
         DefaultRedirectUri = defaultRedirectUri;
         OtherRedirectUris = otherRedirectUris;
         SoftwareStatementProfileId = softwareStatementProfileId;
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
-        TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         RegistrationScope = registrationScope;
-        DefaultResponseMode = defaultResponseMode;
         BankId = bankId;
     }
 
@@ -102,9 +110,36 @@ internal class BankRegistration :
         _registrationAccessToken);
 
     /// <summary>
+    ///     Token endpoint authorisation method
+    /// </summary>
+    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
+
+    public OAuth2ResponseMode DefaultResponseMode { get; }
+
+    /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
     public BankProfileEnum BankProfile { get; set; }
+
+    /// <summary>
+    ///     JWK Set URI (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string JwksUri { get; }
+
+    /// <summary>
+    ///     Registration endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string? RegistrationEndpoint { get; }
+
+    /// <summary>
+    ///     Token endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string TokenEndpoint { get; }
+
+    /// <summary>
+    ///     Authorization endpoint (normally supplied from OpenID Configuration)
+    /// </summary>
+    public string AuthorizationEndpoint { get; }
 
     /// <summary>
     ///     Bank registration group. The same external API registration object is
@@ -130,21 +165,14 @@ internal class BankRegistration :
     public string? SoftwareStatementProfileOverride { get; }
 
     /// <summary>
-    ///     Token endpoint authorisation method
-    /// </summary>
-    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
-    /// <summary>
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
 
-    public OAuth2ResponseMode DefaultResponseMode { get; }
-
     /// <summary>
     ///     Bank with which this BankRegistration is associated.
     /// </summary>
-    public Guid BankId { get; }
+    public Guid? BankId { get; }
 
     IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
         ExternalApiObject;
