@@ -39,9 +39,5 @@ public class OBSigningCertificateProfileValidator : AbstractValidator<SigningCer
         RuleFor(p => p.AssociatedKey)
             .Must(ValidationRules.IsNonWhitespace)
             .WithMessage("Please provide a SigningKey.");
-
-        RuleFor(p => p.Certificate)
-            .Must(ValidationRules.IsNonWhitespace)
-            .WithMessage("Please provide a SigningCertificate.");
     }
 }

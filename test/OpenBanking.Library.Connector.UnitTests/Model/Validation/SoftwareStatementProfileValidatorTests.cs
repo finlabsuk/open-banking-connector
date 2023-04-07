@@ -42,7 +42,6 @@ public class SoftwareStatementProfileValidatorTests
             {
                 AssociatedKey = value,
                 AssociatedKeyId = "a",
-                Certificate = "a",
             };
 
             List<ValidationFailure> results =
@@ -65,7 +64,6 @@ public class SoftwareStatementProfileValidatorTests
                 CertificateType = SigningCertificateType.OBLegacy,
                 AssociatedKey = "a",
                 AssociatedKeyId = value,
-                Certificate = "a",
             };
 
             List<ValidationFailure> results =
@@ -86,7 +84,6 @@ public class SoftwareStatementProfileValidatorTests
             {
                 AssociatedKey = "a",
                 AssociatedKeyId = "a",
-                Certificate = value,
             };
 
             List<ValidationFailure> results =

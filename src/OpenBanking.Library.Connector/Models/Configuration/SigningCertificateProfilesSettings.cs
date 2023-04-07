@@ -49,13 +49,6 @@ public class SigningCertificateProfile
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
     public string AssociatedKey { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Signing certificate (X.509) as "stringified" PEM file with escaped newline characters ("\n") and "CERTIFICATE"
-    ///     label.
-    ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
-    /// </summary>
-    public string Certificate { get; set; } = string.Empty;
 }
 
 public class SigningCertificateProfilesSettings : Dictionary<string, SigningCertificateProfile>,
@@ -85,13 +78,6 @@ public class SigningCertificateProfilesSettings : Dictionary<string, SigningCert
                 throw new ArgumentException(
                     "Configuration or key secrets error: " +
                     $"No non-empty AssociatedKey provided for SigningCertificateProfile {key}.");
-            }
-
-            if (string.IsNullOrEmpty(value.Certificate))
-            {
-                throw new ArgumentException(
-                    "Configuration or key secrets error: " +
-                    $"No non-empty Certificate provided for SigningCertificateProfile {key}.");
             }
         }
 
