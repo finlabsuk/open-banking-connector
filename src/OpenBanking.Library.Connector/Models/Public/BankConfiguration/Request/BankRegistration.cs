@@ -81,28 +81,29 @@ public class BankRegistration : Base, ISupportsValidation
     public List<string>? OtherRedirectUris { get; set; }
 
     /// <summary>
-    ///     Information about a previously-created BankRegistration (OAuth2 client) created at the external (bank) API.
-    ///     When non-null, this will be referenced in the local object
-    ///     instead of
-    ///     creating a new external BankRegistration object at the external API via DCR.
+    ///     Information about a previously-created external API (bank) registration (OAuth2 client) created at the bank either
+    ///     via API or the bank's developer portal.
+    ///     When non-null, this external registration will re-used and Dynamic Client Registration (DCR) will not be performed.
     /// </summary>
     public ExternalApiBankRegistration? ExternalApiObject { get; set; }
 
     /// <summary>
-    ///     Forces BankRegistrationGroup to be null (i.e. no BankRegistrationGroup) rather than the value automatically
-    ///     determined by the BankProfile and RegistrationScope.
-    ///     For each BankRegistrationGroup, the same external API (bank)
-    ///     registration is
+    ///     Forces Dynamic Client Registration (DCR) even when an external API (bank) registration (OAuth2 client) already
+    ///     exists
+    ///     for a member of the same BankRegistrationGroup. By default, for each BankRegistrationGroup, any existing external
+    ///     API registration is
     ///     re-used and DCR will only be performed the first time the BankRegistrationGroup is used.
     ///     This is to prevent unnecessary duplicate
     ///     external API (bank) registrations which may disrupt/overwrite an
     ///     existing such registration depending on bank behaviour.
-    ///     The safeguard of the auto-determined BankRegistrationGroup can be removed, and the use of DCR forced, when
-    ///     ForceNullBankRegistrationGroup is true. Please use this setting with care, and it is suggested to delete any
+    ///     The safeguard of the re-using external API registrations within a BankRegistrationGroup can be removed, and the use
+    ///     of DCR forced, by setting this value to true.
+    ///     Please use this setting with care, and it is suggested to delete any
     ///     unwanted external API
     ///     registrations at the bank possibly via a support ticket if API support for this is not provided.
+    ///     When this setting is true and ExternalApiObject is non-null, an error will be produced.
     /// </summary>
-    public bool ForceNullBankRegistrationGroup { get; set; } = false;
+    public bool ForceDynamicClientRegistration { get; set; } = false;
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new BankRegistrationValidator()

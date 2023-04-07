@@ -172,17 +172,17 @@ internal class
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
-        // Determine bank registration group
-        BankRegistrationGroup? bankRegistrationGroup = null;
-        if (!request.ForceNullBankRegistrationGroup)
+        // Check setting of ForceDynamicClientRegistration
+        if (request.ExternalApiObject is not null &&
+            request.ForceDynamicClientRegistration)
         {
-            bankRegistrationGroup =
-                bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
+            throw new ArgumentException($"{nameof(request.ForceDynamicClientRegistration)} specified as true yet non-null {nameof(request.ExternalApiObject)} also specified.");
         }
-
-        // Check for existing bank registration(s) in bank registration group
+        
+        // Check for existing bank registration(s) in BankRegistrationGroup
+        BankRegistrationGroup? bankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         BankRegistrationPersisted? existingGroupRegistration = null;
-        if (bankRegistrationGroup is not null)
+        if (bankRegistrationGroup is not null && !request.ForceDynamicClientRegistration)
         {
             existingGroupRegistration =
                 await _entityMethods
@@ -190,7 +190,7 @@ internal class
                     .Where(
                         x => x.BankRegistrationGroup == bankRegistrationGroup &&
                              x.SoftwareStatementProfileId == softwareStatementProfileId)
-                    .OrderBy(x => x.Created)
+                    .OrderByDescending(x => x.Created)
                     .FirstOrDefaultAsync();
         }
 
@@ -204,7 +204,7 @@ internal class
             BankProfile existingRegistrationBankProfile =
                 _bankProfileService.GetBankProfile(existingGroupRegistration.BankProfile);
 
-            // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs
+            // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs?
 
             if (request.ExternalApiObject is not null)
             {
@@ -272,9 +272,9 @@ internal class
         }
         else
         {
+            // Perform Dynamic Client Registration
             if (request.ExternalApiObject is null)
             {
-                // Perform DCR
                 if (registrationEndpoint is null)
                 {
                     throw new InvalidOperationException(
@@ -302,6 +302,7 @@ internal class
                 externalApiSecret = externalApiResponse.ClientSecret;
                 registrationAccessToken = externalApiResponse.RegistrationAccessToken;
             }
+            // Use existing registration
             else
             {
                 externalApiId = request.ExternalApiObject.ExternalApiId;
