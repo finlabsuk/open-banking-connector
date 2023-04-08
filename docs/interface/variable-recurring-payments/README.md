@@ -1,8 +1,21 @@
-﻿# Variable Recurring Payments
+﻿# Variable Recurring Payments API
 
-The `VariableRecurringPayments` interface allows you to create and read variable recurring bank payments in Open Banking Connector.
+The Variable Recurring Payments API provides access to UK Open Banking Variable Recurring Payments API functionality.
 
-It is based on v3.1.8 of the [UK Open Banking Read-Write Variable Recurring Payments  API](https://openbankinguk.github.io/read-write-api-site3/v3.1.8/profiles/vrp-profile.html). 
+## OpenAPI Spec
 
-The functionality of the interface is described in the following pages:
-- [variable recurring payments](./domestic-vrps.md)
+An OpenAPI spec for the Variable Recurring Payments API showing the endpoints and data types is provided [here](./openapi.md). This is a static capture of the API at a given release (see grey box at top right of OpenAPI spec for which release).
+
+For any running version of Open Banking Connector, the OpenAPI spec for the currently-running software is provided at `GET /swagger/index.html`.
+
+## Relationship to UK Open Banking Variable Recurring Payments API
+
+[Coming soon]
+
+## Mappings to database objects
+
+[Coming soon]
+
+## External (bank) API operations
+
+[Coming soon]

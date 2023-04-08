@@ -10,59 +10,48 @@ Here are the steps required to:
 
 To publish documentation to the website, you will need to have permission to push to the `gh-pages` branch of the repo.
 
-You will need to install Python 3 and Material for MkDocs (mkdocs-material).
+You will require Python 3 and Material for MkDocs (mkdocs-material).
 
 Assuming you have installed Python, you can install Material for MkDocs as follows:
 
-```powershell
-pip install mkdocs-material # if mkdocs-material not installed
+```bash
+pip install mkdocs-material
 pip install mkdocs-git-revision-date-plugin
+pip install mkdocs-render-swagger-plugin
 ```
 
 ## Prepare for deployment
 
 ### Preview website
 
-To deploy the website locally for inspection and testing, please `cd` to the OBC repo root and run the following command:
+To deploy the website locally for inspection and testing, please `cd` to the repo root and run the following command:
 ```
 mkdocs serve
 ```
-This will return the URL you can use to see the website.
+This will return the URL you can use to preview the website. Commit and push any corrections or updates required.
 
+### Create version tag
 
-### Decide on docs version and create a tag
-
-Everytime website is regenerated, point links to a new tag:
-
-- decide on a version number
-
-- create tag based on version number
-
-```
+Create and push a git tag with a new version number for the docs:
+```bash
 git tag "docs_v1.0"
-```
-
-- push tag to github
-```
 git push publicRemote docs_v1.0
 ```
-
-
-Github tags are used to create a version number for a new release. This separates different versions of code and links depending on the version. 
-
 ### Convert code links to absolute paths (temporary change - do not commit)
 
-Relative paths are normally used for links to code in the docs. Example:
+Relative paths are used for links to other repo files in the docs. However, before running `mkdocs` to generate the website, relative links that go outside the `docs` folder must be converted to absolute links.
+
+So, for example,
 ```
 (../../../../src/..../BankConfigurationMethods.cs#39)
 ```
+must be converted to
 
-However, before running `mkdocs` to generate the website, relative links that go outside the `docs` folder must be converted to absolute links:
 ```
 (https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.0/src/..../BankConfigurationMethods.cs#39).
 ```
 
-Here is a regular expression search and replace that may help to speed this conversion up (we used this in Visual Studio Code)
+Here is a regular expression search and replace that may be used to do this in (we used this in Visual Studio Code.
 
 Search:
 ```
@@ -74,14 +63,13 @@ Replace:
 (https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src
 ```
 
-*Please do not commit these changes to links.*
+*Note: Please do not commit these changes to links. They can be discarded once the website is deployed.*
 
-## Deploy to website 
+## Deploy website 
 
 Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:
-```powershell
+```bash
 mkdocs gh-deploy -m "Deploy docs using tag docs_v1.5" -r publicRemote --ignore-version # adjust commit message and remote as required 
 ```
 
-N.B. The ```--ignore-version```
-flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs version which stops the website from being deployed. 
+N.B. The `--ignore-version` flag is used to solve the problem of Mkdocs confusing the tag version with the Mkdocs version which stops the website from being deployed.

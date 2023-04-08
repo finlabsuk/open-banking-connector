@@ -1,14 +1,14 @@
-# Install Open Banking Root Certificate
+# Install Open Banking UK root certificate
 
-An Open Banking UK root certificate needs to be installed to check remote certs from banks when creating SSL connections.
+When running Open Banking Connector as a .NET application from source code, an Open Banking UK root certificate needs to be installed to check remote certs from banks when creating TLS connections to bank sandboxes.
 
-## Obtain the Root Certificate
+## Obtain the root certificate
 
 The UK Open Baking Sandbox root certificate can be obtained [here](https://openbanking.atlassian.net/wiki/spaces/DZ/pages/252018873/OB+Root+and+Issuing+Certificates+for+Sandbox).
 
 Currently only the Open Banking UK root certificate (and not the issuing certificate) needs to be installed.
 
-## Install the Root Certificate
+## Install the root certificate
 
 On Windows, open the certificate manager (certlm.msc) and right-click "Trusted Root Certification Authorities / Certificates" and choose to import the certificate.
 

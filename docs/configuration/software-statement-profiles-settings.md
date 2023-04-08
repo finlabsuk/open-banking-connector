@@ -1,13 +1,29 @@
 # Software statement profiles settings
 
-Software statement profiles settings are used to configure software statement profiles used by Open Banking Connector.
+Software statement profiles settings are used to configure software statement profiles for use by Open Banking Connector.
 
-A *software statement profile* is a set of settings comprising a software statement assertion (SSA) and information related to that SSA. It is identified by a user-defined profile ID. It references an associated [transport certificiate profile](./transport-certificate-profiles-settings.md) and an associated [signing certificate profile](./signing-certificate-profiles-settings.md). All three profiles may be created after e.g. getting a software statement assertion (SSA) and signed certificates using the [UK Open Banking Directory](https://www.openbanking.org.uk/directory/).
+In UK Open Banking, a software statement identifies a third-party provider (TPP) that can create bank registrations (OAuth2 clients) with banks and can be seen as a kind of "passport". A TPP can create multiple software statements and this is fully supported by Open Banking Connector.
 
-No software statement profiles are configured by default and you will require at least one in order to create a bank registration.
+You should create the software statements you need in the [UK Open Banking Directory](https://www.openbanking.org.uk/directory/). From there, you can also generate a corresponding software statement assertion (SSA) for each. Each SSA can then be the basis of one or more software statement profiles in Open Banking Connector.
 
-Software statement profiles settings are defined in the [SoftwareStatementProfilesSettings](../../src/OpenBanking.Library.Connector/Models/Configuration/SoftwareStatementProfilesSettings.cs#L103) class.
+A *software statement profile* is a group of settings comprising
 
+1. a software statement assertion (SSA)
+2. associated information which will be used for bank registrations that reference the software statement profile:
+
+    -  a [transport certificate profile](./transport-certificate-profiles-settings.md) specifying a transport key/certificate
+    - a [signing certificate profile](./signing-certificate-profiles-settings.md) which specifying a signing key/certificate
+    - a default redirect URL
+
+Transport certificate profiles and signing certificate profiles can be re-used between software statement profiles, i.e. referenced by more than one software statement profile.
+
+When creating a bank registration (OAuth2 client), a software statement profile is specified which configures the associated SSA, transport key-pair, signing key, etc.
+
+No software statement profiles are configured by default and you will require at least one in order to create a bank registration. To create a software statement profile, simply decide upon an ID and configure minimally the settings lacking defaults [below](#settings).
+
+As your needs evolve you can create multiple software statement profiles to allow use of multiple SSAs and certs in different combinations etc.
+
+Software statement profiles are validated on application start-up so please be alert to warning and error messages related to these.
 
 ## Settings
 

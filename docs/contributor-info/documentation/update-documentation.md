@@ -1,45 +1,13 @@
 # Update documentation
 
-Here are the steps required to:
+To update documentation:
 
-- update current documentation using markdown 
+- edit files in the repo `./docs` folder
+- update the `nav` section in the repo `./mkdocs.yml` file to specify sections and links.
 
-- add new documentation
-
-## Update documentation
-
-To update the current documentation:
-
-- edit the required files in the `/docs` repo folder
-
-- Any changes made must be applied to the nav section in the `mkdocs.yml`. (e.g. file/folder rename or file structure changes)
-
-- Links to content in the repo must be relative links. For example:
-
-```
+In the docs, please ensure links to other repo files are relative links. For example:
+```markdown
 [Page](./page.md)
 ```
 
-- The next step is to [generate docs website and deploy documentation.](./deploy-documentation.md)
-
-## Add new documentation
-
-To add new documentation:
-
-- create new folder in `/docs` repo folder
-
-- create new `README.md` file inside the folder
-
-- create `file.md` file
-
-
-In `mkdocs.yml`, the nav section must include your changes:
-
-```yml
-nav:
-- SectionTitle:
-    - folder/file.md
-    - PageTitle: file.md
-```
-
-The next step is to [generate docs website and deploy documentation.](./deploy-documentation.md)
+Once docs are updated, you can [deploy the documentation.](./deploy-documentation.md)

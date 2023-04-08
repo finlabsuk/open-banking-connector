@@ -2,12 +2,11 @@
 
 Transport certificate profiles settings are used to configure transport certificate profiles used by Open Banking Connector.
 
-A *transport certificate profile* is a set of settings comprising a transport key and certificate pair and related information. It is identified by a user-defined profile ID. It is referenced by one or more [software statement profiles](./software-statement-profiles-settings.md). A transport key-certificate pair is used for mutual TLS when commuinicating with banks.
+A *transport certificate profile* is a group of settings comprising a transport certificate, associated key, and other related information. It is identified by a user-defined profile ID. It is referenced by one or more [software statement profiles](./software-statement-profiles-settings.md).
+
+Transport certificates are used for mutual TLS when communicating with banks.
 
 No transport certificate profiles are configured by default and you will require at least one in order to create a bank registration.
-
-Transport certificate profiles settings are defined in the [TransportCertificateProfilesSettings](../../src/OpenBanking.Library.Connector/Models/Configuration/TransportCertificateProfilesSettings.cs#L165) class.
-
 
 ## Settings
 

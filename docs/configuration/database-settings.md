@@ -1,10 +1,8 @@
 # Database settings
 
-Database settings are used to configure the database used by Open Banking Connector to read and write data. In the [development environment](./README.md#environment-selection), default settings are provided in [appsettings.Development.json](../../src/OpenBanking.WebApp.Connector/appsettings.Development.json) to allow auto-creation and use of a local SQLite file as the databse.
+Database settings are used to configure the database used by Open Banking Connector to read and write data.
 
-In non-development envrionments, you will at least need to at least provide a connection string setting for the configured database provider.
-
-Database settings are defined in the [DatabaseSettings](../../src/OpenBanking.Library.Connector/Models/Configuration/DatabaseSettings.cs#L16) class.
+In non-development environments (the default), you will at least need to at least provide a connection string setting for the configured database provider.
 
 ## Settings
 

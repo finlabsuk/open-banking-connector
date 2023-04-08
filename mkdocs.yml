@@ -1,5 +1,5 @@
-site_name: Open Banking Connector Docs
-repo_url: https://github.com/finlabsuk/open-banking-connector-csharp
+site_name: Open Banking Connector docs
+repo_url: https://github.com/finlabsuk/open-banking-connector
 edit_uri: ""
 repo_name: Open Banking Connector
 theme:
@@ -13,62 +13,57 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
   - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji 
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - footnotes
 plugins:
   - search:
        lang: en
        separator: '[\s\-\.]'
   - git-revision-date
+  - render_swagger
 
 extra_css:
   - stylesheets/style.css
 
 nav:
   - Overview:
-      - README.md
-      - Supported Open Banking API's: supported-open-banking-apis.md
-      - Definitions: definitions.md
-      - Open Banking Basics: open-banking-basics.md
-  - Get Started:
-      - get-started/README.md
-      - Dev Environment: 
-          - Install OB Root Cerftificate: get-started/dev-environment/install-ob-root-cert.md
-      - Configure Secrets: get-started/configure-secrets.md
-      - Configure Settings: get-started/configure-settings.md
+    - README.md
+    - Bank Integration Matrix: bank-integration-matrix.md
+  - Get started:
+    - get-started/README.md
   - Configuration:
-      - configuration/README.md
-      - Database settings: configuration/database-settings.md
-      - Software statement profiles settings: configuration/software-statement-profiles-settings.md
-      - Transport certificate profiles settings: configuration/transport-certificate-profiles-settings.md
-      - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
-  - How to:
-      - how-to/set-up-software-statement-profiles.md
-  - Interface:
-      - interface/README.md
-      - Bank Configuration:
-              - interface/bank-configuration/README.md
-              - Setting up a bank: interface/bank-configuration/set-up-a-bank.md
-      - Payment Initiation:
-            - interface/payment-initiation/README.md
-            - Domestic Payments: interface/payment-initiation/domestic-payments.md
-            - Create and authorise Domestic Payment Consent: interface/payment-initiation/create-and-authorise-domestic-payment-consent.md
-            - Make Domestic Payments: interface/payment-initiation/make-domestic-payment.md
-      - Variable Recurring Payments:
-            - interface/variable-recurring-payments/README.md
-            - Domestic VRP: interface/variable-recurring-payments/domestic-vrps.md
-            - Create and authorise Domestic VRP Consent: interface/variable-recurring-payments/create-and-authorise-domestic-vrp-consent.md
-            - Make Domestic VRP: interface/variable-recurring-payments/make-domestic-vrps.md   
-  - Architecture:
-      - architecture/README.md
-      - Components: architecture/Components.md
-      - Classes: architecture/OBC_Connector_Classes.md
-      - Payments: architecture/OpenBanking.Service.Payments.md
-      - Benchmarks: architecture/OpenBanking.Connector.Benchmarks.md
-      - Integration Tests: architecture/OpenBanking.Connector.IntegrationTests.md
-      - Service Payments: architecture/OpenBanking.Service.Payments.md
-      - Suggested API endpoints: architecture/Suggested_API_endpoints.md
+    - configuration/README.md
+    - Database settings: configuration/database-settings.md
+    - Software statement profiles settings: configuration/software-statement-profiles-settings.md
+    - Transport certificate profiles settings: configuration/transport-certificate-profiles-settings.md
+    - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
+    - Configuration sources settings: configuration/configuration-sources-settings.md
+  - APIs:
+    - interface/README.md
+    - Bank Configuration API:
+      - interface/bank-configuration/README.md
+      - Set up a bank: interface/bank-configuration/set-up-a-bank.md
+      - OpenAPI spec: interface/bank-configuration/openapi.md
+    - Account and Transaction API:
+      - interface/account-and-transaction/README.md
+      - OpenAPI spec: interface/account-and-transaction/openapi.md 
+    - Payment Initiation API:
+      - interface/payment-initiation/README.md
+      - OpenAPI spec: interface/payment-initiation/openapi.md
+    - Variable Recurring Payments API:
+      - interface/variable-recurring-payments/README.md
+      - OpenAPI spec: interface/variable-recurring-payments/openapi.md
+    - Auth Contexts API:
+      - interface/auth-contexts/README.md
+      - OpenAPI spec: interface/auth-contexts/openapi.md 
   - Contributor info:
       - contributor-info/README.md
       - Documentation:
-          - contributor-info/documentation/README.md
-          - Update: contributor-info/documentation/update-documentation.md
-          - Deploy: contributor-info/documentation/deploy-documentation.md
+        - contributor-info/documentation/README.md
+        - Update: contributor-info/documentation/update-documentation.md
+        - Deploy: contributor-info/documentation/deploy-documentation.md
+      - Dev Environment: 
+        - Install OB UK root certificate: contributor-info/dev-environment/install-ob-root-cert.md
+        - Use Microsoft's Secret Manager: contributor-info/dev-environment/use-secret-manager.md

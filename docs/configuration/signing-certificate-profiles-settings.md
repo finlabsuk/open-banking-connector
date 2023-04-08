@@ -2,11 +2,11 @@
 
 Signing certificate profiles settings are used to configure signing certificate profiles used by Open Banking Connector.
 
-A *signing certificate profile* is a set of settings comprising a signing key and certificate pair and related information. It is identified by a user-defined profile ID. It is referenced by one or more [software statement profiles](./software-statement-profiles-settings.md). A signing key-certificate pair is used for signing JWTs that are sent to banks.
+A *signing certificate profile* is a group of settings comprising information related to a signing certificate. It is identified by a user-defined profile ID. It is referenced by one or more [software statement profiles](./software-statement-profiles-settings.md).
+
+Signing certificates and associated keys are used to sign and validate JWTs sent to banks.
 
 No signing certificate profiles are configured by default and you will require at least one in order to create a bank registration.
-
-Signing certificate profiles settings are defined in the [SigningCertificateProfilesSettings](../../src/OpenBanking.Library.Connector/Models/Configuration/SigningCertificateProfilesSettings.cs#L62) class.
 
 
 ## Settings
