@@ -8,21 +8,28 @@
       
       
       
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="set-up-a-bank/">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.5">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
     
     
       
-        <title>Bank configuration - Open Banking Connector Docs</title>
+        <title>Bank Configuration API - Open Banking Connector docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.2d9f7617.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ded33207.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
-        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
       
+      
+
     
     
     
@@ -35,10 +42,13 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+      <link rel="stylesheet" href="../../stylesheets/style.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -49,7 +59,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -59,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bank-configuration" class="md-skip">
+        <a href="#bank-configuration-api" class="md-skip">
           Skip to content
         </a>
       
@@ -73,26 +83,26 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Open Banking Connector Docs" class="md-header__button md-logo" aria-label="Open Banking Connector Docs" data-md-component="logo">
+    <a href="../.." title="Open Banking Connector docs" class="md-header__button md-logo" aria-label="Open Banking Connector docs" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Open Banking Connector Docs
+            Open Banking Connector docs
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bank configuration
+              Bank Configuration API
             
           </span>
         </div>
@@ -102,7 +112,7 @@
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -110,17 +120,17 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-          <a href="javascript:void(0)" class="md-search__icon md-icon" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08z"/></svg>
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
           </a>
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
       
@@ -131,7 +141,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -140,10 +150,10 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/finlabsuk/open-banking-connector" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     Open Banking Connector
@@ -162,7 +172,7 @@
           
             
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
+  <div class="md-grid">
     <ul class="md-tabs__list">
       
         
@@ -191,7 +201,7 @@
   
     <li class="md-tabs__item">
       <a href="../../get-started/" class="md-tabs__link">
-        Get Started
+        Get started
       </a>
     </li>
   
@@ -216,22 +226,6 @@
         
   
   
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../how-to/set-up-software-statement-profiles/" class="md-tabs__link">
-        How to
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
     
   
 
@@ -241,23 +235,7 @@
   
     <li class="md-tabs__item">
       <a href="../" class="md-tabs__link md-tabs__link--active">
-        Interface
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-
-
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../architecture/" class="md-tabs__link">
-        Architecture
+        APIs
       </a>
     </li>
   
@@ -300,20 +278,20 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Open Banking Connector Docs" class="md-nav__button md-logo" aria-label="Open Banking Connector Docs" data-md-component="logo">
+    <a href="../.." title="Open Banking Connector docs" class="md-nav__button md-logo" aria-label="Open Banking Connector docs" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    Open Banking Connector Docs
+    Open Banking Connector docs
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/finlabsuk/open-banking-connector-csharp" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/finlabsuk/open-banking-connector" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     Open Banking Connector
@@ -334,17 +312,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
       
       
         
           
             
-          
-        
-          
-        
           
         
           
@@ -362,7 +337,7 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="Overview" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_1">
           <span class="md-nav__icon md-icon"></span>
           Overview
@@ -377,36 +352,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../supported-open-banking-apis/" class="md-nav__link">
-        Supported Open Banking API's
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../definitions/" class="md-nav__link">
-        Definitions
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../open-banking-basics/" class="md-nav__link">
-        Open Banking Basics
+      <a href="../../bank-integration-matrix/" class="md-nav__link">
+        Bank Integration Matrix
       </a>
     </li>
   
@@ -430,19 +377,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
       
       
         
           
             
-          
-        
-          
-        
-          
-        
           
         
       
@@ -450,100 +392,17 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../get-started/">Get Started</a>
-          
-            <label for="__nav_2">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
+          <a href="../../get-started/">Get started</a>
           
         </div>
       
-      <nav class="md-nav" aria-label="Get Started" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
-          Get Started
+          Get started
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
-      
-      
-      
-        
-          
-        
-      
-      
-        <label class="md-nav__link" for="__nav_2_2">
-          Dev Environment
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Dev Environment" data-md-level="2">
-        <label class="md-nav__title" for="__nav_2_2">
-          <span class="md-nav__icon md-icon"></span>
-          Dev Environment
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../get-started/dev-environment/install-ob-root-cert/" class="md-nav__link">
-        Install OB Root Cerftificate
-      </a>
-    </li>
-  
-
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../get-started/configure-secrets/" class="md-nav__link">
-        Configure Secrets
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../get-started/configure-settings/" class="md-nav__link">
-        Configure Settings
-      </a>
-    </li>
-  
-
             
           
         </ul>
@@ -563,13 +422,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
       
       
         
           
             
+          
+        
           
         
           
@@ -593,7 +455,7 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="Configuration" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Configuration
@@ -658,52 +520,14 @@
 
             
           
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      
-      
-        
-          
-        
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          How to
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="How to" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          How to
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
             
               
   
   
   
     <li class="md-nav__item">
-      <a href="../../how-to/set-up-software-statement-profiles/" class="md-nav__link">
-        How to: Set up software statement profiles
+      <a href="../../configuration/configuration-sources-settings/" class="md-nav__link">
+        Configuration sources settings
       </a>
     </li>
   
@@ -729,8 +553,9 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
       
       
         
@@ -744,23 +569,27 @@
         
           
         
+          
+        
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../">Interface</a>
+          <a href="../">APIs</a>
           
-            <label for="__nav_5">
+            <label for="__nav_4">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Interface" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Interface
+          APIs
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -777,8 +606,9 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" checked>
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
       
       
         
@@ -788,23 +618,25 @@
         
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index md-nav__link--active">
-          <a href="./">Bank Configuration</a>
+          <a href="./">Bank Configuration API</a>
           
-            <label for="__nav_5_2">
+            <label for="__nav_4_2">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Bank Configuration" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_4_2">
           <span class="md-nav__icon md-icon"></span>
-          Bank Configuration
+          Bank Configuration API
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -817,7 +649,21 @@
   
     <li class="md-nav__item">
       <a href="set-up-a-bank/" class="md-nav__link">
-        Setting up a bank
+        Set up a bank
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="openapi/" class="md-nav__link">
+        OpenAPI spec
       </a>
     </li>
   
@@ -840,8 +686,9 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
       
       
         
@@ -851,27 +698,23 @@
         
           
         
-          
-        
-          
-        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../payment-initiation/">Payment Initiation</a>
+          <a href="../account-and-transaction/">Account and Transaction API</a>
           
-            <label for="__nav_5_3">
+            <label for="__nav_4_3">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Payment Initiation" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_3">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_3">
           <span class="md-nav__icon md-icon"></span>
-          Payment Initiation
+          Account and Transaction API
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -883,36 +726,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../payment-initiation/domestic-payments/" class="md-nav__link">
-        Domestic Payments
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../payment-initiation/create-and-authorise-domestic-payment-consent/" class="md-nav__link">
-        Create and authorise Domestic Payment Consent
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../payment-initiation/make-domestic-payment/" class="md-nav__link">
-        Make Domestic Payments
+      <a href="../account-and-transaction/openapi/" class="md-nav__link">
+        OpenAPI spec
       </a>
     </li>
   
@@ -935,8 +750,9 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
       
       
         
@@ -946,27 +762,23 @@
         
           
         
-          
-        
-          
-        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../variable-recurring-payments/">Variable Recurring Payments</a>
+          <a href="../payment-initiation/">Payment Initiation API</a>
           
-            <label for="__nav_5_4">
+            <label for="__nav_4_4">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Variable Recurring Payments" data-md-level="2">
-        <label class="md-nav__title" for="__nav_5_4">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_4">
           <span class="md-nav__icon md-icon"></span>
-          Variable Recurring Payments
+          Payment Initiation API
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -978,36 +790,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../variable-recurring-payments/domestic-vrps/" class="md-nav__link">
-        Domestic VRP
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../variable-recurring-payments/create-and-authorise-domestic-vrp-consent/" class="md-nav__link">
-        Create and authorise Domestic VRP Consent
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../variable-recurring-payments/make-domestic-vrps/" class="md-nav__link">
-        Make Domestic VRP
+      <a href="../payment-initiation/openapi/" class="md-nav__link">
+        OpenAPI spec
       </a>
     </li>
   
@@ -1021,16 +805,8 @@
 
             
           
-        </ul>
-      </nav>
-    </li>
-  
-
-    
-      
-      
-      
-
+            
+              
   
   
   
@@ -1038,25 +814,14 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
       
       
         
           
             
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
-          
-        
           
         
           
@@ -1066,18 +831,18 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../architecture/">Architecture</a>
+          <a href="../variable-recurring-payments/">Variable Recurring Payments API</a>
           
-            <label for="__nav_6">
+            <label for="__nav_4_5">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Architecture" data-md-level="1">
-        <label class="md-nav__title" for="__nav_6">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_5">
           <span class="md-nav__icon md-icon"></span>
-          Architecture
+          Variable Recurring Payments API
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1089,9 +854,16 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/Components/" class="md-nav__link">
-        Components
+      <a href="../variable-recurring-payments/openapi/" class="md-nav__link">
+        OpenAPI spec
       </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1102,13 +874,42 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../architecture/OBC_Connector_Classes/" class="md-nav__link">
-        Classes
-      </a>
-    </li>
-  
-
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../auth-contexts/">Auth Contexts API</a>
+          
+            <label for="__nav_4_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_6">
+          <span class="md-nav__icon md-icon"></span>
+          Auth Contexts API
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
             
           
             
@@ -1117,65 +918,16 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/OpenBanking.Service.Payments/" class="md-nav__link">
-        Payments
+      <a href="../auth-contexts/openapi/" class="md-nav__link">
+        OpenAPI spec
       </a>
     </li>
   
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/OpenBanking.Connector.Benchmarks/" class="md-nav__link">
-        Benchmarks
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/OpenBanking.Connector.IntegrationTests/" class="md-nav__link">
-        Integration Tests
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/OpenBanking.Service.Payments/" class="md-nav__link">
-        Service Payments
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/Suggested_API_endpoints/" class="md-nav__link">
-        Suggested API endpoints
-      </a>
+        </ul>
+      </nav>
     </li>
   
 
@@ -1198,13 +950,16 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
       
       
         
           
             
+          
+        
           
         
           
@@ -1216,14 +971,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../contributor-info/">Contributor info</a>
           
-            <label for="__nav_7">
+            <label for="__nav_5">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Contributor info" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Contributor info
         </label>
@@ -1240,8 +995,9 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7_2" type="checkbox" id="__nav_7_2" >
       
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
       
       
         
@@ -1260,14 +1016,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../contributor-info/documentation/">Documentation</a>
           
-            <label for="__nav_7_2">
+            <label for="__nav_5_2">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
-      <nav class="md-nav" aria-label="Documentation" data-md-level="2">
-        <label class="md-nav__title" for="__nav_7_2">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_2">
           <span class="md-nav__icon md-icon"></span>
           Documentation
         </label>
@@ -1297,6 +1053,74 @@
     <li class="md-nav__item">
       <a href="../../contributor-info/documentation/deploy-documentation/" class="md-nav__link">
         Deploy
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+          Dev Environment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Dev Environment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributor-info/dev-environment/install-ob-root-cert/" class="md-nav__link">
+        Install OB UK root certificate
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributor-info/dev-environment/use-secret-manager/" class="md-nav__link">
+        Use Microsoft's Secret Manager
       </a>
     </li>
   
@@ -1343,15 +1167,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#interface-object-types" class="md-nav__link">
-    Interface object types
+  <a href="#openapi-spec" class="md-nav__link">
+    OpenAPI Spec
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#supported-methods" class="md-nav__link">
-    Supported methods
+  <a href="#relationship-to-uk-open-banking-dynamic-client-registration-api" class="md-nav__link">
+    Relationship to UK Open Banking Dynamic Client Registration API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mappings-to-database-objects" class="md-nav__link">
+    Mappings to database objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-bank-api-operations" class="md-nav__link">
+    External (bank) API operations
   </a>
   
 </li>
@@ -1364,134 +1202,98 @@
               </div>
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
+                  
 
 
-<h1 id="bank-configuration">Bank configuration</h1>
-<p>The <code>BankConfiguration</code> interface allows you to create and read configuration for a bank in Open Banking Connector.</p>
-<p>The interface consists of three <a href="#interface-object-types">object types</a> on which <a href="#supported-methods">various methods</a> are supported. Created objects correspond to records in the Open Banking Connector database.</p>
-<p>To set up a bank, you typically will create a <code>Bank</code>and at least one <code>BankRegistration</code> and one <code>BankApiInformationObject</code> object. More information is provided <a href="set-up-a-bank/">here</a>.</p>
-<h2 id="interface-object-types">Interface object types</h2>
-<p>The thee bank configuration object types are shown in the table below. Each corresponds to a table in the Open Banking Connector database. Two of the types are local-only and are not created externally at a bank. Objects of <code>BankRegistration</code> type, however, are created externally at a bank as well as having a local database record.</p>
+<h1 id="bank-configuration-api">Bank Configuration API</h1>
+<p>The Bank Configuration API allows you to create, read, and delete configuration (setup) objects for a bank in Open Banking Connector.</p>
+<p>To set up a bank, see instructions <a href="set-up-a-bank/">here</a>. </p>
+<h2 id="openapi-spec">OpenAPI Spec</h2>
+<p>An OpenAPI spec for the Bank Configuration API showing the endpoints and data types is provided <a href="openapi/">here</a>. This is a static capture of the API at a given release (see grey box at top right of OpenAPI spec for which release).</p>
+<p>For any running version of Open Banking Connector, the OpenAPI spec for the currently-running software is provided at <code>GET /swagger/index.html</code>.</p>
+<h2 id="relationship-to-uk-open-banking-dynamic-client-registration-api">Relationship to UK Open Banking Dynamic Client Registration API</h2>
+<p>The UK Open Banking Dynamic Client Registration (DCR) API is defined <a href="https://openbankinguk.github.io/dcr-docs-pub/">here</a>.</p>
+<p>Open Banking Connector provides replacement endpoints for the UK OB DCR endpoints as shown below. The replacement endpoints, where relevant, use data types from the latest UK OB DCR v3.3 API. When calling external (bank) APIs, Open Banking Connector performs request/response payload translation for any banks supporting earlier API versions.</p>
 <table>
 <thead>
 <tr>
-<th>Object type</th>
-<th>Parent type</th>
-<th>Created at bank?</th>
-<th>Description</th>
+<th>UK OB DCR endpoint</th>
+<th>Replacement Open Banking Connector endpoint</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Bank</td>
-<td>N/A</td>
-<td>No</td>
-<td>Base object for a bank which includes its IssuerUrl and FinancialId</td>
+<td>POST /register</td>
+<td>POST /config/bank-registrations</td>
 </tr>
 <tr>
-<td>BankApiInformationObject</td>
-<td>Bank</td>
-<td>No</td>
-<td>Object which describes a bank's functional APIs (e.g. PISP). Use multiple objects to allow access to multiple API versions supported by a bank (e.g. multiple versions of PISP), or to test new endpoints etc.</td>
+<td>GET /register/{ClientId}</td>
+<td>GET /config/bank-registrations/{bankRegistrationId}</td>
 </tr>
 <tr>
-<td>BankReistration</td>
-<td>Bank</td>
-<td>Yes</td>
-<td>Object which describes a registration (i.e. OAuth2 client registration) with a bank based on a software statement. Use multiple objects to support multiple registrations with a bank or to test a new registration etc.</td>
+<td>DELETE /register/{ClientId}</td>
+<td>DELETE /config/bank-registrations/{bankRegistrationId}</td>
 </tr>
 </tbody>
 </table>
-<h2 id="supported-methods">Supported methods</h2>
-<p>The table below shows the methods supported for each object type as well as the main request and response types for these methods. Methods that include the word "Local" operate on the Open Banking Connector database but not at the external bank.</p>
-<table>
-<thead>
-<tr>
-<th>Object type</th>
-<th>Methods</th>
-<th>Request type</th>
-<th>Response type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Bank</td>
-<td>GetLocalAsync <br/> PostLocalAsync <br/> DeleteLocalAsync <br/></td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Request/Bank.cs#L23">Bank</a></td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Response/BankResponse.cs#L18">Bank</a></td>
-</tr>
-<tr>
-<td>BankRegistration</td>
-<td>PostAsync <br/> GetLocalAsync <br/> DeleteAsync</td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Request/BankRegistration.cs#L17">BankRegistration</a></td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Response/BankRegistrationResponse.cs#L22">BankRegistration</a></td>
-</tr>
-<tr>
-<td>BankApiInformation</td>
-<td>GetLocalAsyn <br/> PostLocalAsync <br/> DeleteLocalAsync</td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Request/BankApiSet.cs#L18">BankApiInformation</a></td>
-<td><a href="https://github.com/finlabsuk/open-banking-connector/blob/docs_v1.5/src/OpenBanking.Library.Connector/Models/Public/Response/BankApiSetResponse.cs#L21">BankApiInformation</a></td>
-</tr>
-</tbody>
-</table>
+<p>All the replacement Open Banking Connector endpoints handle behaviour and spec variations between banks meaning the same API calls can be used regardless of bank. Bank-specific differences are determined by a bank's <em>bank profile</em>.</p>
+<p>There are some further major differences when creating a bank registration/OAuth2 client using <a href="openapi/">POST /config/bank-registrations</a>.</p>
+<p>Firstly, Open Banking Connector can infer most of the payload to send to the bank during DCR from only a few request properties. This means the creation of a new BankRegistration (OAuth2 client) is usually as simple as:
+<div class="highlight"><pre><span></span><code><span class="nf">POST</span> <span class="nn">/config/bank-registrations</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="err">#</span> <span class="l">standard headers omitted</span>
+<span class="err">{</span>
+  &quot;BankProfile&quot;: &quot;Obie_Modelo&quot;,
+  &quot;SoftwareStatementProfileId&quot;: &quot;All&quot;
+}
+</code></pre></div>
+where only the bank's <em>bank profile</em> and ID of the <em>software statement profile</em> are required. Other optional properties are available but generally not necessary to use. </p>
+<p>Secondly, Open Banking Connector knows when to "re-use" an existing external (bank) API OAuth2 client rather than create a new one meaning the user can happily call <code>POST /config/bank-registrations</code> for each bank they want to use without any further knowledge <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>. This client re-use is completely transparent to the user. It can be overridden using the <code>ForceDynamicClientRegistration</code> property.</p>
+<p>Finally, Open Banking Connector allows an existing OAuth2 client created externally to be passed in using the <code>ExternalApiObject</code> property. This is useful when DCR is not supported by the bank or an OAuth2 client has been created elsewhere. When <code>ExternalApiObject</code> is non-null, DCR is not performed.</p>
+<h2 id="mappings-to-database-objects">Mappings to database objects</h2>
+<p>A successful call to <a href="openapi/"><code>POST /config/bank-registrations</code></a> always creates a record in the database <code>bank_registration</code> table even when DCR is not performed (i.e. an existing client has been supplied or re-used).</p>
+<p>Likewise, <a href="openapi/">GET /config/bank-registrations/{bankRegistrationId}</a> and <a href="openapi/">DELETE /config/bank-registrations/{bankRegistrationId}</a> can be used to read and delete database <code>bank_registration</code> records. </p>
+<h2 id="external-bank-api-operations">External (bank) API operations</h2>
+<p>When <a href="openapi/"><code>POST /config/bank-registrations</code></a> causes DCR to be performed, a call will be made to the external (bank) API <code>POST /register</code> endpoint and the property <code>ExternalApiResponse</code> will be included in the response. Otherwise just the local database object will be returned.</p>
+<p>Where supported and specified by the bank profile (or forced via header <code>x-obc-include-external-api-operation</code>), <a href="openapi/">GET /config/bank-registrations/{bankRegistrationId}</a> will perform a call to the external (bank) API <code>GET /register</code> endpoint and the property <code>ExternalApiResponse</code> will be included in the response. Otherwise just the local database object will be returned.</p>
+<p>Where supported and specified by the bank profile (or forced via header <code>x-obc-include-external-api-operation</code>), <a href="openapi/">DELETE /config/bank-registrations/{bankRegistrationId}</a> will perform a call to the external (bank) API <code>DELETE /register/{ClientId}</code> endpoint. Otherwise just the local database object will be deleted.</p>
+<p>Note that only a few banks support <code>GET /register/{ClientId}</code> and <code>DELETE /register/{ClientId}</code> and so in most cases <a href="openapi/">GET /config/bank-registrations/{bankRegistrationId}</a> and <a href="openapi/">DELETE /config/bank-registrations/{bankRegistrationId}</a> will not result in external (bank) API calls.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Why is this re-use necessary or desirable? Some <em>bank groups</em> (e.g. <code>NatWest</code>) expect/require the same OAuth2 client to re-used between sets of banks (e.g. <code>NatWest_RoyalBankOfScotland</code> and <code>NatWest_VirginOne</code>). Also performing DCR twice for the same bank might, depending on bank behaviour, result in re-generating the previous OAuth2 client (with same ID). For at least one bank, though, using the same client for both AISP and PISP is not allowed. Open Banking Connector has an internal concept of <em>bank registration groups</em>. These are essentially rules which determine when OAuth2 clients can be re-used (shared) by default. These are designed to ensure <code>POST /config/bank-registrations</code> can be called safely for all banks and only creates new OAuth2 clients where necessary.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      2022-03-12
+      2023-04-08
     
   </small>
 </div>
 
-              
-            </article>
-          </div>
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
         </div>
         
       </main>
       
         <footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        
-        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Interface" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Interface
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="set-up-a-bank/" class="md-footer__link md-footer__link--next" aria-label="Next: Setting up a bank" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Setting up a bank
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -1513,10 +1315,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.tabs", "search.share"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.bd0b6b67.min.js"}</script>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.indexes", "navigation.tabs", "search.share"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.467223ff.min.js"></script>
+      <script src="../../assets/javascripts/bundle.51198bba.min.js"></script>
       
     
   </body>

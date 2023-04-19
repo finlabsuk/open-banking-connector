@@ -1,0 +1,708 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Bank Configuration API",
+    "description": "Bank Configuration API for Open Banking Connector Web App",
+    "version": "web-app/4.0.0"
+  },
+  "paths": {
+    "/config/bank-registrations": {
+      "post": {
+        "tags": [
+          "BankRegistrations"
+        ],
+        "summary": "Create BankRegistration",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankRegistration"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankRegistration"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankRegistration"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankRegistration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/bank-registrations/{bankRegistrationId}": {
+      "get": {
+        "tags": [
+          "BankRegistrations"
+        ],
+        "summary": "Read BankRegistration",
+        "parameters": [
+          {
+            "name": "bankRegistrationId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-obc-include-external-api-operation",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "x-obc-use-registration-access-token",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankRegistrationResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BankRegistrations"
+        ],
+        "summary": "Delete BankRegistration",
+        "parameters": [
+          {
+            "name": "bankRegistrationId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-obc-include-external-api-operation",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "x-obc-use-registration-access-token",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BankProfileEnum": {
+        "enum": [
+          "DbTransitionalDefault",
+          "Obie_Modelo",
+          "NatWest_NatWestSandbox",
+          "NatWest_NatWest",
+          "NatWest_NatWestBankline",
+          "NatWest_NatWestClearSpend",
+          "NatWest_RoyalBankOfScotlandSandbox",
+          "NatWest_RoyalBankOfScotland",
+          "NatWest_RoyalBankOfScotlandBankline",
+          "NatWest_RoyalBankOfScotlandClearSpend",
+          "NatWest_TheOne",
+          "NatWest_NatWestOne",
+          "NatWest_VirginOne",
+          "NatWest_UlsterBankNI",
+          "NatWest_UlsterBankNiBankline",
+          "NatWest_UlsterBankNiClearSpend",
+          "VrpHackathon",
+          "Santander",
+          "Barclays_Sandbox",
+          "Barclays_Personal",
+          "Barclays_Wealth",
+          "Barclays_Barclaycard",
+          "Barclays_Business",
+          "Barclays_Corporate",
+          "Barclays_BarclaycardCommercialPayments",
+          "NewDayAmazon",
+          "Nationwide",
+          "Lloyds_Sandbox",
+          "Lloyds_LloydsPersonal",
+          "Lloyds_LloydsBusiness",
+          "Lloyds_LloydsCommerical",
+          "Lloyds_HalifaxPersonal",
+          "Lloyds_BankOfScotlandPersonal",
+          "Lloyds_BankOfScotlandBusiness",
+          "Lloyds_BankOfScotlandCommerical",
+          "Lloyds_MbnaPersonal",
+          "Hsbc_FirstDirect",
+          "Hsbc_Sandbox",
+          "Hsbc_UkBusiness",
+          "Hsbc_UkKinetic",
+          "Hsbc_UkPersonal",
+          "Danske",
+          "AlliedIrish",
+          "Monzo",
+          "Tsb"
+        ],
+        "type": "string",
+        "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
+      },
+      "BankRegistration": {
+        "required": [
+          "BankProfile",
+          "SoftwareStatementProfileId"
+        ],
+        "type": "object",
+        "properties": {
+          "BankProfile": {
+            "$ref": "#/components/schemas/BankProfileEnum"
+          },
+          "JwksUri": {
+            "type": "string",
+            "description": "JWK Set URI. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
+            "nullable": true
+          },
+          "RegistrationEndpoint": {
+            "type": "string",
+            "description": "Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl) if\r\navailable.\r\nUsed by operations that access bank registration endpoint(s), i.e. DCR and optional GET, PUT, DELETE\r\nendpoints for bank registration.",
+            "nullable": true
+          },
+          "TokenEndpoint": {
+            "type": "string",
+            "description": "Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
+            "nullable": true
+          },
+          "AuthorizationEndpoint": {
+            "type": "string",
+            "description": "Authorization endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
+            "nullable": true
+          },
+          "SoftwareStatementProfileId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "ID of software statement profile to use for registration. The ID must\r\ncorrespond to a software statement profile provided via secrets/configuration."
+          },
+          "SoftwareStatementProfileOverrideCase": {
+            "type": "string",
+            "description": "Optional override case to use with software statement and certificate profiles. Override cases\r\ncan be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.\r\nWhen null no override case is specified.",
+            "nullable": true
+          },
+          "RegistrationScope": {
+            "$ref": "#/components/schemas/RegistrationScopeEnum"
+          },
+          "DefaultRedirectUri": {
+            "type": "string",
+            "description": "Default redirect URI to use for this registration. This redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, the default redirect URI specified in the software statement profile will be used.",
+            "nullable": true
+          },
+          "OtherRedirectUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Other redirect URIs in addition to default one to use for this registration.\r\nEach redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs in the software statement profile (excluding that used as the default) will be used.",
+            "nullable": true
+          },
+          "ExternalApiObject": {
+            "$ref": "#/components/schemas/ExternalApiBankRegistration"
+          },
+          "ForceDynamicClientRegistration": {
+            "type": "boolean",
+            "description": "Forces Dynamic Client Registration (DCR) even when an external API (bank) registration (OAuth2 client) already\r\nexists\r\nfor a member of the same BankRegistrationGroup. By default, for each BankRegistrationGroup, any existing external\r\nAPI registration is\r\nre-used and DCR will only be performed the first time the BankRegistrationGroup is used.\r\nThis is to prevent unnecessary duplicate\r\nexternal API (bank) registrations which may disrupt/overwrite an\r\nexisting such registration depending on bank behaviour.\r\nThe safeguard of the re-using external API registrations within a BankRegistrationGroup can be removed, and the use\r\nof DCR forced, by setting this value to true.\r\nPlease use this setting with care, and it is suggested to delete any\r\nunwanted external API\r\nregistrations at the bank possibly via a support ticket if API support for this is not provided.\r\nWhen this setting is true and ExternalApiObject is non-null, an error will be produced."
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BankRegistrationGroup": {
+        "enum": [
+          "Barclays_Sandbox",
+          "Barclays_Production",
+          "NatWest_NatWestSandbox",
+          "NatWest_NatWestProduction",
+          "NatWest_RoyalBankOfScotlandSandbox",
+          "NatWest_RoyalBankOfScotlandProduction",
+          "NatWest_UlsterBankNiProduction",
+          "Lloyds_Sandbox",
+          "Lloyds_Production"
+        ],
+        "type": "string"
+      },
+      "BankRegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "ExternalApiObject": {
+            "$ref": "#/components/schemas/ExternalApiObjectResponse"
+          },
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBClientRegistration1Response"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BankProfile": {
+            "$ref": "#/components/schemas/BankProfileEnum"
+          },
+          "JwksUri": {
+            "type": "string",
+            "description": "JWK Set URI (normally supplied from OpenID Configuration)",
+            "nullable": true,
+            "readOnly": true
+          },
+          "RegistrationEndpoint": {
+            "type": "string",
+            "description": "Registration endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true,
+            "readOnly": true
+          },
+          "TokenEndpoint": {
+            "type": "string",
+            "description": "Token endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true,
+            "readOnly": true
+          },
+          "AuthorizationEndpoint": {
+            "type": "string",
+            "description": "Authorization endpoint (normally supplied from OpenID Configuration)",
+            "nullable": true,
+            "readOnly": true
+          },
+          "SoftwareStatementProfileId": {
+            "type": "string",
+            "description": "ID of SoftwareStatementProfile to use in association with BankRegistration",
+            "nullable": true,
+            "readOnly": true
+          },
+          "SoftwareStatementProfileOverride": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "RegistrationScope": {
+            "$ref": "#/components/schemas/RegistrationScopeEnum"
+          },
+          "DefaultRedirectUri": {
+            "type": "string",
+            "description": "Default redirect URI to use for this registration. This redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "OtherRedirectUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Other redirect URIs in addition to default one to use for this registration.\r\nEach redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BankRegistrationGroup": {
+            "$ref": "#/components/schemas/BankRegistrationGroup"
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to BankRegistration Read and Create requests."
+      },
+      "ExternalApiBankRegistration": {
+        "type": "object",
+        "properties": {
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
+          },
+          "ExternalApiSecret": {
+            "type": "string",
+            "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc.",
+            "nullable": true
+          },
+          "RegistrationAccessToken": {
+            "type": "string",
+            "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExternalApiObjectResponse": {
+        "type": "object",
+        "properties": {
+          "ExternalApiId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBClientRegistration1Response": {
+        "type": "object",
+        "properties": {
+          "iss": {
+            "type": "string",
+            "description": "Gets or sets unique identifier for the TPP. Implemented as Base62\r\nencoded GUID",
+            "nullable": true
+          },
+          "iat": {
+            "type": "string",
+            "description": "Gets or sets the time at which the request was issued by the TPP\r\nexpressed as seconds since 1970-01-01T00:00:00Z as measured in UTC",
+            "format": "date-time"
+          },
+          "exp": {
+            "type": "string",
+            "description": "Gets or sets the time at which the request expires expressed as\r\nseconds since 1970-01-01T00:00:00Z as measured in UTC",
+            "format": "date-time"
+          },
+          "aud": {
+            "type": "string",
+            "description": "Gets or sets the audience for the request. This should be the\r\nunique identifier\r\nfor the ASPSP issued by the issuer of the software statement.\r\nImplemented as Base62 encoded GUID",
+            "nullable": true
+          },
+          "jti": {
+            "type": "string",
+            "description": "Gets or sets unique identifier for the JWT implemented as UUID v4",
+            "nullable": true
+          },
+          "client_id": {
+            "type": "string",
+            "description": "Gets or sets oAuth 2.0 client identifier string",
+            "nullable": true
+          },
+          "client_secret": {
+            "type": "string",
+            "description": "Gets or sets oAuth 2.0 client secret string",
+            "nullable": true
+          },
+          "registration_access_token": {
+            "type": "string",
+            "description": "Optional parameter from OpenID DCR spec",
+            "nullable": true
+          },
+          "registration_client_uri": {
+            "type": "string",
+            "description": "Optional parameter from OpenID DCR spec",
+            "nullable": true
+          },
+          "subject_type": {
+            "type": "string",
+            "description": "Optional parameter from OpenID DCR spec",
+            "nullable": true
+          },
+          "client_id_issued_at": {
+            "type": "string",
+            "description": "Gets or sets time at which the client identifier was issued\r\nexpressed as seconds since 1970-01-01T00:00:00Z as measured in UTC",
+            "format": "date-time",
+            "nullable": true
+          },
+          "client_secret_expires_at": {
+            "type": "string",
+            "description": "Gets or sets time at which the client secret will expire expressed\r\nas seconds since 1970-01-01T00:00:00Z as measured in UTC. Set to 0\r\nif does not expire",
+            "format": "date-time",
+            "nullable": true
+          },
+          "redirect_uris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "token_endpoint_auth_method": {
+            "$ref": "#/components/schemas/OBRegistrationProperties1tokenEndpointAuthMethodEnum"
+          },
+          "grant_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBRegistrationProperties1grantTypesItemEnum"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "response_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBRegistrationProperties1responseTypesItemEnum"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "software_id": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "software_statement": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "application_type": {
+            "$ref": "#/components/schemas/OBRegistrationProperties1applicationTypeEnum"
+          },
+          "id_token_signed_response_alg": {
+            "$ref": "#/components/schemas/SupportedAlgorithmsEnum"
+          },
+          "request_object_signing_alg": {
+            "$ref": "#/components/schemas/SupportedAlgorithmsEnum"
+          },
+          "token_endpoint_auth_signing_alg": {
+            "$ref": "#/components/schemas/SupportedAlgorithmsEnum"
+          },
+          "tls_client_auth_subject_dn": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "backchannel_token_delivery_mode": {
+            "$ref": "#/components/schemas/OBRegistrationProperties1backchannelTokenDeliveryModeEnum"
+          },
+          "backchannel_client_notification_endpoint": {
+            "type": "string",
+            "description": "Gets or sets as defined in CIBA - Registration and Discovery\r\nMetadata.  This value MUST be specified iff the grant_types\r\nincludes  urn:openid:params:grant-type:ciba and\r\nbackchannel_token_delivery_mode is not poll.  This must be a valid\r\nHTTPS URL",
+            "nullable": true
+          },
+          "backchannel_authentication_request_signing_alg": {
+            "$ref": "#/components/schemas/OBRegistrationProperties1backchannelAuthenticationRequestSigningAlgEnum"
+          },
+          "backchannel_user_code_parameter_supported": {
+            "type": "boolean",
+            "description": "Gets or sets as defined in CIBA - Registration and Discovery\r\nMetadata.  This value MUST be specified only if the grant_types\r\nincludes  urn:openid:params:grant-type:ciba.  If specified, it MUST\r\nbe set to false.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBRegistrationProperties1applicationTypeEnum": {
+        "enum": [
+          "web",
+          "mobile"
+        ],
+        "type": "string",
+        "description": "Defines values for OBRegistrationProperties1applicationTypeEnum."
+      },
+      "OBRegistrationProperties1backchannelAuthenticationRequestSigningAlgEnum": {
+        "enum": [
+          "RS256",
+          "PS256",
+          "ES256"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBRegistrationProperties1backchannelAuthenticationRequestSigningAlgEnum."
+      },
+      "OBRegistrationProperties1backchannelTokenDeliveryModeEnum": {
+        "enum": [
+          "poll",
+          "ping",
+          "push"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBRegistrationProperties1backchannelTokenDeliveryModeEnum."
+      },
+      "OBRegistrationProperties1grantTypesItemEnum": {
+        "enum": [
+          "client_credentials",
+          "authorization_code",
+          "refresh_token",
+          "urn:openid:params:grant-type:ciba"
+        ],
+        "type": "string",
+        "description": "Defines values for OBRegistrationProperties1grantTypesItemEnum."
+      },
+      "OBRegistrationProperties1responseTypesItemEnum": {
+        "enum": [
+          "code",
+          "code id_token"
+        ],
+        "type": "string",
+        "description": "Defines values for OBRegistrationProperties1responseTypesItemEnum."
+      },
+      "OBRegistrationProperties1tokenEndpointAuthMethodEnum": {
+        "enum": [
+          "private_key_jwt",
+          "client_secret_jwt",
+          "client_secret_basic",
+          "client_secret_post",
+          "tls_client_auth"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBRegistrationProperties1tokenEndpointAuthMethodEnum."
+      },
+      "ObjectDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistrationScopeEnum": {
+        "enum": [
+          "None",
+          "AccountAndTransaction",
+          "PaymentInitiation",
+          "FundsConfirmation",
+          "All"
+        ],
+        "type": "string",
+        "description": "Registration scope used when creating a bank client.\r\nSet of FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.RegistrationScopeElementEnum."
+      },
+      "SupportedAlgorithmsEnum": {
+        "enum": [
+          "RS256",
+          "PS256",
+          "ES256"
+        ],
+        "type": "string",
+        "description": "Defines values for SupportedAlgorithmsEnum."
+      }
+    }
+  }
+}
