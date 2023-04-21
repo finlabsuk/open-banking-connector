@@ -10,8 +10,8 @@ The main steps are:
 
 You can then use Open Banking Connector APIs to:
 
-1. [set up a bank](../interface/bank-configuration/set-up-a-bank.md)
-2. connect to the bank using APIs such as the [Account and Transaction API](../interface/account-and-transaction/README.md)
+1. [set up a bank](../apis/bank-configuration/set-up-a-bank.md)
+2. connect to the bank using APIs such as the [Account and Transaction API](../apis/account-and-transaction/README.md)
 
 ## Set up configuration and secrets
 
@@ -104,7 +104,7 @@ OpenBankingConnector__BankProfiles__Barclays__Default__FinancialId=yy # substitu
 
 For production, you will also need to setup a redirect endpoint (e.g. simple web page) to handle the bank redirects that follow end-user auth. Your redirect endpoint needs to match one of the redirect URLs included in in your SSA and you will probably want to customise the branding and message shown.
 
-Open Banking Connector is designed as an internal API and its endpoints should be secured (see [here](../interface/README.md#security)) and definitely not exposed to the internet in any way. This is *very important* as endpoints provide access to Open Banking APIs.
+Open Banking Connector is designed as an internal API and its endpoints should be secured (see [here](../apis/README.md#security)) and definitely not exposed to the internet in any way. This is *very important* as endpoints provide access to Open Banking APIs.
 
 To give an idea of what is required, Open Banking Connector does provide an example redirect endpoint at `/auth/fragment-redirect` which is a simple web page with "Open Banking Connector" branding.
 

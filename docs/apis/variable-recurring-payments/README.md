@@ -10,12 +10,12 @@ For any running version of Open Banking Connector, the OpenAPI spec for the curr
 
 ## Relationship to UK Open Banking Variable Recurring Payments API
 
-[Coming soon]
+(Coming soon)
 
 ## Mappings to database objects
 
-[Coming soon]
+(Coming soon)
 
 ## External (bank) API operations
 
-[Coming soon]
+(Coming soon)

@@ -1,12 +1,15 @@
 site_name: Open Banking Connector docs
 repo_url: https://github.com/finlabsuk/open-banking-connector
-edit_uri: ""
 repo_name: Open Banking Connector
 theme:
   name: material
   features:
-    - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
     - navigation.tabs
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
     - search.share
 markdown_extensions:
   - pymdownx.highlight
@@ -21,18 +24,16 @@ plugins:
   - search:
        lang: en
        separator: '[\s\-\.]'
-  - git-revision-date
+  - git-revision-date-localized:
+      type: iso_date
   - render_swagger
-
 extra_css:
   - stylesheets/style.css
-
+copyright: Copyright &copy; 2023 Finnovation Labs Limited and contributors
 nav:
-  - Overview:
-    - README.md
-    - Bank Integration Matrix: bank-integration-matrix.md
-  - Get started:
-    - get-started/README.md
+  - Overview: README.md
+  - Get started: get-started/README.md
+  - Bank Integrations: bank-integrations.md
   - Configuration:
     - configuration/README.md
     - Database settings: configuration/database-settings.md
@@ -41,23 +42,23 @@ nav:
     - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
     - Configuration sources settings: configuration/configuration-sources-settings.md
   - APIs:
-    - interface/README.md
+    - apis/README.md
     - Bank Configuration API:
-      - interface/bank-configuration/README.md
-      - Set up a bank: interface/bank-configuration/set-up-a-bank.md
-      - OpenAPI spec: interface/bank-configuration/openapi.md
+      - apis/bank-configuration/README.md
+      - Set up a bank: apis/bank-configuration/set-up-a-bank.md
+      - OpenAPI spec: apis/bank-configuration/openapi.md
     - Account and Transaction API:
-      - interface/account-and-transaction/README.md
-      - OpenAPI spec: interface/account-and-transaction/openapi.md 
+      - apis/account-and-transaction/README.md
+      - OpenAPI spec: apis/account-and-transaction/openapi.md 
     - Payment Initiation API:
-      - interface/payment-initiation/README.md
-      - OpenAPI spec: interface/payment-initiation/openapi.md
+      - apis/payment-initiation/README.md
+      - OpenAPI spec: apis/payment-initiation/openapi.md
     - Variable Recurring Payments API:
-      - interface/variable-recurring-payments/README.md
-      - OpenAPI spec: interface/variable-recurring-payments/openapi.md
+      - apis/variable-recurring-payments/README.md
+      - OpenAPI spec: apis/variable-recurring-payments/openapi.md
     - Auth Contexts API:
-      - interface/auth-contexts/README.md
-      - OpenAPI spec: interface/auth-contexts/openapi.md 
+      - apis/auth-contexts/README.md
+      - OpenAPI spec: apis/auth-contexts/openapi.md 
   - Contributor info:
       - contributor-info/README.md
       - Documentation:

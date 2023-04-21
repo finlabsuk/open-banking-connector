@@ -2,7 +2,7 @@
 
 To set up a bank, you will need to create a bank registration (OAuth2 client) which establishes a relationship with the bank.
 
-To do this, first determine the *bank profile* which is used to identify the bank in Open Banking Connector. Bank profiles are listed in the [bank integration matrix](../../bank-integration-matrix.md).
+To do this, first determine the *bank profile* which is used to identify the bank in Open Banking Connector. Bank profiles are listed in the [bank integrations table](../../bank-integrations.md).
 
 Each bank registration requires a [software statement profile](../../configuration/software-statement-profiles-settings.md) (includes an *SSA* which identifies the third-party provider (TPP) to the bank) and so it is necessary for one of these to be set up before attempting to create a bank registration.
 
