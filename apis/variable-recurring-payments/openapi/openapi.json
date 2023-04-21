@@ -1,0 +1,1340 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Variable Recurring Payments API",
+    "description": "Variable Recurring Payments API for Open Banking Connector Web App",
+    "version": "web-app/4.0.0"
+  },
+  "paths": {
+    "/vrp/domestic-vrp-consents": {
+      "post": {
+        "tags": [
+          "Domestic VRP Consents"
+        ],
+        "summary": "Create DomesticVrpConsent",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vrp/domestic-vrp-consents/{domesticVrpConsentId}": {
+      "get": {
+        "tags": [
+          "Domestic VRP Consents"
+        ],
+        "summary": "Read DomesticVrpConsent",
+        "parameters": [
+          {
+            "name": "domesticVrpConsentId",
+            "in": "path",
+            "description": "ID of DomesticVrpConsent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-include-external-api-operation",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpConsentCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Domestic VRP Consents"
+        ],
+        "summary": "Delete DomesticVrpConsent",
+        "parameters": [
+          {
+            "name": "domesticVrpConsentId",
+            "in": "path",
+            "description": "ID of DomesticVrpConsent",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-include-external-api-operation",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vrp/domestic-vrps": {
+      "post": {
+        "tags": [
+          "Domestic VRPs"
+        ],
+        "summary": "Create DomesticVrp",
+        "parameters": [
+          {
+            "name": "x-obc-domestic-vrp-consent-id",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomesticVrpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vrp/domestic-vrps/{externalApiId}": {
+      "get": {
+        "tags": [
+          "Domestic VRPs"
+        ],
+        "summary": "Read DomesticVrp",
+        "parameters": [
+          {
+            "name": "externalApiId",
+            "in": "path",
+            "description": "External (bank) API ID of Domestic VRP",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-obc-domestic-vrp-consent-id",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomesticVrpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessToken": {
+        "type": "object",
+        "properties": {
+          "Token": {
+            "type": "string",
+            "description": "Token.",
+            "nullable": true
+          },
+          "ExpiresIn": {
+            "type": "integer",
+            "description": "Token \"expires_in\".",
+            "format": "int32"
+          },
+          "RefreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "ModifiedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthContextRequest": {
+        "type": "object",
+        "properties": {
+          "State": {
+            "type": "string",
+            "description": "OAuth2 \"state\".",
+            "nullable": true
+          },
+          "Nonce": {
+            "type": "string",
+            "description": "OpenID Connect \"nonce\".",
+            "nullable": true
+          },
+          "ModifiedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BankProfileEnum": {
+        "enum": [
+          "DbTransitionalDefault",
+          "Obie_Modelo",
+          "NatWest_NatWestSandbox",
+          "NatWest_NatWest",
+          "NatWest_NatWestBankline",
+          "NatWest_NatWestClearSpend",
+          "NatWest_RoyalBankOfScotlandSandbox",
+          "NatWest_RoyalBankOfScotland",
+          "NatWest_RoyalBankOfScotlandBankline",
+          "NatWest_RoyalBankOfScotlandClearSpend",
+          "NatWest_TheOne",
+          "NatWest_NatWestOne",
+          "NatWest_VirginOne",
+          "NatWest_UlsterBankNI",
+          "NatWest_UlsterBankNiBankline",
+          "NatWest_UlsterBankNiClearSpend",
+          "VrpHackathon",
+          "Santander",
+          "Barclays_Sandbox",
+          "Barclays_Personal",
+          "Barclays_Wealth",
+          "Barclays_Barclaycard",
+          "Barclays_Business",
+          "Barclays_Corporate",
+          "Barclays_BarclaycardCommercialPayments",
+          "NewDayAmazon",
+          "Nationwide",
+          "Lloyds_Sandbox",
+          "Lloyds_LloydsPersonal",
+          "Lloyds_LloydsBusiness",
+          "Lloyds_LloydsCommerical",
+          "Lloyds_HalifaxPersonal",
+          "Lloyds_BankOfScotlandPersonal",
+          "Lloyds_BankOfScotlandBusiness",
+          "Lloyds_BankOfScotlandCommerical",
+          "Lloyds_MbnaPersonal",
+          "Hsbc_FirstDirect",
+          "Hsbc_Sandbox",
+          "Hsbc_UkBusiness",
+          "Hsbc_UkKinetic",
+          "Hsbc_UkPersonal",
+          "Danske",
+          "AlliedIrish",
+          "Monzo",
+          "Tsb"
+        ],
+        "type": "string",
+        "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
+      },
+      "DomesticVrpConsentCreateResponse": {
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentResponse"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "BankRegistrationId": {
+            "type": "string",
+            "description": "ID of associated BankRegistration object",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "ExternalApiUserId": {
+            "type": "string",
+            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "AuthContextModified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "AuthContextModifiedBy": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to DomesticVrpConsent Create and Read requests."
+      },
+      "DomesticVrpConsentRequest": {
+        "required": [
+          "BankRegistrationId"
+        ],
+        "type": "object",
+        "properties": {
+          "TemplateRequest": {
+            "$ref": "#/components/schemas/DomesticVrpTemplateRequest"
+          },
+          "ExternalApiRequest": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentRequest"
+          },
+          "BankRegistrationId": {
+            "type": "string",
+            "description": "Specifies BankRegistration object to use when creating the consent.",
+            "format": "uuid"
+          },
+          "ExternalApiObject": {
+            "$ref": "#/components/schemas/ExternalApiConsent"
+          },
+          "ExternalApiUserId": {
+            "type": "string",
+            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. It can also optionally\r\nbe specified here.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomesticVrpRequest": {
+        "type": "object",
+        "properties": {
+          "BankProfile": {
+            "$ref": "#/components/schemas/BankProfileEnum"
+          },
+          "TemplateRequest": {
+            "$ref": "#/components/schemas/DomesticVrpTemplateRequest"
+          },
+          "ExternalApiRequest": {
+            "$ref": "#/components/schemas/OBDomesticVRPRequest"
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomesticVrpResponse": {
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/OBDomesticVRPResponse"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to Read and Create requests"
+      },
+      "DomesticVrpTemplateParameters": {
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "type": "string",
+            "nullable": true
+          },
+          "EndToEndIdentification": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomesticVrpTemplateRequest": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "$ref": "#/components/schemas/DomesticVrpTemplateType"
+          },
+          "Parameters": {
+            "$ref": "#/components/schemas/DomesticVrpTemplateParameters"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DomesticVrpTemplateType": {
+        "enum": [
+          "VrpWithDebtorAccountSpecifiedByPisp",
+          "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation",
+          "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation"
+        ],
+        "type": "string"
+      },
+      "ExternalApiConsent": {
+        "type": "object",
+        "properties": {
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
+          },
+          "AccessToken": {
+            "$ref": "#/components/schemas/AccessToken"
+          },
+          "AuthContext": {
+            "$ref": "#/components/schemas/AuthContextRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Links": {
+        "type": "object",
+        "properties": {
+          "Self": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "First": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "Prev": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "Next": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "Last": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Links relevant to the payload"
+      },
+      "OBActiveOrHistoricCurrencyAndAmount": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBBranchAndFinancialInstitutionIdentification6": {
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `SchemeName` |Name of the identification\r\nscheme, in a coded form as published in an external list.\r\n|OBExternalFinancialInstitutionIdentification4Code",
+            "nullable": true
+          },
+          "Identification": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `Identification` |Unique and unambiguous\r\nidentification of a financial institution or a branch of a\r\nfinancial institution.  | Max35Text",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `Name` | Name by which an agent is known and\r\nwhich is usually used to identify that agent. | Max140Text",
+            "nullable": true
+          },
+          "PostalAddress": {
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification6PostalAddress"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBBranchAndFinancialInstitutionIdentification6PostalAddress": {
+        "type": "object",
+        "properties": {
+          "AddressType": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. AddressType` |Identifies the\r\nnature of the postal address. |OBAddressTypeCode  |Business\r\nCorrespondence DeliveryTo MailTo POBox Postal Residential Statement",
+            "nullable": true
+          },
+          "Department": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. Department` |Identification\r\nof a division of a large organisation or building. | Max70Text",
+            "nullable": true
+          },
+          "SubDepartment": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. SubDepartment`\r\n|Identification of a sub-division of a large organisation or\r\nbuilding. |Max70Text",
+            "nullable": true
+          },
+          "StreetName": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. StreetName`   |Name of a\r\nstreet or thoroughfare.    |Max70Text",
+            "nullable": true
+          },
+          "BuildingNumber": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. BuildingNumber` |Number that\r\nidentifies the position of a building on a street.   |Max16Text",
+            "nullable": true
+          },
+          "PostCode": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. PostCode` |Identifier\r\nconsisting of a group of letters and. or numbers that is added to a\r\npostal address to assist the sorting of mail.    |Max16Text",
+            "nullable": true
+          },
+          "TownName": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. TownName` |Name of a\r\nbuilt-up area, with defined boundaries, and a local government.\r\n|Max35Text",
+            "nullable": true
+          },
+          "CountrySubDivision": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. CountrySubDivision`\r\n|Identifies a subdivision of a country such as state, region,\r\ncounty.      |Max35Text",
+            "nullable": true
+          },
+          "Country": {
+            "type": "string",
+            "description": "Gets or sets ^ 0..1) | `PostalAddress. Country` | Nation with its\r\nown government.      |CountryCode",
+            "nullable": true
+          },
+          "AddressLine": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "^ 0..1) | `PostalAddress` |Information that locates and identifies a\r\nspecific address, as defined by postal services.| OBPostalAddress6"
+      },
+      "OBCashAccountCreditor3": {
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string",
+            "description": "Gets or sets ^ Name of the identification scheme, in a coded form\r\nas published in an external list. | Namespaced Enumeration\r\nOBExternalAccountIdentification4Code",
+            "nullable": true
+          },
+          "Identification": {
+            "type": "string",
+            "description": "Gets or sets ^ Identification assigned by an institution to\r\nidentify an account. This identification is known by the account\r\nowner. | Max256Text",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "description": "Gets or sets ^ Name of the account, as assigned by the account\r\nservicing institution.  Usage The account name is the name or names\r\nof the account owner(s) represented at an account level. The\r\naccount name is not the product name or the nickname of the\r\naccount.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "type": "string",
+            "description": "Gets or sets ^ This is secondary identification of the account, as\r\nassigned by the account servicing institution.  This can be used by\r\nbuilding societies to additionally identify accounts with a roll\r\nnumber (in addition to a sort code and account number combination)\r\n| Max34Text",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBCashAccountDebtorWithName": {
+        "type": "object",
+        "properties": {
+          "SchemeName": {
+            "type": "string",
+            "description": "Gets or sets ^ Name of the identification scheme, in a coded form\r\nas published in an external list. | Namespaced Enumeration\r\nOBExternalAccountIdentification4Code",
+            "nullable": true
+          },
+          "Identification": {
+            "type": "string",
+            "description": "Gets or sets ^ Identification assigned by an institution to\r\nidentify an account. This identification is known by the account\r\nowner. | Max256Text",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "description": "Gets or sets ^ Name of the account, as assigned by the account\r\nservicing institution.  Usage The account name is the name or names\r\nof the account owner(s) represented at an account level. The\r\naccount name is not the product name or the nickname of the\r\naccount.",
+            "nullable": true
+          },
+          "SecondaryIdentification": {
+            "type": "string",
+            "description": "Gets or sets ^ This is secondary identification of the account, as\r\nassigned by the account servicing institution.  This can be used by\r\nbuilding societies to additionally identify accounts with a roll\r\nnumber (in addition to a sort code and account number combination)\r\n| Max34Text",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "^ Only incuded in the response if `Data. ReadRefundAccount` is set to\r\n`Yes` in the consent."
+      },
+      "OBChargeBearerType1CodeEnum": {
+        "enum": [
+          "BorneByCreditor",
+          "BorneByDebtor",
+          "FollowingServiceLevel",
+          "Shared"
+        ],
+        "type": "string",
+        "description": "Defines values for OBChargeBearerType1CodeEnum."
+      },
+      "OBDomesticVRPConsentRequest": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentRequestData"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPConsentRequestData": {
+        "type": "object",
+        "properties": {
+          "ReadRefundAccount": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentRequestDataReadRefundAccountEnum"
+          },
+          "ControlParameters": {
+            "$ref": "#/components/schemas/OBDomesticVRPControlParameters"
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/OBDomesticVRPInitiation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPConsentRequestDataReadRefundAccountEnum": {
+        "enum": [
+          "Yes",
+          "No"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBDomesticVRPConsentRequestDataReadRefundAccountEnum."
+      },
+      "OBDomesticVRPConsentResponse": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentResponseData"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "description": "",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPConsentResponseData": {
+        "type": "object",
+        "properties": {
+          "ReadRefundAccount": {
+            "$ref": "#/components/schemas/OBDomesticVRPConsentResponseDataReadRefundAccountEnum"
+          },
+          "ConsentId": {
+            "type": "string",
+            "description": "Gets or sets unique identification as assigned by the ASPSP to\r\nuniquely identify the consent resource.      | Max128Text",
+            "nullable": true
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "description": "Gets or sets date and time at which the resource was\r\ncreated.|ISODateTime",
+            "format": "date-time"
+          },
+          "Status": {
+            "type": "string",
+            "description": "Gets or sets specifies the status of resource in code form.\r\n|Authorised AwaitingAuthorisation Rejected Revoked Expired",
+            "nullable": true
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "Gets or sets date and time at which the resource status was\r\nupdated.  | ISODateTime",
+            "format": "date-time"
+          },
+          "ControlParameters": {
+            "$ref": "#/components/schemas/OBDomesticVRPControlParameters"
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/OBDomesticVRPInitiation"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPConsentResponseDataReadRefundAccountEnum": {
+        "enum": [
+          "Yes",
+          "No"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBDomesticVRPConsentResponseDataReadRefundAccountEnum."
+      },
+      "OBDomesticVRPControlParameters": {
+        "type": "object",
+        "properties": {
+          "ValidFromDateTime": {
+            "type": "string",
+            "description": "Gets or sets ^ Start date time for which the consent remains valid.\r\n| ISODateTime",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ValidToDateTime": {
+            "type": "string",
+            "description": "Gets or sets ^ End date time for which the consent remains valid. |\r\nISODateTime",
+            "format": "date-time",
+            "nullable": true
+          },
+          "MaximumIndividualAmount": {
+            "$ref": "#/components/schemas/OBDomesticVRPControlParametersMaximumIndividualAmount"
+          },
+          "PeriodicLimits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBDomesticVRPControlParametersPeriodicLimitsItem"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "VRPType": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets or sets ^ The types of payments that can be made under this\r\nVRP consent. This can be used to indicate whether this include\r\nsweeping payment or other ecommerce payments.  | OBVRPConsentType -\r\nNamespaced Enumeration",
+            "nullable": true
+          },
+          "PSUAuthenticationMethods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Gets or sets ^ Indicates that the PSU authentication methods\r\nsupported.  | OBVRPAuthenticationMethods - Namespaced Enumeration",
+            "nullable": true
+          },
+          "SupplementaryData": {
+            "description": "Gets or sets ^ Additional information that can not be captured in\r\nthe structured fields and/or any other specific block",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPControlParametersMaximumIndividualAmount": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "Gets or sets ^ A number of monetary units specified in an active\r\ncurrency where the unit of currency is explicit and compliant with\r\nISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "Gets or sets ^ A code allocated to a currency by a Maintenance\r\nAgency under an international identification scheme, as described\r\nin the latest edition of the international standard ISO 4217 \"Codes\r\nfor the representation of currencies and funds\".   |\r\nActiveOrHistoricCurrencyCode",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPControlParametersPeriodicLimitsItem": {
+        "type": "object",
+        "properties": {
+          "PeriodType": {
+            "$ref": "#/components/schemas/OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum"
+          },
+          "PeriodAlignment": {
+            "$ref": "#/components/schemas/OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum"
+          },
+          "Amount": {
+            "type": "string",
+            "description": "Gets or sets ^ A number of monetary units specified in an active\r\ncurrency where the unit of currency is explicit and compliant with\r\nISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "Gets or sets ^ A code allocated to a currency by a Maintenance\r\nAgency under an international identification scheme, as described\r\nin the latest edition of the international standard ISO 4217 \"Codes\r\nfor the representation of currencies and funds\".   |\r\nActiveOrHistoricCurrencyCode",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum": {
+        "enum": [
+          "Consent",
+          "Calendar"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBDomesticVRPControlParametersPeriodicLimitsItemPeriodAlignmentEnum."
+      },
+      "OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum": {
+        "enum": [
+          "Day",
+          "Week",
+          "Fortnight",
+          "Month",
+          "Half-year",
+          "Year"
+        ],
+        "type": "string",
+        "description": "Defines values for\r\nOBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum."
+      },
+      "OBDomesticVRPInitiation": {
+        "type": "object",
+        "properties": {
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
+          },
+          "CreditorAgent": {
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification6"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/OBCashAccountCreditor3"
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/OBDomesticVRPInitiationRemittanceInformation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPInitiationRemittanceInformation": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "type": "string",
+            "description": "Gets or sets ^ Information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Gets or sets ^ Unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction. Usage - If\r\navailable, the initiating party should provide this reference in\r\nthe structured remittance information, to enable reconciliation by\r\nthe creditor upon receipt of the amount of money. If the business\r\ncontext requires the use of a creditor reference or a payment remit\r\nidentification, and only one identifier can be passed through the\r\nend-to-end chain, the creditor's reference or payment remittance\r\nidentification should be quoted in the end-to-end transaction\r\nidentification.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "^ Information supplied to enable the matching of an entry with the\r\nitems that the transfer is intended to settle, such as commercial\r\ninvoices in an accounts' receivable system."
+      },
+      "OBDomesticVRPInstruction": {
+        "type": "object",
+        "properties": {
+          "InstructionIdentification": {
+            "type": "string",
+            "description": "Gets or sets unique identification as assigned by an instructing\r\nparty for an instructed party to unambiguously identify the\r\ninstruction.\r\nUsage: the instruction identification is a point to point reference\r\nthat can be used between the instructing party and the instructed\r\nparty to refer to the individual instruction.\r\nIt can be included in several messages related to the instruction.",
+            "nullable": true
+          },
+          "EndToEndIdentification": {
+            "type": "string",
+            "description": "Gets or sets unique identification assigned by the initiating party\r\nto unambiguously identify the transaction.\r\nThis identification is passed on, unchanged, throughout the entire\r\nend-to-end chain.\r\nUsage: The end-to-end identification can be used for reconciliation\r\nor to link tasks relating to the transaction.\r\nIt can be included in several messages related to the transaction.\r\nOB: The Faster Payments Scheme can only access 31 characters for\r\nthe EndToEndIdentification field",
+            "nullable": true
+          },
+          "RemittanceInformation": {
+            "$ref": "#/components/schemas/OBVRPRemittanceInformation"
+          },
+          "LocalInstrument": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "InstructedAmount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
+          },
+          "CreditorAgent": {
+            "$ref": "#/components/schemas/OBBranchAndFinancialInstitutionIdentification6"
+          },
+          "CreditorAccount": {
+            "$ref": "#/components/schemas/OBCashAccountCreditor3"
+          },
+          "SupplementaryData": {
+            "description": "Gets or sets ^ Additional information that can not be captured in\r\nthe structured fields and/or any other specific block",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPRequest": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/OBDomesticVRPRequestData"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPRequestData": {
+        "type": "object",
+        "properties": {
+          "ConsentId": {
+            "type": "string",
+            "description": "Gets or sets identifier for the Domestic VRP Consent that this\r\npayment is made under.",
+            "nullable": true
+          },
+          "PSUAuthenticationMethod": {
+            "type": "string",
+            "description": "Gets or sets ^ The authentication method that was used to\r\nauthenicate the PSU.   | OBVRPAuthenticationMethods - Namespaced\r\nEnumeration",
+            "nullable": true
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/OBDomesticVRPInitiation"
+          },
+          "Instruction": {
+            "$ref": "#/components/schemas/OBDomesticVRPInstruction"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPResponse": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/OBDomesticVRPResponseData"
+          },
+          "Risk": {
+            "$ref": "#/components/schemas/OBRisk1"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "description": "",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPResponseData": {
+        "type": "object",
+        "properties": {
+          "DomesticVRPId": {
+            "type": "string",
+            "description": "Gets or sets unique identification as assigned by the ASPSP to\r\nuniquely identify the domestic payment resource.",
+            "nullable": true
+          },
+          "ConsentId": {
+            "type": "string",
+            "description": "Gets or sets identifier for the Domestic VRP Consent that this\r\npayment is made under.",
+            "nullable": true
+          },
+          "CreationDateTime": {
+            "type": "string",
+            "description": "Gets or sets date and time at which the resource was created.",
+            "format": "date-time"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/OBDomesticVRPResponseDataStatusEnum"
+          },
+          "StatusUpdateDateTime": {
+            "type": "string",
+            "description": "Gets or sets date and time at which the resource status was\r\nupdated.",
+            "format": "date-time"
+          },
+          "ExpectedExecutionDateTime": {
+            "type": "string",
+            "description": "Gets or sets expected execution date and time for the payment\r\nresource.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpectedSettlementDateTime": {
+            "type": "string",
+            "description": "Gets or sets expected settlement date and time for the payment\r\nresource.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Refund": {
+            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
+          },
+          "Charges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OBDomesticVRPResponseDataChargesItem"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "Initiation": {
+            "$ref": "#/components/schemas/OBDomesticVRPInitiation"
+          },
+          "Instruction": {
+            "$ref": "#/components/schemas/OBDomesticVRPInstruction"
+          },
+          "DebtorAccount": {
+            "$ref": "#/components/schemas/OBCashAccountDebtorWithName"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OBDomesticVRPResponseDataChargesItem": {
+        "type": "object",
+        "properties": {
+          "ChargeBearer": {
+            "$ref": "#/components/schemas/OBChargeBearerType1CodeEnum"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/OBExternalPaymentChargeType1CodeEnum"
+          },
+          "Amount": {
+            "$ref": "#/components/schemas/OBActiveOrHistoricCurrencyAndAmount"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Set of elements used to provide details of a charge for the payment\r\ninitiation."
+      },
+      "OBDomesticVRPResponseDataStatusEnum": {
+        "enum": [
+          "AcceptedCreditSettlementCompleted",
+          "AcceptedWithoutPosting",
+          "AcceptedSettlementCompleted",
+          "AcceptedSettlementInProcess",
+          "Pending",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Defines values for OBDomesticVRPResponseDataStatusEnum."
+      },
+      "OBExternalPaymentChargeType1CodeEnum": {
+        "enum": [
+          "UK.OBIE.CHAPSOut",
+          "UK.OBIE.BalanceTransferOut",
+          "UK.OBIE.MoneyTransferOut"
+        ],
+        "type": "string",
+        "description": "Defines values for OBExternalPaymentChargeType1CodeEnum."
+      },
+      "OBRisk1": {
+        "type": "object",
+        "properties": {
+          "PaymentContextCode": {
+            "$ref": "#/components/schemas/OBRisk1PaymentContextCodeEnum"
+          },
+          "MerchantCategoryCode": {
+            "type": "string",
+            "description": "Gets or sets category code conform to ISO 18245, related to the\r\ntype of services or goods the merchant provides for the\r\ntransaction.",
+            "nullable": true
+          },
+          "MerchantCustomerIdentification": {
+            "type": "string",
+            "description": "Gets or sets the unique customer identifier of the PSU with the\r\nmerchant.",
+            "nullable": true
+          },
+          "DeliveryAddress": {
+            "$ref": "#/components/schemas/OBRisk1DeliveryAddress"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The Risk section is sent by the initiating party to the ASPSP. It is\r\nused to specify additional details for risk scoring for Payments."
+      },
+      "OBRisk1DeliveryAddress": {
+        "type": "object",
+        "properties": {
+          "AddressLine": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "StreetName": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "BuildingNumber": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "PostCode": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "TownName": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "CountrySubDivision": {
+            "type": "string",
+            "description": "",
+            "nullable": true
+          },
+          "Country": {
+            "type": "string",
+            "description": "Gets or sets nation with its own government, occupying a particular\r\nterritory.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information that locates and identifies a specific address, as defined\r\nby postal services or in free format text."
+      },
+      "OBRisk1PaymentContextCodeEnum": {
+        "enum": [
+          "BillPayment",
+          "EcommerceGoods",
+          "EcommerceServices",
+          "Other",
+          "PartyToParty"
+        ],
+        "type": "string",
+        "description": "Defines values for OBRisk1PaymentContextCodeEnum."
+      },
+      "OBVRPRemittanceInformation": {
+        "type": "object",
+        "properties": {
+          "Unstructured": {
+            "type": "string",
+            "description": "Gets or sets information supplied to enable the\r\nmatching/reconciliation of an entry with the items that the payment\r\nis intended to settle, such as commercial invoices in an accounts'\r\nreceivable system, in an unstructured form.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Gets or sets unique reference, as assigned by the creditor, to\r\nunambiguously refer to the payment transaction. The PISP must\r\npopulate this with the same value as specified in the\r\nControlParameters.Reference field of the consent.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
+      },
+      "ObjectDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
