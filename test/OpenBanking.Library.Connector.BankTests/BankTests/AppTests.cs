@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.AccountAndTransaction.
     AccountAccessConsent;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.DomesticVrp;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
@@ -17,8 +16,12 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Xunit;
@@ -38,19 +41,18 @@ public abstract class AppTests
     public enum BankRegistrationOptions
     {
         /// <summary>
-        ///     Test creation of bank registration.
+        ///     Test creation of external bank registration.
         /// </summary>
         OnlyCreateRegistration,
 
         /// <summary>
-        ///     Test creation then deletion of bank registration.
-        ///     If possible, force external bank registration deletion even if
-        ///     ExternalApi registration supplied via BankRegistrationExternalApiIds rather than created.
+        ///     Test deletion of existing external bank registration.
+        ///     If possible, force bank registration deletion at external (bank) API.
         /// </summary>
         OnlyDeleteRegistration,
 
         /// <summary>
-        ///     Test all possible endpoints (maximal test).
+        ///     Test all possible endpoints (maximal test) using existing external bank registration.
         /// </summary>
         TestRegistration
     }
@@ -182,8 +184,9 @@ public abstract class AppTests
             $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData1.RegistrationScope.AbbreviatedName()}";
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
-        // Set test type
-        var testType = BankRegistrationOptions.TestRegistration;
+        // Set test options
+        var bankRegistrationOptions = BankRegistrationOptions.TestRegistration;
+        var accountAccessConsentOptions = AccountAccessConsentOptions.TestConsent;
 
         // Get bank test settings
         BankTestSettings bankTestSettings =
@@ -230,7 +233,7 @@ public abstract class AppTests
 
         // Create consent auth if in use
         ConsentAuth? consentAuth;
-        bool useConsentAuth = genericNotPlainAppTest && testType is BankRegistrationOptions.TestRegistration;
+        bool useConsentAuth = genericNotPlainAppTest;
         if (useConsentAuth)
         {
             PlaywrightLaunchOptions launchOptions =
@@ -263,19 +266,71 @@ public abstract class AppTests
         var modifiedBy = "Automated bank tests";
 
         // CREATE and READ bank configuration objects
-        Guid bankRegistrationId =
-            await BankConfigurationSubtests.PostAndGetObjects(
-                testData1,
-                testData2,
-                requestBuilder,
-                bankProfile,
-                testNameUnique,
-                modifiedBy,
-                testDataProcessorFluentRequestLogging
-                    .AppendToPath("config"));
+        // Create bankRegistration or use existing
+        string softwareStatementProfileId = testData1.SoftwareStatementProfileId;
+        string? statementProfileOverride = testData1.SoftwareStatementAndCertificateProfileOverride;
+        RegistrationScopeEnum registrationScope = testData1.RegistrationScope;
+        BankRegistration bankRegistrationRequest = await GetBankRegistrationRequest(
+            bankProfile,
+            softwareStatementProfileId,
+            statementProfileOverride,
+            registrationScope,
+            testDataProcessorFluentRequestLogging,
+            testNameUnique,
+            modifiedBy);
 
-        if (testType is BankRegistrationOptions.TestRegistration)
+        // Handle "only delete" case
+        if (bankRegistrationOptions is BankRegistrationOptions.OnlyDeleteRegistration)
         {
+            // Create BankRegistration using existing external API registration
+            bankRegistrationRequest.ExternalApiObject =
+                GetRequiredExternalApiBankRegistration(testData2);
+            Guid bankRegistrationId =
+                await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+
+            // Delete BankRegistration (includes forced external API delete which may fail)
+            await DeleteBankRegistration(requestBuilder, bankRegistrationId, modifiedBy, true);
+        }
+
+        // Handle "only create" case
+        else if (bankRegistrationOptions is BankRegistrationOptions.OnlyCreateRegistration)
+        {
+            // Create fresh BankRegistration
+            Guid _ =
+                await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+        }
+
+        // Handle "normal" case
+        else
+        {
+            if (bankProfile.BankConfigurationApiSettings.TestTemporaryBankRegistration)
+            {
+                // Create fresh BankRegistration
+                Guid bankRegistrationIdTmp =
+                    await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+
+                // Delete BankRegistration (includes external API delete as appropriate)
+                await DeleteBankRegistration(requestBuilder, bankRegistrationIdTmp, modifiedBy, null);
+            }
+
+            // Create BankRegistration using existing external API registration
+            bankRegistrationRequest.ExternalApiObject =
+                GetRequiredExternalApiBankRegistration(testData2);
+            Guid bankRegistrationId =
+                await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+
+            // Read BankRegistration
+            BankRegistrationResponse bankRegistrationReadResponse = await requestBuilder
+                .BankConfiguration
+                .BankRegistrations
+                .ReadAsync(
+                    bankRegistrationId,
+                    modifiedBy);
+
+            // Checks
+            bankRegistrationReadResponse.Should().NotBeNull();
+            bankRegistrationReadResponse.Warnings.Should().BeNull();
+
             // Run account access consent subtests
             if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {
@@ -299,7 +354,7 @@ public abstract class AppTests
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
                         bankUserList,
-                        AccountAccessConsentOptions.TestConsent,
+                        accountAccessConsentOptions,
                         apiClient);
                 }
             }
@@ -351,17 +406,92 @@ public abstract class AppTests
                         bankUserList);
                 }
             }
+
+
+            // Delete BankRegistration (excludes external API delete)
+            await DeleteBankRegistration(requestBuilder, bankRegistrationId, modifiedBy, false);
+        }
+    }
+
+    private static async Task<Guid> CreateBankRegistration(
+        IRequestBuilder requestBuilder,
+        BankRegistration bankRegistrationRequest)
+    {
+        BankRegistrationResponse registrationResp = await requestBuilder
+            .BankConfiguration
+            .BankRegistrations
+            .CreateAsync(bankRegistrationRequest);
+
+        // Checks and assignments
+        registrationResp.Should().NotBeNull();
+        registrationResp.Warnings.Should().BeNull();
+        if (bankRegistrationRequest.ExternalApiObject is not null)
+        {
+            registrationResp.ExternalApiResponse.Should().BeNull();
+        }
+        else
+        {
+            registrationResp.ExternalApiResponse.Should().NotBeNull();
         }
 
+        Guid bankRegistrationId1 = registrationResp.Id;
+        return bankRegistrationId1;
+    }
 
-        // Delete bank configuration objects
-        await BankConfigurationSubtests.DeleteObjects(
-            testData2,
-            requestBuilder,
-            modifiedBy,
-            bankRegistrationId,
-            bankProfile,
-            testType);
+    private static ExternalApiBankRegistration GetRequiredExternalApiBankRegistration(BankTestData2 testData2) =>
+        new()
+        {
+            ExternalApiId =
+                testData2.BankRegistrationExternalApiId ??
+                throw new InvalidOperationException("No external API BankRegistration ID provided."),
+            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
+            RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
+        };
+
+    private static async Task DeleteBankRegistration(
+        IRequestBuilder requestBuilder,
+        Guid bankRegistrationId,
+        string modifiedBy,
+        bool? includeExternalApiOperation)
+    {
+        ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
+            .BankConfiguration
+            .BankRegistrations
+            .DeleteAsync(
+                bankRegistrationId,
+                modifiedBy,
+                includeExternalApiOperation);
+
+        // Checks
+        bankRegistrationDeleteResponse.Should().NotBeNull();
+        bankRegistrationDeleteResponse.Warnings.Should().BeNull();
+    }
+
+    private static async Task<BankRegistration> GetBankRegistrationRequest(
+        BankProfile bankProfile,
+        string softwareStatementProfileId,
+        string? statementProfileOverride,
+        RegistrationScopeEnum registrationScope,
+        FilePathBuilder testDataProcessorFluentRequestLogging,
+        string testNameUnique,
+        string modifiedBy)
+    {
+        var registrationRequest = new BankRegistration
+        {
+            BankProfile = bankProfile.BankProfileEnum,
+            SoftwareStatementProfileId = softwareStatementProfileId,
+            SoftwareStatementProfileOverrideCase =
+                statementProfileOverride,
+            RegistrationScope = registrationScope
+        };
+        await testDataProcessorFluentRequestLogging
+            .AppendToPath("config")
+            .AppendToPath("bankRegistration")
+            .AppendToPath("postRequest")
+            .WriteFile(registrationRequest);
+        registrationRequest.Reference = testNameUnique;
+        registrationRequest.CreatedBy = modifiedBy;
+        return registrationRequest;
     }
 
     protected void SetTestLogging()

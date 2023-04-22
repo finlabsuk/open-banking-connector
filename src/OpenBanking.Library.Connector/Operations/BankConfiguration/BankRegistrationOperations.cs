@@ -176,13 +176,15 @@ internal class
         if (request.ExternalApiObject is not null &&
             request.ForceDynamicClientRegistration)
         {
-            throw new ArgumentException($"{nameof(request.ForceDynamicClientRegistration)} specified as true yet non-null {nameof(request.ExternalApiObject)} also specified.");
+            throw new ArgumentException(
+                $"{nameof(request.ForceDynamicClientRegistration)} specified as true yet non-null {nameof(request.ExternalApiObject)} also specified.");
         }
-        
+
         // Check for existing bank registration(s) in BankRegistrationGroup
         BankRegistrationGroup? bankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         BankRegistrationPersisted? existingGroupRegistration = null;
-        if (bankRegistrationGroup is not null && !request.ForceDynamicClientRegistration)
+        if (bankRegistrationGroup is not null &&
+            !request.ForceDynamicClientRegistration)
         {
             existingGroupRegistration =
                 await _entityMethods
@@ -410,14 +412,11 @@ internal class
             string registrationEndpoint =
                 entity.RegistrationEndpoint ??
                 throw new InvalidOperationException(
-                    $"BankRegistration does not have a registration endpoint configured.");
+                    "BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
                 readParams.UseRegistrationAccessToken ??
-                bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
-                throw new ArgumentNullException(
-                    null,
-                    "useRegistrationAccessToken specified as null and cannot be obtained using specified BankProfile (also null).");
+                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -430,8 +429,9 @@ internal class
             string accessToken;
             if (useRegistrationAccessTokenValue)
             {
-                accessToken = entity.ExternalApiObject.RegistrationAccessToken ??
-                              throw new InvalidOperationException("No registration access token available");
+                accessToken =
+                    entity.ExternalApiObject.RegistrationAccessToken ??
+                    throw new InvalidOperationException("No registration access token available");
             }
             else
             {

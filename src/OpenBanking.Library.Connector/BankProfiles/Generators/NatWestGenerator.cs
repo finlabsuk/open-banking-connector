@@ -102,7 +102,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         or NatWestBank.UlsterBankNiBankline
                         or NatWestBank.UlsterBankNiClearSpend => BankRegistrationGroup.NatWest_UlsterBankNiProduction,
                     _ => throw new ArgumentOutOfRangeException()
-                }
+                },
+                TestTemporaryBankRegistration =
+                    bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

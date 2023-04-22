@@ -49,7 +49,7 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
-                { UseRegistrationGetEndpoint = false }
+                { UseRegistrationDeleteEndpoint = true, TestTemporaryBankRegistration = true }
         };
     }
 }

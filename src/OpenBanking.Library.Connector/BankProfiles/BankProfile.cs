@@ -111,7 +111,9 @@ public class BankConfigurationApiSettings
         }
     }
 
-    public bool UseRegistrationAccessToken { get; set; } = false;
+    public bool TestTemporaryBankRegistration { get; set; }
+
+    public bool UseRegistrationAccessToken { get; set; }
 
     public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethod.TlsClientAuth;
 

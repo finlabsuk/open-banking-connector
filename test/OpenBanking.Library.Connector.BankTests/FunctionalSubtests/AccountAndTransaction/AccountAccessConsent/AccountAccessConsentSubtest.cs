@@ -64,27 +64,24 @@ public class AccountAccessConsentSubtest
         {
             // Create AccountAccessConsent using existing external API consent
             accountAccessConsentRequest.ExternalApiObject =
-                GetExternalApiConsent(testData2, modifiedBy);
+                GetRequiredExternalApiConsent(testData2, modifiedBy);
             Guid accountAccessConsentId =
                 await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
 
             // Delete AccountAccessConsent (includes external API delete)
             await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId, true);
-
-            return;
         }
 
         // Handle "only create" case
-        if (accountAccessConsentOptions is AppTests.AccountAccessConsentOptions.OnlyCreateConsent)
+        else if (accountAccessConsentOptions is AppTests.AccountAccessConsentOptions.OnlyCreateConsent)
         {
             // Create fresh AccountAccessConsent
             Guid _ =
                 await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
-
-            return;
         }
 
         // Handle "normal" case
+        else
         {
             // Create fresh AccountAccessConsent
             Guid accountAccessConsentId2 =
@@ -97,7 +94,7 @@ public class AccountAccessConsentSubtest
 
             // Create AccountAccessConsent using existing external API consent
             accountAccessConsentRequest.ExternalApiObject =
-                GetExternalApiConsent(testData2, modifiedBy);
+                GetRequiredExternalApiConsent(testData2, modifiedBy);
             Guid accountAccessConsentId =
                 await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
 
@@ -419,7 +416,7 @@ public class AccountAccessConsentSubtest
         return accountAccessConsentId;
     }
 
-    private static ExternalApiConsent GetExternalApiConsent(BankTestData2 testData2, string modifiedBy) =>
+    private static ExternalApiConsent GetRequiredExternalApiConsent(BankTestData2 testData2, string modifiedBy) =>
         new()
         {
             ExternalApiId =

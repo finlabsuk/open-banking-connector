@@ -44,7 +44,7 @@ internal interface
         var readParams = new BankRegistrationReadParams(
             id,
             modifiedBy,
-            includeExternalApiOperation,
+            useRegistrationAccessToken,
             includeExternalApiOperation);
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(readParams);
