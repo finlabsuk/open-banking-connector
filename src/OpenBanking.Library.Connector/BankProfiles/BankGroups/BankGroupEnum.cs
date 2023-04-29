@@ -11,6 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum BankGroupEnum
 {
+    /// <summary>
+    ///     For temporary purposes to initialise value in new DB field before DB clean-up corrects to correct value.
+    /// </summary>
+    [EnumMember(Value = "DbTransitionalDefault")]
+    DbTransitionalDefault,
+
     [EnumMember(Value = "Barclays")]
     Barclays,
 

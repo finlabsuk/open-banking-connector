@@ -42,7 +42,7 @@ public class ConsentAuth
 
     private IBankUiMethods GetBankGroupUiMethods(BankProfileEnum bankProfileEnum)
     {
-        return _bankProfileService.GetBankGroupEnum(bankProfileEnum) switch
+        return BankProfileService.GetBankGroupEnum(bankProfileEnum) switch
         {
             BankGroupEnum.Danske => new DanskeUiMethods(_bankProfileService.GetBank<DanskeBank>(bankProfileEnum)),
             BankGroupEnum.Hsbc => new HsbcUiMethods(_bankProfileService.GetBank<HsbcBank>(bankProfileEnum)),

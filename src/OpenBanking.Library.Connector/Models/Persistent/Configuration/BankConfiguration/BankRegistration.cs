@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -65,6 +66,8 @@ internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRe
         builder.Property(e => e.DefaultResponseMode)
             .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.BankGroup)
+            .HasConversion(new EnumToStringConverter<BankGroupEnum>());
         builder.Property(e => e.BankProfile)
             .HasConversion(new EnumToStringConverter<BankProfileEnum>());
         builder.Property(e => e.BankRegistrationGroup)

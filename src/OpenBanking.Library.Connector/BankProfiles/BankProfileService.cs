@@ -106,7 +106,7 @@ public class BankProfileService : IBankProfileService
         return bank;
     }
 
-    public BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
+    public static BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
         bankProfileEnum switch
         {
             BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,

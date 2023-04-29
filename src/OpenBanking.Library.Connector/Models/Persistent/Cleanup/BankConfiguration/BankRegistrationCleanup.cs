@@ -2,8 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -107,6 +107,22 @@ public class BankRegistrationCleanup
                         $"during database cleanup.";
                     logger.LogWarning(message);
                 }
+            }
+
+            // Update bank group
+            if (bankRegistration.BankGroup is BankGroupEnum.DbTransitionalDefault &&
+                bankRegistration.BankProfile is not BankProfileEnum.DbTransitionalDefault)
+            {
+                BankGroupEnum newBankGroup = BankProfileService.GetBankGroupEnum(bankRegistration.BankProfile);
+                string message =
+                    $"In its database record, BankRegistration with ID {bankRegistration.Id} specifies " +
+                    $"no BankGroup but a valid BankProfile. ";
+
+                bankRegistration.BankGroup = newBankGroup;
+                message +=
+                    $"This has been used to set {nameof(bankRegistration.BankGroup)} to " +
+                    $"{newBankGroup} as part of database cleanup.";
+                logger.LogInformation(message);
             }
         }
     }

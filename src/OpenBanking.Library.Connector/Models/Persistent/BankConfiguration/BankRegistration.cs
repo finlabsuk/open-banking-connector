@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -117,6 +118,16 @@ internal class BankRegistration :
     public OAuth2ResponseMode DefaultResponseMode { get; }
 
     /// <summary>
+    ///     Bank group
+    /// </summary>
+    public BankGroupEnum BankGroup { get; set; }
+
+    /// <summary>
+    ///     Bank with which this BankRegistration is associated.
+    /// </summary>
+    public Guid? BankId { get; }
+
+    /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
     public BankProfileEnum BankProfile { get; set; }
@@ -168,11 +179,6 @@ internal class BankRegistration :
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
-
-    /// <summary>
-    ///     Bank with which this BankRegistration is associated.
-    /// </summary>
-    public Guid? BankId { get; }
 
     IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
         ExternalApiObject;

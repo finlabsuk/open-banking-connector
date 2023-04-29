@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 public enum BankProfileEnum
 {
     /// <summary>
-    ///     For temporary purposes to initialise value in new DB field before DB  clean-up corrects to correct value.
+    ///     For temporary purposes to initialise value in new DB field before DB clean-up corrects to correct value.
     /// </summary>
     [EnumMember(Value = "DbTransitionalDefault")]
     DbTransitionalDefault,
