@@ -5,6 +5,7 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -180,138 +181,97 @@ internal class
                 $"{nameof(request.ForceDynamicClientRegistration)} specified as true yet non-null {nameof(request.ExternalApiObject)} also specified.");
         }
 
-        // Check for existing bank registration(s) in BankRegistrationGroup
+        // Get re-usable existing bank registration if possible
         BankRegistrationGroup? bankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         BankRegistrationPersisted? existingGroupRegistration = null;
         if (bankRegistrationGroup is not null &&
             !request.ForceDynamicClientRegistration)
         {
-            existingGroupRegistration =
-                await _entityMethods
+            BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
+
+            // Get existing registrations with same bank group and SSA (ideally software ID)
+            IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
+                _entityMethods
                     .DbSetNoTracking
                     .Where(
-                        x => x.BankRegistrationGroup == bankRegistrationGroup &&
+                        x => x.BankGroup == bankGroup &&
                              x.SoftwareStatementProfileId == softwareStatementProfileId)
-                    .OrderByDescending(x => x.Created)
-                    .FirstOrDefaultAsync();
+                    .OrderByDescending(x => x.Created); // most recent first
+
+            // Search for first registration in same registration group and check compatible (error if not)
+            foreach (BankRegistrationPersisted existingReg in existingRegistrations)
+            {
+                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
+                if (existingRegBankProfile.BankConfigurationApiSettings.BankRegistrationGroup != bankRegistrationGroup)
+                {
+                    continue;
+                }
+
+                existingGroupRegistration = existingReg;
+                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
+                    CheckExistingRegistrationCompatible(
+                        existingGroupRegistration,
+                        existingRegBankProfile,
+                        request.ExternalApiObject,
+                        bankRegistrationGroup.Value,
+                        softwareStatementProfileOverrideCase,
+                        tokenEndpointAuthMethod,
+                        registrationScope);
+                nonErrorMessages.AddRange(newNonErrorMessages);
+                break;
+            }
         }
 
-        // Re-use external API (bank) registration, create new one (DCR), or use supplied one.
+        // Obtain external (bank) API registration
         string externalApiId;
         string? externalApiSecret;
         string? registrationAccessToken;
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse;
         if (existingGroupRegistration is not null)
         {
-            BankProfile existingRegistrationBankProfile =
-                _bankProfileService.GetBankProfile(existingGroupRegistration.BankProfile);
-
-            // TODO: compare bankRegistrationPostCustomBehaviour, redirect URLs?
-
-            if (request.ExternalApiObject is not null)
-            {
-                if (request.ExternalApiObject.ExternalApiId !=
-                    existingGroupRegistration.ExternalApiObject.ExternalApiId)
-                {
-                    throw new
-                        InvalidOperationException(
-                            $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                            $"used ExternalApiObject with ExternalApiId {existingGroupRegistration.ExternalApiObject.ExternalApiId} " +
-                            $"which is different from expected {request.ExternalApiObject.ExternalApiId}.");
-                }
-
-                string warningMessage1 =
-                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                    "exists whose ExternalApiId matches ExternalApiId from " +
-                    $"ExternalApiObject provided in request ({request.ExternalApiObject.ExternalApiId}). " +
-                    "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
-                    "previous registration re-used.";
-                nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage1));
-                _instrumentationClient.Warning(warningMessage1);
-
-                string warningMessage2 =
-                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                    "exists whose ExternalApiId matches ExternalApiId from " +
-                    $"ExternalApiObject provided in request ({request.ExternalApiObject.ExternalApiId}). " +
-                    "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
-                    "previous registration re-used.";
-                nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage2));
-                _instrumentationClient.Warning(warningMessage2);
-            }
-
-            if (softwareStatementProfileOverrideCase != existingGroupRegistration.SoftwareStatementProfileOverride)
-            {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used software statement profile with override {existingGroupRegistration.SoftwareStatementProfileOverride} " +
-                        $"which is different from expected {softwareStatementProfileOverrideCase}.");
-            }
-
-            if (tokenEndpointAuthMethod !=
-                existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod)
-            {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used TokenEndpointAuthMethod {existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod} " +
-                        $"which is different from expected {tokenEndpointAuthMethod}.");
-            }
-
-            if (registrationScope != existingGroupRegistration.RegistrationScope)
-            {
-                throw new
-                    InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used RegistrationScope {existingGroupRegistration.RegistrationScope} " +
-                        $"which is different from expected {registrationScope}.");
-            }
-
+            // Re-use existing external (bank) API registration
             externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;
             externalApiSecret = existingGroupRegistration.ExternalApiObject.ExternalApiSecret;
             registrationAccessToken = existingGroupRegistration.ExternalApiObject.RegistrationAccessToken;
             externalApiResponse = null;
         }
+        else if (request.ExternalApiObject is not null)
+        {
+            // Use supplied external (bank) API registration
+            externalApiId = request.ExternalApiObject.ExternalApiId;
+            externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
+            registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
+            externalApiResponse = null;
+        }
         else
         {
             // Perform Dynamic Client Registration
-            if (request.ExternalApiObject is null)
+            if (registrationEndpoint is null)
             {
-                if (registrationEndpoint is null)
-                {
-                    throw new InvalidOperationException(
-                        $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
-                        "Thus DCR cannot be used. " +
-                        "Please create a registration e.g. using the bank's portal and then try again using " +
-                        "ExternalApiObject to specify the registration.");
-                }
-
-                BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
-                    customBehaviour?.BankRegistrationPost;
-                externalApiResponse = await PerformDynamicClientRegistration(
-                    bankRegistrationPostCustomBehaviour,
-                    dynamicClientRegistrationApiVersion,
-                    processedSoftwareStatementProfile,
-                    registrationEndpoint,
-                    tokenEndpointAuthMethod,
-                    otherRedirectUris,
-                    defaultRedirectUri,
-                    registrationScope,
-                    bankFinancialId,
-                    nonErrorMessages);
-
-                externalApiId = externalApiResponse.ClientId;
-                externalApiSecret = externalApiResponse.ClientSecret;
-                registrationAccessToken = externalApiResponse.RegistrationAccessToken;
+                throw new InvalidOperationException(
+                    $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
+                    "Thus DCR cannot be used. " +
+                    "Please create a registration e.g. using the bank's portal and then try again using " +
+                    "ExternalApiObject to specify the registration.");
             }
-            // Use existing registration
-            else
-            {
-                externalApiId = request.ExternalApiObject.ExternalApiId;
-                externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
-                registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
-                externalApiResponse = null;
-            }
+
+            BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
+                customBehaviour?.BankRegistrationPost;
+            externalApiResponse = await PerformDynamicClientRegistration(
+                bankRegistrationPostCustomBehaviour,
+                dynamicClientRegistrationApiVersion,
+                processedSoftwareStatementProfile,
+                registrationEndpoint,
+                tokenEndpointAuthMethod,
+                otherRedirectUris,
+                defaultRedirectUri,
+                registrationScope,
+                bankFinancialId,
+                nonErrorMessages);
+
+            externalApiId = externalApiResponse.ClientId;
+            externalApiSecret = externalApiResponse.ClientSecret;
+            registrationAccessToken = externalApiResponse.RegistrationAccessToken;
         }
 
         // Create persisted entity
@@ -501,6 +461,83 @@ internal class
             entity.BankRegistrationGroup);
 
         return (response, nonErrorMessages);
+    }
+
+    private IList<IFluentResponseInfoOrWarningMessage> CheckExistingRegistrationCompatible(
+        BankRegistrationPersisted existingRegistration,
+        BankProfile existingRegistrationBankProfile,
+        ExternalApiBankRegistration? externalApiBankRegistration,
+        BankRegistrationGroup bankRegistrationGroup,
+        string? softwareStatementProfileOverrideCase,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        RegistrationScopeEnum registrationScope)
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        if (externalApiBankRegistration is not null)
+        {
+            if (externalApiBankRegistration.ExternalApiId !=
+                existingRegistration.ExternalApiObject.ExternalApiId)
+            {
+                throw new
+                    InvalidOperationException(
+                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"used ExternalApiObject with ExternalApiId {existingRegistration.ExternalApiObject.ExternalApiId} " +
+                        $"which is different from expected {externalApiBankRegistration.ExternalApiId}.");
+            }
+
+            string warningMessage1 =
+                $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                "exists whose ExternalApiId matches ExternalApiId from " +
+                $"ExternalApiObject provided in request ({externalApiBankRegistration.ExternalApiId}). " +
+                "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
+                "previous registration re-used.";
+            nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage1));
+            _instrumentationClient.Warning(warningMessage1);
+
+            string warningMessage2 =
+                $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                "exists whose ExternalApiId matches ExternalApiId from " +
+                $"ExternalApiObject provided in request ({externalApiBankRegistration.ExternalApiId}). " +
+                "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
+                "previous registration re-used.";
+            nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage2));
+            _instrumentationClient.Warning(warningMessage2);
+        }
+
+        // TODO: compare redirect URLs?
+
+        if (softwareStatementProfileOverrideCase != existingRegistration.SoftwareStatementProfileOverride)
+        {
+            throw new
+                InvalidOperationException(
+                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"used software statement profile with override {existingRegistration.SoftwareStatementProfileOverride} " +
+                    $"which is different from expected {softwareStatementProfileOverrideCase}.");
+        }
+
+        if (tokenEndpointAuthMethod !=
+            existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod)
+        {
+            throw new
+                InvalidOperationException(
+                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"used TokenEndpointAuthMethod {existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod} " +
+                    $"which is different from expected {tokenEndpointAuthMethod}.");
+        }
+
+        if (registrationScope != existingRegistration.RegistrationScope)
+        {
+            throw new
+                InvalidOperationException(
+                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"used RegistrationScope {existingRegistration.RegistrationScope} " +
+                    $"which is different from expected {registrationScope}.");
+        }
+
+        return nonErrorMessages;
     }
 
     private async Task<ClientRegistrationModelsPublic.OBClientRegistration1Response> PerformDynamicClientRegistration(
