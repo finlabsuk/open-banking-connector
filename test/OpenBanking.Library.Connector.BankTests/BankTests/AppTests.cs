@@ -153,7 +153,6 @@ public abstract class AppTests
                             TestGroupName = groupName,
                             SoftwareStatementProfileId = testGroup.SoftwareStatementProfileId,
                             SoftwareStatementAndCertificateProfileOverride = overrideCase,
-                            RegistrationScope = testGroup.RegistrationScope
                         },
                         new BankTestData2
                         {
@@ -164,7 +163,8 @@ public abstract class AppTests
                                 bankRegistrationRegistrationAccessToken,
                             AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
                             AccountAccessConsentRefreshToken = accountAccessConsentRefreshToken,
-                            AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce
+                            AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce,
+                            RegistrationScope = testGroup.RegistrationScope
                         });
                 }
             }
@@ -181,7 +181,7 @@ public abstract class AppTests
     {
         // Set test name
         var testName =
-            $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData1.RegistrationScope.AbbreviatedName()}";
+            $"{testData2.BankProfileEnum}_{testData1.SoftwareStatementProfileId}_{testData2.RegistrationScope.AbbreviatedName()}";
         var testNameUnique = $"{testName}_{Guid.NewGuid()}";
 
         // Set test options
@@ -269,7 +269,7 @@ public abstract class AppTests
         // Create bankRegistration or use existing
         string softwareStatementProfileId = testData1.SoftwareStatementProfileId;
         string? statementProfileOverride = testData1.SoftwareStatementAndCertificateProfileOverride;
-        RegistrationScopeEnum registrationScope = testData1.RegistrationScope;
+        RegistrationScopeEnum registrationScope = testData2.RegistrationScope;
         BankRegistration bankRegistrationRequest = await GetBankRegistrationRequest(
             bankProfile,
             softwareStatementProfileId,
@@ -332,7 +332,7 @@ public abstract class AppTests
             bankRegistrationReadResponse.Warnings.Should().BeNull();
 
             // Run account access consent subtests
-            if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
+            if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {
                 foreach (AccountAccessConsentSubtestEnum subTest in
                          AccountAccessConsentSubtest.AccountAccessConsentSubtestsSupported(bankProfile))
@@ -360,7 +360,7 @@ public abstract class AppTests
             }
 
             // Run domestic payment consent subtests
-            if (testData1.RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
+            if (registrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation))
             {
                 foreach (DomesticPaymentSubtestEnum subTest in
                          DomesticPaymentSubtest.DomesticPaymentFunctionalSubtestsSupported(bankProfile))

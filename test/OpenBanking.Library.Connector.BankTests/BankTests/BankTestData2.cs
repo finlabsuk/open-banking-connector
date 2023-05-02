@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
@@ -27,6 +28,8 @@ public class BankTestData2 : IXunitSerializable
 
     public string? AccountAccessConsentAuthContextNonce { get; set; }
 
+    public RegistrationScopeEnum RegistrationScope { get; set; }
+
     public void Deserialize(IXunitSerializationInfo info)
     {
         BankProfileEnum = info.GetValue<BankProfileEnum>(nameof(BankProfileEnum));
@@ -37,6 +40,7 @@ public class BankTestData2 : IXunitSerializable
         AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
         AccountAccessConsentRefreshToken = info.GetValue<string?>(nameof(AccountAccessConsentRefreshToken));
         AccountAccessConsentAuthContextNonce = info.GetValue<string?>(nameof(AccountAccessConsentAuthContextNonce));
+        RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -48,6 +52,7 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
         info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
         info.AddValue(nameof(AccountAccessConsentAuthContextNonce), AccountAccessConsentAuthContextNonce);
+        info.AddValue(nameof(RegistrationScope), RegistrationScope);
     }
 
     public override string ToString()
@@ -57,14 +62,24 @@ public class BankTestData2 : IXunitSerializable
             AccountAccessConsentExternalApiId is not null)
         {
             var elements = new List<string>();
-            if (BankRegistrationExternalApiId is not null)
+
+            bool supportsAisp = RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction);
+            if (supportsAisp)
             {
-                elements.Add($"RegExtId: {BankRegistrationExternalApiId}");
+                if (AccountAccessConsentExternalApiId is not null)
+                {
+                    elements.Add("AISP");
+                }
+                else
+                {
+                    elements.Add("AISP (no auth)");
+                }
             }
 
-            if (AccountAccessConsentExternalApiId is not null)
+            bool supportsPisp = RegistrationScope.HasFlag(RegistrationScopeEnum.PaymentInitiation);
+            if (supportsPisp)
             {
-                elements.Add($"AAConsentExtId: {AccountAccessConsentExternalApiId}");
+                elements.Add("PISP");
             }
 
             extraBankProfileInfo = "(" + string.Join(", ", elements) + ")";

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using Xunit.Abstractions;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
@@ -18,7 +17,6 @@ public class BankTestData1 : IXunitSerializable
 
     public string? SoftwareStatementAndCertificateProfileOverride { get; set; }
 
-    public RegistrationScopeEnum RegistrationScope { get; set; }
 
     public void Deserialize(IXunitSerializationInfo info)
     {
@@ -26,7 +24,6 @@ public class BankTestData1 : IXunitSerializable
         SoftwareStatementProfileId = info.GetValue<string>(nameof(SoftwareStatementProfileId));
         SoftwareStatementAndCertificateProfileOverride =
             info.GetValue<string>(nameof(SoftwareStatementAndCertificateProfileOverride));
-        RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -36,7 +33,6 @@ public class BankTestData1 : IXunitSerializable
         info.AddValue(
             nameof(SoftwareStatementAndCertificateProfileOverride),
             SoftwareStatementAndCertificateProfileOverride);
-        info.AddValue(nameof(RegistrationScope), RegistrationScope);
     }
 
     public override string ToString()
