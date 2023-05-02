@@ -41,6 +41,10 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 // from: https://openbanking.atlassian.net/wiki/spaces/AD/pages/108266712/Implementation+Guide+HSBC+Personal
                 "https://api.ob.hsbc.co.uk",
                 "https://api.ob.hsbc.co.uk/obie/open-banking/v3.1/aisp"),
+            HsbcBank.HsbcNetUk => (
+                // from: https://develop.hsbc.com/sites/default/files/open_banking/HSBC%20Open%20Banking%20TPP%20Implementation%20Guide%20(v3.1).pdf
+                "https://api.ob.hsbcnet.com",
+                "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp"),
             _ => throw new ArgumentOutOfRangeException()
         };
         var sandboxGrantPostCustomBehaviour = new GrantPostCustomBehaviour
@@ -75,6 +79,12 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     AudClaim = issuerUrl,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
+                BankRegistrationPut = bank is HsbcBank.Sandbox
+                    ? null
+                    : new BankRegistrationPutCustomBehaviour
+                    {
+                        CustomTokenScope = "accounts"
+                    },
                 JwksGet = bank is HsbcBank.Sandbox
                     ? new JwksGetCustomBehaviour
                     {
@@ -94,6 +104,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     ? sandboxGrantPostCustomBehaviour
                     : null
             },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>

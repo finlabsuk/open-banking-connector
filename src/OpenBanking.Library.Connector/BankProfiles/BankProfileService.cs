@@ -138,6 +138,7 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,
             BankProfileEnum.Hsbc_UkKinetic => BankGroupEnum.Hsbc,
             BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_HsbcNetUk => BankGroupEnum.Hsbc,
             BankProfileEnum.Danske => BankGroupEnum.Danske,
             BankProfileEnum.Monzo => BankGroupEnum.Monzo,
             BankProfileEnum.Barclays_Sandbox => BankGroupEnum.Barclays,

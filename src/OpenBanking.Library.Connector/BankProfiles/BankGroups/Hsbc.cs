@@ -12,7 +12,8 @@ public enum HsbcBank
     Sandbox,
     UkBusiness,
     UkKinetic,
-    UkPersonal
+    UkPersonal,
+    HsbcNetUk
 }
 
 public class Hsbc : BankGroupBase<HsbcBank>
@@ -26,6 +27,7 @@ public class Hsbc : BankGroupBase<HsbcBank>
             [BankProfileEnum.Hsbc_Sandbox] = HsbcBank.Sandbox,
             [BankProfileEnum.Hsbc_UkBusiness] = HsbcBank.UkBusiness,
             [BankProfileEnum.Hsbc_UkKinetic] = HsbcBank.UkKinetic,
-            [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal
+            [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal,
+            [BankProfileEnum.Hsbc_HsbcNetUk] = HsbcBank.HsbcNetUk
         };
 }

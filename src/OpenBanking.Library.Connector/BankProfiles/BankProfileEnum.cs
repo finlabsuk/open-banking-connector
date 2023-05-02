@@ -141,6 +141,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Hsbc_UkPersonal")]
     Hsbc_UkPersonal,
 
+    [EnumMember(Value = "Hsbc_HsbcNetUk")]
+    Hsbc_HsbcNetUk,
+
     [EnumMember(Value = "Danske")]
     Danske,
 
