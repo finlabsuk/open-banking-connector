@@ -64,6 +64,21 @@ public class SoftwareStatementPayload
             (current, next) => current | next);
 }
 
+public class OBSealKey
+{
+    public OBSealKey(string keyId, string key)
+    {
+        KeyId = keyId;
+        Key = key;
+    }
+
+    // Open Banking Signing Key ID as string, e.g. "ABC"
+    public string KeyId { get; }
+
+    // Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
+    public string Key { get; }
+}
+
 /// <summary>
 ///     Processed software statement profile generated at start-up which includes
 ///     information from a <see cref="SoftwareStatementProfile" />, a <see cref="TransportCertificateProfile" />, and a
@@ -103,8 +118,9 @@ public class ProcessedSoftwareStatementProfile
             ));
 
         // Pass-through properties
-        SigningKeyId = processedSigningCertificateProfile.AssociatedKeyId;
-        SigningKey = processedSigningCertificateProfile.AssociatedKey;
+        OBSealKey = new OBSealKey(
+            processedSigningCertificateProfile.AssociatedKeyId,
+            processedSigningCertificateProfile.AssociatedKey);
         TransportCertificateType = processedTransportCertificateProfile.CertificateType;
         TransportCertificateDnWithHexDottedDecimalAttributeValues =
             processedTransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
@@ -180,11 +196,7 @@ public class ProcessedSoftwareStatementProfile
             SoftwwareStatementSignatureBase64
         }.JoinString(".");
 
-    /// Open Banking Signing Key ID as string, e.g. "ABC"
-    public string SigningKeyId { get; }
-
-    /// Open Banking Signing Key as string, e.g. "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n"
-    public string SigningKey { get; }
+    public OBSealKey OBSealKey { get; }
 
     /// <summary>
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = query.

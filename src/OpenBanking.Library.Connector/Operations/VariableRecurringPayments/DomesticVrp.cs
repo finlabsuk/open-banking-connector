@@ -183,15 +183,14 @@ internal class DomesticVrp :
         string ccGrantAccessToken =
             (await _grantPost.PostClientCredentialsGrantAsync(
                 ClientCredentialsGrantScope,
-                processedSoftwareStatementProfile,
+                processedSoftwareStatementProfile.OBSealKey,
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
-                processedSoftwareStatementProfile.ApiClient,
-                _instrumentationClient))
+                processedSoftwareStatementProfile.ApiClient))
             .AccessToken;
 
 

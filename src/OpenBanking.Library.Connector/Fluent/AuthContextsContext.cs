@@ -34,7 +34,7 @@ internal class AuthContextsContext : IAuthContextsContext
             sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
             sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
-            new GrantPost(sharedContext.ApiClient),
+            new GrantPost(sharedContext.ApiClient, sharedContext.Instrumentation),
             sharedContext.BankProfileService);
     }
 

@@ -87,7 +87,7 @@ internal class
 
         (string authUrl, string state, string nonce) = CreateAuthUrl.Create(
             accountAccessConsent.ExternalApiId,
-            processedSoftwareStatementProfile,
+            processedSoftwareStatementProfile.OBSealKey,
             bankRegistration,
             bankRegistration.ExternalApiObject.ExternalApiId,
             customBehaviour?.AccountAccessConsentAuthGet,

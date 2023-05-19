@@ -234,7 +234,7 @@ internal class AuthContextUpdate :
                     consent.ExternalApiUserId,
                     nonce,
                     requestScope,
-                    processedSoftwareStatementProfile,
+                    processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
@@ -243,8 +243,7 @@ internal class AuthContextUpdate :
                     jsonSerializerSettings,
                     customBehaviour?.AuthCodeGrantPost,
                     customBehaviour?.JwksGet,
-                    processedSoftwareStatementProfile.ApiClient,
-                    _instrumentationClient);
+                    processedSoftwareStatementProfile.ApiClient);
 
             // Update consent with nonce, token
             consent.UpdateAuthContext(

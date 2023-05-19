@@ -73,7 +73,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             string registrationEndpoint =
                 entity.RegistrationEndpoint ??
                 throw new InvalidOperationException(
-                    $"BankRegistration does not have a registration endpoint configured.");
+                    "BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
                 deleteParams.UseRegistrationAccessToken ??
@@ -106,15 +106,14 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
                 accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
                         scope,
-                        processedSoftwareStatementProfile,
+                        processedSoftwareStatementProfile.OBSealKey,
                         entity,
                         tokenEndpointAuthMethod,
                         entity.TokenEndpoint,
                         supportsSca,
                         null,
                         customBehaviour?.ClientCredentialsGrantPost,
-                        apiClient,
-                        _instrumentationClient))
+                        apiClient))
                     .AccessToken;
             }
 

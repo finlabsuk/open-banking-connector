@@ -97,15 +97,14 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             TokenEndpointResponseClientCredentialsGrant tokenEndpointResponse =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "payments",
-                    processedSoftwareStatementProfile,
+                    processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient,
-                    _instrumentationClient);
+                    apiClient);
             IDeleteRequestProcessor deleteRequestProcessor =
                 new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
 

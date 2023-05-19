@@ -31,7 +31,7 @@ public static class CreateAuthUrl
 
     internal static (string authUrl, string state, string nonce) Create(
         string externalApiConsentId,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         string clientExternalApiId,
         ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
@@ -57,9 +57,9 @@ public static class CreateAuthUrl
                 state,
                 nonce);
         string requestObjectJwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
+            JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
             oAuth2RequestObjectClaims,
-            processedSoftwareStatementProfile.SigningKey);
+            obSealKey.Key);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine("#### Claims (Request Object)")
             .AppendLine(

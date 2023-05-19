@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
@@ -19,15 +18,14 @@ internal interface IGrantPost
 {
     Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
         string? scope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
-        IApiClient mtlsApiClient,
-        IInstrumentationClient instrumentationClient);
+        IApiClient mtlsApiClient);
 
     Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
         string authCode,
@@ -38,7 +36,7 @@ internal interface IGrantPost
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -47,8 +45,7 @@ internal interface IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient matlsApiClient,
-        IInstrumentationClient instrumentationClient);
+        IApiClient matlsApiClient);
 
     Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
@@ -59,7 +56,7 @@ internal interface IGrantPost
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -68,8 +65,7 @@ internal interface IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient,
-        IInstrumentationClient instrumentationClient);
+        IApiClient mtlsApiClient);
 
     Task<string?> ValidateIdTokenAuthEndpoint(
         OAuth2RedirectData redirectData,

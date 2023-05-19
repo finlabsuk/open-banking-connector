@@ -398,15 +398,14 @@ internal class
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
                 accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
                         scope,
-                        processedSoftwareStatementProfile,
+                        processedSoftwareStatementProfile.OBSealKey,
                         entity,
                         tokenEndpointAuthMethod,
                         entity.TokenEndpoint,
                         supportsSca,
                         null,
                         customBehaviour?.ClientCredentialsGrantPost,
-                        apiClient,
-                        _instrumentationClient))
+                        apiClient))
                     .AccessToken;
             }
 

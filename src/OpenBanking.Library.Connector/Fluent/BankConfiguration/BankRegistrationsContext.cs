@@ -40,7 +40,7 @@ internal class BankRegistrationsContextInternal :
             new OpenIdConfigurationRead(sharedContext.ApiClient),
             sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
             sharedContext.BankProfileService,
-            new GrantPost(sharedContext.ApiClient));
+            new GrantPost(sharedContext.ApiClient, sharedContext.Instrumentation));
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
@@ -49,7 +49,7 @@ internal class BankRegistrationsContextInternal :
             sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.BankProfileService,
-            new GrantPost(sharedContext.ApiClient));
+            new GrantPost(sharedContext.ApiClient, sharedContext.Instrumentation));
         CreateObject = bankRegistrationOperations;
     }
 

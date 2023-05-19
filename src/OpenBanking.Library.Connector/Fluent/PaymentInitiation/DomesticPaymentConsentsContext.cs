@@ -58,13 +58,13 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(_sharedContext.ApiClient),
+            new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
                 _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                new GrantPost(_sharedContext.ApiClient),
+                new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
                 _sharedContext.Instrumentation),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = domesticPaymentConsentOperations;

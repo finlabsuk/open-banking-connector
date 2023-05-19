@@ -28,9 +28,12 @@ internal class GrantPost : IGrantPost
     // Non-MTLS client for accessing JwksUri
     private readonly IApiClient _apiClient;
 
-    public GrantPost(IApiClient apiClient)
+    private readonly IInstrumentationClient _instrumentationClient;
+
+    public GrantPost(IApiClient apiClient, IInstrumentationClient instrumentationClient)
     {
         _apiClient = apiClient;
+        _instrumentationClient = instrumentationClient;
     }
 
     public async Task<string?> ValidateIdTokenAuthEndpoint(
@@ -126,15 +129,14 @@ internal class GrantPost : IGrantPost
 
     public async Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
         string? scope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
-        IApiClient mtlsApiClient,
-        IInstrumentationClient instrumentationClient)
+        IApiClient mtlsApiClient)
     {
         var keyValuePairs = new Dictionary<string, string>
         {
@@ -150,10 +152,10 @@ internal class GrantPost : IGrantPost
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
-                processedSoftwareStatementProfile,
+                obSealKey,
                 bankRegistration,
                 tokenEndpoint,
-                instrumentationClient);
+                _instrumentationClient);
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -188,7 +190,7 @@ internal class GrantPost : IGrantPost
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -197,8 +199,7 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient matlsApiClient,
-        IInstrumentationClient instrumentationClient)
+        IApiClient matlsApiClient)
     {
         var keyValuePairs = new Dictionary<string, string>
         {
@@ -211,10 +212,10 @@ internal class GrantPost : IGrantPost
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
-                processedSoftwareStatementProfile,
+                obSealKey,
                 bankRegistration,
                 tokenEndpoint,
-                instrumentationClient);
+                _instrumentationClient);
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -262,7 +263,7 @@ internal class GrantPost : IGrantPost
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
@@ -271,8 +272,7 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
-        IApiClient mtlsApiClient,
-        IInstrumentationClient instrumentationClient)
+        IApiClient mtlsApiClient)
     {
         var keyValuePairs = new Dictionary<string, string>
         {
@@ -284,10 +284,10 @@ internal class GrantPost : IGrantPost
             TokenEndpointAuthMethod.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
-                processedSoftwareStatementProfile,
+                obSealKey,
                 bankRegistration,
                 tokenEndpoint,
-                instrumentationClient);
+                _instrumentationClient);
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -330,7 +330,7 @@ internal class GrantPost : IGrantPost
     }
 
     private static string CreateClientAssertionJwt(
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         BankRegistration bankRegistration,
         string tokenEndpoint,
         IInstrumentationClient instrumentationClient)
@@ -346,9 +346,9 @@ internal class GrantPost : IGrantPost
             exp = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds()
         };
         string jwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersExcludingTyp(processedSoftwareStatementProfile.SigningKeyId),
+            JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
             claims,
-            processedSoftwareStatementProfile.SigningKey);
+            obSealKey.Key);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine("#### JWT (Client Auth)")
             .Append(jwt);

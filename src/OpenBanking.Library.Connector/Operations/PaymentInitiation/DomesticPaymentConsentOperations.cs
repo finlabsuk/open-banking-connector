@@ -130,15 +130,14 @@ internal class
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
-                    processedSoftwareStatementProfile,
+                    processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient,
-                    _instrumentationClient))
+                    processedSoftwareStatementProfile.ApiClient))
                 .AccessToken;
 
             // Create new object at external API
@@ -297,15 +296,14 @@ internal class
             string ccGrantAccessToken =
                 (await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
-                    processedSoftwareStatementProfile,
+                    processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     bankRegistration.TokenEndpoint,
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient,
-                    _instrumentationClient))
+                    processedSoftwareStatementProfile.ApiClient))
                 .AccessToken;
 
             // Read object from external API

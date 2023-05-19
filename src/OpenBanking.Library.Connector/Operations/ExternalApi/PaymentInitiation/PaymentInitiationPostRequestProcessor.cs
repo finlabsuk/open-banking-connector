@@ -45,10 +45,10 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             GetJoseHeaders(
                 _processedSoftwareStatementProfile.SoftwareStatementPayload.OrgId,
                 _processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareId,
-                _processedSoftwareStatementProfile.SigningKeyId,
+                _processedSoftwareStatementProfile.OBSealKey.KeyId,
                 _useB64),
             variantRequest,
-            _processedSoftwareStatementProfile.SigningKey);
+            _processedSoftwareStatementProfile.OBSealKey.Key);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### JWT ({requestDescription})")
             .Append(jwt);

@@ -38,9 +38,9 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
     {
         // Create JWT and log
         string jwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.SigningKeyId),
+            JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.OBSealKey.KeyId),
             variantRequest,
-            _processedSoftwareStatementProfile.SigningKey,
+            _processedSoftwareStatementProfile.OBSealKey.Key,
             requestJsonSerializerSettings);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### Claims ({requestDescription})")

@@ -102,7 +102,7 @@ internal class ConsentAccessTokenGet
                 consent.ExternalApiUserId,
                 nonce,
                 requestScope,
-                processedSoftwareStatementProfile,
+                processedSoftwareStatementProfile.OBSealKey,
                 bankRegistration,
                 tokenEndpointAuthMethod,
                 tokenEndpoint,
@@ -111,8 +111,7 @@ internal class ConsentAccessTokenGet
                 jsonSerializerSettings,
                 refreshTokenGrantPostCustomBehaviour,
                 jwksGetCustomBehaviour,
-                processedSoftwareStatementProfile.ApiClient,
-                _instrumentationClient);
+                processedSoftwareStatementProfile.ApiClient);
 
         // Update consent with token
         consent.UpdateAccessToken(

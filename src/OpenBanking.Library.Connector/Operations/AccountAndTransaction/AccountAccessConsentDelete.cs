@@ -97,15 +97,14 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             TokenEndpointResponseClientCredentialsGrant tokenEndpointResponse =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "accounts",
-                    processedSoftwareStatementProfile,
+                    processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient,
-                    _instrumentationClient);
+                    apiClient);
             IDeleteRequestProcessor deleteRequestProcessor =
                 new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
 
