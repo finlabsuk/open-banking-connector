@@ -115,7 +115,7 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                (await _grantPost.PostClientCredentialsGrantAsync(
+                await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
@@ -124,8 +124,7 @@ internal class
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient))
-                .AccessToken;
+                    processedSoftwareStatementProfile.ApiClient);
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -283,7 +282,7 @@ internal class
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
-                (await _grantPost.PostClientCredentialsGrantAsync(
+                await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile.OBSealKey,
                     bankRegistration,
@@ -292,8 +291,7 @@ internal class
                     supportsSca,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient))
-                .AccessToken;
+                    processedSoftwareStatementProfile.ApiClient);
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;

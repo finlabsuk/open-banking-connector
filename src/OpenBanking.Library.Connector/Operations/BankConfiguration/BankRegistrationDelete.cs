@@ -104,17 +104,16 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             else
             {
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
-                accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
-                        scope,
-                        processedSoftwareStatementProfile.OBSealKey,
-                        entity,
-                        tokenEndpointAuthMethod,
-                        entity.TokenEndpoint,
-                        supportsSca,
-                        null,
-                        customBehaviour?.ClientCredentialsGrantPost,
-                        apiClient))
-                    .AccessToken;
+                accessToken = await _grantPost.PostClientCredentialsGrantAsync(
+                    scope,
+                    processedSoftwareStatementProfile.OBSealKey,
+                    entity,
+                    tokenEndpointAuthMethod,
+                    entity.TokenEndpoint,
+                    supportsSca,
+                    null,
+                    customBehaviour?.ClientCredentialsGrantPost,
+                    apiClient);
             }
 
             // Delete at API

@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
@@ -94,7 +93,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             var endpointUrl = new Uri(baseUrl + RelativePathBeforeId + $"/{bankApiId}" + RelativePathAfterId);
 
             // Get client credentials grant token
-            TokenEndpointResponseClientCredentialsGrant tokenEndpointResponse =
+            string ccGrantAccessToken =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "accounts",
                     processedSoftwareStatementProfile.OBSealKey,
@@ -106,7 +105,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);
             IDeleteRequestProcessor deleteRequestProcessor =
-                new ApiDeleteRequestProcessor(tokenEndpointResponse.AccessToken, bankFinancialId);
+                new ApiDeleteRequestProcessor(ccGrantAccessToken, bankFinancialId);
 
             // Delete at API
             await deleteRequestProcessor.DeleteAsync(endpointUrl, apiClient);

@@ -396,17 +396,16 @@ internal class
             else
             {
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
-                accessToken = (await _grantPost.PostClientCredentialsGrantAsync(
-                        scope,
-                        processedSoftwareStatementProfile.OBSealKey,
-                        entity,
-                        tokenEndpointAuthMethod,
-                        entity.TokenEndpoint,
-                        supportsSca,
-                        null,
-                        customBehaviour?.ClientCredentialsGrantPost,
-                        apiClient))
-                    .AccessToken;
+                accessToken = await _grantPost.PostClientCredentialsGrantAsync(
+                    scope,
+                    processedSoftwareStatementProfile.OBSealKey,
+                    entity,
+                    tokenEndpointAuthMethod,
+                    entity.TokenEndpoint,
+                    supportsSca,
+                    null,
+                    customBehaviour?.ClientCredentialsGrantPost,
+                    apiClient);
             }
 
             // Read object from external API

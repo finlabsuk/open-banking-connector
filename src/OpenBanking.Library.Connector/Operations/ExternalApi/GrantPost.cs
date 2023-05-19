@@ -137,7 +137,7 @@ internal class GrantPost : IGrantPost
         return outputExternalApiUserId;
     }
 
-    public async Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
+    public async Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
         BankRegistration bankRegistration,
@@ -148,47 +148,68 @@ internal class GrantPost : IGrantPost
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient)
     {
-        var keyValuePairs = new Dictionary<string, string>
+        async Task<TokenEndpointResponseClientCredentialsGrant> GetTokenAsync()
         {
-            { "grant_type", "client_credentials" }
-        };
+            var keyValuePairs = new Dictionary<string, string>
+            {
+                { "grant_type", "client_credentials" }
+            };
 
-        if (scope is not null)
-        {
-            keyValuePairs["scope"] = scope;
+            if (scope is not null)
+            {
+                keyValuePairs["scope"] = scope;
+            }
+
+            if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.PrivateKeyJwt)
+            {
+                string jwt = CreateClientAssertionJwt(
+                    obSealKey,
+                    bankRegistration,
+                    tokenEndpoint,
+                    _instrumentationClient);
+
+                // Add parameters
+                keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
+                keyValuePairs["client_assertion"] = jwt;
+            }
+
+            var response =
+                await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
+                    keyValuePairs,
+                    bankRegistration,
+                    tokenEndpointAuthMethod,
+                    supportsSca,
+                    jsonSerializerSettings,
+                    mtlsApiClient,
+                    scope,
+                    clientCredentialsGrantPostCustomBehaviour?.DoNotValidateScopeResponse ?? false);
+
+            if (response.IdToken is not null)
+            {
+                throw new Exception("Unexpectedly received ID token with client credentials grant.");
+            }
+
+            return response;
         }
 
-        if (tokenEndpointAuthMethod is
-            TokenEndpointAuthMethod.PrivateKeyJwt)
-        {
-            string jwt = CreateClientAssertionJwt(
-                obSealKey,
-                bankRegistration,
-                tokenEndpoint,
-                _instrumentationClient);
+        // Get or create cache entry
+        string cacheKey = string.Join(":", "token", "client", bankRegistration.Id.ToString(), scope ?? "");
+        string accessToken =
+            (await _memoryCache.GetOrCreateAsync(
+                cacheKey,
+                async cacheEntry =>
+                {
+                    TokenEndpointResponseClientCredentialsGrant response =
+                        await GetTokenAsync();
+                    // DateTimeOffset currentTime = _timeProvider.GetUtcNow();
+                    // cacheEntry.AbsoluteExpiration =
+                    //     currentTime.AddSeconds(response.ExpiresIn);
+                    cacheEntry.AbsoluteExpirationRelativeToNow =
+                        GetTokenExpiryRelativeToNow(response.ExpiresIn);
+                    return response.AccessToken;
+                }))!;
 
-            // Add parameters
-            keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-            keyValuePairs["client_assertion"] = jwt;
-        }
-
-        var response = await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
-            keyValuePairs,
-            bankRegistration,
-            tokenEndpointAuthMethod,
-            supportsSca,
-            jsonSerializerSettings,
-            mtlsApiClient,
-            scope,
-            clientCredentialsGrantPostCustomBehaviour
-                ?.DoNotValidateScopeResponse ?? false);
-
-        if (response.IdToken is not null)
-        {
-            throw new Exception("Unexpectedly received ID token with client credentials grant.");
-        }
-
-        return response;
+        return accessToken;
     }
 
     public async Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
@@ -337,6 +358,19 @@ internal class GrantPost : IGrantPost
         }
 
         return response;
+    }
+
+    public TimeSpan GetTokenExpiryRelativeToNow(int expiresInSeconds)
+    {
+        const int tokenEarlyExpiryIntervalInSeconds =
+            10; // margin to allow for time required to obtain token and later to present token
+        int tokenExpiryRelativeToNow = expiresInSeconds - tokenEarlyExpiryIntervalInSeconds;
+        if (tokenExpiryRelativeToNow < 0)
+        {
+            throw new InvalidOperationException("Negative token expiry value encountered.");
+        }
+
+        return TimeSpan.FromSeconds(tokenExpiryRelativeToNow);
     }
 
     private static string CreateClientAssertionJwt(

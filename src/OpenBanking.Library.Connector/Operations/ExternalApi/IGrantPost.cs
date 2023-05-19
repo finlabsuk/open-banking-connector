@@ -16,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal interface IGrantPost
 {
-    Task<TokenEndpointResponseClientCredentialsGrant> PostClientCredentialsGrantAsync(
+    Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
         BankRegistration bankRegistration,
@@ -79,4 +79,6 @@ internal interface IGrantPost
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId);
+
+    TimeSpan GetTokenExpiryRelativeToNow(int expiresInSeconds);
 }
