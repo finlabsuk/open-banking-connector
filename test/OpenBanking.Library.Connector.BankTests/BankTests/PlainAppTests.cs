@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -124,7 +125,8 @@ public partial class PlainAppTests : AppTests, IDisposable
                 apiClient,
                 processedSoftwareStatementProfileStore,
                 GetDbContext(),
-                new BankProfileService(bankProfilesSettingsProvider)),
+                new BankProfileService(bankProfilesSettingsProvider),
+                new MemoryCache(new MemoryCacheOptions())),
             false);
 
         UnsetTestLogging();

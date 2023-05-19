@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests;
@@ -26,7 +27,8 @@ internal static class TestDataFactory
             Substitute
                 .For<IProcessedSoftwareStatementProfileStore>(),
             Substitute.For<IApiVariantMapper>(),
-            Substitute.For<IBankProfileService>());
+            Substitute.For<IBankProfileService>(),
+            Substitute.For<IMemoryCache>());
     }
 
 
@@ -39,6 +41,7 @@ internal static class TestDataFactory
             Substitute.For<IApiClient>(),
             Substitute.For<IProcessedSoftwareStatementProfileStore>(),
             Substitute.For<IDbService>(),
-            Substitute.For<IBankProfileService>());
+            Substitute.For<IBankProfileService>(),
+            Substitute.For<IMemoryCache>());
     }
 }

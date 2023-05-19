@@ -52,12 +52,20 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                 _sharedContext.ApiVariantMapper,
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+                new GrantPost(
+                    _sharedContext.ApiClient,
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache,
+                    _sharedContext.TimeProvider),
                 new ConsentAccessTokenGet(
                     _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
-                    new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+                    new GrantPost(
+                        _sharedContext.ApiClient,
+                        _sharedContext.Instrumentation,
+                        _sharedContext.MemoryCache,
+                        _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation),
                 _sharedContext.BankProfileService);
             return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(

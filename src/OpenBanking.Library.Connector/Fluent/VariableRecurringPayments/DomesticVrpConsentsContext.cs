@@ -60,13 +60,21 @@ internal class DomesticVrpConsentsContext :
             sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+            new GrantPost(
+                _sharedContext.ApiClient,
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
                 _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+                new GrantPost(
+                    _sharedContext.ApiClient,
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache,
+                    _sharedContext.TimeProvider),
                 _sharedContext.Instrumentation),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = domesticVrpConsentOperations;
@@ -80,7 +88,11 @@ internal class DomesticVrpConsentsContext :
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.BankProfileService,
-                new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation));
+                new GrantPost(
+                    _sharedContext.ApiClient,
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache,
+                    _sharedContext.TimeProvider));
     }
 
     public IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams> ReadObject { get; }

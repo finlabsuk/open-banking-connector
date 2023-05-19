@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
@@ -28,7 +29,8 @@ public class RequestBuilderContainer : IRequestBuilderContainer
         IApiClient apiClient,
         IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
         BaseDbContext dbContext,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        IMemoryCache memoryCache)
     {
         _dbContext = dbContext;
         RequestBuilder = new RequestBuilder(
@@ -38,7 +40,8 @@ public class RequestBuilderContainer : IRequestBuilderContainer
             apiClient,
             softwareStatementProfilesRepository,
             new DbService(dbContext),
-            bankProfileService);
+            bankProfileService,
+            memoryCache);
     }
 
     public void Dispose()

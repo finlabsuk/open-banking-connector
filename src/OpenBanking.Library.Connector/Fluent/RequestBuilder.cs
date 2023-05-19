@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
@@ -61,6 +62,7 @@ public class RequestBuilder : IRequestBuilder
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbService _dbService;
     private readonly IInstrumentationClient _logger;
+    private readonly IMemoryCache _memoryCache;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -71,7 +73,8 @@ public class RequestBuilder : IRequestBuilder
         IApiClient apiClient,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IDbService dbService,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        IMemoryCache memoryCache)
     {
         _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
@@ -80,8 +83,8 @@ public class RequestBuilder : IRequestBuilder
         _bankProfileService = bankProfileService;
         _logger = logger.ArgNotNull(nameof(logger));
         _apiClient = apiClient.ArgNotNull(nameof(apiClient));
+        _memoryCache = memoryCache.ArgNotNull(nameof(memoryCache));
     }
-
 
     public IBankConfigurationContext BankConfiguration =>
         new BankConfigurationContext(CreateContext());
@@ -110,7 +113,8 @@ public class RequestBuilder : IRequestBuilder
             _dbService,
             _softwareStatementProfileCachedRepo,
             _apiVariantMapper,
-            _bankProfileService)
+            _bankProfileService,
+            _memoryCache)
         {
             Created = _timeProvider.GetUtcNow()
         };

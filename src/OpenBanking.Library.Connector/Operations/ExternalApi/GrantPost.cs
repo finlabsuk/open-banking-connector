@@ -12,7 +12,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
+using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Jose;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using BankRegistration =
@@ -29,11 +31,19 @@ internal class GrantPost : IGrantPost
     private readonly IApiClient _apiClient;
 
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IMemoryCache _memoryCache;
+    private readonly ITimeProvider _timeProvider;
 
-    public GrantPost(IApiClient apiClient, IInstrumentationClient instrumentationClient)
+    public GrantPost(
+        IApiClient apiClient,
+        IInstrumentationClient instrumentationClient,
+        IMemoryCache memoryCache,
+        ITimeProvider timeProvider)
     {
         _apiClient = apiClient;
         _instrumentationClient = instrumentationClient;
+        _memoryCache = memoryCache;
+        _timeProvider = timeProvider;
     }
 
     public async Task<string?> ValidateIdTokenAuthEndpoint(

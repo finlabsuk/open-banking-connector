@@ -60,7 +60,11 @@ internal class AccountAccessConsentsConsentContext :
             sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
-            new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+            new GrantPost(
+                _sharedContext.ApiClient,
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = accountAccessConsentOperations;
@@ -72,7 +76,11 @@ internal class AccountAccessConsentsConsentContext :
                 sharedContext.TimeProvider,
                 sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
-                new GrantPost(_sharedContext.ApiClient, _sharedContext.Instrumentation),
+                new GrantPost(
+                    _sharedContext.ApiClient,
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache,
+                    _sharedContext.TimeProvider),
                 _sharedContext.BankProfileService);
     }
 

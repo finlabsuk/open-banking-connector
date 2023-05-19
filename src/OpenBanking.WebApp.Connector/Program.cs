@@ -92,6 +92,8 @@ builder.Services
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         })
     .AddSwaggerGenNewtonsoftSupport()
+    // Add memory cache
+    .AddMemoryCache()
     // Add controllers
     .AddControllers(
         options =>

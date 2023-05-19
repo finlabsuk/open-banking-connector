@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
@@ -21,7 +22,8 @@ internal class SharedContext : ISharedContext
         IDbService dbService,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IApiVariantMapper apiVariantMapper,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        IMemoryCache memoryCache)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -30,9 +32,11 @@ internal class SharedContext : ISharedContext
         SoftwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
         ApiVariantMapper = apiVariantMapper;
         BankProfileService = bankProfileService;
+        MemoryCache = memoryCache;
     }
 
     public ITimeProvider TimeProvider { get; }
+    public IMemoryCache MemoryCache { get; }
     public DateTimeOffset Created { get; set; }
     public IApiClient ApiClient { get; }
     public IInstrumentationClient Instrumentation { get; }

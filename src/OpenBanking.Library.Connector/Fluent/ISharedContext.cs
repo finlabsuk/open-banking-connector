@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 
@@ -23,4 +24,6 @@ public interface ISharedContext
     IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
     IApiVariantMapper ApiVariantMapper { get; }
     ITimeProvider TimeProvider { get; }
+
+    IMemoryCache MemoryCache { get; }
 }

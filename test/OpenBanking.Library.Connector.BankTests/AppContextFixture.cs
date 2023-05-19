@@ -52,6 +52,8 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
             .AddWebHostServices(builder.Configuration)
             // Add bank testing services
             .AddBankTestingServices(builder.Configuration)
+            // Add memory cache
+            .AddMemoryCache()
             // Add controllers
             .AddControllers()
             // Add controllers from web host library (explicit add apparently required since not using Microsoft.NET.Sdk.Web)
