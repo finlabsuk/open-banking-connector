@@ -81,7 +81,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -101,7 +102,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -121,7 +123,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -141,7 +144,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -162,7 +166,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -182,7 +187,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -202,7 +208,8 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),

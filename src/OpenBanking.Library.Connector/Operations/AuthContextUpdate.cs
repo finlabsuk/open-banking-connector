@@ -21,6 +21,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using BankRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
@@ -30,14 +31,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal class AuthContextUpdate :
     IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse>
 {
-    private readonly
-        IDbReadWriteEntityMethods<AuthContext>
-        _authContextMethods;
-
+    private readonly IDbReadWriteEntityMethods<AuthContext> _authContextMethods;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IMemoryCache _memoryCache;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -49,7 +48,8 @@ internal class AuthContextUpdate :
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IGrantPost grantPost,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        IMemoryCache memoryCache)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -58,6 +58,7 @@ internal class AuthContextUpdate :
         _instrumentationClient = instrumentationClient;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
+        _memoryCache = memoryCache;
     }
 
     public async
@@ -244,6 +245,19 @@ internal class AuthContextUpdate :
                     customBehaviour?.AuthCodeGrantPost,
                     customBehaviour?.JwksGet,
                     processedSoftwareStatementProfile.ApiClient);
+
+            // Create cache entry
+            string consentTypeString = consentType switch
+            {
+                ConsentType.AccountAccessConsent => "aisp",
+                ConsentType.DomesticPaymentConsent => "pisp_dom",
+                ConsentType.DomesticVrpConsent => "vrp_dom",
+                _ => throw new ArgumentOutOfRangeException(nameof(consentType), consentType, null)
+            };
+            string cacheKey = string.Join(":", "token", consentTypeString, consent.Id.ToString());
+            MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(_grantPost.GetTokenAdjustedDuration(tokenEndpointResponse.ExpiresIn));
+            _memoryCache.Set(cacheKey, tokenEndpointResponse.AccessToken, cacheEntryOptions);
 
             // Update consent with nonce, token
             consent.UpdateAuthContext(

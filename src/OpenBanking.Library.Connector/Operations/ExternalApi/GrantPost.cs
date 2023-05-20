@@ -205,7 +205,7 @@ internal class GrantPost : IGrantPost
                     // cacheEntry.AbsoluteExpiration =
                     //     currentTime.AddSeconds(response.ExpiresIn);
                     cacheEntry.AbsoluteExpirationRelativeToNow =
-                        GetTokenExpiryRelativeToNow(response.ExpiresIn);
+                        GetTokenAdjustedDuration(response.ExpiresIn);
                     return response.AccessToken;
                 }))!;
 
@@ -360,7 +360,7 @@ internal class GrantPost : IGrantPost
         return response;
     }
 
-    public TimeSpan GetTokenExpiryRelativeToNow(int expiresInSeconds)
+    public TimeSpan GetTokenAdjustedDuration(int expiresInSeconds)
     {
         const int tokenEarlyExpiryIntervalInSeconds =
             10; // margin to allow for time required to obtain token and later to present token

@@ -66,7 +66,8 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                         _sharedContext.Instrumentation,
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
-                    _sharedContext.Instrumentation),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache),
                 _sharedContext.BankProfileService);
             return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
                 domesticPayment,

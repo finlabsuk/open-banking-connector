@@ -39,7 +39,8 @@ internal class AuthContextsContext : IAuthContextsContext
                 sharedContext.Instrumentation,
                 sharedContext.MemoryCache,
                 sharedContext.TimeProvider),
-            sharedContext.BankProfileService);
+            sharedContext.BankProfileService,
+            sharedContext.MemoryCache);
     }
 
     public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }

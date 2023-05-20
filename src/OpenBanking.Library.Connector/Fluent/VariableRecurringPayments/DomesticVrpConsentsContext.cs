@@ -75,7 +75,8 @@ internal class DomesticVrpConsentsContext :
                     _sharedContext.Instrumentation,
                     _sharedContext.MemoryCache,
                     _sharedContext.TimeProvider),
-                _sharedContext.Instrumentation),
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = domesticVrpConsentOperations;
         ReadObject = domesticVrpConsentOperations;

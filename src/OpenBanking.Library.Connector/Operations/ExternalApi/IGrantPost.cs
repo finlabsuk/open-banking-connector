@@ -80,5 +80,5 @@ internal interface IGrantPost
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId);
 
-    TimeSpan GetTokenExpiryRelativeToNow(int expiresInSeconds);
+    TimeSpan GetTokenAdjustedDuration(int expiresInSeconds);
 }
