@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 public class AccessToken
 {
     public AccessToken(
-        string token,
+        string? token,
         int expiresIn,
         string? refreshToken,
         DateTimeOffset modified,
@@ -23,7 +23,7 @@ public class AccessToken
         ModifiedBy = modifiedBy;
     }
 
-    public string Token { get; }
+    public string? Token { get; }
 
     public int ExpiresIn { get; }
 
@@ -148,17 +148,12 @@ internal class BaseConsent : BaseEntity
     public string? ExternalApiUserIdModifiedBy { get; private set; }
 
 
-    public AccessToken? AccessToken => _accessTokenAccessToken switch
-    {
-        null => null,
-        { } value =>
-            new AccessToken(
-                value,
-                _accessTokenExpiresIn,
-                _accessTokenRefreshToken,
-                _accessTokenModified,
-                _accessTokenModifiedBy)
-    };
+    public AccessToken AccessToken => new(
+        _accessTokenAccessToken,
+        _accessTokenExpiresIn,
+        _accessTokenRefreshToken,
+        _accessTokenModified,
+        _accessTokenModifiedBy);
 
     public void UpdateAuthContext(string state, string nonce, DateTimeOffset modified, string? modifiedBy)
     {

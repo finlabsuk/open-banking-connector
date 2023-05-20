@@ -56,9 +56,12 @@ internal class ConsentAccessTokenGet
         where TConsentEntity : BaseConsent
     {
         // Get token
-        AccessToken accessToken =
-            consent.AccessToken ??
+        AccessToken accessToken = consent.AccessToken;
+        if (accessToken.Token is null)
+        {
             throw new InvalidOperationException("No access token is available for Consent.");
+        }
+
         string nonce =
             consent.AuthContextNonce ??
             throw new InvalidOperationException("No nonce is available for Consent.");
