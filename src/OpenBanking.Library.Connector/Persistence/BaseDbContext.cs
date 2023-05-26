@@ -5,15 +5,14 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
-using BankConfig = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.Bank;
-using BankRegistrationConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration.BankRegistration;
 using DomesticPaymentConsentConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsent;
@@ -29,16 +28,6 @@ using AuthContextConfig =
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
-using AccountAccessConsentConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction.
-    AccountAccessConsent;
-using AccountAccessConsentAuthContextConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction.
-    AccountAccessConsentAuthContext;
-using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
@@ -83,6 +72,15 @@ public abstract class BaseDbContext : DbContext
     internal DbSet<DomesticPaymentConsent> DomesticPaymentConsent => Set<DomesticPaymentConsent>();
     internal DbSet<DomesticVrpConsent> DomesticVrpConsent => Set<DomesticVrpConsent>();
 
+    // Encrypted objects
+    internal DbSet<EncryptedObject> EncryptedObject => Set<EncryptedObject>();
+
+    internal DbSet<AccountAccessConsentAccessToken> AccountAccessConsentAccessToken =>
+        Set<AccountAccessConsentAccessToken>();
+
+    internal DbSet<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshToken =>
+        Set<AccountAccessConsentRefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Bank configuration
@@ -93,6 +91,7 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(DbProvider, true, JsonFormatting));
 
         // Auth contexts (note global query filter not supported for inherited types)
+        // var x = new AuthContextConfig(DbProvider, true, JsonFormatting);
         modelBuilder.ApplyConfiguration(new AuthContextConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new AccountAccessConsentAuthContextConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAuthContextConfig(DbProvider, false, JsonFormatting));
@@ -102,6 +101,12 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AccountAccessConsentConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new DomesticPaymentConsentConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new DomesticVrpConsentConfig(DbProvider, true, JsonFormatting));
+
+        // Encrypted objects
+        // var y = new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting);
+        modelBuilder.ApplyConfiguration(new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new AccountAccessConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new AccountAccessConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
 
         base.OnModelCreating(modelBuilder);
     }

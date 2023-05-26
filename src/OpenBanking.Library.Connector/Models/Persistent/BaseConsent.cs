@@ -63,7 +63,7 @@ internal class BaseConsent : BaseEntity
     private string? _accessTokenRefreshToken;
 
 
-    public BaseConsent(
+    protected BaseConsent(
         Guid id,
         string? reference,
         bool isDeleted,

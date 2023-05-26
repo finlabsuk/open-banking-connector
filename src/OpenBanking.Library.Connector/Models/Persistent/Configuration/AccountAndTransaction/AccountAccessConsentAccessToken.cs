@@ -8,26 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
 
-internal class AccountAccessConsentConfig : BaseConsentConfig<AccountAccessConsent>
+internal class
+    AccountAccessConsentAccessTokenConfig : EncryptedObjectConfig<
+        AccountAccessConsentAccessToken>
 {
-    public AccountAccessConsentConfig(
+    public AccountAccessConsentAccessTokenConfig(
         DbProvider dbProvider,
         bool supportsGlobalQueryFilter,
-        Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
-    public override void Configure(EntityTypeBuilder<AccountAccessConsent> builder)
+    public override void Configure(EntityTypeBuilder<AccountAccessConsentAccessToken> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.AccountAndTransactionApiId)
-            .HasColumnOrder(10)
+        builder.Property(e => e.AccountAccessConsentId)
+            .HasColumnName("account_access_consent_id") // shared column
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

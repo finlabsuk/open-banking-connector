@@ -14,17 +14,19 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
+using BankRegistration =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
 
-internal class BankRegistration : BaseConfig<Persistent.BankConfiguration.BankRegistration>
+internal class BankRegistrationConfig : BaseConfig<BankRegistration>
 {
-    public BankRegistration(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
+    public BankRegistrationConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
         base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
-    public override void Configure(EntityTypeBuilder<Persistent.BankConfiguration.BankRegistration> builder)
+    public override void Configure(EntityTypeBuilder<BankRegistration> builder)
     {
         base.Configure(builder);
 

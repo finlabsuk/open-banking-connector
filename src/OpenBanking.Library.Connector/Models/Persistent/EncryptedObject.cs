@@ -10,11 +10,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 ///     Persisted type.
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-[Index(nameof(State), IsUnique = true)]
 [Index(nameof(Nonce), IsUnique = true)]
-internal class AuthContext : BaseEntity
+internal class EncryptedObject : BaseEntity
 {
-    protected AuthContext(
+    protected EncryptedObject(
         Guid id,
         string? reference,
         bool isDeleted,
@@ -22,20 +21,27 @@ internal class AuthContext : BaseEntity
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string state,
-        string nonce) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
+        string text,
+        string tag,
+        string? nonce) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
     {
-        State = state;
+        Text = text;
+        Tag = tag;
         Nonce = nonce;
     }
 
     /// <summary>
-    ///     OAuth2 "state".
+    ///     Text
     /// </summary>
-    public string State { get; }
+    public string Text { get; }
 
     /// <summary>
-    ///     OpenID Connect "nonce".
+    ///     Tag
     /// </summary>
-    public string Nonce { get; }
+    public string Tag { get; }
+
+    /// <summary>
+    ///     Encryption "nonce".
+    /// </summary>
+    public string? Nonce { get; }
 }

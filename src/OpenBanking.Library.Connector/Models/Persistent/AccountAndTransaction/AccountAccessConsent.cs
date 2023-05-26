@@ -62,14 +62,29 @@ internal class AccountAccessConsent :
         AccountAndTransactionApiId = accountAndTransactionApiId;
     }
 
-    [ForeignKey("AccountAndTransactionApiId")]
-    public AccountAndTransactionApiEntity AccountAndTransactionApiNavigation { get; set; } = null!;
-
-    public IList<AccountAccessConsentAuthContext> AccountAccessConsentAuthContextsNavigation { get; } =
-        new List<AccountAccessConsentAuthContext>();
+    [ForeignKey(nameof(AccountAndTransactionApiId))]
+    public AccountAndTransactionApiEntity AccountAndTransactionApiNavigation { get; private set; } = null!;
 
     /// <summary>
     ///     Associated AccountAndTransactionApi object
     /// </summary>
     public Guid? AccountAndTransactionApiId { get; }
+
+    /// <summary>
+    ///     Associated auth contexts
+    /// </summary>
+    public IList<AccountAccessConsentAuthContext> AccountAccessConsentAuthContextsNavigation { get; private set; } =
+        new List<AccountAccessConsentAuthContext>();
+
+    /// <summary>
+    ///     Associated access tokens
+    /// </summary>
+    public IList<AccountAccessConsentAccessToken> AccountAccessConsentAccessTokensNavigation { get; private set; } =
+        new List<AccountAccessConsentAccessToken>();
+
+    /// <summary>
+    ///     Associated refresh tokens
+    /// </summary>
+    public IList<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshTokensNavigation { get; private set; } =
+        new List<AccountAccessConsentRefreshToken>();
 }
