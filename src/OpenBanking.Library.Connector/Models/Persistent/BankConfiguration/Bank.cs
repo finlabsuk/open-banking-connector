@@ -55,17 +55,6 @@ internal partial class Bank :
         CustomBehaviour = customBehaviour;
     }
 
-    public IList<BankRegistration> BankRegistrationsNavigation { get; } = new List<BankRegistration>();
-
-    public IList<AccountAndTransactionApiEntity> AccountAndTransactionApisNavigation { get; } =
-        new List<AccountAndTransactionApiEntity>();
-
-    public IList<PaymentInitiationApiEntity> PaymentInitiationApisNavigation { get; } =
-        new List<PaymentInitiationApiEntity>();
-
-    public IList<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApisNavigation { get; } =
-        new List<VariableRecurringPaymentsApiEntity>();
-
     /// <summary>
     ///     ID token "sub" claim type. Determined by how bank uses ID token.
     /// </summary>

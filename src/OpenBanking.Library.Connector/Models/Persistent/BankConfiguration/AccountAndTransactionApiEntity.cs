@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -43,9 +42,6 @@ internal partial class AccountAndTransactionApiEntity :
 
     [ForeignKey("BankId")]
     public Bank BankNavigation { get; set; } = null!;
-
-    public IList<AccountAccessConsent> AccountAccessConsentsNavigation { get; } =
-        new List<AccountAccessConsent>();
 
     public Guid BankId { get; }
     public AccountAndTransactionApiVersion ApiVersion { get; set; }

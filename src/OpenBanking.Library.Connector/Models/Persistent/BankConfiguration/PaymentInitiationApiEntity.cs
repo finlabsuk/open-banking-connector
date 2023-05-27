@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -43,9 +42,6 @@ internal partial class PaymentInitiationApiEntity :
 
     [ForeignKey("BankId")]
     public Bank BankNavigation { get; set; } = null!;
-
-    public IList<DomesticPaymentConsent> DomesticPaymentConsentsNavigation { get; } =
-        new List<DomesticPaymentConsent>();
 
     public Guid BankId { get; }
     public PaymentInitiationApiVersion ApiVersion { get; }

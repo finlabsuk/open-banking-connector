@@ -109,8 +109,8 @@ internal class BaseConsent : BaseEntity
         ExternalApiUserIdModifiedBy = externalApiUserIdModifiedBy;
     }
 
-    [ForeignKey("BankRegistrationId")]
-    public BankRegistration BankRegistrationNavigation { get; set; } = null!;
+    [ForeignKey(nameof(BankRegistrationId))]
+    public BankRegistration BankRegistrationNavigation { get; private set; } = null!;
 
     /// <summary>
     ///     Associated BankRegistration object

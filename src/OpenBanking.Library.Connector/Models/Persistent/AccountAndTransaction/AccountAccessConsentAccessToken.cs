@@ -40,8 +40,8 @@ internal class AccountAccessConsentAccessToken :
     }
 
     // Parent consent
-    [ForeignKey("AccountAccessConsentId")]
-    public AccountAccessConsent AccountAccessConsentNavigation { get; set; } = null!;
+    [ForeignKey(nameof(AccountAccessConsentId))]
+    public AccountAccessConsent AccountAccessConsentNavigation { get; private set; } = null!;
 
     public Guid AccountAccessConsentId { get; }
 }
