@@ -63,7 +63,7 @@ internal class ConsentAccessTokenGet
         where TConsentEntity : BaseConsent
     {
         // Get token
-        AccessToken accessToken = consent.AccessToken;
+        ConsentAccessToken accessToken = consent.ConsentAccessToken;
         if (accessToken.Token is null)
         {
             throw new InvalidOperationException("No access token is available for Consent.");
@@ -142,23 +142,23 @@ internal class ConsentAccessTokenGet
                 async cacheEntry =>
                 {
                     // Prefer stored access token if unexpired
-                    if (consent.AccessToken.Token is not null)
+                    if (consent.ConsentAccessToken.Token is not null)
                     {
                         // Calculate time since token stored
                         TimeSpan elapsedTime =
                             _timeProvider.GetUtcNow()
-                                .Subtract(consent.AccessToken.Modified); // subtract time when token stored
+                                .Subtract(consent.ConsentAccessToken.Modified); // subtract time when token stored
 
                         // Calculate remaining token duration
                         TimeSpan tokenRemainingDuration =
-                            _grantPost.GetTokenAdjustedDuration(consent.AccessToken.ExpiresIn)
+                            _grantPost.GetTokenAdjustedDuration(consent.ConsentAccessToken.ExpiresIn)
                                 .Subtract(elapsedTime);
 
                         // Return unexpired access token if available
                         if (tokenRemainingDuration > TimeSpan.Zero)
                         {
                             cacheEntry.AbsoluteExpirationRelativeToNow = tokenRemainingDuration;
-                            return consent.AccessToken.Token;
+                            return consent.ConsentAccessToken.Token;
                         }
                     }
 

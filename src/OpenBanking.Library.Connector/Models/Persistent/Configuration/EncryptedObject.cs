@@ -20,11 +20,5 @@ internal class EncryptedObjectConfig<TEntity> : BaseConfig<TEntity>
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.Nonce)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.Text)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.Tag)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

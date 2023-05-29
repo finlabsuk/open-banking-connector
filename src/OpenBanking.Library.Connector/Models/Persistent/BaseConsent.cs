@@ -7,9 +7,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-public class AccessToken
+public class ConsentAccessToken
 {
-    public AccessToken(
+    public ConsentAccessToken(
         string? token,
         int expiresIn,
         string? refreshToken,
@@ -148,7 +148,7 @@ internal class BaseConsent : BaseEntity
     public string? ExternalApiUserIdModifiedBy { get; private set; }
 
 
-    public AccessToken AccessToken => new(
+    public ConsentAccessToken ConsentAccessToken => new(
         _accessTokenAccessToken,
         _accessTokenExpiresIn,
         _accessTokenRefreshToken,

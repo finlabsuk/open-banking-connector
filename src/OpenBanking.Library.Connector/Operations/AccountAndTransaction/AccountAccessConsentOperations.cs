@@ -32,6 +32,7 @@ internal class
         IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
         IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
 
     private readonly IBankProfileService _bankProfileService;
@@ -42,15 +43,18 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsent1,
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
+
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
+
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentOperations(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
+        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
@@ -58,12 +62,17 @@ internal class
         IApiVariantMapper mapper,
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
-        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
+        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
+        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
+        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
     {
-        _entityMethods = entityMethods;
+        _consentEntityMethods = consentEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
-        _accountAccessConsentCommon = new AccountAccessConsentCommon(entityMethods, softwareStatementProfileRepo);
+        _accessTokenEntityMethods = accessTokenEntityMethods;
+        _refreshTokenEntityMethods = refreshTokenEntityMethods;
+        _accountAccessConsentCommon =
+            new AccountAccessConsentCommon(consentEntityMethods, softwareStatementProfileRepo);
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -220,7 +229,7 @@ internal class
         }
 
         // Save entity
-        await _entityMethods.AddAsync(persistedConsent);
+        await _consentEntityMethods.AddAsync(persistedConsent);
 
         // Create response (may involve additional processing based on entity)
         var response =

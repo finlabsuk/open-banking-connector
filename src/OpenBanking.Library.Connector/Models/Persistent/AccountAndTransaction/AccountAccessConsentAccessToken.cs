@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 
@@ -21,9 +22,12 @@ internal class AccountAccessConsentAccessToken :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string text,
-        string tag,
-        string? nonce,
+        DateTimeOffset modified,
+        string? modifiedBy,
+        string? keyId,
+        AccessToken accessToken,
+        string associatedData,
+        byte[] encryptionKey,
         Guid accountAccessConsentId) : base(
         id,
         reference,
@@ -32,9 +36,12 @@ internal class AccountAccessConsentAccessToken :
         isDeletedModifiedBy,
         created,
         createdBy,
-        text,
-        tag,
-        nonce)
+        modified,
+        modifiedBy,
+        keyId,
+        accessToken.PlainText,
+        associatedData,
+        encryptionKey)
     {
         AccountAccessConsentId = accountAccessConsentId;
     }
@@ -44,4 +51,19 @@ internal class AccountAccessConsentAccessToken :
     public AccountAccessConsent AccountAccessConsentNavigation { get; private set; } = null!;
 
     public Guid AccountAccessConsentId { get; }
+
+    public void UpdateAccessToken(
+        AccessToken accessToken,
+        string associatedData,
+        byte[] encryptionKey,
+        DateTimeOffset modified,
+        string? modifiedBy,
+        string? keyId) =>
+        UpdatePlainText(accessToken.PlainText, associatedData, encryptionKey, modified, modifiedBy, keyId);
+
+    public AccessToken GetAccessToken(byte[] encryptionKey)
+    {
+        string plainText = GetPlainText(AccountAccessConsentId.ToString(), encryptionKey);
+        return JsonConvert.DeserializeObject<AccessToken>(plainText)!;
+    }
 }
