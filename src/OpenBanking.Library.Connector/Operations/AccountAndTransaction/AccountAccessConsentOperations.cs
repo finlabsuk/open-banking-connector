@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -207,17 +208,6 @@ internal class
             utcNow,
             request.CreatedBy,
             null);
-
-        AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
-        if (accessToken is not null)
-        {
-            persistedConsent.UpdateAccessToken(
-                accessToken.Token,
-                accessToken.ExpiresIn,
-                accessToken.RefreshToken,
-                utcNow,
-                accessToken.ModifiedBy);
-        }
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)

@@ -162,7 +162,6 @@ public abstract class AppTests
                             BankRegistrationRegistrationAccessToken =
                                 bankRegistrationRegistrationAccessToken,
                             AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
-                            AccountAccessConsentRefreshToken = accountAccessConsentRefreshToken,
                             AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce,
                             RegistrationScope = testGroup.RegistrationScope
                         });

@@ -4,23 +4,6 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 
-public class AccessToken
-{
-    /// <summary>
-    ///     Token.
-    /// </summary>
-    public string Token { get; init; } = null!;
-
-    /// <summary>
-    ///     Token "expires_in".
-    /// </summary>
-    public int ExpiresIn { get; set; }
-
-    public string? RefreshToken { get; set; }
-
-    public string? ModifiedBy { get; set; }
-}
-
 public class AuthContextRequest
 {
     /// <summary>
@@ -43,8 +26,6 @@ public class ExternalApiConsent
     ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
     /// </summary>
     public string ExternalApiId { get; set; } = null!;
-
-    public AccessToken? AccessToken { get; set; }
 
     public AuthContextRequest? AuthContext { get; set; }
 }

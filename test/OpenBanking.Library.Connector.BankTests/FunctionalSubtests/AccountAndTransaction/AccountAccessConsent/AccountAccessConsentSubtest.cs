@@ -142,28 +142,25 @@ public class AccountAccessConsentSubtest
                 if (consentAuth is not null)
                 {
                     // Authorise consent in UI via Playwright
-                    if (testData2.AccountAccessConsentRefreshToken is null)
+                    async Task<bool> AuthIsComplete()
                     {
-                        async Task<bool> AuthIsComplete()
-                        {
-                            AccountAccessConsentCreateResponse consentResponse =
-                                await requestBuilder
-                                    .AccountAndTransaction
-                                    .AccountAccessConsents
-                                    .ReadAsync(
-                                        accountAccessConsentId2,
-                                        modifiedBy,
-                                        false);
-                            return consentResponse.Created < consentResponse.AuthContextModified;
-                        }
-
-                        await consentAuth.AuthoriseAsync(
-                            authUrl,
-                            bankProfile,
-                            ConsentVariety.AccountAccessConsent,
-                            bankUser,
-                            AuthIsComplete);
+                        AccountAccessConsentCreateResponse consentResponse =
+                            await requestBuilder
+                                .AccountAndTransaction
+                                .AccountAccessConsents
+                                .ReadAsync(
+                                    accountAccessConsentId2,
+                                    modifiedBy,
+                                    false);
+                        return consentResponse.Created < consentResponse.AuthContextModified;
                     }
+
+                    await consentAuth.AuthoriseAsync(
+                        authUrl,
+                        bankProfile,
+                        ConsentVariety.AccountAccessConsent,
+                        bankUser,
+                        AuthIsComplete);
 
                     // Refresh scope to ensure user token acquired following consent is available
                     using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();
@@ -435,15 +432,6 @@ public class AccountAccessConsentSubtest
             ExternalApiId =
                 testData2.AccountAccessConsentExternalApiId ??
                 throw new InvalidOperationException("No external API AccountAccessConsent ID provided."),
-            AccessToken = testData2.AccountAccessConsentRefreshToken is null
-                ? null
-                : new AccessToken
-                {
-                    Token = "",
-                    ExpiresIn = 0, // to trigger use of refresh token
-                    RefreshToken = testData2.AccountAccessConsentRefreshToken,
-                    ModifiedBy = modifiedBy
-                },
             AuthContext = testData2.AccountAccessConsentAuthContextNonce is null
                 ? null
                 : new AuthContextRequest

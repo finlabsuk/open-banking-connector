@@ -24,8 +24,6 @@ public class BankTestData2 : IXunitSerializable
 
     public string? AccountAccessConsentExternalApiId { get; set; }
 
-    public string? AccountAccessConsentRefreshToken { get; set; }
-
     public string? AccountAccessConsentAuthContextNonce { get; set; }
 
     public RegistrationScopeEnum RegistrationScope { get; set; }
@@ -38,7 +36,6 @@ public class BankTestData2 : IXunitSerializable
         BankRegistrationRegistrationAccessToken =
             info.GetValue<string?>(nameof(BankRegistrationRegistrationAccessToken));
         AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
-        AccountAccessConsentRefreshToken = info.GetValue<string?>(nameof(AccountAccessConsentRefreshToken));
         AccountAccessConsentAuthContextNonce = info.GetValue<string?>(nameof(AccountAccessConsentAuthContextNonce));
         RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
     }
@@ -50,7 +47,6 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(BankRegistrationExternalApiSecret), BankRegistrationExternalApiSecret);
         info.AddValue(nameof(BankRegistrationRegistrationAccessToken), BankRegistrationRegistrationAccessToken);
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
-        info.AddValue(nameof(AccountAccessConsentRefreshToken), AccountAccessConsentRefreshToken);
         info.AddValue(nameof(AccountAccessConsentAuthContextNonce), AccountAccessConsentAuthContextNonce);
         info.AddValue(nameof(RegistrationScope), RegistrationScope);
     }

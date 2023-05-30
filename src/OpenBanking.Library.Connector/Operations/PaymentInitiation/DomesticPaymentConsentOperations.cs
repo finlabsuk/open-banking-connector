@@ -218,17 +218,6 @@ internal class
             request.CreatedBy,
             null);
 
-        AccessToken? accessToken = request.ExternalApiObject?.AccessToken;
-        if (accessToken is not null)
-        {
-            persistedConsent.UpdateAccessToken(
-                accessToken.Token,
-                accessToken.ExpiresIn,
-                accessToken.RefreshToken,
-                utcNow,
-                accessToken.ModifiedBy);
-        }
-
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)
         {
