@@ -14,6 +14,19 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
 internal class AccountAccessConsentAccessToken :
     EncryptedObject
 {
+    /// <summary>
+    ///     Constructor. Ideally would set all fields (full state) of class but unfortunately having parameters which don't
+    ///     directly map to properties causes an issue for EF Core. Thus this constructor should be followed by a call
+    ///     to <see cref="UpdateAccessToken" />.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="reference"></param>
+    /// <param name="isDeleted"></param>
+    /// <param name="isDeletedModified"></param>
+    /// <param name="isDeletedModifiedBy"></param>
+    /// <param name="created"></param>
+    /// <param name="createdBy"></param>
+    /// <param name="accountAccessConsentId"></param>
     public AccountAccessConsentAccessToken(
         Guid id,
         string? reference,
@@ -22,12 +35,6 @@ internal class AccountAccessConsentAccessToken :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        DateTimeOffset modified,
-        string? modifiedBy,
-        string? keyId,
-        AccessToken accessToken,
-        string associatedData,
-        byte[] encryptionKey,
         Guid accountAccessConsentId) : base(
         id,
         reference,
@@ -35,13 +42,7 @@ internal class AccountAccessConsentAccessToken :
         isDeletedModified,
         isDeletedModifiedBy,
         created,
-        createdBy,
-        modified,
-        modifiedBy,
-        keyId,
-        accessToken.PlainText,
-        associatedData,
-        encryptionKey)
+        createdBy)
     {
         AccountAccessConsentId = accountAccessConsentId;
     }

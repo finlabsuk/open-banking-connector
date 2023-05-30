@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -18,47 +17,49 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 internal class EncryptedObject : BaseEntity
 {
     /// <summary>
-    ///     Encryption "nonce".
+    ///     Encryption "nonce". Protected rather than private for EF Core visibility.
     /// </summary>
     [Column("nonce")]
-    private byte[] _nonce;
+    protected byte[] _nonce = null!;
 
     /// <summary>
-    ///     Tag
+    ///     Tag. Protected rather than private for EF Core visibility.
     /// </summary>
     [Column("tag")]
-    private byte[] _tag;
+    protected byte[] _tag = null!;
 
     /// <summary>
-    ///     Text
+    ///     Text. Protected rather than private for EF Core visibility.
     /// </summary>
     [Column("text")]
-    private string _text;
+    protected byte[] _text = null!;
 
-    protected EncryptedObject(
+    /// <summary>
+    ///     Text (string). Protected rather than private for EF Core visibility.
+    /// </summary>
+    [Column("text2")]
+    protected string? _text2;
+
+    /// <summary>
+    ///     Constructor. Ideally would set all fields (full state) of class but unfortunately having parameters which don't
+    ///     directly map to properties causes an issue for EF Core. Thus this constructor should be followed by a call
+    ///     to <see cref="UpdatePlainText" />.
+    /// </summary>
+    public EncryptedObject(
         Guid id,
         string? reference,
         bool isDeleted,
         DateTimeOffset isDeletedModified,
         string? isDeletedModifiedBy,
         DateTimeOffset created,
-        string? createdBy,
-        DateTimeOffset modified,
-        string? modifiedBy,
-        string? keyId,
-        string plainText,
-        string associatedData,
-        byte[] encryptionKey) : base(
+        string? createdBy) : base(
         id,
         reference,
         isDeleted,
         isDeletedModified,
         isDeletedModifiedBy,
         created,
-        createdBy)
-    {
-        UpdatePlainText(plainText, associatedData, encryptionKey, modified, modifiedBy, keyId);
-    }
+        createdBy) { }
 
     public DateTimeOffset Modified { get; private set; }
 
@@ -72,16 +73,6 @@ internal class EncryptedObject : BaseEntity
     /// <summary>
     ///     Update plain text with new value.
     /// </summary>
-    /// <param name="plainText"></param>
-    /// <param name="associatedData"></param>
-    /// <param name="encryptionKey"></param>
-    /// <param name="modified"></param>
-    /// <param name="modifiedBy"></param>
-    /// <param name="keyId"></param>
-    /// <exception cref="InvalidOperationException"></exception>
-    [MemberNotNull(nameof(_text))]
-    [MemberNotNull(nameof(_tag))]
-    [MemberNotNull(nameof(_nonce))]
     protected void UpdatePlainText(
         string plainText,
         string associatedData,
@@ -104,10 +95,12 @@ internal class EncryptedObject : BaseEntity
         _nonce = new byte[nonceLengthBytes];
         RandomNumberGenerator.Fill(_nonce);
 
+        byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
         if (KeyId is null)
         {
-            _text = plainText;
+            _text = plainTextBytes;
+            _text2 = plainText;
             _tag = Array.Empty<byte>();
         }
         else
@@ -120,12 +113,13 @@ internal class EncryptedObject : BaseEntity
 
             (byte[] cipherText, byte[] tag) = AesGcmEncrypt(
                 _nonce,
-                Encoding.UTF8.GetBytes(plainText),
+                plainTextBytes,
                 tagLengthBytes,
                 Encoding.UTF8.GetBytes(associatedData),
                 encryptionKey);
 
-            _text = Convert.ToBase64String(cipherText);
+            _text = cipherText;
+            _text2 = null;
             _tag = tag;
         }
     }
@@ -133,19 +127,16 @@ internal class EncryptedObject : BaseEntity
     /// <summary>
     ///     Get plain text value.
     /// </summary>
-    /// <param name="associatedData"></param>
-    /// <param name="encryptionKey"></param>
-    /// <returns></returns>
     protected string GetPlainText(string associatedData, byte[] encryptionKey) =>
-        KeyId is not null
-            ? Encoding.UTF8.GetString(
-                AesGcmDecrypt(
+        Encoding.UTF8.GetString(
+            KeyId is not null
+                ? AesGcmDecrypt(
                     _nonce,
-                    Convert.FromBase64String(_text),
+                    _text,
                     _tag,
                     Encoding.UTF8.GetBytes(associatedData),
-                    encryptionKey))
-            : _text;
+                    encryptionKey)
+                : _text);
 
     private static (byte[] cipherText, byte[] tag) AesGcmEncrypt(
         byte[] nonce,
