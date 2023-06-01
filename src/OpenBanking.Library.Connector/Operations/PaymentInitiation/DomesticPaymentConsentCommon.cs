@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -32,6 +33,8 @@ internal class DomesticPaymentConsentCommon
 
     public async
         Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+            DomesticPaymentConsentAccessToken? storedAccessToken,
+            DomesticPaymentConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
             Guid consentId)
     {
@@ -41,8 +44,20 @@ internal class DomesticPaymentConsentCommon
                 .DbSetNoTracking
                 .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
                 .Include(o => o.BankRegistrationNavigation)
+                .Include(
+                    o => o
+                        .DomesticPaymentConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => o
+                        .DomesticPaymentConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
+        DomesticPaymentConsentAccessToken? storedAccessToken =
+            persistedConsent.DomesticPaymentConsentAccessTokensNavigation.SingleOrDefault();
+        DomesticPaymentConsentRefreshToken? storedRefreshToken =
+            persistedConsent.DomesticPaymentConsentRefreshTokensNavigation.SingleOrDefault();
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
@@ -51,7 +66,8 @@ internal class DomesticPaymentConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, bankRegistration, processedSoftwareStatementProfile);
+        return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
+            processedSoftwareStatementProfile);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

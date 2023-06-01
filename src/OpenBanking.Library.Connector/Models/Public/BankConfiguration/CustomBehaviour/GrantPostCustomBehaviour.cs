@@ -12,6 +12,8 @@ public class GrantPostCustomBehaviour
 
     public bool? DoNotValidateScopeResponse { get; set; }
 
+    public bool? AllowNullResponseRefreshToken { get; set; }
+
     /// <summary>
     ///     Deprecated
     /// </summary>

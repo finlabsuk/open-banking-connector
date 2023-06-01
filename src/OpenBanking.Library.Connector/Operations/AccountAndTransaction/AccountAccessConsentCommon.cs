@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -28,9 +29,9 @@ internal class AccountAccessConsentCommon
     }
 
     public async
-        Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted
-            bankRegistration, ProcessedSoftwareStatementProfile
-            processedSoftwareStatementProfile)> GetAccountAccessConsent(
+        Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted bankRegistration,
+            AccountAccessConsentAccessToken? storedAccessToken, AccountAccessConsentRefreshToken? storedRefreshToken,
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetAccountAccessConsent(
             Guid consentId,
             bool dbTracking = false)
     {
@@ -40,10 +41,26 @@ internal class AccountAccessConsentCommon
 
         AccountAccessConsentPersisted persistedConsent =
             await db
-                .Include(o => o.AccountAccessConsentAuthContextsNavigation)
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(
+                    o => o
+                        .AccountAccessConsentAuthContextsNavigation)
+                .Include(
+                    o => o
+                        .BankRegistrationNavigation)
+                .Include(
+                    o => o
+                        .AccountAccessConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => o
+                        .AccountAccessConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
+        AccountAccessConsentAccessToken? storedAccessToken =
+            persistedConsent.AccountAccessConsentAccessTokensNavigation.SingleOrDefault();
+        AccountAccessConsentRefreshToken? storedRefreshToken =
+            persistedConsent.AccountAccessConsentRefreshTokensNavigation.SingleOrDefault();
         BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
@@ -52,7 +69,8 @@ internal class AccountAccessConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, bankRegistration, processedSoftwareStatementProfile);
+        return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
+            processedSoftwareStatementProfile);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

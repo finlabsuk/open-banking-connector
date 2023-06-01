@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -259,7 +260,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
 
@@ -358,6 +359,7 @@ internal class
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedObject, BankRegistration bankRegistration,
+                DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
         string externalApiConsentId = persistedObject.ExternalApiId;
@@ -384,6 +386,8 @@ internal class
                 bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedObject.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,

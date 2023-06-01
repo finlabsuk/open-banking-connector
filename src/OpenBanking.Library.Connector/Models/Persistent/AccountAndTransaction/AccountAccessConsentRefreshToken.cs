@@ -11,12 +11,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Accoun
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
 internal class AccountAccessConsentRefreshToken :
-    EncryptedObject
+    RefreshTokenEntity
 {
     /// <summary>
     ///     Constructor. Ideally would set all fields (full state) of class but unfortunately having parameters which don't
     ///     directly map to properties causes an issue for EF Core. Thus this constructor should be followed by a call
-    ///     to <see cref="UpdateRefreshToken" />.
+    ///     to <see cref="RefreshTokenEntity.UpdateRefreshToken" />.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="reference"></param>
@@ -51,17 +51,4 @@ internal class AccountAccessConsentRefreshToken :
     public AccountAccessConsent AccountAccessConsentNavigation { get; private set; } = null!;
 
     public Guid AccountAccessConsentId { get; }
-
-    public void UpdateRefreshToken(
-        string refreshToken,
-        string associatedData,
-        byte[] encryptionKey,
-        DateTimeOffset modified,
-        string? modifiedBy,
-        string? keyId) =>
-        UpdatePlainText(refreshToken, associatedData, encryptionKey, modified, modifiedBy, keyId);
-
-    public string GetRefreshToken(byte[] encryptionKey) => GetPlainText(
-        AccountAccessConsentId.ToString(),
-        encryptionKey);
 }

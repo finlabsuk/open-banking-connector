@@ -87,4 +87,50 @@ internal class AccountAccessConsent :
     /// </summary>
     public IList<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshTokensNavigation { get; private set; } =
         new List<AccountAccessConsentRefreshToken>();
+
+    public override AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var accountAccessConsentAccessToken =
+            new AccountAccessConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        AccountAccessConsentAccessTokensNavigation.Add(accountAccessConsentAccessToken);
+        return accountAccessConsentAccessToken;
+    }
+
+    public override RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var accountAccessConsentRefreshToken =
+            new AccountAccessConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        AccountAccessConsentRefreshTokensNavigation.Add(accountAccessConsentRefreshToken);
+        return accountAccessConsentRefreshToken;
+    }
 }

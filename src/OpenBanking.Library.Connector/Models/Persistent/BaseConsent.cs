@@ -38,7 +38,7 @@ public class ConsentAccessToken
 ///     Persisted type.
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-internal class BaseConsent : BaseEntity
+internal abstract class BaseConsent : BaseEntity
 {
     /// <summary>
     ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
@@ -162,6 +162,24 @@ internal class BaseConsent : BaseEntity
         AuthContextModified = modified;
         AuthContextModifiedBy = modifiedBy;
     }
+
+    public abstract AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy);
+
+    public abstract RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy);
 
     public void UpdateAccessToken(
         string accessTokenValue,

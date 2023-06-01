@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
@@ -82,7 +83,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -103,7 +106,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -124,7 +129,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -145,7 +152,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -167,7 +176,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -188,7 +199,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),
@@ -209,7 +222,9 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
                         _sharedContext.MemoryCache,
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
-                    _sharedContext.MemoryCache),
+                    _sharedContext.MemoryCache,
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
                 new AccountAccessConsentCommon(
                     _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                     _sharedContext.SoftwareStatementProfileCachedRepo),

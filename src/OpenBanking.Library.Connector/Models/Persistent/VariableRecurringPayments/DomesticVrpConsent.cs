@@ -69,11 +69,72 @@ internal class DomesticVrpConsent :
     [ForeignKey("VariableRecurringPaymentsApiId")]
     public VariableRecurringPaymentsApiEntity VariableRecurringPaymentsApiNavigation { get; set; } = null!;
 
-    public IList<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; } =
-        new List<DomesticVrpConsentAuthContext>();
-
     /// <summary>
     ///     Associated VariableRecurringPaymentsApi object
     /// </summary>
     public Guid? VariableRecurringPaymentsApiId { get; }
+
+    /// <summary>
+    ///     Associated auth contexts
+    /// </summary>
+    public IList<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; private set; } =
+        new List<DomesticVrpConsentAuthContext>();
+
+    /// <summary>
+    ///     Associated access tokens
+    /// </summary>
+    public IList<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessTokensNavigation { get; } =
+        new List<DomesticVrpConsentAccessToken>();
+
+    /// <summary>
+    ///     Associated refresh tokens
+    /// </summary>
+    public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; } =
+        new List<DomesticVrpConsentRefreshToken>();
+
+    public override AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var domesticVrpConsentAccessToken =
+            new DomesticVrpConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        DomesticVrpConsentAccessTokensNavigation.Add(domesticVrpConsentAccessToken);
+        return domesticVrpConsentAccessToken;
+    }
+
+    public override RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var domesticVrpConsentRefreshToken =
+            new DomesticVrpConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        DomesticVrpConsentRefreshTokensNavigation.Add(domesticVrpConsentRefreshToken);
+        return domesticVrpConsentRefreshToken;
+    }
 }

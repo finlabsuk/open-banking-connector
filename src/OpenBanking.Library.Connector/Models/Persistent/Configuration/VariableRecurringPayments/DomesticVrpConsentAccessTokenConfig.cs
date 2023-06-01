@@ -8,23 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
-using VariableRecurringPaymentsModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
 
-internal class DomesticVrpConsentConfig : BaseConsentConfig<DomesticVrpConsent>
+internal class
+    DomesticVrpConsentAccessTokenConfig : EncryptedObjectConfig<
+        DomesticVrpConsentAccessToken>
 {
-    public DomesticVrpConsentConfig(DbProvider dbProvider, bool supportsGlobalQueryFilter, Formatting jsonFormatting) :
-        base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
+    public DomesticVrpConsentAccessTokenConfig(
+        DbProvider dbProvider,
+        bool supportsGlobalQueryFilter,
+        Formatting jsonFormatting) : base(dbProvider, supportsGlobalQueryFilter, jsonFormatting) { }
 
-    public override void Configure(EntityTypeBuilder<DomesticVrpConsent> builder)
+    public override void Configure(EntityTypeBuilder<DomesticVrpConsentAccessToken> builder)
     {
         base.Configure(builder);
 
         // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.VariableRecurringPaymentsApiId)
-            .HasColumnOrder(10)
+        builder.Property(e => e.DomesticVrpConsentId)
+            .HasColumnName("domestic_vrp_consent_id") // shared column
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

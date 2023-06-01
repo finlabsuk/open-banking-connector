@@ -8,23 +8,24 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfig
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Newtonsoft.Json;
-using DomesticPaymentConsentConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
-    DomesticPaymentConsent;
 using DomesticPaymentConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation.
     DomesticPaymentConsentAuthContext;
-using DomesticVrpConsentConfig =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
-    DomesticVrpConsent;
 using AuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AuthContextConfig<
         FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AuthContext>;
+using DomesticPaymentConsentAuthContext =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsentAuthContext;
+using DomesticVrpConsentAuthContext =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
+    DomesticVrpConsentAuthContext;
 using DomesticVrpConsentAuthContextConfig =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
@@ -81,6 +82,18 @@ public abstract class BaseDbContext : DbContext
     internal DbSet<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshToken =>
         Set<AccountAccessConsentRefreshToken>();
 
+    internal DbSet<DomesticPaymentConsentAccessToken> DomesticPaymentConsentAccessToken =>
+        Set<DomesticPaymentConsentAccessToken>();
+
+    internal DbSet<DomesticPaymentConsentRefreshToken> DomesticPaymentConsentRefreshToken =>
+        Set<DomesticPaymentConsentRefreshToken>();
+
+    internal DbSet<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessToken =>
+        Set<DomesticVrpConsentAccessToken>();
+
+    internal DbSet<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshToken =>
+        Set<DomesticVrpConsentRefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Bank configuration
@@ -107,6 +120,11 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EncryptedObjectConfig<EncryptedObject>(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new AccountAccessConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
         modelBuilder.ApplyConfiguration(new AccountAccessConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticPaymentConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(
+            new DomesticPaymentConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticVrpConsentAccessTokenConfig(DbProvider, false, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new DomesticVrpConsentRefreshTokenConfig(DbProvider, false, JsonFormatting));
 
         base.OnModelCreating(modelBuilder);
     }

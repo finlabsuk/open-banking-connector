@@ -52,6 +52,8 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
 
         // Get consent and associated data
         (AccountAccessConsent persistedConsent, BankRegistration bankRegistration,
+                AccountAccessConsentAccessToken? storedAccessToken,
+                AccountAccessConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
@@ -76,6 +78,8 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
                 bankTokenIssuerClaim,
                 "openid accounts",
                 bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,

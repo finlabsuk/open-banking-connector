@@ -263,6 +263,14 @@ internal class GrantPost : IGrantPost
             requestScope,
             false);
 
+        // Check for refresh token
+        bool allowNullRefreshTokenResponse = authCodeGrantPostCustomBehaviour?.AllowNullResponseRefreshToken ?? false;
+        if (!allowNullRefreshTokenResponse &&
+            response.RefreshToken is null)
+        {
+            throw new Exception("Did not receive refresh token when using auth code grant.");
+        }
+
         bool doNotValidateIdToken = authCodeGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {

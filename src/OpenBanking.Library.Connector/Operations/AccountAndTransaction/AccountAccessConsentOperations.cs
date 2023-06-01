@@ -261,7 +261,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load AccountAccessConsent and related
-        (AccountAccessConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        (AccountAccessConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id);
 

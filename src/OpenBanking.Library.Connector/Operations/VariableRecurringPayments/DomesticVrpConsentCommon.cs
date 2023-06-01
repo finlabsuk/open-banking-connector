@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -31,8 +32,9 @@ internal class DomesticVrpConsentCommon
     }
 
     public async
-        Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistration
-            bankRegistration, ProcessedSoftwareStatementProfile
+        Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+            DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
+            ProcessedSoftwareStatementProfile
             processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId)
     {
         // Load DomesticVrpConsent and related
@@ -41,8 +43,20 @@ internal class DomesticVrpConsentCommon
                 .DbSetNoTracking
                 .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
                 .Include(o => o.BankRegistrationNavigation)
+                .Include(
+                    o => o
+                        .DomesticVrpConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => o
+                        .DomesticVrpConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
+        DomesticVrpConsentAccessToken? storedAccessToken =
+            persistedConsent.DomesticVrpConsentAccessTokensNavigation.SingleOrDefault();
+        DomesticVrpConsentRefreshToken? storedRefreshToken =
+            persistedConsent.DomesticVrpConsentRefreshTokensNavigation.SingleOrDefault();
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
@@ -51,7 +65,8 @@ internal class DomesticVrpConsentCommon
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration.SoftwareStatementProfileOverride);
 
-        return (persistedConsent, bankRegistration, processedSoftwareStatementProfile);
+        return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
+            processedSoftwareStatementProfile);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

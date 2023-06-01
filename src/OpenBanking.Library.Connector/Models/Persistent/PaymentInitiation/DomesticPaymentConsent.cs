@@ -69,11 +69,72 @@ internal class DomesticPaymentConsent :
     [ForeignKey("PaymentInitiationApiId")]
     public PaymentInitiationApiEntity PaymentInitiationApiNavigation { get; set; } = null!;
 
-    public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; } =
-        new List<DomesticPaymentConsentAuthContext>();
-
     /// <summary>
     ///     Associated PaymentInitiationApi object
     /// </summary>
     public Guid? PaymentInitiationApiId { get; }
+
+    /// <summary>
+    ///     Associated auth contexts
+    /// </summary>
+    public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; private set; } =
+        new List<DomesticPaymentConsentAuthContext>();
+
+    /// <summary>
+    ///     Associated access tokens
+    /// </summary>
+    public IList<DomesticPaymentConsentAccessToken> DomesticPaymentConsentAccessTokensNavigation { get; private set; } =
+        new List<DomesticPaymentConsentAccessToken>();
+
+    /// <summary>
+    ///     Associated refresh tokens
+    /// </summary>
+    public IList<DomesticPaymentConsentRefreshToken> DomesticPaymentConsentRefreshTokensNavigation { get; private set; } =
+        new List<DomesticPaymentConsentRefreshToken>();
+
+    public override AccessTokenEntity AddNewAccessToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var domesticPaymentConsentAccessToken =
+            new DomesticPaymentConsentAccessToken(
+                id,
+                reference,
+                isDeleted,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        DomesticPaymentConsentAccessTokensNavigation.Add(domesticPaymentConsentAccessToken);
+        return domesticPaymentConsentAccessToken;
+    }
+
+    public override RefreshTokenEntity AddNewRefreshToken(
+        Guid id,
+        string? reference,
+        bool isDeleted,
+        DateTimeOffset isDeletedModified,
+        string? isDeletedModifiedBy,
+        DateTimeOffset created,
+        string? createdBy)
+    {
+        var domesticPaymentConsentRefreshToken =
+            new DomesticPaymentConsentRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                isDeletedModified,
+                isDeletedModifiedBy,
+                created,
+                createdBy,
+                Id);
+        DomesticPaymentConsentRefreshTokensNavigation.Add(domesticPaymentConsentRefreshToken);
+        return domesticPaymentConsentRefreshToken;
+    }
 }

@@ -11,7 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanu
 
 public class AccountAccessConsentCleanup
 {
-    public Task Cleanup(
+    public async Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ILogger logger)
@@ -22,6 +22,11 @@ public class AccountAccessConsentCleanup
         var negativeInfinity = new DateTimeOffset(
             new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
             new TimeSpan(0, 0, 0, 0, 0));
+
+        var accessTokenEntityMethods =
+            new DbEntityMethods<AccountAccessConsentAccessToken>(postgreSqlDbContext);
+        var refreshTokenEntityMethods =
+            new DbEntityMethods<AccountAccessConsentRefreshToken>(postgreSqlDbContext);
 
         foreach (AccountAccessConsent accountAccessConsent in entityList)
         {
@@ -40,8 +45,58 @@ public class AccountAccessConsentCleanup
                     "and has been fixed as part of database cleanup.";
                 logger.LogInformation(message);
             }
-        }
 
-        return Task.CompletedTask;
+            // Transfer tokens to other table
+            ConsentAccessToken consentAccessToken = accountAccessConsent.ConsentAccessToken;
+            if (consentAccessToken.Token is not null)
+            {
+                DateTimeOffset created = consentAccessToken.Modified;
+                var createdBy = "Database cleanup";
+
+                // Transfer access token
+                var accountAccessConsentAccessToken = new AccountAccessConsentAccessToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    created,
+                    createdBy,
+                    created,
+                    createdBy,
+                    accountAccessConsent.Id);
+
+                var accessToken = new AccessToken(consentAccessToken.Token, consentAccessToken.ExpiresIn);
+                accountAccessConsentAccessToken.UpdateAccessToken(
+                    accessToken,
+                    string.Empty,
+                    Array.Empty<byte>(),
+                    created,
+                    createdBy,
+                    null);
+                await accessTokenEntityMethods.AddAsync(accountAccessConsentAccessToken);
+
+                // Transfer refresh token
+                if (consentAccessToken.RefreshToken is not null)
+                {
+                    var accountAccessConsentRefreshToken = new AccountAccessConsentRefreshToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        created,
+                        createdBy,
+                        created,
+                        createdBy,
+                        accountAccessConsent.Id);
+
+                    accountAccessConsentRefreshToken.UpdateRefreshToken(
+                        consentAccessToken.RefreshToken,
+                        string.Empty,
+                        Array.Empty<byte>(),
+                        created,
+                        createdBy,
+                        null);
+                    await refreshTokenEntityMethods.AddAsync(accountAccessConsentRefreshToken);
+                }
+            }
+        }
     }
 }

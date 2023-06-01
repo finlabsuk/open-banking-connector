@@ -31,12 +31,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal class AuthContextUpdate :
     IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse>
 {
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbReadWriteEntityMethods<AuthContext> _authContextMethods;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -49,7 +51,9 @@ internal class AuthContextUpdate :
         IInstrumentationClient instrumentationClient,
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
+        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -59,6 +63,8 @@ internal class AuthContextUpdate :
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _memoryCache = memoryCache;
+        _accessTokenEntityMethods = accessTokenEntityMethods;
+        _refreshTokenEntityMethods = refreshTokenEntityMethods;
     }
 
     public async
@@ -76,52 +82,94 @@ internal class AuthContextUpdate :
 
         _instrumentationClient.Trace("Received ID token: " + request.RedirectData.IdToken);
 
-        // Read auth context etc from DB
+        // Read auth context and consent from database
         string state = request.RedirectData.State;
         AuthContext authContext =
             _authContextMethods
                 .DbSet
                 .Include(
-                    o => ((AccountAccessConsentAuthContext) o).AccountAccessConsentNavigation
+                    o => ((AccountAccessConsentAuthContext) o)
+                        .AccountAccessConsentNavigation
                         .BankRegistrationNavigation)
                 .Include(
-                    o => ((DomesticPaymentConsentAuthContext) o).DomesticPaymentConsentNavigation
+                    o => ((AccountAccessConsentAuthContext) o)
+                        .AccountAccessConsentNavigation
+                        .AccountAccessConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => ((AccountAccessConsentAuthContext) o)
+                        .AccountAccessConsentNavigation
+                        .AccountAccessConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => ((DomesticPaymentConsentAuthContext) o)
+                        .DomesticPaymentConsentNavigation
                         .BankRegistrationNavigation)
                 .Include(
-                    o => ((DomesticVrpConsentAuthContext) o).DomesticVrpConsentNavigation
+                    o => ((DomesticPaymentConsentAuthContext) o)
+                        .DomesticPaymentConsentNavigation
+                        .DomesticPaymentConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => ((DomesticPaymentConsentAuthContext) o)
+                        .DomesticPaymentConsentNavigation
+                        .DomesticPaymentConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => ((DomesticVrpConsentAuthContext) o)
+                        .DomesticVrpConsentNavigation
                         .BankRegistrationNavigation)
+                .Include(
+                    o => ((DomesticVrpConsentAuthContext) o)
+                        .DomesticVrpConsentNavigation
+                        .DomesticVrpConsentAccessTokensNavigation
+                        .Where(x => !x.IsDeleted))
+                .Include(
+                    o => ((DomesticVrpConsentAuthContext) o)
+                        .DomesticVrpConsentNavigation
+                        .DomesticVrpConsentRefreshTokensNavigation
+                        .Where(x => !x.IsDeleted))
                 .SingleOrDefault(x => x.State == state) ??
             throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
         string currentAuthContextNonce = authContext.Nonce;
 
         // Get consent info
-        (ConsentType consentType, Guid consentId, string externalApiConsentId, BaseConsent consent,
-                BankRegistration bankRegistration, string? requestScope) =
+        (ConsentType consentType,
+                BaseConsent consent,
+                string? requestScope,
+                AccessTokenEntity? oldAccessToken,
+                RefreshTokenEntity? oldRefreshToken) =
             authContext switch
             {
                 AccountAccessConsentAuthContext ac1 => (
                     ConsentType.AccountAccessConsent,
-                    ac1.AccountAccessConsentId,
-                    ac1.AccountAccessConsentNavigation.ExternalApiId,
-                    ac1.AccountAccessConsentNavigation,
-                    ac1.AccountAccessConsentNavigation.BankRegistrationNavigation,
-                    "openid accounts"),
+                    (BaseConsent) ac1.AccountAccessConsentNavigation,
+                    "openid accounts",
+                    (AccessTokenEntity?) ac1.AccountAccessConsentNavigation
+                        .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(),
+                    (RefreshTokenEntity?) ac1.AccountAccessConsentNavigation
+                        .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault()),
                 DomesticPaymentConsentAuthContext ac2 => (
                     ConsentType.DomesticPaymentConsent,
-                    ac2.DomesticPaymentConsentId,
-                    ac2.DomesticPaymentConsentNavigation.ExternalApiId,
-                    (BaseConsent) ac2.DomesticPaymentConsentNavigation,
-                    ac2.DomesticPaymentConsentNavigation.BankRegistrationNavigation,
-                    "openid payments"),
+                    ac2.DomesticPaymentConsentNavigation,
+                    "openid payments",
+                    ac2.DomesticPaymentConsentNavigation
+                        .DomesticPaymentConsentAccessTokensNavigation.SingleOrDefault(),
+                    ac2.DomesticPaymentConsentNavigation
+                        .DomesticPaymentConsentRefreshTokensNavigation.SingleOrDefault()),
                 DomesticVrpConsentAuthContext ac3 => (
                     ConsentType.DomesticVrpConsent,
-                    ac3.DomesticVrpConsentId,
-                    ac3.DomesticVrpConsentNavigation.ExternalApiId,
-                    (BaseConsent) ac3.DomesticVrpConsentNavigation,
-                    ac3.DomesticVrpConsentNavigation.BankRegistrationNavigation,
-                    "openid payments"),
+                    ac3.DomesticVrpConsentNavigation,
+                    "openid payments",
+                    ac3.DomesticVrpConsentNavigation
+                        .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(),
+                    ac3.DomesticVrpConsentNavigation
+                        .DomesticVrpConsentRefreshTokensNavigation.SingleOrDefault()),
                 _ => throw new ArgumentOutOfRangeException()
             };
+        BankRegistration bankRegistration = consent.BankRegistrationNavigation;
+        Guid consentId = consent.Id;
+        string externalApiConsentId = consent.ExternalApiId;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
@@ -265,13 +313,59 @@ internal class AuthContextUpdate :
                 nonce,
                 modified,
                 modifiedBy);
-            consent.UpdateAccessToken(
-                tokenEndpointResponse.AccessToken,
-                //0,
-                tokenEndpointResponse.ExpiresIn,
-                tokenEndpointResponse.RefreshToken,
+
+            // Delete old access token if exists
+            if (oldAccessToken is not null)
+            {
+                oldAccessToken.UpdateIsDeleted(true, modified, modifiedBy);
+            }
+
+            // Store new access token
+            AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                modified,
+                modifiedBy,
                 modified,
                 modifiedBy);
+            var newAccessToken = new AccessToken(
+                tokenEndpointResponse.AccessToken,
+                //0,
+                tokenEndpointResponse.ExpiresIn);
+            newAccessTokenObject.UpdateAccessToken(
+                newAccessToken,
+                string.Empty,
+                Array.Empty<byte>(),
+                modified,
+                modifiedBy,
+                null);
+
+            if (tokenEndpointResponse.RefreshToken is not null)
+            {
+                // Delete old refresh token if exists
+                if (oldRefreshToken is not null)
+                {
+                    oldRefreshToken.UpdateIsDeleted(true, modified, modifiedBy);
+                }
+
+                // Store new refresh token
+                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy);
+                newRefreshTokenObject.UpdateRefreshToken(
+                    tokenEndpointResponse.RefreshToken,
+                    string.Empty,
+                    Array.Empty<byte>(),
+                    modified,
+                    modifiedBy,
+                    null);
+            }
 
             // Create response (may involve additional processing based on entity)
             var response =

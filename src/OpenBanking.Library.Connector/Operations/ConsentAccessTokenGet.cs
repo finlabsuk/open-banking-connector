@@ -25,10 +25,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal class ConsentAccessTokenGet
 {
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
+    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -38,7 +40,9 @@ internal class ConsentAccessTokenGet
         ITimeProvider timeProvider,
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
+        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
     {
         _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -46,6 +50,8 @@ internal class ConsentAccessTokenGet
         _grantPost = grantPost;
         _instrumentationClient = instrumentationClient;
         _memoryCache = memoryCache;
+        _accessTokenEntityMethods = accessTokenEntityMethods;
+        _refreshTokenEntityMethods = refreshTokenEntityMethods;
     }
 
     public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
@@ -53,6 +59,8 @@ internal class ConsentAccessTokenGet
         string bankIssuerUrl,
         string? requestScope,
         BankRegistration bankRegistration,
+        AccessTokenEntity? storedAccessTokenEntity,
+        RefreshTokenEntity? storedRefreshTokenEntity,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
@@ -62,39 +70,33 @@ internal class ConsentAccessTokenGet
         string? modifiedBy)
         where TConsentEntity : BaseConsent
     {
-        // Get token
-        ConsentAccessToken accessToken = consent.ConsentAccessToken;
-        if (accessToken.Token is null)
-        {
-            throw new InvalidOperationException("No access token is available for Consent.");
-        }
-
         // Check nonce available
         string nonce =
             consent.AuthContextNonce ??
             throw new InvalidOperationException("No nonce is available for Consent.");
-        string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
 
-        async Task<TokenEndpointResponseRefreshTokenGrant> GetTokenAsync()
+        async Task<AccessToken> GetNewAccessTokenAsync()
         {
-            // Check that refresh token is available
-            if (accessToken.RefreshToken is null)
+            // Get stored refresh token, throw if doesn't exist
+            if (storedRefreshTokenEntity is null)
             {
-                throw new InvalidOperationException("Access token has expired and no refresh token is available.");
+                throw new InvalidOperationException("No unexpired access token or refresh token is available.");
             }
 
-            // Get new access token using refresh token 
+            string storedRefreshToken = storedRefreshTokenEntity
+                .GetRefreshToken(string.Empty, Array.Empty<byte>());
+
+            // Obtain new refresh and access tokens
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
                     bankRegistration.SoftwareStatementProfileOverride);
-
-            // Obtain token for consent
             string redirectUrl = bankRegistration.DefaultRedirectUri;
+            string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
-                    accessToken.RefreshToken,
+                    storedRefreshToken,
                     redirectUrl,
                     bankIssuerUrl,
                     externalApiClientId,
@@ -113,18 +115,52 @@ internal class ConsentAccessTokenGet
                     jwksGetCustomBehaviour,
                     processedSoftwareStatementProfile.ApiClient);
 
-            // Update consent with token
-            consent.UpdateAccessToken(
-                tokenEndpointResponse.AccessToken,
-                tokenEndpointResponse.ExpiresIn,
-                tokenEndpointResponse.RefreshToken,
-                _timeProvider.GetUtcNow(),
+            // Delete old access token (is expired else would have been used)
+            DateTimeOffset modified = _timeProvider.GetUtcNow();
+            if (storedAccessTokenEntity is not null)
+            {
+                storedAccessTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
+            }
+
+            // Store new access token
+            AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                modified,
+                modifiedBy,
+                modified,
                 modifiedBy);
+            var newAccessToken = new AccessToken(tokenEndpointResponse.AccessToken, tokenEndpointResponse.ExpiresIn);
+            newAccessTokenObject.UpdateAccessToken(
+                newAccessToken,
+                string.Empty,
+                Array.Empty<byte>(),
+                modified,
+                modifiedBy,
+                null);
 
-            // Persist updates (this happens last so as not to happen if there are any previous errors)
-            await _dbSaveChangesMethod.SaveChangesAsync();
+            // Delete old refresh token
+            storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
 
-            return tokenEndpointResponse;
+            // Store new refresh token
+            RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                Guid.NewGuid(),
+                null,
+                false,
+                modified,
+                modifiedBy,
+                modified,
+                modifiedBy);
+            newRefreshTokenObject.UpdateRefreshToken(
+                tokenEndpointResponse.RefreshToken,
+                string.Empty,
+                Array.Empty<byte>(),
+                modified,
+                modifiedBy,
+                null);
+
+            return newAccessToken;
         }
 
         // Get or create cache entry
@@ -141,33 +177,42 @@ internal class ConsentAccessTokenGet
                 cacheKey,
                 async cacheEntry =>
                 {
-                    // Prefer stored access token if unexpired
-                    if (consent.ConsentAccessToken.Token is not null)
+                    // Use stored access token if unexpired, else delete
+                    if (storedAccessTokenEntity is not null)
                     {
+                        // Extract token
+                        AccessToken storedAccessToken =
+                            storedAccessTokenEntity
+                                .GetAccessToken(string.Empty, Array.Empty<byte>());
+
                         // Calculate time since token stored
+                        DateTimeOffset timeWhenStored = storedAccessTokenEntity.Created;
                         TimeSpan elapsedTime =
                             _timeProvider.GetUtcNow()
-                                .Subtract(consent.ConsentAccessToken.Modified); // subtract time when token stored
+                                .Subtract(timeWhenStored); // subtract time when token stored
 
                         // Calculate remaining token duration
                         TimeSpan tokenRemainingDuration =
-                            _grantPost.GetTokenAdjustedDuration(consent.ConsentAccessToken.ExpiresIn)
+                            _grantPost.GetTokenAdjustedDuration(storedAccessToken.ExpiresIn)
                                 .Subtract(elapsedTime);
 
                         // Return unexpired access token if available
                         if (tokenRemainingDuration > TimeSpan.Zero)
                         {
                             cacheEntry.AbsoluteExpirationRelativeToNow = tokenRemainingDuration;
-                            return consent.ConsentAccessToken.Token;
+                            return storedAccessToken.Token;
                         }
                     }
 
                     // Else get new access token
-                    TokenEndpointResponseRefreshTokenGrant response =
-                        await GetTokenAsync();
+                    AccessToken response = await GetNewAccessTokenAsync();
                     cacheEntry.AbsoluteExpirationRelativeToNow =
                         _grantPost.GetTokenAdjustedDuration(response.ExpiresIn);
-                    return response.AccessToken;
+
+                    // Persist updates (this happens last so as not to happen if there are any previous errors)
+                    await _dbSaveChangesMethod.SaveChangesAsync();
+
+                    return response.Token;
                 }))!;
 
         return accessTokenOut;

@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -79,6 +80,7 @@ internal class DomesticVrp :
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -105,6 +107,8 @@ internal class DomesticVrp :
                 bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
@@ -165,7 +169,7 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
 
@@ -191,7 +195,6 @@ internal class DomesticVrp :
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
                 processedSoftwareStatementProfile.ApiClient);
-
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;

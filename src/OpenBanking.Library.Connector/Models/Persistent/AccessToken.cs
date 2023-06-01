@@ -27,8 +27,8 @@ public class AccessToken
     /// </summary>
     public int ExpiresIn { get; }
 
-    public string PlainText => JsonConvert.SerializeObject(
-        this,
+    public static string GetPlainText(AccessToken accessToken) => JsonConvert.SerializeObject(
+        accessToken,
         Formatting.None,
         new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 }

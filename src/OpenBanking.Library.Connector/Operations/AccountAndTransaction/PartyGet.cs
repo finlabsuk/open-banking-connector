@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
@@ -53,6 +54,8 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
 
         // Get consent and associated data
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted bankRegistration,
+                AccountAccessConsentAccessToken? storedAccessToken,
+                AccountAccessConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
@@ -77,6 +80,8 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
                 bankTokenIssuerClaim,
                 "openid accounts",
                 bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,

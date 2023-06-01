@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -82,6 +83,8 @@ internal class DomesticPayment :
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+                DomesticPaymentConsentAccessToken? storedAccessToken,
+                DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
         string externalApiConsentId = persistedConsent.ExternalApiId;
@@ -107,6 +110,8 @@ internal class DomesticPayment :
                 bankTokenIssuerClaim,
                 "openid payments",
                 bankRegistration,
+                storedAccessToken,
+                storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
@@ -168,7 +173,7 @@ internal class DomesticPayment :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticPaymentConsent and related
-        (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId);
 
