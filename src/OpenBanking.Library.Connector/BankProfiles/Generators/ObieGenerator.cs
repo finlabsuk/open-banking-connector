@@ -46,6 +46,10 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 {
                     ClientIdIssuedAtClaimResponseJsonConverter =
                         DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                },
+                AuthCodeGrantPost = new GrantPostCustomBehaviour()
+                {
+                    AllowNullResponseRefreshToken = true // required for PISP case
                 }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings

@@ -94,13 +94,11 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
                         .AccountAccessConsentNavigation
-                        .AccountAccessConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .AccountAccessConsentAccessTokensNavigation)
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
                         .AccountAccessConsentNavigation
-                        .AccountAccessConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .AccountAccessConsentRefreshTokensNavigation)
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
@@ -108,13 +106,11 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
-                        .DomesticPaymentConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .DomesticPaymentConsentAccessTokensNavigation)
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
-                        .DomesticPaymentConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .DomesticPaymentConsentRefreshTokensNavigation)
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
@@ -122,49 +118,50 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
-                        .DomesticVrpConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .DomesticVrpConsentAccessTokensNavigation)
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
-                        .DomesticVrpConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                        .DomesticVrpConsentRefreshTokensNavigation)
+                .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefault(x => x.State == state) ??
             throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
         string currentAuthContextNonce = authContext.Nonce;
 
         // Get consent info
-        (ConsentType consentType,
-                BaseConsent consent,
+        (BaseConsent consent,
                 string? requestScope,
-                AccessTokenEntity? oldAccessToken,
-                RefreshTokenEntity? oldRefreshToken) =
+                AccessTokenEntity? storedAccessToken,
+                RefreshTokenEntity? storedRefreshToken) =
             authContext switch
             {
                 AccountAccessConsentAuthContext ac1 => (
-                    ConsentType.AccountAccessConsent,
                     (BaseConsent) ac1.AccountAccessConsentNavigation,
                     "openid accounts",
                     (AccessTokenEntity?) ac1.AccountAccessConsentNavigation
-                        .AccountAccessConsentAccessTokensNavigation.SingleOrDefault(),
+                        .AccountAccessConsentAccessTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted),
                     (RefreshTokenEntity?) ac1.AccountAccessConsentNavigation
-                        .AccountAccessConsentRefreshTokensNavigation.SingleOrDefault()),
+                        .AccountAccessConsentRefreshTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted)),
                 DomesticPaymentConsentAuthContext ac2 => (
-                    ConsentType.DomesticPaymentConsent,
                     ac2.DomesticPaymentConsentNavigation,
                     "openid payments",
                     ac2.DomesticPaymentConsentNavigation
-                        .DomesticPaymentConsentAccessTokensNavigation.SingleOrDefault(),
+                        .DomesticPaymentConsentAccessTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted),
                     ac2.DomesticPaymentConsentNavigation
-                        .DomesticPaymentConsentRefreshTokensNavigation.SingleOrDefault()),
+                        .DomesticPaymentConsentRefreshTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted)),
                 DomesticVrpConsentAuthContext ac3 => (
-                    ConsentType.DomesticVrpConsent,
                     ac3.DomesticVrpConsentNavigation,
                     "openid payments",
                     ac3.DomesticVrpConsentNavigation
-                        .DomesticVrpConsentAccessTokensNavigation.SingleOrDefault(),
+                        .DomesticVrpConsentAccessTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted),
                     ac3.DomesticVrpConsentNavigation
-                        .DomesticVrpConsentRefreshTokensNavigation.SingleOrDefault()),
+                        .DomesticVrpConsentRefreshTokensNavigation
+                        .SingleOrDefault(x => !x.IsDeleted)),
                 _ => throw new ArgumentOutOfRangeException()
             };
         BankRegistration bankRegistration = consent.BankRegistrationNavigation;
@@ -197,9 +194,9 @@ internal class AuthContextUpdate :
         // Determine nonce
         ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour = authContext switch
         {
-            AccountAccessConsentAuthContext ac => customBehaviour?.AccountAccessConsentAuthGet,
-            DomesticPaymentConsentAuthContext ac => customBehaviour?.DomesticPaymentConsentAuthGet,
-            DomesticVrpConsentAuthContext ac => customBehaviour?.DomesticVrpConsentAuthGet,
+            AccountAccessConsentAuthContext => customBehaviour?.AccountAccessConsentAuthGet,
+            DomesticPaymentConsentAuthContext => customBehaviour?.DomesticPaymentConsentAuthGet,
+            DomesticVrpConsentAuthContext => customBehaviour?.DomesticVrpConsentAuthGet,
             _ => throw new ArgumentOutOfRangeException()
         };
         bool nonceClaimIsInitialValue = consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
@@ -294,19 +291,6 @@ internal class AuthContextUpdate :
                     customBehaviour?.JwksGet,
                     processedSoftwareStatementProfile.ApiClient);
 
-            // Create cache entry
-            string consentTypeString = consentType switch
-            {
-                ConsentType.AccountAccessConsent => "aisp",
-                ConsentType.DomesticPaymentConsent => "pisp_dom",
-                ConsentType.DomesticVrpConsent => "vrp_dom",
-                _ => throw new ArgumentOutOfRangeException(nameof(consentType), consentType, null)
-            };
-            string cacheKey = string.Join(":", "token", consentTypeString, consent.Id.ToString());
-            MemoryCacheEntryOptions cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(_grantPost.GetTokenAdjustedDuration(tokenEndpointResponse.ExpiresIn));
-            _memoryCache.Set(cacheKey, tokenEndpointResponse.AccessToken, cacheEntryOptions);
-
             // Update consent with nonce, token
             consent.UpdateAuthContext(
                 authContext.State,
@@ -314,40 +298,53 @@ internal class AuthContextUpdate :
                 modified,
                 modifiedBy);
 
-            // Delete old access token if exists
-            if (oldAccessToken is not null)
+            // Create cache entry
+            MemoryCacheEntryOptions cacheEntryOptions =
+                new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(
+                        _grantPost.GetTokenAdjustedDuration(
+                            //11,
+                            tokenEndpointResponse.ExpiresIn));
+            _memoryCache.Set(
+                consent.GetCacheKey(),
+                tokenEndpointResponse.AccessToken,
+                cacheEntryOptions);
+
+            // Delete old stored access token if exists
+            storedAccessToken?.UpdateIsDeleted(true, modified, modifiedBy);
+
+            // Conditionally store new access token
+            const int expiryThresholdForSaving = 24 * 60 * 60; // one day
+            if (tokenEndpointResponse.ExpiresIn > expiryThresholdForSaving)
             {
-                oldAccessToken.UpdateIsDeleted(true, modified, modifiedBy);
+                var newAccessToken = new AccessToken(
+                    tokenEndpointResponse.AccessToken,
+                    //11,
+                    tokenEndpointResponse.ExpiresIn);
+                AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy);
+                newAccessTokenObject.UpdateAccessToken(
+                    newAccessToken,
+                    string.Empty,
+                    Array.Empty<byte>(),
+                    modified,
+                    modifiedBy,
+                    null);
             }
 
-            // Store new access token
-            AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
-                Guid.NewGuid(),
-                null,
-                false,
-                modified,
-                modifiedBy,
-                modified,
-                modifiedBy);
-            var newAccessToken = new AccessToken(
-                tokenEndpointResponse.AccessToken,
-                //0,
-                tokenEndpointResponse.ExpiresIn);
-            newAccessTokenObject.UpdateAccessToken(
-                newAccessToken,
-                string.Empty,
-                Array.Empty<byte>(),
-                modified,
-                modifiedBy,
-                null);
-
-            if (tokenEndpointResponse.RefreshToken is not null)
+            // Store new refresh token if available and different from old stored refresh token
+            if (tokenEndpointResponse.RefreshToken is not null &&
+                tokenEndpointResponse.RefreshToken !=
+                storedRefreshToken?.GetRefreshToken(string.Empty, Array.Empty<byte>()))
             {
                 // Delete old refresh token if exists
-                if (oldRefreshToken is not null)
-                {
-                    oldRefreshToken.UpdateIsDeleted(true, modified, modifiedBy);
-                }
+                storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
 
                 // Store new refresh token
                 RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
@@ -370,7 +367,7 @@ internal class AuthContextUpdate :
             // Create response (may involve additional processing based on entity)
             var response =
                 new AuthContextUpdateAuthResultResponse(
-                    consentType,
+                    consent.GetConsentType(),
                     consentId,
                     null);
 

@@ -49,6 +49,10 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                         // missing from OpenID configuration
                         OAuth2ResponseMode.Fragment
                     }
+                },
+                AuthCodeGrantPost = new GrantPostCustomBehaviour
+                {
+                    AllowNullResponseRefreshToken = true // required for PISP case
                 }
             }
         };

@@ -36,28 +36,30 @@ internal class DomesticPaymentConsentCommon
             DomesticPaymentConsentAccessToken? storedAccessToken,
             DomesticPaymentConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
-            Guid consentId)
+            Guid consentId,
+            bool dbTracking)
     {
+        IQueryable<DomesticPaymentConsent> db = dbTracking
+            ? _entityMethods.DbSet
+            : _entityMethods.DbSetNoTracking;
+
         // Load DomesticPaymentConsent and related
         DomesticPaymentConsentPersisted persistedConsent =
-            await _entityMethods
-                .DbSetNoTracking
-                .Include(o => o.DomesticPaymentConsentAuthContextsNavigation)
+            await db
                 .Include(o => o.BankRegistrationNavigation)
-                .Include(
-                    o => o
-                        .DomesticPaymentConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
-                .Include(
-                    o => o
-                        .DomesticPaymentConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                .Include(o => o.DomesticPaymentConsentAccessTokensNavigation)
+                .Include(o => o.DomesticPaymentConsentRefreshTokensNavigation)
+                .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic Payment Consent with ID {consentId}.");
         DomesticPaymentConsentAccessToken? storedAccessToken =
-            persistedConsent.DomesticPaymentConsentAccessTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .DomesticPaymentConsentAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         DomesticPaymentConsentRefreshToken? storedRefreshToken =
-            persistedConsent.DomesticPaymentConsentRefreshTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .DomesticPaymentConsentRefreshTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile

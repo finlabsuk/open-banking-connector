@@ -262,7 +262,7 @@ internal class
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
@@ -361,7 +361,7 @@ internal class
         (DomesticVrpConsentPersisted persistedObject, BankRegistration bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, true);
         string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile

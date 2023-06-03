@@ -60,7 +60,6 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         AccountAccessConsent persistedObject =
             await _entityMethods
                 .DbSet
-                .Include(o => o.AccountAccessConsentAuthContextsNavigation)
                 .Include(o => o.BankRegistrationNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {deleteParams.Id}.");

@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 
@@ -71,12 +72,6 @@ internal class AccountAccessConsent :
     public Guid? AccountAndTransactionApiId { get; }
 
     /// <summary>
-    ///     Associated auth contexts
-    /// </summary>
-    public IList<AccountAccessConsentAuthContext> AccountAccessConsentAuthContextsNavigation { get; private set; } =
-        new List<AccountAccessConsentAuthContext>();
-
-    /// <summary>
     ///     Associated access tokens
     /// </summary>
     public IList<AccountAccessConsentAccessToken> AccountAccessConsentAccessTokensNavigation { get; private set; } =
@@ -87,6 +82,10 @@ internal class AccountAccessConsent :
     /// </summary>
     public IList<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshTokensNavigation { get; private set; } =
         new List<AccountAccessConsentRefreshToken>();
+
+    protected override string GetConsentTypeString() => "aisp";
+
+    public override ConsentType GetConsentType() => ConsentType.AccountAccessConsent;
 
     public override AccessTokenEntity AddNewAccessToken(
         Guid id,

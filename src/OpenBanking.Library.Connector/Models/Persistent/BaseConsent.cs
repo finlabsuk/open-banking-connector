@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
@@ -146,8 +147,7 @@ internal abstract class BaseConsent : BaseEntity
     public DateTimeOffset ExternalApiUserIdModified { get; private set; }
 
     public string? ExternalApiUserIdModifiedBy { get; private set; }
-
-
+    
     public ConsentAccessToken ConsentAccessToken => new(
         _accessTokenAccessToken,
         _accessTokenExpiresIn,
@@ -162,6 +162,12 @@ internal abstract class BaseConsent : BaseEntity
         AuthContextModified = modified;
         AuthContextModifiedBy = modifiedBy;
     }
+
+    protected abstract string GetConsentTypeString();
+
+    public abstract ConsentType GetConsentType();
+
+    public string GetCacheKey() => string.Join(":", "token", GetConsentTypeString(), Id.ToString());
 
     public abstract AccessTokenEntity AddNewAccessToken(
         Guid id,
@@ -180,21 +186,6 @@ internal abstract class BaseConsent : BaseEntity
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy);
-
-    public void UpdateAccessToken(
-        string accessTokenValue,
-        int accessTokenExpiresIn,
-        string? accessTokenRefreshToken,
-        DateTimeOffset modified,
-        string? modifiedBy)
-
-    {
-        _accessTokenAccessToken = accessTokenValue;
-        _accessTokenExpiresIn = accessTokenExpiresIn;
-        _accessTokenRefreshToken = accessTokenRefreshToken;
-        _accessTokenModified = modified;
-        _accessTokenModifiedBy = modifiedBy;
-    }
 
     public void UpdateExternalApiUserId(
         string? externalApiUserId,

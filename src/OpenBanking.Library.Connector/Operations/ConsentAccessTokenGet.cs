@@ -6,8 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -122,59 +120,60 @@ internal class ConsentAccessTokenGet
                 storedAccessTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
             }
 
-            // Store new access token
-            AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
-                Guid.NewGuid(),
-                null,
-                false,
-                modified,
-                modifiedBy,
-                modified,
-                modifiedBy);
+            // Conditionally store new access token
             var newAccessToken = new AccessToken(tokenEndpointResponse.AccessToken, tokenEndpointResponse.ExpiresIn);
-            newAccessTokenObject.UpdateAccessToken(
-                newAccessToken,
-                string.Empty,
-                Array.Empty<byte>(),
-                modified,
-                modifiedBy,
-                null);
 
-            // Delete old refresh token
-            storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
+            const int expiryThresholdForSaving = 24 * 60 * 60; // one day
+            if (newAccessToken.ExpiresIn > expiryThresholdForSaving)
+            {
+                AccessTokenEntity newAccessTokenObject = consent.AddNewAccessToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy);
+                newAccessTokenObject.UpdateAccessToken(
+                    newAccessToken,
+                    string.Empty,
+                    Array.Empty<byte>(),
+                    modified,
+                    modifiedBy,
+                    null);
+            }
 
-            // Store new refresh token
-            RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
-                Guid.NewGuid(),
-                null,
-                false,
-                modified,
-                modifiedBy,
-                modified,
-                modifiedBy);
-            newRefreshTokenObject.UpdateRefreshToken(
-                tokenEndpointResponse.RefreshToken,
-                string.Empty,
-                Array.Empty<byte>(),
-                modified,
-                modifiedBy,
-                null);
+            // Store new refresh token if different from old stored refresh token
+            if (tokenEndpointResponse.RefreshToken != storedRefreshToken)
+            {
+                // Delete old refresh token
+                storedRefreshTokenEntity.UpdateIsDeleted(true, modified, modifiedBy);
+
+                // Store new refresh token
+                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                    Guid.NewGuid(),
+                    null,
+                    false,
+                    modified,
+                    modifiedBy,
+                    modified,
+                    modifiedBy);
+                newRefreshTokenObject.UpdateRefreshToken(
+                    tokenEndpointResponse.RefreshToken,
+                    string.Empty,
+                    Array.Empty<byte>(),
+                    modified,
+                    modifiedBy,
+                    null);
+            }
 
             return newAccessToken;
         }
 
         // Get or create cache entry
-        string consentType = consent switch
-        {
-            AccountAccessConsent => "aisp",
-            DomesticPaymentConsent => "pisp_dom",
-            DomesticVrpConsent => "vrp_dom",
-            _ => throw new ArgumentOutOfRangeException(nameof(consent), consent, null)
-        };
-        string cacheKey = string.Join(":", "token", consentType, consent.Id.ToString());
         string accessTokenOut =
             (await _memoryCache.GetOrCreateAsync(
-                cacheKey,
+                consent.GetCacheKey(),
                 async cacheEntry =>
                 {
                     // Use stored access token if unexpired, else delete

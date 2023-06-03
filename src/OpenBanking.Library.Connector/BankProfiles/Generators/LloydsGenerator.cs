@@ -138,7 +138,11 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     : new DirectDebitGetCustomBehaviour
                     {
                         PreviousPaymentDateTimeJsonConverter = DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
-                    }
+                    },
+                AuthCodeGrantPost = new GrantPostCustomBehaviour
+                {
+                    AllowNullResponseRefreshToken = true // required for PISP case
+                }
             },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

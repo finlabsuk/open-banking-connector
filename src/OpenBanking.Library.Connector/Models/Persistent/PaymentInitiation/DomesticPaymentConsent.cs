@@ -5,6 +5,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
@@ -75,12 +76,6 @@ internal class DomesticPaymentConsent :
     public Guid? PaymentInitiationApiId { get; }
 
     /// <summary>
-    ///     Associated auth contexts
-    /// </summary>
-    public IList<DomesticPaymentConsentAuthContext> DomesticPaymentConsentAuthContextsNavigation { get; private set; } =
-        new List<DomesticPaymentConsentAuthContext>();
-
-    /// <summary>
     ///     Associated access tokens
     /// </summary>
     public IList<DomesticPaymentConsentAccessToken> DomesticPaymentConsentAccessTokensNavigation { get; private set; } =
@@ -91,6 +86,10 @@ internal class DomesticPaymentConsent :
     /// </summary>
     public IList<DomesticPaymentConsentRefreshToken> DomesticPaymentConsentRefreshTokensNavigation { get; private set; } =
         new List<DomesticPaymentConsentRefreshToken>();
+
+    protected override string GetConsentTypeString() => "pisp_dom";
+
+    public override ConsentType GetConsentType() => ConsentType.DomesticPaymentConsent;
 
     public override AccessTokenEntity AddNewAccessToken(
         Guid id,

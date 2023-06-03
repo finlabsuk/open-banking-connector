@@ -265,7 +265,7 @@ internal class
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
@@ -365,7 +365,7 @@ internal class
                 DomesticPaymentConsentAccessToken? storedAccessToken,
                 DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
         string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile

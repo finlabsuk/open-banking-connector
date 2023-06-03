@@ -60,7 +60,6 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         DomesticVrpConsent persistedObject =
             await _entityMethods
                 .DbSet
-                .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
                 .Include(o => o.BankRegistrationNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {deleteParams.Id}.");

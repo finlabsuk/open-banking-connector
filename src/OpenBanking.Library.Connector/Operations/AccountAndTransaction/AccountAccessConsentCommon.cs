@@ -33,7 +33,7 @@ internal class AccountAccessConsentCommon
             AccountAccessConsentAccessToken? storedAccessToken, AccountAccessConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetAccountAccessConsent(
             Guid consentId,
-            bool dbTracking = false)
+            bool dbTracking)
     {
         IQueryable<AccountAccessConsentPersisted> db = dbTracking
             ? _entityMethods.DbSet
@@ -41,26 +41,20 @@ internal class AccountAccessConsentCommon
 
         AccountAccessConsentPersisted persistedConsent =
             await db
-                .Include(
-                    o => o
-                        .AccountAccessConsentAuthContextsNavigation)
-                .Include(
-                    o => o
-                        .BankRegistrationNavigation)
-                .Include(
-                    o => o
-                        .AccountAccessConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
-                .Include(
-                    o => o
-                        .AccountAccessConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.AccountAccessConsentAccessTokensNavigation)
+                .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
+                .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {consentId}.");
         AccountAccessConsentAccessToken? storedAccessToken =
-            persistedConsent.AccountAccessConsentAccessTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .AccountAccessConsentAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         AccountAccessConsentRefreshToken? storedRefreshToken =
-            persistedConsent.AccountAccessConsentRefreshTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .AccountAccessConsentRefreshTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile

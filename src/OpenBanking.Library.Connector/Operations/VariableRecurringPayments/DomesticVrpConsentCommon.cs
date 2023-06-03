@@ -35,28 +35,29 @@ internal class DomesticVrpConsentCommon
         Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
             DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile
-            processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId)
+            processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId, bool dbTracking)
     {
+        IQueryable<DomesticVrpConsent> db = dbTracking
+            ? _entityMethods.DbSet
+            : _entityMethods.DbSetNoTracking;
+
         // Load DomesticVrpConsent and related
         DomesticVrpConsentPersisted persistedConsent =
-            await _entityMethods
-                .DbSetNoTracking
-                .Include(o => o.DomesticVrpConsentAuthContextsNavigation)
+            await db
                 .Include(o => o.BankRegistrationNavigation)
-                .Include(
-                    o => o
-                        .DomesticVrpConsentAccessTokensNavigation
-                        .Where(x => !x.IsDeleted))
-                .Include(
-                    o => o
-                        .DomesticVrpConsentRefreshTokensNavigation
-                        .Where(x => !x.IsDeleted))
+                .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
+                .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
+                .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefaultAsync(x => x.Id == consentId) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {consentId}.");
         DomesticVrpConsentAccessToken? storedAccessToken =
-            persistedConsent.DomesticVrpConsentAccessTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .DomesticVrpConsentAccessTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         DomesticVrpConsentRefreshToken? storedRefreshToken =
-            persistedConsent.DomesticVrpConsentRefreshTokensNavigation.SingleOrDefault();
+            persistedConsent
+                .DomesticVrpConsentRefreshTokensNavigation
+                .SingleOrDefault(x => !x.IsDeleted);
         BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile

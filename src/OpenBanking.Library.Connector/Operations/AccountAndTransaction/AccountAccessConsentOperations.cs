@@ -263,7 +263,7 @@ internal class
         // Load AccountAccessConsent and related
         (AccountAccessConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id);
+            await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id, false);
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;

@@ -82,7 +82,7 @@ internal class DomesticVrp :
         (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
@@ -171,7 +171,7 @@ internal class DomesticVrp :
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, false);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);

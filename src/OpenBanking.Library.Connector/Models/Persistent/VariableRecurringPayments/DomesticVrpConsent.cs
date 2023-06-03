@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
@@ -75,22 +76,20 @@ internal class DomesticVrpConsent :
     public Guid? VariableRecurringPaymentsApiId { get; }
 
     /// <summary>
-    ///     Associated auth contexts
-    /// </summary>
-    public IList<DomesticVrpConsentAuthContext> DomesticVrpConsentAuthContextsNavigation { get; private set; } =
-        new List<DomesticVrpConsentAuthContext>();
-
-    /// <summary>
     ///     Associated access tokens
     /// </summary>
-    public IList<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessTokensNavigation { get; } =
+    public IList<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessTokensNavigation { get; private set; } =
         new List<DomesticVrpConsentAccessToken>();
 
     /// <summary>
     ///     Associated refresh tokens
     /// </summary>
-    public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; } =
+    public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; private set; } =
         new List<DomesticVrpConsentRefreshToken>();
+
+    protected override string GetConsentTypeString() => "vrp_dom";
+
+    public override ConsentType GetConsentType() => ConsentType.DomesticVrpConsent;
 
     public override AccessTokenEntity AddNewAccessToken(
         Guid id,
