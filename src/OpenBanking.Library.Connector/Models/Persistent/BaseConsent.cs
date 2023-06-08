@@ -147,7 +147,7 @@ internal abstract class BaseConsent : BaseEntity
     public DateTimeOffset ExternalApiUserIdModified { get; private set; }
 
     public string? ExternalApiUserIdModifiedBy { get; private set; }
-    
+
     public ConsentAccessToken ConsentAccessToken => new(
         _accessTokenAccessToken,
         _accessTokenExpiresIn,
@@ -168,6 +168,15 @@ internal abstract class BaseConsent : BaseEntity
     public abstract ConsentType GetConsentType();
 
     public string GetCacheKey() => string.Join(":", "token", GetConsentTypeString(), Id.ToString());
+
+    public string GetAssociatedData(BankRegistration bankRegistration) => string.Join(
+        ":",
+        GetConsentTypeString(),
+        Id.ToString(),
+        ExternalApiId,
+        BankRegistrationId.ToString(),
+        bankRegistration.ExternalApiObject.ExternalApiId,
+        bankRegistration.BankProfile.ToString());
 
     public abstract AccessTokenEntity AddNewAccessToken(
         Guid id,

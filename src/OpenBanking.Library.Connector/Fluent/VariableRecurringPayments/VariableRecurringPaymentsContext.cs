@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -71,8 +70,7 @@ internal class VariableRecurringPaymentsContext : IVariableRecurringPaymentsCont
                         _sharedContext.TimeProvider),
                     _sharedContext.Instrumentation,
                     _sharedContext.MemoryCache,
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
+                    _sharedContext.EncryptionKeyInfo),
                 _sharedContext.BankProfileService);
             return new ExternalEntityContextInternal<DomesticVrpRequest, DomesticVrpResponse>(
                 domesticVrp,

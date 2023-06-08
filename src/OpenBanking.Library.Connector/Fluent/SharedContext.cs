@@ -23,7 +23,8 @@ internal class SharedContext : ISharedContext
         IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IApiVariantMapper apiVariantMapper,
         IBankProfileService bankProfileService,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -33,6 +34,7 @@ internal class SharedContext : ISharedContext
         ApiVariantMapper = apiVariantMapper;
         BankProfileService = bankProfileService;
         MemoryCache = memoryCache;
+        EncryptionKeyInfo = encryptionKeyInfo;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -43,5 +45,6 @@ internal class SharedContext : ISharedContext
     public IBankProfileService BankProfileService { get; }
     public IDbService DbService { get; }
     public IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
+    public IEncryptionKeyInfo EncryptionKeyInfo { get; }
     public IApiVariantMapper ApiVariantMapper { get; }
 }

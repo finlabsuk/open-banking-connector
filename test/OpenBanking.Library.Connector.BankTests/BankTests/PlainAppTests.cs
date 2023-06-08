@@ -77,6 +77,7 @@ public partial class PlainAppTests : AppTests, IDisposable
             AppConfiguration.GetSettings<SigningCertificateProfilesSettings>();
         var bankProfilesSettings =
             AppConfiguration.GetSettings<BankProfilesSettings>();
+        var keysSettings = AppConfiguration.GetSettings<KeysSettings>();
 
         // Create providers from settings
         // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -89,6 +90,7 @@ public partial class PlainAppTests : AppTests, IDisposable
             new DefaultSettingsProvider<SigningCertificateProfilesSettings>(obSigningCertificateProfilesSettings);
         var bankProfilesSettingsProvider =
             new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
+        var keySettingsProvider = new DefaultSettingsProvider<KeysSettings>(keysSettings);
 
         // Set up time provider
         var timeProvider = new TimeProvider();
@@ -110,6 +112,7 @@ public partial class PlainAppTests : AppTests, IDisposable
             obTransportCertificateProfilesSettingsProvider,
             obSigningCertificateProfilesSettingsProvider,
             instrumentationClient);
+        var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
 
         var apiVariantMapper = new ApiVariantMapper();
         var apiClient = new ApiClient(instrumentationClient, new HttpClient());
@@ -124,6 +127,7 @@ public partial class PlainAppTests : AppTests, IDisposable
                 instrumentationClient,
                 apiClient,
                 processedSoftwareStatementProfileStore,
+                encryptionKeyInfo,
                 GetDbContext(),
                 new BankProfileService(bankProfilesSettingsProvider),
                 new MemoryCache(new MemoryCacheOptions())),

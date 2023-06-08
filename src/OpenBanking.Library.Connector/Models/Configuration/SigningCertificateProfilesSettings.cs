@@ -45,7 +45,8 @@ public class SigningCertificateProfile
     public string AssociatedKeyId { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Signing key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
+    ///     Signing key (PKCS #8) provided as PEM file text (with "PRIVATE KEY" label).
+    ///     Newlines in PEM file text should be replaced by "\n".
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
     public string AssociatedKey { get; set; } = string.Empty;

@@ -31,14 +31,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal class AuthContextUpdate :
     IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse>
 {
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbReadWriteEntityMethods<AuthContext> _authContextMethods;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -52,8 +51,7 @@ internal class AuthContextUpdate :
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -63,8 +61,7 @@ internal class AuthContextUpdate :
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _memoryCache = memoryCache;
-        _accessTokenEntityMethods = accessTokenEntityMethods;
-        _refreshTokenEntityMethods = refreshTokenEntityMethods;
+        _encryptionKeyInfo = encryptionKeyInfo;
     }
 
     public async
@@ -169,6 +166,7 @@ internal class AuthContextUpdate :
         string externalApiConsentId = consent.ExternalApiId;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
+        string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -329,39 +327,52 @@ internal class AuthContextUpdate :
                     modifiedBy,
                     modified,
                     modifiedBy);
+                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
+                    consentAssociatedData,
+                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
-                    null);
+                    currentKeyId);
             }
 
             // Store new refresh token if available and different from old stored refresh token
-            if (tokenEndpointResponse.RefreshToken is not null &&
-                tokenEndpointResponse.RefreshToken !=
-                storedRefreshToken?.GetRefreshToken(string.Empty, Array.Empty<byte>()))
+            if (tokenEndpointResponse.RefreshToken is not null)
             {
-                // Delete old refresh token if exists
-                storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
+                string? storedRefreshTokenValue = null;
+                if (storedRefreshToken is not null)
+                {
+                    // Extract token
+                    byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedRefreshToken.KeyId);
+                    storedRefreshTokenValue =
+                        storedRefreshToken
+                            .GetRefreshToken(consentAssociatedData, encryptionKey);
+                }
 
-                // Store new refresh token
-                RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
-                    Guid.NewGuid(),
-                    null,
-                    false,
-                    modified,
-                    modifiedBy,
-                    modified,
-                    modifiedBy);
-                newRefreshTokenObject.UpdateRefreshToken(
-                    tokenEndpointResponse.RefreshToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
-                    modified,
-                    modifiedBy,
-                    null);
+                if (tokenEndpointResponse.RefreshToken != storedRefreshTokenValue)
+                {
+                    // Delete old refresh token if exists
+                    storedRefreshToken?.UpdateIsDeleted(true, modified, modifiedBy);
+
+                    // Store new refresh token
+                    RefreshTokenEntity newRefreshTokenObject = consent.AddNewRefreshToken(
+                        Guid.NewGuid(),
+                        null,
+                        false,
+                        modified,
+                        modifiedBy,
+                        modified,
+                        modifiedBy);
+                    string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
+                    newRefreshTokenObject.UpdateRefreshToken(
+                        tokenEndpointResponse.RefreshToken,
+                        consentAssociatedData,
+                        _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
+                        modified,
+                        modifiedBy,
+                        currentKeyId);
+                }
             }
 
             // Create response (may involve additional processing based on entity)

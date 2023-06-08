@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -42,8 +41,7 @@ internal class AuthContextsContext : IAuthContextsContext
                 sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             sharedContext.MemoryCache,
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>());
+            sharedContext.EncryptionKeyInfo);
     }
 
     public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }

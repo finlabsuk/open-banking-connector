@@ -61,6 +61,7 @@ public class RequestBuilder : IRequestBuilder
     private readonly IApiVariantMapper _apiVariantMapper;
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbService _dbService;
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly IInstrumentationClient _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
@@ -74,13 +75,15 @@ public class RequestBuilder : IRequestBuilder
         IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IDbService dbService,
         IBankProfileService bankProfileService,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
         _softwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
         _dbService = dbService;
         _bankProfileService = bankProfileService;
+        _encryptionKeyInfo = encryptionKeyInfo;
         _logger = logger.ArgNotNull(nameof(logger));
         _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         _memoryCache = memoryCache.ArgNotNull(nameof(memoryCache));
@@ -114,7 +117,8 @@ public class RequestBuilder : IRequestBuilder
             _softwareStatementProfileCachedRepo,
             _apiVariantMapper,
             _bankProfileService,
-            _memoryCache)
+            _memoryCache,
+            _encryptionKeyInfo)
         {
             Created = _timeProvider.GetUtcNow()
         };

@@ -28,6 +28,7 @@ public class RequestBuilderContainer : IRequestBuilderContainer
         IInstrumentationClient instrumentationClient,
         IApiClient apiClient,
         IProcessedSoftwareStatementProfileStore softwareStatementProfilesRepository,
+        IEncryptionKeyInfo encryptionKeyInfo,
         BaseDbContext dbContext,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache)
@@ -41,7 +42,8 @@ public class RequestBuilderContainer : IRequestBuilderContainer
             softwareStatementProfilesRepository,
             new DbService(dbContext),
             bankProfileService,
-            memoryCache);
+            memoryCache,
+            encryptionKeyInfo);
     }
 
     public void Dispose()

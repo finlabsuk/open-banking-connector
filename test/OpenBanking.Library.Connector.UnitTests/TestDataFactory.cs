@@ -28,7 +28,8 @@ internal static class TestDataFactory
                 .For<IProcessedSoftwareStatementProfileStore>(),
             Substitute.For<IApiVariantMapper>(),
             Substitute.For<IBankProfileService>(),
-            Substitute.For<IMemoryCache>());
+            Substitute.For<IMemoryCache>(),
+            Substitute.For<IEncryptionKeyInfo>());
     }
 
 
@@ -42,6 +43,7 @@ internal static class TestDataFactory
             Substitute.For<IProcessedSoftwareStatementProfileStore>(),
             Substitute.For<IDbService>(),
             Substitute.For<IBankProfileService>(),
-            Substitute.For<IMemoryCache>());
+            Substitute.For<IMemoryCache>(),
+            Substitute.For<IEncryptionKeyInfo>());
     }
 }

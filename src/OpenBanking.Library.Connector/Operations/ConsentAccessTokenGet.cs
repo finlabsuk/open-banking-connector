@@ -5,7 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -23,12 +22,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal class ConsentAccessTokenGet
 {
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -39,8 +37,7 @@ internal class ConsentAccessTokenGet
         IGrantPost grantPost,
         IInstrumentationClient instrumentationClient,
         IMemoryCache memoryCache,
-        IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
-        IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _dbSaveChangesMethod = dbSaveChangesMethod;
@@ -48,8 +45,7 @@ internal class ConsentAccessTokenGet
         _grantPost = grantPost;
         _instrumentationClient = instrumentationClient;
         _memoryCache = memoryCache;
-        _accessTokenEntityMethods = accessTokenEntityMethods;
-        _refreshTokenEntityMethods = refreshTokenEntityMethods;
+        _encryptionKeyInfo = encryptionKeyInfo;
     }
 
     public async Task<string> GetAccessTokenAndUpdateConsent<TConsentEntity>(
@@ -68,6 +64,8 @@ internal class ConsentAccessTokenGet
         string? modifiedBy)
         where TConsentEntity : BaseConsent
     {
+        string? consentAssociatedData = consent.GetAssociatedData(bankRegistration);
+
         // Check nonce available
         string nonce =
             consent.AuthContextNonce ??
@@ -81,8 +79,11 @@ internal class ConsentAccessTokenGet
                 throw new InvalidOperationException("No unexpired access token or refresh token is available.");
             }
 
-            string storedRefreshToken = storedRefreshTokenEntity
-                .GetRefreshToken(string.Empty, Array.Empty<byte>());
+            // Extract token
+            byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedRefreshTokenEntity.KeyId);
+            string storedRefreshToken =
+                storedRefreshTokenEntity
+                    .GetRefreshToken(consentAssociatedData, encryptionKey);
 
             // Obtain new refresh and access tokens
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -134,13 +135,14 @@ internal class ConsentAccessTokenGet
                     modifiedBy,
                     modified,
                     modifiedBy);
+                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newAccessTokenObject.UpdateAccessToken(
                     newAccessToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
+                    consentAssociatedData,
+                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
-                    null);
+                    currentKeyId);
             }
 
             // Store new refresh token if different from old stored refresh token
@@ -158,13 +160,14 @@ internal class ConsentAccessTokenGet
                     modifiedBy,
                     modified,
                     modifiedBy);
+                string? currentKeyId = _encryptionKeyInfo.GetCurrentKeyId();
                 newRefreshTokenObject.UpdateRefreshToken(
                     tokenEndpointResponse.RefreshToken,
-                    string.Empty,
-                    Array.Empty<byte>(),
+                    consentAssociatedData,
+                    _encryptionKeyInfo.GetEncryptionKey(currentKeyId),
                     modified,
                     modifiedBy,
-                    null);
+                    currentKeyId);
             }
 
             return newAccessToken;
@@ -180,9 +183,10 @@ internal class ConsentAccessTokenGet
                     if (storedAccessTokenEntity is not null)
                     {
                         // Extract token
+                        byte[] encryptionKey = _encryptionKeyInfo.GetEncryptionKey(storedAccessTokenEntity.KeyId);
                         AccessToken storedAccessToken =
                             storedAccessTokenEntity
-                                .GetAccessToken(string.Empty, Array.Empty<byte>());
+                                .GetAccessToken(consentAssociatedData, encryptionKey);
 
                         // Calculate time since token stored
                         DateTimeOffset timeWhenStored = storedAccessTokenEntity.Created;

@@ -29,6 +29,9 @@ public class StartupTasksHostedService : IHostedService
 
     // Ensures this set up at application start-up
     private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
+    
+    // Ensures this set up at application start-up
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -37,7 +40,8 @@ public class StartupTasksHostedService : IHostedService
         IServiceScopeFactory serviceScopeFactory,
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         IBankProfileService bankProfileService,
-        ILogger<StartupTasksHostedService> logger)
+        ILogger<StartupTasksHostedService> logger,
+        IEncryptionKeyInfo encryptionKeyInfo)
     {
         _databaseSettingsProvider =
             databaseSettingsProvider ??
@@ -46,6 +50,7 @@ public class StartupTasksHostedService : IHostedService
         _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
         _bankProfileService = bankProfileService;
         _logger = logger;
+        _encryptionKeyInfo = encryptionKeyInfo;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)

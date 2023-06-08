@@ -33,12 +33,17 @@ public static class ServiceCollectionExtensions
             .AddSettingsGroup<BankProfilesSettings>()
             .AddSettingsGroup<SoftwareStatementProfilesSettings>()
             .AddSettingsGroup<TransportCertificateProfilesSettings>()
-            .AddSettingsGroup<SigningCertificateProfilesSettings>();
+            .AddSettingsGroup<SigningCertificateProfilesSettings>()
+            .AddSettingsGroup<KeysSettings>();
 
         // Set up software statement store
         services
             .AddSingleton<IProcessedSoftwareStatementProfileStore,
                 ProcessedSoftwareStatementProfileStore>();
+
+        // Set up encryption key
+        services
+            .AddSingleton<IEncryptionKeyInfo, EncryptionKeyInfo>();
 
         // Set up bank profile definitions
         services.AddSingleton<IBankProfileService, BankProfileService>();

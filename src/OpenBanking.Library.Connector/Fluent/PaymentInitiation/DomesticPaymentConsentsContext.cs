@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -76,8 +75,7 @@ internal class DomesticPaymentConsentsConsentContext :
                     _sharedContext.TimeProvider),
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-                _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>()),
+                _sharedContext.EncryptionKeyInfo),
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
         CreateObject = domesticPaymentConsentOperations;
         ReadObject = domesticPaymentConsentOperations;
