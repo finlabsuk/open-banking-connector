@@ -49,7 +49,6 @@ public class BankRegistrationsController : ControllerBase
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
-    /// <param name="useRegistrationAccessToken"></param>
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -59,9 +58,7 @@ public class BankRegistrationsController : ControllerBase
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation,
-        [FromHeader(Name = "x-obc-use-registration-access-token")]
-        bool? useRegistrationAccessToken)
+        bool? includeExternalApiOperation)
     {
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
@@ -70,8 +67,7 @@ public class BankRegistrationsController : ControllerBase
             .ReadAsync(
                 bankRegistrationId,
                 modifiedBy,
-                includeExternalApiOperation,
-                useRegistrationAccessToken);
+                includeExternalApiOperation);
 
         return Ok(fluentResponse);
     }
@@ -82,7 +78,6 @@ public class BankRegistrationsController : ControllerBase
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
-    /// <param name="useRegistrationAccessToken"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
@@ -91,9 +86,7 @@ public class BankRegistrationsController : ControllerBase
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation,
-        [FromHeader(Name = "x-obc-use-registration-access-token")]
-        bool? useRegistrationAccessToken)
+        bool? includeExternalApiOperation)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
@@ -102,8 +95,7 @@ public class BankRegistrationsController : ControllerBase
             .DeleteAsync(
                 bankRegistrationId,
                 modifiedBy,
-                includeExternalApiOperation,
-                useRegistrationAccessToken);
+                includeExternalApiOperation);
 
         return Ok(fluentResponse);
     }

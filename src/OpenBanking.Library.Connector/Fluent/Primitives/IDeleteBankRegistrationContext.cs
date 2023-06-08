@@ -23,16 +23,11 @@ public interface IDeleteBankRegistrationContext
     ///     Include deletion of corresponding object at external API endpoint. When null,
     ///     BankProfile is used to set value.
     /// </param>
-    /// <param name="useRegistrationAccessToken">
-    ///     Use registration access token when deleting object at external API. When null, BankProfile is used
-    ///     to set value if deleting object at external API.
-    /// </param>
     /// <returns></returns>
     Task<ObjectDeleteResponse> DeleteAsync(
         Guid id,
         string? modifiedBy = null,
-        bool? includeExternalApiOperation = null,
-        bool? useRegistrationAccessToken = null);
+        bool? includeExternalApiOperation = null);
 }
 
 internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrationContext
@@ -42,14 +37,12 @@ internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrat
     async Task<ObjectDeleteResponse> IDeleteBankRegistrationContext.DeleteAsync(
         Guid id,
         string? modifiedBy,
-        bool? includeExternalApiOperation,
-        bool? useRegistrationAccessToken)
+        bool? includeExternalApiOperation)
     {
         var bankRegistrationDeleteParams = new BankRegistrationDeleteParams(
             id,
             modifiedBy,
-            includeExternalApiOperation,
-            useRegistrationAccessToken);
+            includeExternalApiOperation);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
             await DeleteObject.DeleteAsync(bankRegistrationDeleteParams);
 

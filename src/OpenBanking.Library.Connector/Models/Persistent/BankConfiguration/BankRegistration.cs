@@ -70,6 +70,8 @@ internal class BankRegistration :
         string? registrationAccessToken,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         OAuth2ResponseMode defaultResponseMode,
+        BankGroupEnum bankGroup,
+        Guid? bankId,
         BankProfileEnum bankProfile,
         string jwksUri,
         string? registrationEndpoint,
@@ -80,14 +82,22 @@ internal class BankRegistration :
         IList<string> otherRedirectUris,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
-        RegistrationScopeEnum registrationScope,
-        Guid? bankId) : base(id, reference, isDeleted, isDeletedModified, isDeletedModifiedBy, created, createdBy)
+        RegistrationScopeEnum registrationScope) : base(
+        id,
+        reference,
+        isDeleted,
+        isDeletedModified,
+        isDeletedModifiedBy,
+        created,
+        createdBy)
     {
         _externalApiId = externalApiId;
         _externalApiSecret = externalApiSecret;
         _registrationAccessToken = registrationAccessToken;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         DefaultResponseMode = defaultResponseMode;
+        BankGroup = bankGroup;
+        BankId = bankId;
         BankProfile = bankProfile;
         JwksUri = jwksUri;
         RegistrationEndpoint = registrationEndpoint;
@@ -99,7 +109,6 @@ internal class BankRegistration :
         SoftwareStatementProfileId = softwareStatementProfileId;
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
-        BankId = bankId;
     }
 
     [ForeignKey("BankId")]

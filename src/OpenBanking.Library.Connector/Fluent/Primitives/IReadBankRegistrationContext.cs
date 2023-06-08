@@ -20,13 +20,11 @@ public interface IReadBankRegistrationContext<TPublicResponse>
     /// <param name="id"></param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
-    /// <param name="useRegistrationAccessToken"></param>
     /// <returns></returns>
     Task<TPublicResponse> ReadAsync(
         Guid id,
         string? modifiedBy = null,
-        bool? includeExternalApiOperation = null,
-        bool? useRegistrationAccessToken = null);
+        bool? includeExternalApiOperation = null);
 }
 
 internal interface
@@ -38,13 +36,11 @@ internal interface
     async Task<TPublicResponse> IReadBankRegistrationContext<TPublicResponse>.ReadAsync(
         Guid id,
         string? modifiedBy,
-        bool? includeExternalApiOperation,
-        bool? useRegistrationAccessToken)
+        bool? includeExternalApiOperation)
     {
         var readParams = new BankRegistrationReadParams(
             id,
             modifiedBy,
-            useRegistrationAccessToken,
             includeExternalApiOperation);
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(readParams);

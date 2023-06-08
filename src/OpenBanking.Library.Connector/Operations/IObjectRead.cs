@@ -24,14 +24,11 @@ internal class BankRegistrationReadParams : LocalReadParams
     public BankRegistrationReadParams(
         Guid id,
         string? modifiedBy,
-        bool? useRegistrationAccessToken,
         bool? includeExternalApiOperation) : base(id, modifiedBy)
     {
-        UseRegistrationAccessToken = useRegistrationAccessToken;
         IncludeExternalApiOperation = includeExternalApiOperation;
     }
 
-    public bool? UseRegistrationAccessToken { get; }
     public bool? IncludeExternalApiOperation { get; }
 }
 

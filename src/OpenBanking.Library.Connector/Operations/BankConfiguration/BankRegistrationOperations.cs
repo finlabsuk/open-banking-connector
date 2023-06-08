@@ -86,6 +86,7 @@ internal class
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
+        BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
         OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
@@ -187,8 +188,6 @@ internal class
         if (bankRegistrationGroup is not null &&
             !request.ForceDynamicClientRegistration)
         {
-            BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
-
             // Get existing registrations with same bank group and SSA (ideally software ID)
             IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
                 _entityMethods
@@ -289,7 +288,9 @@ internal class
             registrationAccessToken,
             tokenEndpointAuthMethod,
             defaultResponseMode,
-            request.BankProfile,
+            bankGroup,
+            null,
+            bankProfile.BankProfileEnum,
             jwksUri,
             registrationEndpoint,
             tokenEndpoint,
@@ -299,8 +300,7 @@ internal class
             otherRedirectUris,
             softwareStatementProfileId,
             softwareStatementProfileOverrideCase,
-            registrationScope,
-            null);
+            registrationScope);
 
         // Save entity
         await _entityMethods.AddAsync(entity);
@@ -375,7 +375,6 @@ internal class
                     "BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
-                readParams.UseRegistrationAccessToken ??
                 bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
             // Get software statement profile

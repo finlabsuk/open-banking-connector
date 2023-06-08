@@ -23,15 +23,12 @@ internal class BankRegistrationDeleteParams : LocalDeleteParams
     public BankRegistrationDeleteParams(
         Guid id,
         string? modifiedBy,
-        bool? includeExternalApiOperation,
-        bool? useRegistrationAccessToken) : base(id, modifiedBy)
+        bool? includeExternalApiOperation) : base(id, modifiedBy)
     {
         IncludeExternalApiOperation = includeExternalApiOperation;
-        UseRegistrationAccessToken = useRegistrationAccessToken;
     }
 
     public bool? IncludeExternalApiOperation { get; }
-    public bool? UseRegistrationAccessToken { get; }
 }
 
 internal class ConsentDeleteParams : LocalDeleteParams

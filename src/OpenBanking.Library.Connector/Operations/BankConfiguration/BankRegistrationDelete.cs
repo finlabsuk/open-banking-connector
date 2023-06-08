@@ -76,11 +76,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                     "BankRegistration does not have a registration endpoint configured.");
 
             bool useRegistrationAccessTokenValue =
-                deleteParams.UseRegistrationAccessToken ??
-                bankProfile?.BankConfigurationApiSettings.UseRegistrationAccessToken ??
-                throw new ArgumentNullException(
-                    null,
-                    "useRegistrationAccessToken specified as null and cannot be obtained using specified BankProfile (also null).");
+                bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
             // Get API client
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
