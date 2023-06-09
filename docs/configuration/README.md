@@ -30,6 +30,7 @@ Open Banking Connector configuration settings are collected into groups which ar
 - [software statement profiles settings](./software-statement-profiles-settings.md) configure software statement profiles used by Open Banking Connector
 - [transport certificate profiles settings](./transport-certificate-profiles-settings.md) configure transport certificate profiles used by Open Banking Connector
 - [signing certificate profiles settings](./signing-certificate-profiles-settings.md) configure signing certificate profiles used by Open Banking Connector
+- [encryption keys settings](./encryption-keys-settings.md) configure encryption keys used by Open Banking Connector
 - [configuration sources settings](./configuration-sources-settings.md) configure configuration sources used by Open Banking Connector
 
 ## Sources
@@ -52,5 +53,5 @@ Even if environment variables are the vehicle for providing both (to decouple co
 
 ## Environment Variables
 
-When supplying configuration via environment variables, you should use double underscores (__) in place of colons (:) in settings names. So, for instance, the setting `OpenBankingConnector:Database:Provider` would be configured using environment variable `OpenBankingConnector__Database__Provider`. This is a .NET convention and explained [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#environment-variables).
+When supplying configuration via environment variables, you should use double underscores (__) in place of colons (:) in settings names. So, for instance, the setting *OpenBankingConnector:Database:Provider* would be configured using environment variable `OpenBankingConnector__Database__Provider`. This is a .NET convention and explained [here](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#environment-variables).
 

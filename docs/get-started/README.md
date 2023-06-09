@@ -21,7 +21,7 @@ They can be supplied via environment variables, command line options, or via a s
 
 In this section, we will set up minimal configuration and secrets using environment variables. (Note that Open Banking Connector uses the .NET convention of replacing ":" with "__" when environment variables are used. So the configuration setting `OpenBankingConnector:Database:Provider` is set by the environment variable `OpenBankingConnector__Database__Provider`.)
 
-### 1. Set up software statement, transport and signing keys
+### 1. Set up software statement, transport/signing/encryption keys
 
 Software statements (SSAs), transport keys and certs, and signing keys are supplied (alongside related data) to Open Banking Connector by means of:
 
@@ -29,7 +29,11 @@ Software statements (SSAs), transport keys and certs, and signing keys are suppl
 - [transport certificate profiles](../configuration/transport-certificate-profiles-settings.md)
 - [signing certificate profiles](../configuration/signing-certificate-profiles-settings.md)
 
-Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). To use these, you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the [UK Open Banking Directory](https://directory.openbanking.org.uk/s/login/) and following the instructions there.
+Encryption keys are supplied using:
+
+- [encryption keys](../configuration/encryption-keys-settings.md)
+
+Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the [UK Open Banking Directory](https://directory.openbanking.org.uk/s/login/) and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given [here](../configuration/encryption-keys-settings.md#encryption-keys-settings)).
 
 ```bash
 # Software statement profile with ID "All"
@@ -46,6 +50,10 @@ OpenBankingConnector__TransportCertificateProfiles__All__AssociatedKey="-----BEG
 # Signing certificate profile with ID "All"
 OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId=xyz # substitute your signing key ID (kid) to allow certificate lookup (obtain from UK Open Banking Directory)
 OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey="-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n" # substitute your signing key (that associated with OBSeal signing certificate)
+
+# Encryption key with ID "MyKey"
+OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKey
+OpenBankingConnector__Keys__Encryption__MyKey__Value=Q95hOua2S5wXK9W5q/j0+1xIThOSbGhUl2Wano2uTc4= # substitute your base64-encoded 256-bit encryption key (see text for link to example generation code)
 ```
 
 ### 2. Set up database connection

@@ -40,6 +40,7 @@ nav:
     - Software statement profiles settings: configuration/software-statement-profiles-settings.md
     - Transport certificate profiles settings: configuration/transport-certificate-profiles-settings.md
     - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
+    - Encryption keys settings: configuration/encryption-keys-settings.md
     - Configuration sources settings: configuration/configuration-sources-settings.md
   - APIs:
     - apis/README.md
