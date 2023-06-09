@@ -381,6 +381,8 @@
         
           
         
+          
+        
       
       
         
@@ -453,6 +455,20 @@
     <li class="md-nav__item">
       <a href="../../../configuration/signing-certificate-profiles-settings/" class="md-nav__link">
         Signing certificate profiles settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/encryption-keys-settings/" class="md-nav__link">
+        Encryption keys settings
       </a>
     </li>
   
@@ -1127,7 +1143,7 @@
 
 <h1 id="use-microsofts-secret-manager">Use Microsoft's secret manager</h1>
 <p>When running Open Banking Connector as a .NET application from source code, and when in the development environment, Microsoft's secret manager can be used to provide configuration/secrets.</p>
-<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one already). The Microsoft documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a> gives the path for this directory. Please note that the UserSecretsId for the app is <code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given <a href="https://github.com/finlabsuk/open-banking-connector/blob/docs/2.0/src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj">here</a>.</p>
+<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one already). The Microsoft documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a> gives the path for this directory. Please note that the UserSecretsId for the app is <code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given <a href="https://github.com/finlabsuk/open-banking-connector/tree/web-app/5.0.0/src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj">here</a>.</p>
 <p>You can then add key-value pairs to the <code>secrets.json</code> file to supply configuration to Open Banking Connector.</p>
 <p>Here is an example of what such a file might look like after configuring a software statement profile, transport certificate profile and signing certificate profile:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>

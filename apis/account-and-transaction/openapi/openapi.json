@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "web-app/4.0.0"
+    "version": "web-app/5.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -1170,30 +1170,6 @@
   },
   "components": {
     "schemas": {
-      "AccessToken": {
-        "type": "object",
-        "properties": {
-          "Token": {
-            "type": "string",
-            "description": "Token.",
-            "nullable": true
-          },
-          "ExpiresIn": {
-            "type": "integer",
-            "description": "Token \"expires_in\".",
-            "format": "int32"
-          },
-          "RefreshToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "ModifiedBy": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AccountAccessConsentAuthContext": {
         "required": [
           "AccountAccessConsentId"
@@ -1531,9 +1507,6 @@
             "type": "string",
             "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
             "nullable": true
-          },
-          "AccessToken": {
-            "$ref": "#/components/schemas/AccessToken"
           },
           "AuthContext": {
             "$ref": "#/components/schemas/AuthContextRequest"

@@ -3,7 +3,7 @@
   "info": {
     "title": "Bank Configuration API",
     "description": "Bank Configuration API for Open Banking Connector Web App",
-    "version": "web-app/4.0.0"
+    "version": "web-app/5.0.0"
   },
   "paths": {
     "/config/bank-registrations": {
@@ -93,14 +93,6 @@
             "schema": {
               "type": "boolean"
             }
-          },
-          {
-            "name": "x-obc-use-registration-access-token",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -152,14 +144,6 @@
           },
           {
             "name": "x-obc-include-external-api-operation",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "x-obc-use-registration-access-token",
             "in": "header",
             "description": "",
             "schema": {
@@ -237,6 +221,7 @@
           "Hsbc_UkBusiness",
           "Hsbc_UkKinetic",
           "Hsbc_UkPersonal",
+          "Hsbc_HsbcNetUk",
           "Danske",
           "AlliedIrish",
           "Monzo",

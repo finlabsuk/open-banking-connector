@@ -372,8 +372,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-set-up-software-statement-transport-and-signing-keys" class="md-nav__link">
-    1. Set up software statement, transport and signing keys
+  <a href="#1-set-up-software-statement-transportsigningencryption-keys" class="md-nav__link">
+    1. Set up software statement, transport/signing/encryption keys
   </a>
   
 </li>
@@ -465,6 +465,8 @@
         
           
         
+          
+        
       
       
         
@@ -537,6 +539,20 @@
     <li class="md-nav__item">
       <a href="../configuration/signing-certificate-profiles-settings/" class="md-nav__link">
         Signing certificate profiles settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/encryption-keys-settings/" class="md-nav__link">
+        Encryption keys settings
       </a>
     </li>
   
@@ -1194,8 +1210,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-set-up-software-statement-transport-and-signing-keys" class="md-nav__link">
-    1. Set up software statement, transport and signing keys
+  <a href="#1-set-up-software-statement-transportsigningencryption-keys" class="md-nav__link">
+    1. Set up software statement, transport/signing/encryption keys
   </a>
   
 </li>
@@ -1268,14 +1284,18 @@
 <p>Configuration and secrets are read-only data supplied to Open Banking Connector that configure its behaviour and supply sensitive information such as transport and signing keys.</p>
 <p>They can be supplied via environment variables, command line options, or via a supported cloud secrets provider (or any of these in combination). You may wish to decouple your configuration sources from Open Banking Connector as an application by combining static <em>configuration environment variables</em> with dynamically-generated <em>secrets environment variables</em>.</p>
 <p>In this section, we will set up minimal configuration and secrets using environment variables. (Note that Open Banking Connector uses the .NET convention of replacing ":" with "__" when environment variables are used. So the configuration setting <code>OpenBankingConnector:Database:Provider</code> is set by the environment variable <code>OpenBankingConnector__Database__Provider</code>.)</p>
-<h3 id="1-set-up-software-statement-transport-and-signing-keys">1. Set up software statement, transport and signing keys</h3>
+<h3 id="1-set-up-software-statement-transportsigningencryption-keys">1. Set up software statement, transport/signing/encryption keys</h3>
 <p>Software statements (SSAs), transport keys and certs, and signing keys are supplied (alongside related data) to Open Banking Connector by means of:</p>
 <ul>
 <li><a href="../configuration/software-statement-profiles-settings/">software statement profiles</a></li>
 <li><a href="../configuration/transport-certificate-profiles-settings/">transport certificate profiles</a></li>
 <li><a href="../configuration/signing-certificate-profiles-settings/">signing certificate profiles</a></li>
 </ul>
-<p>Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). To use these, you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the <a href="https://directory.openbanking.org.uk/s/login/">UK Open Banking Directory</a> and following the instructions there.</p>
+<p>Encryption keys are supplied using:</p>
+<ul>
+<li><a href="../configuration/encryption-keys-settings/">encryption keys</a></li>
+</ul>
+<p>Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the <a href="https://directory.openbanking.org.uk/s/login/">UK Open Banking Directory</a> and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given <a href="../configuration/encryption-keys-settings/#encryption-keys-settings">here</a>).</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Software statement profile with ID &quot;All&quot;</span>
 <span class="nv">OpenBankingConnector__SoftwareStatementProfiles__All__TransportCertificateProfileId</span><span class="o">=</span>All<span class="w"> </span><span class="c1"># instruction to use transport certificate profile with ID &quot;All&quot;</span>
 <span class="nv">OpenBankingConnector__SoftwareStatementProfiles__All__SoftwareStatement</span><span class="o">=</span>a.b.c<span class="w"> </span><span class="c1"># substitute your software statement assertion (SSA)</span>
@@ -1290,6 +1310,10 @@
 <span class="c1"># Signing certificate profile with ID &quot;All&quot;</span>
 <span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId</span><span class="o">=</span>xyz<span class="w"> </span><span class="c1"># substitute your signing key ID (kid) to allow certificate lookup (obtain from UK Open Banking Directory)</span>
 <span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey</span><span class="o">=</span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute your signing key (that associated with OBSeal signing certificate)</span>
+
+<span class="c1"># Encryption key with ID &quot;MyKey&quot;</span>
+<span class="nv">OpenBankingConnector__Keys__CurrentEncryptionKeyId</span><span class="o">=</span>MyKey
+<span class="nv">OpenBankingConnector__Keys__Encryption__MyKey__Value</span><span class="o">=</span>Q95hOua2S5wXK9W5q/j0+1xIThOSbGhUl2Wano2uTc4<span class="o">=</span><span class="w"> </span><span class="c1"># substitute your base64-encoded 256-bit encryption key (see text for link to example generation code)</span>
 </code></pre></div>
 <h3 id="2-set-up-database-connection">2. Set up database connection</h3>
 <p>Database settings are described <a href="../configuration/database-settings/">here</a>.</p>
@@ -1347,7 +1371,7 @@ where an <em>env file</em> is used to supply environment variables.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-04-21</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-06-09</span>
       
     
   </small>
