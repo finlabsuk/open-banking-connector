@@ -96,6 +96,8 @@ public class AccountAccessConsentCleanup
                         null);
                     await refreshTokenEntityMethods.AddAsync(accountAccessConsentRefreshToken);
                 }
+
+                accountAccessConsent.UpdateAccessToken(null, 0, null, DateTimeOffset.UtcNow, createdBy);
             }
         }
     }

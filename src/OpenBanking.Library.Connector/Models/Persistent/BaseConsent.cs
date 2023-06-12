@@ -155,6 +155,21 @@ internal abstract class BaseConsent : BaseEntity
         _accessTokenModified,
         _accessTokenModifiedBy);
 
+    public void UpdateAccessToken(
+        string? accessTokenValue,
+        int accessTokenExpiresIn,
+        string? accessTokenRefreshToken,
+        DateTimeOffset modified,
+        string? modifiedBy)
+
+    {
+        _accessTokenAccessToken = accessTokenValue;
+        _accessTokenExpiresIn = accessTokenExpiresIn;
+        _accessTokenRefreshToken = accessTokenRefreshToken;
+        _accessTokenModified = modified;
+        _accessTokenModifiedBy = modifiedBy;
+    }
+
     public void UpdateAuthContext(string state, string nonce, DateTimeOffset modified, string? modifiedBy)
     {
         AuthContextState = state;
