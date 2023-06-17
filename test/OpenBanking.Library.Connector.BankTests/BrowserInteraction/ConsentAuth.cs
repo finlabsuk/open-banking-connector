@@ -55,63 +55,63 @@ public class ConsentAuth
         };
     }
 
-    public async Task AuthoriseAsync(
+    public Task EmailAuthAsync(
+        string authUrl,
+        Func<Task<bool>> authIsCompleteFcn)
+    {
+        SendEmail(
+            "Open Banking Connector Test",
+            "This is the auth URL: " + authUrl);
+        EnsureTokenAvailable(authIsCompleteFcn, 180000);
+        return Task.CompletedTask;
+    }
+    
+    public async Task AutomatedAuthAsync(
         string authUrl,
         BankProfile bankProfile,
         ConsentVariety consentVariety,
         BankUser bankUser,
         Func<Task<bool>> authIsCompleteFcn)
     {
-        bool useManualAuth = bankProfile.SupportsSca;
-        if (useManualAuth)
+        IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
+        using IPlaywright playwright = await Playwright.CreateAsync();
+        await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
+        IPage page = await browser.NewPageAsync();
+        await page.GotoAsync(authUrl);
+        await bankUiMethods.PerformConsentAuthUiInteractions(consentVariety, page, bankUser);
+
+        bool isFragmentRedirect = bankProfile.DefaultResponseMode is OAuth2ResponseMode.Fragment;
+        if (isFragmentRedirect)
         {
-            SendEmail(
-                "Open Banking Connector Test",
-                "This is the auth URL: " + authUrl);
-            EnsureTokenAvailable(authIsCompleteFcn, 180000);
+            // Wait for redirect
+            var redirectTimeout = 10000;
+            await page.WaitForSelectorAsync(
+                "id=auth-fragment-redirect",
+                new PageWaitForSelectorOptions
+                {
+                    State = WaitForSelectorState.Attached,
+                    Timeout = redirectTimeout
+                });
+
+            // Wait for delegate API call (allows 5s)
+            IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
+                "window.pageStatus",
+                null,
+                new PageWaitForFunctionOptions { Timeout = 12000 });
+
+            var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
+            if (pageStatus is not "POST of fragment succeeded")
+            {
+                throw new Exception("Redirect page could not capture and pass on parameters in URL fragment");
+            }
         }
         else
         {
-            IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
-            using IPlaywright playwright = await Playwright.CreateAsync();
-            await using IBrowser browser = await playwright.Chromium.LaunchAsync(_launchOptions);
-            IPage page = await browser.NewPageAsync();
-            await page.GotoAsync(authUrl);
-            await bankUiMethods.PerformConsentAuthUiInteractions(consentVariety, page, bankUser);
-
-            bool isFragmentRedirect = bankProfile.DefaultResponseMode is OAuth2ResponseMode.Fragment;
-            if (isFragmentRedirect)
-            {
-                // Wait for redirect
-                var redirectTimeout = 10000;
-                await page.WaitForSelectorAsync(
-                    "id=auth-fragment-redirect",
-                    new PageWaitForSelectorOptions
-                    {
-                        State = WaitForSelectorState.Attached,
-                        Timeout = redirectTimeout
-                    });
-
-                // Wait for delegate API call (allows 5s)
-                IJSHandle pageStatusJsHandle = await page.WaitForFunctionAsync(
-                    "window.pageStatus",
-                    null,
-                    new PageWaitForFunctionOptions { Timeout = 12000 });
-
-                var pageStatus = await pageStatusJsHandle.JsonValueAsync<string>();
-                if (pageStatus is not "POST of fragment succeeded")
-                {
-                    throw new Exception("Redirect page could not capture and pass on parameters in URL fragment");
-                }
-            }
-            else
-            {
-                // Wait for network activity to complete
-                await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            }
-
-            EnsureTokenAvailable(authIsCompleteFcn, 10000);
+            // Wait for network activity to complete
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
+
+        EnsureTokenAvailable(authIsCompleteFcn, 10000);
     }
 
     private static void EnsureTokenAvailable(Func<Task<bool>> authIsCompleteFcn, int maxWaitTimeForConsentMs)

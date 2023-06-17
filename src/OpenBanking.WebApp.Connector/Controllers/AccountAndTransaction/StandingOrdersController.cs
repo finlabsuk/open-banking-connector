@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
-[Tags("StandingOrders")]
+[Tags("Standing Orders")]
 public class StandingOrdersController : ControllerBase
 {
     private readonly LinkGenerator _linkGenerator;
@@ -23,7 +23,7 @@ public class StandingOrdersController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Standing Orders.
+    ///     Read standing orders
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
@@ -33,8 +33,8 @@ public class StandingOrdersController : ControllerBase
     [Route("aisp/standing-orders")]
     [Route("aisp/accounts/{externalApiAccountId}/standing-orders")]
     [HttpGet]
-    [ProducesResponseType(typeof(StandingOrdersResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<StandingOrdersResponse>> GetAsync(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")]
         Guid accountAccessConsentId,

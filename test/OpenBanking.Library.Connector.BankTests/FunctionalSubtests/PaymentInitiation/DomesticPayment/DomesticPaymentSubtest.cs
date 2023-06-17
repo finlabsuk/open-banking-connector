@@ -169,7 +169,7 @@ public class DomesticPaymentSubtest
             }
 
             // Authorise consent in UI via Playwright
-            await consentAuth.AuthoriseAsync(
+            await consentAuth.AutomatedAuthAsync(
                 authUrl,
                 bankProfile,
                 ConsentVariety.DomesticPaymentConsent,

@@ -40,6 +40,7 @@ public class AccountAccessConsentSubtest
         FilePathBuilder configFluentRequestLogging,
         FilePathBuilder aispFluentRequestLogging,
         ConsentAuth? consentAuth,
+        string authUrlLeftPart,
         List<BankUser> bankUserList,
         AppTests.AccountAccessConsentOptions accountAccessConsentOptions,
         IApiClient apiClient)
@@ -105,38 +106,6 @@ public class AccountAccessConsentSubtest
                 // Read account access consent
                 await ReadAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId2);
 
-                // POST auth context
-                var authContextRequest = new AccountAccessConsentAuthContext
-                {
-                    AccountAccessConsentId = accountAccessConsentId2,
-                    Reference = testNameUnique + "_AccountAccessConsent",
-                    CreatedBy = modifiedBy
-                };
-                AccountAccessConsentAuthContextCreateResponse authContextResponse =
-                    await requestBuilder
-                        .AccountAndTransaction
-                        .AccountAccessConsents
-                        .AuthContexts
-                        .CreateLocalAsync(authContextRequest);
-
-                // Checks
-                authContextResponse.Should().NotBeNull();
-                authContextResponse.Warnings.Should().BeNull();
-                authContextResponse.AuthUrl.Should().NotBeNull();
-
-                Guid authContextId = authContextResponse.Id;
-                string authUrl = authContextResponse.AuthUrl;
-
-                // GET auth context
-                AccountAccessConsentAuthContextReadResponse authContextResponse2 =
-                    await requestBuilder.AccountAndTransaction
-                        .AccountAccessConsents
-                        .AuthContexts
-                        .ReadLocalAsync(authContextId);
-
-                // Checks
-                authContextResponse2.Should().NotBeNull();
-                authContextResponse2.Warnings.Should().BeNull();
 
                 // Consent authorisation
                 if (consentAuth is not null)
@@ -155,12 +124,60 @@ public class AccountAccessConsentSubtest
                         return consentResponse.Created < consentResponse.AuthContextModified;
                     }
 
-                    await consentAuth.AuthoriseAsync(
-                        authUrl,
-                        bankProfile,
-                        ConsentVariety.AccountAccessConsent,
-                        bankUser,
-                        AuthIsComplete);
+                    // Perform auth
+                    string authUrl;
+                    if (bankProfile.SupportsSca)
+                    {
+                        // POST auth context
+                        var authContextRequest = new AccountAccessConsentAuthContext
+                        {
+                            AccountAccessConsentId = accountAccessConsentId2,
+                            Reference = testNameUnique + "_AccountAccessConsent",
+                            CreatedBy = modifiedBy
+                        };
+                        AccountAccessConsentAuthContextCreateResponse authContextResponse =
+                            await requestBuilder
+                                .AccountAndTransaction
+                                .AccountAccessConsents
+                                .AuthContexts
+                                .CreateLocalAsync(authContextRequest);
+
+                        // Checks
+                        authContextResponse.Should().NotBeNull();
+                        authContextResponse.Warnings.Should().BeNull();
+                        authContextResponse.AuthUrl.Should().NotBeNull();
+
+                        Guid authContextId = authContextResponse.Id;
+                        authUrl = authContextResponse.AuthUrl;
+
+                        // GET auth context
+                        AccountAccessConsentAuthContextReadResponse authContextResponse2 =
+                            await requestBuilder.AccountAndTransaction
+                                .AccountAccessConsents
+                                .AuthContexts
+                                .ReadLocalAsync(authContextId);
+
+                        // Checks
+                        authContextResponse2.Should().NotBeNull();
+                        authContextResponse2.Warnings.Should().BeNull();
+
+                        // Perform email auth
+                        await consentAuth.EmailAuthAsync(
+                            authUrl,
+                            AuthIsComplete);
+                    }
+                    else
+                    {
+                        // Perform automated auth
+                        authUrl =
+                            $"{authUrlLeftPart}/dev1/aisp/account-access-consents/{accountAccessConsentId2}/auth";
+                        await consentAuth.AutomatedAuthAsync(
+                            authUrl,
+                            bankProfile,
+                            ConsentVariety.AccountAccessConsent,
+                            bankUser,
+                            AuthIsComplete);
+                    }
 
                     // Refresh scope to ensure user token acquired following consent is available
                     using IRequestBuilderContainer scopedRequestBuilderNew = requestBuilderGenerator();

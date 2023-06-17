@@ -26,13 +26,15 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create AccountAccessConsent
+    ///     Create account access consent
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccountAccessConsentCreateResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentRequest request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<
+        AccountAccessConsentCreateResponse>> PostAsync([FromBody] AccountAccessConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -50,7 +52,7 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read AccountAccessConsent
+    ///     Read account access consent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
@@ -58,8 +60,9 @@ public class AccountAccessConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentCreateResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        AccountAccessConsentCreateResponse>> GetAsync(
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
@@ -80,15 +83,16 @@ public class AccountAccessConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Delete AccountAccessConsent
+    ///     Delete account access consent
     /// </summary>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{accountAccessConsentId:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
-    public async Task<IActionResult> DeleteAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        ObjectDeleteResponse>> DeleteAsync(
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,

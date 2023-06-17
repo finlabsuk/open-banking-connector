@@ -18,7 +18,7 @@ public class AuthorisationCallbackDataValidatorTests
     {
         var validator = new AuthorisationRedirectObjectValidator();
 
-        var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
+        var data = new AuthResult(OAuth2ResponseMode.Fragment, null, null, null!);
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -30,7 +30,7 @@ public class AuthorisationCallbackDataValidatorTests
     {
         var validator = new AuthorisationRedirectObjectValidator();
 
-        var data = new AuthResult(OAuth2ResponseMode.Fragment, null!, null);
+        var data = new AuthResult(OAuth2ResponseMode.Fragment, null, null, null!);
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -45,8 +45,9 @@ public class AuthorisationCallbackDataValidatorTests
 
         var data = new AuthResult(
             OAuth2ResponseMode.Fragment,
-            new OAuth2RedirectData("", "", ""),
-            null);
+            null,
+            null,
+            new OAuth2RedirectData("", "", ""));
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -61,8 +62,9 @@ public class AuthorisationCallbackDataValidatorTests
 
         var data = new AuthResult(
             OAuth2ResponseMode.Fragment,
-            new OAuth2RedirectData("a", "a", "a"),
-            null);
+            null,
+            null,
+            new OAuth2RedirectData("a", "a", "a"));
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 

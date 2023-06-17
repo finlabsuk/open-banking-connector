@@ -26,13 +26,15 @@ public class DomesticVrpConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create DomesticVrpConsent
+    ///     Create domestic VRP consent
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticVrpConsentCreateResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] DomesticVrpConsentRequest request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<DomesticVrpConsentCreateResponse>> PostAsync(
+        [FromBody] DomesticVrpConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -50,7 +52,7 @@ public class DomesticVrpConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read DomesticVrpConsent
+    ///     Read domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="modifiedBy"></param>
@@ -58,8 +60,8 @@ public class DomesticVrpConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{domesticVrpConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticVrpConsentCreateResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DomesticVrpConsentCreateResponse>> GetAsync(
         Guid domesticVrpConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
@@ -80,15 +82,15 @@ public class DomesticVrpConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Delete DomesticVrpConsent
+    ///     Delete domestic VRP consent
     /// </summary>
     /// <param name="domesticVrpConsentId">ID of DomesticVrpConsent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{domesticVrpConsentId:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
-    public async Task<IActionResult> DeleteAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
         Guid domesticVrpConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,

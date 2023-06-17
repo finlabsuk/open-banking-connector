@@ -331,6 +331,9 @@ public abstract class AppTests
             bankRegistrationReadResponse.Warnings.Should().BeNull();
 
             // Run account access consent subtests
+            string authUrlLeftPart =
+                new Uri(bankRegistrationReadResponse.DefaultRedirectUri)
+                    .GetLeftPart(UriPartial.Authority);
             if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {
                 foreach (AccountAccessConsentSubtestEnum subTest in
@@ -352,6 +355,7 @@ public abstract class AppTests
                             .AppendToPath("aisp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
+                        authUrlLeftPart,
                         bankUserList,
                         accountAccessConsentOptions,
                         apiClient);

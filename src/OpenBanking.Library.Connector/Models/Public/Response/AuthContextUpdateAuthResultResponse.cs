@@ -20,8 +20,14 @@ public class AuthContextUpdateAuthResultResponse
         Warnings = warnings;
     }
 
+    /// <summary>
+    ///     Type of consent.
+    /// </summary>
     public ConsentType ConsentType { get; }
 
+    /// <summary>
+    ///     Consent ID.
+    /// </summary>
     public Guid ConsentId { get; }
 
     /// <summary>

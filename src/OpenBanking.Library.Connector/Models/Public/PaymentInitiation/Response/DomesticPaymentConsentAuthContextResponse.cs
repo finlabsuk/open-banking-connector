@@ -22,21 +22,27 @@ public class DomesticPaymentConsentAuthContextReadResponse : LocalObjectBaseResp
         DateTimeOffset created,
         string? createdBy,
         string? reference,
-        Guid domesticPaymentConsentId) : base(id, created, createdBy, reference)
+        IList<string>? warnings,
+        Guid domesticPaymentConsentId,
+        string state) : base(id, created, createdBy, reference)
     {
+        Warnings = warnings;
         DomesticPaymentConsentId = domesticPaymentConsentId;
+        State = state;
     }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public IList<string>? Warnings { get; set; }
+    public IList<string>? Warnings { get; }
+
+    public string State { get; }
 
     public Guid DomesticPaymentConsentId { get; }
 }
 
 /// <summary>
-///     Response to Create requests.
+///     Response to create requests.
 /// </summary>
 public class
     DomesticPaymentConsentAuthContextCreateResponse : DomesticPaymentConsentAuthContextReadResponse
@@ -46,11 +52,23 @@ public class
         DateTimeOffset created,
         string? createdBy,
         string? reference,
+        IList<string>? warnings,
         Guid domesticPaymentConsentId,
-        string authUrl) : base(id, created, createdBy, reference, domesticPaymentConsentId)
+        string state,
+        string authUrl,
+        string appSessionId) : base(id, created, createdBy, reference, warnings, domesticPaymentConsentId, state)
     {
         AuthUrl = authUrl;
+        AppSessionId = appSessionId;
     }
 
+    /// <summary>
+    ///     Time-sensitive URL to enable end-user authentication via website or mobile app
+    /// </summary>
     public string AuthUrl { get; }
+
+    /// <summary>
+    ///     App session ID that can be checked when processing post-auth redirect
+    /// </summary>
+    public string AppSessionId { get; }
 }

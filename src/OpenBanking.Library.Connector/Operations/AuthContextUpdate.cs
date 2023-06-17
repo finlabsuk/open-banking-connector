@@ -123,7 +123,28 @@ internal class AuthContextUpdate :
                 .AsSplitQuery() // Load collections in separate SQL queries
                 .SingleOrDefault(x => x.State == state) ??
             throw new KeyNotFoundException($"No record found for Auth Context with state {state}.");
-        string currentAuthContextNonce = authContext.Nonce;
+        string authContextNonce = authContext.Nonce;
+        string authContextAppSessionId = authContext.AppSessionId;
+
+        // Only accept redirects within 10 mins of auth context (session) creation
+        const int authContextExpiryIntervalInSeconds = 10 * 60;
+        DateTimeOffset authContextExpiryTime = authContext.Created
+            .AddSeconds(authContextExpiryIntervalInSeconds);
+        if (_timeProvider.GetUtcNow() > authContextExpiryTime)
+        {
+            throw new InvalidOperationException(
+                "Auth context exists but now stale (more than 10 minutes old) so will not process redirect. " +
+                "Please create a new auth context and authenticate again.");
+        }
+
+        // Validate auth context app session ID
+        if (request.AppSessionId is not null)
+        {
+            if (request.AppSessionId != authContextAppSessionId)
+            {
+                throw new InvalidOperationException("App session ID supplied does not match that of auth context.");
+            }
+        }
 
         // Get consent info
         (BaseConsent consent,
@@ -162,11 +183,21 @@ internal class AuthContextUpdate :
                 _ => throw new ArgumentOutOfRangeException()
             };
         BankRegistration bankRegistration = consent.BankRegistrationNavigation;
+        string redirectUrl = bankRegistration.DefaultRedirectUri;
         Guid consentId = consent.Id;
         string externalApiConsentId = consent.ExternalApiId;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
+
+        // Validate redirect URL
+        if (request.RedirectUrl is not null)
+        {
+            if (!string.Equals(request.RedirectUrl, redirectUrl))
+            {
+                throw new Exception("Redirect URL supplied does not match that which was expected");
+            }
+        }
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -178,15 +209,10 @@ internal class AuthContextUpdate :
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
-        // Only accept redirects within 10 mins of auth context (session) creation
-        const int authContextExpiryIntervalInSeconds = 10 * 60;
-        DateTimeOffset authContextExpiryTime = authContext.Created
-            .AddSeconds(authContextExpiryIntervalInSeconds);
-        if (_timeProvider.GetUtcNow() > authContextExpiryTime)
+        // Validate response mode
+        if (request.ResponseMode != defaultResponseMode)
         {
-            throw new InvalidOperationException(
-                "Auth context exists but now stale (more than 10 mins old) so will not process redirect. " +
-                "Please create a new auth context and authenticate again.");
+            throw new Exception("Response mode supplied does not match that which was expected");
         }
 
         // Determine nonce
@@ -197,16 +223,11 @@ internal class AuthContextUpdate :
             DomesticVrpConsentAuthContext => customBehaviour?.DomesticVrpConsentAuthGet,
             _ => throw new ArgumentOutOfRangeException()
         };
-        bool nonceClaimIsInitialValue = consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
-        string nonce;
-        if (nonceClaimIsInitialValue && consent.AuthContextNonce is not null)
-        {
-            nonce = consent.AuthContextNonce;
-        }
-        else
-        {
-            nonce = currentAuthContextNonce;
-        }
+        bool nonceClaimIsInitialValue =
+            consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
+        string nonce = nonceClaimIsInitialValue && consent.AuthContextNonce is not null
+            ? consent.AuthContextNonce
+            : authContextNonce;
 
         // Validate ID token including nonce
         string? requestObjectAudClaim = consentAuthGetCustomBehaviour?.AudClaim;
@@ -245,22 +266,6 @@ internal class AuthContextUpdate :
         // Wrap remaining processing in try block to ensure DB changes persisted
         try
         {
-            // Validate redirect URL
-            string redirectUrl = bankRegistration.DefaultRedirectUri;
-            if (request.RedirectUrl is not null)
-            {
-                if (!string.Equals(request.RedirectUrl, redirectUrl))
-                {
-                    throw new Exception("Redirect URL supplied does not match that which was expected");
-                }
-            }
-
-            // Validate response mode
-            if (request.ResponseMode != defaultResponseMode)
-            {
-                throw new Exception("Response mode supplied does not match that which was expected");
-            }
-
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,

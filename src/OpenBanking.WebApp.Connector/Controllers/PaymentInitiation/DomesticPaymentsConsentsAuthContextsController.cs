@@ -23,15 +23,16 @@ public class DomesticPaymentsConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create DomesticPaymentConsent AuthContext
+    ///     Create domestic payment consent auth context (time-sensitive auth session) and return auth URL
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(
-        StatusCodes.Status201Created,
-        Type = typeof(DomesticPaymentConsentAuthContextCreateResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsentAuthContext request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<
+        DomesticPaymentConsentAuthContextCreateResponse>> PostAsync(
+        [FromBody] DomesticPaymentConsentAuthContext request)
     {
         DomesticPaymentConsentAuthContextCreateResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
@@ -46,14 +47,15 @@ public class DomesticPaymentsConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read DomesticPaymentConsent AuthContext
+    ///     Read domestic payment consent auth context
     /// </summary>
     /// <param name="domesticPaymentConsentAuthContextId">ID of DomesticPaymentConsent AuthContext</param>
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentAuthContextId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentAuthContextReadResponse))]
-    public async Task<IActionResult> GetAsync(Guid domesticPaymentConsentAuthContextId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        DomesticPaymentConsentAuthContextReadResponse>> GetAsync(Guid domesticPaymentConsentAuthContextId)
     {
         // Operation
         DomesticPaymentConsentAuthContextReadResponse fluentResponse = await _requestBuilder

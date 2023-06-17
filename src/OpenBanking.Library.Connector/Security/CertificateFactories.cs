@@ -21,7 +21,11 @@ public static class CertificateFactories
         string cleanedKeyPem = CleanPem(keyPem);
         string cleanedCertPem = CleanPem(certPem);
         var initialCert = X509Certificate2.CreateFromPem(cleanedCertPem, cleanedKeyPem);
-        return new X509Certificate2(initialCert.Export(X509ContentType.Pkcs12));
+        byte[]
+            exportedCert =
+                initialCert.Export(
+                    X509ContentType.Pkcs12); // workaround for issue: https://github.com/dotnet/runtime/issues/45680 
+        return new X509Certificate2(exportedCert);
     }
 
     private static string CleanPem(string pem)

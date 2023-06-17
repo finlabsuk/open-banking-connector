@@ -17,39 +17,58 @@ public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
 public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse,
     IDomesticVrpConsentAuthContextPublicQuery
 {
-    internal DomesticVrpConsentAuthContextReadResponse(
+    public DomesticVrpConsentAuthContextReadResponse(
         Guid id,
         DateTimeOffset created,
         string? createdBy,
         string? reference,
-        Guid domesticVrpConsentId) : base(id, created, createdBy, reference)
+        IList<string>? warnings,
+        Guid domesticVrpConsentId,
+        string state) : base(id, created, createdBy, reference)
     {
+        Warnings = warnings;
         DomesticVrpConsentId = domesticVrpConsentId;
+        State = state;
     }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public IList<string>? Warnings { get; set; }
+    public IList<string>? Warnings { get; }
+
+    public string State { get; }
 
     public Guid DomesticVrpConsentId { get; }
 }
 
 /// <summary>
-///     Response to DomesticVrpConsentAuthContext Create requests.
+///     Response to create requests.
 /// </summary>
 public class DomesticVrpConsentAuthContextCreateResponse : DomesticVrpConsentAuthContextReadResponse
 {
-    internal DomesticVrpConsentAuthContextCreateResponse(
+    public DomesticVrpConsentAuthContextCreateResponse(
         Guid id,
         DateTimeOffset created,
         string? createdBy,
         string? reference,
+        IList<string>? warnings,
         Guid domesticVrpConsentId,
-        string authUrl) : base(id, created, createdBy, reference, domesticVrpConsentId)
+        string state,
+        string authUrl,
+        string appSessionId) : base(id, created, createdBy, reference, warnings, domesticVrpConsentId, state)
     {
         AuthUrl = authUrl;
+        AppSessionId = appSessionId;
     }
 
+
+    /// <summary>
+    ///     Time-sensitive URL to enable end-user authentication via website or mobile app
+    /// </summary>
     public string AuthUrl { get; }
+
+    /// <summary>
+    ///     App session ID that can be checked when processing post-auth redirect
+    /// </summary>
+    public string AppSessionId { get; }
 }

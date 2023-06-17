@@ -23,14 +23,15 @@ public class DomesticPaymentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create DomesticPayment
+    ///     Create domestic payment
     /// </summary>
     /// <param name="domesticPaymentConsentId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentResponse))]
-    public async Task<IActionResult> PostAsync(
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<DomesticPaymentResponse>> PostAsync(
         [FromHeader(Name = "x-obc-domestic-payment-consent-id")] Guid domesticPaymentConsentId,
         [FromBody]
         DomesticPaymentRequest request)
@@ -48,7 +49,7 @@ public class DomesticPaymentsController : ControllerBase
 
 
     /// <summary>
-    ///     Read DomesticPayment
+    ///     Read domestic payment
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
     /// <param name="domesticPaymentConsentId"></param>
@@ -56,8 +57,8 @@ public class DomesticPaymentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DomesticPaymentResponse>> GetAsync(
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
         Guid domesticPaymentConsentId,

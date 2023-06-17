@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "web-app/5.0.0"
+    "version": "web-app/5.1.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -11,26 +11,11 @@
         "tags": [
           "Account Access Consent Auth Contexts"
         ],
-        "summary": "Create AccountAccessConsent AuthContext",
+        "summary": "Create account access consent auth context (time-sensitive auth session) and return auth URL",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
               }
@@ -66,7 +51,7 @@
         "tags": [
           "Account Access Consent Auth Contexts"
         ],
-        "summary": "Read AccountAccessConsent AuthContext",
+        "summary": "Read account access consent auth context",
         "parameters": [
           {
             "name": "accountAccessConsentAuthContextId",
@@ -108,26 +93,11 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Create AccountAccessConsent",
+        "summary": "Create account access consent",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/AccountAccessConsentRequest"
               }
@@ -163,7 +133,7 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Read AccountAccessConsent",
+        "summary": "Read account access consent",
         "parameters": [
           {
             "name": "accountAccessConsentId",
@@ -219,7 +189,7 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Delete AccountAccessConsent",
+        "summary": "Delete account access consent",
         "parameters": [
           {
             "name": "accountAccessConsentId",
@@ -277,7 +247,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Read Account(s)",
+        "summary": "Read accounts",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -336,7 +306,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Read Account(s)",
+        "summary": "Read accounts",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -395,7 +365,7 @@
         "tags": [
           "Balances"
         ],
-        "summary": "Read Balances",
+        "summary": "Read balances",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -453,7 +423,7 @@
         "tags": [
           "Balances"
         ],
-        "summary": "Read Balances",
+        "summary": "Read balances",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -509,9 +479,9 @@
     "/aisp/direct-debits": {
       "get": {
         "tags": [
-          "DirectDebits"
+          "Direct Debits"
         ],
-        "summary": "Read Direct Debits.",
+        "summary": "Read direct debits",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -567,9 +537,9 @@
     "/aisp/accounts/{externalApiAccountId}/direct-debits": {
       "get": {
         "tags": [
-          "DirectDebits"
+          "Direct Debits"
         ],
-        "summary": "Read Direct Debits.",
+        "summary": "Read direct debits",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -627,7 +597,7 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Party",
+        "summary": "Read party",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -686,7 +656,7 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Party",
+        "summary": "Read party",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -745,7 +715,7 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Parties",
+        "summary": "Read parties",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -802,9 +772,9 @@
     "/aisp/standing-orders": {
       "get": {
         "tags": [
-          "StandingOrders"
+          "Standing Orders"
         ],
-        "summary": "Read Standing Orders.",
+        "summary": "Read standing orders",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -860,9 +830,9 @@
     "/aisp/accounts/{externalApiAccountId}/standing-orders": {
       "get": {
         "tags": [
-          "StandingOrders"
+          "Standing Orders"
         ],
-        "summary": "Read Standing Orders.",
+        "summary": "Read standing orders",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -920,7 +890,7 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -1004,7 +974,7 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -1088,7 +1058,7 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -1198,11 +1168,13 @@
         "properties": {
           "AuthUrl": {
             "type": "string",
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
             "nullable": true,
             "readOnly": true
           },
-          "State": {
+          "AppSessionId": {
             "type": "string",
+            "description": "App session ID that can be checked when processing post-auth redirect",
             "nullable": true,
             "readOnly": true
           },
@@ -1212,11 +1184,17 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid",
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
             "readOnly": true
           },
           "Id": {
@@ -1245,7 +1223,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to Create requests."
+        "description": "Response to create requests."
       },
       "AccountAccessConsentAuthContextReadResponse": {
         "type": "object",
@@ -1256,11 +1234,17 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid",
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
             "readOnly": true
           },
           "Id": {

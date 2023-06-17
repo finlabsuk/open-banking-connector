@@ -29,6 +29,7 @@ internal partial class DomesticVrpConsentAuthContext :
         string? createdBy,
         string state,
         string nonce,
+        string appSessionId,
         Guid domesticVrpConsentId) : base(
         id,
         reference,
@@ -38,11 +39,11 @@ internal partial class DomesticVrpConsentAuthContext :
         created,
         createdBy,
         state,
-        nonce)
+        nonce,
+        appSessionId)
     {
         DomesticVrpConsentId = domesticVrpConsentId;
     }
-
 
     // Parent consent (optional to avoid warning due to non-support of global query filter)
     [ForeignKey("DomesticVrpConsentId")]
@@ -60,5 +61,7 @@ internal partial class DomesticVrpConsentAuthContext :
             Created,
             CreatedBy,
             Reference,
-            DomesticVrpConsentId);
+            null,
+            DomesticVrpConsentId,
+            State);
 }

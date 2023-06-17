@@ -24,7 +24,7 @@ public class TransactionsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Transactions
+    ///     Read transactions
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="externalApiStatementId">External (bank) API ID of Statement</param>
@@ -44,8 +44,8 @@ public class TransactionsController : ControllerBase
     [Route("aisp/accounts/{externalApiAccountId}/transactions")]
     [Route("aisp/accounts/{externalApiAccountId}/statements/{externalApiStatementId}/transactions")]
     [HttpGet]
-    [ProducesResponseType(typeof(TransactionsResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<TransactionsResponse>> GetAsync(
         string? externalApiAccountId,
         string? externalApiStatementId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]

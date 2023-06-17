@@ -23,15 +23,15 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create AccountAccessConsent AuthContext
+    ///     Create account access consent auth context (time-sensitive auth session) and return auth URL
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(
-        StatusCodes.Status201Created,
-        Type = typeof(AccountAccessConsentAuthContextCreateResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] AccountAccessConsentAuthContext request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<
+        AccountAccessConsentAuthContextCreateResponse>> PostAsync([FromBody] AccountAccessConsentAuthContext request)
     {
         AccountAccessConsentAuthContextCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -46,14 +46,15 @@ public class AccountAccessConsentsAuthContextsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read AccountAccessConsent AuthContext
+    ///     Read account access consent auth context
     /// </summary>
     /// <param name="accountAccessConsentAuthContextId">ID of AccountAccessConsent AuthContext</param>
     /// <returns></returns>
     [HttpGet("{accountAccessConsentAuthContextId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AccountAccessConsentAuthContextReadResponse))]
-    public async Task<IActionResult> GetAsync(Guid accountAccessConsentAuthContextId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        AccountAccessConsentAuthContextReadResponse>> GetAsync(Guid accountAccessConsentAuthContextId)
     {
         // Operation
         AccountAccessConsentAuthContextReadResponse fluentResponse = await _requestBuilder

@@ -25,13 +25,15 @@ public class DomesticPaymentConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create DomesticPaymentConsent
+    ///     Create domestic payment consent
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticPaymentConsentCreateResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] DomesticPaymentConsentRequest request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<
+        DomesticPaymentConsentCreateResponse>> PostAsync([FromBody] DomesticPaymentConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -49,7 +51,7 @@ public class DomesticPaymentConsentsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read DomesticPaymentConsent
+    ///     Read domestic payment consent
     /// </summary>
     /// <param name="domesticPaymentConsentId">ID of DomesticPaymentConsent</param>
     /// <param name="modifiedBy"></param>
@@ -57,8 +59,9 @@ public class DomesticPaymentConsentsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{domesticPaymentConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticPaymentConsentCreateResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        DomesticPaymentConsentCreateResponse>> GetAsync(
         Guid domesticPaymentConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,

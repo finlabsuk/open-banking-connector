@@ -74,6 +74,16 @@ builder.Services
                     Version = "code-generated",
                     Description = "Auth Contexts API for Open Banking Connector Web App"
                 });
+            options.SwaggerDoc(
+                "test",
+                new OpenApiInfo
+                {
+                    Title = "Testing (non-production) API",
+                    Version = "code-generated",
+                    Description =
+                        "Testing API for Open Banking Connector Web App. Endpoints should not be used in production."
+                });
+
             // Add XML from this assembly
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -140,6 +150,7 @@ app.UseSwaggerUI(
         c.SwaggerEndpoint("/swagger/pisp/swagger.json", "Payment Initiation API");
         c.SwaggerEndpoint("/swagger/vrp/swagger.json", "Variable Recurring Payments API");
         c.SwaggerEndpoint("/swagger/auth-contexts/swagger.json", "Auth Contexts API");
+        c.SwaggerEndpoint("/swagger/test/swagger.json", "Testing (non-production) API");
     });
 
 // Add controller endpoints

@@ -9,6 +9,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAnd
 public interface IAccountAccessConsentAuthContextPublicQuery : IBaseQuery
 {
     public Guid AccountAccessConsentId { get; }
+
+    public string State { get; }
 }
 
 /// <summary>
@@ -22,21 +24,27 @@ public class AccountAccessConsentAuthContextReadResponse : LocalObjectBaseRespon
         DateTimeOffset created,
         string? createdBy,
         string? reference,
-        Guid accountAccessConsentId) : base(id, created, createdBy, reference)
+        IList<string>? warnings,
+        Guid accountAccessConsentId,
+        string state) : base(id, created, createdBy, reference)
     {
+        Warnings = warnings;
         AccountAccessConsentId = accountAccessConsentId;
+        State = state;
     }
 
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public IList<string>? Warnings { get; set; }
+    public IList<string>? Warnings { get; }
 
     public Guid AccountAccessConsentId { get; }
+
+    public string State { get; }
 }
 
 /// <summary>
-///     Response to Create requests.
+///     Response to create requests.
 /// </summary>
 public class AccountAccessConsentAuthContextCreateResponse : AccountAccessConsentAuthContextReadResponse
 {
@@ -45,15 +53,23 @@ public class AccountAccessConsentAuthContextCreateResponse : AccountAccessConsen
         DateTimeOffset created,
         string? createdBy,
         string? reference,
+        IList<string>? warnings,
         Guid accountAccessConsentId,
+        string state,
         string authUrl,
-        string state) : base(id, created, createdBy, reference, accountAccessConsentId)
+        string appSessionId) : base(id, created, createdBy, reference, warnings, accountAccessConsentId, state)
     {
         AuthUrl = authUrl;
-        State = state;
+        AppSessionId = appSessionId;
     }
 
+    /// <summary>
+    ///     Time-sensitive URL to enable end-user authentication via website or mobile app
+    /// </summary>
     public string AuthUrl { get; }
 
-    public string State { get; }
+    /// <summary>
+    ///     App session ID that can be checked when processing post-auth redirect
+    /// </summary>
+    public string AppSessionId { get; }
 }

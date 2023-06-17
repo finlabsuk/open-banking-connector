@@ -19,17 +19,36 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 public static class CreateAuthUrl
 {
-    private static string GenerateNonceOrState()
+    private static string GenerateRandomString(int numBytes)
     {
-        const int lengthInBytes = 24;
-        var buffer = new byte[lengthInBytes];
-        // Generate random bytes
-        using var rnd = RandomNumberGenerator.Create();
-        rnd.GetBytes(buffer);
-        return Base64UrlEncoder.Encode(buffer, 0, lengthInBytes);
+        var buffer = new byte[numBytes];
+        RandomNumberGenerator.Fill(buffer);
+        return Base64UrlEncoder.Encode(buffer, 0, numBytes);
     }
 
-    internal static (string authUrl, string state, string nonce) Create(
+    private static (string sessionId, string nonce) GenerateSessionIdAndNonce()
+    {
+        const int lengthInBytes = 32;
+
+        // Generate session ID
+        var sessionIdBytes = new byte[lengthInBytes];
+        RandomNumberGenerator.Fill(sessionIdBytes);
+        string sessionId = Base64UrlEncoder.Encode(sessionIdBytes, 0, lengthInBytes);
+
+        // Generate nonce
+        using var sha256 = SHA256.Create();
+        byte[] nonceBytes = sha256.ComputeHash(sessionIdBytes);
+        if (nonceBytes.Length != lengthInBytes)
+        {
+            throw new InvalidOperationException();
+        }
+
+        string nonce = Base64UrlEncoder.Encode(nonceBytes, 0, lengthInBytes);
+
+        return (sessionId, nonce);
+    }
+
+    internal static (string authUrl, string state, string nonce, string appSessionId) Create(
         string externalApiConsentId,
         OBSealKey obSealKey,
         BankRegistration bankRegistration,
@@ -41,8 +60,10 @@ public static class CreateAuthUrl
         string scopeString,
         IInstrumentationClient instrumentationClient)
     {
-        string nonce = GenerateNonceOrState();
-        string state = GenerateNonceOrState();
+        const int lengthInBytes = 24;
+        string state = GenerateRandomString(lengthInBytes);
+        string nonce = GenerateRandomString(lengthInBytes);
+        string appSessionId = GenerateRandomString(32);
         string redirectUrl = bankRegistration.DefaultRedirectUri;
 
         OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
@@ -92,6 +113,6 @@ public static class CreateAuthUrl
             .AppendLine("#### Auth URL (Consent)")
             .Append(authUrl);
         instrumentationClient.Trace(authUrlTraceSb.ToString());
-        return (authUrl, state, nonce);
+        return (authUrl, state, nonce, appSessionId);
     }
 }

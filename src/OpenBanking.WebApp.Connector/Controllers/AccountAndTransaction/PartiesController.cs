@@ -24,7 +24,7 @@ public class PartiesController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Party
+    ///     Read party
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
@@ -34,8 +34,8 @@ public class PartiesController : ControllerBase
     [Route("aisp/party")]
     [Route("aisp/accounts/{externalApiAccountId}/party")]
     [HttpGet]
-    [ProducesResponseType(typeof(PartiesResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<PartiesResponse>> GetAsync(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
@@ -68,7 +68,7 @@ public class PartiesController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Parties
+    ///     Read parties
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
@@ -77,8 +77,8 @@ public class PartiesController : ControllerBase
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/accounts/{externalApiAccountId}/parties")]
     [HttpGet]
-    [ProducesResponseType(typeof(Parties2Response), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Get2Async(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<Parties2Response>> Get2Async(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,

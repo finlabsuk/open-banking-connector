@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.AccountAndTra
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "aisp")]
-[Tags("DirectDebits")]
+[Tags("Direct Debits")]
 public class DirectDebitsController : ControllerBase
 {
     private readonly LinkGenerator _linkGenerator;
@@ -23,7 +23,7 @@ public class DirectDebitsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Direct Debits.
+    ///     Read direct debits
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
@@ -33,8 +33,8 @@ public class DirectDebitsController : ControllerBase
     [Route("aisp/direct-debits")]
     [Route("aisp/accounts/{externalApiAccountId}/direct-debits")]
     [HttpGet]
-    [ProducesResponseType(typeof(DirectDebitsResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DirectDebitsResponse>> GetAsync(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")]
         Guid accountAccessConsentId,

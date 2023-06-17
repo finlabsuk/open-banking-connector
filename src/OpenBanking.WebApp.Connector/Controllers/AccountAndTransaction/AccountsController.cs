@@ -24,7 +24,7 @@ public class AccountsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read Account(s)
+    ///     Read accounts
     /// </summary>
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
@@ -34,8 +34,8 @@ public class AccountsController : ControllerBase
     [Route("aisp/accounts")]
     [Route("aisp/accounts/{externalApiAccountId}")]
     [HttpGet]
-    [ProducesResponseType(typeof(AccountsResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<AccountsResponse>> GetAsync(
         string? externalApiAccountId,
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,

@@ -13,6 +13,7 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfigura
 [ApiController]
 [ApiExplorerSettings(GroupName = "config")]
 [Route("config/bank-registrations")]
+[Tags("Bank Registrations")]
 public class BankRegistrationsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
@@ -23,13 +24,15 @@ public class BankRegistrationsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create BankRegistration
+    ///     Create bank registration
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(BankRegistrationResponse))]
-    public async Task<IActionResult> PostAsync([FromBody] BankRegistration request)
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<
+        BankRegistrationResponse>> PostAsync([FromBody] BankRegistration request)
     {
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
@@ -44,7 +47,7 @@ public class BankRegistrationsController : ControllerBase
     }
 
     /// <summary>
-    ///     Read BankRegistration
+    ///     Read bank registration
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
@@ -52,8 +55,9 @@ public class BankRegistrationsController : ControllerBase
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BankRegistrationResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<
+        BankRegistrationResponse>> GetAsync(
         Guid bankRegistrationId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
@@ -73,15 +77,15 @@ public class BankRegistrationsController : ControllerBase
     }
 
     /// <summary>
-    ///     Delete BankRegistration
+    ///     Delete bank registration
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ObjectDeleteResponse))]
-    public async Task<IActionResult> DeleteAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
         Guid bankRegistrationId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,

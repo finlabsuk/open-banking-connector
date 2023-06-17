@@ -23,14 +23,15 @@ public class DomesticVrpController : ControllerBase
     }
 
     /// <summary>
-    ///     Create DomesticVrp
+    ///     Create domestic VRP
     /// </summary>
     /// <param name="domesticVrpConsentId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DomesticVrpResponse))]
-    public async Task<IActionResult> PostAsync(
+    [Consumes("application/json")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<DomesticVrpResponse>> PostAsync(
         [FromHeader(Name = "x-obc-domestic-vrp-consent-id")] Guid domesticVrpConsentId,
         [FromBody]
         DomesticVrpRequest request)
@@ -47,7 +48,7 @@ public class DomesticVrpController : ControllerBase
     }
 
     /// <summary>
-    ///     Read DomesticVrp
+    ///     Read domestic VRP
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic VRP</param>
     /// <param name="domesticVrpConsentId"></param>
@@ -55,8 +56,8 @@ public class DomesticVrpController : ControllerBase
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
     [ActionName(nameof(GetAsync))]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DomesticVrpResponse))]
-    public async Task<IActionResult> GetAsync(
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DomesticVrpResponse>> GetAsync(
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
         Guid domesticVrpConsentId,
