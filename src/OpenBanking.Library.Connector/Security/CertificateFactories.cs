@@ -25,7 +25,9 @@ public static class CertificateFactories
             exportedCert =
                 initialCert.Export(
                     X509ContentType.Pkcs12); // workaround for issue: https://github.com/dotnet/runtime/issues/45680 
-        return new X509Certificate2(exportedCert);
+        string?
+            password = null; // workaround from https://support.microsoft.com/en-gb/topic/kb5025823-change-in-how-net-applications-import-x-509-certificates-bf81c936-af2b-446e-9f7a-016f4713b46b
+        return new X509Certificate2(exportedCert, password);
     }
 
     private static string CleanPem(string pem)
