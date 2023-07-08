@@ -7,21 +7,24 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadParty3Data. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadParty3Data))]
     public partial class OBReadParty3Data
     {
         /// <summary> Initializes a new instance of OBReadParty3Data. </summary>
-        internal OBReadParty3Data()
+        public OBReadParty3Data()
         {
             Party = new ChangeTrackingList<OBParty2>();
         }
 
         /// <summary> Initializes a new instance of OBReadParty3Data. </summary>
         /// <param name="party"></param>
-        internal OBReadParty3Data(IReadOnlyList<OBParty2> party)
+        [JsonConstructor]
+        public OBReadParty3Data(IReadOnlyList<OBParty2> party)
         {
             Party = party;
         }

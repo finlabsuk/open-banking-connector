@@ -6,10 +6,12 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Set of elements used to provide details on the currency exchange. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBCurrencyExchange5))]
     public partial class OBCurrencyExchange5
     {
         /// <summary> Initializes a new instance of OBCurrencyExchange5. </summary>
@@ -19,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// Usage: ExchangeRate expresses the ratio between UnitCurrency and QuotedCurrency (ExchangeRate = UnitCurrency/QuotedCurrency).
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="sourceCurrency"/> is null. </exception>
-        internal OBCurrencyExchange5(string sourceCurrency, float exchangeRate)
+        public OBCurrencyExchange5(string sourceCurrency, float exchangeRate)
         {
             if (sourceCurrency == null)
             {
@@ -45,7 +47,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// 2017-04-05T10:43:07+00:00
         /// </param>
         /// <param name="instructedAmount"> Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party. </param>
-        internal OBCurrencyExchange5(string sourceCurrency, string targetCurrency, string unitCurrency, float exchangeRate, string contractIdentification, DateTimeOffset? quotationDate, OBCurrencyExchange5InstructedAmount instructedAmount)
+        [JsonConstructor]
+        public OBCurrencyExchange5(string sourceCurrency, string targetCurrency, string unitCurrency, float exchangeRate, string contractIdentification, DateTimeOffset? quotationDate, OBCurrencyExchange5InstructedAmount instructedAmount)
         {
             SourceCurrency = sourceCurrency;
             TargetCurrency = targetCurrency;

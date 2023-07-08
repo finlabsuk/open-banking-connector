@@ -10,13 +10,13 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Set of elements used to provide details of a generic rate related to the statement resource. </summary>
-    internal partial class OBStatement2BasicStatementRateItem
+    public partial class OBStatement2BasicStatementRateItem
     {
         /// <summary> Initializes a new instance of OBStatement2BasicStatementRateItem. </summary>
         /// <param name="rate"> Rate associated with the statement rate type. </param>
         /// <param name="type"> Statement rate type, in a coded form. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="rate"/> or <paramref name="type"/> is null. </exception>
-        internal OBStatement2BasicStatementRateItem(string rate, string type)
+        public OBStatement2BasicStatementRateItem(string rate, string type)
         {
             if (rate == null)
             {

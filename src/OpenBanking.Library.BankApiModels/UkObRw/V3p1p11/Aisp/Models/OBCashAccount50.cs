@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -16,7 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="schemeName"> Name of the identification scheme, in a coded form as published in an external list. </param>
         /// <param name="identification"> Identification assigned by an institution to identify an account. This identification is known by the account owner. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="schemeName"/> or <paramref name="identification"/> is null. </exception>
-        internal OBCashAccount50(string schemeName, string identification)
+        public OBCashAccount50(string schemeName, string identification)
         {
             if (schemeName == null)
             {
@@ -42,7 +43,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// This is secondary identification of the account, as assigned by the account servicing institution. 
         /// This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
         /// </param>
-        internal OBCashAccount50(string schemeName, string identification, string name, string secondaryIdentification)
+        [JsonConstructor]
+        public OBCashAccount50(string schemeName, string identification, string name, string secondaryIdentification)
         {
             SchemeName = schemeName;
             Identification = identification;

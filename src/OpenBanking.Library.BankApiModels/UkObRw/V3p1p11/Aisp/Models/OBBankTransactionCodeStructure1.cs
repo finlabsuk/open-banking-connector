@@ -10,13 +10,14 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Set of elements used to fully identify the type of underlying transaction resulting in an entry. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBBankTransactionCodeStructure1))]
     public partial class OBBankTransactionCodeStructure1
     {
         /// <summary> Initializes a new instance of OBBankTransactionCodeStructure1. </summary>
         /// <param name="code"> Specifies the family within a domain. </param>
         /// <param name="subCode"> Specifies the sub-product family within a specific family. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="code"/> or <paramref name="subCode"/> is null. </exception>
-        internal OBBankTransactionCodeStructure1(string code, string subCode)
+        public OBBankTransactionCodeStructure1(string code, string subCode)
         {
             if (code == null)
             {

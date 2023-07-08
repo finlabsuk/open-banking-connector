@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -20,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="type"> Fee type, in a coded form. </param>
         /// <param name="amount"> Amount of money associated with the statement fee type. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2StatementFeeItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount6 amount)
+        public OBStatement2StatementFeeItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBActiveOrHistoricCurrencyAndAmount6 amount)
         {
             if (type == null)
             {
@@ -47,7 +48,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="rateType"> Description that may be available for the statement fee rate type. </param>
         /// <param name="frequency"> How frequently the fee is applied to the Account. </param>
         /// <param name="amount"> Amount of money associated with the statement fee type. </param>
-        internal OBStatement2StatementFeeItem(string description, OBCreditDebitCode0Enum creditDebitIndicator, string type, float? rate, string rateType, string frequency, OBActiveOrHistoricCurrencyAndAmount6 amount)
+        [JsonConstructor]
+        public OBStatement2StatementFeeItem(string description, OBCreditDebitCode0Enum creditDebitIndicator, string type, float? rate, string rateType, string frequency, OBActiveOrHistoricCurrencyAndAmount6 amount)
         {
             Description = description;
             CreditDebitIndicator = creditDebitIndicator;

@@ -7,21 +7,24 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadDataTransaction6. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadDataTransaction6))]
     public partial class OBReadDataTransaction6
     {
         /// <summary> Initializes a new instance of OBReadDataTransaction6. </summary>
-        internal OBReadDataTransaction6()
+        public OBReadDataTransaction6()
         {
             Transaction = new ChangeTrackingList<OBTransaction6>();
         }
 
         /// <summary> Initializes a new instance of OBReadDataTransaction6. </summary>
         /// <param name="transaction"></param>
-        internal OBReadDataTransaction6(IReadOnlyList<OBTransaction6> transaction)
+        [JsonConstructor]
+        public OBReadDataTransaction6(IReadOnlyList<OBTransaction6> transaction)
         {
             Transaction = transaction;
         }

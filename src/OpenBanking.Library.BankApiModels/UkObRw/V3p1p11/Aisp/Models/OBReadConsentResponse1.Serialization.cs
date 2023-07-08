@@ -51,7 +51,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
                     continue;
                 }
             }
-            return new OBReadConsentResponse1(data, risk, links.Value, meta.Value);
+            return new OBReadConsentResponse1(data, links.Value, meta.Value, risk);
         }
     }
 }

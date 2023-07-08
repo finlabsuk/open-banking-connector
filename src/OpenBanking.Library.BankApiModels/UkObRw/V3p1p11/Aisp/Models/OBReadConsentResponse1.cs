@@ -6,17 +6,23 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
-    /// <summary> The OBReadConsentResponse1. </summary>
+    /// <summary>
+    ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     v3.1.11. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadConsentResponse1))]
     public partial class OBReadConsentResponse1
     {
         /// <summary> Initializes a new instance of OBReadConsentResponse1. </summary>
         /// <param name="data"></param>
         /// <param name="risk"> Any object. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> or <paramref name="risk"/> is null. </exception>
-        internal OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk)
+        public OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk)
         {
             if (data == null)
             {
@@ -36,7 +42,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="risk"> Any object. </param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadConsentResponse1(OBReadConsentResponse1Data data, object risk, Links links, Meta meta)
+        [JsonConstructor]
+        public OBReadConsentResponse1(OBReadConsentResponse1Data data, Links links, Meta meta, object risk)
         {
             Data = data;
             Risk = risk;

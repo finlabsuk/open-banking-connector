@@ -6,16 +6,22 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
-    /// <summary> The OBReadTransaction6. </summary>
+    /// <summary>
+    ///     Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     v3.1.11. Open Banking Connector will automatically
+    ///     translate <i>to</i> this from an older format for banks supporting an earlier spec version.
+    /// </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadTransaction6))]
     public partial class OBReadTransaction6
     {
         /// <summary> Initializes a new instance of OBReadTransaction6. </summary>
         /// <param name="data"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null. </exception>
-        internal OBReadTransaction6(OBReadDataTransaction6 data)
+        public OBReadTransaction6(OBReadDataTransaction6 data)
         {
             if (data == null)
             {
@@ -29,7 +35,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadTransaction6(OBReadDataTransaction6 data, Links links, Meta meta)
+        [JsonConstructor]
+        public OBReadTransaction6(OBReadDataTransaction6 data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

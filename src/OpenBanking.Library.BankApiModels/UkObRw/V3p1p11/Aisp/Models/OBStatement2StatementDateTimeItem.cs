@@ -20,7 +20,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// </param>
         /// <param name="type"> Date time type, in a coded form. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> is null. </exception>
-        internal OBStatement2StatementDateTimeItem(DateTimeOffset dateTime, string type)
+        public OBStatement2StatementDateTimeItem(DateTimeOffset dateTime, string type)
         {
             if (type == null)
             {

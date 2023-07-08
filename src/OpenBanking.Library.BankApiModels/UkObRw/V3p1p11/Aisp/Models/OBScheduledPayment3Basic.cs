@@ -10,7 +10,7 @@ using System;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBScheduledPayment3Basic. </summary>
-    internal partial class OBScheduledPayment3Basic
+    public partial class OBScheduledPayment3Basic
     {
         /// <summary> Initializes a new instance of OBScheduledPayment3Basic. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -25,7 +25,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// Usage: This amount has to be transported unchanged through the transaction chain.
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="instructedAmount"/> is null. </exception>
-        internal OBScheduledPayment3Basic(string accountId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount)
+        public OBScheduledPayment3Basic(string accountId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount)
         {
             if (accountId == null)
             {

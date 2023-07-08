@@ -12,7 +12,7 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Provides further details on an entry in the report. </summary>
-    internal partial class OBTransaction6Detail
+    public partial class OBTransaction6Detail
     {
         /// <summary> Initializes a new instance of OBTransaction6Detail. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// </param>
         /// <param name="amount"> Amount of money in the cash transaction entry. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="amount"/> is null. </exception>
-        internal OBTransaction6Detail(string accountId, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, DateTimeOffset bookingDateTime, OBActiveOrHistoricCurrencyAndAmount9 amount)
+        public OBTransaction6Detail(string accountId, OBCreditDebitCode1Enum creditDebitIndicator, OBEntryStatus1CodeEnum status, DateTimeOffset bookingDateTime, OBActiveOrHistoricCurrencyAndAmount9 amount)
         {
             if (accountId == null)
             {

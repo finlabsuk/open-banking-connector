@@ -5,19 +5,23 @@
 
 #nullable disable
 
+using Newtonsoft.Json;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadParty2Data. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadParty2Data))]
     public partial class OBReadParty2Data
     {
         /// <summary> Initializes a new instance of OBReadParty2Data. </summary>
-        internal OBReadParty2Data()
+        public OBReadParty2Data()
         {
         }
 
         /// <summary> Initializes a new instance of OBReadParty2Data. </summary>
         /// <param name="party"></param>
-        internal OBReadParty2Data(OBParty2 party)
+        [JsonConstructor]
+        public OBReadParty2Data(OBParty2 party)
         {
             Party = party;
         }

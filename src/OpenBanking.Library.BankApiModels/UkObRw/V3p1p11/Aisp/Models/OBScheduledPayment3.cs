@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -25,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// Usage: This amount has to be transported unchanged through the transaction chain.
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> or <paramref name="instructedAmount"/> is null. </exception>
-        internal OBScheduledPayment3(string accountId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount)
+        public OBScheduledPayment3(string accountId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount)
         {
             if (accountId == null)
             {
@@ -66,7 +67,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// This is the servicer of the beneficiary account.
         /// </param>
         /// <param name="creditorAccount"> Provides the details to identify the beneficiary account. </param>
-        internal OBScheduledPayment3(string accountId, string scheduledPaymentId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, string reference, string debtorReference, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount)
+        [JsonConstructor]
+        public OBScheduledPayment3(string accountId, string scheduledPaymentId, DateTimeOffset scheduledPaymentDateTime, OBExternalScheduleType1CodeEnum scheduledType, string reference, string debtorReference, OBActiveOrHistoricCurrencyAndAmount1 instructedAmount, OBBranchAndFinancialInstitutionIdentification51 creditorAgent, OBCashAccount51 creditorAccount)
         {
             AccountId = accountId;
             ScheduledPaymentId = scheduledPaymentId;

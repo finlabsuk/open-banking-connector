@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -20,7 +21,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="type"> Amount type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="type"/> or <paramref name="amount"/> is null. </exception>
-        internal OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBStatement2StatementAmountItemAmount amount)
+        public OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBStatement2StatementAmountItemAmount amount)
         {
             if (type == null)
             {
@@ -44,7 +45,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="type"> Amount type, in a coded form. </param>
         /// <param name="amount"> Amount of money of the cash balance. </param>
         /// <param name="localAmount"> Optional component providing the equivalent of Amount in local currency. </param>
-        internal OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBStatement2StatementAmountItemAmount amount, OBStatement2StatementAmountItemLocalAmount localAmount)
+        [JsonConstructor]
+        public OBStatement2StatementAmountItem(OBCreditDebitCode0Enum creditDebitIndicator, string type, OBStatement2StatementAmountItemAmount amount, OBStatement2StatementAmountItemLocalAmount localAmount)
         {
             CreditDebitIndicator = creditDebitIndicator;
             Type = type;

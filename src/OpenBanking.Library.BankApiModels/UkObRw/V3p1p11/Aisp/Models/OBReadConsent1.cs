@@ -9,7 +9,12 @@ using System;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
-    /// <summary> The OBReadConsent1. </summary>
+    /// <summary>
+    ///     Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec
+    ///     v3.1.11. Open Banking Connector will automatically
+    ///     translate <i>from</i> this to an older format for banks supporting an earlier spec version.
+    /// </summary>
+    [TargetApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadConsent1))]
     public partial class OBReadConsent1
     {
         /// <summary> Initializes a new instance of OBReadConsent1. </summary>

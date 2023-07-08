@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -33,7 +34,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// 2017-04-05T10:43:07+00:00
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> is null. </exception>
-        internal OBStatement2(string accountId, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime)
+        public OBStatement2(string accountId, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime)
         {
             if (accountId == null)
             {
@@ -84,7 +85,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="statementRate"></param>
         /// <param name="statementValue"></param>
         /// <param name="totalValue"> Combined sum of all Amounts in the accounts base currency. </param>
-        internal OBStatement2(string accountId, string statementId, string statementReference, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime, IReadOnlyList<string> statementDescription, IReadOnlyList<OBStatement2StatementBenefitItem> statementBenefit, IReadOnlyList<OBStatement2StatementFeeItem> statementFee, IReadOnlyList<OBStatement2StatementInterestItem> statementInterest, IReadOnlyList<OBStatement2StatementAmountItem> statementAmount, IReadOnlyList<OBStatement2StatementDateTimeItem> statementDateTime, IReadOnlyList<OBStatement2StatementRateItem> statementRate, IReadOnlyList<OBStatement2StatementValueItem> statementValue, OBStatement2TotalValue totalValue)
+        [JsonConstructor]
+        public OBStatement2(string accountId, string statementId, string statementReference, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime, IReadOnlyList<string> statementDescription, IReadOnlyList<OBStatement2StatementBenefitItem> statementBenefit, IReadOnlyList<OBStatement2StatementFeeItem> statementFee, IReadOnlyList<OBStatement2StatementInterestItem> statementInterest, IReadOnlyList<OBStatement2StatementAmountItem> statementAmount, IReadOnlyList<OBStatement2StatementDateTimeItem> statementDateTime, IReadOnlyList<OBStatement2StatementRateItem> statementRate, IReadOnlyList<OBStatement2StatementValueItem> statementValue, OBStatement2TotalValue totalValue)
         {
             AccountId = accountId;
             StatementId = statementId;

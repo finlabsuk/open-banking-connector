@@ -7,21 +7,24 @@
 
 using System.Collections.Generic;
 using Azure.Core;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadAccount6Data. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadAccount6Data))]
     public partial class OBReadAccount6Data
     {
         /// <summary> Initializes a new instance of OBReadAccount6Data. </summary>
-        internal OBReadAccount6Data()
+        public OBReadAccount6Data()
         {
             Account = new ChangeTrackingList<OBAccount6>();
         }
 
         /// <summary> Initializes a new instance of OBReadAccount6Data. </summary>
         /// <param name="account"></param>
-        internal OBReadAccount6Data(IReadOnlyList<OBAccount6> account)
+        [JsonConstructor]
+        public OBReadAccount6Data(IReadOnlyList<OBAccount6> account)
         {
             Account = account;
         }

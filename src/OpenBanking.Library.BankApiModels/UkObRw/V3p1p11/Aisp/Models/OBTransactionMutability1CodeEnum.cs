@@ -5,14 +5,21 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Specifies the Mutability of the Transaction record. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBTransactionMutability1CodeEnum
     {
         /// <summary> Mutable. </summary>
+        [EnumMember(Value = "Mutable")]
         Mutable,
         /// <summary> Immutable. </summary>
+        [EnumMember(Value = "Immutable")]
         Immutable
     }
 }

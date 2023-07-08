@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -15,7 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <summary> Initializes a new instance of OBReadOffer1. </summary>
         /// <param name="data"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="data"/> is null. </exception>
-        internal OBReadOffer1(OBReadOffer1Data data)
+        public OBReadOffer1(OBReadOffer1Data data)
         {
             if (data == null)
             {
@@ -29,7 +30,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="data"></param>
         /// <param name="links"> Links relevant to the payload. </param>
         /// <param name="meta"> Meta Data relevant to the payload. </param>
-        internal OBReadOffer1(OBReadOffer1Data data, Links links, Meta meta)
+        [JsonConstructor]
+        public OBReadOffer1(OBReadOffer1Data data, Links links, Meta meta)
         {
             Data = data;
             Links = links;

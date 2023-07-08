@@ -5,14 +5,21 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Type of interest rate, Fixed or Variable. </summary>
-    internal enum OBInterestFixedVariableType1CodeEnum
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum OBInterestFixedVariableType1CodeEnum
     {
         /// <summary> INFI. </summary>
+        [EnumMember(Value = "Infi")]
         Infi,
         /// <summary> INVA. </summary>
+        [EnumMember(Value = "Inva")]
         Inva
     }
 }

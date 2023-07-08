@@ -6,6 +6,8 @@
 #nullable disable
 
 using System;
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -17,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <param name="mandateIdentification"> Direct Debit reference. For AUDDIS service users provide Core Reference. For non AUDDIS service users provide Core reference if possible or last used reference. </param>
         /// <param name="name"> Name of Service User. </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/>, <paramref name="mandateIdentification"/> or <paramref name="name"/> is null. </exception>
-        internal OBReadDirectDebit2DataDirectDebitItem(string accountId, string mandateIdentification, string name)
+        public OBReadDirectDebit2DataDirectDebitItem(string accountId, string mandateIdentification, string name)
         {
             if (accountId == null)
             {
@@ -50,7 +52,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// </param>
         /// <param name="frequency"> Regularity with which direct debit instructions are to be created and processed. </param>
         /// <param name="previousPaymentAmount"> The amount of the most recent direct debit collection. </param>
-        internal OBReadDirectDebit2DataDirectDebitItem(string accountId, string directDebitId, string mandateIdentification, OBExternalDirectDebitStatus1CodeEnum? directDebitStatusCode, string name, DateTimeOffset? previousPaymentDateTime, string frequency, OBActiveOrHistoricCurrencyAndAmount0 previousPaymentAmount)
+        [JsonConstructor]
+        public OBReadDirectDebit2DataDirectDebitItem(string accountId, string directDebitId, string mandateIdentification, OBExternalDirectDebitStatus1CodeEnum? directDebitStatusCode, string name, DateTimeOffset? previousPaymentDateTime, string frequency, OBActiveOrHistoricCurrencyAndAmount0 previousPaymentAmount)
         {
             AccountId = accountId;
             DirectDebitId = directDebitId;
@@ -77,6 +80,9 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// All date-time fields in responses must include the timezone. An example is below:
         /// 2017-04-05T10:43:07+00:00
         /// </summary>
+        [JsonConverter(
+            typeof(DateTimeOffsetNullableConverter),
+            JsonConverterLabel.DirectDebitPreviousPaymentDateTime)]
         public DateTimeOffset? PreviousPaymentDateTime { get; }
         /// <summary> Regularity with which direct debit instructions are to be created and processed. </summary>
         public string Frequency { get; }

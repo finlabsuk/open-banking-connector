@@ -5,14 +5,21 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Specifies the status of the direct debit in code form. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBExternalDirectDebitStatus1CodeEnum
     {
         /// <summary> Active. </summary>
+        [EnumMember(Value = "Active")]
         Active,
         /// <summary> Inactive. </summary>
+        [EnumMember(Value = "Inactive")]
         Inactive
     }
 }

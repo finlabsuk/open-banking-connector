@@ -5,14 +5,21 @@
 
 #nullable disable
 
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The amount in the local market currency for which the asset is held. Default is Local Currency (LCUR) if not specified. </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum OBStatement2StatementAmountLocalAmountSubTypeEnum
     {
         /// <summary> BaseCurrency. </summary>
+        [EnumMember(Value = "BaseCurrency")]
         BaseCurrency,
         /// <summary> LocalCurrency. </summary>
+        [EnumMember(Value = "LocalCurrency")]
         LocalCurrency
     }
 }

@@ -12,7 +12,7 @@ using Azure.Core;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> Provides further details on a statement resource. </summary>
-    internal partial class OBStatement2Basic
+    public partial class OBStatement2Basic
     {
         /// <summary> Initializes a new instance of OBStatement2Basic. </summary>
         /// <param name="accountId"> A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner. </param>
@@ -33,7 +33,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// 2017-04-05T10:43:07+00:00
         /// </param>
         /// <exception cref="ArgumentNullException"> <paramref name="accountId"/> is null. </exception>
-        internal OBStatement2Basic(string accountId, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime)
+        public OBStatement2Basic(string accountId, OBExternalStatementType1CodeEnum type, DateTimeOffset startDateTime, DateTimeOffset endDateTime, DateTimeOffset creationDateTime)
         {
             if (accountId == null)
             {

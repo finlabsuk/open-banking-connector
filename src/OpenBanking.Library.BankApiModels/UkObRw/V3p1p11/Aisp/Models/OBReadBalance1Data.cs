@@ -8,16 +8,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadBalance1Data. </summary>
+    [SourceApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadBalance1Data))]
     public partial class OBReadBalance1Data
     {
         /// <summary> Initializes a new instance of OBReadBalance1Data. </summary>
         /// <param name="balance"></param>
         /// <exception cref="ArgumentNullException"> <paramref name="balance"/> is null. </exception>
-        internal OBReadBalance1Data(IEnumerable<OBReadBalance1DataBalanceItem> balance)
+        public OBReadBalance1Data(IEnumerable<OBReadBalance1DataBalanceItem> balance)
         {
             if (balance == null)
             {
@@ -30,7 +32,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// <summary> Initializes a new instance of OBReadBalance1Data. </summary>
         /// <param name="balance"></param>
         /// <param name="totalValue"> Combined sum of all Amounts in the accounts base currency. </param>
-        internal OBReadBalance1Data(IReadOnlyList<OBReadBalance1DataBalanceItem> balance, OBReadBalance1DataTotalValue totalValue)
+        [JsonConstructor]
+        public OBReadBalance1Data(IReadOnlyList<OBReadBalance1DataBalanceItem> balance, OBReadBalance1DataTotalValue totalValue)
         {
             Balance = balance;
             TotalValue = totalValue;

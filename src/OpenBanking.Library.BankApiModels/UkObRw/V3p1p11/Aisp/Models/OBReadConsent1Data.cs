@@ -12,6 +12,7 @@ using System.Linq;
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
     /// <summary> The OBReadConsent1Data. </summary>
+    [TargetApiEquivalent(typeof(V3p1p7.Aisp.Models.OBReadConsent1Data))]
     public partial class OBReadConsent1Data
     {
         /// <summary> Initializes a new instance of OBReadConsent1Data. </summary>
