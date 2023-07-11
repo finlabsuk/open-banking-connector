@@ -23,7 +23,7 @@ To generate models on a Windows machine,
   ```
 - navigate to target current directory, e.g.
   ```powershell
-  cd src/OpenBanking.Library.BankApiModels/UkObRw/V3p1p10/Aisp
+  cd src/OpenBanking.Library.BankApiModels/UkObRw/V3p1p11/Aisp
   ```
 - generate model files:
   ```powershell
