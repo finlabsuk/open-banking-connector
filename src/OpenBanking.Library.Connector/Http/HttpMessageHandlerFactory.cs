@@ -84,12 +84,13 @@ internal class HttpMessageHandlerFactory
         }
     }
 
+    // NB: only used for testing
     private void ApplyCertificates(HttpRequestInfo value, HttpClientHandler clientHandler)
     {
         if (value.Certificates.Count > 0)
         {
             clientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            clientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11;
+            clientHandler.SslProtocols = SslProtocols.Tls12;
 
             foreach (X509Certificate certificate in value.Certificates)
             {

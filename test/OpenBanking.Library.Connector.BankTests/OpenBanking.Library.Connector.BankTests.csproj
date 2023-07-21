@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
@@ -16,10 +16,10 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="FluentAssertions" Version="6.11.0" />
         <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.19" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.9" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
-        <PackageReference Include="Microsoft.Playwright" Version="1.35.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
+        <PackageReference Include="Microsoft.Playwright" Version="1.36.0" />
         <PackageReference Include="NSubstitute" Version="5.0.0" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
             <PrivateAssets>all</PrivateAssets>

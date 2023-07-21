@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>FinnovationLabs.OpenBanking.Library.Connector.UnitTests</AssemblyName>
@@ -14,7 +14,7 @@
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.11.0" />
         <PackageReference Include="FsCheck.Xunit" Version="2.16.6" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
         <PackageReference Include="NSubstitute" Version="5.0.0" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
             <PrivateAssets>all</PrivateAssets>

@@ -68,7 +68,7 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
                 });
 
         // Add test logging
-        builder.Host.ConfigureLogging(p => p.AddXUnit(this));
+        builder.Logging.AddXUnit(this);
 
         // Build app
         WebApplication app = builder.Build();
