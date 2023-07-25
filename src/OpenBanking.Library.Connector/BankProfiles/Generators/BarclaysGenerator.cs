@@ -26,7 +26,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             bank switch
             {
                 BarclaysBank
-                    .Sandbox => "https://token.sandbox.barclays.com", // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#barclays-identity-provider-(idp)-authentication-types
+                        .Sandbox =>
+                    "https://token.sandbox.barclays.com", // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#barclays-identity-provider-(idp)-authentication-types
                 BarclaysBank.Personal =>
                     "https://oauth.tiaa.barclays.com/BarclaysPersonal", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
                 BarclaysBank.Wealth =>
@@ -150,7 +151,11 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     {
                         DoNotValidateIdToken = true
                     }
-                    : null
+                    : null,
+                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                {
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                }
             }
         };
     }

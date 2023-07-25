@@ -131,12 +131,17 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
+                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
                         ScopeClaimResponseJsonConverter =
                             DelimitedStringConverterOptions.JsonIsStringArrayNotString
                     }
                 }
                 : new CustomBehaviourClass
                 {
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                    {
+                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
+                    },
                     AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
                     {
                         AudClaim = bank switch

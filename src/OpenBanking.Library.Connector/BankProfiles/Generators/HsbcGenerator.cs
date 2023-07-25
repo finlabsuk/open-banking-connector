@@ -73,6 +73,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
                     ClientIdIssuedAtClaimResponseJsonConverter =
                         DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
                     AudClaim = issuerUrl,

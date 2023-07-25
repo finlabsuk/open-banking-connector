@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Formats.Asn1;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -70,13 +71,117 @@ public class ProcessedTransportCertificateProfile
 
         CertificateDnWithStringDottedDecimalAttributeValues =
             transportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues;
+
+        SubjectDnWithDottedDecimalOrgIdAttribute = GetSubjectDn(transportCert, true);
+
+        SubjectDn = GetSubjectDn(transportCert, false);
+
+        // if (CertificateDnWithHexDottedDecimalAttributeValues != SubjectDnWithDottedDecimalOrgIdAttribute)
+        // {
+        //     throw new InvalidOperationException();
+        // }
+        //
+        // if (CertificateDnWithStringDottedDecimalAttributeValues != SubjectDn)
+        // {
+        //     throw new InvalidOperationException();
+        // }
     }
 
     public IApiClient ApiClient { get; }
 
     public TransportCertificateType CertificateType { get; }
 
-    public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; }
+    public string CertificateDnWithHexDottedDecimalAttributeValues { get; }
 
-    public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; }
+    public string CertificateDnWithStringDottedDecimalAttributeValues { get; }
+
+    public string SubjectDnWithDottedDecimalOrgIdAttribute { get; }
+
+    public string SubjectDn { get; }
+
+    private string GetSubjectDn(X509Certificate2 transportCert, bool useDottedDecimalOrgIdAttribute)
+    {
+        // string? commonName = null;
+        // string? orgId = null;
+        // string? orgName = null;
+        // string? countryOrRegion = null;
+        // foreach (X500RelativeDistinguishedName relativeDn in
+        //          transportCert
+        //              .SubjectName
+        //              .EnumerateRelativeDistinguishedNames())
+        // {
+        //     if (relativeDn.HasMultipleElements)
+        //     {
+        //         continue;
+        //     }
+        //
+        //     Oid singleElementType = relativeDn.GetSingleElementType();
+        //     switch (singleElementType)
+        //     {
+        //         case { FriendlyName: "CN" }:
+        //             commonName = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
+        //             break;
+        //         case { Value: "2.5.4.97" }:
+        //             orgId = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
+        //             break;
+        //         case { FriendlyName: "O" }:
+        //             orgName = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
+        //             break;
+        //         case { FriendlyName: "C" }:
+        //             countryOrRegion = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
+        //             break;
+        //     }
+        // }
+        //
+        // var builder = new X500DistinguishedNameBuilder();
+        // builder.AddCommonName(commonName ?? throw new InvalidOperationException());
+        // builder.Add(new Oid("2.5.4.97"), orgId ?? throw new InvalidOperationException());
+        // builder.AddOrganizationName(orgName ?? throw new InvalidOperationException());
+        // builder.AddCountryOrRegion(countryOrRegion ?? throw new InvalidOperationException());
+        // string subjectDn = builder.Build().Name;
+
+        // Get subject DN
+        X500DistinguishedName subjectDnObject = transportCert.SubjectName;
+
+        // Get subject DN string removing unwanted space in delimiter
+        string subjectDn = subjectDnObject.Name.Replace(", ", ",");
+
+        // Update organizationIdentifier attribute type
+        if (useDottedDecimalOrgIdAttribute)
+        {
+            subjectDn = subjectDn.Replace("OID.2.5.4.97", "2.5.4.97"); // fix currently necessary on Windows
+            subjectDn = subjectDn.Replace("organizationIdentifier", "2.5.4.97");
+        }
+        else
+        {
+            subjectDn = subjectDn.Replace(
+                "OID.2.5.4.97",
+                "organizationIdentifier"); // fix currently necessary on Windows
+        }
+
+        // Update organizationIdentifier attribute value if required
+        if (useDottedDecimalOrgIdAttribute)
+        {
+            // Get OID 2.5.4.97 value
+            X500RelativeDistinguishedName orgIdObject =
+                subjectDnObject
+                    .EnumerateRelativeDistinguishedNames()
+                    .Single(
+                        x =>
+                            x.HasMultipleElements is false &&
+                            x.GetSingleElementType() is { Value: "2.5.4.97" });
+            string orgId = orgIdObject.GetSingleElementValue() ?? throw new InvalidOperationException();
+
+            // BER-encode value
+            var writer = new AsnWriter(AsnEncodingRules.BER);
+            writer.WriteCharacterString(UniversalTagNumber.PrintableString, orgId);
+            byte[] output = writer.Encode();
+            string newOrgId = "#" + Convert.ToHexString(output);
+
+            // Update attribute value
+            subjectDn = subjectDn.Replace(orgId, newOrgId);
+        }
+
+        return subjectDn;
+    }
 }

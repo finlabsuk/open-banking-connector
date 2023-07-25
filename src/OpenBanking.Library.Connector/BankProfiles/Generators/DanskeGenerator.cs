@@ -40,6 +40,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
             {
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour

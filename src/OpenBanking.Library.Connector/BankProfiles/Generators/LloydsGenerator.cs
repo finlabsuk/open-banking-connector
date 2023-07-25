@@ -95,7 +95,6 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     }
                     : new BankRegistrationPostCustomBehaviour
                     {
-                        UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues = true,
                         GrantTypesClaim =
                             new List<OBRegistrationProperties1grantTypesItemEnum>
                             {

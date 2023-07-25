@@ -49,14 +49,12 @@ public class BankRegistrationPostCustomBehaviour
     public bool? UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; }
 
     /// <summary>
-    ///     Use
-    ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
-    ///     rather than
-    ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
-    ///     as transport certificate DN for registration. This setting is irrelevant where the
+    ///     For registration, use transport certificate subject DN where OID 2.5.4.97 (organizationIdentifier) uses a
+    ///     dotted-decimal AttributeType. This setting is irrelevant where the
     ///     software statement profile specifies a <see cref="TransportCertificateType.OBLegacy" /> transport certificate.
-    ///     https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 specifies hex-encoding for a decimal-dotted
-    ///     AttributeValue and thus this setting defaults to false.
+    ///     Note that https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 specifies hex encoding for an AttributeValue
+    ///     corresponding to a dotted-decimal
+    ///     AttributeType.
     /// </summary>
-    public bool? UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues { get; set; }
+    public bool? UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute { get; set; }
 }

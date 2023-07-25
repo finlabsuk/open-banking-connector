@@ -34,6 +34,10 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         {
             CustomBehaviour = new CustomBehaviourClass
             {
+                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                {
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                },
                 ClientCredentialsGrantPost = new GrantPostCustomBehaviour
                 {
                     DoNotValidateScopeResponse = true

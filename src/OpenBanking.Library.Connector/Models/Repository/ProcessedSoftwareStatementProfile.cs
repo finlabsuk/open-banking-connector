@@ -122,10 +122,10 @@ public class ProcessedSoftwareStatementProfile
             processedSigningCertificateProfile.AssociatedKeyId,
             processedSigningCertificateProfile.AssociatedKey);
         TransportCertificateType = processedTransportCertificateProfile.CertificateType;
-        TransportCertificateDnWithHexDottedDecimalAttributeValues =
-            processedTransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
-        TransportCertificateDnWithStringDottedDecimalAttributeValues = processedTransportCertificateProfile
-            .CertificateDnWithStringDottedDecimalAttributeValues;
+        TransportCertificateSubjectDn = processedTransportCertificateProfile
+            .SubjectDn;
+        TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = processedTransportCertificateProfile
+            .SubjectDnWithDottedDecimalOrgIdAttribute;
         Id = id;
         OverrideCase = overrideCase;
 
@@ -234,9 +234,9 @@ public class ProcessedSoftwareStatementProfile
 
     public TransportCertificateType TransportCertificateType { get; }
 
-    public string TransportCertificateDnWithHexDottedDecimalAttributeValues { get; }
+    public string TransportCertificateSubjectDn { get; }
 
-    public string TransportCertificateDnWithStringDottedDecimalAttributeValues { get; }
+    public string TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute { get; }
 
     public IApiClient ApiClient { get; }
 

@@ -43,10 +43,11 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             {
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
                     ClientIdIssuedAtClaimResponseJsonConverter =
                         DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
                 },
-                AuthCodeGrantPost = new GrantPostCustomBehaviour()
+                AuthCodeGrantPost = new GrantPostCustomBehaviour
                 {
                     AllowNullResponseRefreshToken = true // required for PISP case
                 }

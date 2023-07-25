@@ -88,10 +88,12 @@ internal static class RegistrationClaimsFactory
         }
         else
         {
-            tlsClientAuthSubjectDn = bankRegistrationPostCustomBehaviour
-                ?.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues ?? false
-                ? sProfile.TransportCertificateDnWithStringDottedDecimalAttributeValues
-                : sProfile.TransportCertificateDnWithHexDottedDecimalAttributeValues;
+            bool useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
+                bankRegistrationPostCustomBehaviour
+                    ?.UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute ?? false;
+            tlsClientAuthSubjectDn = useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
+                ? sProfile.TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
+                : sProfile.TransportCertificateSubjectDn;
         }
 
         var registrationClaims =
