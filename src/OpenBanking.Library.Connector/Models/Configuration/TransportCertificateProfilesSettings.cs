@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -51,31 +50,6 @@ public class TransportCertificateProfile
     public bool DisableTlsCertificateVerification { get; set; }
 
     /// <summary>
-    ///     Transport certificate DN to use for bank registration (DCR) with hex values for dotted-decimal attributes (as
-    ///     specified by
-    ///     https://datatracker.ietf.org/doc/html/rfc4514#section-2.4). Whether
-    ///     <see cref="CertificateDnWithHexDottedDecimalAttributeValues" /> or
-    ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
-    ///     determined by bank registration request property
-    ///     <see
-    ///         cref="BankRegistrationPostCustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
-    ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
-    /// </summary>
-    public string CertificateDnWithHexDottedDecimalAttributeValues { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Alternative transport certificate DN to use for bank registration (DCR) with string (not hex) values for
-    ///     dotted-decimal attributes
-    ///     (required by some banks). Whether <see cref="CertificateDnWithHexDottedDecimalAttributeValues" /> or
-    ///     <see cref="CertificateDnWithStringDottedDecimalAttributeValues" /> is used in bank registration is
-    ///     determined by bank registration request property
-    ///     <see
-    ///         cref="BankRegistrationPostCustomBehaviour.UseTransportCertificateDnWithStringNotHexDottedDecimalAttributeValues" />
-    ///     . This setting is ignored when using <see cref="TransportCertificateType.OBLegacy" /> certificates.
-    /// </summary>
-    public string CertificateDnWithStringDottedDecimalAttributeValues { get; set; } = string.Empty;
-
-    /// <summary>
     ///     Transport key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
@@ -99,20 +73,6 @@ public class TransportCertificateProfileWithOverrideProperties : TransportCertif
         new();
 
     /// <summary>
-    ///     Bank-specific overrides for
-    ///     <see cref="TransportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues" />
-    /// </summary>
-    public Dictionary<string, string> CertificateDnWithHexDottedDecimalAttributeValuesOverrides { get; set; } =
-        new();
-
-    /// <summary>
-    ///     Bank-specific overrides for
-    ///     <see cref="TransportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues" />
-    /// </summary>
-    public Dictionary<string, string> CertificateDnWithStringDottedDecimalAttributeValuesOverrides { get; set; } =
-        new();
-
-    /// <summary>
     ///     Returns profile with override substitution based on override case and override properties removed
     /// </summary>
     /// <param name="overrideCase"></param>
@@ -123,9 +83,6 @@ public class TransportCertificateProfileWithOverrideProperties : TransportCertif
         {
             CertificateType = CertificateType,
             DisableTlsCertificateVerification = DisableTlsCertificateVerification,
-            CertificateDnWithHexDottedDecimalAttributeValues = CertificateDnWithHexDottedDecimalAttributeValues,
-            CertificateDnWithStringDottedDecimalAttributeValues =
-                CertificateDnWithStringDottedDecimalAttributeValues,
             AssociatedKey = AssociatedKey,
             Certificate = Certificate
         };
@@ -142,21 +99,6 @@ public class TransportCertificateProfileWithOverrideProperties : TransportCertif
             newObject.DisableTlsCertificateVerification = disableTlsCertificateVerification;
         }
 
-        if (CertificateDnWithHexDottedDecimalAttributeValuesOverrides.TryGetValue(
-                overrideCase,
-                out string? certificateDnWithHexDottedDecimalAttributeValues))
-        {
-            newObject.CertificateDnWithHexDottedDecimalAttributeValues =
-                certificateDnWithHexDottedDecimalAttributeValues;
-        }
-
-        if (CertificateDnWithStringDottedDecimalAttributeValuesOverrides.TryGetValue(
-                overrideCase,
-                out string? certificateDnWithStringDottedDecimalAttributeValues))
-        {
-            newObject.CertificateDnWithStringDottedDecimalAttributeValues =
-                certificateDnWithStringDottedDecimalAttributeValues;
-        }
 
         return newObject;
     }

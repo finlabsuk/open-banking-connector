@@ -66,34 +66,14 @@ public class ProcessedTransportCertificateProfile
 
         CertificateType = transportCertificateProfile.CertificateType;
 
-        CertificateDnWithHexDottedDecimalAttributeValues =
-            transportCertificateProfile.CertificateDnWithHexDottedDecimalAttributeValues;
-
-        CertificateDnWithStringDottedDecimalAttributeValues =
-            transportCertificateProfile.CertificateDnWithStringDottedDecimalAttributeValues;
-
         SubjectDnWithDottedDecimalOrgIdAttribute = GetSubjectDn(transportCert, true);
 
         SubjectDn = GetSubjectDn(transportCert, false);
-
-        // if (CertificateDnWithHexDottedDecimalAttributeValues != SubjectDnWithDottedDecimalOrgIdAttribute)
-        // {
-        //     throw new InvalidOperationException();
-        // }
-        //
-        // if (CertificateDnWithStringDottedDecimalAttributeValues != SubjectDn)
-        // {
-        //     throw new InvalidOperationException();
-        // }
     }
 
     public IApiClient ApiClient { get; }
 
     public TransportCertificateType CertificateType { get; }
-
-    public string CertificateDnWithHexDottedDecimalAttributeValues { get; }
-
-    public string CertificateDnWithStringDottedDecimalAttributeValues { get; }
 
     public string SubjectDnWithDottedDecimalOrgIdAttribute { get; }
 
@@ -101,45 +81,6 @@ public class ProcessedTransportCertificateProfile
 
     private string GetSubjectDn(X509Certificate2 transportCert, bool useDottedDecimalOrgIdAttribute)
     {
-        // string? commonName = null;
-        // string? orgId = null;
-        // string? orgName = null;
-        // string? countryOrRegion = null;
-        // foreach (X500RelativeDistinguishedName relativeDn in
-        //          transportCert
-        //              .SubjectName
-        //              .EnumerateRelativeDistinguishedNames())
-        // {
-        //     if (relativeDn.HasMultipleElements)
-        //     {
-        //         continue;
-        //     }
-        //
-        //     Oid singleElementType = relativeDn.GetSingleElementType();
-        //     switch (singleElementType)
-        //     {
-        //         case { FriendlyName: "CN" }:
-        //             commonName = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
-        //             break;
-        //         case { Value: "2.5.4.97" }:
-        //             orgId = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
-        //             break;
-        //         case { FriendlyName: "O" }:
-        //             orgName = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
-        //             break;
-        //         case { FriendlyName: "C" }:
-        //             countryOrRegion = relativeDn.GetSingleElementValue() ?? throw new InvalidOperationException();
-        //             break;
-        //     }
-        // }
-        //
-        // var builder = new X500DistinguishedNameBuilder();
-        // builder.AddCommonName(commonName ?? throw new InvalidOperationException());
-        // builder.Add(new Oid("2.5.4.97"), orgId ?? throw new InvalidOperationException());
-        // builder.AddOrganizationName(orgName ?? throw new InvalidOperationException());
-        // builder.AddCountryOrRegion(countryOrRegion ?? throw new InvalidOperationException());
-        // string subjectDn = builder.Build().Name;
-
         // Get subject DN
         X500DistinguishedName subjectDnObject = transportCert.SubjectName;
 

@@ -33,7 +33,7 @@ Encryption keys are supplied using:
 
 - [encryption keys](../configuration/encryption-keys-settings.md)
 
-Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the [UK Open Banking Directory](https://directory.openbanking.org.uk/s/login/) and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given [here](../configuration/encryption-keys-settings.md#encryption-keys-settings)).
+Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to create an SSA, a signed OBWAC transport cert and key, and a signed OBSeal signing cert and key using the [UK Open Banking Directory](https://directory.openbanking.org.uk/s/login/) and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given [here](../configuration/encryption-keys-settings.md#encryption-keys-settings)).
 
 ```bash
 # Software statement profile with ID "All"
@@ -43,13 +43,12 @@ OpenBankingConnector__SoftwareStatementProfiles__All__SigningCertificateProfileI
 OpenBankingConnector__SoftwareStatementProfiles__All__DefaultFragmentRedirectUrl=https://example.com/auth/fragment-redirect # substitute your default redirect URL (must match one in your included in your SSA)
 
 # Transport certificate profile with ID "All"
-OpenBankingConnector__TransportCertificateProfiles__All__CertificateDnWithHexDottedDecimalAttributeValues="CN=00158,2.5.4.97=#1,O=MyCompany,C=GB" # substitute your transport certificate DN
 OpenBankingConnector__TransportCertificateProfiles__All__Certificate="-----BEGIN CERTIFICATE-----\nline1\nline2\n-----END CERTIFICATE-----\n" # substitute your OBWAC transport certificate
-OpenBankingConnector__TransportCertificateProfiles__All__AssociatedKey="-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n" # substitute your transport key
+OpenBankingConnector__TransportCertificateProfiles__All__AssociatedKey="-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n" # substitute the key associated with your OBWAC transport certificate
 
 # Signing certificate profile with ID "All"
-OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId=xyz # substitute your signing key ID (kid) to allow certificate lookup (obtain from UK Open Banking Directory)
-OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey="-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n" # substitute your signing key (that associated with OBSeal signing certificate)
+OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId=xyz # substitute the key ID (kid) associated with your OBSeal signing certificate to allow certificate lookup (obtain the key ID from UK Open Banking Directory)
+OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey="-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n" # substitute the key associated with your OBSeal signing certificate
 
 # Encryption key with ID "MyKey"
 OpenBankingConnector__Keys__CurrentEncryptionKeyId=MyKey
@@ -102,7 +101,6 @@ OpenBankingConnector__BankProfiles__Lloyds__BankOfScotlandPersonal__FinancialId=
 
 # Bank group: HSBC
 OpenBankingConnector__BankProfiles__Hsbc__Default__FinancialId=yy # substitute value
-OpenBankingConnector__BankProfiles__Hsbc__Default__AccountAndTransactionApi__ApiVersion=VersionZZ # substitute value
 
 # Bank group: Barclays
 OpenBankingConnector__BankProfiles__Barclays__Default__FinancialId=yy # substitute value

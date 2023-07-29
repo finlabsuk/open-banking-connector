@@ -93,9 +93,6 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
             // Get override cases (keys)
             var overrideCases =
                 new HashSet<string>(unresolvedProfile.DisableTlsCertificateVerificationOverrides.Keys);
-            overrideCases.UnionWith(unresolvedProfile.CertificateDnWithHexDottedDecimalAttributeValuesOverrides.Keys);
-            overrideCases.UnionWith(
-                unresolvedProfile.CertificateDnWithStringDottedDecimalAttributeValuesOverrides.Keys);
 
             // Get override variants
             ConcurrentDictionary<string, ProcessedTransportCertificateProfile> overrideVariants =

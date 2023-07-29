@@ -10,11 +10,9 @@ Here is an example of what such a file might look like after configuring a softw
 
 ```json
 {
-  "OpenBankingConnector:TransportCertificateProfiles:New2:CertificateDnWithStringDottedDecimalAttributeValues": "CN=abc,2.5.4.97=abc,O=abc,C=GB",
-  "OpenBankingConnector:TransportCertificateProfiles:New2:CertificateDnWithHexDottedDecimalAttributeValues": "CN=abc,2.5.4.97=#123,O=abc,C=GB",
-  "OpenBankingConnector:TransportCertificateProfiles:New2:Certificate": "-----BEGIN CERTIFICATE-----\nabc\n-----END CERTIFICATE-----\n",
-  "OpenBankingConnector:TransportCertificateProfiles:New2:AssociatedKey": "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n",
-  "OpenBankingConnector:SoftwareStatementProfiles:All:TransportCertificateProfileId": "New2",
+  "OpenBankingConnector:TransportCertificateProfiles:New1:Certificate": "-----BEGIN CERTIFICATE-----\nabc\n-----END CERTIFICATE-----\n",
+  "OpenBankingConnector:TransportCertificateProfiles:New1:AssociatedKey": "-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n",
+  "OpenBankingConnector:SoftwareStatementProfiles:All:TransportCertificateProfileId": "New1",
   "OpenBankingConnector:SoftwareStatementProfiles:All:SoftwareStatement": "a.b.c",
   "OpenBankingConnector:SoftwareStatementProfiles:All:SigningCertificateProfileId": "New2",
   "OpenBankingConnector:SoftwareStatementProfiles:All:DefaultFragmentRedirectUrl": "https://example.com/auth/fragment-redirect",
