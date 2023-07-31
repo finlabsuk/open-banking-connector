@@ -27,7 +27,6 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             "0015800001041RHAAY", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
             new AccountAndTransactionApi
             {
-                ApiVersion = AccountAndTransactionApiVersion.Version3p1p10,
                 BaseUrl =
                     "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
             },

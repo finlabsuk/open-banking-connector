@@ -130,7 +130,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                     AccountAndTransactionModelsPublic.OBReadDirectDebit2,
                     AccountAndTransactionModelsV3p1p7.OBReadDirectDebit2>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadDirectDebit2,
                     AccountAndTransactionModelsPublic.OBReadDirectDebit2>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),

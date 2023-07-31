@@ -109,7 +109,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
                     AccountAndTransactionModelsPublic.OBReadBalance1,
                     AccountAndTransactionModelsV3p1p7.OBReadBalance1>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadBalance1,
                     AccountAndTransactionModelsPublic.OBReadBalance1>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),

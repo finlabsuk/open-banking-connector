@@ -110,7 +110,7 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
                     AccountAndTransactionModelsPublic.OBReadParty2,
                     AccountAndTransactionModelsV3p1p7.OBReadParty2>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadParty2,
                     AccountAndTransactionModelsPublic.OBReadParty2>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),

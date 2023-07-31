@@ -109,7 +109,7 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
                     AccountAndTransactionModelsPublic.OBReadAccount6,
                     AccountAndTransactionModelsV3p1p7.OBReadAccount6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadAccount6,
                     AccountAndTransactionModelsPublic.OBReadAccount6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),

@@ -108,7 +108,7 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
                     AccountAndTransactionModelsPublic.OBReadStandingOrder6,
                     AccountAndTransactionModelsV3p1p7.OBReadStandingOrder6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),
-                AccountAndTransactionApiVersion.Version3p1p10 => new ApiGetRequests<
+                AccountAndTransactionApiVersion.VersionPublic => new ApiGetRequests<
                     AccountAndTransactionModelsPublic.OBReadStandingOrder6,
                     AccountAndTransactionModelsPublic.OBReadStandingOrder6>(
                     new ApiGetRequestProcessor(bankFinancialId, accessToken)),

@@ -181,9 +181,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     {
         return new AccountAndTransactionApi
         {
-            ApiVersion =
-                AccountAndTransactionApiVersion
-                    .Version3p1p10, // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/nwb/3.1.10
             BaseUrl =
                 bank switch
                 {

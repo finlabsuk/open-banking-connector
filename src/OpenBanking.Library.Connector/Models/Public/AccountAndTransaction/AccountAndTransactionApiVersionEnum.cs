@@ -23,5 +23,11 @@ public enum AccountAndTransactionApiVersion
     // Version3p1p9,
 
     [EnumMember(Value = "Version3p1p10")]
-    Version3p1p10
+    Version3p1p10,
+
+    [EnumMember(Value = "Version3p1p11")]
+    Version3p1p11,
+
+    [EnumMember(Value = "VersionPublic")]
+    VersionPublic = Version3p1p11
 }

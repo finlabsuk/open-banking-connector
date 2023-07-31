@@ -159,9 +159,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
     {
         return new AccountAndTransactionApi
         {
-            ApiVersion =
-                AccountAndTransactionApiVersion
-                    .Version3p1p10, // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
             BaseUrl = bank is BarclaysBank.Sandbox
                 ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details
                 : "https://telesto.api.barclays:443/open-banking/v3.1/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details

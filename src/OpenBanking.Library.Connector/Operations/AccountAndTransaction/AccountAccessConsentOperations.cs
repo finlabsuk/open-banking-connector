@@ -367,7 +367,7 @@ internal class
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient)),
-            AccountAndTransactionApiVersion.Version3p1p10 => new ApiRequests<
+            AccountAndTransactionApiVersion.VersionPublic => new ApiRequests<
                 AccountAndTransactionModelsPublic.OBReadConsent1,
                 AccountAndTransactionModelsPublic.OBReadConsentResponse1,
                 AccountAndTransactionModelsPublic.OBReadConsent1,

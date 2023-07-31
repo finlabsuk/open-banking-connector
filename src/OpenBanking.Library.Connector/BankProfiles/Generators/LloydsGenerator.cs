@@ -177,9 +177,6 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
     {
         return new AccountAndTransactionApi
         {
-            ApiVersion =
-                AccountAndTransactionApiVersion
-                    .Version3p1p10, // from https://developer.lloydsbanking.com/node/4045
             BaseUrl =
                 bank switch
                 {
