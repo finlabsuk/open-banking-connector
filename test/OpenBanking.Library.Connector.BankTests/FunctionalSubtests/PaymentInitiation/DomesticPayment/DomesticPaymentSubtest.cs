@@ -37,7 +37,7 @@ public class DomesticPaymentSubtest
         FilePathBuilder configFluentRequestLogging,
         FilePathBuilder pispFluentRequestLogging,
         ConsentAuth? consentAuth,
-        List<BankUser> bankUserList,
+        BankUser? bankUser,
         IApiClient apiClient)
     {
         bool subtestSkipped = subtestEnum switch
@@ -52,10 +52,6 @@ public class DomesticPaymentSubtest
         {
             return;
         }
-
-        // For now, we just use first bank user in list. Maybe later we can use different users for
-        // different sub-tests.
-        BankUser bankUser = bankUserList[0];
 
         IRequestBuilder requestBuilder = requestBuilderIn;
 
@@ -166,6 +162,11 @@ public class DomesticPaymentSubtest
                             modifiedBy,
                             false);
                 return consentResponse.Created < consentResponse.AuthContextModified;
+            }
+            
+            if (bankUser is null)
+            {
+                throw new ArgumentException("No user specified for consent auth.");
             }
 
             // Authorise consent in UI via Playwright

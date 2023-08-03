@@ -41,14 +41,10 @@ public class AccountAccessConsentSubtest
         FilePathBuilder aispFluentRequestLogging,
         ConsentAuth? consentAuth,
         string authUrlLeftPart,
-        List<BankUser> bankUserList,
+        BankUser? bankUser,
         AppTests.AccountAccessConsentOptions accountAccessConsentOptions,
         IApiClient apiClient)
     {
-        // For now, we just use first bank user in list. Maybe later we can use different users for
-        // different sub-tests.
-        BankUser bankUser = bankUserList[0];
-
         IRequestBuilder requestBuilder = requestBuilderIn;
 
         (AccountAccessConsentRequest accountAccessConsentRequest,
@@ -105,7 +101,6 @@ public class AccountAccessConsentSubtest
 
                 // Read account access consent
                 await ReadAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId2);
-
 
                 // Consent authorisation
                 if (consentAuth is not null)
@@ -168,6 +163,11 @@ public class AccountAccessConsentSubtest
                     }
                     else
                     {
+                        if (bankUser is null)
+                        {
+                            throw new ArgumentException("No user specified for consent auth.");
+                        }
+
                         // Perform automated auth
                         authUrl =
                             $"{authUrlLeftPart}/dev1/aisp/account-access-consents/{accountAccessConsentId2}/auth";

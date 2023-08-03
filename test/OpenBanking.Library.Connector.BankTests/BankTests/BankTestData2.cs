@@ -28,6 +28,10 @@ public class BankTestData2 : IXunitSerializable
 
     public RegistrationScopeEnum RegistrationScope { get; set; }
 
+    public string? ConsentAuthUserName { get; set; }
+    
+    public string? ConsentAuthPassword { get; set; }
+
     public void Deserialize(IXunitSerializationInfo info)
     {
         BankProfileEnum = info.GetValue<BankProfileEnum>(nameof(BankProfileEnum));
@@ -38,6 +42,8 @@ public class BankTestData2 : IXunitSerializable
         AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
         AccountAccessConsentAuthContextNonce = info.GetValue<string?>(nameof(AccountAccessConsentAuthContextNonce));
         RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
+        ConsentAuthUserName = info.GetValue<string?>(nameof(ConsentAuthUserName));
+        ConsentAuthPassword = info.GetValue<string?>(nameof(ConsentAuthPassword));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -49,6 +55,8 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
         info.AddValue(nameof(AccountAccessConsentAuthContextNonce), AccountAccessConsentAuthContextNonce);
         info.AddValue(nameof(RegistrationScope), RegistrationScope);
+        info.AddValue(nameof(ConsentAuthUserName), ConsentAuthUserName);
+        info.AddValue(nameof(ConsentAuthPassword), ConsentAuthPassword);
     }
 
     public override string ToString()

@@ -3,13 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
-using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.Extensions;
 
@@ -22,22 +18,6 @@ public static class ServiceCollectionExtensions
         // Add settings groups
         services
             .AddSettingsGroup<BankTestSettings>();
-
-        // Set up bank users
-        services.AddSingleton(
-            sp =>
-            {
-                BankTestSettings bankTestSettings =
-                    sp.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
-                string bankUsersFile = Path.Combine(
-                    bankTestSettings.GetDataDirectoryForCurrentOs(),
-                    "bankUsers.json");
-                var bankUsers = new BankUserStore(
-                    DataFile.ReadFile<BankUserDictionary>(
-                        bankUsersFile,
-                        new JsonSerializerSettings()).GetAwaiter().GetResult());
-                return bankUsers;
-            });
 
         return services;
     }

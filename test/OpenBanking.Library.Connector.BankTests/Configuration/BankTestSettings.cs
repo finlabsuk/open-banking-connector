@@ -85,6 +85,13 @@ public class ConsentAuthoriserOptions
     public EmailOptions Email { get; set; } = new();
 }
 
+public class ConsentAuthData
+{
+    public string UserName { get; set; } = string.Empty;
+
+    public string Password { get; set; } = string.Empty;
+}
+
 /// <summary>
 ///     Test case group specified by parameters and bank filtering rules
 /// </summary>
@@ -229,7 +236,14 @@ public class BankTestSettings : ISettings<BankTestSettings>
     /// </summary>
     public Dictionary<string, TestGroup> TestGroups { get; set; } = new();
 
-    public ConsentAuthoriserOptions ConsentAuth { get; set; } = new();
+    public ConsentAuthoriserOptions Auth { get; set; } = new();
+
+    /// <summary>
+    ///     Consent auth data to use in consent auth automation (used for sandboxes).
+    ///     Dictionary whose keys are bankProfileEnums and values are strings.
+    /// </summary>
+    public Dictionary<BankProfileEnum, ConsentAuthData>
+        AuthData { get; set; } = new();
 
     /// <summary>
     ///     Path to data folder used for logging, "API overrides", and bank user information.
@@ -253,20 +267,20 @@ public class BankTestSettings : ISettings<BankTestSettings>
         }
 
         // Check executable path in the case where this is not ignored
-        if (!ConsentAuth.PlaywrightLaunch.IgnoreExecutablePathAndArgs)
+        if (!Auth.PlaywrightLaunch.IgnoreExecutablePathAndArgs)
         {
             // Check executable path is not null
-            if (ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs() is null)
+            if (Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs() is null)
             {
                 throw new ArgumentException("Please specify an executable path in app settings.");
             }
 
             // Check executable path exists
-            if (!File.Exists(ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs()))
+            if (!File.Exists(Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs()))
             {
                 throw new DirectoryNotFoundException(
                     "Can't locate executable path specified in bank test setting ExecutablePath:" +
-                    $"{ConsentAuth.PlaywrightLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
+                    $"{Auth.PlaywrightLaunch.GetExecutablePathForCurrentOs()}. Please update app settings.");
             }
         }
 

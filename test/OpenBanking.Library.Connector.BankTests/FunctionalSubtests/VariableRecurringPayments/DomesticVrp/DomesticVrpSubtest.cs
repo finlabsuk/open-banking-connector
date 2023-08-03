@@ -36,7 +36,7 @@ public class DomesticVrpSubtest
         FilePathBuilder configFluentRequestLogging,
         FilePathBuilder vrpFluentRequestLogging,
         ConsentAuth? consentAuth,
-        List<BankUser> bankUserList)
+        BankUser? bankUser)
     {
         bool subtestSkipped = subtestEnum switch
         {
@@ -52,10 +52,6 @@ public class DomesticVrpSubtest
         {
             return;
         }
-
-        // For now, we just use first bank user in list. Maybe later we can use different users for
-        // different sub-tests.
-        BankUser bankUser = bankUserList[0];
 
         IRequestBuilder requestBuilder = requestBuilderIn;
 
@@ -94,6 +90,11 @@ public class DomesticVrpSubtest
             {
                 ExternalApiRequest = obDomesticVrpRequest
             };
+        
+        if (bankUser is null)
+        {
+            throw new ArgumentException("No user specified for consent auth.");
+        }
 
         // POST domestic payment consent
         DomesticVrpAccountIndexPair domesticVrpAccountIndexPair = bankUser.DomesticVrpAccountIndexPairs[0];

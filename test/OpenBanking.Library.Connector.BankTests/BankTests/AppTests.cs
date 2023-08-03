@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.VariableRecurringPayments.DomesticVrp;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
-using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -138,6 +137,14 @@ public abstract class AppTests
                     .AccountAccessConsentAuthContextNonces
                     .TryGetValue(bankProfileEnum, out string? accountAccessConsentAuthContextNonce);
 
+                // Get consent auth data (for sandboxes)
+                bankTestSettings
+                    .AuthData
+                    .TryGetValue(bankProfileEnum, out ConsentAuthData? consentAuthData);
+
+                string? consentAuthUserName = consentAuthData?.UserName; // can only be null when consentAuthData null
+                string? consentAuthPassword = consentAuthData?.Password; // can only be null when consentAuthData null
+
                 // Determine whether test case should be skipped based on registration scope
                 BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
                 bool registrationScopeValid =
@@ -163,7 +170,9 @@ public abstract class AppTests
                                 bankRegistrationRegistrationAccessToken,
                             AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
                             AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce,
-                            RegistrationScope = testGroup.RegistrationScope
+                            RegistrationScope = testGroup.RegistrationScope,
+                            ConsentAuthUserName = consentAuthUserName,
+                            ConsentAuthPassword = consentAuthPassword
                         });
                 }
             }
@@ -196,10 +205,14 @@ public abstract class AppTests
             _serviceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
-        // Get bank users
-        List<BankUser> bankUserList =
-            _serviceProvider.GetRequiredService<BankUserStore>()
-                .GetRequiredBankUserList(testData2.BankProfileEnum);
+        // Get bank user
+        BankUser? bankUser = testData2.ConsentAuthUserName is not null
+            ? new BankUser(
+                testData2.ConsentAuthUserName,
+                testData2.ConsentAuthPassword!, // not null when ConsentAuthUserName not null
+                new List<Account>(),
+                new List<DomesticVrpAccountIndexPair>())
+            : null;
 
         // Get API client
         var processedSoftwareStatementProfileStore =
@@ -236,7 +249,7 @@ public abstract class AppTests
         if (useConsentAuth)
         {
             PlaywrightLaunchOptions launchOptions =
-                bankTestSettings.ConsentAuth.PlaywrightLaunch;
+                bankTestSettings.Auth.PlaywrightLaunch;
 
             if (launchOptions is null)
             {
@@ -253,7 +266,7 @@ public abstract class AppTests
                 Timeout = launchOptions.TimeOut
             };
 
-            EmailOptions emailOptions = bankTestSettings.ConsentAuth.Email;
+            EmailOptions emailOptions = bankTestSettings.Auth.Email;
 
             consentAuth = new ConsentAuth(browserTypeLaunchOptions, emailOptions, bankProfileDefinitions);
         }
@@ -356,7 +369,7 @@ public abstract class AppTests
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
                         authUrlLeftPart,
-                        bankUserList,
+                        bankUser,
                         accountAccessConsentOptions,
                         apiClient);
                 }
@@ -383,7 +396,7 @@ public abstract class AppTests
                             .AppendToPath("pisp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
-                        bankUserList,
+                        bankUser,
                         apiClient);
                 }
 
@@ -406,7 +419,7 @@ public abstract class AppTests
                             .AppendToPath("vrp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
-                        bankUserList);
+                        bankUser);
                 }
             }
 
