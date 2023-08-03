@@ -165,9 +165,15 @@ internal class
             // Transform links
             externalApiId = externalApiResponse.Data.ConsentId;
             bool responseLinksOmitId = customBehaviour?.AccountAccessConsentPost?.ResponseLinksOmitId ?? false;
+            bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentPost?.ResponseLinksAddSlash ?? false;
             Uri expectedLinkUrlWithoutQuery = responseLinksOmitId
                 ? externalApiUrl
                 : new Uri(externalApiUrl + $"/{externalApiId}");
+            if (responseLinksAddSlash)
+            {
+                expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
+            }
+
             string? publicUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
             {
                 { } x => x + $"/{entityId}",
@@ -312,9 +318,15 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Transform links 
+            bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentGet?.ResponseLinksAddSlash ?? false;
+            Uri expectedLinkUrlWithoutQuery = externalApiUrl;
+            if (responseLinksAddSlash)
+            {
+                expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
+            }
             var validQueryParameters = new List<string>();
             var linksUrlOperations = new LinksUrlOperations(
-                externalApiUrl,
+                expectedLinkUrlWithoutQuery,
                 readParams.PublicRequestUrlWithoutQuery,
                 true,
                 validQueryParameters);

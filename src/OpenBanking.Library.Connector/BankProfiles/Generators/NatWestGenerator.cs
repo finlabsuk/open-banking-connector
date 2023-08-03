@@ -52,6 +52,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     "https://corporate.secure1.ulsterbank.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
                 NatWestBank.UlsterBankNiClearSpend =>
                     "https://clearspend.secure1.ulsterbank.co.uk", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.Mettle =>
+                    "https://auth.openbanking.prd-mettle.co.uk", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/mettle/3.1.10
+                NatWestBank.Coutts =>
+                    "https://secure1.coutts.com", // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/coutts/3.1.8
                 _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
             bank switch
@@ -59,7 +63,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 NatWestBank.NatWestSandbox
                     or NatWestBank.NatWest
                     or NatWestBank.NatWestBankline
-                    or NatWestBank.NatWestClearSpend =>
+                    or NatWestBank.NatWestClearSpend
+                    or NatWestBank.Mettle =>
                     "0015800000jfwxXAAQ", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
                 NatWestBank.RoyalBankOfScotlandSandbox
                     or NatWestBank.RoyalBankOfScotland
@@ -73,6 +78,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     or NatWestBank.UlsterBankNiBankline
                     or NatWestBank.UlsterBankNiClearSpend =>
                     "0015800000jfwxXAAQ", // from https://www.bankofapis.com/articles/consent-confirmation-support/natwest-group-authorisation-servers-explained
+                NatWestBank.Coutts => "0015800000ti1PbAAI", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/3.1.8#tls-requirements
                 _ => throw new ArgumentOutOfRangeException()
             },
             GetAccountAndTransactionApi(bank),
@@ -84,7 +90,11 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
-                TokenEndpointAuthMethod = TokenEndpointAuthMethod.PrivateKeyJwt,
+                TokenEndpointAuthMethod = bank switch
+                {
+                    NatWestBank.Mettle => TokenEndpointAuthMethod.TlsClientAuth,
+                    _ => TokenEndpointAuthMethod.PrivateKeyJwt
+                },
                 BankRegistrationGroup = bank switch
                 {
                     NatWestBank.NatWestSandbox => BankRegistrationGroup.NatWest_NatWestSandbox,
@@ -101,6 +111,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     NatWestBank.UlsterBankNi
                         or NatWestBank.UlsterBankNiBankline
                         or NatWestBank.UlsterBankNiClearSpend => BankRegistrationGroup.NatWest_UlsterBankNiProduction,
+                    NatWestBank.Mettle => BankRegistrationGroup.NatWest_MettleProduction,
+                    NatWestBank.Coutts => BankRegistrationGroup.NatWest_CouttsProduction,
                     _ => throw new ArgumentOutOfRangeException()
                 },
                 TestTemporaryBankRegistration =
@@ -108,6 +120,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
+                UseAccountAccessConsentDeleteEndpointBeforeAuth = bank is not NatWestBank.Mettle,
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
@@ -117,6 +130,17 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
                             AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN
                         };
+                    if (bank is NatWestBank.Coutts)
+                    {
+                        elementsToRemove.AddRange(
+                            new[]
+                            {
+                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
+                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
+                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsDetail
+                            });
+                    }
+
                     foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
                              elementsToRemove)
                     {
@@ -140,7 +164,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
+                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
+                            bank is not (NatWestBank.Mettle or NatWestBank.Coutts)
                     },
                     AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
                     {
@@ -159,6 +184,8 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                                 or NatWestBank.UlsterBankNiBankline
                                 or NatWestBank.UlsterBankNiClearSpend =>
                                 "https://secure1.ulsterbank.co.uk",
+                            NatWestBank.Mettle => null, // use default
+                            NatWestBank.Coutts => null, // use default
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                         },
                         DoNotValidateIdTokenAcrClaim = true
@@ -166,7 +193,20 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     AuthCodeGrantPost = new GrantPostCustomBehaviour
                     {
                         DoNotValidateIdTokenAcrClaim = true
-                    }
+                    },
+                    AccountAccessConsentPost = bank is NatWestBank.Coutts
+                        ? new AccountAccessConsentPostCustomBehaviour
+                        {
+                            ResponseLinksOmitId = true,
+                            ResponseLinksAddSlash = true
+                        }
+                        : null,
+                    AccountAccessConsentGet = bank is NatWestBank.Coutts
+                        ? new AccountAccessConsentGetCustomBehaviour
+                        {
+                            ResponseLinksAddSlash = true
+                        }
+                        : null
                 }
         };
     }
@@ -206,6 +246,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         or NatWestBank.UlsterBankNiBankline
                         or NatWestBank.UlsterBankNiClearSpend =>
                         "https://api.ulsterbank.co.uk/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/ubn/3.1.10
+                    NatWestBank.Mettle =>
+                        "https://api.openbanking.prd-mettle.co.uk/apis/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/mettle/3.1.10
+                    NatWestBank.Coutts =>
+                        "https://api.coutts.com/open-banking/v3.1/aisp", // from https://www.bankofapis.com/products/natwest-group-open-banking/accounts/documentation/coutts/3.1.8#api-specification
                     _ => throw new ArgumentOutOfRangeException()
                 }
         };

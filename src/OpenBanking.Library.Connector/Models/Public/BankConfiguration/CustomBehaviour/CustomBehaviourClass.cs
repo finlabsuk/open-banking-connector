@@ -33,5 +33,7 @@ public class CustomBehaviourClass
     // Account and Transaction API endpoints
     public AccountAccessConsentPostCustomBehaviour? AccountAccessConsentPost { get; set; }
 
+    public AccountAccessConsentGetCustomBehaviour? AccountAccessConsentGet { get; set; }
+
     public DirectDebitGetCustomBehaviour? DirectDebitGet { get; set; }
 }

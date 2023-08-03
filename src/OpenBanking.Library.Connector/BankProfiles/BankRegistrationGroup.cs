@@ -32,6 +32,12 @@ public enum BankRegistrationGroup
     [EnumMember(Value = "NatWest_UlsterBankNiProduction")]
     NatWest_UlsterBankNiProduction,
 
+    [EnumMember(Value = "NatWest_MettleProduction")]
+    NatWest_MettleProduction,
+
+    [EnumMember(Value = "NatWest_CouttsProduction")]
+    NatWest_CouttsProduction,
+
     [EnumMember(Value = "Lloyds_Sandbox")]
     Lloyds_Sandbox,
 

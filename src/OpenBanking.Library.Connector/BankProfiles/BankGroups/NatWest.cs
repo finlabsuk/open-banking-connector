@@ -21,7 +21,9 @@ public enum NatWestBank
     VirginOne,
     UlsterBankNi,
     UlsterBankNiBankline,
-    UlsterBankNiClearSpend
+    UlsterBankNiClearSpend,
+    Mettle,
+    Coutts
 }
 
 public class NatWest : BankGroupBase<NatWestBank>
@@ -44,6 +46,8 @@ public class NatWest : BankGroupBase<NatWestBank>
             [BankProfileEnum.NatWest_VirginOne] = NatWestBank.VirginOne,
             [BankProfileEnum.NatWest_UlsterBankNi] = NatWestBank.UlsterBankNi,
             [BankProfileEnum.NatWest_UlsterBankNiBankline] = NatWestBank.UlsterBankNiBankline,
-            [BankProfileEnum.NatWest_UlsterBankNiClearSpend] = NatWestBank.UlsterBankNiClearSpend
+            [BankProfileEnum.NatWest_UlsterBankNiClearSpend] = NatWestBank.UlsterBankNiClearSpend,
+            [BankProfileEnum.NatWest_Mettle] = NatWestBank.Mettle,
+            [BankProfileEnum.NatWest_Coutts] = NatWestBank.Coutts
         };
 }

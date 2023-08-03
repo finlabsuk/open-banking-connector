@@ -124,6 +124,8 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.NatWest_UlsterBankNi => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_UlsterBankNiBankline => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_UlsterBankNiClearSpend => BankGroupEnum.NatWest,
+            BankProfileEnum.NatWest_Mettle => BankGroupEnum.NatWest,
+            BankProfileEnum.NatWest_Coutts => BankGroupEnum.NatWest,
             BankProfileEnum.Lloyds_Sandbox => BankGroupEnum.Lloyds,
             BankProfileEnum.Lloyds_LloydsPersonal => BankGroupEnum.Lloyds,
             BankProfileEnum.Lloyds_LloydsBusiness => BankGroupEnum.Lloyds,

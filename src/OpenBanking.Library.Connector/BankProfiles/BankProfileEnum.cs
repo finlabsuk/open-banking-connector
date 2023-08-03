@@ -66,6 +66,12 @@ public enum BankProfileEnum
     [EnumMember(Value = "NatWest_UlsterBankNiClearSpend")]
     NatWest_UlsterBankNiClearSpend,
 
+    [EnumMember(Value = "NatWest_Mettle")]
+    NatWest_Mettle,
+
+    [EnumMember(Value = "NatWest_Coutts")]
+    NatWest_Coutts,
+
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,
 
