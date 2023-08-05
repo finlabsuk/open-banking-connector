@@ -140,10 +140,11 @@ public abstract class AppTests
                 // Get consent auth data (for sandboxes)
                 bankTestSettings
                     .AuthData
-                    .TryGetValue(bankProfileEnum, out ConsentAuthData? consentAuthData);
+                    .TryGetValue(bankProfileEnum, out AuthData? authData);
 
-                string? consentAuthUserName = consentAuthData?.UserName; // can only be null when consentAuthData null
-                string? consentAuthPassword = consentAuthData?.Password; // can only be null when consentAuthData null
+                bool? authDisable = authData?.DisableAuth;
+                string? authUiInputUserName = authData?.UiInput?.UserName; // can only be null when UiInput null
+                string? authUiInputPassword = authData?.UiInput?.Password; // can only be null when UiInput null
 
                 // Determine whether test case should be skipped based on registration scope
                 BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
@@ -171,8 +172,9 @@ public abstract class AppTests
                             AccountAccessConsentExternalApiId = accountAccessConsentExternalApiId,
                             AccountAccessConsentAuthContextNonce = accountAccessConsentAuthContextNonce,
                             RegistrationScope = testGroup.RegistrationScope,
-                            ConsentAuthUserName = consentAuthUserName,
-                            ConsentAuthPassword = consentAuthPassword
+                            AuthDisable = authDisable,
+                            AuthUiInputUserName = authUiInputUserName,
+                            AuthUiInputPassword = authUiInputPassword
                         });
                 }
             }
@@ -206,10 +208,10 @@ public abstract class AppTests
         BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
         // Get bank user
-        BankUser? bankUser = testData2.ConsentAuthUserName is not null
+        BankUser? bankUser = testData2.AuthUiInputUserName is not null
             ? new BankUser(
-                testData2.ConsentAuthUserName,
-                testData2.ConsentAuthPassword!, // not null when ConsentAuthUserName not null
+                testData2.AuthUiInputUserName,
+                testData2.AuthUiInputPassword!, // not null when AuthUiInputUserName not null
                 new List<Account>(),
                 new List<DomesticVrpAccountIndexPair>())
             : null;

@@ -28,9 +28,11 @@ public class BankTestData2 : IXunitSerializable
 
     public RegistrationScopeEnum RegistrationScope { get; set; }
 
-    public string? ConsentAuthUserName { get; set; }
-    
-    public string? ConsentAuthPassword { get; set; }
+    public string? AuthUiInputUserName { get; set; }
+
+    public string? AuthUiInputPassword { get; set; }
+
+    public bool? AuthDisable { get; set; }
 
     public void Deserialize(IXunitSerializationInfo info)
     {
@@ -42,8 +44,9 @@ public class BankTestData2 : IXunitSerializable
         AccountAccessConsentExternalApiId = info.GetValue<string?>(nameof(AccountAccessConsentExternalApiId));
         AccountAccessConsentAuthContextNonce = info.GetValue<string?>(nameof(AccountAccessConsentAuthContextNonce));
         RegistrationScope = info.GetValue<RegistrationScopeEnum>(nameof(RegistrationScope));
-        ConsentAuthUserName = info.GetValue<string?>(nameof(ConsentAuthUserName));
-        ConsentAuthPassword = info.GetValue<string?>(nameof(ConsentAuthPassword));
+        AuthUiInputUserName = info.GetValue<string?>(nameof(AuthUiInputUserName));
+        AuthUiInputPassword = info.GetValue<string?>(nameof(AuthUiInputPassword));
+        AuthDisable = info.GetValue<bool?>(nameof(AuthDisable));
     }
 
     public void Serialize(IXunitSerializationInfo info)
@@ -55,8 +58,9 @@ public class BankTestData2 : IXunitSerializable
         info.AddValue(nameof(AccountAccessConsentExternalApiId), AccountAccessConsentExternalApiId);
         info.AddValue(nameof(AccountAccessConsentAuthContextNonce), AccountAccessConsentAuthContextNonce);
         info.AddValue(nameof(RegistrationScope), RegistrationScope);
-        info.AddValue(nameof(ConsentAuthUserName), ConsentAuthUserName);
-        info.AddValue(nameof(ConsentAuthPassword), ConsentAuthPassword);
+        info.AddValue(nameof(AuthUiInputUserName), AuthUiInputUserName);
+        info.AddValue(nameof(AuthUiInputPassword), AuthUiInputPassword);
+        info.AddValue(nameof(AuthDisable), AuthDisable);
     }
 
     public override string ToString()
@@ -70,13 +74,14 @@ public class BankTestData2 : IXunitSerializable
             bool supportsAisp = RegistrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction);
             if (supportsAisp)
             {
-                if (AccountAccessConsentExternalApiId is not null)
+                if (AccountAccessConsentExternalApiId is null ||
+                    AuthDisable is true)
                 {
-                    elements.Add("AISP");
+                    elements.Add("AISP (no auth)");
                 }
                 else
                 {
-                    elements.Add("AISP (no auth)");
+                    elements.Add("AISP");
                 }
             }
 

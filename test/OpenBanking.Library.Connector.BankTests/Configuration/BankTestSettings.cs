@@ -85,11 +85,18 @@ public class ConsentAuthoriserOptions
     public EmailOptions Email { get; set; } = new();
 }
 
-public class ConsentAuthData
+public class AuthUiInputData
 {
     public string UserName { get; set; } = string.Empty;
 
     public string Password { get; set; } = string.Empty;
+}
+
+public class AuthData
+{
+    public bool DisableAuth { get; set; } = false;
+
+    public AuthUiInputData? UiInput { get; set; }
 }
 
 /// <summary>
@@ -242,7 +249,7 @@ public class BankTestSettings : ISettings<BankTestSettings>
     ///     Consent auth data to use in consent auth automation (used for sandboxes).
     ///     Dictionary whose keys are bankProfileEnums and values are strings.
     /// </summary>
-    public Dictionary<BankProfileEnum, ConsentAuthData>
+    public Dictionary<BankProfileEnum, AuthData>
         AuthData { get; set; } = new();
 
     /// <summary>
