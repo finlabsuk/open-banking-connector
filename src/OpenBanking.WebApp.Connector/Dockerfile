@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 # Expose app on HTTP port
 EXPOSE 80
@@ -21,7 +21,7 @@ RUN chmod 644 /usr/local/share/ca-certificates/open-banking-sandbox-root-ca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/open-banking-prod-root-ca.crt
 RUN update-ca-certificates
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj", "src/OpenBanking.WebApp.Connector/"]
 COPY ["src/OpenBanking.Library.Connector.Web/OpenBanking.Library.Connector.Web.csproj", "src/OpenBanking.Library.Connector.Web/"]
