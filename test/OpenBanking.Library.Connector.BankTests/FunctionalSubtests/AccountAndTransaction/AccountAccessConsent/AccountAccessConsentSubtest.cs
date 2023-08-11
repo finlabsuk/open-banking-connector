@@ -81,20 +81,19 @@ public class AccountAccessConsentSubtest
         else
         {
             // Test creation and deletion of fresh consent
-            if (bankProfile.AccountAndTransactionApiSettings.UseAccountAccessConsentDeleteEndpointBeforeAuth)
-            {
-                // Create fresh AccountAccessConsent
-                Guid accountAccessConsentId1 =
-                    await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
 
-                // Read account access consent
-                await ReadAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId1);
+            // Create fresh AccountAccessConsent
+            Guid accountAccessConsentId1 =
+                await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
 
-                // Delete AccountAccessConsent (includes external API delete)
-                await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId1, true);
-            }
+            // Read account access consent
+            await ReadAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId1);
+
+            // Delete AccountAccessConsent (includes external API delete)
+            await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId1, true);
 
             // Perform further testing with existing AccountAccessConsent (to avoid creating orphan object at bank if test terminates)
+
             if (testData2.AccountAccessConsentExternalApiId is not null)
             {
                 // Create AccountAccessConsent using existing external API consent

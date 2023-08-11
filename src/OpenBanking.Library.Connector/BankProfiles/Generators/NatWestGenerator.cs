@@ -120,7 +120,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
-                UseAccountAccessConsentDeleteEndpointBeforeAuth = bank is not NatWestBank.Mettle,
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
