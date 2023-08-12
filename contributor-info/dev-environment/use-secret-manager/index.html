@@ -383,6 +383,8 @@
         
           
         
+          
+        
       
       
         
@@ -483,6 +485,20 @@
     <li class="md-nav__item">
       <a href="../../../configuration/configuration-sources-settings/" class="md-nav__link">
         Configuration sources settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../configuration/open-telemetry-settings/" class="md-nav__link">
+        Open Telemetry settings
       </a>
     </li>
   
@@ -1143,15 +1159,13 @@
 
 <h1 id="use-microsofts-secret-manager">Use Microsoft's secret manager</h1>
 <p>When running Open Banking Connector as a .NET application from source code, and when in the development environment, Microsoft's secret manager can be used to provide configuration/secrets.</p>
-<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one already). The Microsoft documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a> gives the path for this directory. Please note that the UserSecretsId for the app is <code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given <a href="https://github.com/finlabsuk/open-banking-connector/tree/web-app/5.0.0/src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj">here</a>.</p>
+<p>To use the secret manager, you will need a <code>secrets.json</code> file in the appropriate directory (if you do not have one already). The Microsoft documentation <a href="https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&amp;tabs=windows#how-the-secret-manager-tool-works">here</a> gives the path for this directory. Please note that the UserSecretsId for the app is <code>aa921213-9461-4f9e-8fec-153624ec67ad</code> as given <a href="https://github.com/finlabsuk/open-banking-connector/blob/web-app/6.2.0/src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj">here</a>.</p>
 <p>You can then add key-value pairs to the <code>secrets.json</code> file to supply configuration to Open Banking Connector.</p>
 <p>Here is an example of what such a file might look like after configuring a software statement profile, transport certificate profile and signing certificate profile:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New2:CertificateDnWithStringDottedDecimalAttributeValues&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CN=abc,2.5.4.97=abc,O=abc,C=GB&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New2:CertificateDnWithHexDottedDecimalAttributeValues&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CN=abc,2.5.4.97=#123,O=abc,C=GB&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New2:Certificate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN CERTIFICATE-----\nabc\n-----END CERTIFICATE-----\n&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New2:AssociatedKey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:TransportCertificateProfileId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New1:Certificate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN CERTIFICATE-----\nabc\n-----END CERTIFICATE-----\n&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:TransportCertificateProfiles:New1:AssociatedKey&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----\n&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:TransportCertificateProfileId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New1&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:SoftwareStatement&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a.b.c&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:SigningCertificateProfileId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New2&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;OpenBankingConnector:SoftwareStatementProfiles:All:DefaultFragmentRedirectUrl&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://example.com/auth/fragment-redirect&quot;</span><span class="p">,</span>
@@ -1167,7 +1181,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-04-08</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-07-29</span>
       
     
   </small>

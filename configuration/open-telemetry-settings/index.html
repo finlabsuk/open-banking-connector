@@ -9,17 +9,17 @@
       
       
       
-        <link rel="prev" href="../software-statement-profiles-settings/">
+        <link rel="prev" href="../configuration-sources-settings/">
       
       
-        <link rel="next" href="../signing-certificate-profiles-settings/">
+        <link rel="next" href="../../apis/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
     
     
       
-        <title>Transport certificate profiles settings - Open Banking Connector docs</title>
+        <title>Open Telemetry settings - Open Banking Connector docs</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#transport-certificate-profiles-settings" class="md-skip">
+        <a href="#open-telemetry-settings" class="md-skip">
           Skip to content
         </a>
       
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Transport certificate profiles settings
+              Open Telemetry settings
             
           </span>
         </div>
@@ -443,52 +443,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Transport certificate profiles settings
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../transport-certificate-profiles-settings/" class="md-nav__link">
         Transport certificate profiles settings
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#settings" class="md-nav__link">
-    Settings
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -540,11 +499,73 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../open-telemetry-settings/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Open Telemetry settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Open Telemetry settings
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-logging" class="md-nav__link">
+    Support for Open Telemetry logging
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-tracing" class="md-nav__link">
+    Support for Open Telemetry tracing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-metrics" class="md-nav__link">
+    Support for Open Telemetry metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    Settings
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1179,6 +1200,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-logging" class="md-nav__link">
+    Support for Open Telemetry logging
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-tracing" class="md-nav__link">
+    Support for Open Telemetry tracing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-for-open-telemetry-metrics" class="md-nav__link">
+    Support for Open Telemetry metrics
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#settings" class="md-nav__link">
     Settings
   </a>
@@ -1203,11 +1245,16 @@
   
 
 
-<h1 id="transport-certificate-profiles-settings">Transport certificate profiles settings</h1>
-<p>Transport certificate profiles settings are used to configure transport certificate profiles used by Open Banking Connector.</p>
-<p>A <em>transport certificate profile</em> is a group of settings comprising a transport certificate, associated key, and other related information. It is identified by a user-defined profile ID. It is referenced by one or more <a href="../software-statement-profiles-settings/">software statement profiles</a>.</p>
-<p>Transport certificates are used for mutual TLS when communicating with banks.</p>
-<p>No transport certificate profiles are configured by default and you will require at least one in order to create a bank registration.</p>
+<h1 id="open-telemetry-settings">Open Telemetry settings</h1>
+<p><a href="#settings">Open Telemetry settings</a> configure support for Open Telemetry in Open Banking Connector.</p>
+<p>Open Telemetry is a system for collecting logging, tracing and metrics output from an application (service) like Open Banking Connector. Open Banking Connector support for each of these is indicated below.</p>
+<p>The service name used by Open Banking Connector for Open Telemetry can be customised using the setting <code>OpenBankingConnector:OpenTelemetry:ServiceName</code>. The service version used for Open Telemetry will be set to the product version of Open Banking Connector.</p>
+<h2 id="support-for-open-telemetry-logging">Support for Open Telemetry logging</h2>
+<p>By default, Open Telemetry trace and span IDs are included with logs. To propagate trace IDs from a service making requests to Open Banking Connector, please include the <code>traceparent</code> header as described <a href="https://doordash.engineering/2021/06/17/leveraging-opentelemetry-for-custom-context-propagation/#:~:text=A%20close%20look%20at%20OpenTelemetry%E2%80%99s%20propagation%20formats">here</a> in requests.</p>
+<h2 id="support-for-open-telemetry-tracing">Support for Open Telemetry tracing</h2>
+<p>Support for Open Telemetry tracing can be enabled by setting <code>OpenBankingConnector:OpenTelemetry:Tracing:UseConsoleExporter</code> to true (for console output) or specifying an exporter URL in <code>OpenBankingConnector:OpenTelemetry:Tracing:OtlpExporterUrl</code>. You can control the level of output by means of <code>OpenBankingConnector:OpenTelemetry:Tracing:ProviderFilter</code>.</p>
+<h2 id="support-for-open-telemetry-metrics">Support for Open Telemetry metrics</h2>
+<p>This is not enabled yet.</p>
 <h2 id="settings">Settings</h2>
 <table>
 <thead>
@@ -1220,40 +1267,28 @@
 </thead>
 <tbody>
 <tr>
-<td>OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:Active <p style="margin-top: 10px;"> <em>where string Id is user-defined profile ID</em>  </p></td>
-<td>{<code>"true"</code>, <code>"false"</code>}</td>
-<td><code>"true"</code></td>
-<td>Whether profile is active or inactive (ignored by Open Banking Connector). This allows profiles to be "switched on and off" for testing etc.</td>
-</tr>
-<tr>
-<td>OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:TransportCertificateType <p style="margin-top: 10px;"> <em>where string Id is user-defined profile ID</em>  </p></td>
-<td>{<code>"OB</code><wbr/><code>Legacy"</code>, <code>"OBWac"</code>}</td>
-<td><code>"OBWac"</code></td>
-<td>Type of UK Open Banking Directory certificate used.</td>
-</tr>
-<tr>
-<td>OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:DisableTlsCertificateVerification <p style="margin-top: 10px;"> <em>where string Id is user-defined profile ID</em>  </p></td>
-<td>{<code>"true"</code>, <code>"false"</code>}</td>
-<td><code>"false"</code></td>
-<td>Disable verification of external bank TLS certificates when using mutual TLS with this certificate profile. Not intended for production use but sometimes helpful for diagnosing issues with bank sandboxes (e.g. if they use self-signed certificates).</td>
-</tr>
-<tr>
-<td>OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:AssociatedKey <p style="margin-top: 10px;"> <em>where string Id is user-defined profile ID</em>  </p></td>
+<td>OpenBankingConnector<wbr/>:OpenTelemetry<wbr/>:ServiceName</td>
 <td>string</td>
-<td>-</td>
-<td>Transport key (PKCS #8) as "stringified" PEM file with escaped newline characters (<code>"\n"</code>) and PRIVATE KEY label.             Example: <code>"-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"</code>.</td>
+<td><code>"FinnovationLabs.OpenBanking.Connector"</code></td>
+<td>Use to customise the service name used with Open Telemetry</td>
 </tr>
 <tr>
-<td>OpenBankingConnector<wbr/>:TransportCertificateProfiles<wbr/>:{Id}<wbr/>:Certificate <p style="margin-top: 10px;"> <em>where string Id is user-defined profile ID</em>  </p></td>
+<td>OpenBankingConnector<wbr/>:OpenTelemetry<wbr/>:Tracing<wbr/>:UseConsoleExporter</td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>Add console exporter to tracing. Will send tracing output to the console.</td>
+</tr>
+<tr>
+<td>OpenBankingConnector<wbr/>:OpenTelemetry<wbr/>:Tracing<wbr/>:OtlpExporterUrl</td>
 <td>string</td>
-<td>-</td>
-<td>Transport certificate (X.509) as "stringified" PEM file with escaped newline characters (<code>"\n"</code>) and CERTIFICATE label.             Example: <code>"-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"</code>.</td>
+<td><code>""</code></td>
+<td>When non-empty, add OTLP (Open Telemetry Protocol) exporter to tracing with target URL as specified.</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>OpenBankingConnector<wbr/>:OpenTelemetry<wbr/>:Tracing<wbr/>:ProviderFilter</td>
+<td>int</td>
+<td><code>3</code> (AspNetCore and HttpClient only)</td>
+<td>Use to control tracing providers. Provide sum of desired providers where AspNetCore (top-level) = 1, HttpClient (bank requests) = 2, EFCore (database ORM) = 4.</td>
 </tr>
 </tbody>
 </table>
@@ -1263,7 +1298,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-07-29</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-08-12</span>
       
     
   </small>

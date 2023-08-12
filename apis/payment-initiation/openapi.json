@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "web-app/4.0.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -11,26 +11,11 @@
         "tags": [
           "Domestic Payment Consent Auth Contexts"
         ],
-        "summary": "Create DomesticPaymentConsent AuthContext",
+        "summary": "Create domestic payment consent auth context (time-sensitive auth session) and return auth URL",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentAuthContext"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentAuthContext"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentAuthContext"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DomesticPaymentConsentAuthContext"
               }
@@ -66,7 +51,7 @@
         "tags": [
           "Domestic Payment Consent Auth Contexts"
         ],
-        "summary": "Read DomesticPaymentConsent AuthContext",
+        "summary": "Read domestic payment consent auth context",
         "parameters": [
           {
             "name": "domesticPaymentConsentAuthContextId",
@@ -108,26 +93,11 @@
         "tags": [
           "Domestic Payment Consents"
         ],
-        "summary": "Create DomesticPaymentConsent",
+        "summary": "Create domestic payment consent",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentConsentRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DomesticPaymentConsentRequest"
               }
@@ -163,7 +133,7 @@
         "tags": [
           "Domestic Payment Consents"
         ],
-        "summary": "Read DomesticPaymentConsent",
+        "summary": "Read domestic payment consent",
         "parameters": [
           {
             "name": "domesticPaymentConsentId",
@@ -221,7 +191,7 @@
         "tags": [
           "Domestic Payments"
         ],
-        "summary": "Create DomesticPayment",
+        "summary": "Create domestic payment",
         "parameters": [
           {
             "name": "x-obc-domestic-payment-consent-id",
@@ -236,22 +206,7 @@
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticPaymentRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DomesticPaymentRequest"
               }
@@ -287,7 +242,7 @@
         "tags": [
           "Domestic Payments"
         ],
-        "summary": "Read DomesticPayment",
+        "summary": "Read domestic payment",
         "parameters": [
           {
             "name": "externalApiId",
@@ -343,30 +298,6 @@
   },
   "components": {
     "schemas": {
-      "AccessToken": {
-        "type": "object",
-        "properties": {
-          "Token": {
-            "type": "string",
-            "description": "Token.",
-            "nullable": true
-          },
-          "ExpiresIn": {
-            "type": "integer",
-            "description": "Token \"expires_in\".",
-            "format": "int32"
-          },
-          "RefreshToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "ModifiedBy": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AuthContextRequest": {
         "type": "object",
         "properties": {
@@ -405,6 +336,8 @@
           "NatWest_UlsterBankNI",
           "NatWest_UlsterBankNiBankline",
           "NatWest_UlsterBankNiClearSpend",
+          "NatWest_Mettle",
+          "NatWest_Coutts",
           "VrpHackathon",
           "Santander",
           "Barclays_Sandbox",
@@ -430,6 +363,7 @@
           "Hsbc_UkBusiness",
           "Hsbc_UkKinetic",
           "Hsbc_UkPersonal",
+          "Hsbc_HsbcNetUk",
           "Danske",
           "AlliedIrish",
           "Monzo",
@@ -466,6 +400,13 @@
         "properties": {
           "AuthUrl": {
             "type": "string",
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
+            "nullable": true,
+            "readOnly": true
+          },
+          "AppSessionId": {
+            "type": "string",
+            "description": "App session ID that can be checked when processing post-auth redirect",
             "nullable": true,
             "readOnly": true
           },
@@ -475,7 +416,13 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -508,7 +455,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to Create requests."
+        "description": "Response to create requests."
       },
       "DomesticPaymentConsentAuthContextReadResponse": {
         "type": "object",
@@ -519,7 +466,13 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "DomesticPaymentConsentId": {
             "type": "string",
@@ -746,9 +699,6 @@
             "type": "string",
             "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
             "nullable": true
-          },
-          "AccessToken": {
-            "$ref": "#/components/schemas/AccessToken"
           },
           "AuthContext": {
             "$ref": "#/components/schemas/AuthContextRequest"

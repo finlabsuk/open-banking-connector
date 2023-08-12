@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "web-app/5.0.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -11,26 +11,11 @@
         "tags": [
           "Account Access Consent Auth Contexts"
         ],
-        "summary": "Create AccountAccessConsent AuthContext",
+        "summary": "Create account access consent auth context (time-sensitive auth session) and return auth URL",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/AccountAccessConsentAuthContext"
               }
@@ -66,7 +51,7 @@
         "tags": [
           "Account Access Consent Auth Contexts"
         ],
-        "summary": "Read AccountAccessConsent AuthContext",
+        "summary": "Read account access consent auth context",
         "parameters": [
           {
             "name": "accountAccessConsentAuthContextId",
@@ -108,26 +93,11 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Create AccountAccessConsent",
+        "summary": "Create account access consent",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccountAccessConsentRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/AccountAccessConsentRequest"
               }
@@ -163,7 +133,7 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Read AccountAccessConsent",
+        "summary": "Read account access consent",
         "parameters": [
           {
             "name": "accountAccessConsentId",
@@ -219,7 +189,7 @@
         "tags": [
           "Account Access Consents"
         ],
-        "summary": "Delete AccountAccessConsent",
+        "summary": "Delete account access consent",
         "parameters": [
           {
             "name": "accountAccessConsentId",
@@ -277,17 +247,8 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Read Account(s)",
+        "summary": "Read accounts",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -336,7 +297,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Read Account(s)",
+        "summary": "Read accounts",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -395,17 +356,8 @@
         "tags": [
           "Balances"
         ],
-        "summary": "Read Balances",
+        "summary": "Read balances",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -453,7 +405,7 @@
         "tags": [
           "Balances"
         ],
-        "summary": "Read Balances",
+        "summary": "Read balances",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -509,19 +461,10 @@
     "/aisp/direct-debits": {
       "get": {
         "tags": [
-          "DirectDebits"
+          "Direct Debits"
         ],
-        "summary": "Read Direct Debits.",
+        "summary": "Read direct debits",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -567,9 +510,9 @@
     "/aisp/accounts/{externalApiAccountId}/direct-debits": {
       "get": {
         "tags": [
-          "DirectDebits"
+          "Direct Debits"
         ],
-        "summary": "Read Direct Debits.",
+        "summary": "Read direct debits",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -627,17 +570,8 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Party",
+        "summary": "Read party",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -686,7 +620,7 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Party",
+        "summary": "Read party",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -745,7 +679,7 @@
         "tags": [
           "Parties"
         ],
-        "summary": "Read Parties",
+        "summary": "Read parties",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -802,19 +736,10 @@
     "/aisp/standing-orders": {
       "get": {
         "tags": [
-          "StandingOrders"
+          "Standing Orders"
         ],
-        "summary": "Read Standing Orders.",
+        "summary": "Read standing orders",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -860,9 +785,9 @@
     "/aisp/accounts/{externalApiAccountId}/standing-orders": {
       "get": {
         "tags": [
-          "StandingOrders"
+          "Standing Orders"
         ],
-        "summary": "Read Standing Orders.",
+        "summary": "Read standing orders",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -920,26 +845,8 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "externalApiStatementId",
-            "in": "path",
-            "description": "External (bank) API ID of Statement",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -1004,21 +911,12 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
           {
             "name": "externalApiAccountId",
             "in": "path",
             "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "externalApiStatementId",
-            "in": "path",
-            "description": "External (bank) API ID of Statement",
             "required": true,
             "schema": {
               "type": "string"
@@ -1088,7 +986,7 @@
         "tags": [
           "Transactions"
         ],
-        "summary": "Read Transactions",
+        "summary": "Read transactions",
         "parameters": [
           {
             "name": "externalApiAccountId",
@@ -1198,11 +1096,13 @@
         "properties": {
           "AuthUrl": {
             "type": "string",
+            "description": "Time-sensitive URL to enable end-user authentication via website or mobile app",
             "nullable": true,
             "readOnly": true
           },
-          "State": {
+          "AppSessionId": {
             "type": "string",
+            "description": "App session ID that can be checked when processing post-auth redirect",
             "nullable": true,
             "readOnly": true
           },
@@ -1212,11 +1112,17 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid",
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
             "readOnly": true
           },
           "Id": {
@@ -1245,7 +1151,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to Create requests."
+        "description": "Response to create requests."
       },
       "AccountAccessConsentAuthContextReadResponse": {
         "type": "object",
@@ -1256,11 +1162,17 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "AccountAccessConsentId": {
             "type": "string",
             "format": "uuid",
+            "readOnly": true
+          },
+          "State": {
+            "type": "string",
+            "nullable": true,
             "readOnly": true
           },
           "Id": {
@@ -2378,7 +2290,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadAccount6Data": {
         "type": "object",
@@ -2409,7 +2321,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadBalance1Data": {
         "type": "object",
@@ -2421,10 +2333,21 @@
             },
             "description": "Gets the balance.",
             "nullable": true
+          },
+          "TotalValue": {
+            "$ref": "#/components/schemas/OBReadBalance1DataTotalValue"
           }
         },
         "additionalProperties": false,
         "description": "The OBReadBalance1Data."
+      },
+      "OBReadBalance1DataBalanceAmountSubTypeEnum": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string",
+        "description": "The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified."
       },
       "OBReadBalance1DataBalanceCreditLineTypeEnum": {
         "enum": [
@@ -2466,6 +2389,9 @@
             },
             "description": "Gets the credit line.",
             "nullable": true
+          },
+          "LocalAmount": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemLocalAmount"
           }
         },
         "additionalProperties": false,
@@ -2483,6 +2409,9 @@
             "type": "string",
             "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
             "nullable": true
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceAmountSubTypeEnum"
           }
         },
         "additionalProperties": false,
@@ -2505,6 +2434,34 @@
         "additionalProperties": false,
         "description": "Amount of money of the credit line."
       },
+      "OBReadBalance1DataBalanceItemLocalAmount": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
+            "nullable": true
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceLocalAmountSubTypeEnum"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Optional component providing the equivalent of Amount in local currency. Default is Local Currency (LCUR) if not specified."
+      },
+      "OBReadBalance1DataBalanceLocalAmountSubTypeEnum": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string",
+        "description": "The amount in the local market currency for which the asset is held."
+      },
       "OBReadBalance1DataBalancePropertiesItemsItem": {
         "type": "object",
         "properties": {
@@ -2522,6 +2479,23 @@
         "additionalProperties": false,
         "description": "Set of elements used to provide details on the credit line."
       },
+      "OBReadBalance1DataTotalValue": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Combined sum of all Amounts in the accounts base currency."
+      },
       "OBReadConsent1": {
         "type": "object",
         "properties": {
@@ -2534,7 +2508,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>from</i> this to an older format for banks supporting an earlier spec version."
+        "description": "Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>from</i> this to an older format for banks supporting an earlier spec version."
       },
       "OBReadConsent1Data": {
         "type": "object",
@@ -2614,7 +2588,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadConsentResponse1Data": {
         "type": "object",
@@ -2808,7 +2782,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadParty2Data": {
         "type": "object",
@@ -2834,7 +2808,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadParty3Data": {
         "type": "object",
@@ -2896,7 +2870,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBStandingOrder6": {
         "type": "object",

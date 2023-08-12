@@ -467,6 +467,8 @@
         
           
         
+          
+        
       
       
         
@@ -567,6 +569,20 @@
     <li class="md-nav__item">
       <a href="../configuration/configuration-sources-settings/" class="md-nav__link">
         Configuration sources settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/open-telemetry-settings/" class="md-nav__link">
+        Open Telemetry settings
       </a>
     </li>
   
@@ -1295,7 +1311,7 @@
 <ul>
 <li><a href="../configuration/encryption-keys-settings/">encryption keys</a></li>
 </ul>
-<p>Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to generate an SSA, a OBWAC transport key with signed cert, and an OBSeal signing key with signed cert using the <a href="https://directory.openbanking.org.uk/s/login/">UK Open Banking Directory</a> and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given <a href="../configuration/encryption-keys-settings/#encryption-keys-settings">here</a>).</p>
+<p>Below are environment variables to set up of one of each of these (the minimum necessary to create a bank registration). You will need to substitute your own values into some of these as noted in the comments. To allow this you will need to create an SSA, a signed OBWAC transport cert and key, and a signed OBSeal signing cert and key using the <a href="https://directory.openbanking.org.uk/s/login/">UK Open Banking Directory</a> and following the instructions there. You will also need to generate a 256-bit encryption key (example code is given <a href="../configuration/encryption-keys-settings/#encryption-keys-settings">here</a>).</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Software statement profile with ID &quot;All&quot;</span>
 <span class="nv">OpenBankingConnector__SoftwareStatementProfiles__All__TransportCertificateProfileId</span><span class="o">=</span>All<span class="w"> </span><span class="c1"># instruction to use transport certificate profile with ID &quot;All&quot;</span>
 <span class="nv">OpenBankingConnector__SoftwareStatementProfiles__All__SoftwareStatement</span><span class="o">=</span>a.b.c<span class="w"> </span><span class="c1"># substitute your software statement assertion (SSA)</span>
@@ -1303,13 +1319,12 @@
 <span class="nv">OpenBankingConnector__SoftwareStatementProfiles__All__DefaultFragmentRedirectUrl</span><span class="o">=</span>https://example.com/auth/fragment-redirect<span class="w"> </span><span class="c1"># substitute your default redirect URL (must match one in your included in your SSA)</span>
 
 <span class="c1"># Transport certificate profile with ID &quot;All&quot;</span>
-<span class="nv">OpenBankingConnector__TransportCertificateProfiles__All__CertificateDnWithHexDottedDecimalAttributeValues</span><span class="o">=</span><span class="s2">&quot;CN=00158,2.5.4.97=#1,O=MyCompany,C=GB&quot;</span><span class="w"> </span><span class="c1"># substitute your transport certificate DN</span>
 <span class="nv">OpenBankingConnector__TransportCertificateProfiles__All__Certificate</span><span class="o">=</span><span class="s2">&quot;-----BEGIN CERTIFICATE-----\nline1\nline2\n-----END CERTIFICATE-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute your OBWAC transport certificate</span>
-<span class="nv">OpenBankingConnector__TransportCertificateProfiles__All__AssociatedKey</span><span class="o">=</span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute your transport key</span>
+<span class="nv">OpenBankingConnector__TransportCertificateProfiles__All__AssociatedKey</span><span class="o">=</span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute the key associated with your OBWAC transport certificate</span>
 
 <span class="c1"># Signing certificate profile with ID &quot;All&quot;</span>
-<span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId</span><span class="o">=</span>xyz<span class="w"> </span><span class="c1"># substitute your signing key ID (kid) to allow certificate lookup (obtain from UK Open Banking Directory)</span>
-<span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey</span><span class="o">=</span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute your signing key (that associated with OBSeal signing certificate)</span>
+<span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKeyId</span><span class="o">=</span>xyz<span class="w"> </span><span class="c1"># substitute the key ID (kid) associated with your OBSeal signing certificate to allow certificate lookup (obtain the key ID from UK Open Banking Directory)</span>
+<span class="nv">OpenBankingConnector__SigningCertificateProfiles__All__AssociatedKey</span><span class="o">=</span><span class="s2">&quot;-----BEGIN PRIVATE KEY-----\nline1\nline2\n-----END PRIVATE KEY-----\n&quot;</span><span class="w"> </span><span class="c1"># substitute the key associated with your OBSeal signing certificate</span>
 
 <span class="c1"># Encryption key with ID &quot;MyKey&quot;</span>
 <span class="nv">OpenBankingConnector__Keys__CurrentEncryptionKeyId</span><span class="o">=</span>MyKey
@@ -1349,7 +1364,6 @@
 
 <span class="c1"># Bank group: HSBC</span>
 <span class="nv">OpenBankingConnector__BankProfiles__Hsbc__Default__FinancialId</span><span class="o">=</span>yy<span class="w"> </span><span class="c1"># substitute value</span>
-<span class="nv">OpenBankingConnector__BankProfiles__Hsbc__Default__AccountAndTransactionApi__ApiVersion</span><span class="o">=</span>VersionZZ<span class="w"> </span><span class="c1"># substitute value</span>
 
 <span class="c1"># Bank group: Barclays</span>
 <span class="nv">OpenBankingConnector__BankProfiles__Barclays__Default__FinancialId</span><span class="o">=</span>yy<span class="w"> </span><span class="c1"># substitute value</span>
@@ -1371,7 +1385,7 @@ where an <em>env file</em> is used to supply environment variables.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-06-09</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-07-29</span>
       
     
   </small>

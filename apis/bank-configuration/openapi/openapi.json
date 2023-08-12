@@ -3,34 +3,19 @@
   "info": {
     "title": "Bank Configuration API",
     "description": "Bank Configuration API for Open Banking Connector Web App",
-    "version": "web-app/5.0.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/config/bank-registrations": {
       "post": {
         "tags": [
-          "BankRegistrations"
+          "Bank Registrations"
         ],
-        "summary": "Create BankRegistration",
+        "summary": "Create bank registration",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/BankRegistration"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BankRegistration"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BankRegistration"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/BankRegistration"
               }
@@ -64,9 +49,9 @@
     "/config/bank-registrations/{bankRegistrationId}": {
       "get": {
         "tags": [
-          "BankRegistrations"
+          "Bank Registrations"
         ],
-        "summary": "Read BankRegistration",
+        "summary": "Read bank registration",
         "parameters": [
           {
             "name": "bankRegistrationId",
@@ -120,9 +105,9 @@
       },
       "delete": {
         "tags": [
-          "BankRegistrations"
+          "Bank Registrations"
         ],
-        "summary": "Delete BankRegistration",
+        "summary": "Delete bank registration",
         "parameters": [
           {
             "name": "bankRegistrationId",
@@ -196,6 +181,8 @@
           "NatWest_UlsterBankNI",
           "NatWest_UlsterBankNiBankline",
           "NatWest_UlsterBankNiClearSpend",
+          "NatWest_Mettle",
+          "NatWest_Coutts",
           "VrpHackathon",
           "Santander",
           "Barclays_Sandbox",
@@ -315,6 +302,8 @@
           "NatWest_RoyalBankOfScotlandSandbox",
           "NatWest_RoyalBankOfScotlandProduction",
           "NatWest_UlsterBankNiProduction",
+          "NatWest_MettleProduction",
+          "NatWest_CouttsProduction",
           "Lloyds_Sandbox",
           "Lloyds_Production"
         ],

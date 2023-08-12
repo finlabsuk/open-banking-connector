@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "web-app/4.0.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consents": {
@@ -11,26 +11,11 @@
         "tags": [
           "Domestic VRP Consents"
         ],
-        "summary": "Create DomesticVrpConsent",
+        "summary": "Create domestic VRP consent",
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpConsentRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DomesticVrpConsentRequest"
               }
@@ -66,7 +51,7 @@
         "tags": [
           "Domestic VRP Consents"
         ],
-        "summary": "Read DomesticVrpConsent",
+        "summary": "Read domestic VRP consent",
         "parameters": [
           {
             "name": "domesticVrpConsentId",
@@ -122,7 +107,7 @@
         "tags": [
           "Domestic VRP Consents"
         ],
-        "summary": "Delete DomesticVrpConsent",
+        "summary": "Delete domestic VRP consent",
         "parameters": [
           {
             "name": "domesticVrpConsentId",
@@ -180,7 +165,7 @@
         "tags": [
           "Domestic VRPs"
         ],
-        "summary": "Create DomesticVrp",
+        "summary": "Create domestic VRP",
         "parameters": [
           {
             "name": "x-obc-domestic-vrp-consent-id",
@@ -195,22 +180,7 @@
         "requestBody": {
           "description": "",
           "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpRequest"
-              }
-            },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DomesticVrpRequest"
-              }
-            },
-            "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DomesticVrpRequest"
               }
@@ -246,7 +216,7 @@
         "tags": [
           "Domestic VRPs"
         ],
-        "summary": "Read DomesticVrp",
+        "summary": "Read domestic VRP",
         "parameters": [
           {
             "name": "externalApiId",
@@ -302,30 +272,6 @@
   },
   "components": {
     "schemas": {
-      "AccessToken": {
-        "type": "object",
-        "properties": {
-          "Token": {
-            "type": "string",
-            "description": "Token.",
-            "nullable": true
-          },
-          "ExpiresIn": {
-            "type": "integer",
-            "description": "Token \"expires_in\".",
-            "format": "int32"
-          },
-          "RefreshToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "ModifiedBy": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AuthContextRequest": {
         "type": "object",
         "properties": {
@@ -364,6 +310,8 @@
           "NatWest_UlsterBankNI",
           "NatWest_UlsterBankNiBankline",
           "NatWest_UlsterBankNiClearSpend",
+          "NatWest_Mettle",
+          "NatWest_Coutts",
           "VrpHackathon",
           "Santander",
           "Barclays_Sandbox",
@@ -389,6 +337,7 @@
           "Hsbc_UkBusiness",
           "Hsbc_UkKinetic",
           "Hsbc_UkPersonal",
+          "Hsbc_HsbcNetUk",
           "Danske",
           "AlliedIrish",
           "Monzo",
@@ -590,9 +539,6 @@
             "type": "string",
             "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
             "nullable": true
-          },
-          "AccessToken": {
-            "$ref": "#/components/schemas/AccessToken"
           },
           "AuthContext": {
             "$ref": "#/components/schemas/AuthContextRequest"

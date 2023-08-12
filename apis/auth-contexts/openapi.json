@@ -3,58 +3,25 @@
   "info": {
     "title": "Auth Contexts API",
     "description": "Auth Contexts API for Open Banking Connector Web App",
-    "version": "web-app/4.0.0"
+    "version": "6.2.0"
   },
   "paths": {
-    "/auth/query-redirect": {
-      "get": {
-        "tags": [
-          "OAuth2 Redirects"
-        ],
-        "summary": "OAuth2 query redirect endpoint",
-        "parameters": [
-          {
-            "name": "id_token",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "code",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "description": "",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/auth/redirect-delegate": {
       "post": {
         "tags": [
-          "OAuth2 Redirects"
+          "Post-Auth Redirects"
         ],
-        "summary": "Delegate endpoint for forwarding data captured elsewhere from OAuth2 redirect",
+        "summary": "Delegate endpoint for forwarding data captured elsewhere from post-auth (OAuth 2/OpenID Connect) redirect",
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
+                "required": [
+                  "code",
+                  "id_token",
+                  "response_mode",
+                  "state"
+                ],
                 "type": "object",
                 "properties": {
                   "id_token": {
@@ -73,6 +40,9 @@
                     "type": "string"
                   },
                   "redirect_uri": {
+                    "type": "string"
+                  },
+                  "app_session_id": {
                     "type": "string"
                   }
                 }
@@ -94,6 +64,9 @@
                   "style": "form"
                 },
                 "redirect_uri": {
+                  "style": "form"
+                },
+                "app_session_id": {
                   "style": "form"
                 }
               }
@@ -135,6 +108,7 @@
           },
           "ConsentId": {
             "type": "string",
+            "description": "Consent ID.",
             "format": "uuid"
           },
           "Warnings": {
