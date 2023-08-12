@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "web-app/5.1.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consents": {
@@ -310,6 +310,8 @@
           "NatWest_UlsterBankNI",
           "NatWest_UlsterBankNiBankline",
           "NatWest_UlsterBankNiClearSpend",
+          "NatWest_Mettle",
+          "NatWest_Coutts",
           "VrpHackathon",
           "Santander",
           "Barclays_Sandbox",

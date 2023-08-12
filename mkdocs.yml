@@ -42,6 +42,7 @@ nav:
     - Signing certificate profiles settings: configuration/signing-certificate-profiles-settings.md
     - Encryption keys settings: configuration/encryption-keys-settings.md
     - Configuration sources settings: configuration/configuration-sources-settings.md
+    - Open Telemetry settings: configuration/open-telemetry-settings.md
   - APIs:
     - apis/README.md
     - Bank Configuration API:

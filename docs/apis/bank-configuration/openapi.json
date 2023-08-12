@@ -3,7 +3,7 @@
   "info": {
     "title": "Bank Configuration API",
     "description": "Bank Configuration API for Open Banking Connector Web App",
-    "version": "web-app/5.1.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/config/bank-registrations": {
@@ -181,6 +181,8 @@
           "NatWest_UlsterBankNI",
           "NatWest_UlsterBankNiBankline",
           "NatWest_UlsterBankNiClearSpend",
+          "NatWest_Mettle",
+          "NatWest_Coutts",
           "VrpHackathon",
           "Santander",
           "Barclays_Sandbox",
@@ -300,6 +302,8 @@
           "NatWest_RoyalBankOfScotlandSandbox",
           "NatWest_RoyalBankOfScotlandProduction",
           "NatWest_UlsterBankNiProduction",
+          "NatWest_MettleProduction",
+          "NatWest_CouttsProduction",
           "Lloyds_Sandbox",
           "Lloyds_Production"
         ],

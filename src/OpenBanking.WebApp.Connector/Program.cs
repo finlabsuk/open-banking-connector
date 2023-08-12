@@ -25,11 +25,23 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host.AddGenericHostConfiguration(args);
 
 // Add services
+
+//var serviceVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+//string serviceVersion = FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion!;
+
+// Service version is taken to be assembly file version without revision number removed (see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning#assembly-file-version for info on assembly file version)
+string serviceVersion =
+    Assembly
+        .GetExecutingAssembly()
+        .GetCustomAttribute<AssemblyFileVersionAttribute>()!
+        .Version;
+serviceVersion = serviceVersion.Remove(serviceVersion.LastIndexOf('.'));
+
 builder.Services
     // Add .NET generic host app services 
     .AddGenericHostServices(builder.Configuration)
     // Add .NET web host app services
-    .AddWebHostServices(builder.Configuration)
+    .AddWebHostServices(builder.Configuration, serviceVersion)
     // Configure Swagger
     .AddSwaggerGen(
         options =>
@@ -39,7 +51,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Bank Configuration API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description = "Bank Configuration API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
@@ -47,7 +59,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Account and Transaction API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description = "Account and Transaction API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
@@ -55,7 +67,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Payment Initiation API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description = "Payment Initiation API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
@@ -63,7 +75,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Variable Recurring Payments API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description = "Variable Recurring Payments API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
@@ -71,7 +83,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Auth Contexts API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description = "Auth Contexts API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
@@ -79,7 +91,7 @@ builder.Services
                 new OpenApiInfo
                 {
                     Title = "Testing (non-production) API",
-                    Version = "code-generated",
+                    Version = serviceVersion,
                     Description =
                         "Testing API for Open Banking Connector Web App. Endpoints should not be used in production."
                 });

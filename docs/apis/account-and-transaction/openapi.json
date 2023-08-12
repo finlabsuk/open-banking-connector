@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "web-app/5.1.0"
+    "version": "6.2.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -250,15 +250,6 @@
         "summary": "Read accounts",
         "parameters": [
           {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
             "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
@@ -368,15 +359,6 @@
         "summary": "Read balances",
         "parameters": [
           {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
             "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
@@ -484,15 +466,6 @@
         "summary": "Read direct debits",
         "parameters": [
           {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
             "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
@@ -599,15 +572,6 @@
         ],
         "summary": "Read party",
         "parameters": [
-          {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
@@ -777,15 +741,6 @@
         "summary": "Read standing orders",
         "parameters": [
           {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
             "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
@@ -893,24 +848,6 @@
         "summary": "Read transactions",
         "parameters": [
           {
-            "name": "externalApiAccountId",
-            "in": "path",
-            "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "externalApiStatementId",
-            "in": "path",
-            "description": "External (bank) API ID of Statement",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "x-obc-account-access-consent-id",
             "in": "header",
             "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
@@ -980,15 +917,6 @@
             "name": "externalApiAccountId",
             "in": "path",
             "description": "External (bank) API ID of Account",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "externalApiStatementId",
-            "in": "path",
-            "description": "External (bank) API ID of Statement",
             "required": true,
             "schema": {
               "type": "string"
@@ -2362,7 +2290,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadAccount6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadAccount6Data": {
         "type": "object",
@@ -2393,7 +2321,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadBalance1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadBalance1Data": {
         "type": "object",
@@ -2405,10 +2333,21 @@
             },
             "description": "Gets the balance.",
             "nullable": true
+          },
+          "TotalValue": {
+            "$ref": "#/components/schemas/OBReadBalance1DataTotalValue"
           }
         },
         "additionalProperties": false,
         "description": "The OBReadBalance1Data."
+      },
+      "OBReadBalance1DataBalanceAmountSubTypeEnum": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string",
+        "description": "The amount in the domestic or base accounting currency. Default is Base Currency (BCUR) if not specified."
       },
       "OBReadBalance1DataBalanceCreditLineTypeEnum": {
         "enum": [
@@ -2450,6 +2389,9 @@
             },
             "description": "Gets the credit line.",
             "nullable": true
+          },
+          "LocalAmount": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemLocalAmount"
           }
         },
         "additionalProperties": false,
@@ -2467,6 +2409,9 @@
             "type": "string",
             "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
             "nullable": true
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceAmountSubTypeEnum"
           }
         },
         "additionalProperties": false,
@@ -2489,6 +2434,34 @@
         "additionalProperties": false,
         "description": "Amount of money of the credit line."
       },
+      "OBReadBalance1DataBalanceItemLocalAmount": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
+            "nullable": true
+          },
+          "SubType": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceLocalAmountSubTypeEnum"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Optional component providing the equivalent of Amount in local currency. Default is Local Currency (LCUR) if not specified."
+      },
+      "OBReadBalance1DataBalanceLocalAmountSubTypeEnum": {
+        "enum": [
+          "BaseCurrency",
+          "LocalCurrency"
+        ],
+        "type": "string",
+        "description": "The amount in the local market currency for which the asset is held."
+      },
       "OBReadBalance1DataBalancePropertiesItemsItem": {
         "type": "object",
         "properties": {
@@ -2506,6 +2479,23 @@
         "additionalProperties": false,
         "description": "Set of elements used to provide details on the credit line."
       },
+      "OBReadBalance1DataTotalValue": {
+        "type": "object",
+        "properties": {
+          "Amount": {
+            "type": "string",
+            "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Combined sum of all Amounts in the accounts base currency."
+      },
       "OBReadConsent1": {
         "type": "object",
         "properties": {
@@ -2518,7 +2508,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>from</i> this to an older format for banks supporting an earlier spec version."
+        "description": "Request object OBReadConsent1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>from</i> this to an older format for banks supporting an earlier spec version."
       },
       "OBReadConsent1Data": {
         "type": "object",
@@ -2598,7 +2588,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadConsentResponse1Data": {
         "type": "object",
@@ -2792,7 +2782,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadParty2 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadParty2Data": {
         "type": "object",
@@ -2818,7 +2808,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadParty3 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBReadParty3Data": {
         "type": "object",
@@ -2880,7 +2870,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec\r\n<a href=\"https://github.com/OpenBankingUK/read-write-api-specs/blob/v3.1.10r5/dist/openapi/account-info-openapi.yaml\" />\r\nv3.1.10r5 <a />. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
+        "description": "Response object OBReadTransaction6 from UK Open Banking Read-Write Account and Transaction API spec\r\nv3.1.11. Open Banking Connector will automatically\r\ntranslate <i>to</i> this from an older format for banks supporting an earlier spec version."
       },
       "OBStandingOrder6": {
         "type": "object",

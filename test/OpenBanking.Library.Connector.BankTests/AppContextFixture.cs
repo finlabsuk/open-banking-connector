@@ -49,7 +49,7 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
             // Add .NET generic host app services 
             .AddGenericHostServices(builder.Configuration)
             // Add .NET web host app services
-            .AddWebHostServices(builder.Configuration)
+            .AddWebHostServices(builder.Configuration, null)
             // Add bank testing services
             .AddBankTestingServices(builder.Configuration)
             // Add memory cache

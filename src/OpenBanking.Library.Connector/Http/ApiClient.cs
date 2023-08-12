@@ -27,6 +27,7 @@ public class ApiClient : IApiClient
         {
             AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
             ActivityHeadersPropagator = null // ensures no traceparent HTTP header
+            //ActivityHeadersPropagator = DistributedContextPropagator.CreateNoOutputPropagator() 
         };
 
         const int maxRedirects = 50;

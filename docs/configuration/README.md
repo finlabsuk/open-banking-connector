@@ -32,6 +32,7 @@ Open Banking Connector configuration settings are collected into groups which ar
 - [signing certificate profiles settings](./signing-certificate-profiles-settings.md) configure signing certificate profiles used by Open Banking Connector
 - [encryption keys settings](./encryption-keys-settings.md) configure encryption keys used by Open Banking Connector
 - [configuration sources settings](./configuration-sources-settings.md) configure configuration sources used by Open Banking Connector
+- [open telemetry settings](./open-telemetry-settings.md) configure Open Telemetry settings used by Open Banking Connector
 
 ## Sources
 

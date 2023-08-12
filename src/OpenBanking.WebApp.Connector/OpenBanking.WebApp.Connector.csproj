@@ -7,6 +7,7 @@
         <UserSecretsId>aa921213-9461-4f9e-8fec-153624ec67ad</UserSecretsId>
         <AssemblyName>FinnovationLabs.OpenBanking.WebApp.Connector</AssemblyName>
         <RootNamespace>FinnovationLabs.OpenBanking.WebApp.Connector</RootNamespace>
+        <Version>6.2.0</Version>
         <Copyright>Finnovation Labs Limited and Contributors</Copyright>
         <Company>Finnovation Labs Limited</Company>
         <IsPackable>false</IsPackable>
@@ -15,18 +16,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.9"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.Connector.Web\OpenBanking.Library.Connector.Web.csproj"/>
     </ItemGroup>
 
     <PropertyGroup>
