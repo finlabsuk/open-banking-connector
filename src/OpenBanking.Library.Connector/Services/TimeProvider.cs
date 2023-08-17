@@ -6,8 +6,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 public class TimeProvider : ITimeProvider
 {
-    public DateTimeOffset GetUtcNow()
-    {
-        return DateTimeOffset.UtcNow;
-    }
+    public DateTimeOffset GetUtcNow() => DateTimeOffset.UtcNow;
 }

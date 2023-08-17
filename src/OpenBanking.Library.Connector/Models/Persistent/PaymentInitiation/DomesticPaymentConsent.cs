@@ -84,7 +84,8 @@ internal class DomesticPaymentConsent :
     /// <summary>
     ///     Associated refresh tokens
     /// </summary>
-    public IList<DomesticPaymentConsentRefreshToken> DomesticPaymentConsentRefreshTokensNavigation { get; private set; } =
+    public IList<DomesticPaymentConsentRefreshToken>
+        DomesticPaymentConsentRefreshTokensNavigation { get; private set; } =
         new List<DomesticPaymentConsentRefreshToken>();
 
     protected override string GetConsentTypeString() => "pisp_dom";

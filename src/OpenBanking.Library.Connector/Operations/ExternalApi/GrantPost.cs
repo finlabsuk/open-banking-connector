@@ -66,10 +66,7 @@ internal class GrantPost : IGrantPost
 
         // Deserialise IT token claims
         var jsonSerializerSettings =
-            new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         IdTokenAuthEndpoint idToken =
             JsonConvert.DeserializeObject<IdTokenAuthEndpoint>(
@@ -150,10 +147,7 @@ internal class GrantPost : IGrantPost
     {
         async Task<TokenEndpointResponseClientCredentialsGrant> GetTokenAsync()
         {
-            var keyValuePairs = new Dictionary<string, string>
-            {
-                { "grant_type", "client_credentials" }
-            };
+            var keyValuePairs = new Dictionary<string, string> { { "grant_type", "client_credentials" } };
 
             if (scope is not null)
             {
@@ -492,10 +486,7 @@ internal class GrantPost : IGrantPost
 
         // Deserialise IT token claims
         var jsonSerializerSettings =
-            new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         IdTokenTokenEndpoint idToken =
             JsonConvert.DeserializeObject<IdTokenTokenEndpoint>(

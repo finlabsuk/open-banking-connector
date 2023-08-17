@@ -20,5 +20,5 @@ public enum PaymentInitiationApiVersion
     Version3p1p4,
 
     [EnumMember(Value = "Version3p1p6")]
-    Version3p1p6,
+    Version3p1p6
 }

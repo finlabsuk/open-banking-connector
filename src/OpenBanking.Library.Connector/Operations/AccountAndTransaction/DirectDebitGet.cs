@@ -96,12 +96,9 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
         string urlString = readParams.ExternalApiAccountId switch
         {
             null => $"{accountAndTransactionApi.BaseUrl}/direct-debits",
-            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/direct-debits",
+            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/direct-debits"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;

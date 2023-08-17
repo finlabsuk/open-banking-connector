@@ -18,7 +18,7 @@ public enum RegistrationScopeElementEnum
     PaymentInitiation,
 
     [EnumMember(Value = "FundsConfirmation")]
-    FundsConfirmation,
+    FundsConfirmation
 }
 
 public static class RegistrationScopeApiHelper

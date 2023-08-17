@@ -17,8 +17,5 @@ public static class HttpUtils
     /// </summary>
     /// <param name="uri"></param>
     /// <returns></returns>
-    public static NameValueCollection ParseQueryString(Uri uri)
-    {
-        return HttpUtility.ParseQueryString(uri.Query);
-    }
+    public static NameValueCollection ParseQueryString(Uri uri) => HttpUtility.ParseQueryString(uri.Query);
 }

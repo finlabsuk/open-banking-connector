@@ -18,20 +18,12 @@ internal class IoFacade : IIoFacade
         _getContentPath = getContentPath.ArgNotNull(nameof(getContentPath));
     }
 
-    public string GetContentPath()
-    {
-        return _getContentPath();
-    }
+    public string GetContentPath() => _getContentPath();
 
-    public IEnumerable<string> GetDirectoryFiles(string path, string filter)
-    {
-        return Directory.GetFiles(path, filter, SearchOption.AllDirectories);
-    }
+    public IEnumerable<string> GetDirectoryFiles(string path, string filter) =>
+        Directory.GetFiles(path, filter, SearchOption.AllDirectories);
 
-    public bool FileExists(string path)
-    {
-        return File.Exists(path);
-    }
+    public bool FileExists(string path) => File.Exists(path);
 
     public void WriteFile(string path, byte[] bytes)
     {

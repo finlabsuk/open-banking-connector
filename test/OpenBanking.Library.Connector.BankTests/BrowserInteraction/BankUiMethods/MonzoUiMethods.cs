@@ -20,8 +20,6 @@ public class MonzoUiMethods : IBankUiMethods
     public Task PerformConsentAuthUiInteractions(
         ConsentVariety consentVariety,
         IPage page,
-        BankUser bankUser)
-    {
-        return Task.CompletedTask;
-    }
+        BankUser bankUser) =>
+        Task.CompletedTask;
 }

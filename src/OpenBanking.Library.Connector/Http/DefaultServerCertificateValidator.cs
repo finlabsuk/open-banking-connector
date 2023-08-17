@@ -13,8 +13,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 /// </summary>
 public class DefaultServerCertificateValidator : IServerCertificateValidator
 {
-    public bool IsOk(object stateInfo, X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors)
-    {
-        return true;
-    }
+    public bool IsOk(object stateInfo, X509Certificate? cert, X509Chain? chain, SslPolicyErrors errors) => true;
 }

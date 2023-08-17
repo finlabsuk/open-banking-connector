@@ -32,7 +32,8 @@ public class DomesticPaymentsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticPaymentResponse>> PostAsync(
-        [FromHeader(Name = "x-obc-domestic-payment-consent-id")] Guid domesticPaymentConsentId,
+        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
+        Guid domesticPaymentConsentId,
         [FromBody]
         DomesticPaymentRequest request)
     {

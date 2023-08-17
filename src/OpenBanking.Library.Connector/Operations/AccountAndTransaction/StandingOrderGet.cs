@@ -92,15 +92,12 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
         string urlString = readParams.ExternalApiAccountId switch
         {
             null => $"{accountAndTransactionApi.BaseUrl}/standing-orders",
-            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/standing-orders",
+            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/standing-orders"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
-        JsonSerializerSettings? jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
+        JsonSerializerSettings jsonSerializerSettings = ApiClient.GetDefaultJsonSerializerSettings;
         IApiGetRequests<AccountAndTransactionModelsPublic.OBReadStandingOrder6> apiRequests =
             accountAndTransactionApi.ApiVersion switch
             {

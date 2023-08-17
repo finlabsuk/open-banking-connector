@@ -189,12 +189,8 @@ public class ProcessedSoftwareStatementProfile
 
     /// Software statement as string, e.g. "A.B.C"
     public string SoftwareStatement =>
-        new[]
-        {
-            SoftwareStatementHeaderBase64,
-            SoftwareStatementPayloadBase64,
-            SoftwwareStatementSignatureBase64
-        }.JoinString(".");
+        new[] { SoftwareStatementHeaderBase64, SoftwareStatementPayloadBase64, SoftwwareStatementSignatureBase64 }
+            .JoinString(".");
 
     public OBSealKey OBSealKey { get; }
 

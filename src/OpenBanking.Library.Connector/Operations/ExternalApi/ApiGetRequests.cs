@@ -49,7 +49,7 @@ internal class
         // Validate response
         ValidationResult responseValidationResult = await response.ValidateAsync();
         IEnumerable<IFluentResponseInfoOrWarningMessage> responseNonErrorMessages =
-            responseValidationResult.ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
+            responseValidationResult.ProcessValidationResultsAndRaiseErrors("prefix");
         nonErrorMessages.AddRange(responseNonErrorMessages);
         return (response, nonErrorMessages);
     }

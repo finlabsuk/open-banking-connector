@@ -108,10 +108,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                     },
                 BankRegistrationPut = bank is LloydsBank.Sandbox
                     ? null
-                    : new BankRegistrationPutCustomBehaviour
-                    {
-                        CustomTokenScope = "openid"
-                    },
+                    : new BankRegistrationPutCustomBehaviour { CustomTokenScope = "openid" },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     ResponseModesSupportedResponse = new List<OAuth2ResponseMode>
@@ -122,21 +119,16 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 },
                 AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
                     ? null
-                    : new ConsentAuthGetCustomBehaviour
-                    {
-                        IdTokenNonceClaimIsPreviousValue = true
-                    },
+                    : new ConsentAuthGetCustomBehaviour { IdTokenNonceClaimIsPreviousValue = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
-                    : new AccountAccessConsentPostCustomBehaviour
-                    {
-                        ResponseLinksOmitId = true
-                    },
+                    : new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
                 DirectDebitGet = bank is LloydsBank.Sandbox
                     ? null
                     : new DirectDebitGetCustomBehaviour
                     {
-                        PreviousPaymentDateTimeJsonConverter = DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
+                        PreviousPaymentDateTimeJsonConverter =
+                            DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
                     },
                 AuthCodeGrantPost = new GrantPostCustomBehaviour
                 {

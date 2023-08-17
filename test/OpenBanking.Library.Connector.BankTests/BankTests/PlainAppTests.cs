@@ -23,7 +23,7 @@ using Xunit.Abstractions;
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 [Collection("App context collection")]
-public partial class PlainAppTests : AppTests, IDisposable
+public class PlainAppTests : AppTests, IDisposable
 {
     private readonly AppContextFixture _appContextFixture;
     private readonly SqliteConnection _connection;

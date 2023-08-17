@@ -21,8 +21,5 @@ public class ConfigurationSettingsProvider<TSettings> : ISettingsProvider<TSetti
         _settings = options.Value;
     }
 
-    public TSettings GetSettings()
-    {
-        return _settings;
-    }
+    public TSettings GetSettings() => _settings;
 }

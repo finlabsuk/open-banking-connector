@@ -10,7 +10,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Extensions;
 public static class FluentResponseExtensions
 {
     public static HttpResponse ToHttpResponse(this IFluentResponse value) =>
-        new(messages: value.GetHttpResponseMessages());
+        new(value.GetHttpResponseMessages());
 
     public static HttpResponse<TData> ToHttpResponse<TData>(this IFluentResponse<TData> value)
         where TData : class => new(value.GetHttpResponseMessages(), value.Data);

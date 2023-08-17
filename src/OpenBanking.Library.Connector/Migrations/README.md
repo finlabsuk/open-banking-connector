@@ -30,6 +30,7 @@ dotnet ef migrations add MigrationName --startup-project ..\OpenBanking.WebApp.C
 Generally, you can use Open Banking Connector to automatically apply the latest migration using the [OpenBankingConnector:Database:EnsureDatabaseMigrated](../../../docs/configuration/database-settings.md) setting.
 
 You can also apply a migration manually (or create the database) from the repo as follows:
+
 ```powershell
 
 # Set working directory to web app (startup project)

@@ -13,8 +13,5 @@ public class BankProfilesSettings : Dictionary<BankGroupEnum, Dictionary<string,
 {
     public string SettingsGroupName => "OpenBankingConnector:BankProfiles";
 
-    public BankProfilesSettings Validate()
-    {
-        return this;
-    }
+    public BankProfilesSettings Validate() => this;
 }

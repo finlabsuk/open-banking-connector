@@ -23,18 +23,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="12.0.1" />
-        <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
-        <PackageReference Include="FluentValidation" Version="11.6.0" />
-        <PackageReference Include="jose-jwt" Version="4.1.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.32.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="EFCore.NamingConventions" Version="7.0.2"/>
+        <PackageReference Include="FluentValidation" Version="11.6.0"/>
+        <PackageReference Include="jose-jwt" Version="4.1.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.32.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj" />
+        <ProjectReference Include="..\OpenBanking.Library.BankApiModels\OpenBanking.Library.BankApiModels.csproj"/>
     </ItemGroup>
 
     <PropertyGroup>

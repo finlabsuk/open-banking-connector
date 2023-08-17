@@ -24,7 +24,7 @@ internal class ApiGetRequestProcessor : IGetRequestProcessor
         var headers = new List<HttpHeader>
         {
             new("x-fapi-financial-id", _financialId),
-            new("Authorization", "Bearer " + _accessToken),
+            new("Authorization", "Bearer " + _accessToken)
         };
 
         return (headers, "application/json");

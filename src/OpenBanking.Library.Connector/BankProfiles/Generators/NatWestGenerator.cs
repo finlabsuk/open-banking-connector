@@ -135,8 +135,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             new[]
                             {
                                 AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
-                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
-                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsDetail
+                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                    .ReadStatementsBasic,
+                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                    .ReadStatementsDetail
                             });
                     }
 
@@ -189,10 +191,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         },
                         DoNotValidateIdTokenAcrClaim = true
                     },
-                    AuthCodeGrantPost = new GrantPostCustomBehaviour
-                    {
-                        DoNotValidateIdTokenAcrClaim = true
-                    },
+                    AuthCodeGrantPost = new GrantPostCustomBehaviour { DoNotValidateIdTokenAcrClaim = true },
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
                         ? new AccountAccessConsentPostCustomBehaviour
                         {
@@ -201,25 +200,20 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                         }
                         : null,
                     AccountAccessConsentGet = bank is NatWestBank.Coutts
-                        ? new AccountAccessConsentGetCustomBehaviour
-                        {
-                            ResponseLinksAddSlash = true
-                        }
+                        ? new AccountAccessConsentGetCustomBehaviour { ResponseLinksAddSlash = true }
                         : null
                 }
         };
     }
 
-    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(NatWestBank bank)
-    {
-        return new VariableRecurringPaymentsApi
+    private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(NatWestBank bank) =>
+        new()
         {
             ApiVersion =
                 VariableRecurringPaymentsApiVersion
                     .Version3p1p8, // from https://www.bankofapis.com/products/natwest-group-open-banking/vrp/documentation/nwb/3.1.8
             BaseUrl = GetVariableRecurringPaymentsApiBaseUrl(bank)
         };
-    }
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(NatWestBank bank)
     {
@@ -254,14 +248,12 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         };
     }
 
-    private PaymentInitiationApi GetPaymentInitiationApi(NatWestBank bank)
-    {
-        return new PaymentInitiationApi
+    private PaymentInitiationApi GetPaymentInitiationApi(NatWestBank bank) =>
+        new()
         {
             ApiVersion =
                 PaymentInitiationApiVersion
                     .Version3p1p6, // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.6
             BaseUrl = GetPaymentInitiationApiBaseUrl(bank)
         };
-    }
 }

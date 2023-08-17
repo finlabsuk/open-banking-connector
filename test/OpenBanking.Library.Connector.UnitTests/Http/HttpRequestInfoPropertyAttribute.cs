@@ -17,13 +17,9 @@ public class HttpRequestInfoPropertyAttribute : PropertyAttribute
         Verbose = PropertyTests.VerboseTests;
         Arbitrary = new[]
         {
-            typeof(BaseUrlArbitrary),
-            typeof(BaseMockArbitrary<ICredentials>),
-            typeof(BaseArbitrary<Cookie>),
-            typeof(BaseArbitrary<HttpHeader>),
-            typeof(BaseArbitrary<X509Certificate>),
-            typeof(BaseMockArbitrary<IWebProxy>),
-            typeof(BaseMockArbitrary<IServerCertificateValidator>)
+            typeof(BaseUrlArbitrary), typeof(BaseMockArbitrary<ICredentials>), typeof(BaseArbitrary<Cookie>),
+            typeof(BaseArbitrary<HttpHeader>), typeof(BaseArbitrary<X509Certificate>),
+            typeof(BaseMockArbitrary<IWebProxy>), typeof(BaseMockArbitrary<IServerCertificateValidator>)
         };
     }
 }

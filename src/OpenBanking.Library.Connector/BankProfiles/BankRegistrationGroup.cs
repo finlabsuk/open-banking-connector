@@ -42,5 +42,5 @@ public enum BankRegistrationGroup
     Lloyds_Sandbox,
 
     [EnumMember(Value = "Lloyds_Production")]
-    Lloyds_Production,
+    Lloyds_Production
 }

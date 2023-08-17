@@ -87,10 +87,7 @@ public class DomesticPaymentSubtest
             domesticPaymentConsentRequest.ExternalApiRequest,
             out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
         var domesticPaymentRequest =
-            new DomesticPaymentRequest
-            {
-                ExternalApiRequest = obWriteDomestic
-            };
+            new DomesticPaymentRequest { ExternalApiRequest = obWriteDomestic };
 
         domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
@@ -163,7 +160,7 @@ public class DomesticPaymentSubtest
                             false);
                 return consentResponse.Created < consentResponse.AuthContextModified;
             }
-            
+
             if (bankUser is null)
             {
                 throw new ArgumentException("No user specified for consent auth.");

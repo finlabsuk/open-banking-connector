@@ -47,18 +47,12 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 "https://api.ob.hsbcnet.com/obie/open-banking/v3.1/aisp"),
             _ => throw new ArgumentOutOfRangeException()
         };
-        var sandboxGrantPostCustomBehaviour = new GrantPostCustomBehaviour
-        {
-            DoNotValidateIdToken = true
-        };
+        var sandboxGrantPostCustomBehaviour = new GrantPostCustomBehaviour { DoNotValidateIdToken = true };
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
             issuerUrl,
             GetFinancialId(bank),
-            new AccountAndTransactionApi
-            {
-                BaseUrl = accountAndTransactionApiBaseUrl
-            },
+            new AccountAndTransactionApi { BaseUrl = accountAndTransactionApiBaseUrl },
             null,
             null,
             bank is not HsbcBank.Sandbox)
@@ -66,10 +60,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 OpenIdConfigurationGet = bank is HsbcBank.Sandbox
-                    ? new OpenIdConfigurationGetCustomBehaviour
-                    {
-                        Url = GetExtra1(bank)
-                    }
+                    ? new OpenIdConfigurationGetCustomBehaviour { Url = GetExtra1(bank) }
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
@@ -81,21 +72,12 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 },
                 BankRegistrationPut = bank is HsbcBank.Sandbox
                     ? null
-                    : new BankRegistrationPutCustomBehaviour
-                    {
-                        CustomTokenScope = "accounts"
-                    },
+                    : new BankRegistrationPutCustomBehaviour { CustomTokenScope = "accounts" },
                 JwksGet = bank is HsbcBank.Sandbox
-                    ? new JwksGetCustomBehaviour
-                    {
-                        ResponseHasNoRootProperty = true
-                    }
+                    ? new JwksGetCustomBehaviour { ResponseHasNoRootProperty = true }
                     : null,
                 AccountAccessConsentAuthGet = bank is HsbcBank.Sandbox
-                    ? new ConsentAuthGetCustomBehaviour
-                    {
-                        DoNotValidateIdToken = true
-                    }
+                    ? new ConsentAuthGetCustomBehaviour { DoNotValidateIdToken = true }
                     : null,
                 AuthCodeGrantPost = bank is HsbcBank.Sandbox
                     ? sandboxGrantPostCustomBehaviour
@@ -116,7 +98,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                             AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
                             AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
                             AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
-                                .ReadStatementsDetail,
+                                .ReadStatementsDetail
                         };
                     foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
                              elementsToRemove)

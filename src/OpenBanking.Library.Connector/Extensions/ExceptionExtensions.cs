@@ -8,10 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 
 public static class ExceptionExtensions
 {
-    public static FluentResponseOtherErrorMessage CreateOtherErrorMessage(this Exception exception)
-    {
-        return new FluentResponseOtherErrorMessage(exception);
-    }
+    public static FluentResponseOtherErrorMessage CreateOtherErrorMessage(this Exception exception) => new(exception);
 
     public static IList<FluentResponseOtherErrorMessage> CreateOtherErrorMessages(this AggregateException exception)
     {

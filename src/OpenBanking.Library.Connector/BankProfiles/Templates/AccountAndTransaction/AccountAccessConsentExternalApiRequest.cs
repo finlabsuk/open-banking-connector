@@ -27,10 +27,13 @@ public static class AccountAccessTemplates
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadProducts,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadScheduledPaymentsBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadScheduledPaymentsDetail,
+                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                            .ReadScheduledPaymentsBasic,
+                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                            .ReadScheduledPaymentsDetail,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStandingOrdersDetail,
+                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                            .ReadStandingOrdersDetail,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsDetail,
                         AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic,

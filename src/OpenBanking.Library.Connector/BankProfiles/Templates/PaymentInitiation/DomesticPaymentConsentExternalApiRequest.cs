@@ -60,8 +60,9 @@ public static partial class DomesticPaymentTemplates
                         Authorisation =
                             new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
                             {
-                                AuthorisationType = PaymentInitiationModelsPublic
-                                    .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Any,
+                                AuthorisationType =
+                                    PaymentInitiationModelsPublic
+                                        .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Any,
                                 CompletionDateTime = DateTimeOffset.UtcNow.AddDays(1)
                             },
                         SCASupportData = null
@@ -102,7 +103,7 @@ public static partial class DomesticPaymentTemplates
                                     {
                                         Unstructured = "Internal ops code 5120101",
                                         Reference = "FRESCO-101"
-                                    },
+                                    }
                         }
                     },
                     Risk = new PaymentInitiationModelsPublic.OBRisk1
@@ -123,9 +124,9 @@ public static partial class DomesticPaymentTemplates
                             TownName = "Sparsholt",
                             PostCode = "GU31 2ZZ",
                             CountrySubDivision = "Wessex",
-                            Country = "UK",
+                            Country = "UK"
                         }
-                    },
+                    }
                 },
             _ => throw new ArgumentOutOfRangeException(
                 nameof(domesticPaymentTemplateRequest.Type),

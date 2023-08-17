@@ -15,8 +15,5 @@ public static class InvalidUriArbitrary
             .ToArbitrary();
     }
 
-    private static bool IsUrl(string value)
-    {
-        return Uri.TryCreate(value, UriKind.Absolute, out _);
-    }
+    private static bool IsUrl(string value) => Uri.TryCreate(value, UriKind.Absolute, out _);
 }

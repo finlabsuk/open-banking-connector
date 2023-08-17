@@ -29,7 +29,7 @@ public enum RegistrationScopeEnum
     FundsConfirmation = 4,
 
     [EnumMember(Value = "All")]
-    All = AccountAndTransaction | PaymentInitiation | FundsConfirmation,
+    All = AccountAndTransaction | PaymentInitiation | FundsConfirmation
 }
 
 public static class RegistrationScopeExtensions

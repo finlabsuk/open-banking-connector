@@ -12,15 +12,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
 [ExcludeFromCodeCoverage]
 public class LocalStoreCertificateReader : ICertificateReader
 {
-    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint)
-    {
-        return GetCertificateInner(thumbprint, null).ToTaskResult();
-    }
+    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint) =>
+        GetCertificateInner(thumbprint, null).ToTaskResult();
 
-    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint, SecureString password)
-    {
-        return GetCertificateInner(thumbprint, password).ToTaskResult();
-    }
+    public Task<X509Certificate2?> GetCertificateAsync(string thumbprint, SecureString password) =>
+        GetCertificateInner(thumbprint, password).ToTaskResult();
 
     private X509Certificate2? GetCertificateInner(string value, SecureString? password)
     {

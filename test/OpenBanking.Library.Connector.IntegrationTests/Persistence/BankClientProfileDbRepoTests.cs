@@ -40,7 +40,7 @@ public class BankClientProfileDbRepoTests : DbTest
     [Property(Verbose = PropertyTests.VerboseTests)]
     public Property GetAsync_ReturnsEmpty(Guid id)
     {
-        Func<bool> rule = () => { return _repo.GetNoTrackingAsync(id).Result == null; };
+        Func<bool> rule = () => _repo.GetNoTrackingAsync(id).Result == null;
 
         return rule.When(true);
     }

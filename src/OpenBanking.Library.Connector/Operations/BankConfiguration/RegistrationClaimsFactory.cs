@@ -107,10 +107,8 @@ internal static class RegistrationClaimsFactory
                 Jti = Guid.NewGuid().ToString(),
                 TokenEndpointAuthMethod = tokenEndpointAuthMethodLocal,
                 GrantTypes = grantTypes,
-                ResponseTypes = new[]
-                {
-                    ClientRegistrationModelsPublic.OBRegistrationProperties1responseTypesItemEnum.CodeidToken
-                },
+                ResponseTypes =
+                    new[] { ClientRegistrationModelsPublic.OBRegistrationProperties1responseTypesItemEnum.CodeidToken },
                 ApplicationType = ClientRegistrationModelsPublic.OBRegistrationProperties1applicationTypeEnum.Web,
                 IdTokenSignedResponseAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                 RequestObjectSigningAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,

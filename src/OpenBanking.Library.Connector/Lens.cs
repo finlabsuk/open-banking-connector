@@ -23,10 +23,7 @@ internal static class Lens
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
-    public static Lens<T, TValue> Create<T, TValue>(Func<T, TValue> get, Action<T, TValue> set)
-    {
-        return new Lens<T, TValue>(get, set);
-    }
+    public static Lens<T, TValue> Create<T, TValue>(Func<T, TValue> get, Action<T, TValue> set) => new(get, set);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]

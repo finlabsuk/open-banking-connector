@@ -136,43 +136,31 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 AccountAccessConsentPost =
-                    new AccountAccessConsentPostCustomBehaviour
-                    {
-                        ResponseLinksOmitId = true
-                    },
+                    new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
-                    ? new ConsentAuthGetCustomBehaviour
-                    {
-                        DoNotValidateIdToken = true
-                    }
+                    ? new ConsentAuthGetCustomBehaviour { DoNotValidateIdToken = true }
                     : null,
                 AuthCodeGrantPost = bank is BarclaysBank.Sandbox
-                    ? new GrantPostCustomBehaviour
-                    {
-                        DoNotValidateIdToken = true
-                    }
+                    ? new GrantPostCustomBehaviour { DoNotValidateIdToken = true }
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
                 }
             }
         };
     }
 
-    private AccountAndTransactionApi GetAccountAndTransactionApi(BarclaysBank bank)
-    {
-        return new AccountAndTransactionApi
+    private AccountAndTransactionApi GetAccountAndTransactionApi(BarclaysBank bank) =>
+        new()
         {
             BaseUrl = bank is BarclaysBank.Sandbox
                 ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details
                 : "https://telesto.api.barclays:443/open-banking/v3.1/aisp" // from https://developer.barclays.com/apis/account-and-transactions/20e74071-13fb-44eb-b98f-2c89d6251ad8.bdn/documentation#interface-details
         };
-    }
 
-    private PaymentInitiationApi GetPaymentInitiationApi(BarclaysBank bank)
-    {
-        return new PaymentInitiationApi
+    private PaymentInitiationApi GetPaymentInitiationApi(BarclaysBank bank) =>
+        new()
         {
             ApiVersion =
                 PaymentInitiationApiVersion
@@ -181,5 +169,4 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
                 : "https://telesto.api.barclays:443/open-banking/v3.1/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
         };
-    }
 }

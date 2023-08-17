@@ -19,8 +19,9 @@ public static partial class DomesticVrpTemplates
                 {
                     Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestData
                     {
-                        ReadRefundAccount = VariableRecurringPaymentsModelsPublic
-                            .OBDomesticVRPConsentRequestDataReadRefundAccountEnum.Yes,
+                        ReadRefundAccount =
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestDataReadRefundAccountEnum
+                                .Yes,
                         ControlParameters =
                             new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                             {
@@ -95,8 +96,9 @@ public static partial class DomesticVrpTemplates
                 {
                     Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestData
                     {
-                        ReadRefundAccount = VariableRecurringPaymentsModelsPublic
-                            .OBDomesticVRPConsentRequestDataReadRefundAccountEnum.Yes,
+                        ReadRefundAccount =
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestDataReadRefundAccountEnum
+                                .Yes,
                         ControlParameters =
                             new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                             {
@@ -165,8 +167,9 @@ public static partial class DomesticVrpTemplates
                 {
                     Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestData
                     {
-                        ReadRefundAccount = VariableRecurringPaymentsModelsPublic
-                            .OBDomesticVRPConsentRequestDataReadRefundAccountEnum.Yes,
+                        ReadRefundAccount =
+                            VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequestDataReadRefundAccountEnum
+                                .Yes,
                         ControlParameters =
                             new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                             {
@@ -181,7 +184,6 @@ public static partial class DomesticVrpTemplates
                                             Amount = "100.00",
                                             Currency = "GBP"
                                         },
-
                                 PeriodicLimits =
                                     new List<VariableRecurringPaymentsModelsPublic.
                                         OBDomesticVRPControlParametersPeriodicLimitsItem>
@@ -197,7 +199,7 @@ public static partial class DomesticVrpTemplates
                                                 .OBDomesticVRPControlParametersPeriodicLimitsItemPeriodTypeEnum
                                                 .Week
                                         }
-                                    },
+                                    }
                             },
                         Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
                         {

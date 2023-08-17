@@ -8,8 +8,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Converters;
 
 public class IdentityValueConverter<TValue> : IValueConverter<TValue, TValue>
 {
-    public TValue Convert(TValue sourceMember, ResolutionContext context)
-    {
-        return sourceMember;
-    }
+    public TValue Convert(TValue sourceMember, ResolutionContext context) => sourceMember;
 }

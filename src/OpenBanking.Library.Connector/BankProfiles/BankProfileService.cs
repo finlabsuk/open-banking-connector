@@ -48,7 +48,7 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Lloyds] = new Lloyds(BankGroupEnum.Lloyds),
             [BankGroupEnum.Obie] = new Obie(BankGroupEnum.Obie),
             [BankGroupEnum.Monzo] = new Monzo(BankGroupEnum.Monzo),
-            [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest),
+            [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest)
         };
 
         // Populate dictionary of bank profile generators
@@ -74,7 +74,7 @@ public class BankProfileService : IBankProfileService
                 GetBankGroup<MonzoBank>(BankGroupEnum.Monzo)),
             [BankGroupEnum.NatWest] = new NatWestGenerator(
                 bankProfilesSettingsProvider,
-                GetBankGroup<NatWestBank>(BankGroupEnum.NatWest)),
+                GetBankGroup<NatWestBank>(BankGroupEnum.NatWest))
         };
     }
 

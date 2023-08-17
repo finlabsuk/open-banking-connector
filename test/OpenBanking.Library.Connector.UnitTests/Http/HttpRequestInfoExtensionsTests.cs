@@ -53,10 +53,7 @@ public class HttpRequestInfoExtensionsTests
     [Fact]
     public void Create_EmptyContentTypesProduceDefaults()
     {
-        var info = new HttpRequestInfo
-        {
-            RequestUri = new Uri("http://tests")
-        };
+        var info = new HttpRequestInfo { RequestUri = new Uri("http://tests") };
         info.ContentTypes.Clear();
 
         HttpRequestMessage result = info.CreateRequestMessage();

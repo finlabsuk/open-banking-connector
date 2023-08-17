@@ -18,10 +18,7 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
     (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
     {
         // Assemble headers and body
-        var headers = new List<HttpHeader>
-        {
-            new("Authorization", "Bearer " + _accessToken),
-        };
+        var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
 
         return (headers, "application/json");
     }

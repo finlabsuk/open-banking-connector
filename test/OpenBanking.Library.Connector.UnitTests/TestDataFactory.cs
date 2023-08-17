@@ -17,9 +17,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests;
 
 internal static class TestDataFactory
 {
-    public static SharedContext CreateMockOpenBankingContext()
-    {
-        return new SharedContext(
+    public static SharedContext CreateMockOpenBankingContext() =>
+        new(
             Substitute.For<ITimeProvider>(),
             Substitute.For<IApiClient>(),
             Substitute.For<IInstrumentationClient>(),
@@ -30,12 +29,10 @@ internal static class TestDataFactory
             Substitute.For<IBankProfileService>(),
             Substitute.For<IMemoryCache>(),
             Substitute.For<IEncryptionKeyInfo>());
-    }
 
 
-    public static RequestBuilder CreateMockRequestBuilder()
-    {
-        return new RequestBuilder(
+    public static RequestBuilder CreateMockRequestBuilder() =>
+        new(
             Substitute.For<ITimeProvider>(),
             new ApiVariantMapper(),
             Substitute.For<IInstrumentationClient>(),
@@ -45,5 +42,4 @@ internal static class TestDataFactory
             Substitute.For<IBankProfileService>(),
             Substitute.For<IMemoryCache>(),
             Substitute.For<IEncryptionKeyInfo>());
-    }
 }

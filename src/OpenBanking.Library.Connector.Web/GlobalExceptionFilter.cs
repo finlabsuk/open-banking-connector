@@ -23,8 +23,7 @@ public class GlobalExceptionFilter : IExceptionFilter
         // Catch unhandled input validation errors
         if (context.Exception is ArgumentNullException)
         {
-            context.Result = new ObjectResult(messages)
-                { StatusCode = StatusCodes.Status400BadRequest };
+            context.Result = new ObjectResult(messages) { StatusCode = StatusCodes.Status400BadRequest };
         }
     }
 }

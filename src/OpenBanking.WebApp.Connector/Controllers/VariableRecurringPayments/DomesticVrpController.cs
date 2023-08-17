@@ -32,7 +32,8 @@ public class DomesticVrpController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticVrpResponse>> PostAsync(
-        [FromHeader(Name = "x-obc-domestic-vrp-consent-id")] Guid domesticVrpConsentId,
+        [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
+        Guid domesticVrpConsentId,
         [FromBody]
         DomesticVrpRequest request)
     {

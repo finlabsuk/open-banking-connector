@@ -113,16 +113,21 @@ public class EntityMappingApplication
     private PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiation CreateDataInitiation() =>
         new()
         {
-            CreditorAccount = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationCreditorAccount
-            {
-                Identification = "id",
-                Name = "test",
-                SchemeName = "schema",
-                SecondaryIdentification = "secondary id"
-            },
+            CreditorAccount =
+                new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataInitiationCreditorAccount
+                {
+                    Identification = "id",
+                    Name = "test",
+                    SchemeName = "schema",
+                    SecondaryIdentification = "secondary id"
+                },
             CreditorPostalAddress = new PaymentInitiationModelsPublic.OBPostalAddress6
             {
-                AddressLine = new List<string> { "1 high street", "blexley" },
+                AddressLine = new List<string>
+                {
+                    "1 high street",
+                    "blexley"
+                },
                 AddressType = PaymentInitiationModelsPublic.OBAddressTypeCodeEnum.POBox,
                 BuildingNumber = "42",
                 Country = "UK",
@@ -167,8 +172,9 @@ public class EntityMappingApplication
                 Initiation = CreateDataInitiation(),
                 Authorisation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
                 {
-                    AuthorisationType = PaymentInitiationModelsPublic
-                        .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
+                    AuthorisationType =
+                        PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum
+                            .Single,
                     CompletionDateTime = DateTimeOffset.UtcNow
                 },
                 SCASupportData = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataSCASupportData
@@ -177,8 +183,9 @@ public class EntityMappingApplication
                         PaymentInitiationModelsPublic
                             .OBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum.SCA,
                     ReferencePaymentOrderId = "reference Payment Order Id",
-                    RequestedSCAExemptionType = PaymentInitiationModelsPublic
-                        .OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum.PartyToParty
+                    RequestedSCAExemptionType =
+                        PaymentInitiationModelsPublic
+                            .OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum.PartyToParty
                 }
             },
             Risk = CreateRisk()
@@ -187,7 +194,7 @@ public class EntityMappingApplication
 
     private BankRegistration CreateClient() => new()
     {
-        SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         //XFapiFinancialId = "xfapi"
     };
 
@@ -202,6 +209,6 @@ public class EntityMappingApplication
     {
         CertificateType = TransportCertificateType.OBLegacy,
         AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
-        Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n",
+        Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     };
 }

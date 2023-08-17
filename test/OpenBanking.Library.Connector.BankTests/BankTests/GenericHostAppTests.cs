@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
 [Collection("App context collection")]
-public partial class GenericHostAppTests : AppTests
+public class GenericHostAppTests : AppTests
 {
     public GenericHostAppTests(ITestOutputHelper outputHelper, AppContextFixture appContextFixture) : base(
         outputHelper,

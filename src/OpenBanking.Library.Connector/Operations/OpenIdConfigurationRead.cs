@@ -68,7 +68,7 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
         IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
             new OpenBankingOpenIdConfigurationResponseValidator()
                 .Validate(openIdConfiguration)
-                .ProcessValidationResultsAndRaiseErrors(messagePrefix: "prefix");
+                .ProcessValidationResultsAndRaiseErrors("prefix");
 
         return (openIdConfiguration, newNonErrorMessages);
     }

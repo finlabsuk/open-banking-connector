@@ -24,10 +24,7 @@ public class DateTimeOffsetUnixConverterTests
             dateTime.Second,
             TimeSpan.Zero);
 
-        var value = new SerialisedEntity
-        {
-            DateAndTime = dateTimeOffset
-        };
+        var value = new SerialisedEntity { DateAndTime = dateTimeOffset };
 
         Func<bool> rule = () =>
         {
@@ -53,10 +50,7 @@ public class DateTimeOffsetUnixConverterTests
             DateTimeKind.Utc).AddMilliseconds(milliseconds);
         var dto = new DateTimeOffset(dt, TimeSpan.Zero);
 
-        var value = new SerialisedEntity
-        {
-            DateAndTime = dto
-        };
+        var value = new SerialisedEntity { DateAndTime = dto };
 
         Func<bool> rule = () =>
         {
@@ -78,7 +72,9 @@ public class DateTimeOffsetUnixConverterTests
             // Set up converter and JSON serialiser settings
             var converter = new DateTimeOffsetUnixConverter(JsonConverterLabel.DcrRegScope);
             var optionsDict = new Dictionary<JsonConverterLabel, int>
-                { [JsonConverterLabel.DcrRegScope] = (int) DateTimeOffsetUnixConverterEnum.UnixSecondsJsonFormat };
+            {
+                [JsonConverterLabel.DcrRegScope] = (int) DateTimeOffsetUnixConverterEnum.UnixSecondsJsonFormat
+            };
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 Context = new StreamingContext(StreamingContextStates.All, optionsDict)

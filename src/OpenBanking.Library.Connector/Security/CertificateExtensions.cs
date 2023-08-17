@@ -6,18 +6,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 internal static class CertificateExtensions
 {
-    public static bool IsPemThumbprint(this string? thumbprint)
-    {
-        return thumbprint != null &&
-               thumbprint.IndexOf("-----BEGIN CERTIFICATE-----", StringComparison.Ordinal) ==
-               0;
-    }
+    public static bool IsPemThumbprint(this string? thumbprint) =>
+        thumbprint != null &&
+        thumbprint.IndexOf("-----BEGIN CERTIFICATE-----", StringComparison.Ordinal) ==
+        0;
 
 
-    public static bool IsPemKey(this string? value)
-    {
-        return value != null && value.IndexOf(
+    public static bool IsPemKey(this string? value) =>
+        value != null && value.IndexOf(
             "-----BEGIN PRIVATE KEY-----",
             StringComparison.Ordinal) == 0;
-    }
 }

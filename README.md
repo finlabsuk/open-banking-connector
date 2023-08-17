@@ -1,6 +1,7 @@
 # Open Banking Connector
 
-Open Banking Connector is a *fully open-source*, *free-to-use* UK Open Banking client (connection layer) that simplifies connections to UK Open Banking APIs.
+Open Banking Connector is a *fully open-source*,
+*free-to-use* UK Open Banking client (connection layer) that simplifies connections to UK Open Banking APIs.
 
 Further information and documentation is [here](https://docs.openbankingconnector.io/).
 

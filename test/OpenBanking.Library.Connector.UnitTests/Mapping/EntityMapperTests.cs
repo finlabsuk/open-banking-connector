@@ -111,7 +111,11 @@ public class EntityMapperTests
             string.Empty,
             string.Empty)
         {
-            Scope = new List<string> { "Value1", "Value2" }
+            Scope = new List<string>
+            {
+                "Value1",
+                "Value2"
+            }
         };
 
 
@@ -147,7 +151,12 @@ public class EntityMapperTests
 
         var output = mapper.Map<OBClientRegistration1>(input);
 
-        output.Scope.Should().Equal(new List<string> { "Value1", "Value2" });
+        output.Scope.Should().Equal(
+            new List<string>
+            {
+                "Value1",
+                "Value2"
+            });
     }
 
 

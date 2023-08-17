@@ -30,7 +30,9 @@ public class BarclaysUiMethods : IBankUiMethods
 
             await page.Locator("#test-case").SelectOptionAsync(new[] { "ACC200" });
 
-            await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { NameString = "Run Test Case" })
+            await page.GetByRole(
+                    AriaRole.Button,
+                    new PageGetByRoleOptions { NameString = "Run Test Case" })
                 .ClickAsync();
         }
     }

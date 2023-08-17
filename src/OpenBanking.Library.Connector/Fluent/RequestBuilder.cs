@@ -118,10 +118,7 @@ public class RequestBuilder : IRequestBuilder
             _apiVariantMapper,
             _bankProfileService,
             _memoryCache,
-            _encryptionKeyInfo)
-        {
-            Created = _timeProvider.GetUtcNow()
-        };
+            _encryptionKeyInfo) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

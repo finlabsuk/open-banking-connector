@@ -94,12 +94,9 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
         string urlString = readParams.ExternalApiAccountId switch
         {
             null => $"{accountAndTransactionApi.BaseUrl}/party",
-            ( { } extAccountId) => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/party",
+            ( { } extAccountId) => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/party"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;

@@ -16,8 +16,5 @@ public class Danske : BankGroupBase<DanskeBank>
     public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
-        new()
-        {
-            [BankProfileEnum.Danske] = DanskeBank.Danske
-        };
+        new() { [BankProfileEnum.Danske] = DanskeBank.Danske };
 }

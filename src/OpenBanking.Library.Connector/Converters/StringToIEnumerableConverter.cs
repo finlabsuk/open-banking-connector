@@ -11,10 +11,8 @@ public class StringToIListConverter : ITypeConverter<string, IList<string>>
     public IList<string> Convert(
         string source,
         IList<string> destination,
-        ResolutionContext context)
-    {
-        return source.Split(" ").ToList();
-    }
+        ResolutionContext context) =>
+        source.Split(" ").ToList();
 }
 
 public class StringToIEnumerableReverseConverter : ITypeConverter<IEnumerable<string>, string>
@@ -22,24 +20,18 @@ public class StringToIEnumerableReverseConverter : ITypeConverter<IEnumerable<st
     public string Convert(
         IEnumerable<string> source,
         string destination,
-        ResolutionContext context)
-    {
-        return string.Join(" ", source);
-    }
+        ResolutionContext context) =>
+        string.Join(" ", source);
 }
 
 public class CommaDelimitedStringToIEnumerableValueConverter : IValueConverter<string, IEnumerable<string>>
 {
-    public IEnumerable<string> Convert(string sourceMember, ResolutionContext context)
-    {
-        return sourceMember.Split(", ").ToList();
-    }
+    public IEnumerable<string> Convert(string sourceMember, ResolutionContext context) =>
+        sourceMember.Split(", ").ToList();
 }
 
 public class CommaDelimitedStringToIEnumerableReverseValueConverter : IValueConverter<IEnumerable<string>, string>
 {
-    public string Convert(IEnumerable<string> sourceMember, ResolutionContext context)
-    {
-        return string.Join(", ", sourceMember);
-    }
+    public string Convert(IEnumerable<string> sourceMember, ResolutionContext context) =>
+        string.Join(", ", sourceMember);
 }

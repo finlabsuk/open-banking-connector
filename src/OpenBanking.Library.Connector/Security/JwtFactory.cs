@@ -48,10 +48,7 @@ public static class JwtFactory
     }
 
     public static Dictionary<string, object> DefaultJwtHeadersExcludingTyp(string signingId) =>
-        new()
-        {
-            { "kid", signingId.ArgNotNull(nameof(signingId)) }
-        };
+        new() { { "kid", signingId.ArgNotNull(nameof(signingId)) } };
 
     public static Dictionary<string, object> DefaultJwtHeadersIncludingTyp(string signingId) =>
         new()

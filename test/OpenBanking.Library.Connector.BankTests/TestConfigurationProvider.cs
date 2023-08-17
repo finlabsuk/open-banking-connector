@@ -15,8 +15,7 @@ public class TestConfigurationProvider : ITestConfigurationProvider
     {
         _providers = new ITestConfigurationProvider[]
         {
-            new LocalFileTestConfigurationProvider("user"),
-            new LocalFileTestConfigurationProvider(null)
+            new LocalFileTestConfigurationProvider("user"), new LocalFileTestConfigurationProvider(null)
         };
     }
 

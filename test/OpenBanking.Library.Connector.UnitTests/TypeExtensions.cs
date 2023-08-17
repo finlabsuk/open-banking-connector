@@ -137,8 +137,5 @@ internal static class TypeExtensions
         return parameters.Length == 0 || parameters.All(p => p.HasDefaultValue);
     }
 
-    private static bool HasDefaultValue(this ParameterInfo parameter)
-    {
-        return parameter.DefaultValue != null;
-    }
+    private static bool HasDefaultValue(this ParameterInfo parameter) => parameter.DefaultValue != null;
 }

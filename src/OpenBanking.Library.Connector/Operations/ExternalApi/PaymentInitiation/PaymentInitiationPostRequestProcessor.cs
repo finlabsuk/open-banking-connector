@@ -59,7 +59,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         {
             new("x-fapi-financial-id", _orgId),
             new("Authorization", "Bearer " + _accessToken),
-            new("x-idempotency-key", Guid.NewGuid().ToString()),
+            new("x-idempotency-key", Guid.NewGuid().ToString())
         };
         headers.Add(CreateJwsSignatureHeader(jwt));
         JsonSerializerSettings jsonSerializerSettings =
@@ -96,8 +96,8 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         {
             crit = new[]
             {
-                "http://openbanking.org.uk/iat", "http://openbanking.org.uk/iss",
-                "http://openbanking.org.uk/tan", "b64"
+                "http://openbanking.org.uk/iat", "http://openbanking.org.uk/iss", "http://openbanking.org.uk/tan",
+                "b64"
             };
             b64 = false;
         }
@@ -105,8 +105,7 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         {
             crit = new[]
             {
-                "http://openbanking.org.uk/iat", "http://openbanking.org.uk/iss",
-                "http://openbanking.org.uk/tan"
+                "http://openbanking.org.uk/iat", "http://openbanking.org.uk/iss", "http://openbanking.org.uk/tan"
             };
             b64 = null;
         }

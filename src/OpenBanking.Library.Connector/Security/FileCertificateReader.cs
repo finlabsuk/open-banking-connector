@@ -54,13 +54,11 @@ internal class FileCertificateReader : ICertificateReader
     }
 
 
-    private X509Certificate2 GetCertificateFromFileAsync(string certFile, SecureString password)
-    {
-        return new X509Certificate2(
+    private X509Certificate2 GetCertificateFromFileAsync(string certFile, SecureString password) =>
+        new(
             certFile,
             password,
             X509KeyStorageFlags.MachineKeySet |
             X509KeyStorageFlags.PersistKeySet |
             X509KeyStorageFlags.Exportable);
-    }
 }

@@ -16,6 +16,7 @@ see footer of this [page](https://standards.openbanking.org.uk/api-specification
 ## Model generation
 
 To generate models on a Windows machine,
+
 - install Node.js and npm
 - install AutoRest v3:
   ```powershell
@@ -30,10 +31,6 @@ To generate models on a Windows machine,
   autorest --reset
   autorest --use=@autorest/csharp@3.0.0-beta.20220317.3
   ```
-
-
-
-
 
 ## Misc
 

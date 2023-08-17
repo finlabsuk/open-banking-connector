@@ -53,10 +53,7 @@ public class MemoryRepository<TRepositoryItem> : IRepository<TRepositoryItem>
         return result.ToTaskResult();
     }
 
-    public Task<bool> DeleteAsync(string id)
-    {
-        return _cache.TryRemove(id, out _).ToTaskResult();
-    }
+    public Task<bool> DeleteAsync(string id) => _cache.TryRemove(id, out _).ToTaskResult();
 
     public Task<IList<string>> GetIdsAsync()
     {

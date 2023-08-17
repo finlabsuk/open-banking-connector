@@ -18,10 +18,7 @@ public class BankRegistrationDeleteRequestProcessor : IDeleteRequestProcessor
     List<HttpHeader> IDeleteRequestProcessor.HttpDeleteRequestData(string requestDescription)
     {
         // Assemble headers and body
-        var headers = new List<HttpHeader>
-        {
-            new("Authorization", "Bearer " + _accessToken),
-        };
+        var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
 
         return headers;
     }

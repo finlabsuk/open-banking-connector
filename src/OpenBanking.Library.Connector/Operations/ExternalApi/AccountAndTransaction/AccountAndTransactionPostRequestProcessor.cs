@@ -37,7 +37,7 @@ internal class
         {
             new("x-fapi-financial-id", _orgId),
             new("Authorization", "Bearer " + _accessToken),
-            new("x-idempotency-key", Guid.NewGuid().ToString()),
+            new("x-idempotency-key", Guid.NewGuid().ToString())
         };
         JsonSerializerSettings jsonSerializerSettings =
             requestJsonSerializerSettings ?? new JsonSerializerSettings();

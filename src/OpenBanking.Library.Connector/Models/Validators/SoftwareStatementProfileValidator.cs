@@ -23,10 +23,8 @@ public class SoftwareStatementProfileValidator : AbstractValidator<SoftwareState
         string? arg2,
         ValidationContext<T> arg3,
         char delimiter,
-        int maxLength)
-    {
-        return arg2 != null && arg2.DelimiterCount(delimiter) == maxLength;
-    }
+        int maxLength) =>
+        arg2 != null && arg2.DelimiterCount(delimiter) == maxLength;
 
 
     private void CreateRules()

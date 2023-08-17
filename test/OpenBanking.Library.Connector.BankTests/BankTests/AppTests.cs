@@ -160,7 +160,7 @@ public abstract class AppTests
                         {
                             TestGroupName = groupName,
                             SoftwareStatementProfileId = testGroup.SoftwareStatementProfileId,
-                            SoftwareStatementAndCertificateProfileOverride = overrideCase,
+                            SoftwareStatementAndCertificateProfileOverride = overrideCase
                         },
                         new BankTestData2
                         {

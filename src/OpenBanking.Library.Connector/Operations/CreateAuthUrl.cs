@@ -87,10 +87,7 @@ public static class CreateAuthUrl
                 JsonConvert.SerializeObject(
                     oAuth2RequestObjectClaims,
                     Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore,
-                    }))
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }))
             .AppendLine("#### JWT (Request Object)")
             .Append(requestObjectJwt);
         instrumentationClient.Trace(requestTraceSb.ToString());

@@ -101,10 +101,7 @@ internal class
                     $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/statements/{extStatementId}/transactions",
                 _ => throw new ArgumentOutOfRangeException()
             };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;

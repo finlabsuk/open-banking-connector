@@ -11,8 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Web.Controllers;
 public class ErrorController : ControllerBase
 {
     [Route("/error")]
-    public IActionResult HandleError()
-    {
+    public IActionResult HandleError() =>
         // Exception exception =
         //     HttpContext.Features.Get<IExceptionHandlerFeature>()!.Error;
 
@@ -33,6 +32,5 @@ public class ErrorController : ControllerBase
         // }
 
         // Default to returning no details
-        return Problem();
-    }
+        Problem();
 }

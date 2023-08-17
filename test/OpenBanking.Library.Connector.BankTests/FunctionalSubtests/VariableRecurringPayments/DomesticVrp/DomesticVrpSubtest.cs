@@ -86,11 +86,8 @@ public class DomesticVrpSubtest
             domesticVrpConsentRequest.ExternalApiRequest,
             out VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest obDomesticVrpRequest);
         var domesticVrpRequest =
-            new DomesticVrpRequest
-            {
-                ExternalApiRequest = obDomesticVrpRequest
-            };
-        
+            new DomesticVrpRequest { ExternalApiRequest = obDomesticVrpRequest };
+
         if (bankUser is null)
         {
             throw new ArgumentException("No user specified for consent auth.");

@@ -102,10 +102,7 @@ public static class TestCertificateGenerator
         return (certV2, privateKey);
     }
 
-    public static X509Certificate ToX509V2Cert(X509Certificate cert)
-    {
-        return new X509Certificate(cert);
-    }
+    public static X509Certificate ToX509V2Cert(X509Certificate cert) => new(cert);
 
     public static X509Certificate GenerateRandomCert(string name)
     {

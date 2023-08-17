@@ -25,13 +25,13 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
+    // Ensures this set up at application start-up
+    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+
     private readonly ILogger<StartupTasksHostedService> _logger;
 
     // Ensures this set up at application start-up
     private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
-    
-    // Ensures this set up at application start-up
-    private readonly IEncryptionKeyInfo _encryptionKeyInfo;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 

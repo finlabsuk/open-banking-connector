@@ -16,6 +16,6 @@ public class TimeProviderTests
 
         DateTimeOffset result = new TimeProvider().GetUtcNow();
 
-        return (result >= now) & (result <= now.AddSeconds(1));
+        return result >= now && result <= now.AddSeconds(1);
     }
 }

@@ -8,10 +8,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 
 public static class NullWhitespaceStringArbitrary
 {
-    public static Arbitrary<string> GetArbitrary()
-    {
-        return Arb.Default.String().Generator
+    public static Arbitrary<string> GetArbitrary() =>
+        Arb.Default.String().Generator
             .Where(string.IsNullOrWhiteSpace)
             .ToArbitrary();
-    }
 }

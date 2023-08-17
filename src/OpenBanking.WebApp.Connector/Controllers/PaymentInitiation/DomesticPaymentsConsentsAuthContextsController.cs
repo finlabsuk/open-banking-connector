@@ -32,7 +32,8 @@ public class DomesticPaymentsConsentsAuthContextsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
         DomesticPaymentConsentAuthContextCreateResponse>> PostAsync(
-        [FromBody] DomesticPaymentConsentAuthContext request)
+        [FromBody]
+        DomesticPaymentConsentAuthContext request)
     {
         DomesticPaymentConsentAuthContextCreateResponse fluentResponse = await _requestBuilder
             .PaymentInitiation

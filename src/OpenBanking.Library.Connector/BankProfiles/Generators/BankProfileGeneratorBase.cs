@@ -151,7 +151,7 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
         {
             (not null and not "", _) => value1,
             (_, not null and not "") => value2,
-            _ => null,
+            _ => null
         };
 
     protected string GetIssuerUrl(TBank bank) =>
@@ -194,12 +194,10 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
                 bank,
                 $"{nameof(BankProfileHiddenProperties.AccountAndTransactionApi)}:{nameof(BankProfileHiddenProperties.AccountAndTransactionApi.BaseUrl)}"));
 
-    private string GetHiddenPropertyExceptionMessage(TBank bank, string propertyName)
-    {
-        return "Configuration or key secrets error: " +
-               $"Bank profile {_bankGroup.GetBankProfile(bank)} (bank: {bank}, bank group: {_bankGroup.BankGroupEnum}) " +
-               $"requires hidden property {propertyName} to be specified.";
-    }
+    private string GetHiddenPropertyExceptionMessage(TBank bank, string propertyName) =>
+        "Configuration or key secrets error: " +
+        $"Bank profile {_bankGroup.GetBankProfile(bank)} (bank: {bank}, bank group: {_bankGroup.BankGroupEnum}) " +
+        $"requires hidden property {propertyName} to be specified.";
 
     protected PaymentInitiationApiVersion GetPaymentInitiationApiVersion(TBank bank) =>
         GetBankProfileHiddenProperties(bank)

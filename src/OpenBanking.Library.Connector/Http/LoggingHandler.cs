@@ -10,8 +10,6 @@ public class LoggingHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
-        CancellationToken cancellationToken)
-    {
-        return await base.SendAsync(request, cancellationToken);
-    }
+        CancellationToken cancellationToken) =>
+        await base.SendAsync(request, cancellationToken);
 }

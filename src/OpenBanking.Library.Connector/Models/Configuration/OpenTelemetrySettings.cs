@@ -35,8 +35,5 @@ public class OpenTelemetrySettings : ISettings<OpenTelemetrySettings>
 
     public string SettingsGroupName => "OpenBankingConnector:OpenTelemetry";
 
-    public OpenTelemetrySettings Validate()
-    {
-        return this;
-    }
+    public OpenTelemetrySettings Validate() => this;
 }

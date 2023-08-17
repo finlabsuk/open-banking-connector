@@ -34,7 +34,8 @@ public class DomesticVrpConsentsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticVrpConsentCreateResponse>> PostAsync(
-        [FromBody] DomesticVrpConsentRequest request)
+        [FromBody]
+        DomesticVrpConsentRequest request)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??

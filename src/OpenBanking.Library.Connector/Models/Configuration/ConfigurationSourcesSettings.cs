@@ -27,8 +27,5 @@ public class ConfigurationSourcesSettings : ISettings<ConfigurationSourcesSettin
 
     public string SettingsGroupName => "OpenBankingConnector:ConfigurationSources";
 
-    public ConfigurationSourcesSettings Validate()
-    {
-        return this;
-    }
+    public ConfigurationSourcesSettings Validate() => this;
 }

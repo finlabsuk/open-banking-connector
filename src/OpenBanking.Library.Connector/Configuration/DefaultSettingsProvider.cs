@@ -19,8 +19,5 @@ public class DefaultSettingsProvider<TSettings> : ISettingsProvider<TSettings>
             .Validate();
     }
 
-    public TSettings GetSettings()
-    {
-        return _settings;
-    }
+    public TSettings GetSettings() => _settings;
 }

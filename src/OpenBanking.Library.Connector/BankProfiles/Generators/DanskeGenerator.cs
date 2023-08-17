@@ -18,9 +18,8 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
         IBankGroup<DanskeBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
     //See https://developers.danskebank.com/documentation
-    public override BankProfile GetBankProfile(DanskeBank bank)
-    {
-        return new BankProfile(
+    public override BankProfile GetBankProfile(DanskeBank bank) =>
+        new(
             _bankGroup.GetBankProfile(bank),
             "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
             "0015800000jf7AeAAI", //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
@@ -57,5 +56,4 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                 }
             }
         };
-    }
 }

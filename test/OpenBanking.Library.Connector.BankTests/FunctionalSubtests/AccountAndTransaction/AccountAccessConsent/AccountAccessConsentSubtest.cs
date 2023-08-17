@@ -276,7 +276,8 @@ public class AccountAccessConsentSubtest
                                 // Update query string based on "Next" link
                                 queryString = transactionsResp.ExternalApiResponse.Links.Next;
                                 page++;
-                            } while (queryString is not null && page < maxPages);
+                            } while (queryString is not null &&
+                                     page < maxPages);
                         }
 
                         // GET /party

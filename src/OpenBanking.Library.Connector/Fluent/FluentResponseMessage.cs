@@ -52,25 +52,13 @@ public abstract class FluentResponseMessage : IFluentResponseMessage
 
     public string Message { get; }
 
-    public static FluentResponseInfoMessage Info(string message)
-    {
-        return new FluentResponseInfoMessage(message);
-    }
+    public static FluentResponseInfoMessage Info(string message) => new(message);
 
-    public static FluentResponseWarningMessage Warning(string message)
-    {
-        return new FluentResponseWarningMessage(message);
-    }
+    public static FluentResponseWarningMessage Warning(string message) => new(message);
 
-    public static FluentResponseBadRequestErrorMessage BadRequestError(string message)
-    {
-        return new FluentResponseBadRequestErrorMessage(message);
-    }
+    public static FluentResponseBadRequestErrorMessage BadRequestError(string message) => new(message);
 
-    public static FluentResponseOtherErrorMessage OtherError(string message)
-    {
-        return new FluentResponseOtherErrorMessage(message);
-    }
+    public static FluentResponseOtherErrorMessage OtherError(string message) => new(message);
 }
 
 /// <summary>
@@ -108,7 +96,7 @@ public class FluentResponseOtherErrorMessage : FluentResponseMessage, IFluentRes
 {
     internal FluentResponseOtherErrorMessage(string message) : base(message) { }
 
-    internal FluentResponseOtherErrorMessage(Exception exception) : this(message: CombineMessages(exception)) { }
+    internal FluentResponseOtherErrorMessage(Exception exception) : this(CombineMessages(exception)) { }
 
     public static string CombineMessages(Exception exception)
     {

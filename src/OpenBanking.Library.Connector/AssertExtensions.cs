@@ -25,18 +25,14 @@ internal static class AssertExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
     public static T ArgNotNullElseInvalidOp<T>(this T value, string message)
-        where T : class
-    {
-        return value ?? throw new InvalidOperationException(message);
-    }
+        where T : class =>
+        value ?? throw new InvalidOperationException(message);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]
     public static T ArgStructNotNullElseInvalidOp<T>(this T? value, string message)
-        where T : struct
-    {
-        return value ?? throw new InvalidOperationException(message);
-    }
+        where T : struct =>
+        value ?? throw new InvalidOperationException(message);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [DebuggerStepThrough]

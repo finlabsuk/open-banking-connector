@@ -2,14 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
+using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 
@@ -41,7 +40,6 @@ public class AccountAccessConsentTemplateRequest
 /// </summary>
 public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidation
 {
-
     /// <summary>
     ///     Use external API request object created from template.
     ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used

@@ -93,12 +93,9 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
         string urlString = readParams.ExternalApiAccountId switch
         {
             null => $"{accountAndTransactionApi.BaseUrl}/balances",
-            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/balances",
+            { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/balances"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;

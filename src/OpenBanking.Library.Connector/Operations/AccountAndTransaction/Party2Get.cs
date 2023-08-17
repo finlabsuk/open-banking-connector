@@ -95,10 +95,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
             null => throw new ArgumentOutOfRangeException(),
             { } extAccountId => $"{accountAndTransactionApi.BaseUrl}/accounts/{extAccountId}/parties"
         };
-        Uri apiRequestUrl = new UriBuilder(urlString)
-        {
-            Query = readParams.QueryString ?? string.Empty
-        }.Uri;
+        Uri apiRequestUrl = new UriBuilder(urlString) { Query = readParams.QueryString ?? string.Empty }.Uri;
 
         // Get external object from bank API
         JsonSerializerSettings? jsonSerializerSettings = null;

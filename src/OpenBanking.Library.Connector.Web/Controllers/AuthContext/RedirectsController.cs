@@ -41,7 +41,8 @@ public class RedirectsController : ControllerBase
     [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<AuthContextUpdateAuthResultResponse>> RedirectDelegatePostAsync(
-        [Required] [FromForm(Name = "id_token")] string idToken,
+        [Required] [FromForm(Name = "id_token")]
+        string idToken,
         [Required] [FromForm(Name = "code")]
         string code,
         [Required] [FromForm(Name = "state")]

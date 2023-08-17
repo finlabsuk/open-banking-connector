@@ -65,7 +65,7 @@ public class ConsentAuth
         EnsureTokenAvailable(authIsCompleteFcn, 180000);
         return Task.CompletedTask;
     }
-    
+
     public async Task AutomatedAuthAsync(
         string authUrl,
         BankProfile bankProfile,

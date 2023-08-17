@@ -41,7 +41,7 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new SigningCertificateProfile
             {
                 AssociatedKey = value,
-                AssociatedKeyId = "a",
+                AssociatedKeyId = "a"
             };
 
             List<ValidationFailure> results =
@@ -63,7 +63,7 @@ public class SoftwareStatementProfileValidatorTests
             {
                 CertificateType = SigningCertificateType.OBLegacy,
                 AssociatedKey = "a",
-                AssociatedKeyId = value,
+                AssociatedKeyId = value
             };
 
             List<ValidationFailure> results =
@@ -83,7 +83,7 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new SigningCertificateProfile
             {
                 AssociatedKey = "a",
-                AssociatedKeyId = "a",
+                AssociatedKeyId = "a"
             };
 
             List<ValidationFailure> results =
@@ -103,7 +103,7 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new TransportCertificateProfile
             {
                 AssociatedKey = value,
-                Certificate = "a",
+                Certificate = "a"
             };
 
             List<ValidationFailure> results =
@@ -123,7 +123,7 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new TransportCertificateProfile
             {
                 AssociatedKey = "a",
-                Certificate = value,
+                Certificate = value
             };
 
             List<ValidationFailure> results =
@@ -143,7 +143,7 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new TransportCertificateProfile
             {
                 AssociatedKey = "a",
-                Certificate = "a",
+                Certificate = "a"
             };
 
             List<ValidationFailure> results =

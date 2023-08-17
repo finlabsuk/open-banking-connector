@@ -14,36 +14,23 @@ internal static class Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TResult Maybe<T, TResult>(this T? value, Func<T, TResult> selector)
         where T : class
-        where TResult : struct
-    {
-        return value != null
+        where TResult : struct =>
+        value != null
             ? selector(value)
             : default;
-    }
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> NullToEmpty<T>(this IEnumerable<T>? values)
-    {
-        return values ?? Enumerable.Empty<T>();
-    }
+    public static IEnumerable<T> NullToEmpty<T>(this IEnumerable<T>? values) => values ?? Enumerable.Empty<T>();
 
     public static IEnumerable<T> WalkRecursive<T>(this T value, Func<T, T?> selector)
-        where T : class
-    {
-        return WalkRecursiveInner(value, selector.ArgNotNull(nameof(selector)));
-    }
+        where T : class =>
+        WalkRecursiveInner(value, selector.ArgNotNull(nameof(selector)));
 
 
-    public static Task<T> ToTaskResult<T>(this T value)
-    {
-        return Task.FromResult(value);
-    }
+    public static Task<T> ToTaskResult<T>(this T value) => Task.FromResult(value);
 
-    public static async Task<T[]> WaitAll<T>(this Task<T>[] tasks)
-    {
-        return await Task.WhenAll(tasks);
-    }
+    public static async Task<T[]> WaitAll<T>(this Task<T>[] tasks) => await Task.WhenAll(tasks);
 
     public static int DelimiterCount(this string value, char delimiter)
     {
@@ -103,10 +90,8 @@ internal static class Extensions
                type.Namespace.Maybe(n => n.StartsWith(rootType.Namespace));
     }
 
-    public static string JoinString(this IEnumerable<string> lines, string delimiter)
-    {
-        return string.Join(delimiter, lines.ArgNotNull(nameof(lines)));
-    }
+    public static string JoinString(this IEnumerable<string> lines, string delimiter) =>
+        string.Join(delimiter, lines.ArgNotNull(nameof(lines)));
 
 
     public static string ToUrlEncoded(this IEnumerable<KeyValuePair<string, string>> values)

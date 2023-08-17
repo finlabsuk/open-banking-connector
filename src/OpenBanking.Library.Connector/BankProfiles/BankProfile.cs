@@ -132,7 +132,6 @@ public class AccountAndTransactionApiSettings
 
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
-
 }
 
 public class PaymentInitiationApiSettings
@@ -161,7 +160,7 @@ public class VariableRecurringPaymentsApiSettings
 ///     A Bank Profile describes configuration and settings used when testing with a particular bank.
 ///     It also provides convenient functions for generating request objects to use with Open Banking Connector.
 /// </summary>
-public partial class BankProfile
+public class BankProfile
 {
     public BankProfile(
         BankProfileEnum bankProfileEnum,

@@ -16,12 +16,12 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Public.P
 
 public class TransformTests
 {
+    private readonly ApiVariantMapper _apiVariantMapper;
+
     public TransformTests()
     {
         _apiVariantMapper = new ApiVariantMapper();
     }
-
-    private readonly ApiVariantMapper _apiVariantMapper;
 
     [Fact]
     public void OBWriteDomesticConsent_To_V111()
@@ -43,7 +43,11 @@ public class TransformTests
                             },
                         CreditorPostalAddress = new PaymentInitiationModelsPublic.OBPostalAddress6
                         {
-                            AddressLine = new List<string> { "1 high street", "blexley" },
+                            AddressLine = new List<string>
+                            {
+                                "1 high street",
+                                "blexley"
+                            },
                             AddressType = PaymentInitiationModelsPublic.OBAddressTypeCodeEnum.POBox,
                             BuildingNumber = "42",
                             Country = "UK",
@@ -79,20 +83,26 @@ public class TransformTests
                             },
                         SupplementaryData = new Dictionary<string, object>()
                     },
-                    Authorisation = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
-                    {
-                        AuthorisationType = PaymentInitiationModelsPublic
-                            .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
-                        CompletionDateTime = DateTimeOffset.UtcNow
-                    },
-                    SCASupportData = new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataSCASupportData
-                    {
-                        AppliedAuthenticationApproach = PaymentInitiationModelsPublic
-                            .OBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum.SCA,
-                        ReferencePaymentOrderId = "reference Payment Order Id",
-                        RequestedSCAExemptionType = PaymentInitiationModelsPublic
-                            .OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum.PartyToParty
-                    }
+                    Authorisation =
+                        new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
+                        {
+                            AuthorisationType =
+                                PaymentInitiationModelsPublic
+                                    .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
+                            CompletionDateTime = DateTimeOffset.UtcNow
+                        },
+                    SCASupportData =
+                        new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataSCASupportData
+                        {
+                            AppliedAuthenticationApproach =
+                                PaymentInitiationModelsPublic
+                                    .OBWriteDomesticConsent4DataSCASupportDataAppliedAuthenticationApproachEnum.SCA,
+                            ReferencePaymentOrderId = "reference Payment Order Id",
+                            RequestedSCAExemptionType =
+                                PaymentInitiationModelsPublic
+                                    .OBWriteDomesticConsent4DataSCASupportDataRequestedSCAExemptionTypeEnum
+                                    .PartyToParty
+                        }
                 },
                 Risk = new PaymentInitiationModelsPublic.OBRisk1
                 {
@@ -144,7 +154,11 @@ public class TransformTests
     {
         var value = new PaymentInitiationModelsPublic.OBPostalAddress6
         {
-            AddressLine = new List<string> { "1 high street", "blexley" },
+            AddressLine = new List<string>
+            {
+                "1 high street",
+                "blexley"
+            },
             AddressType = PaymentInitiationModelsPublic.OBAddressTypeCodeEnum.POBox,
             BuildingNumber = "42",
             Country = "UK",
@@ -239,8 +253,9 @@ public class TransformTests
         var value =
             new PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisation
             {
-                AuthorisationType = PaymentInitiationModelsPublic
-                    .OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum.Single,
+                AuthorisationType =
+                    PaymentInitiationModelsPublic.OBWriteDomesticConsent4DataAuthorisationAuthorisationTypeEnum
+                        .Single,
                 CompletionDateTime = DateTimeOffset.UtcNow
             };
 

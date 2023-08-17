@@ -48,10 +48,7 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
                 JsonConvert.SerializeObject(
                     variantRequest,
                     Formatting.Indented,
-                    new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore,
-                    }))
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }))
             .AppendLine($"#### JWT ({requestDescription})")
             .Append(jwt);
         _instrumentationClient.Trace(requestTraceSb.ToString());

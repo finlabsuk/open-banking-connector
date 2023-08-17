@@ -34,7 +34,8 @@ public class TestingRedirectsController : ControllerBase
     /// <returns></returns>
     [HttpGet("query-redirect")]
     public async Task<ActionResult> QueryRedirectGetAsync(
-        [FromQuery(Name = "id_token")] string idToken,
+        [FromQuery(Name = "id_token")]
+        string idToken,
         [FromQuery(Name = "code")]
         string code,
         [FromQuery(Name = "state")]
@@ -69,7 +70,8 @@ public class TestingRedirectsController : ControllerBase
     [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<AuthContextUpdateAuthResultResponse>> FragmentRedirectDelegatePostAsync(
-        [FromForm(Name = "id_token")] string idToken,
+        [FromForm(Name = "id_token")]
+        string idToken,
         [FromForm(Name = "code")]
         string code,
         [FromForm(Name = "state")]
