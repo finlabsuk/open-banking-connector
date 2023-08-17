@@ -24,6 +24,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Obie_Modelo")]
     Obie_Modelo,
 
+    [EnumMember(Value = "Obie_Model2023")]
+    Obie_Model2023,
+
     [EnumMember(Value = "NatWest_NatWestSandbox")]
     NatWest_NatWestSandbox,
 

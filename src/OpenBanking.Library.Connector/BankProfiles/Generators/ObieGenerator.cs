@@ -23,18 +23,37 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
-            "https://ob19-auth1-ui.o3bank.co.uk", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
-            "0015800001041RHAAY", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+            bank switch
+            {
+                ObieBank.Modelo =>
+                    "https://ob19-auth1-ui.o3bank.co.uk", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+                ObieBank.Model2023 =>
+                    "https://auth1.obie.uk.ozoneapi.io", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+            },
+            "0015800001041RHAAY", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
             new AccountAndTransactionApi
             {
-                BaseUrl =
-                    "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp" // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
+                BaseUrl = bank switch
+                {
+                    ObieBank.Modelo =>
+                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/aisp", // from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+the+Model+Bank+provided+by+OBIE#Accounts-End-points
+                    ObieBank.Model2023 =>
+                        "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/aisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
+                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                }
             },
             new PaymentInitiationApi
             {
                 ApiVersion = PaymentInitiationApiVersion.Version3p1p6,
-                BaseUrl =
-                    "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp" //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+                BaseUrl = bank switch
+                {
+                    ObieBank.Modelo =>
+                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+                    ObieBank.Model2023 =>
+                        "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/pisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
+                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                }
             },
             null,
             false)

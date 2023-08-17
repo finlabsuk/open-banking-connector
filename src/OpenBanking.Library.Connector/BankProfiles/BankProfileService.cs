@@ -110,6 +110,7 @@ public class BankProfileService : IBankProfileService
         bankProfileEnum switch
         {
             BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
+            BankProfileEnum.Obie_Model2023 => BankGroupEnum.Obie,
             BankProfileEnum.NatWest_NatWestSandbox => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWest => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWestBankline => BankGroupEnum.NatWest,
