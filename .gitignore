@@ -471,3 +471,6 @@ user.test.settings.json
 
 # VS Code
 .vscode/
+
+# Python venv
+.venv/
