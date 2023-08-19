@@ -7897,7 +7897,6 @@
     },
     "File": {
       "type": "object",
-      
       "properties": {}
     },
     "ISODateTime": {
@@ -7919,7 +7918,6 @@
     },
     "Links": {
       "type": "object",
-      
       "description": "Links relevant to the payload",
       "properties": {
         "Self": {
@@ -7950,7 +7948,6 @@
     "Meta": {
       "title": "MetaData",
       "type": "object",
-      
       "description": "Meta Data relevant to the payload",
       "properties": {
         "TotalPages": {
@@ -7978,7 +7975,6 @@
     },
     "OBActiveOrHistoricCurrencyAndAmount": {
       "type": "object",
-      
       "required": [
         "Amount",
         "Currency"
@@ -8068,7 +8064,6 @@
     },
     "OBError1": {
       "type": "object",
-      
       "properties": {
         "ErrorCode": {
           "description": "Low level textual error code, e.g., UK.OBIE.Field.Missing",
@@ -8129,7 +8124,6 @@
     "OBErrorResponse1": {
       "description": "An array of detail error codes, and messages, and URLs to documentation to help remediation.",
       "type": "object",
-      
       "properties": {
         "Code": {
           "description": "High level textual error code, to help categorize the errors.",
@@ -8208,7 +8202,6 @@
     },
     "OBPostalAddress6": {
       "type": "object",
-      
       "description": "Information that locates and identifies a specific address, as defined by postal services.",
       "properties": {
         "AddressType": {
@@ -8383,7 +8376,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -8409,7 +8401,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -8426,7 +8417,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -8452,7 +8442,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -8482,7 +8471,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -8513,7 +8501,6 @@
     },
     "OBWriteDomesticConsent4": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -8521,7 +8508,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Initiation"
           ],
@@ -8536,7 +8522,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -8562,7 +8547,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -8579,7 +8563,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -8605,7 +8588,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -8635,7 +8617,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -8659,7 +8640,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -8692,7 +8672,6 @@
     },
     "OBWriteDomesticConsentResponse5": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -8700,7 +8679,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -8762,7 +8740,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -8784,7 +8761,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -8810,7 +8786,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -8827,7 +8802,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -8853,7 +8827,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -8883,7 +8856,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -8907,7 +8879,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -8949,14 +8920,12 @@
     },
     "OBWriteDomesticResponse5": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "DomesticPaymentId",
             "ConsentId",
@@ -9012,7 +8981,6 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
@@ -9020,7 +8988,6 @@
               "properties": {
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9051,7 +9018,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -9073,7 +9039,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -9099,7 +9064,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -9116,7 +9080,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -9142,7 +9105,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9172,7 +9134,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -9196,7 +9157,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -9246,7 +9206,6 @@
     },
     "OBWriteDomesticScheduled2": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -9254,7 +9213,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -9268,7 +9226,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -9299,7 +9256,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -9316,7 +9272,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -9342,7 +9297,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9372,7 +9326,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -9403,7 +9356,6 @@
     },
     "OBWriteDomesticScheduledConsent4": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -9411,7 +9363,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Permission",
             "Initiation"
@@ -9434,7 +9385,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -9465,7 +9415,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -9482,7 +9431,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -9508,7 +9456,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9538,7 +9485,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -9562,7 +9508,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -9595,7 +9540,6 @@
     },
     "OBWriteDomesticScheduledConsentResponse5": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -9603,7 +9547,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -9673,7 +9616,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -9695,7 +9637,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -9726,7 +9667,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -9743,7 +9683,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -9769,7 +9708,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9799,7 +9737,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -9823,7 +9760,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -9865,14 +9801,12 @@
     },
     "OBWriteDomesticScheduledResponse5": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "DomesticScheduledPaymentId",
             "ConsentId",
@@ -9926,7 +9860,6 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
@@ -9934,7 +9867,6 @@
               "properties": {
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -9965,7 +9897,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -9987,7 +9918,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -10018,7 +9948,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10035,7 +9964,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -10061,7 +9989,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -10091,7 +10018,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -10115,7 +10041,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -10165,7 +10090,6 @@
     },
     "OBWriteDomesticStandingOrder3": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -10173,7 +10097,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -10187,7 +10110,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -10230,7 +10152,6 @@
                 },
                 "FirstPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10247,7 +10168,6 @@
                 },
                 "RecurringPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10264,7 +10184,6 @@
                 },
                 "FinalPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10281,7 +10200,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -10307,7 +10225,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -10346,7 +10263,6 @@
     },
     "OBWriteDomesticStandingOrderConsent5": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -10354,7 +10270,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Permission",
             "Initiation"
@@ -10377,7 +10292,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -10420,7 +10334,6 @@
                 },
                 "FirstPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10437,7 +10350,6 @@
                 },
                 "RecurringPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10454,7 +10366,6 @@
                 },
                 "FinalPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10471,7 +10382,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -10497,7 +10407,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -10529,7 +10438,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -10562,7 +10470,6 @@
     },
     "OBWriteDomesticStandingOrderConsentResponse6": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -10570,7 +10477,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -10630,7 +10536,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -10652,7 +10557,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -10695,7 +10599,6 @@
                 },
                 "FirstPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10712,7 +10615,6 @@
                 },
                 "RecurringPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10729,7 +10631,6 @@
                 },
                 "FinalPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -10746,7 +10647,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -10772,7 +10672,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -10804,7 +10703,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -10846,14 +10744,12 @@
     },
     "OBWriteDomesticStandingOrderResponse6": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "DomesticStandingOrderId",
             "ConsentId",
@@ -10897,7 +10793,6 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
@@ -10905,7 +10800,6 @@
               "properties": {
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -10936,7 +10830,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -10958,7 +10851,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -11001,7 +10893,6 @@
                 },
                 "FirstPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -11018,7 +10909,6 @@
                 },
                 "RecurringPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -11035,7 +10925,6 @@
                 },
                 "FinalPaymentAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -11052,7 +10941,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -11078,7 +10966,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -11110,7 +10997,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -11160,14 +11046,12 @@
     },
     "OBWriteFile2": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -11181,7 +11065,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "FileType",
                 "FileHash"
@@ -11227,7 +11110,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -11253,7 +11135,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -11281,21 +11162,18 @@
     },
     "OBWriteFileConsent3": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Initiation"
           ],
           "properties": {
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "FileType",
                 "FileHash"
@@ -11341,7 +11219,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -11367,7 +11244,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -11391,7 +11267,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -11421,14 +11296,12 @@
     },
     "OBWriteFileConsentResponse4": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -11473,7 +11346,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -11495,7 +11367,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "FileType",
                 "FileHash"
@@ -11541,7 +11412,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -11567,7 +11437,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -11591,7 +11460,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -11630,14 +11498,12 @@
     },
     "OBWriteFileResponse3": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "FilePaymentId",
             "ConsentId",
@@ -11682,7 +11548,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -11704,7 +11569,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "FileType",
                 "FileHash"
@@ -11750,7 +11614,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -11776,7 +11639,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -11800,7 +11662,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -11850,18 +11711,15 @@
     },
     "OBWriteFundsConfirmationResponse1": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "properties": {
             "FundsAvailableResult": {
               "type": "object",
-              
               "required": [
                 "FundsAvailableDateTime",
                 "FundsAvailable"
@@ -11894,7 +11752,6 @@
     },
     "OBWriteInternational3": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -11902,7 +11759,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -11916,7 +11772,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -11976,7 +11831,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -11993,7 +11847,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -12028,7 +11881,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -12054,7 +11906,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -12070,7 +11921,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -12089,7 +11939,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -12116,7 +11965,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -12147,7 +11995,6 @@
     },
     "OBWriteInternationalConsent5": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -12155,7 +12002,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Initiation"
           ],
@@ -12170,7 +12016,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -12230,7 +12075,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -12247,7 +12091,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -12282,7 +12125,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -12308,7 +12150,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -12324,7 +12165,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -12343,7 +12183,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -12370,7 +12209,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -12394,7 +12232,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -12427,7 +12264,6 @@
     },
     "OBWriteInternationalConsentResponse6": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -12435,7 +12271,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -12497,7 +12332,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -12519,7 +12353,6 @@
             },
             "ExchangeRateInformation": {
               "type": "object",
-              
               "required": [
                 "UnitCurrency",
                 "ExchangeRate",
@@ -12560,7 +12393,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -12620,7 +12452,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -12637,7 +12468,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -12672,7 +12502,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -12698,7 +12527,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -12714,7 +12542,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -12733,7 +12560,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -12760,7 +12586,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -12784,7 +12609,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -12826,14 +12650,12 @@
     },
     "OBWriteInternationalResponse5": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "InternationalPaymentId",
             "ConsentId",
@@ -12889,14 +12711,12 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
               "properties": {
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Set of elements used to identify a person or an organisation.",
                   "properties": {
                     "Name": {
@@ -12912,7 +12732,6 @@
                 },
                 "Agent": {
                   "type": "object",
-                  
                   "description": "Set of elements used to uniquely and unambiguously identify a financial institution or a branch of a financial institution.",
                   "properties": {
                     "SchemeName": {
@@ -12931,7 +12750,6 @@
                 },
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -12962,7 +12780,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -12984,7 +12801,6 @@
             },
             "ExchangeRateInformation": {
               "type": "object",
-              
               "required": [
                 "UnitCurrency",
                 "ExchangeRate",
@@ -13025,7 +12841,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "EndToEndIdentification",
@@ -13085,7 +12900,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -13102,7 +12916,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -13137,7 +12950,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -13163,7 +12975,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -13179,7 +12990,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -13198,7 +13008,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -13225,7 +13034,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -13249,7 +13057,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -13299,7 +13106,6 @@
     },
     "OBWriteInternationalScheduled3": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -13307,7 +13113,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -13321,7 +13126,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -13386,7 +13190,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -13403,7 +13206,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -13438,7 +13240,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -13464,7 +13265,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -13480,7 +13280,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -13499,7 +13298,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -13526,7 +13324,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -13557,7 +13354,6 @@
     },
     "OBWriteInternationalScheduledConsent5": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -13565,7 +13361,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Permission",
             "Initiation"
@@ -13588,7 +13383,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -13653,7 +13447,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -13670,7 +13463,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -13705,7 +13497,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -13731,7 +13522,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -13747,7 +13537,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -13766,7 +13555,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -13793,7 +13581,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -13817,7 +13604,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -13850,7 +13636,6 @@
     },
     "OBWriteInternationalScheduledConsentResponse6": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -13858,7 +13643,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -13928,7 +13712,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -13950,7 +13733,6 @@
             },
             "ExchangeRateInformation": {
               "type": "object",
-              
               "required": [
                 "UnitCurrency",
                 "ExchangeRate",
@@ -13991,7 +13773,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -14056,7 +13837,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -14073,7 +13853,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -14108,7 +13887,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -14134,7 +13912,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -14150,7 +13927,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -14169,7 +13945,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -14196,7 +13971,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -14220,7 +13994,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -14262,14 +14035,12 @@
     },
     "OBWriteInternationalScheduledResponse6": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "InternationalScheduledPaymentId",
             "ConsentId",
@@ -14323,14 +14094,12 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
               "properties": {
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Set of elements used to identify a person or an organisation.",
                   "properties": {
                     "Name": {
@@ -14346,7 +14115,6 @@
                 },
                 "Agent": {
                   "type": "object",
-                  
                   "description": "Set of elements used to uniquely and unambiguously identify a financial institution or a branch of a financial institution.",
                   "properties": {
                     "SchemeName": {
@@ -14365,7 +14133,6 @@
                 },
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -14396,7 +14163,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -14418,7 +14184,6 @@
             },
             "ExchangeRateInformation": {
               "type": "object",
-              
               "required": [
                 "UnitCurrency",
                 "ExchangeRate",
@@ -14459,7 +14224,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "InstructionIdentification",
                 "RequestedExecutionDateTime",
@@ -14524,7 +14288,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -14541,7 +14304,6 @@
                 },
                 "ExchangeRateInformation": {
                   "type": "object",
-                  
                   "required": [
                     "UnitCurrency",
                     "RateType"
@@ -14576,7 +14338,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -14602,7 +14363,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -14618,7 +14378,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Financial institution servicing an account for the creditor.",
                   "properties": {
                     "SchemeName": {
@@ -14637,7 +14396,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -14664,7 +14422,6 @@
                 },
                 "RemittanceInformation": {
                   "type": "object",
-                  
                   "description": "Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.",
                   "properties": {
                     "Unstructured": {
@@ -14688,7 +14445,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -14738,7 +14494,6 @@
     },
     "OBWriteInternationalStandingOrder4": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -14746,7 +14501,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "Initiation"
@@ -14760,7 +14514,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -14824,7 +14577,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -14841,7 +14593,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -14867,7 +14618,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -14883,7 +14633,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\nThis is the servicer of the beneficiary account.",
                   "properties": {
                     "SchemeName": {
@@ -14905,7 +14654,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -14944,7 +14692,6 @@
     },
     "OBWriteInternationalStandingOrderConsent6": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -14952,7 +14699,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "Permission",
             "Initiation"
@@ -14975,7 +14721,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -15039,7 +14784,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -15056,7 +14800,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -15082,7 +14825,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -15098,7 +14840,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\nThis is the servicer of the beneficiary account.",
                   "properties": {
                     "SchemeName": {
@@ -15120,7 +14861,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -15152,7 +14892,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -15185,7 +14924,6 @@
     },
     "OBWriteInternationalStandingOrderConsentResponse7": {
       "type": "object",
-      
       "required": [
         "Data",
         "Risk"
@@ -15193,7 +14931,6 @@
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "ConsentId",
             "CreationDateTime",
@@ -15253,7 +14990,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -15275,7 +15011,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -15339,7 +15074,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -15356,7 +15090,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -15382,7 +15115,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -15398,7 +15130,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\nThis is the servicer of the beneficiary account.",
                   "properties": {
                     "SchemeName": {
@@ -15420,7 +15151,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -15452,7 +15182,6 @@
             },
             "Authorisation": {
               "type": "object",
-              
               "required": [
                 "AuthorisationType"
               ],
@@ -15494,14 +15223,12 @@
     },
     "OBWriteInternationalStandingOrderResponse7": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "required": [
             "InternationalStandingOrderId",
             "ConsentId",
@@ -15545,14 +15272,12 @@
             },
             "Refund": {
               "type": "object",
-              
               "required": [
                 "Account"
               ],
               "properties": {
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Set of elements used to identify a person or an organisation.",
                   "properties": {
                     "Name": {
@@ -15568,7 +15293,6 @@
                 },
                 "Agent": {
                   "type": "object",
-                  
                   "description": "Set of elements used to uniquely and unambiguously identify a financial institution or a branch of a financial institution.",
                   "properties": {
                     "SchemeName": {
@@ -15587,7 +15311,6 @@
                 },
                 "Account": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -15618,7 +15341,6 @@
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Set of elements used to provide details of a charge for the payment initiation.",
                 "required": [
                   "ChargeBearer",
@@ -15640,7 +15362,6 @@
             },
             "Initiation": {
               "type": "object",
-              
               "required": [
                 "Frequency",
                 "FirstPaymentDateTime",
@@ -15704,7 +15425,6 @@
                 },
                 "InstructedAmount": {
                   "type": "object",
-                  
                   "required": [
                     "Amount",
                     "Currency"
@@ -15721,7 +15441,6 @@
                 },
                 "DebtorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification"
@@ -15747,7 +15466,6 @@
                 },
                 "Creditor": {
                   "type": "object",
-                  
                   "description": "Party to which an amount of money is due.",
                   "properties": {
                     "Name": {
@@ -15763,7 +15481,6 @@
                 },
                 "CreditorAgent": {
                   "type": "object",
-                  
                   "description": "Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.\nThis is the servicer of the beneficiary account.",
                   "properties": {
                     "SchemeName": {
@@ -15785,7 +15502,6 @@
                 },
                 "CreditorAccount": {
                   "type": "object",
-                  
                   "required": [
                     "SchemeName",
                     "Identification",
@@ -15817,7 +15533,6 @@
             },
             "MultiAuthorisation": {
               "type": "object",
-              
               "required": [
                 "Status"
               ],
@@ -15867,20 +15582,17 @@
     },
     "OBWritePaymentDetailsResponse1": {
       "type": "object",
-      
       "required": [
         "Data"
       ],
       "properties": {
         "Data": {
           "type": "object",
-          
           "properties": {
             "PaymentStatus": {
               "type": "array",
               "items": {
                 "type": "object",
-                
                 "description": "Payment status details.",
                 "required": [
                   "PaymentTransactionId",
@@ -15927,7 +15639,6 @@
                   },
                   "StatusDetail": {
                     "type": "object",
-                    
                     "required": [
                       "Status"
                     ],

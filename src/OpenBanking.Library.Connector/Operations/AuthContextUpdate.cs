@@ -389,10 +389,6 @@ internal class AuthContextUpdate :
 
             return (response, nonErrorMessages);
         }
-        catch
-        {
-            throw;
-        }
         finally
         {
             await _dbSaveChangesMethod.SaveChangesAsync();
