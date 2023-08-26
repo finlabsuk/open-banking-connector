@@ -7,6 +7,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -34,6 +36,10 @@ public static class ServiceCollectionExtensions
         string? serviceVersion,
         OpenTelemetrySettings openTelemetrySettings)
     {
+        Sdk.SetDefaultTextMapPropagator(
+            new CompositeTextMapPropagator(
+                Array.Empty<TextMapPropagator>())); // See https://github.com/dotnet/runtime/issues/90407
+
         string serviceName = openTelemetrySettings.ServiceName;
         string? otlpExporterUrl = openTelemetrySettings.Tracing.OtlpExporterUrl.Length > 0
             ? openTelemetrySettings.Tracing.OtlpExporterUrl

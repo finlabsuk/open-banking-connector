@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
@@ -26,8 +27,10 @@ public class ApiClient : IApiClient
         var clientHandler = new SocketsHttpHandler
         {
             AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-            ActivityHeadersPropagator = null // ensures no traceparent HTTP header
-            //ActivityHeadersPropagator = DistributedContextPropagator.CreateNoOutputPropagator() 
+            //ActivityHeadersPropagator = null // ensures no traceparent HTTP header but also disables Otel tracing
+            ActivityHeadersPropagator =
+                DistributedContextPropagator
+                    .CreateNoOutputPropagator() // ensures no traceparent HTTP header when ActivityHeadersPropagator used 
         };
 
         const int maxRedirects = 50;

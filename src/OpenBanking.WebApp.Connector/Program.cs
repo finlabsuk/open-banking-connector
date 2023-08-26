@@ -26,10 +26,7 @@ builder.Host.AddGenericHostConfiguration(args);
 
 // Add services
 
-//var serviceVersion = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-//string serviceVersion = FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion!;
-
-// Service version is taken to be assembly file version without revision number removed (see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning#assembly-file-version for info on assembly file version)
+// Service version is taken to be assembly file version without revision number (see https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning#assembly-file-version for info on assembly file version)
 string serviceVersion =
     Assembly
         .GetExecutingAssembly()
