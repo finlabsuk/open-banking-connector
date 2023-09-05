@@ -26,7 +26,7 @@ internal static class OAuth2RequestObjectClaimsFactory
             Iss = clientExternalApiId,
             Iat = DateTimeOffset.Now,
             Nbf = DateTimeOffset.Now,
-            Exp = DateTimeOffset.UtcNow.AddMinutes(30),
+            Exp = DateTimeOffset.UtcNow.AddSeconds(300),
             Aud = consentAuthGetAudClaim,
             Jti = Guid.NewGuid().ToString(),
             ResponseType = "code id_token",

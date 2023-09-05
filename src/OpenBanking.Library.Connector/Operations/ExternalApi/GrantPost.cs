@@ -389,7 +389,7 @@ internal class GrantPost : IGrantPost
             aud = tokenEndpoint,
             jti = Guid.NewGuid().ToString(),
             iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
-            exp = DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds()
+            exp = DateTimeOffset.UtcNow.AddSeconds(300).ToUnixTimeSeconds()
         };
         string jwt = JwtFactory.CreateJwt(
             JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),

@@ -101,7 +101,7 @@ internal static class RegistrationClaimsFactory
             {
                 Iss = sProfile.SoftwareStatementPayload.SoftwareId,
                 Iat = DateTimeOffset.Now,
-                Exp = DateTimeOffset.UtcNow.AddMinutes(30),
+                Exp = DateTimeOffset.UtcNow.AddSeconds(300),
                 Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
                       bankFinancialId,
                 Jti = Guid.NewGuid().ToString(),
