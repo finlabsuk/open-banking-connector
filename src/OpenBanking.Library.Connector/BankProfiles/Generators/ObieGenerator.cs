@@ -58,23 +58,32 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             null,
             false)
         {
-            CustomBehaviour = new CustomBehaviourClass
-            {
-                BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+            CustomBehaviour = bank is ObieBank.Modelo
+                ? new CustomBehaviourClass
                 {
-                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
-                    ClientIdIssuedAtClaimResponseJsonConverter =
-                        DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
-                },
-                AuthCodeGrantPost = new GrantPostCustomBehaviour
-                {
-                    AllowNullResponseRefreshToken = true // required for PISP case
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                    {
+                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                        ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                    },
+                    AuthCodeGrantPost = new GrantPostCustomBehaviour
+                    {
+                        AllowNullResponseRefreshToken = true // required for PISP case
+                    }
                 }
-            },
+                : new CustomBehaviourClass
+                {
+                    BankRegistrationPost = new BankRegistrationPostCustomBehaviour
+                    {
+                        ClientIdIssuedAtClaimResponseJsonConverter =
+                            DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                    }
+                },
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {
                 UseRegistrationDeleteEndpoint = true,
-                TestTemporaryBankRegistration = true
+                TestTemporaryBankRegistration = bank is ObieBank.Modelo
             }
         };
     }
