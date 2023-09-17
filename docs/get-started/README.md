@@ -7,6 +7,7 @@ We first show how to get Open Banking Connector up and running, then demonstrate
 ## Get Open Banking Connector up and running
 
 To get Open Banking Connector up and running, you will need to do the following:
+
 1. [set up configuration and secrets](./set-up-configuration-and-secrets/README.md)
 2. [pull and run the Open Banking Connector Docker image](./run-docker-image/README.md)
 

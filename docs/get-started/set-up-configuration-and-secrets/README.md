@@ -62,14 +62,16 @@ OpenBankingConnector__Custom__PostgreSqlPassword=placeholder # example arbitrary
 
 Almost all bank profile information is supplied via source code.
 
-However, some key information such as org IDs and URLs is only available to those registered with the UK Open Banking Directory. This information needs to be provided via configuration to complete the bank profile definitions.
+However sometimes key information such as org IDs and URLs cannot be obtained from public sources and is only available to those registered with the UK Open Banking Directory or from bank dev portals. This information needs to be provided via configuration to complete the bank profile definitions.
 
-When using a bank profile for the first time, if any required information from configuration is not available, Open Banking Connector will provide an error with details.
+*Important: It is only necessary to provide information that relates to bank profiles you want to use.* When using a bank profile for the first time, if any required information from configuration is not available, Open Banking Connector will provide an error with details.
 
-For reference, we list here currently required configuration for various bank groups. *Important: You only need to provide information that relates to bank profiles you want to use.*
+For reference, we list here currently required configuration for supported bank groups.
+
+Please contact us if you need any assistance populating these configuration values.
 
 ```bash
-# Bank group: NatWest (only affects sandbox bank profiles)
+# Bank group: NatWest (only required if using sandbox bank profiles)
 OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__PaymentInitiationApi__BaseUrl=xx # substitute value
 OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__IssuerUrl=xx # substitute value
 OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__AccountAndTransactionApi__BaseUrl=xx # substitute value
@@ -77,7 +79,7 @@ OpenBankingConnector__BankProfiles__NatWest__NatWestSandbox__PaymentInitiationAp
 OpenBankingConnector__BankProfiles__NatWest__NatWestSandbox__IssuerUrl=xx # substitute value
 OpenBankingConnector__BankProfiles__NatWest__NatWestSandbox__AccountAndTransactionApi__BaseUrl=xx # substitute value
 
-# Bank group: Monzo (only affects sandbox bank profiles)
+# Bank group: Monzo (only required if using sandbox bank profiles)
 OpenBankingConnector__BankProfiles__Monzo__Monzo__PaymentInitiationApi__ApiVersion=VersionZZ # substitute value
 OpenBankingConnector__BankProfiles__Monzo__Monzo__FinancialId=yy # substitute value
 

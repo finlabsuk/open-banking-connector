@@ -17,10 +17,12 @@ Essentially Open Banking Connector runs as a micro-service in your back-end that
 The [HTTP APIs](../apis/README.md) provided by Open Banking Connector to your back-end include several that aim to be "simpler" versions of their UK Open Banking equivalents such as the [Bank Configuration](../apis/bank-configuration/README.md) and [Account and Transaction](../apis/account-and-transaction/README.md) APIs.
 
 The objective is not to re-design UK Open Banking but rather to simplify things by:
-* Absorbing bank differences so that you can use the same requests for all banks.
-* Absorbing complexities related to security aspects of Open Banking such as MTLS, tokens, signing etc.
+
+- Absorbing bank differences so that you can use the same requests for all banks.
+- Absorbing complexities related to security aspects of Open Banking such as MTLS, tokens, signing etc.
 
 A typical use of Open Banking APIs would be make the following requests:
+
 1. Create a registration with a bank to establish a relationship
 2. Create a consent at the bank and then get an end-user to authorise it
 3. Perform API calls relevant to the consent such as retrieving transactions or balances
@@ -28,11 +30,12 @@ A typical use of Open Banking APIs would be make the following requests:
 Please see [Get Started](../get-started/README.md) for examples of basic operations such as these.
 
 The main simplifications for these requests when using Open Banking Connector are as follows:
-* When creating a bank registration, rather than supply detailed configuration you only need to specify a *bank profile* and *software statement profile*. The bank profile associates all of a bank's specific configuration and customisation with the registration and any subsequent consents. The software statement profile ensures the right TPP identity is used when creating the registration.
-* When creating a consent, you supply the bank registration ID (returned when creating the registration) instead of a token and can specify the template "MaximumPermissions" instead of needing to know what permissions are supported by a particular bank.
-* When retrieving AISP objects such as transactions etc, you supply the consent ID (returned when creating the consent) instead of a token
-* All data request and response objects are based on a single UK Open Banking spec revision and Open Banking Connector is capable of converting to and from older spec revisions if required for a bank
-* No bank tokens are required as these are obtained, used and refreshed automatically by Open Banking Connector keeping them separate from other parts of your back-end
+
+- When creating a bank registration, rather than supply detailed configuration you only need to specify a *bank profile* and *software statement profile*. The bank profile associates all of a bank's specific configuration and customisation with the registration and any subsequent consents. The software statement profile ensures the right TPP identity is used when creating the registration.
+- When creating a consent, you supply the bank registration ID (returned when creating the registration) instead of a token and can specify the template "MaximumPermissions" instead of needing to know what permissions are supported by a particular bank.
+- When retrieving AISP objects such as transactions etc, you supply the consent ID (returned when creating the consent) instead of a token
+- All data request and response objects are based on a single UK Open Banking spec revision and Open Banking Connector is capable of converting to and from older spec revisions if required for a bank
+- No bank tokens are required as these are obtained, used and refreshed automatically by Open Banking Connector keeping them separate from other parts of your back-end
 
 #### Open Banking Connector supports end-user auth in your app
 
