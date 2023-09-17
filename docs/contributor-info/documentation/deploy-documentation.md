@@ -30,39 +30,6 @@ mkdocs serve
 ```
 This will return the URL you can use to preview the website. Commit and push any corrections or updates required.
 
-### Convert code links to absolute paths (temporary change - do not commit)
-
-Relative paths are used for links to other repo files in the docs. However, before running `mkdocs` to generate the website, relative links that go outside the `docs` folder must be converted to absolute links.
-
-If no version tag is available for absolute links, create and push a git tag with a new version number for the docs:
-```bash
-git tag "docs_v1.0"
-git push publicRemote docs_v1.0
-```
-So, for example,
-```
-(../../../../src/..../BankConfigurationMethods.cs#39)
-```
-must be converted to
-
-```
-(https://github.com/finlabsuk/open-banking-connector/blob/tag/src/..../BankConfigurationMethods.cs#39).
-```
-
-Here is a regular expression search and replace that may be used to do this in (we used this in Visual Studio Code.
-
-Search:
-```
-\(\.\.\/[\.\/]*?src
-```
-
-Replace (with correct tag):
-```
-(https://github.com/finlabsuk/open-banking-connector/blob/tag/src
-```
-
-*Note: Please do not commit these changes to links. They can be discarded once the website is deployed.*
-
 ## Deploy website 
 
 Assuming you have permissions to push to the repo `gh-pages` branch, you can update the public website on GitHub Pages using:

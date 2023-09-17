@@ -2,7 +2,7 @@
 
 When running Open Banking Connector as a .NET application from source code, and when in the development environment, Microsoft's secret manager can be used to provide configuration/secrets.
 
-To use the secret manager, you will need a `secrets.json` file in the appropriate directory (if you do not have one already). The Microsoft documentation [here](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#how-the-secret-manager-tool-works) gives the path for this directory. Please note that the UserSecretsId for the app is `aa921213-9461-4f9e-8fec-153624ec67ad` as given [here](../../../src/OpenBanking.WebApp.Connector/OpenBanking.WebApp.Connector.csproj).
+To use the secret manager, you will need a `secrets.json` file in the appropriate directory (if you do not have one already). The Microsoft documentation [here](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#how-the-secret-manager-tool-works) gives the path for this directory. Please note that the UserSecretsId for the app is `aa921213-9461-4f9e-8fec-153624ec67ad` as given in the web app `.csproj` file.
 
 You can then add key-value pairs to the `secrets.json` file to supply configuration to Open Banking Connector.
 

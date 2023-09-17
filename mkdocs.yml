@@ -32,7 +32,15 @@ extra_css:
 copyright: Copyright &copy; 2023 Finnovation Labs Limited and contributors
 nav:
   - Overview: README.md
-  - Get started: get-started/README.md
+  - Guide:
+    - guide/README.md
+  - Get started:
+    - get-started/README.md
+    - Set up configuration and secrets: get-started\set-up-configuration-and-secrets\README.md
+    - Run Docker image: get-started\run-docker-image\README.md
+    - Create bank registration: get-started\create-bank-registration\README.md
+    - Create and authorise account access consent: get-started\create-and-authorise-account-access-consent\README.md
+    - Get account data: get-started\get-account-data\README.md
   - Bank Integrations: bank-integrations.md
   - Configuration:
     - configuration/README.md
@@ -47,7 +55,6 @@ nav:
     - apis/README.md
     - Bank Configuration API:
       - apis/bank-configuration/README.md
-      - Set up a bank: apis/bank-configuration/set-up-a-bank.md
       - OpenAPI spec: apis/bank-configuration/openapi.md
     - Account and Transaction API:
       - apis/account-and-transaction/README.md

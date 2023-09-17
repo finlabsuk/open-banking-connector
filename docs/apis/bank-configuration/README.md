@@ -2,8 +2,6 @@
 
 The Bank Configuration API allows you to create, read, and delete configuration (setup) objects for a bank in Open Banking Connector.
 
-To set up a bank, see instructions [here](./set-up-a-bank.md). 
-
 ## OpenAPI Spec
 
 An OpenAPI spec for the Bank Configuration API showing the endpoints and data types is provided [here](./openapi.md). This is a static capture of the API at a given release (see grey box at top right of OpenAPI spec for which release).

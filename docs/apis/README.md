@@ -16,18 +16,11 @@ The APIs provided are as follows:
 
 ## Security
 
-The Open Banking Connector API is intended to be used as an *internal (i.e. non-internet-accessible) API* within your backend infrastructure. Please see [below](#bank-redirects) for info about handling bank redirects.
+The Open Banking Connector APIs are *internal (i.e. non-internet-accessible) APIs* for consumption within your back-end infrastructure. They should definitely not (!) be exposed to the internet in any way. This is *very important* as these endpoints provide access to Open Banking APIs.
 
-It is provided as an HTTP rather than HTTPS API as customers are expected to configure HTTPS via an outer wrapper (e.g. using Kubernetes or a reverse proxy) to enable easier certificate configuration and to set up features such as MTLS.
+The APIs are provided as HTTP rather than HTTPS APIs as customers are expected to configure HTTPS via an outer wrapper (e.g. using Kubernetes or a reverse proxy) to enable easier certificate configuration and to set up features such as MTLS.
 
-As an internal API, no tokens are required to access the API. It should obviously be secured as appropriate, e.g. via MTLS, firewalls, AWS security groups etc.
+As internal APIs, they do not require tokens but should obviously be secured as appropriate, e.g. via MTLS, firewalls, AWS security groups etc.
 
-Internally, Open Banking Connector acquires and uses tokens to access UK Open Banking APIs. As a security feature, these tokens are not retrievable via the HTTP API. So, for example, when reading (GETing) a consent such as an Account Access Consent tokens will not be included in the consent payload. To inspect them, you will need to query the database directly.
+Internally, Open Banking Connector acquires and uses tokens to access UK Open Banking APIs. As a security feature, these tokens are not retrievable via the Open Banking Connector APIs. So, for example, when reading (GETing) a consent such as an Account Access Consent, tokens will not be included in the consent payload. To inspect them (in encrypted form), you will need to query the database directly.
 
-Open Banking Connector stores sensitive data including tokens in the database. So the database provided to Open Banking Connector should therefore be tightly secured including using at-rest encryption and not allowing access from any other application. Controls on human access to the database should also be implemented.
-
-## Bank Redirects
-
-It is expected that the customer implements their own secure internet-facing endpoint to handle bank redirects that occur following end-user auth.
-
-This endpoint can then forward data to Open Banking Connector via the [POST /auth/redirect-delegate](./auth-contexts/openapi.md) endpoint. Please contact us if you need any help with creating an internet-facing redirect endpoint.

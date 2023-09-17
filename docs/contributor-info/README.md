@@ -4,7 +4,7 @@ Open Banking Connector is an open-source project and welcomes contributions. Ple
 
 See the following sections for contributor guidance on:
 
-- [documentation](./documentation)
+- [documentation](./documentation/README.md)
 
 ## Environment selection
 
