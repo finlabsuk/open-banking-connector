@@ -121,7 +121,7 @@ public class ApiClientTests
 
     [Theory]
     [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
-    public void ApiClient_RequestJsonAsync_Failure_NoContent(string url)
+    public async Task ApiClient_RequestJsonAsync_Failure_NoContent(string url)
     {
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
@@ -134,27 +134,22 @@ public class ApiClientTests
         var mockHttp = new MockHttpMessageHandler();
         mockHttp.When(HttpMethod.Get, url).Respond(r => new HttpResponseMessage(HttpStatusCode.OK));
 
-        using (var http = mockHttp.ToHttpClient())
-        {
-            var api = new ApiClient(
-                Substitute.For<IInstrumentationClient>(),
-                http);
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
 
-            Action a = () =>
-            {
-                SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
-                        req,
-                        null)
-                    .Result;
-            };
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                null);
 
-            a.Should().Throw<HttpRequestException>();
-        }
+        await a.Should().ThrowAsync<HttpRequestException>();
     }
 
     [Theory]
     [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
-    public void ApiClient_RequestJsonAsync_Failure(string url)
+    public async Task ApiClient_RequestJsonAsync_Failure(string url)
     {
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
@@ -174,27 +169,23 @@ public class ApiClientTests
                     "application/json")
             });
 
-        using (var http = mockHttp.ToHttpClient())
-        {
-            var api = new ApiClient(
-                Substitute.For<IInstrumentationClient>(),
-                http);
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(
+            Substitute.For<IInstrumentationClient>(),
+            http);
 
-            Action a = () =>
-            {
-                SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
-                    req,
-                    null).Result;
-            };
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+                req,
+                null);
 
-            a.Should().Throw<ExternalApiHttpErrorException>();
-        }
+        await a.Should().ThrowAsync<ExternalApiHttpErrorException>();
     }
 
 
     [Theory]
     [InlineData("https://a5b2a8a9-1220-4aa4-aa83-0036a7bd1e69.com/stuff")]
-    public void ApiClient_RequestJsonAsync_Failure_StartEndTraceLogged(string url)
+    public async Task ApiClient_RequestJsonAsync_Failure_StartEndTraceLogged(string url)
     {
         HttpRequestMessage req = new HttpRequestBuilder()
             .SetMethod(HttpMethod.Get)
@@ -215,20 +206,16 @@ public class ApiClientTests
                     "application/json")
             });
 
-        using (var http = mockHttp.ToHttpClient())
-        {
-            var api = new ApiClient(instrumentationClient, http);
+        using var http = mockHttp.ToHttpClient();
+        var api = new ApiClient(instrumentationClient, http);
 
-            Action a = () =>
-            {
-                SerialisedEntity _ = api.SendExpectingJsonResponseAsync<SerialisedEntity>(
-                    req,
-                    null).Result;
-            };
+        Func<Task> a = async () =>
+            await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
+            req,
+            null);
 
-            a.Should().Throw<ExternalApiHttpErrorException>();
-            instrumentationClient.Received(1).Trace(Arg.Any<string>());
-        }
+        await a.Should().ThrowAsync<ExternalApiHttpErrorException>();
+        instrumentationClient.Received(1).Trace(Arg.Any<string>());
     }
 
     public class SerialisedEntity

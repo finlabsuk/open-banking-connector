@@ -26,13 +26,13 @@ public class FileCertificateReaderTests
     // }
 
     [Fact]
-    public void GetCertificateAsync_FileNotFound_CertificateNotReturned()
+    public async Task GetCertificateAsync_FileNotFound_CertificateNotReturned()
     {
         string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
         string fileName = Guid.NewGuid() + ".pfx";
 
-        X509Certificate2? certificate = new FileCertificateReader(path).GetCertificateAsync(fileName).Result;
+        X509Certificate2? certificate = await new FileCertificateReader(path).GetCertificateAsync(fileName);
 
         certificate.Should().BeNull();
     }

@@ -27,10 +27,10 @@
         <PackageReference Include="EFCore.NamingConventions" Version="7.0.2"/>
         <PackageReference Include="FluentValidation" Version="11.7.1"/>
         <PackageReference Include="jose-jwt" Version="4.1.0"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.10"/>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.32.2"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11"/>
     </ItemGroup>
 
     <ItemGroup>

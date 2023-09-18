@@ -30,14 +30,14 @@ public class FileCertificateReaderTests
 
 
     [Fact]
-    public void GetCertificateAsync_EmptyThumbprint_NullReturned()
+    public async Task GetCertificateAsync_EmptyThumbprint_NullReturned()
     {
         var thumbprint = "";
 
         var ioFacade = Substitute.For<IIoFacade>();
 
         var rdr = new FileCertificateReader(ioFacade);
-        X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
+        X509Certificate2? result = await rdr.GetCertificateAsync(thumbprint);
 
         result.Should().BeNull();
         ioFacade.DidNotReceive().GetContentPath();
@@ -45,7 +45,7 @@ public class FileCertificateReaderTests
     }
 
     [Fact]
-    public void GetCertificateAsync_NoFiles_NullReturned()
+    public async Task GetCertificateAsync_NoFiles_NullReturned()
     {
         var files = new string[0];
         var contentPath = "";
@@ -58,7 +58,7 @@ public class FileCertificateReaderTests
 
 
         var rdr = new FileCertificateReader(ioFacade);
-        X509Certificate2? result = rdr.GetCertificateAsync(thumbprint).Result;
+        X509Certificate2? result = await rdr.GetCertificateAsync(thumbprint);
 
         result.Should().BeNull();
         ioFacade.Received().GetContentPath();
@@ -67,7 +67,7 @@ public class FileCertificateReaderTests
 
 
     [Fact]
-    public void GetCertificateAsync_DirectoryNamespaceQueried()
+    public async Task GetCertificateAsync_DirectoryNamespaceQueried()
     {
         string[] files = { "file.cert" };
         var contentPath = "";
@@ -83,7 +83,7 @@ public class FileCertificateReaderTests
 
         try
         {
-            X509Certificate2? _ = rdr.GetCertificateAsync(thumbprint).Result;
+            X509Certificate2? _ = await rdr.GetCertificateAsync(thumbprint);
 
             throw new InvalidOperationException("Test failed");
         }
