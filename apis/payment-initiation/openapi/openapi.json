@@ -3,7 +3,7 @@
   "info": {
     "title": "Payment Initiation API",
     "description": "Payment Initiation API for Open Banking Connector Web App",
-    "version": "6.2.0"
+    "version": "6.3.1"
   },
   "paths": {
     "/pisp/domestic-payment-consent-auth-contexts": {
@@ -322,6 +322,7 @@
         "enum": [
           "DbTransitionalDefault",
           "Obie_Modelo",
+          "Obie_Model2023",
           "NatWest_NatWestSandbox",
           "NatWest_NatWest",
           "NatWest_NatWestBankline",

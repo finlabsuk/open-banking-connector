@@ -1734,10 +1734,11 @@
 </code></pre></div>
 <h3 id="3-configure-non-public-bank-profile-information">3. Configure non-public bank profile information</h3>
 <p>Almost all bank profile information is supplied via source code.</p>
-<p>However, some key information such as org IDs and URLs is only available to those registered with the UK Open Banking Directory. This information needs to be provided via configuration to complete the bank profile definitions.</p>
-<p>When using a bank profile for the first time, if any required information from configuration is not available, Open Banking Connector will provide an error with details.</p>
-<p>For reference, we list here currently required configuration for various bank groups. <em>Important: You only need to provide information that relates to bank profiles you want to use.</em></p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Bank group: NatWest (only affects sandbox bank profiles)</span>
+<p>However sometimes key information such as org IDs and URLs cannot be obtained from public sources and is only available to those registered with the UK Open Banking Directory or from bank dev portals. This information needs to be provided via configuration to complete the bank profile definitions.</p>
+<p><em>Important: It is only necessary to provide information that relates to bank profiles you want to use.</em> When using a bank profile for the first time, if any required information from configuration is not available, Open Banking Connector will provide an error with details.</p>
+<p>For reference, we list here currently required configuration for supported bank groups.</p>
+<p>Please contact us if you need any assistance populating these configuration values.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Bank group: NatWest (only required if using sandbox bank profiles)</span>
 <span class="nv">OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__PaymentInitiationApi__BaseUrl</span><span class="o">=</span>xx<span class="w"> </span><span class="c1"># substitute value</span>
 <span class="nv">OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__IssuerUrl</span><span class="o">=</span>xx<span class="w"> </span><span class="c1"># substitute value</span>
 <span class="nv">OpenBankingConnector__BankProfiles__NatWest__RoyalBankOfScotlandSandbox__AccountAndTransactionApi__BaseUrl</span><span class="o">=</span>xx<span class="w"> </span><span class="c1"># substitute value</span>
@@ -1745,7 +1746,7 @@
 <span class="nv">OpenBankingConnector__BankProfiles__NatWest__NatWestSandbox__IssuerUrl</span><span class="o">=</span>xx<span class="w"> </span><span class="c1"># substitute value</span>
 <span class="nv">OpenBankingConnector__BankProfiles__NatWest__NatWestSandbox__AccountAndTransactionApi__BaseUrl</span><span class="o">=</span>xx<span class="w"> </span><span class="c1"># substitute value</span>
 
-<span class="c1"># Bank group: Monzo (only affects sandbox bank profiles)</span>
+<span class="c1"># Bank group: Monzo (only required if using sandbox bank profiles)</span>
 <span class="nv">OpenBankingConnector__BankProfiles__Monzo__Monzo__PaymentInitiationApi__ApiVersion</span><span class="o">=</span>VersionZZ<span class="w"> </span><span class="c1"># substitute value</span>
 <span class="nv">OpenBankingConnector__BankProfiles__Monzo__Monzo__FinancialId</span><span class="o">=</span>yy<span class="w"> </span><span class="c1"># substitute value</span>
 
