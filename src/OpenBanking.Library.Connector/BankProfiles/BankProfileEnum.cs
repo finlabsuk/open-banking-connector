@@ -159,8 +159,11 @@ public enum BankProfileEnum
     [EnumMember(Value = "AlliedIrish")]
     AlliedIrish,
 
-    [EnumMember(Value = "Monzo")]
-    Monzo,
+    [EnumMember(Value = "Monzo_Monzo")]
+    Monzo_Monzo,
+
+    [EnumMember(Value = "Monzo_Sandbox")]
+    Monzo_Sandbox,
 
     [EnumMember(Value = "Tsb")]
     Tsb

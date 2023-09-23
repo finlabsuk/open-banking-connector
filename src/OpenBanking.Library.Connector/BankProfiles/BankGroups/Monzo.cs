@@ -8,6 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum MonzoBank
 {
+    Sandbox,
     Monzo
 }
 
@@ -16,5 +17,9 @@ public class Monzo : BankGroupBase<MonzoBank>
     public Monzo(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, MonzoBank> BankProfileToBank { get; } =
-        new() { [BankProfileEnum.Monzo] = MonzoBank.Monzo };
+        new()
+        {
+            [BankProfileEnum.Monzo_Sandbox] = MonzoBank.Sandbox,
+            [BankProfileEnum.Monzo_Monzo] = MonzoBank.Monzo
+        };
 }

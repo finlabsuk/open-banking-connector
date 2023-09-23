@@ -19,8 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using BankRegistration =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
-using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 using JsonWebKey = FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi.JsonWebKey;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -176,7 +174,8 @@ internal class GrantPost : IGrantPost
                     jsonSerializerSettings,
                     mtlsApiClient,
                     scope,
-                    clientCredentialsGrantPostCustomBehaviour?.DoNotValidateScopeResponse ?? false);
+                    clientCredentialsGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
+                    clientCredentialsGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
 
             if (response.IdToken is not null)
             {
@@ -255,7 +254,8 @@ internal class GrantPost : IGrantPost
             jsonSerializerSettings,
             matlsApiClient,
             requestScope,
-            false);
+            authCodeGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
+            authCodeGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
 
         // Check for refresh token
         bool allowNullRefreshTokenResponse = authCodeGrantPostCustomBehaviour?.AllowNullResponseRefreshToken ?? false;
@@ -335,7 +335,8 @@ internal class GrantPost : IGrantPost
             jsonSerializerSettings,
             mtlsApiClient,
             requestScope,
-            false);
+            refreshTokenGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
+            refreshTokenGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
 
         bool doNotValidateIdToken = refreshTokenGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         string? responseIdToken = response.IdToken;
@@ -630,7 +631,8 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient mtlsApiClient,
         string? requestScope,
-        bool doNotValidateScopeResponse)
+        bool tokenTypeResponseStartsWithLowerCaseLetter,
+        bool expectedScopeResponseIsEmptyString)
         where TokenEndpointResponse : TokenEndpointResponseBase
     {
         // POST request
@@ -647,11 +649,9 @@ internal class GrantPost : IGrantPost
             mtlsApiClient);
 
         // Check token endpoint response
-        StringComparison stringComparison = supportsSca
-            ? StringComparison.Ordinal
-            : StringComparison.OrdinalIgnoreCase;
+        string expectedTokenTypeResponse = tokenTypeResponseStartsWithLowerCaseLetter ? "bearer" : "Bearer";
 
-        if (!string.Equals(response.TokenType, "Bearer", stringComparison))
+        if (!string.Equals(response.TokenType, expectedTokenTypeResponse, StringComparison.Ordinal))
         {
             throw new InvalidDataException("Access token received does not have token type equal to Bearer.");
         }
@@ -661,12 +661,21 @@ internal class GrantPost : IGrantPost
         {
             if (response.Scope is not null)
             {
-                IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
-                IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
-                if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered) &&
-                    !doNotValidateScopeResponse)
+                if (expectedScopeResponseIsEmptyString)
                 {
-                    throw new Exception("Requested and received scope for access token differ.");
+                    if (response.Scope != string.Empty)
+                    {
+                        throw new Exception("Received scope for access token unexpectedly non-empty.");
+                    }
+                }
+                else
+                {
+                    IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
+                    IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
+                    if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered))
+                    {
+                        throw new Exception("Requested and received scope for access token differ.");
+                    }
                 }
             }
         }

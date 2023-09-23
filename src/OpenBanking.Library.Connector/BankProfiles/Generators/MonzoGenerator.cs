@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 
@@ -18,19 +19,23 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
 
     public override BankProfile GetBankProfile(MonzoBank bank)
     {
+        var grantPostCustomBehaviour =
+            new GrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
-            "https://api.s101.nonprod-ffs.io/open-banking/", //from https://docs.monzo.com/#well-known-endpoints
-            GetFinancialId(bank),
-            null,
-            new PaymentInitiationApi
+            bank switch
             {
-                ApiVersion = GetPaymentInitiationApiVersion(bank),
-                BaseUrl =
-                    "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" //from https://docs.monzo.com/#well-known-endpoints58
+                MonzoBank.Monzo =>
+                    "https://api.monzo.com/open-banking/", // from https://docs.monzo.com/#account-information-services-api
+                MonzoBank.Sandbox =>
+                    "https://api.s101.nonprod-ffs.io/open-banking/", // from https://docs.monzo.com/#account-information-services-api
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             },
+            GetFinancialId(bank),
+            GetAccountAndTransactionApi(bank),
+            GetPaymentInitiationApi(bank),
             null,
-            false)
+            bank is not MonzoBank.Sandbox)
         {
             CustomBehaviour = new CustomBehaviourClass
             {
@@ -39,22 +44,75 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                     {
                         UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
                     },
-                ClientCredentialsGrantPost = new GrantPostCustomBehaviour { DoNotValidateScopeResponse = true }
+                ClientCredentialsGrantPost = new GrantPostCustomBehaviour
+                {
+                    ScopeResponseIsEmptyString = true,
+                    TokenTypeResponseStartsWithLowerCaseLetter = true
+                },
+                AuthCodeGrantPost = grantPostCustomBehaviour,
+                RefreshTokenGrantPost = grantPostCustomBehaviour
+            },
+            AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
+            {
+                AccountAccessConsentExternalApiRequestAdjustments = bank is MonzoBank.Sandbox
+                    ? externalApiRequest =>
+                    {
+                        externalApiRequest.Data.SupplementaryData =
+                            new Dictionary<string, object>
+                            {
+                                ["DesiredStatus"] = "Authorised",
+                                ["UserID"] = "user_0000A4C4ZChWNMEvew2U77",
+                                ["AccountID"] = "acc_0000A4C4ZSskDOixqNPfpR"
+                            };
+                        return externalApiRequest;
+                    }
+                    : x => x
             },
             PaymentInitiationApiSettings = new PaymentInitiationApiSettings
             {
-                DomesticPaymentConsentExternalApiRequestAdjustments = externalApiRequest =>
-                {
-                    externalApiRequest.Data.Initiation.SupplementaryData =
-                        new Dictionary<string, object>
-                        {
-                            ["DesiredStatus"] = "Authorised",
-                            ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
-                            ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
-                        };
-                    return externalApiRequest;
-                }
+                DomesticPaymentConsentExternalApiRequestAdjustments = bank is MonzoBank.Sandbox
+                    ? externalApiRequest =>
+                    {
+                        externalApiRequest.Data.Initiation.SupplementaryData =
+                            new Dictionary<string, object>
+                            {
+                                ["DesiredStatus"] = "Authorised",
+                                ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
+                                ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
+                            };
+                        return externalApiRequest;
+                    }
+                    : x => x
             }
         };
     }
+
+    private AccountAndTransactionApi? GetAccountAndTransactionApi(MonzoBank bank) =>
+        bank switch
+        {
+            MonzoBank.Sandbox => new AccountAndTransactionApi
+            {
+                BaseUrl =
+                    "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/aisp" // from https://docs.monzo.com/#account-information-services-api
+            },
+            MonzoBank.Monzo => new AccountAndTransactionApi
+            {
+                BaseUrl =
+                    "https://openbanking.monzo.com/open-banking/v3.1/aisp" // from https://docs.monzo.com/#account-information-services-api
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+        };
+
+    private PaymentInitiationApi? GetPaymentInitiationApi(MonzoBank bank) =>
+        bank switch
+        {
+            MonzoBank.Sandbox => new PaymentInitiationApi
+            {
+                ApiVersion = GetPaymentInitiationApiVersion(bank),
+                BaseUrl =
+                    "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" // from https://docs.monzo.com/#payment-initiation-services-api
+            },
+            MonzoBank.Monzo => null,
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+        };
 }

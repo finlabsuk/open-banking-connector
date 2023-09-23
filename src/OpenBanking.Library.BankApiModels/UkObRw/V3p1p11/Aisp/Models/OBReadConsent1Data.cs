@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.Models
 {
@@ -51,5 +52,12 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.Aisp.
         /// 2017-04-05T10:43:07+00:00
         /// </summary>
         public DateTimeOffset? TransactionToDateTime { get; set; }
+        
+        /// <summary>
+        /// Extra property used with Monzo
+        /// </summary>
+        [JsonProperty(PropertyName = "SupplementaryData")]
+        public IDictionary<string, object> SupplementaryData { get; set; }
+
     }
 }
