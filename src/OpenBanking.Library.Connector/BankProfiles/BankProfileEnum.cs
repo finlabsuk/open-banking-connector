@@ -165,6 +165,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Monzo_Sandbox")]
     Monzo_Sandbox,
 
+    [EnumMember(Value = "Revolut_Revolut")]
+    Revolut_Revolut,
+
     [EnumMember(Value = "Starling_Starling")]
     Starling_Starling,
 

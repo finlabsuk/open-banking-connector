@@ -49,6 +49,7 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Obie] = new Obie(BankGroupEnum.Obie),
             [BankGroupEnum.Monzo] = new Monzo(BankGroupEnum.Monzo),
             [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest),
+            [BankGroupEnum.Revolut] = new Revolut(BankGroupEnum.Revolut),
             [BankGroupEnum.Starling] = new Starling(BankGroupEnum.Starling)
         };
 
@@ -76,6 +77,9 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.NatWest] = new NatWestGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<NatWestBank>(BankGroupEnum.NatWest)),
+            [BankGroupEnum.Revolut] = new RevolutGenerator(
+                bankProfilesSettingsProvider,
+                GetBankGroup<RevolutBank>(BankGroupEnum.Revolut)),
             [BankGroupEnum.Starling] = new StarlingGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<StarlingBank>(BankGroupEnum.Starling))
@@ -95,6 +99,7 @@ public class BankProfileService : IBankProfileService
                         BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum),
                         BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum),
                         BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum),
+                        BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum),
                         BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum),
                         _ => throw new ArgumentOutOfRangeException()
                     },
@@ -114,8 +119,31 @@ public class BankProfileService : IBankProfileService
     public static BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
         bankProfileEnum switch
         {
-            BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
-            BankProfileEnum.Obie_Model2023 => BankGroupEnum.Obie,
+            BankProfileEnum.Barclays_Sandbox => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_Personal => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_Wealth => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_Barclaycard => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_Business => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_Corporate => BankGroupEnum.Barclays,
+            BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroupEnum.Barclays,
+            BankProfileEnum.Danske => BankGroupEnum.Danske,
+            BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_UkKinetic => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
+            BankProfileEnum.Hsbc_HsbcNetUk => BankGroupEnum.Hsbc,
+            BankProfileEnum.Lloyds_Sandbox => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_LloydsPersonal => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_LloydsBusiness => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_LloydsCommerical => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_HalifaxPersonal => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_BankOfScotlandPersonal => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_BankOfScotlandBusiness => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_BankOfScotlandCommerical => BankGroupEnum.Lloyds,
+            BankProfileEnum.Lloyds_MbnaPersonal => BankGroupEnum.Lloyds,
+            BankProfileEnum.Monzo_Monzo => BankGroupEnum.Monzo,
+            BankProfileEnum.Monzo_Sandbox => BankGroupEnum.Monzo,
             BankProfileEnum.NatWest_NatWestSandbox => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWest => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWestBankline => BankGroupEnum.NatWest,
@@ -132,32 +160,10 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.NatWest_UlsterBankNiClearSpend => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_Mettle => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_Coutts => BankGroupEnum.NatWest,
-            BankProfileEnum.Lloyds_Sandbox => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_LloydsPersonal => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_LloydsBusiness => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_LloydsCommerical => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_HalifaxPersonal => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_BankOfScotlandPersonal => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_BankOfScotlandBusiness => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_BankOfScotlandCommerical => BankGroupEnum.Lloyds,
-            BankProfileEnum.Lloyds_MbnaPersonal => BankGroupEnum.Lloyds,
-            BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
-            BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,
-            BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,
-            BankProfileEnum.Hsbc_UkKinetic => BankGroupEnum.Hsbc,
-            BankProfileEnum.Hsbc_UkPersonal => BankGroupEnum.Hsbc,
-            BankProfileEnum.Hsbc_HsbcNetUk => BankGroupEnum.Hsbc,
-            BankProfileEnum.Danske => BankGroupEnum.Danske,
-            BankProfileEnum.Monzo_Monzo => BankGroupEnum.Monzo,
-            BankProfileEnum.Monzo_Sandbox => BankGroupEnum.Monzo,
+            BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
+            BankProfileEnum.Obie_Model2023 => BankGroupEnum.Obie,
+            BankProfileEnum.Revolut_Revolut => BankGroupEnum.Revolut,
             BankProfileEnum.Starling_Starling => BankGroupEnum.Starling,
-            BankProfileEnum.Barclays_Sandbox => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_Personal => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_Wealth => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_Barclaycard => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_Business => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_Corporate => BankGroupEnum.Barclays,
-            BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroupEnum.Barclays,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
 
