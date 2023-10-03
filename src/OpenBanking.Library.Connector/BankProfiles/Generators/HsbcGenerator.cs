@@ -70,9 +70,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     AudClaim = issuerUrl,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
-                BankRegistrationPut = bank is HsbcBank.Sandbox
-                    ? null
-                    : new BankRegistrationPutCustomBehaviour { CustomTokenScope = "accounts" },
+                BankRegistrationPut = new BankRegistrationPutCustomBehaviour { CustomTokenScope = "accounts" },
                 JwksGet = bank is HsbcBank.Sandbox
                     ? new JwksGetCustomBehaviour { ResponseHasNoRootProperty = true }
                     : null,
