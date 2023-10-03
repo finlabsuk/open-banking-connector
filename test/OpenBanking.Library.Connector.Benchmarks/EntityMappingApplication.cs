@@ -207,7 +207,6 @@ public class EntityMappingApplication
 
     private TransportCertificateProfile CreateObCertificateProfile() => new()
     {
-        CertificateType = TransportCertificateType.OBLegacy,
         AssociatedKey = "-----BEGIN PRIVATE KEY-----\nABCD\n-----END PRIVATE KEY-----\n",
         Certificate = "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     };

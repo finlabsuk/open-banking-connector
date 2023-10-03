@@ -8,22 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 /// <summary>
-///     UK Open Banking signing certificate type
-/// </summary>
-public enum SigningCertificateType
-{
-    /// <summary>
-    ///     Legacy certificate used by UK Open Banking Directory
-    /// </summary>
-    OBLegacy,
-
-    /// <summary>
-    ///     New OBSeal certificate used by UK Open Banking Directory.
-    /// </summary>
-    OBSeal
-}
-
-/// <summary>
 ///     Open Banking Signing Certificate Profile provided to Open Banking Connector as part of
 ///     <see cref="SigningCertificateProfilesSettings" />.
 ///     This class captures a signing certificate and associated data.
@@ -35,11 +19,6 @@ public class SigningCertificateProfile
     ///     and off" for testing etc.
     /// </summary>
     public bool Active { get; set; } = true;
-
-    /// <summary>
-    ///     Type of UK Open Banking Directory certificate used - see <see cref="SigningCertificateType" />
-    /// </summary>
-    public SigningCertificateType CertificateType { get; set; } = SigningCertificateType.OBSeal;
 
     /// Signing Key ID (from UK Open Banking Directory) as string. This is not the same as the user-definied profile ID for this signing certificate profile.
     public string AssociatedKeyId { get; set; } = string.Empty;

@@ -121,7 +121,6 @@ public class ProcessedSoftwareStatementProfile
         OBSealKey = new OBSealKey(
             processedSigningCertificateProfile.AssociatedKeyId,
             processedSigningCertificateProfile.AssociatedKey);
-        TransportCertificateType = processedTransportCertificateProfile.CertificateType;
         TransportCertificateSubjectDn = processedTransportCertificateProfile
             .SubjectDn;
         TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = processedTransportCertificateProfile
@@ -227,8 +226,6 @@ public class ProcessedSoftwareStatementProfile
             return _defaultFragmentRedirectUrl;
         }
     }
-
-    public TransportCertificateType TransportCertificateType { get; }
 
     public string TransportCertificateSubjectDn { get; }
 

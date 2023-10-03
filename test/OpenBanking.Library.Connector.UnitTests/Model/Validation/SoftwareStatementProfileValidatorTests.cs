@@ -61,7 +61,6 @@ public class SoftwareStatementProfileValidatorTests
         {
             var profile = new SigningCertificateProfile
             {
-                CertificateType = SigningCertificateType.OBLegacy,
                 AssociatedKey = "a",
                 AssociatedKeyId = value
             };

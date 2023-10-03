@@ -8,22 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 /// <summary>
-///     UK Open Banking transport certificate type
-/// </summary>
-public enum TransportCertificateType
-{
-    /// <summary>
-    ///     Legacy certificate used by UK Open Banking Directory
-    /// </summary>
-    OBLegacy,
-
-    /// <summary>
-    ///     New OBWAC certificate used by UK Open Banking Directory.
-    /// </summary>
-    OBWac
-}
-
-/// <summary>
 ///     Open Banking Transport Certificate Profile provided to Open Banking Connector as part of
 ///     <see cref="TransportCertificateProfilesSettings" />.
 ///     This class captures a transport certificate and associated data.
@@ -35,11 +19,6 @@ public class TransportCertificateProfile
     ///     and off" for testing etc.
     /// </summary>
     public bool Active { get; set; } = true;
-
-    /// <summary>
-    ///     Type of UK Open Banking Directory certificate used - see <see cref="TransportCertificateType" />
-    /// </summary>
-    public TransportCertificateType CertificateType { get; set; } = TransportCertificateType.OBWac;
 
     /// <summary>
     ///     Disable verification of external bank TLS certificates when using mutual TLS with this certificate profile. Not
@@ -81,7 +60,6 @@ public class TransportCertificateProfileWithOverrideProperties : TransportCertif
     {
         var newObject = new TransportCertificateProfile
         {
-            CertificateType = CertificateType,
             DisableTlsCertificateVerification = DisableTlsCertificateVerification,
             AssociatedKey = AssociatedKey,
             Certificate = Certificate

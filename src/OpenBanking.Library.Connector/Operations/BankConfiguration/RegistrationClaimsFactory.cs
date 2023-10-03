@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -80,21 +79,12 @@ internal static class RegistrationClaimsFactory
                     .AuthorizationCode,
                 ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
             };
-        string tlsClientAuthSubjectDn;
-        if (sProfile.TransportCertificateType is TransportCertificateType.OBLegacy)
-        {
-            tlsClientAuthSubjectDn =
-                $"CN={sProfile.SoftwareStatementPayload.SoftwareId},OU={sProfile.SoftwareStatementPayload.OrgId},O=OpenBanking,C=GB";
-        }
-        else
-        {
-            bool useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
-                bankRegistrationPostCustomBehaviour
-                    ?.UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute ?? false;
-            tlsClientAuthSubjectDn = useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
-                ? sProfile.TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
-                : sProfile.TransportCertificateSubjectDn;
-        }
+        bool useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
+            bankRegistrationPostCustomBehaviour
+                ?.UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute ?? false;
+        string tlsClientAuthSubjectDn = useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
+            ? sProfile.TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
+            : sProfile.TransportCertificateSubjectDn;
 
         var registrationClaims =
             new ClientRegistrationModelsPublic.OBClientRegistration1

@@ -64,16 +64,12 @@ public class ProcessedTransportCertificateProfile
 
         ApiClient = new ApiClient(instrumentationClient, transportCerts, serverCertificateValidator);
 
-        CertificateType = transportCertificateProfile.CertificateType;
-
         SubjectDnWithDottedDecimalOrgIdAttribute = GetSubjectDn(transportCert, true);
 
         SubjectDn = GetSubjectDn(transportCert, false);
     }
 
     public IApiClient ApiClient { get; }
-
-    public TransportCertificateType CertificateType { get; }
 
     public string SubjectDnWithDottedDecimalOrgIdAttribute { get; }
 
