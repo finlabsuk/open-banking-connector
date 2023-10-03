@@ -55,14 +55,14 @@ public class SoftwareStatementProfile
 public class SoftwareStatementProfileWithOverrideProperties : SoftwareStatementProfile
 {
     /// <summary>
-    ///     Bank-specific overrides for
+    ///     (Bank-specific) overrides for
     ///     <see cref="SoftwareStatementProfile.TransportCertificateProfileId" />
     /// </summary>
     public Dictionary<string, string> TransportCertificateProfileIdOverrides { get; set; } =
         new();
 
     /// <summary>
-    ///     Bank-specific overrides for
+    ///     (Bank-specific) overrides for
     ///     <see cref="SoftwareStatementProfile.SigningCertificateProfileId" />
     /// </summary>
     public Dictionary<string, string> SigningCertificateProfileIdOverrides { get; set; } =
@@ -80,7 +80,8 @@ public class SoftwareStatementProfileWithOverrideProperties : SoftwareStatementP
             SoftwareStatement = SoftwareStatement,
             TransportCertificateProfileId = TransportCertificateProfileId,
             SigningCertificateProfileId = SigningCertificateProfileId,
-            DefaultFragmentRedirectUrl = DefaultFragmentRedirectUrl
+            DefaultFragmentRedirectUrl = DefaultFragmentRedirectUrl,
+            DefaultQueryRedirectUrl = DefaultQueryRedirectUrl
         };
 
         if (overrideCase is null)
@@ -146,12 +147,19 @@ public class SoftwareStatementProfilesSettings : Dictionary<string, SoftwareStat
                     $"No non-empty SigningCertificateProfileId provided for SoftwareStatementProfile {key}.");
             }
 
-            if (string.IsNullOrEmpty(value.DefaultQueryRedirectUrl) &&
-                string.IsNullOrEmpty(value.DefaultFragmentRedirectUrl))
+            if (string.IsNullOrEmpty(value.DefaultFragmentRedirectUrl))
             {
                 throw new ArgumentException(
                     "Configuration or key secrets error: " +
-                    "At least one of {DefaultQueryRedirectUrl, DefaultFragmentRedirectUrl} must be non-empty in " +
+                    "DefaultFragmentRedirectUrl must be non-empty in " +
+                    $"SoftwareStatementProfile {key}.");
+            }
+
+            if (string.IsNullOrEmpty(value.DefaultQueryRedirectUrl))
+            {
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    "DefaultQueryRedirectUrl must be non-empty in " +
                     $"SoftwareStatementProfile {key}.");
             }
         }

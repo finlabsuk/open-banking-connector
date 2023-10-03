@@ -179,6 +179,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
             // Get override cases (keys)
             var overrideCases =
                 new HashSet<string>(expandedProfile.TransportCertificateProfileIdOverrides.Keys);
+            overrideCases.UnionWith(expandedProfile.SigningCertificateProfileIdOverrides.Keys);
             overrideCases.UnionWith(defaultProcessedTransportCertificateProfiles.OverrideVariants.Keys);
 
             // Create and store override profiles
