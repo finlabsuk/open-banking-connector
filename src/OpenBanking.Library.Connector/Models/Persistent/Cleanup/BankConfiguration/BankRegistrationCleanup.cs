@@ -54,6 +54,26 @@ public class BankRegistrationCleanup
                     $"Null or empty DefaultFragmentRedirectUri found for BankRegistration with ID {bankRegistration.Id}.");
             }
 
+            // Check for empty RedirectUris
+            if (!bankRegistration.RedirectUris.Any())
+            {
+                var newRedirectUris =
+                    new List<string>(bankRegistration.OtherRedirectUris)
+                    {
+                        bankRegistration.DefaultFragmentRedirectUri
+                    };
+                if (!newRedirectUris.Any())
+                {
+                    throw new Exception(
+                        $"Cannot create non-empty RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
+                }
+                bankRegistration.RedirectUris = newRedirectUris;
+                string message =
+                    $"RedirectUris for BankRegistration with ID {bankRegistration.Id} has been populated " +
+                    $"as part of database cleanup.";
+                logger.LogInformation(message);
+            }
+
             // Prepare for removal of DbTransitionalDefault
             if (bankRegistration.BankProfile is BankProfileEnum.DbTransitionalDefault)
             {
