@@ -66,19 +66,21 @@ public class BankRegistration : Base, ISupportsValidation
     public RegistrationScopeEnum? RegistrationScope { get; set; }
 
     /// <summary>
-    ///     Default fragment redirect URI to use for this registration. This redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
-    ///     If null, the default redirect URI specified in the software statement profile will be used.
+    ///     Default fragment redirect URI to use for this registration. This URI must
+    ///     be included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is
+    ///     null default to those specified in the software statement in software statement profile
+    ///     SoftwareStatementProfileId).
+    ///     If null, the default fragment redirect URI specified in the software statement profile
+    ///     will be used.
     /// </summary>
     public string? DefaultFragmentRedirectUri { get; set; }
 
     /// <summary>
-    ///     Other redirect URIs in addition to default one to use for this registration.
-    ///     Each redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
-    ///     If null, redirect URIs in the software statement profile (excluding that used as the default) will be used.
+    ///     Redirect URIs to use for this registration. Must be a subset of those specified in
+    ///     the software statement in software statement profile SoftwareStatementProfileId.
+    ///     If null, redirect URIs specified in the software statement will be used.
     /// </summary>
-    public List<string>? OtherRedirectUris { get; set; }
+    public IList<string>? RedirectUris { get; set; }
 
     /// <summary>
     ///     Information about a previously-created external API (bank) registration (OAuth2 client) created at the bank either

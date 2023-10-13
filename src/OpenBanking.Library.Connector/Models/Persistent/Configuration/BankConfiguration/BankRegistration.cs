@@ -52,6 +52,18 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
                     (c1, c2) => c1!.SequenceEqual(c2!),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
+        builder.Property(e => e.RedirectUris)
+            .HasConversion(
+                v =>
+                    JsonConvert.SerializeObject(
+                        v,
+                        _jsonFormatting,
+                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                v => JsonConvert.DeserializeObject<List<string>>(v)!,
+                new ValueComparer<IList<string>>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()));
         builder.Property(e => e.SoftwareStatementProfileId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SoftwareStatementProfileOverride)
@@ -86,6 +98,7 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
         if (_dbProvider is DbProvider.PostgreSql)
         {
             builder.Property(e => e.OtherRedirectUris).HasColumnType("jsonb");
+            builder.Property(e => e.RedirectUris).HasColumnType("jsonb");
         }
     }
 }

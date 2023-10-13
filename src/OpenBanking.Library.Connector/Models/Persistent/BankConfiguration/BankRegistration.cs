@@ -79,7 +79,7 @@ internal class BankRegistration :
         string authorizationEndpoint,
         BankRegistrationGroup? bankRegistrationGroup,
         string defaultFragmentRedirectUri,
-        IList<string> otherRedirectUris,
+        IList<string> redirectUris,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope) : base(
@@ -106,7 +106,7 @@ internal class BankRegistration :
         BankRegistrationGroup = bankRegistrationGroup;
         DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
                                      throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
-        OtherRedirectUris = otherRedirectUris ?? throw new ArgumentNullException(nameof(otherRedirectUris));
+        RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
         SoftwareStatementProfileId = softwareStatementProfileId ??
                                      throw new ArgumentNullException(nameof(softwareStatementProfileId));
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
@@ -134,6 +134,11 @@ internal class BankRegistration :
     ///     Use simulated bank.
     /// </summary>
     public bool UseSimulatedBank { get; }
+
+    /// <summary>
+    ///     Redirect URIs in addition to default one used for this registration.
+    /// </summary>
+    public IList<string> OtherRedirectUris { get; set; } = new List<string>();
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -172,9 +177,9 @@ internal class BankRegistration :
     public string DefaultFragmentRedirectUri { get; set; }
 
     /// <summary>
-    ///     Redirect URIs in addition to default one used for this registration.
+    ///     Redirect URIs used for registration.
     /// </summary>
-    public IList<string> OtherRedirectUris { get; set; }
+    public IList<string> RedirectUris { get; set; }
 
     /// <summary>
     ///     ID of SoftwareStatementProfile to use in association with BankRegistration

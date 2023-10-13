@@ -68,17 +68,21 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     public string AuthorizationEndpoint { get; }
 
     /// <summary>
-    ///     Default redirect URI to use for this registration. This redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+    ///     Default fragment redirect URI to use for this registration. This URI must
+    ///     be included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is
+    ///     null default to those specified in the software statement in software statement profile
+    ///     SoftwareStatementProfileId).
+    ///     If null, the default fragment redirect URI specified in the software statement profile
+    ///     will be used.
     /// </summary>
     public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
-    ///     Other redirect URIs in addition to default one to use for this registration.
-    ///     Each redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+    ///     Redirect URIs to use for this registration. Must be a subset of those specified in
+    ///     the software statement in software statement profile SoftwareStatementProfileId.
+    ///     If null, redirect URIs specified in the software statement will be used.
     /// </summary>
-    public IList<string> OtherRedirectUris { get; }
+    public IList<string> RedirectUris { get; }
 
     IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
 
@@ -112,7 +116,7 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope,
         string defaultFragmentRedirectUri,
-        IList<string> otherRedirectUris,
+        IList<string> redirectUris,
         BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
     {
         ExternalApiObject = externalApiObject;
@@ -128,7 +132,7 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
         DefaultFragmentRedirectUri = defaultFragmentRedirectUri;
-        OtherRedirectUris = otherRedirectUris;
+        RedirectUris = redirectUris;
         BankRegistrationGroup = bankRegistrationGroup;
     }
 
@@ -184,17 +188,21 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     public RegistrationScopeEnum RegistrationScope { get; }
 
     /// <summary>
-    ///     Default fragment redirect URI to use for this registration. This redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+    ///     Default fragment redirect URI to use for this registration. This URI must
+    ///     be included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is
+    ///     null default to those specified in the software statement in software statement profile
+    ///     SoftwareStatementProfileId).
+    ///     If null, the default fragment redirect URI specified in the software statement profile
+    ///     will be used.
     /// </summary>
     public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
-    ///     Other redirect URIs in addition to default one to use for this registration.
-    ///     Each redirect URI must
-    ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
+    ///     Redirect URIs to use for this registration. Must be a subset of those specified in
+    ///     the software statement in software statement profile SoftwareStatementProfileId.
+    ///     If null, redirect URIs specified in the software statement will be used.
     /// </summary>
-    public IList<string> OtherRedirectUris { get; }
+    public IList<string> RedirectUris { get; }
 
     /// <summary>
     ///     Bank registration group. The same external API registration object is

@@ -105,10 +105,10 @@ internal class
                 softwareStatementProfileOverrideCase);
 
         // Determine redirect URIs
-        (string defaultFragmentRedirectUri, List<string> otherRedirectUris) = GetRedirectUris(
+        (string defaultFragmentRedirectUri, IList<string> redirectUris) = GetRedirectUris(
             processedSoftwareStatementProfile,
             request.DefaultFragmentRedirectUri,
-            request.OtherRedirectUris);
+            request.RedirectUris);
 
         // Determine registration scope
         RegistrationScopeEnum registrationScope =
@@ -263,8 +263,7 @@ internal class
                 processedSoftwareStatementProfile,
                 registrationEndpoint,
                 tokenEndpointAuthMethod,
-                otherRedirectUris,
-                defaultFragmentRedirectUri,
+                redirectUris,
                 registrationScope,
                 bankFinancialId,
                 nonErrorMessages);
@@ -298,7 +297,7 @@ internal class
             authorizationEndpoint,
             bankRegistrationGroup,
             defaultFragmentRedirectUri,
-            otherRedirectUris,
+            redirectUris,
             softwareStatementProfileId,
             softwareStatementProfileOverrideCase,
             registrationScope);
@@ -334,7 +333,7 @@ internal class
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
-            entity.OtherRedirectUris,
+            entity.RedirectUris,
             entity.BankRegistrationGroup);
 
         return (response, nonErrorMessages);
@@ -457,7 +456,7 @@ internal class
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
-            entity.OtherRedirectUris,
+            entity.RedirectUris,
             entity.BankRegistrationGroup);
 
         return (response, nonErrorMessages);
@@ -546,8 +545,7 @@ internal class
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         string registrationEndpoint,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
-        List<string> otherRedirectUris,
-        string defaultRedirectUri,
+        IList<string> redirectUris,
         RegistrationScopeEnum registrationScope,
         string bankFinancialId,
         List<IFluentResponseInfoOrWarningMessage> nonErrorMessages)
@@ -573,7 +571,7 @@ internal class
         ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest =
             RegistrationClaimsFactory.CreateRegistrationClaims(
                 tokenEndpointAuthMethod,
-                new List<string>(otherRedirectUris) { defaultRedirectUri },
+                redirectUris,
                 processedSoftwareStatementProfile,
                 registrationScope,
                 bankRegistrationPostCustomBehaviour,
@@ -636,48 +634,71 @@ internal class
         return tokenEndpointAuthMethod;
     }
 
-    private static (string defaultRedirectUri, List<string> otherRedirectUris) GetRedirectUris(
+    private static (string defaultFragmentRedirectUri, IList<string> redirectUris) GetRedirectUris(
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-        string? requestDefaultRedirectUri,
-        List<string>? requestOtherRedirectUris)
+        string? requestDefaultFragmentRedirectUri,
+        IList<string>? requestRedirectUris)
     {
         List<string> softwareStatementRedirectUris =
             processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareRedirectUris;
 
-        if (requestDefaultRedirectUri is not null)
+        // Determine redirect URIs
+        IList<string> redirectUris;
+        if (requestRedirectUris is not null)
         {
-            if (!softwareStatementRedirectUris.Contains(requestDefaultRedirectUri))
+            if (!requestRedirectUris.Any())
             {
-                throw new InvalidOperationException(
-                    $"Specified default redirect URI {requestDefaultRedirectUri} not included in software statement.");
+                throw new InvalidOperationException("Specified RedirectUris is empty list.");
             }
-        }
 
-        string defaultRedirectUri =
-            requestDefaultRedirectUri ??
-            processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
-
-        List<string> otherRedirectUris;
-        if (requestOtherRedirectUris is not null)
-        {
-            foreach (string redirectUri in requestOtherRedirectUris)
+            foreach (string redirectUri in requestRedirectUris)
             {
                 if (!softwareStatementRedirectUris.Contains(redirectUri))
                 {
                     throw new InvalidOperationException(
-                        $"Specified other redirect URI {redirectUri} not included in software statement.");
+                        $"Specified URI {redirectUri} in RedirectUris is not included in software statement.");
                 }
             }
-
-            otherRedirectUris = requestOtherRedirectUris;
+            redirectUris = requestRedirectUris;
         }
         else
         {
-            otherRedirectUris = softwareStatementRedirectUris;
+            if (!softwareStatementRedirectUris.Any())
+            {
+                throw new InvalidOperationException("RedirectUris from software statement is empty list.");
+            }
+            redirectUris = softwareStatementRedirectUris;
         }
 
-        otherRedirectUris.Remove(defaultRedirectUri);
-        return (defaultRedirectUri, otherRedirectUris);
+        // Determine default fragment redirect URI
+        string defaultFragmentRedirectUri;
+        if (requestDefaultFragmentRedirectUri is not null)
+        {
+            if (!softwareStatementRedirectUris.Contains(requestDefaultFragmentRedirectUri))
+            {
+                throw new InvalidOperationException(
+                    $"Specified default fragment redirect URI {requestDefaultFragmentRedirectUri} not included in software statement.");
+            }
+
+            if (!redirectUris.Contains(requestDefaultFragmentRedirectUri))
+            {
+                throw new InvalidOperationException(
+                    $"Specified default fragment redirect URI {requestDefaultFragmentRedirectUri} not included in specified RedirectUris.");
+            }
+            defaultFragmentRedirectUri = requestDefaultFragmentRedirectUri;
+        }
+        else
+        {
+            if (!redirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
+            {
+                throw new InvalidOperationException(
+                    $"Default fragment redirect URI {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} from software statement profile not included in specified RedirectUris. Please specify a different one or include this one in specified RedirectUris.");
+            }
+            defaultFragmentRedirectUri =
+                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+        }
+
+        return (defaultFragmentRedirectUri, redirectUris);
     }
 
     private static JsonSerializerSettings? GetRequestJsonSerializerSettings(

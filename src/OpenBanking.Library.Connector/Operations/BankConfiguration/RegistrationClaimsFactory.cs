@@ -33,7 +33,7 @@ internal static class RegistrationClaimsFactory
 
     public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
-        List<string> redirectUris,
+        IList<string> redirectUris,
         ProcessedSoftwareStatementProfile sProfile,
         RegistrationScopeEnum registrationScope,
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
