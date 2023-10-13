@@ -221,8 +221,7 @@ internal class
             request.CreatedBy,
             request.ExternalApiUserId,
             utcNow,
-            request.CreatedBy,
-            null);
+            request.CreatedBy);
 
         AuthContextRequest? authContext = request.ExternalApiObject?.AuthContext;
         if (authContext is not null)

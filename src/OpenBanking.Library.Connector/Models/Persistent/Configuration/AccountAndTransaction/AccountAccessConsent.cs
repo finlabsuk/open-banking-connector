@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 using PaymentInitiationModelsPublic =
@@ -24,10 +22,5 @@ internal class AccountAccessConsentConfig : BaseConsentConfig<AccountAccessConse
     public override void Configure(EntityTypeBuilder<AccountAccessConsent> builder)
     {
         base.Configure(builder);
-
-        // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.AccountAndTransactionApiId)
-            .HasColumnOrder(10)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

@@ -71,7 +71,7 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     ///     Default redirect URI to use for this registration. This redirect URI must
     ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
     /// </summary>
-    public string DefaultRedirectUri { get; }
+    public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
     ///     Other redirect URIs in addition to default one to use for this registration.
@@ -102,6 +102,7 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         ExternalApiObjectResponse externalApiObject,
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
         IList<string>? warnings,
+        bool useSimulatedBank,
         BankProfileEnum bankProfile,
         string jwksUri,
         string? registrationEndpoint,
@@ -110,13 +111,14 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope,
-        string defaultRedirectUri,
+        string defaultFragmentRedirectUri,
         IList<string> otherRedirectUris,
         BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
     {
         ExternalApiObject = externalApiObject;
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
+        UseSimulatedBank = useSimulatedBank;
         BankProfile = bankProfile;
         JwksUri = jwksUri;
         RegistrationEndpoint = registrationEndpoint;
@@ -125,7 +127,7 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         SoftwareStatementProfileId = softwareStatementProfileId;
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
-        DefaultRedirectUri = defaultRedirectUri;
+        DefaultFragmentRedirectUri = defaultFragmentRedirectUri;
         OtherRedirectUris = otherRedirectUris;
         BankRegistrationGroup = bankRegistrationGroup;
     }
@@ -138,6 +140,11 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
     public IList<string>? Warnings { get; }
+
+    /// <summary>
+    ///     Use simulated bank (only supported for some bank profiles).
+    /// </summary>
+    public bool UseSimulatedBank { get; set; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -177,10 +184,10 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     public RegistrationScopeEnum RegistrationScope { get; }
 
     /// <summary>
-    ///     Default redirect URI to use for this registration. This redirect URI must
+    ///     Default fragment redirect URI to use for this registration. This redirect URI must
     ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
     /// </summary>
-    public string DefaultRedirectUri { get; }
+    public string DefaultFragmentRedirectUri { get; }
 
     /// <summary>
     ///     Other redirect URIs in addition to default one to use for this registration.

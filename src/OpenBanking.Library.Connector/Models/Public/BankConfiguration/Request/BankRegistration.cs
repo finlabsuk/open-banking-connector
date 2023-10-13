@@ -66,11 +66,11 @@ public class BankRegistration : Base, ISupportsValidation
     public RegistrationScopeEnum? RegistrationScope { get; set; }
 
     /// <summary>
-    ///     Default redirect URI to use for this registration. This redirect URI must
+    ///     Default fragment redirect URI to use for this registration. This redirect URI must
     ///     be included in the software statement in software statement profile SoftwareStatementProfileId.
     ///     If null, the default redirect URI specified in the software statement profile will be used.
     /// </summary>
-    public string? DefaultRedirectUri { get; set; }
+    public string? DefaultFragmentRedirectUri { get; set; }
 
     /// <summary>
     ///     Other redirect URIs in addition to default one to use for this registration.
@@ -104,6 +104,11 @@ public class BankRegistration : Base, ISupportsValidation
     ///     When this setting is true and ExternalApiObject is non-null, an error will be produced.
     /// </summary>
     public bool ForceDynamicClientRegistration { get; set; } = false;
+
+    /// <summary>
+    ///     Use simulated bank (only supported for some bank profiles).
+    /// </summary>
+    public bool UseSimulatedBank { get; set; } = false;
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new BankRegistrationValidator()

@@ -71,14 +71,14 @@ internal class BankRegistration :
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         OAuth2ResponseMode defaultResponseMode,
         BankGroupEnum bankGroup,
-        Guid? bankId,
+        bool useSimulatedBank,
         BankProfileEnum bankProfile,
         string jwksUri,
         string? registrationEndpoint,
         string tokenEndpoint,
         string authorizationEndpoint,
         BankRegistrationGroup? bankRegistrationGroup,
-        string defaultRedirectUri,
+        string defaultFragmentRedirectUri,
         IList<string> otherRedirectUris,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
@@ -91,28 +91,27 @@ internal class BankRegistration :
         created,
         createdBy)
     {
-        _externalApiId = externalApiId;
+        _externalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         _externalApiSecret = externalApiSecret;
         _registrationAccessToken = registrationAccessToken;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         DefaultResponseMode = defaultResponseMode;
         BankGroup = bankGroup;
-        BankId = bankId;
+        UseSimulatedBank = useSimulatedBank;
         BankProfile = bankProfile;
-        JwksUri = jwksUri;
+        JwksUri = jwksUri ?? throw new ArgumentNullException(nameof(jwksUri));
         RegistrationEndpoint = registrationEndpoint;
-        TokenEndpoint = tokenEndpoint;
-        AuthorizationEndpoint = authorizationEndpoint;
+        TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
+        AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
         BankRegistrationGroup = bankRegistrationGroup;
-        DefaultRedirectUri = defaultRedirectUri;
-        OtherRedirectUris = otherRedirectUris;
-        SoftwareStatementProfileId = softwareStatementProfileId;
+        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
+                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
+        OtherRedirectUris = otherRedirectUris ?? throw new ArgumentNullException(nameof(otherRedirectUris));
+        SoftwareStatementProfileId = softwareStatementProfileId ??
+                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
     }
-
-    [ForeignKey("BankId")]
-    public Bank BankNavigation { get; set; } = null!;
 
     public ExternalApiObject ExternalApiObject => new(
         _externalApiId,
@@ -132,9 +131,9 @@ internal class BankRegistration :
     public BankGroupEnum BankGroup { get; set; }
 
     /// <summary>
-    ///     Bank with which this BankRegistration is associated.
+    ///     Use simulated bank.
     /// </summary>
-    public Guid? BankId { get; }
+    public bool UseSimulatedBank { get; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -168,9 +167,9 @@ internal class BankRegistration :
     public BankRegistrationGroup? BankRegistrationGroup { get; }
 
     /// <summary>
-    ///     Default redirect URI used for this registration.
+    ///     Default fragment redirect URI used for this registration.
     /// </summary>
-    public string DefaultRedirectUri { get; set; }
+    public string DefaultFragmentRedirectUri { get; set; }
 
     /// <summary>
     ///     Redirect URIs in addition to default one used for this registration.

@@ -347,7 +347,7 @@ public abstract class AppTests
 
             // Run account access consent subtests
             string authUrlLeftPart =
-                new Uri(bankRegistrationReadResponse.DefaultRedirectUri)
+                new Uri(bankRegistrationReadResponse.DefaultFragmentRedirectUri)
                     .GetLeftPart(UriPartial.Authority);
             if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {

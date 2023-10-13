@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
@@ -36,8 +34,7 @@ internal class AccountAccessConsent :
         string? authContextModifiedBy,
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
-        string? externalApiUserIdModifiedBy,
-        Guid? accountAndTransactionApiId) : base(
+        string? externalApiUserIdModifiedBy) : base(
         id,
         reference,
         isDeleted,
@@ -58,29 +55,18 @@ internal class AccountAccessConsent :
         authContextModifiedBy,
         externalApiUserId,
         externalApiUserIdModified,
-        externalApiUserIdModifiedBy)
-    {
-        AccountAndTransactionApiId = accountAndTransactionApiId;
-    }
-
-    [ForeignKey(nameof(AccountAndTransactionApiId))]
-    public AccountAndTransactionApiEntity AccountAndTransactionApiNavigation { get; private set; } = null!;
-
-    /// <summary>
-    ///     Associated AccountAndTransactionApi object
-    /// </summary>
-    public Guid? AccountAndTransactionApiId { get; }
+        externalApiUserIdModifiedBy) { }
 
     /// <summary>
     ///     Associated access tokens
     /// </summary>
-    public IList<AccountAccessConsentAccessToken> AccountAccessConsentAccessTokensNavigation { get; private set; } =
+    public IList<AccountAccessConsentAccessToken> AccountAccessConsentAccessTokensNavigation { get; } =
         new List<AccountAccessConsentAccessToken>();
 
     /// <summary>
     ///     Associated refresh tokens
     /// </summary>
-    public IList<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshTokensNavigation { get; private set; } =
+    public IList<AccountAccessConsentRefreshToken> AccountAccessConsentRefreshTokensNavigation { get; } =
         new List<AccountAccessConsentRefreshToken>();
 
     protected override string GetConsentTypeString() => "aisp";

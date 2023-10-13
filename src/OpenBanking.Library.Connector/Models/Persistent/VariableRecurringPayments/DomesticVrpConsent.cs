@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using VariableRecurringPaymentsModelsPublic =
@@ -40,8 +38,7 @@ internal class DomesticVrpConsent :
         string? authContextModifiedBy,
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
-        string? externalApiUserIdModifiedBy,
-        Guid? variableRecurringPaymentsApiId) : base(
+        string? externalApiUserIdModifiedBy) : base(
         id,
         reference,
         isDeleted,
@@ -62,29 +59,18 @@ internal class DomesticVrpConsent :
         authContextModifiedBy,
         externalApiUserId,
         externalApiUserIdModified,
-        externalApiUserIdModifiedBy)
-    {
-        VariableRecurringPaymentsApiId = variableRecurringPaymentsApiId;
-    }
-
-    [ForeignKey("VariableRecurringPaymentsApiId")]
-    public VariableRecurringPaymentsApiEntity VariableRecurringPaymentsApiNavigation { get; set; } = null!;
-
-    /// <summary>
-    ///     Associated VariableRecurringPaymentsApi object
-    /// </summary>
-    public Guid? VariableRecurringPaymentsApiId { get; }
+        externalApiUserIdModifiedBy) { }
 
     /// <summary>
     ///     Associated access tokens
     /// </summary>
-    public IList<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessTokensNavigation { get; private set; } =
+    public IList<DomesticVrpConsentAccessToken> DomesticVrpConsentAccessTokensNavigation { get; } =
         new List<DomesticVrpConsentAccessToken>();
 
     /// <summary>
     ///     Associated refresh tokens
     /// </summary>
-    public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; private set; } =
+    public IList<DomesticVrpConsentRefreshToken> DomesticVrpConsentRefreshTokensNavigation { get; } =
         new List<DomesticVrpConsentRefreshToken>();
 
     protected override string GetConsentTypeString() => "vrp_dom";

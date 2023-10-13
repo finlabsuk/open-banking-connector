@@ -183,7 +183,7 @@ internal class AuthContextUpdate :
                 _ => throw new ArgumentOutOfRangeException()
             };
         BankRegistration bankRegistration = consent.BankRegistrationNavigation;
-        string redirectUrl = bankRegistration.DefaultRedirectUri;
+        string redirectUrl = bankRegistration.DefaultFragmentRedirectUri;
         Guid consentId = consent.Id;
         string externalApiConsentId = consent.ExternalApiId;
         string tokenEndpoint = bankRegistration.TokenEndpoint;

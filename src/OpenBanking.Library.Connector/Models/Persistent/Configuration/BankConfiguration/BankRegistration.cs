@@ -33,16 +33,13 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
         // Top-level property info: read-only, JSON conversion, etc
         builder.Property(e => e.Id)
             .HasColumnOrder(1);
-        builder.Property(e => e.BankId)
-            .HasColumnOrder(2)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property("_externalApiId")
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property("_externalApiSecret")
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property("_registrationAccessToken")
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultRedirectUri);
+        builder.Property(e => e.DefaultFragmentRedirectUri);
         builder.Property(e => e.OtherRedirectUris)
             .HasConversion(
                 v =>
@@ -70,6 +67,8 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankGroup)
             .HasConversion(new EnumToStringConverter<BankGroupEnum>());
+        builder.Property(e => e.UseSimulatedBank)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankProfile)
             .HasConversion(new EnumToStringConverter<BankProfileEnum>());
         builder.Property(e => e.BankRegistrationGroup)

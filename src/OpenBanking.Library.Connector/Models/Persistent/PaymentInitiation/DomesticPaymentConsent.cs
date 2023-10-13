@@ -2,8 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using PaymentInitiationModelsPublic =
@@ -40,8 +38,7 @@ internal class DomesticPaymentConsent :
         string? authContextModifiedBy,
         string? externalApiUserId,
         DateTimeOffset externalApiUserIdModified,
-        string? externalApiUserIdModifiedBy,
-        Guid? paymentInitiationApiId) : base(
+        string? externalApiUserIdModifiedBy) : base(
         id,
         reference,
         isDeleted,
@@ -62,30 +59,19 @@ internal class DomesticPaymentConsent :
         authContextModifiedBy,
         externalApiUserId,
         externalApiUserIdModified,
-        externalApiUserIdModifiedBy)
-    {
-        PaymentInitiationApiId = paymentInitiationApiId;
-    }
-
-    [ForeignKey("PaymentInitiationApiId")]
-    public PaymentInitiationApiEntity PaymentInitiationApiNavigation { get; set; } = null!;
-
-    /// <summary>
-    ///     Associated PaymentInitiationApi object
-    /// </summary>
-    public Guid? PaymentInitiationApiId { get; }
+        externalApiUserIdModifiedBy) { }
 
     /// <summary>
     ///     Associated access tokens
     /// </summary>
-    public IList<DomesticPaymentConsentAccessToken> DomesticPaymentConsentAccessTokensNavigation { get; private set; } =
+    public IList<DomesticPaymentConsentAccessToken> DomesticPaymentConsentAccessTokensNavigation { get; } =
         new List<DomesticPaymentConsentAccessToken>();
 
     /// <summary>
     ///     Associated refresh tokens
     /// </summary>
     public IList<DomesticPaymentConsentRefreshToken>
-        DomesticPaymentConsentRefreshTokensNavigation { get; private set; } =
+        DomesticPaymentConsentRefreshTokensNavigation { get; } =
         new List<DomesticPaymentConsentRefreshToken>();
 
     protected override string GetConsentTypeString() => "pisp_dom";

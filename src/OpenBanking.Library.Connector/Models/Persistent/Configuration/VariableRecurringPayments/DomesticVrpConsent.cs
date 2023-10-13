@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Newtonsoft.Json;
 using VariableRecurringPaymentsModelsPublic =
@@ -21,10 +19,5 @@ internal class DomesticVrpConsentConfig : BaseConsentConfig<DomesticVrpConsent>
     public override void Configure(EntityTypeBuilder<DomesticVrpConsent> builder)
     {
         base.Configure(builder);
-
-        // Top-level property info: read-only, JSON conversion, etc
-        builder.Property(e => e.VariableRecurringPaymentsApiId)
-            .HasColumnOrder(10)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
     }
 }

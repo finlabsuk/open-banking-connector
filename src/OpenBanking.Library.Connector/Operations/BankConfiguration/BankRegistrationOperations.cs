@@ -94,6 +94,7 @@ internal class
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bankProfile.DynamicClientRegistrationApiVersion;
+        bool useSimulatedBank = request.UseSimulatedBank;
 
         // Load processed software statement profile
         string softwareStatementProfileId = request.SoftwareStatementProfileId;
@@ -104,9 +105,9 @@ internal class
                 softwareStatementProfileOverrideCase);
 
         // Determine redirect URIs
-        (string defaultRedirectUri, List<string> otherRedirectUris) = GetRedirectUris(
+        (string defaultFragmentRedirectUri, List<string> otherRedirectUris) = GetRedirectUris(
             processedSoftwareStatementProfile,
-            request.DefaultRedirectUri,
+            request.DefaultFragmentRedirectUri,
             request.OtherRedirectUris);
 
         // Determine registration scope
@@ -263,7 +264,7 @@ internal class
                 registrationEndpoint,
                 tokenEndpointAuthMethod,
                 otherRedirectUris,
-                defaultRedirectUri,
+                defaultFragmentRedirectUri,
                 registrationScope,
                 bankFinancialId,
                 nonErrorMessages);
@@ -289,14 +290,14 @@ internal class
             tokenEndpointAuthMethod,
             defaultResponseMode,
             bankGroup,
-            null,
+            useSimulatedBank,
             bankProfile.BankProfileEnum,
             jwksUri,
             registrationEndpoint,
             tokenEndpoint,
             authorizationEndpoint,
             bankRegistrationGroup,
-            defaultRedirectUri,
+            defaultFragmentRedirectUri,
             otherRedirectUris,
             softwareStatementProfileId,
             softwareStatementProfileOverrideCase,
@@ -323,6 +324,7 @@ internal class
             new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
+            entity.UseSimulatedBank,
             entity.BankProfile,
             entity.JwksUri,
             entity.RegistrationEndpoint,
@@ -331,7 +333,7 @@ internal class
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
-            entity.DefaultRedirectUri,
+            entity.DefaultFragmentRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);
 
@@ -445,6 +447,7 @@ internal class
             new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
+            entity.UseSimulatedBank,
             entity.BankProfile,
             entity.JwksUri,
             entity.RegistrationEndpoint,
@@ -453,7 +456,7 @@ internal class
             entity.SoftwareStatementProfileId,
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
-            entity.DefaultRedirectUri,
+            entity.DefaultFragmentRedirectUri,
             entity.OtherRedirectUris,
             entity.BankRegistrationGroup);
 

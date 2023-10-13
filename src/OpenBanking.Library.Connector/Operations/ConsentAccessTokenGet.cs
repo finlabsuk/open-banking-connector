@@ -90,7 +90,7 @@ internal class ConsentAccessTokenGet
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementProfileId,
                     bankRegistration.SoftwareStatementProfileOverride);
-            string redirectUrl = bankRegistration.DefaultRedirectUri;
+            string redirectUrl = bankRegistration.DefaultFragmentRedirectUri;
             string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
