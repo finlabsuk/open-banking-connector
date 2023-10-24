@@ -211,8 +211,8 @@ public class ApiClientTests
 
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
-            req,
-            null);
+                req,
+                null);
 
         await a.Should().ThrowAsync<ExternalApiHttpErrorException>();
         instrumentationClient.Received(1).Trace(Arg.Any<string>());

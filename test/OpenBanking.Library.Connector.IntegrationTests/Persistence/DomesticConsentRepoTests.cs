@@ -5,9 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Xunit.Abstractions;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence;
 

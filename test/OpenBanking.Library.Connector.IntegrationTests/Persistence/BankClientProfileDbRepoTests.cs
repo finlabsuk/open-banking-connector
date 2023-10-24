@@ -7,8 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
 using FsCheck.Xunit;
 using Xunit.Abstractions;
-using ClientRegistrationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.IntegrationTests.Persistence;
 
