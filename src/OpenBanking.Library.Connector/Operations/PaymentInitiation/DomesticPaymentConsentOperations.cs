@@ -391,6 +391,7 @@ internal class
                 tokenEndpointAuthMethod,
                 persistedObject.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
+                bankProfile.DefaultResponseMode,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,

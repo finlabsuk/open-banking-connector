@@ -183,21 +183,11 @@ internal class AuthContextUpdate :
                 _ => throw new ArgumentOutOfRangeException()
             };
         BankRegistration bankRegistration = consent.BankRegistrationNavigation;
-        string redirectUrl = bankRegistration.DefaultFragmentRedirectUri;
         Guid consentId = consent.Id;
         string externalApiConsentId = consent.ExternalApiId;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
-
-        // Validate redirect URL
-        if (request.RedirectUrl is not null)
-        {
-            if (!string.Equals(request.RedirectUrl, redirectUrl))
-            {
-                throw new Exception("Redirect URL supplied does not match that which was expected");
-            }
-        }
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -208,6 +198,25 @@ internal class AuthContextUpdate :
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+
+        // Get software statement profile
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+            await _softwareStatementProfileRepo.GetAsync(
+                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration.SoftwareStatementProfileOverride);
+        string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
+            defaultResponseMode,
+            bankRegistration.DefaultFragmentRedirectUri,
+            null);
+
+        // Validate redirect URL
+        if (request.RedirectUrl is not null)
+        {
+            if (!string.Equals(request.RedirectUrl, redirectUrl))
+            {
+                throw new Exception("Redirect URL supplied does not match that which was expected");
+            }
+        }
 
         // Validate response mode
         if (request.ResponseMode != defaultResponseMode)
@@ -266,11 +275,6 @@ internal class AuthContextUpdate :
         // Wrap remaining processing in try block to ensure DB changes persisted
         try
         {
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
-                    bankRegistration.SoftwareStatementProfileOverride);
-
             // Obtain token for consent
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseAuthCodeGrant tokenEndpointResponse =

@@ -57,6 +57,7 @@ public static class CreateAuthUrl
         string authorisationEndpoint,
         string consentAuthGetAudClaim,
         bool supportsSca,
+        string redirectUrl,
         string scopeString,
         IInstrumentationClient instrumentationClient)
     {
@@ -64,7 +65,6 @@ public static class CreateAuthUrl
         string state = GenerateRandomString(lengthInBytes);
         string nonce = GenerateRandomString(lengthInBytes);
         string appSessionId = GenerateRandomString(32);
-        string redirectUrl = bankRegistration.DefaultFragmentRedirectUri;
 
         OAuth2RequestObjectClaims oAuth2RequestObjectClaims =
             OAuth2RequestObjectClaimsFactory.CreateOAuth2RequestObjectClaims(

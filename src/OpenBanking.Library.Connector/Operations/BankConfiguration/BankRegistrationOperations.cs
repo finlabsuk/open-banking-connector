@@ -39,8 +39,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfigura
 
 internal class
     BankRegistrationOperations :
-        IObjectCreate<BankRegistrationRequest, BankRegistrationResponse, BankRegistrationCreateParams>,
-        IObjectRead<BankRegistrationResponse, BankRegistrationReadParams>
+    IObjectCreate<BankRegistrationRequest, BankRegistrationResponse, BankRegistrationCreateParams>,
+    IObjectRead<BankRegistrationResponse, BankRegistrationReadParams>
 {
     private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
     private readonly IBankProfileService _bankProfileService;
@@ -87,7 +87,6 @@ internal class
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
         BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
-        OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         string bankFinancialId = bankProfile.FinancialId;
@@ -170,8 +169,10 @@ internal class
                 $"{nameof(request.JwksUri)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
 
         // Determine TokenEndpointAuthMethod
-        TokenEndpointAuthMethod tokenEndpointAuthMethod = GetTokenEndpointAuthMethod(
-            bankProfile,
+        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
+        CheckTokenEndpointAuthMethod(
+            tokenEndpointAuthMethod,
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
@@ -287,7 +288,7 @@ internal class
             externalApiSecret,
             registrationAccessToken,
             tokenEndpointAuthMethod,
-            defaultResponseMode,
+            bankProfile.DefaultResponseMode,
             bankGroup,
             useSimulatedBank,
             bankProfile.BankProfileEnum,
@@ -588,14 +589,11 @@ internal class
         return externalApiResponse;
     }
 
-    private static TokenEndpointAuthMethod GetTokenEndpointAuthMethod(
-        BankProfile bankProfile,
+    private static void CheckTokenEndpointAuthMethod(
+        TokenEndpointAuthMethod tokenEndpointAuthMethod,
         bool supportsSca,
         IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupported)
     {
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
-            bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-
         if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.ClientSecretBasic &&
             !supportsSca)
         {
@@ -630,8 +628,6 @@ internal class
                     $"{tokenEndpointAuthMethod} which is not specified as supported by OpenID Configuration for Bank's IssuerUrl.");
             }
         }
-
-        return tokenEndpointAuthMethod;
     }
 
     private static (string defaultFragmentRedirectUri, IList<string> redirectUris) GetRedirectUris(

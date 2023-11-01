@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 using FluentValidation.Results;
@@ -236,6 +237,18 @@ public class ProcessedSoftwareStatementProfile
     public string Id { get; }
 
     public string? OverrideCase { get; }
+
+    public string GetRedirectUri(
+        OAuth2ResponseMode responseMode,
+        string? registrationFragmentRedirectUrl,
+        string? registrationQueryRedirectUrl) =>
+        responseMode switch
+        {
+            OAuth2ResponseMode.Query => registrationQueryRedirectUrl ?? DefaultQueryRedirectUrl,
+            OAuth2ResponseMode.Fragment => registrationFragmentRedirectUrl ?? DefaultFragmentRedirectUrl,
+            //OAuth2ResponseMode.FormPost => expr,
+            _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
+        };
 
     public string SoftwareStatementPayloadToBase64(SoftwareStatementPayload payload)
     {

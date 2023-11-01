@@ -216,7 +216,7 @@ public abstract class AppTests
                 new List<DomesticVrpAccountIndexPair>())
             : null;
 
-        // Get API client
+        // Get software statement profile
         var processedSoftwareStatementProfileStore =
             _serviceProvider.GetRequiredService<IProcessedSoftwareStatementProfileStore>();
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
@@ -346,8 +346,12 @@ public abstract class AppTests
             bankRegistrationReadResponse.Warnings.Should().BeNull();
 
             // Run account access consent subtests
+            string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
+                bankProfile.DefaultResponseMode,
+                bankRegistrationReadResponse.DefaultFragmentRedirectUri,
+                null);
             string authUrlLeftPart =
-                new Uri(bankRegistrationReadResponse.DefaultFragmentRedirectUri)
+                new Uri(redirectUri)
                     .GetLeftPart(UriPartial.Authority);
             if (registrationScope.HasFlag(RegistrationScopeEnum.AccountAndTransaction))
             {

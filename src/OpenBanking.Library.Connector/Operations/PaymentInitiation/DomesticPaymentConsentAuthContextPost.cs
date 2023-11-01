@@ -78,6 +78,10 @@ internal class
                 bankRegistration.SoftwareStatementProfileId,
                 bankRegistration
                     .SoftwareStatementProfileOverride);
+        string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
+            bankProfile.DefaultResponseMode,
+            bankRegistration.DefaultFragmentRedirectUri,
+            null);
 
         // Create auth URL
         string consentAuthGetAudClaim =
@@ -93,6 +97,7 @@ internal class
             authorizationEndpoint,
             consentAuthGetAudClaim,
             supportsSca,
+            redirectUri,
             "payments",
             _instrumentationClient);
 
