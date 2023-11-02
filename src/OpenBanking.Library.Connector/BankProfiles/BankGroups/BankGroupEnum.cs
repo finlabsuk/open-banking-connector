@@ -29,12 +29,15 @@ public enum BankGroupEnum
     [EnumMember(Value = "Lloyds")]
     Lloyds,
 
-    [EnumMember(Value = "Obie")]
-    Obie,
-
     [EnumMember(Value = "Monzo")]
     Monzo,
 
     [EnumMember(Value = "NatWest")]
-    NatWest
+    NatWest,
+
+    [EnumMember(Value = "Obie")]
+    Obie,
+
+    [EnumMember(Value = "Starling")]
+    Starling
 }

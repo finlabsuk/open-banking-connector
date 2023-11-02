@@ -48,7 +48,8 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Lloyds] = new Lloyds(BankGroupEnum.Lloyds),
             [BankGroupEnum.Obie] = new Obie(BankGroupEnum.Obie),
             [BankGroupEnum.Monzo] = new Monzo(BankGroupEnum.Monzo),
-            [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest)
+            [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest),
+            [BankGroupEnum.Starling] = new Starling(BankGroupEnum.Starling)
         };
 
         // Populate dictionary of bank profile generators
@@ -74,7 +75,10 @@ public class BankProfileService : IBankProfileService
                 GetBankGroup<MonzoBank>(BankGroupEnum.Monzo)),
             [BankGroupEnum.NatWest] = new NatWestGenerator(
                 bankProfilesSettingsProvider,
-                GetBankGroup<NatWestBank>(BankGroupEnum.NatWest))
+                GetBankGroup<NatWestBank>(BankGroupEnum.NatWest)),
+            [BankGroupEnum.Starling] = new StarlingGenerator(
+                bankProfilesSettingsProvider,
+                GetBankGroup<StarlingBank>(BankGroupEnum.Starling))
         };
     }
 
@@ -91,6 +95,7 @@ public class BankProfileService : IBankProfileService
                         BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum),
                         BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum),
                         BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum),
+                        BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum),
                         _ => throw new ArgumentOutOfRangeException()
                     },
                     LazyThreadSafetyMode.ExecutionAndPublication))
@@ -145,6 +150,7 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Danske => BankGroupEnum.Danske,
             BankProfileEnum.Monzo_Monzo => BankGroupEnum.Monzo,
             BankProfileEnum.Monzo_Sandbox => BankGroupEnum.Monzo,
+            BankProfileEnum.Starling_Starling => BankGroupEnum.Starling,
             BankProfileEnum.Barclays_Sandbox => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_Personal => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_Wealth => BankGroupEnum.Barclays,
