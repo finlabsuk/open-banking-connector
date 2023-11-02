@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "6.3.1"
+    "version": "7.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consents": {
@@ -341,7 +341,10 @@
           "Hsbc_HsbcNetUk",
           "Danske",
           "AlliedIrish",
-          "Monzo",
+          "Monzo_Monzo",
+          "Monzo_Sandbox",
+          "Revolut_Revolut",
+          "Starling_Starling",
           "Tsb"
         ],
         "type": "string",

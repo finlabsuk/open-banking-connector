@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "6.3.1"
+    "version": "7.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -2537,6 +2537,12 @@
             "type": "string",
             "description": "Specified end date and time for the transaction query period.\r\nIf this is not populated, the end date will be open ended, and data will be returned to the latest available transaction.All dates in the JSON payloads are represented in ISO 8601 date-time format. \r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
             "format": "date-time",
+            "nullable": true
+          },
+          "SupplementaryData": {
+            "type": "object",
+            "additionalProperties": { },
+            "description": "Extra property used with Monzo",
             "nullable": true
           }
         },

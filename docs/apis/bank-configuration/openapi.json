@@ -3,7 +3,7 @@
   "info": {
     "title": "Bank Configuration API",
     "description": "Bank Configuration API for Open Banking Connector Web App",
-    "version": "6.3.1"
+    "version": "7.0.0"
   },
   "paths": {
     "/config/bank-registrations": {
@@ -212,7 +212,10 @@
           "Hsbc_HsbcNetUk",
           "Danske",
           "AlliedIrish",
-          "Monzo",
+          "Monzo_Monzo",
+          "Monzo_Sandbox",
+          "Revolut_Revolut",
+          "Starling_Starling",
           "Tsb"
         ],
         "type": "string",
@@ -261,17 +264,17 @@
           "RegistrationScope": {
             "$ref": "#/components/schemas/RegistrationScopeEnum"
           },
-          "DefaultRedirectUri": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URI to use for this registration. This redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, the default redirect URI specified in the software statement profile will be used.",
+            "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used.",
             "nullable": true
           },
-          "OtherRedirectUris": {
+          "RedirectUris": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Other redirect URIs in addition to default one to use for this registration.\r\nEach redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs in the software statement profile (excluding that used as the default) will be used.",
+            "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used.",
             "nullable": true
           },
           "ExternalApiObject": {
@@ -280,6 +283,10 @@
           "ForceDynamicClientRegistration": {
             "type": "boolean",
             "description": "Forces Dynamic Client Registration (DCR) even when an external API (bank) registration (OAuth2 client) already\r\nexists\r\nfor a member of the same BankRegistrationGroup. By default, for each BankRegistrationGroup, any existing external\r\nAPI registration is\r\nre-used and DCR will only be performed the first time the BankRegistrationGroup is used.\r\nThis is to prevent unnecessary duplicate\r\nexternal API (bank) registrations which may disrupt/overwrite an\r\nexisting such registration depending on bank behaviour.\r\nThe safeguard of the re-using external API registrations within a BankRegistrationGroup can be removed, and the use\r\nof DCR forced, by setting this value to true.\r\nPlease use this setting with care, and it is suggested to delete any\r\nunwanted external API\r\nregistrations at the bank possibly via a support ticket if API support for this is not provided.\r\nWhen this setting is true and ExternalApiObject is non-null, an error will be produced."
+          },
+          "UseSimulatedBank": {
+            "type": "boolean",
+            "description": "Use simulated bank (only supported for some bank profiles)."
           },
           "Reference": {
             "type": "string",
@@ -328,6 +335,10 @@
             "nullable": true,
             "readOnly": true
           },
+          "UseSimulatedBank": {
+            "type": "boolean",
+            "description": "Use simulated bank (only supported for some bank profiles)."
+          },
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
           },
@@ -369,18 +380,18 @@
           "RegistrationScope": {
             "$ref": "#/components/schemas/RegistrationScopeEnum"
           },
-          "DefaultRedirectUri": {
+          "DefaultFragmentRedirectUri": {
             "type": "string",
-            "description": "Default redirect URI to use for this registration. This redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.",
+            "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used.",
             "nullable": true,
             "readOnly": true
           },
-          "OtherRedirectUris": {
+          "RedirectUris": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Other redirect URIs in addition to default one to use for this registration.\r\nEach redirect URI must\r\nbe included in the software statement in software statement profile SoftwareStatementProfileId.",
+            "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used.",
             "nullable": true,
             "readOnly": true
           },
