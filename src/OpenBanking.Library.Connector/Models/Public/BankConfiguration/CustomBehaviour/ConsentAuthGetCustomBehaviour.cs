@@ -16,5 +16,7 @@ public class ConsentAuthGetCustomBehaviour
 
     public bool? DoNotValidateIdTokenAcrClaim { get; set; }
 
+    public bool? IdTokenMayNotHaveAcrClaim { get; set; }
+
     public bool? IdTokenNonceClaimIsPreviousValue { get; set; }
 }

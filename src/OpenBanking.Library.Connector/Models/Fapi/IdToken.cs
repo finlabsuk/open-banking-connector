@@ -125,8 +125,8 @@ public abstract class IdTokenBase
     [JsonProperty("openbanking_intent_id", Required = Required.Always)]
     public string ConsentId { get; set; } = null!;
 
-    [JsonProperty("acr", Required = Required.Always)]
-    public Acr Acr { get; set; }
+    [JsonProperty("acr")]
+    public Acr? Acr { get; set; }
 }
 
 public class IdTokenAuthEndpoint : IdTokenBase

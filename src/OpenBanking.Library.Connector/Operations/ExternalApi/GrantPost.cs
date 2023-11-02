@@ -74,6 +74,9 @@ internal class GrantPost : IGrantPost
         bool doNotValidateIdTokenAcrClaim =
             consentAuthGetCustomBehaviour?.DoNotValidateIdTokenAcrClaim
             ?? false;
+        bool idTokenMayNotHaveAcrClaim =
+            consentAuthGetCustomBehaviour?.IdTokenMayNotHaveAcrClaim
+            ?? false;
         ValidateIdTokenCommon(
             idToken,
             bankIssuerUrl,
@@ -81,6 +84,7 @@ internal class GrantPost : IGrantPost
             externalApiConsentId,
             expectedNonce,
             supportsSca,
+            !idTokenMayNotHaveAcrClaim,
             !doNotValidateIdTokenAcrClaim);
 
         // Validate ID token subject claim
@@ -410,6 +414,7 @@ internal class GrantPost : IGrantPost
         string externalApiConsentId,
         string expectedNonce,
         bool supportsSca,
+        bool idTokenHasAcrClaim,
         bool validateAcr)
     {
         if (idToken.Exp < DateTimeOffset.UtcNow)
@@ -432,11 +437,22 @@ internal class GrantPost : IGrantPost
             throw new Exception("Auth time is null.");
         }
 
-        if (supportsSca &&
-            validateAcr &&
-            idToken.Acr is not Acr.Sca)
+        if (idTokenHasAcrClaim)
         {
-            throw new Exception("Acr from ID token does not match expected Acr.");
+            if (idToken.Acr is null)
+            {
+                throw new Exception("Acr not provided in ID token.");
+            }
+        }
+
+        if (idToken.Acr is not null)
+        {
+            if (supportsSca &&
+                validateAcr &&
+                idToken.Acr is not Acr.Sca)
+            {
+                throw new Exception("Acr from ID token does not match expected Acr.");
+            }
         }
 
         if (!string.Equals(idToken.Issuer, bankIssuerUrl))
@@ -498,7 +514,9 @@ internal class GrantPost : IGrantPost
         bool doNotValidateIdTokenAcrClaim =
             grantPostCustomBehaviour?.DoNotValidateIdTokenAcrClaim
             ?? false;
-
+        bool idTokenMayNotHaveAcrClaim =
+            grantPostCustomBehaviour?.IdTokenMayNotHaveAcrClaim
+            ?? false;
         ValidateIdTokenCommon(
             idToken,
             bankIssuerUrl,
@@ -506,6 +524,7 @@ internal class GrantPost : IGrantPost
             externalApiConsentId,
             expectedNonce,
             supportsSca,
+            !idTokenMayNotHaveAcrClaim,
             !doNotValidateIdTokenAcrClaim);
 
         // Validate ID token subject claim

@@ -14,5 +14,7 @@ public class GrantPostCustomBehaviour
 
     public bool? TokenTypeResponseStartsWithLowerCaseLetter { get; set; }
 
+    public bool? IdTokenMayNotHaveAcrClaim { get; set; }
+
     public bool? DoNotValidateIdTokenAcrClaim { get; set; }
 }
