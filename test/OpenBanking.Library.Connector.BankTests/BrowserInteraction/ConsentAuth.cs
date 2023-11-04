@@ -62,7 +62,7 @@ public class ConsentAuth
         SendEmail(
             "Open Banking Connector Test",
             "This is the auth URL: " + authUrl);
-        EnsureTokenAvailable(authIsCompleteFcn, 180000);
+        EnsureTokenAvailable(authIsCompleteFcn, 90000);
         return Task.CompletedTask;
     }
 
