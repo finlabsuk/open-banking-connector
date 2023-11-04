@@ -144,7 +144,8 @@ internal class GrantPost : IGrantPost
         Guid bankRegistrationId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
-        IApiClient mtlsApiClient)
+        IApiClient mtlsApiClient,
+        JwsAlgorithm? jwsAlgorithm = null)
     {
         async Task<TokenEndpointResponseClientCredentialsGrant> GetTokenAsync()
         {
@@ -161,7 +162,8 @@ internal class GrantPost : IGrantPost
                     obSealKey,
                     externalApiClientId,
                     tokenEndpoint,
-                    _instrumentationClient);
+                    _instrumentationClient,
+                    jwsAlgorithm);
 
                 // Add parameters
                 keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -244,7 +246,8 @@ internal class GrantPost : IGrantPost
                 obSealKey,
                 externalApiClientId,
                 tokenEndpoint,
-                _instrumentationClient);
+                _instrumentationClient,
+                null);
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -325,7 +328,8 @@ internal class GrantPost : IGrantPost
                 obSealKey,
                 externalApiClientId,
                 tokenEndpoint,
-                _instrumentationClient);
+                _instrumentationClient,
+                null);
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -384,7 +388,8 @@ internal class GrantPost : IGrantPost
         OBSealKey obSealKey,
         string externalApiClientId,
         string tokenEndpoint,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        JwsAlgorithm? jwsAlgorithm)
     {
         // Create JWT
         var claims = new
@@ -396,10 +401,15 @@ internal class GrantPost : IGrantPost
             iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
             exp = DateTimeOffset.UtcNow.AddSeconds(300).ToUnixTimeSeconds()
         };
+        var jsonSerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+        string payloadJson = JsonConvert.SerializeObject(
+            claims,
+            jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
             JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
-            claims,
-            obSealKey.Key);
+            payloadJson,
+            obSealKey.Key,
+            jwsAlgorithm);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine("#### JWT (Client Auth)")
             .Append(jwt);

@@ -77,10 +77,15 @@ public static class CreateAuthUrl
                 supportsSca,
                 state,
                 nonce);
+        var jsonSerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+        string payloadJson = JsonConvert.SerializeObject(
+            oAuth2RequestObjectClaims,
+            jsonSerializerSettings);
         string requestObjectJwt = JwtFactory.CreateJwt(
             JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
-            oAuth2RequestObjectClaims,
-            obSealKey.Key);
+            payloadJson,
+            obSealKey.Key,
+            null);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine("#### Claims (Request Object)")
             .AppendLine(

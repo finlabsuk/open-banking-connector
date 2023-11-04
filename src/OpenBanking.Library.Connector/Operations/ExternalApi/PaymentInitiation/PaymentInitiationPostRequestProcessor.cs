@@ -41,14 +41,20 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             string requestDescription)
     {
         // Create JWT and log
+        var jsonSerializerSettings =
+            new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+        string payloadJson = JsonConvert.SerializeObject(
+            variantRequest,
+            jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
             GetJoseHeaders(
                 _processedSoftwareStatementProfile.SoftwareStatementPayload.OrgId,
                 _processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareId,
                 _processedSoftwareStatementProfile.OBSealKey.KeyId,
                 _useB64),
-            variantRequest,
-            _processedSoftwareStatementProfile.OBSealKey.Key);
+            payloadJson,
+            _processedSoftwareStatementProfile.OBSealKey.Key,
+            null);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### JWT ({requestDescription})")
             .Append(jwt);
@@ -59,15 +65,15 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         {
             new("x-fapi-financial-id", _orgId),
             new("Authorization", "Bearer " + _accessToken),
-            new("x-idempotency-key", Guid.NewGuid().ToString())
+            new("x-idempotency-key", Guid.NewGuid().ToString()),
+            CreateJwsSignatureHeader(jwt)
         };
-        headers.Add(CreateJwsSignatureHeader(jwt));
-        JsonSerializerSettings jsonSerializerSettings =
+        JsonSerializerSettings jsonSerializerSettings2 =
             requestJsonSerializerSettings ?? new JsonSerializerSettings();
-        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        jsonSerializerSettings2.NullValueHandling = NullValueHandling.Ignore;
         string content = JsonConvert.SerializeObject(
             variantRequest,
-            jsonSerializerSettings);
+            jsonSerializerSettings2);
         return (headers, content, "application/json");
     }
 

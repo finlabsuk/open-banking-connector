@@ -4,30 +4,18 @@
 
 using System.Security.Cryptography;
 using Jose;
-using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Security;
 
 public static class JwtFactory
 {
-    public static string CreateJwt<TClaims>(
+    public static string CreateJwt(
         Dictionary<string, object> headers,
-        TClaims claims,
+        string payloadJson,
         string signingKey,
-        JsonSerializerSettings? jsonSerializerSettingsOverride = null)
-        where TClaims : class
+        JwsAlgorithm? jwsAlgorithm)
     {
-        claims.ArgNotNull(nameof(claims));
         signingKey.ArgNotNull(nameof(signingKey));
-
-        // Create JSON serialiser settings
-        JsonSerializerSettings jsonSerializerSettings =
-            jsonSerializerSettingsOverride ?? new JsonSerializerSettings();
-        jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-
-        string payloadJson = JsonConvert.SerializeObject(
-            claims,
-            jsonSerializerSettings);
 
         var rsa = RSA.Create();
         try
@@ -37,7 +25,7 @@ public static class JwtFactory
             string result = JWT.Encode(
                 payloadJson,
                 rsa,
-                JwsAlgorithm.PS256,
+                jwsAlgorithm ?? JwsAlgorithm.PS256,
                 headers);
             return result;
         }

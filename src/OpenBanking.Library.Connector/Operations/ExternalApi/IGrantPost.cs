@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using Jose;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -24,7 +25,8 @@ internal interface IGrantPost
         Guid bankRegistrationId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
-        IApiClient mtlsApiClient);
+        IApiClient mtlsApiClient,
+        JwsAlgorithm? jwsAlgorithm = null);
 
     Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
         string authCode,
