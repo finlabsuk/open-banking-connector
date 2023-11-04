@@ -100,15 +100,15 @@ internal class ConsentAccessTokenGet
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
                     storedRefreshToken,
-                    redirectUrl,
+                    bankRegistration.JwksUri,
                     bankIssuerUrl,
                     externalApiClientId,
+                    bankRegistration.ExternalApiObject.ExternalApiSecret,
                     consent.ExternalApiId,
                     consent.ExternalApiUserId,
                     nonce,
                     requestScope,
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,

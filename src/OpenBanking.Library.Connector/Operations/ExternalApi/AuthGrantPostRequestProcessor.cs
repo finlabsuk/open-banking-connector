@@ -7,22 +7,23 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<TRequest>
     where TRequest : Dictionary<string, string>
 {
-    private readonly BankRegistration _bankRegistration;
+    private readonly string _externalApiClientId;
+    private readonly string? _externalApiClientSecret;
     private readonly TokenEndpointAuthMethod _tokenEndpointAuthMethod;
 
     public AuthGrantPostRequestProcessor(
-        BankRegistration bankRegistration,
+        string externalApiClientId,
+        string? externalApiClientSecret,
         TokenEndpointAuthMethod tokenEndpointAuthMethod)
     {
-        _bankRegistration = bankRegistration;
+        _externalApiClientId = externalApiClientId;
+        _externalApiClientSecret = externalApiClientSecret;
         _tokenEndpointAuthMethod = tokenEndpointAuthMethod;
     }
 
@@ -36,14 +37,14 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
         switch (_tokenEndpointAuthMethod)
         {
             case TokenEndpointAuthMethod.TlsClientAuth:
-                variantRequest["client_id"] = _bankRegistration.ExternalApiObject.ExternalApiId;
+                variantRequest["client_id"] = _externalApiClientId;
                 break;
             case TokenEndpointAuthMethod.ClientSecretBasic:
             {
                 string clientSecret =
-                    _bankRegistration.ExternalApiObject.ExternalApiSecret ??
+                    _externalApiClientSecret ??
                     throw new InvalidOperationException("No client secret available.");
-                string authString = _bankRegistration.ExternalApiObject.ExternalApiId + ":" + clientSecret;
+                string authString = _externalApiClientId + ":" + clientSecret;
                 byte[] plainTextBytes = Encoding.UTF8.GetBytes(authString);
                 string authHeader = "Basic " + Convert.ToBase64String(plainTextBytes);
                 headers.Add(new HttpHeader("Authorization", authHeader));

@@ -17,8 +17,6 @@ using Jose;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using JsonWebKey = FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi.JsonWebKey;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -139,10 +137,11 @@ internal class GrantPost : IGrantPost
     public async Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
-        bool supportsSca,
+        string externalApiClientId,
+        string? externalApiClientSecret,
+        Guid bankRegistrationId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient)
@@ -160,7 +159,7 @@ internal class GrantPost : IGrantPost
             {
                 string jwt = CreateClientAssertionJwt(
                     obSealKey,
-                    bankRegistration,
+                    externalApiClientId,
                     tokenEndpoint,
                     _instrumentationClient);
 
@@ -172,9 +171,10 @@ internal class GrantPost : IGrantPost
             var response =
                 await PostGrantAsync<TokenEndpointResponseClientCredentialsGrant>(
                     keyValuePairs,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
-                    supportsSca,
+                    tokenEndpoint,
+                    externalApiClientId,
+                    externalApiClientSecret,
                     jsonSerializerSettings,
                     mtlsApiClient,
                     scope,
@@ -190,7 +190,7 @@ internal class GrantPost : IGrantPost
         }
 
         // Get or create cache entry
-        string cacheKey = string.Join(":", "token", "client", bankRegistration.Id.ToString(), scope ?? "");
+        string cacheKey = string.Join(":", "token", "client", bankRegistrationId.ToString(), scope ?? "");
         string accessToken =
             (await _memoryCache.GetOrCreateAsync(
                 cacheKey,
@@ -214,12 +214,13 @@ internal class GrantPost : IGrantPost
         string redirectUrl,
         string bankIssuerUrl,
         string externalApiClientId,
+        string? externalApiClientSecret,
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
+        string jwksUri,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
@@ -241,7 +242,7 @@ internal class GrantPost : IGrantPost
         {
             string jwt = CreateClientAssertionJwt(
                 obSealKey,
-                bankRegistration,
+                externalApiClientId,
                 tokenEndpoint,
                 _instrumentationClient);
 
@@ -252,9 +253,10 @@ internal class GrantPost : IGrantPost
 
         var response = await PostGrantAsync<TokenEndpointResponseAuthCodeGrant>(
             keyValuePairs,
-            bankRegistration,
             tokenEndpointAuthMethod,
-            supportsSca,
+            tokenEndpoint,
+            externalApiClientId,
+            externalApiClientSecret,
             jsonSerializerSettings,
             matlsApiClient,
             requestScope,
@@ -272,7 +274,6 @@ internal class GrantPost : IGrantPost
         bool doNotValidateIdToken = authCodeGrantPostCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
-            string jwksUri = bankRegistration.JwksUri;
             await ValidateIdTokenTokenEndpoint(
                 response.IdToken,
                 response.AccessToken,
@@ -293,15 +294,15 @@ internal class GrantPost : IGrantPost
 
     public async Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
-        string redirectUrl,
+        string jwksUri,
         string bankIssuerUrl,
         string externalApiClientId,
+        string? externalApiClientSecret,
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
@@ -322,7 +323,7 @@ internal class GrantPost : IGrantPost
         {
             string jwt = CreateClientAssertionJwt(
                 obSealKey,
-                bankRegistration,
+                externalApiClientId,
                 tokenEndpoint,
                 _instrumentationClient);
 
@@ -333,9 +334,10 @@ internal class GrantPost : IGrantPost
 
         var response = await PostGrantAsync<TokenEndpointResponseRefreshTokenGrant>(
             keyValuePairs,
-            bankRegistration,
             tokenEndpointAuthMethod,
-            supportsSca,
+            tokenEndpoint,
+            externalApiClientId,
+            externalApiClientSecret,
             jsonSerializerSettings,
             mtlsApiClient,
             requestScope,
@@ -347,8 +349,6 @@ internal class GrantPost : IGrantPost
         if (doNotValidateIdToken is false &&
             responseIdToken is not null)
         {
-            string jwksUri = bankRegistration.JwksUri;
-
             await ValidateIdTokenTokenEndpoint(
                 responseIdToken,
                 response.AccessToken,
@@ -382,15 +382,15 @@ internal class GrantPost : IGrantPost
 
     private static string CreateClientAssertionJwt(
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
+        string externalApiClientId,
         string tokenEndpoint,
         IInstrumentationClient instrumentationClient)
     {
         // Create JWT
         var claims = new
         {
-            iss = bankRegistration.ExternalApiObject.ExternalApiId,
-            sub = bankRegistration.ExternalApiObject.ExternalApiId,
+            iss = externalApiClientId,
+            sub = externalApiClientId,
             aud = tokenEndpoint,
             jti = Guid.NewGuid().ToString(),
             iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
@@ -644,9 +644,10 @@ internal class GrantPost : IGrantPost
 
     private async Task<TokenEndpointResponse> PostGrantAsync<TokenEndpointResponse>(
         Dictionary<string, string> keyValuePairs,
-        BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
-        bool supportsSca,
+        string tokenEndpoint,
+        string externalApiClientId,
+        string? externalApiClientSecret,
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient mtlsApiClient,
         string? requestScope,
@@ -655,10 +656,11 @@ internal class GrantPost : IGrantPost
         where TokenEndpointResponse : TokenEndpointResponseBase
     {
         // POST request
-        var uri = new Uri(bankRegistration.TokenEndpoint);
+        var uri = new Uri(tokenEndpoint);
         IPostRequestProcessor<Dictionary<string, string>> postRequestProcessor =
             new AuthGrantPostRequestProcessor<Dictionary<string, string>>(
-                bankRegistration,
+                externalApiClientId,
+                externalApiClientSecret,
                 tokenEndpointAuthMethod);
         var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
             uri,

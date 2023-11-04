@@ -189,10 +189,11 @@ internal class DomesticVrp :
             await _grantPost.PostClientCredentialsGrantAsync(
                 ClientCredentialsGrantScope,
                 processedSoftwareStatementProfile.OBSealKey,
-                bankRegistration,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
-                supportsSca,
+                persistedConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                persistedConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiSecret,
+                persistedConsent.BankRegistrationNavigation.Id,
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
                 processedSoftwareStatementProfile.ApiClient);

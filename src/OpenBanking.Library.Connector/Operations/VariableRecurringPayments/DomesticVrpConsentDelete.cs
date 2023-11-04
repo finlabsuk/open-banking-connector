@@ -96,10 +96,11 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "payments",
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
-                    supportsSca,
+                    persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                    persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiSecret,
+                    persistedObject.BankRegistrationNavigation.Id,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);

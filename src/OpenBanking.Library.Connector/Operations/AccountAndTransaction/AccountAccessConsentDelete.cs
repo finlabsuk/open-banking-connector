@@ -96,10 +96,11 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "accounts",
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
-                    supportsSca,
+                    persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
+                    persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiSecret,
+                    persistedObject.BankRegistrationNavigation.Id,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);

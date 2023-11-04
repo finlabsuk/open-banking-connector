@@ -182,11 +182,13 @@ internal class AuthContextUpdate :
                         .SingleOrDefault(x => !x.IsDeleted)),
                 _ => throw new ArgumentOutOfRangeException()
             };
-        BankRegistration bankRegistration = consent.BankRegistrationNavigation;
         Guid consentId = consent.Id;
         string externalApiConsentId = consent.ExternalApiId;
+        BankRegistration bankRegistration = consent.BankRegistrationNavigation;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
+        string? externalApiSecret = bankRegistration.ExternalApiObject.ExternalApiSecret;
+        string jwksUri = bankRegistration.JwksUri;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
         // Get bank profile
@@ -247,7 +249,6 @@ internal class AuthContextUpdate :
         bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
-            string jwksUri = bankRegistration.JwksUri;
             string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
                 request.RedirectData,
                 consentAuthGetCustomBehaviour,
@@ -283,12 +284,13 @@ internal class AuthContextUpdate :
                     redirectUrl,
                     bankTokenIssuerClaim,
                     externalApiClientId,
+                    externalApiSecret,
                     externalApiConsentId,
                     consent.ExternalApiUserId,
                     nonce,
                     requestScope,
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
+                    jwksUri,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,

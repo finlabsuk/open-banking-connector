@@ -128,10 +128,11 @@ internal class
                 await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
-                    supportsSca,
+                    bankRegistration.ExternalApiObject.ExternalApiId,
+                    bankRegistration.ExternalApiObject.ExternalApiSecret,
+                    bankRegistration.Id,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient);
@@ -289,10 +290,11 @@ internal class
                 await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
                     processedSoftwareStatementProfile.OBSealKey,
-                    bankRegistration,
                     tokenEndpointAuthMethod,
                     bankRegistration.TokenEndpoint,
-                    supportsSca,
+                    bankRegistration.ExternalApiObject.ExternalApiId,
+                    bankRegistration.ExternalApiObject.ExternalApiSecret,
+                    bankRegistration.Id,
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient);

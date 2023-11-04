@@ -9,8 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
@@ -19,10 +17,11 @@ internal interface IGrantPost
     Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
-        bool supportsSca,
+        string externalApiClientId,
+        string? externalApiClientSecret,
+        Guid bankRegistrationId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient);
@@ -32,12 +31,13 @@ internal interface IGrantPost
         string redirectUrl,
         string bankIssuerUrl,
         string externalApiClientId,
+        string? externalApiClientSecret,
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
+        string jwksUri,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
@@ -49,15 +49,15 @@ internal interface IGrantPost
 
     Task<TokenEndpointResponseRefreshTokenGrant> PostRefreshTokenGrantAsync(
         string refreshToken,
-        string redirectUrl,
+        string jwksUri,
         string bankIssuerUrl,
         string externalApiClientId,
+        string? externalApiClientSecret,
         string externalApiConsentId,
         string? externalApiUserId,
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
