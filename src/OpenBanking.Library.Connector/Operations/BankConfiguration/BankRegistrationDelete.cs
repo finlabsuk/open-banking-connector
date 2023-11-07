@@ -107,7 +107,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                     entity.TokenEndpoint,
                     entity.ExternalApiObject.ExternalApiId,
                     entity.ExternalApiObject.ExternalApiSecret,
-                    entity.Id,
+                    entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);

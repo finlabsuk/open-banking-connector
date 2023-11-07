@@ -132,7 +132,7 @@ internal class
                     tokenEndpoint,
                     bankRegistration.ExternalApiObject.ExternalApiId,
                     bankRegistration.ExternalApiObject.ExternalApiSecret,
-                    bankRegistration.Id,
+                    bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient);
@@ -294,7 +294,7 @@ internal class
                     bankRegistration.TokenEndpoint,
                     bankRegistration.ExternalApiObject.ExternalApiId,
                     bankRegistration.ExternalApiObject.ExternalApiSecret,
-                    bankRegistration.Id,
+                    bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     processedSoftwareStatementProfile.ApiClient);

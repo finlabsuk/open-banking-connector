@@ -193,7 +193,7 @@ internal class DomesticVrp :
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 persistedConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
                 persistedConsent.BankRegistrationNavigation.ExternalApiObject.ExternalApiSecret,
-                persistedConsent.BankRegistrationNavigation.Id,
+                persistedConsent.BankRegistrationNavigation.Id.ToString(),
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
                 processedSoftwareStatementProfile.ApiClient);

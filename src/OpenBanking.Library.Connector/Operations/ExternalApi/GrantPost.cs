@@ -4,6 +4,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -141,10 +142,12 @@ internal class GrantPost : IGrantPost
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,
-        Guid bankRegistrationId,
+        string cacheKeyId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
+        Dictionary<string, JsonNode?>? extraClientAssertionClaims = null,
+        bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null)
     {
         async Task<TokenEndpointResponseClientCredentialsGrant> GetTokenAsync()
@@ -163,11 +166,17 @@ internal class GrantPost : IGrantPost
                     externalApiClientId,
                     tokenEndpoint,
                     _instrumentationClient,
-                    jwsAlgorithm);
+                    jwsAlgorithm,
+                    extraClientAssertionClaims ?? new Dictionary<string, JsonNode?>());
 
                 // Add parameters
                 keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
                 keyValuePairs["client_assertion"] = jwt;
+
+                if (includeClientIdWithPrivateKeyJwt)
+                {
+                    keyValuePairs["client_id"] = externalApiClientId;
+                }
             }
 
             var response =
@@ -192,7 +201,7 @@ internal class GrantPost : IGrantPost
         }
 
         // Get or create cache entry
-        string cacheKey = string.Join(":", "token", "client", bankRegistrationId.ToString(), scope ?? "");
+        string cacheKey = string.Join(":", "token", "client", cacheKeyId, scope ?? "");
         string accessToken =
             (await _memoryCache.GetOrCreateAsync(
                 cacheKey,
@@ -247,7 +256,8 @@ internal class GrantPost : IGrantPost
                 externalApiClientId,
                 tokenEndpoint,
                 _instrumentationClient,
-                null);
+                null,
+                new Dictionary<string, JsonNode?>());
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -329,7 +339,8 @@ internal class GrantPost : IGrantPost
                 externalApiClientId,
                 tokenEndpoint,
                 _instrumentationClient,
-                null);
+                null,
+                new Dictionary<string, JsonNode?>());
 
             // Add parameters
             keyValuePairs["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
@@ -389,22 +400,22 @@ internal class GrantPost : IGrantPost
         string externalApiClientId,
         string tokenEndpoint,
         IInstrumentationClient instrumentationClient,
-        JwsAlgorithm? jwsAlgorithm)
+        JwsAlgorithm? jwsAlgorithm,
+        Dictionary<string, JsonNode?> extraClaims)
     {
+        ArgumentNullException.ThrowIfNull(extraClaims);
+
         // Create JWT
-        var claims = new
+        var claims = new JsonObject(extraClaims)
         {
-            iss = externalApiClientId,
-            sub = externalApiClientId,
-            aud = tokenEndpoint,
-            jti = Guid.NewGuid().ToString(),
-            iat = DateTimeOffset.Now.ToUnixTimeSeconds(),
-            exp = DateTimeOffset.UtcNow.AddSeconds(300).ToUnixTimeSeconds()
+            ["iss"] = externalApiClientId,
+            ["sub"] = externalApiClientId,
+            ["aud"] = tokenEndpoint,
+            ["jti"] = Guid.NewGuid().ToString(),
+            ["iat"] = DateTimeOffset.Now.ToUnixTimeSeconds(),
+            ["exp"] = DateTimeOffset.UtcNow.AddSeconds(300).ToUnixTimeSeconds()
         };
-        var jsonSerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-        string payloadJson = JsonConvert.SerializeObject(
-            claims,
-            jsonSerializerSettings);
+        string payloadJson = claims.ToJsonString();
         string jwt = JwtFactory.CreateJwt(
             JwtFactory.DefaultJwtHeadersExcludingTyp(obSealKey.KeyId),
             payloadJson,

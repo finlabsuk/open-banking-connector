@@ -100,7 +100,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
                     persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiId,
                     persistedObject.BankRegistrationNavigation.ExternalApiObject.ExternalApiSecret,
-                    persistedObject.BankRegistrationNavigation.Id,
+                    persistedObject.BankRegistrationNavigation.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);

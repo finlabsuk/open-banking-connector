@@ -404,7 +404,7 @@ internal class
                     entity.TokenEndpoint,
                     entity.ExternalApiObject.ExternalApiId,
                     entity.ExternalApiObject.ExternalApiSecret,
-                    entity.Id,
+                    entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
                     apiClient);

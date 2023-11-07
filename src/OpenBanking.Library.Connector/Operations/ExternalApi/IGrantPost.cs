@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
@@ -22,10 +23,12 @@ internal interface IGrantPost
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,
-        Guid bankRegistrationId,
+        string cacheKeyId,
         JsonSerializerSettings? jsonSerializerSettings,
         GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
+        Dictionary<string, JsonNode?>? extraClaims = null,
+        bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null);
 
     Task<TokenEndpointResponseAuthCodeGrant> PostAuthCodeGrantAsync(
