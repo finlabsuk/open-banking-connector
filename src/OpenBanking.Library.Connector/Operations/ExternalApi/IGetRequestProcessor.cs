@@ -28,7 +28,7 @@ internal interface IGetRequestProcessor
             //.SetContentType(contentType)
             //.SetContent(content)
             .Create()
-            .RequestJsonAsync<TResponse>(
+            .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 jsonSerializerSettings);
 

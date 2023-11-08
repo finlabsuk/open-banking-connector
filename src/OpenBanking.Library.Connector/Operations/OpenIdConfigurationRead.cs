@@ -47,7 +47,7 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
             .SetMethod(HttpMethod.Get)
             .SetUri(openIdConfigurationUrl)
             .Create()
-            .RequestJsonAsync<OpenIdConfiguration>(_apiClient);
+            .SendExpectingJsonResponseAsync<OpenIdConfiguration>(_apiClient);
 
         // Update OpenID Provider Configuration based on overrides
         IList<OAuth2ResponseMode>? responseModesSupportedOverride =

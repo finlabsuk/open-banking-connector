@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 internal static class HttpRequestMessageExtensions
 {
-    public static Task<T> RequestJsonAsync<T>(
+    public static Task<T> SendExpectingJsonResponseAsync<T>(
         this HttpRequestMessage request,
         IApiClient client,
         JsonSerializerSettings? jsonSerializerSettings = null)
@@ -22,7 +22,18 @@ internal static class HttpRequestMessageExtensions
             jsonSerializerSettings);
     }
 
-    public static Task SendAsync(
+    public static Task<string> SendExpectingStringResponseAsync(
+        this HttpRequestMessage request,
+        IApiClient client)
+
+    {
+        request.ArgNotNull(nameof(request));
+        client.ArgNotNull(nameof(client));
+
+        return client.SendExpectingStringResponseAsync(request);
+    }
+
+    public static Task SendExpectingNoResponseAsync(
         this HttpRequestMessage request,
         IApiClient client)
     {

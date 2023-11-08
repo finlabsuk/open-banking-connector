@@ -14,4 +14,5 @@ public interface IApiClient
         where T : class;
 
     Task SendExpectingNoResponseAsync(HttpRequestMessage request);
+    Task<string> SendExpectingStringResponseAsync(HttpRequestMessage request);
 }

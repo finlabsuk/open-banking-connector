@@ -92,7 +92,7 @@ public class ApiClient : IApiClient
         JsonSerializerSettings? jsonSerializerSettings)
         where T : class
     {
-        request.ArgNotNull(nameof(request));
+        ArgumentNullException.ThrowIfNull(request);
 
         (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
 
@@ -129,22 +129,36 @@ public class ApiClient : IApiClient
 
     public async Task SendExpectingNoResponseAsync(HttpRequestMessage request)
     {
-        request.ArgNotNull(nameof(request));
+        ArgumentNullException.ThrowIfNull(request);
 
         (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
 
-        // Check body not null
+        // Check body null
         if (!string.IsNullOrEmpty(responseBody))
         {
             throw new HttpRequestException("Received non-null HTTP body when configured to receive null type.");
         }
     }
 
+    public async Task<string> SendExpectingStringResponseAsync(HttpRequestMessage request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+
+        // Check body not null
+        if (string.IsNullOrEmpty(responseBody))
+        {
+            throw new HttpRequestException("Received null HTTP body when configured to receive non-null type.");
+        }
+
+        return responseBody;
+    }
+
     private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
         HttpRequestMessage request)
     {
         HttpResponseMessage? response = null;
-
         int statusCode;
         string? responseBody = null;
         string? xFapiInteractionId = null;
@@ -152,17 +166,19 @@ public class ApiClient : IApiClient
         {
             // Make HTTP call
             response = await _httpClient.SendAsync(request);
-            responseBody = await GetStringResponseAsync(response);
 
-            // Get selected headers
+            // Get selected response headers
             if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
             {
                 xFapiInteractionId = values.First();
             }
 
+            // Get response body
+            responseBody = await response.Content.ReadAsStringAsync();
+
             // Check HTTP status code
             statusCode = (int) response.StatusCode;
-            if (statusCode >= 400)
+            if (!response.IsSuccessStatusCode)
             {
                 throw new ExternalApiHttpErrorException(
                     statusCode,
@@ -171,8 +187,6 @@ public class ApiClient : IApiClient
                     responseBody ?? "",
                     xFapiInteractionId);
             }
-
-            HttpResponseMessage _ = response.EnsureSuccessStatusCode();
         }
         catch (Exception ex)
         {
@@ -219,7 +233,10 @@ public class ApiClient : IApiClient
             .AppendLine($"{request}")
             .AppendLine("######## REQUEST BODY");
 
-        string? requestBody = await GetStringRequestAsync(request);
+        // Get request body
+        string? requestBody = await GetStringRequestBodyAsync(request);
+
+        // Log request body
         if (string.IsNullOrEmpty(requestBody))
         {
             requestTraceSb.AppendLine("<No Body>");
@@ -277,24 +294,13 @@ public class ApiClient : IApiClient
         _instrumentation.Trace(requestTraceSb.ToString());
     }
 
-    private static async Task<string?> GetStringResponseAsync(HttpResponseMessage response)
+    private static async Task<string?> GetStringRequestBodyAsync(HttpRequestMessage request)
     {
-        using (response.Content)
-        {
-            return await response.Content.ReadAsStringAsync();
-        }
-    }
-
-    private static async Task<string?> GetStringRequestAsync(HttpRequestMessage request)
-    {
-        if (request.Content is null)
+        using HttpContent? content = request.Content;
+        if (content is null)
         {
             return null;
         }
-
-        using (request.Content)
-        {
-            return await request.Content.ReadAsStringAsync();
-        }
+        return await content.ReadAsStringAsync();
     }
 }

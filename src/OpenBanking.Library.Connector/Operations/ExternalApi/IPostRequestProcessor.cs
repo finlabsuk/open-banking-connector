@@ -42,7 +42,7 @@ internal interface IPostRequestProcessor<in TRequest>
             .SetContentType(contentType)
             .SetContent(content)
             .Create()
-            .RequestJsonAsync<TResponse>(
+            .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
                 responseJsonSerializerSettings);
 

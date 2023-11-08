@@ -30,6 +30,6 @@ internal interface IDeleteRequestProcessor
             .SetUri(uri)
             .SetHeaders(headers)
             .Create()
-            .SendAsync(apiClient);
+            .SendExpectingNoResponseAsync(apiClient);
     }
 }

@@ -497,8 +497,8 @@ internal class GrantPost : IGrantPost
             .Create();
 
         Jwks jwks = responseHasNoRootProperty
-            ? new Jwks { Keys = await message.RequestJsonAsync<List<JsonWebKey>>(_apiClient) }
-            : await message.RequestJsonAsync<Jwks>(_apiClient);
+            ? new Jwks { Keys = await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(_apiClient) }
+            : await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient);
 
         return jwks;
     }
