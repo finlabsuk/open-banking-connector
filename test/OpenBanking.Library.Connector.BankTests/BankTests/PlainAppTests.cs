@@ -108,6 +108,9 @@ public class PlainAppTests : AppTests, IDisposable
         // Connect output to logging
         SetTestLogging();
 
+        var apiClient = new ApiClient(instrumentationClient, httpClientSettings.PooledConnectionLifetimeSeconds);
+        var memoryCache = new MemoryCache(new MemoryCacheOptions());
+
         // Set up software statement store
         var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
             softwareStatementProfilesSettingsProvider,
@@ -118,7 +121,6 @@ public class PlainAppTests : AppTests, IDisposable
         var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
 
         var apiVariantMapper = new ApiVariantMapper();
-        var apiClient = new ApiClient(instrumentationClient, httpClientSettings.PooledConnectionLifetimeSeconds);
 
         // Run test            
         await TestAllInner(
@@ -133,7 +135,7 @@ public class PlainAppTests : AppTests, IDisposable
                 encryptionKeyInfo,
                 GetDbContext(),
                 new BankProfileService(bankProfilesSettingsProvider),
-                new MemoryCache(new MemoryCacheOptions())),
+                memoryCache),
             false);
 
         UnsetTestLogging();

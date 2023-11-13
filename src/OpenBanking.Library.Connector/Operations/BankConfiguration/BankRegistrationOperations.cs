@@ -3,14 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.Serialization;
+using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Obie;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -21,7 +24,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankC
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
+using Jose;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
 using BankRegistrationPersisted =
@@ -103,16 +108,24 @@ internal class
                 softwareStatementProfileId,
                 softwareStatementProfileOverrideCase);
 
+        // Get and process software statement assertion
+        string softwareStatementAssertion = await GetSoftwareStatementAssertion(processedSoftwareStatementProfile);
+        SsaPayload ssaPayload = ProcessSsa(
+            softwareStatementAssertion,
+            processedSoftwareStatementProfile,
+            softwareStatementProfileId);
+
         // Determine redirect URIs
         (string defaultFragmentRedirectUri, IList<string> redirectUris) = GetRedirectUris(
             processedSoftwareStatementProfile,
+            ssaPayload,
             request.DefaultFragmentRedirectUri,
             request.RedirectUris);
 
         // Determine registration scope
         RegistrationScopeEnum registrationScope =
             request.RegistrationScope ??
-            processedSoftwareStatementProfile.SoftwareStatementPayload.RegistrationScope;
+            ssaPayload.RegistrationScope;
         RegistrationScopeIsValid registrationScopeIsValidFcn =
             bankProfile.BankConfigurationApiSettings.RegistrationScopeIsValid;
         if (!registrationScopeIsValidFcn(registrationScope))
@@ -247,6 +260,8 @@ internal class
         else
         {
             // Perform Dynamic Client Registration
+
+            // Check endpoint
             if (registrationEndpoint is null)
             {
                 throw new InvalidOperationException(
@@ -256,12 +271,25 @@ internal class
                     "ExternalApiObject to specify the registration.");
             }
 
+            // Check registration scope
+            bool registrationScopeIsSubset =
+                (registrationScope & ssaPayload.RegistrationScope) == registrationScope;
+            if (!registrationScopeIsSubset)
+            {
+                throw new InvalidOperationException(
+                    "Software statement assertion does not support specified RegistrationScope.");
+            }
+
+            // Check redirect URIs
+            CheckRedirectUris(redirectUris, ssaPayload);
+
             BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
                 customBehaviour?.BankRegistrationPost;
             externalApiResponse = await PerformDynamicClientRegistration(
                 bankRegistrationPostCustomBehaviour,
                 dynamicClientRegistrationApiVersion,
                 processedSoftwareStatementProfile,
+                softwareStatementAssertion,
                 registrationEndpoint,
                 tokenEndpointAuthMethod,
                 redirectUris,
@@ -541,10 +569,117 @@ internal class
         return nonErrorMessages;
     }
 
+    private async Task<string> GetSoftwareStatementAssertion(
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
+    {
+        // Get access token
+        var scope = "ASPSPReadAccess TPPReadAccess AuthoritiesReadAccess";
+        string tokenEndpoint = processedSoftwareStatementProfile.SandboxEnvironment
+            ? "https://matls-sso.openbankingtest.org.uk/as/token.oauth2"
+            : "https://matls-sso.openbanking.org.uk/as/token.oauth2";
+        string accessToken = await _grantPost.PostClientCredentialsGrantAsync(
+            scope,
+            processedSoftwareStatementProfile.OBSealKey,
+            TokenEndpointAuthMethod.PrivateKeyJwt,
+            tokenEndpoint,
+            processedSoftwareStatementProfile.SoftwareId,
+            null,
+            processedSoftwareStatementProfile.SoftwareId,
+            null,
+            null,
+            processedSoftwareStatementProfile.ApiClient,
+            new Dictionary<string, JsonNode?> { ["scope"] = scope },
+            true,
+            JwsAlgorithm.RS256);
+
+        // Get software statement assertion
+        var headers = new List<HttpHeader> { new("Authorization", "Bearer " + accessToken) };
+        string url = processedSoftwareStatementProfile.SandboxEnvironment
+            ? "https://matls-ssaapi.openbankingtest.org.uk/api/v2/tpp/"
+            : "https://matls-ssaapi.openbanking.org.uk/api/v2/tpp/";
+        url += $"{processedSoftwareStatementProfile.OrganisationId}/ssa/{processedSoftwareStatementProfile.SoftwareId}";
+        string response = await new HttpRequestBuilder()
+            .SetUri(url)
+            .SetHeaders(headers)
+            .SetAccept("application/jws+json")
+            .Create()
+            .SendExpectingStringResponseAsync(processedSoftwareStatementProfile.ApiClient);
+
+        return response;
+    }
+
+    private SsaPayload ProcessSsa(
+        string ssa,
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        string id)
+    {
+        // Get parts of SSA and payload
+        string[] ssaComponentsBase64 = ssa.Split(new[] { '.' });
+        if (ssaComponentsBase64.Length != 3)
+        {
+            throw new ArgumentException("SSA should have three parts.");
+        }
+        string ssaHeaderBase64 = ssaComponentsBase64[0];
+        string ssaPayloadBase64 = ssaComponentsBase64[1];
+        string ssaSignatureBase64 = ssaComponentsBase64[2];
+        if (new[] { ssaHeaderBase64, ssaPayloadBase64, ssaSignatureBase64 }
+                .JoinString(".") != ssa)
+        {
+            throw new InvalidOperationException("Can't correctly process software statement");
+        }
+        SsaPayload ssaPayload =
+            SoftwareStatementPayloadFromBase64(ssaComponentsBase64[1]);
+
+        // Check DefaultQueryRedirectUrl
+        if (processedSoftwareStatementProfile.DefaultQueryRedirectUrl is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultQueryRedirectUrl))
+        {
+            throw new ArgumentException(
+                $"Software statement profile with ID {id} contains DefaultQueryRedirectUrl {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
+                "which is not included in software statement assertion software_redirect_uris field.");
+        }
+
+        // Check DefaultFragmentRedirectUrl
+        if (processedSoftwareStatementProfile.DefaultFragmentRedirectUrl is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
+        {
+            throw new ArgumentException(
+                $"Software statement profile with ID {id} contains DefaultFragmentRedirectUrl {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                "which is not included in software statement assertion software_redirect_uris field.");
+        }
+
+        return ssaPayload;
+    }
+
+    private string SoftwareStatementPayloadToBase64(SsaPayload payload)
+    {
+        string jsonData = JsonConvert.SerializeObject(payload);
+        return Base64UrlEncoder.Encode(jsonData);
+    }
+
+    private SsaPayload SoftwareStatementPayloadFromBase64(string payloadBase64)
+    {
+        // Perform conversion
+        string payloadString = Base64UrlEncoder.Decode(payloadBase64);
+        SsaPayload newObject =
+            JsonConvert.DeserializeObject<SsaPayload>(payloadString) ??
+            throw new ArgumentException("Cannot de-serialise software statement");
+
+        // Check reverse conversion works or throw
+        // (If reverse conversion fails, we can never re-generate base64 correctly)
+        // if (payloadBase64 != SoftwareStatementPayloadToBase64(newObject))
+        // {
+        //     throw new ArgumentException("Please update SoftwareStatementPayload type to support your software statement");
+        // }
+
+        return newObject;
+    }
+
     private async Task<ClientRegistrationModelsPublic.OBClientRegistration1Response> PerformDynamicClientRegistration(
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        string softwareStatementAssertion,
         string registrationEndpoint,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         IList<string> redirectUris,
@@ -575,6 +710,7 @@ internal class
                 tokenEndpointAuthMethod,
                 redirectUris,
                 processedSoftwareStatementProfile,
+                softwareStatementAssertion,
                 registrationScope,
                 bankRegistrationPostCustomBehaviour,
                 bankFinancialId);
@@ -633,13 +769,13 @@ internal class
 
     private static (string defaultFragmentRedirectUri, IList<string> redirectUris) GetRedirectUris(
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        SsaPayload ssaPayload,
         string? requestDefaultFragmentRedirectUri,
         IList<string>? requestRedirectUris)
     {
-        List<string> softwareStatementRedirectUris =
-            processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareRedirectUris;
+        List<string> ssaRedirectUris = ssaPayload.SoftwareRedirectUris;
 
-        // Determine redirect URIs
+        // Determine redirect URIs ensuring list not empty
         IList<string> redirectUris;
         if (requestRedirectUris is not null)
         {
@@ -647,36 +783,21 @@ internal class
             {
                 throw new InvalidOperationException("Specified RedirectUris is empty list.");
             }
-
-            foreach (string redirectUri in requestRedirectUris)
-            {
-                if (!softwareStatementRedirectUris.Contains(redirectUri))
-                {
-                    throw new InvalidOperationException(
-                        $"Specified URI {redirectUri} in RedirectUris is not included in software statement.");
-                }
-            }
             redirectUris = requestRedirectUris;
         }
         else
         {
-            if (!softwareStatementRedirectUris.Any())
+            if (!ssaRedirectUris.Any())
             {
                 throw new InvalidOperationException("RedirectUris from software statement is empty list.");
             }
-            redirectUris = softwareStatementRedirectUris;
+            redirectUris = ssaRedirectUris;
         }
 
-        // Determine default fragment redirect URI
+        // Determine default fragment redirect URI ensuring also contained in redirect URIs list
         string defaultFragmentRedirectUri;
         if (requestDefaultFragmentRedirectUri is not null)
         {
-            if (!softwareStatementRedirectUris.Contains(requestDefaultFragmentRedirectUri))
-            {
-                throw new InvalidOperationException(
-                    $"Specified default fragment redirect URI {requestDefaultFragmentRedirectUri} not included in software statement.");
-            }
-
             if (!redirectUris.Contains(requestDefaultFragmentRedirectUri))
             {
                 throw new InvalidOperationException(
@@ -696,6 +817,23 @@ internal class
         }
 
         return (defaultFragmentRedirectUri, redirectUris);
+    }
+
+    private static void CheckRedirectUris(
+        IList<string> redirectUris,
+        SsaPayload ssaPayload)
+    {
+        List<string> ssaRedirectUris = ssaPayload.SoftwareRedirectUris;
+
+        // Check redirect URIs in SSA
+        foreach (string redirectUri in redirectUris)
+        {
+            if (!ssaRedirectUris.Contains(redirectUri))
+            {
+                throw new InvalidOperationException(
+                    $"Specified URI {redirectUri} in RedirectUris is not included in software statement assertion.");
+            }
+        }
     }
 
     private static JsonSerializerSettings? GetRequestJsonSerializerSettings(

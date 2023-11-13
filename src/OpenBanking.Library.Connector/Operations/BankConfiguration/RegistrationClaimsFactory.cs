@@ -35,21 +35,13 @@ internal static class RegistrationClaimsFactory
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         IList<string> redirectUris,
         ProcessedSoftwareStatementProfile sProfile,
+        string softwareStatementAssertion,
         RegistrationScopeEnum registrationScope,
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         string bankFinancialId)
     {
         sProfile.ArgNotNull(nameof(sProfile));
 
-        // Check API types
-        bool apiTypesIsSubset =
-            (registrationScope & sProfile.SoftwareStatementPayload.RegistrationScope) ==
-            registrationScope;
-        if (!apiTypesIsSubset)
-        {
-            throw new InvalidOperationException(
-                "Software statement does not support API types specified in Bank object.");
-        }
 
         string scope = ApiTypesToScope(registrationScope);
 
@@ -89,7 +81,7 @@ internal static class RegistrationClaimsFactory
         var registrationClaims =
             new ClientRegistrationModelsPublic.OBClientRegistration1
             {
-                Iss = sProfile.SoftwareStatementPayload.SoftwareId,
+                Iss = sProfile.SoftwareId,
                 Iat = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddSeconds(300),
                 Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
@@ -103,9 +95,9 @@ internal static class RegistrationClaimsFactory
                 IdTokenSignedResponseAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                 RequestObjectSigningAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                 RedirectUris = redirectUris,
-                SoftwareId = sProfile.SoftwareStatementPayload.SoftwareId,
+                SoftwareId = sProfile.SoftwareId,
                 Scope = scope,
-                SoftwareStatement = sProfile.SoftwareStatement,
+                SoftwareStatement = softwareStatementAssertion,
                 TlsClientAuthSubjectDn = tlsClientAuthSubjectDn
             };
 

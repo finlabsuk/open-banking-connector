@@ -18,11 +18,7 @@ public class SoftwareStatementProfileValidatorTests
     {
         Func<bool> rule = () =>
         {
-            var profile = new SoftwareStatementProfile
-            {
-                DefaultFragmentRedirectUrl = "http://test.com",
-                SoftwareStatement = $"{value}.{value}.{value}"
-            };
+            var profile = new SoftwareStatementProfile { DefaultFragmentRedirectUrl = "http://test.com" };
 
             List<ValidationFailure> results =
                 new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();
@@ -160,11 +156,7 @@ public class SoftwareStatementProfileValidatorTests
     {
         Func<bool> rule = () =>
         {
-            var profile = new SoftwareStatementProfile
-            {
-                DefaultFragmentRedirectUrl = value,
-                SoftwareStatement = "a.b.c"
-            };
+            var profile = new SoftwareStatementProfile { DefaultFragmentRedirectUrl = value };
 
             List<ValidationFailure> results =
                 new SoftwareStatementProfileValidator().Validate(profile).Errors.ToList();

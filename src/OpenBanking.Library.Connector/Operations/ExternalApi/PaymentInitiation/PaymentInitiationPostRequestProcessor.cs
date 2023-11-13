@@ -48,8 +48,8 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
             GetJoseHeaders(
-                _processedSoftwareStatementProfile.SoftwareStatementPayload.OrgId,
-                _processedSoftwareStatementProfile.SoftwareStatementPayload.SoftwareId,
+                _processedSoftwareStatementProfile.OrganisationId,
+                _processedSoftwareStatementProfile.SoftwareId,
                 _processedSoftwareStatementProfile.OBSealKey.KeyId,
                 _useB64),
             payloadJson,

@@ -29,14 +29,6 @@ public class SoftwareStatementProfileValidator : AbstractValidator<SoftwareState
 
     private void CreateRules()
     {
-        RuleFor(p => p.SoftwareStatement)
-            .Must(ValidationRules.IsNonWhitespace)
-            .WithMessage($"Please provide a {nameof(SoftwareStatementProfile.SoftwareStatement)}.");
-
-        RuleFor(p => p.SoftwareStatement)
-            .Must((x, y, z) => HasDelimiters(x, y, z, '.', 2))
-            .WithMessage($"Please provide a valid {nameof(SoftwareStatementProfile.SoftwareStatement)}.");
-
         When(
             x => !string.IsNullOrEmpty(x.DefaultFragmentRedirectUrl),
             () =>

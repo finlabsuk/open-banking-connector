@@ -15,10 +15,11 @@ public class SoftwareStatementProfile
     /// </summary>
     public bool Active { get; set; } = true;
 
-    /// <summary>
-    ///     Software statement assertion (SSA) as string, i.e. "FirstPart.SecondPart.ThirdPart".
-    /// </summary>
-    public string SoftwareStatement { get; set; } = string.Empty;
+    public string OrganisationId { get; set; } = string.Empty;
+
+    public string SoftwareId { get; set; } = string.Empty;
+
+    public bool SandboxEnvironment { get; set; }
 
     /// <summary>
     ///     ID of <see cref="TransportCertificateProfile" /> to use for mutual TLS with this software statement profile.
@@ -77,11 +78,13 @@ public class SoftwareStatementProfileWithOverrideProperties : SoftwareStatementP
     {
         var newObject = new SoftwareStatementProfile
         {
-            SoftwareStatement = SoftwareStatement,
             TransportCertificateProfileId = TransportCertificateProfileId,
             SigningCertificateProfileId = SigningCertificateProfileId,
             DefaultFragmentRedirectUrl = DefaultFragmentRedirectUrl,
-            DefaultQueryRedirectUrl = DefaultQueryRedirectUrl
+            DefaultQueryRedirectUrl = DefaultQueryRedirectUrl,
+            OrganisationId = OrganisationId,
+            SoftwareId = SoftwareId,
+            SandboxEnvironment = SandboxEnvironment
         };
 
         if (overrideCase is null)
@@ -126,11 +129,18 @@ public class SoftwareStatementProfilesSettings : Dictionary<string, SoftwareStat
     {
         foreach ((string key, SoftwareStatementProfileWithOverrideProperties value) in this)
         {
-            if (string.IsNullOrEmpty(value.SoftwareStatement))
+            if (string.IsNullOrEmpty(value.OrganisationId))
             {
                 throw new ArgumentException(
                     "Configuration or key secrets error: " +
-                    $"No non-empty SoftwareStatement provided for SoftwareStatementProfile {key}.");
+                    $"No non-empty OrganisationId provided for SoftwareStatementProfile {key}.");
+            }
+
+            if (string.IsNullOrEmpty(value.SoftwareId))
+            {
+                throw new ArgumentException(
+                    "Configuration or key secrets error: " +
+                    $"No non-empty SoftwareId provided for SoftwareStatementProfile {key}.");
             }
 
             if (string.IsNullOrEmpty(value.TransportCertificateProfileId))
