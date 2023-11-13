@@ -37,5 +37,8 @@ public class HttpRequestInfo
     public List<string> ContentTypes { get; } = new();
 
     public string Content { get; set; } = null!;
+
+    public List<string> Accept { get; set; } = new();
+
     public IServerCertificateValidator? ServerCertificateValidator { get; set; }
 }

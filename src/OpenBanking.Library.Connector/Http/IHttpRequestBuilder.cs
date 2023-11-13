@@ -43,6 +43,8 @@ public interface IHttpRequestBuilder
 
     IHttpRequestBuilder SetContent(string content);
 
+    IHttpRequestBuilder SetAccept(string accept);
+
     IHttpRequestBuilder SetContentType(string contentType);
 
     HttpRequestMessage Create();

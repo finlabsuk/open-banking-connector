@@ -108,6 +108,13 @@ public class HttpRequestBuilder : IHttpRequestBuilder
         return this;
     }
 
+    public IHttpRequestBuilder SetAccept(string accept)
+    {
+        RequestInfo.Accept.Add(accept);
+
+        return this;
+    }
+
     public IHttpRequestBuilder SetContentType(string contentType)
     {
         RequestInfo.ContentTypes.Add(contentType);

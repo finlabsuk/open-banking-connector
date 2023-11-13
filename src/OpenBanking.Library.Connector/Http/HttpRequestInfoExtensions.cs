@@ -24,16 +24,18 @@ internal static class HttpRequestInfoExtensions
 
     private static HttpRequestMessage ApplyAcceptContentTypes(this HttpRequestMessage request, HttpRequestInfo info)
     {
-        var acceptableContentTypes = new List<string> { "application/json" };
-
-        foreach (string contentType in acceptableContentTypes)
+        foreach (string contentType in info.Accept)
         {
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(contentType));
         }
 
+        if (!request.Headers.Accept.Any())
+        {
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
         return request;
     }
-
 
     private static HttpRequestMessage ApplyUserAgent(this HttpRequestMessage request, HttpRequestInfo info)
     {
