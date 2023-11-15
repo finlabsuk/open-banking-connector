@@ -21,16 +21,17 @@ public class ApiClient : IApiClient
 
     public ApiClient(
         IInstrumentationClient instrumentationClient,
+        int pooledConnectionLifetimeSeconds,
         IList<X509Certificate2>? clientCertificates = null,
         IServerCertificateValidator? serverCertificateValidator = null)
     {
         var clientHandler = new SocketsHttpHandler
         {
             AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-            //ActivityHeadersPropagator = null // ensures no traceparent HTTP header but also disables Otel tracing
             ActivityHeadersPropagator =
                 DistributedContextPropagator
-                    .CreateNoOutputPropagator() // ensures no traceparent HTTP header when ActivityHeadersPropagator used 
+                    .CreateNoOutputPropagator(), // ensures no traceparent HTTP header when ActivityHeadersPropagator used 
+            PooledConnectionLifetime = TimeSpan.FromSeconds(pooledConnectionLifetimeSeconds)
         };
 
         const int maxRedirects = 50;

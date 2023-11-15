@@ -25,8 +25,11 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         ISettingsProvider<SoftwareStatementProfilesSettings> softwareStatementProfilesSettingsProvider,
         ISettingsProvider<TransportCertificateProfilesSettings> transportCertificateProfilesSettingsProvider,
         ISettingsProvider<SigningCertificateProfilesSettings> signingCertificateProfilesSettingsProvider,
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient)
     {
+        HttpClientSettings httpClientSettings = httpClientSettingsProvider.GetSettings();
+
         // Create signing cert profile cache
         SigningCertificateProfilesSettings signingCertificateProfilesSettings =
             signingCertificateProfilesSettingsProvider.GetSettings();
@@ -88,6 +91,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 defaultTransportCertificateProfile,
                 tcpId,
                 null,
+                httpClientSettings.PooledConnectionLifetimeSeconds,
                 instrumentationClient);
 
             // Get override cases (keys)
@@ -105,6 +109,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                     overrideTransportCertificateProfile,
                     tcpId,
                     overrideCase,
+                    httpClientSettings.PooledConnectionLifetimeSeconds,
                     instrumentationClient);
             }
 

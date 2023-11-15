@@ -78,6 +78,7 @@ public class PlainAppTests : AppTests, IDisposable
         var bankProfilesSettings =
             AppConfiguration.GetSettings<BankProfilesSettings>();
         var keysSettings = AppConfiguration.GetSettings<KeysSettings>();
+        var httpClientSettings = AppConfiguration.GetSettings<HttpClientSettings>();
 
         // Create providers from settings
         // TODO: update to write settings to environment variables and then use EnvironmentVariablesSettingsProvider to get
@@ -91,6 +92,7 @@ public class PlainAppTests : AppTests, IDisposable
         var bankProfilesSettingsProvider =
             new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
         var keySettingsProvider = new DefaultSettingsProvider<KeysSettings>(keysSettings);
+        var httpClientSettingsProvider = new DefaultSettingsProvider<HttpClientSettings>(httpClientSettings);
 
         // Set up time provider
         var timeProvider = new TimeProvider();
@@ -111,11 +113,12 @@ public class PlainAppTests : AppTests, IDisposable
             softwareStatementProfilesSettingsProvider,
             obTransportCertificateProfilesSettingsProvider,
             obSigningCertificateProfilesSettingsProvider,
+            httpClientSettingsProvider,
             instrumentationClient);
         var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
 
         var apiVariantMapper = new ApiVariantMapper();
-        var apiClient = new ApiClient(instrumentationClient, new HttpClient());
+        var apiClient = new ApiClient(instrumentationClient, httpClientSettings.PooledConnectionLifetimeSeconds);
 
         // Run test            
         await TestAllInner(

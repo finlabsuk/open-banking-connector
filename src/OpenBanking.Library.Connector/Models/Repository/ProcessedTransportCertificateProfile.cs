@@ -20,6 +20,7 @@ public class ProcessedTransportCertificateProfile
         TransportCertificateProfile transportCertificateProfile,
         string id,
         string? overrideCase,
+        int pooledConnectionLifetimeSeconds,
         IInstrumentationClient instrumentationClient)
     {
         // Log processing message
@@ -62,7 +63,11 @@ public class ProcessedTransportCertificateProfile
             serverCertificateValidator = new DefaultServerCertificateValidator();
         }
 
-        ApiClient = new ApiClient(instrumentationClient, transportCerts, serverCertificateValidator);
+        ApiClient = new ApiClient(
+            instrumentationClient,
+            pooledConnectionLifetimeSeconds,
+            transportCerts,
+            serverCertificateValidator);
 
         SubjectDnWithDottedDecimalOrgIdAttribute = GetSubjectDn(transportCert, true);
 

@@ -34,7 +34,8 @@ public static class ServiceCollectionExtensions
             .AddSettingsGroup<SoftwareStatementProfilesSettings>()
             .AddSettingsGroup<TransportCertificateProfilesSettings>()
             .AddSettingsGroup<SigningCertificateProfilesSettings>()
-            .AddSettingsGroup<KeysSettings>();
+            .AddSettingsGroup<KeysSettings>()
+            .AddSettingsGroup<HttpClientSettings>();
 
         // Set up software statement store
         services
@@ -81,10 +82,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient<RequestBuilder>>();
 
         // Set up API client not associated with software statement profile
+        var httpClientSettings = GetSettings<HttpClientSettings>(configuration);
         services.AddSingleton<IApiClient>(
             sp => new ApiClient(
                 sp.GetRequiredService<
-                    IInstrumentationClient>())); // IHttpClientFactory no longer needed as SocketsHttpHandler now used by default
+                    IInstrumentationClient>(),
+                httpClientSettings
+                    .PooledConnectionLifetimeSeconds));
 
         // Configure Request Builder
         services.AddScoped<IRequestBuilder, RequestBuilder>();
