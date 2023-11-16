@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -39,7 +40,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
             {
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                    TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
                     UseApplicationJoseNotApplicationJwtContentTypeHeader = true
                 },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour

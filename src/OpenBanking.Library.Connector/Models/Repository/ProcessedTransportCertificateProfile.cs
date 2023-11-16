@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using System.Formats.Asn1;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
@@ -13,6 +14,13 @@ using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+
+public enum SubjectDnOrgIdEncoding
+{
+    StringAttributeType, // default
+    DottedDecimalAttributeType,
+    DottedDecimalAttributeTypeWithStringValue
+}
 
 public class ProcessedTransportCertificateProfile
 {
@@ -69,18 +77,23 @@ public class ProcessedTransportCertificateProfile
             transportCerts,
             serverCertificateValidator);
 
-        SubjectDnWithDottedDecimalOrgIdAttribute = GetSubjectDn(transportCert, true);
-
-        SubjectDn = GetSubjectDn(transportCert, false);
+        SubjectDn = new ConcurrentDictionary<SubjectDnOrgIdEncoding, string>
+        {
+            [SubjectDnOrgIdEncoding.StringAttributeType] =
+                GetSubjectDn(transportCert, SubjectDnOrgIdEncoding.StringAttributeType),
+            [SubjectDnOrgIdEncoding.DottedDecimalAttributeType] =
+                GetSubjectDn(transportCert, SubjectDnOrgIdEncoding.DottedDecimalAttributeType),
+            [SubjectDnOrgIdEncoding.DottedDecimalAttributeTypeWithStringValue] = GetSubjectDn(
+                transportCert,
+                SubjectDnOrgIdEncoding.DottedDecimalAttributeTypeWithStringValue)
+        };
     }
 
     public IApiClient ApiClient { get; }
 
-    public string SubjectDnWithDottedDecimalOrgIdAttribute { get; }
+    public ConcurrentDictionary<SubjectDnOrgIdEncoding, string> SubjectDn { get; }
 
-    public string SubjectDn { get; }
-
-    private string GetSubjectDn(X509Certificate2 transportCert, bool useDottedDecimalOrgIdAttribute)
+    private static string GetSubjectDn(X509Certificate2 transportCert, SubjectDnOrgIdEncoding subjectDnOrgIdEncoding)
     {
         // Get subject DN
         X500DistinguishedName subjectDnObject = transportCert.SubjectName;
@@ -89,7 +102,7 @@ public class ProcessedTransportCertificateProfile
         string subjectDn = subjectDnObject.Name.Replace(", ", ",");
 
         // Update organizationIdentifier attribute type
-        if (useDottedDecimalOrgIdAttribute)
+        if (subjectDnOrgIdEncoding is not SubjectDnOrgIdEncoding.StringAttributeType)
         {
             subjectDn = subjectDn.Replace("OID.2.5.4.97", "2.5.4.97"); // fix currently necessary on Windows
             subjectDn = subjectDn.Replace("organizationIdentifier", "2.5.4.97");
@@ -102,7 +115,7 @@ public class ProcessedTransportCertificateProfile
         }
 
         // Update organizationIdentifier attribute value if required
-        if (useDottedDecimalOrgIdAttribute)
+        if (subjectDnOrgIdEncoding is SubjectDnOrgIdEncoding.DottedDecimalAttributeType)
         {
             // Get OID 2.5.4.97 value
             X500RelativeDistinguishedName orgIdObject =

@@ -705,11 +705,16 @@ internal class
                 string.Empty // not used for POST
             );
         var externalApiUrl = new Uri(registrationEndpoint);
+        SubjectDnOrgIdEncoding transportCertificateSubjectDnOrgIdEncoding =
+            bankRegistrationPostCustomBehaviour?.TransportCertificateSubjectDnOrgIdEncoding ??
+            SubjectDnOrgIdEncoding.StringAttributeType;
         ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest =
             RegistrationClaimsFactory.CreateRegistrationClaims(
                 tokenEndpointAuthMethod,
                 redirectUris,
-                processedSoftwareStatementProfile,
+                processedSoftwareStatementProfile.SoftwareId,
+                processedSoftwareStatementProfile.TransportCertificateSubjectDn[
+                    transportCertificateSubjectDnOrgIdEncoding],
                 softwareStatementAssertion,
                 registrationScope,
                 bankRegistrationPostCustomBehaviour,

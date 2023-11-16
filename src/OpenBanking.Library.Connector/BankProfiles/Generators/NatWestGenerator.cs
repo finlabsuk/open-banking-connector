@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -156,7 +157,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                        TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
                         ScopeClaimResponseJsonConverter =
                             DelimitedStringConverterOptions.JsonIsStringArrayNotString
                     }
@@ -165,8 +166,11 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 {
                     BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                     {
-                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
-                            bank is not (NatWestBank.Mettle or NatWestBank.Coutts)
+                        TransportCertificateSubjectDnOrgIdEncoding = bank switch
+                        {
+                            NatWestBank.Mettle or NatWestBank.Coutts => SubjectDnOrgIdEncoding.StringAttributeType,
+                            _ => SubjectDnOrgIdEncoding.DottedDecimalAttributeType
+                        }
                     },
                     AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour
                     {

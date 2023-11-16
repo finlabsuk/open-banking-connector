@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -48,11 +49,12 @@ public class BankRegistrationPostCustomBehaviour
     public bool? UseApplicationJoseNotApplicationJwtContentTypeHeader { get; set; }
 
     /// <summary>
-    ///     For registration, use transport certificate subject DN where OID 2.5.4.97 (organizationIdentifier) uses a
+    ///     For registration, transport certificate subject DN must be specified. OID 2.5.4.97 (organizationIdentifier) may use
+    ///     a
     ///     dotted-decimal AttributeType.
     ///     Note that https://datatracker.ietf.org/doc/html/rfc4514#section-2.4 specifies hex encoding for an AttributeValue
     ///     corresponding to a dotted-decimal
     ///     AttributeType.
     /// </summary>
-    public bool? UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute { get; set; }
+    public SubjectDnOrgIdEncoding? TransportCertificateSubjectDnOrgIdEncoding { get; set; }
 }

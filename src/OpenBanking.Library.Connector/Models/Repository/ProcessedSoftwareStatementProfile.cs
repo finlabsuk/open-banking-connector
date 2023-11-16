@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -71,8 +72,6 @@ public class ProcessedSoftwareStatementProfile
             processedSigningCertificateProfile.AssociatedKey);
         TransportCertificateSubjectDn = processedTransportCertificateProfile
             .SubjectDn;
-        TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = processedTransportCertificateProfile
-            .SubjectDnWithDottedDecimalOrgIdAttribute;
         Id = id;
         OverrideCase = overrideCase;
         ApiClient = processedTransportCertificateProfile.ApiClient;
@@ -127,9 +126,7 @@ public class ProcessedSoftwareStatementProfile
         }
     }
 
-    public string TransportCertificateSubjectDn { get; }
-
-    public string TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute { get; }
+    public ConcurrentDictionary<SubjectDnOrgIdEncoding, string> TransportCertificateSubjectDn { get; }
 
     public IApiClient ApiClient { get; }
 

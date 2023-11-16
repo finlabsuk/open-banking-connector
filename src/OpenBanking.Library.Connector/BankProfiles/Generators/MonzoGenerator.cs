@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -42,7 +43,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                 BankRegistrationPost =
                     new BankRegistrationPostCustomBehaviour
                     {
-                        UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
+                        TransportCertificateSubjectDnOrgIdEncoding =
+                            SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                     },
                 ClientCredentialsGrantPost = new GrantPostCustomBehaviour
                 {

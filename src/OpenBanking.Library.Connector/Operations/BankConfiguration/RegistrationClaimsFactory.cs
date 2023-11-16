@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
 
@@ -34,15 +33,13 @@ internal static class RegistrationClaimsFactory
     public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         IList<string> redirectUris,
-        ProcessedSoftwareStatementProfile sProfile,
+        string softwareId,
+        string tlsClientAuthSubjectDn,
         string softwareStatementAssertion,
         RegistrationScopeEnum registrationScope,
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         string bankFinancialId)
     {
-        sProfile.ArgNotNull(nameof(sProfile));
-
-
         string scope = ApiTypesToScope(registrationScope);
 
         // Convert tokenEndpointAuthMethod to spec type
@@ -71,17 +68,11 @@ internal static class RegistrationClaimsFactory
                     .AuthorizationCode,
                 ClientRegistrationModelsPublic.OBRegistrationProperties1grantTypesItemEnum.RefreshToken
             };
-        bool useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute =
-            bankRegistrationPostCustomBehaviour
-                ?.UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute ?? false;
-        string tlsClientAuthSubjectDn = useTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
-            ? sProfile.TransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute
-            : sProfile.TransportCertificateSubjectDn;
 
         var registrationClaims =
             new ClientRegistrationModelsPublic.OBClientRegistration1
             {
-                Iss = sProfile.SoftwareId,
+                Iss = softwareId,
                 Iat = DateTimeOffset.Now,
                 Exp = DateTimeOffset.UtcNow.AddSeconds(300),
                 Aud = bankRegistrationPostCustomBehaviour?.AudClaim ??
@@ -95,7 +86,7 @@ internal static class RegistrationClaimsFactory
                 IdTokenSignedResponseAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                 RequestObjectSigningAlg = ClientRegistrationModelsPublic.SupportedAlgorithmsEnum.PS256,
                 RedirectUris = redirectUris,
-                SoftwareId = sProfile.SoftwareId,
+                SoftwareId = softwareId,
                 Scope = scope,
                 SoftwareStatement = softwareStatementAssertion,
                 TlsClientAuthSubjectDn = tlsClientAuthSubjectDn

@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -64,7 +65,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true,
+                    TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType,
                     ClientIdIssuedAtClaimResponseJsonConverter =
                         DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat,
                     AudClaim = issuerUrl,

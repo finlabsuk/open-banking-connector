@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfigurat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -145,7 +146,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {
-                    UseTransportCertificateSubjectDnWithDottedDecimalOrgIdAttribute = true
+                    TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                 }
             }
         };
