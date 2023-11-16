@@ -48,6 +48,7 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Lloyds] = new Lloyds(BankGroupEnum.Lloyds),
             [BankGroupEnum.Obie] = new Obie(BankGroupEnum.Obie),
             [BankGroupEnum.Monzo] = new Monzo(BankGroupEnum.Monzo),
+            [BankGroupEnum.Nationwide] = new Nationwide(BankGroupEnum.Nationwide),
             [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest),
             [BankGroupEnum.Revolut] = new Revolut(BankGroupEnum.Revolut),
             [BankGroupEnum.Starling] = new Starling(BankGroupEnum.Starling)
@@ -74,6 +75,9 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Monzo] = new MonzoGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<MonzoBank>(BankGroupEnum.Monzo)),
+            [BankGroupEnum.Nationwide] = new NationwideGenerator(
+                bankProfilesSettingsProvider,
+                GetBankGroup<NationwideBank>(BankGroupEnum.Nationwide)),
             [BankGroupEnum.NatWest] = new NatWestGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<NatWestBank>(BankGroupEnum.NatWest)),
@@ -98,6 +102,7 @@ public class BankProfileService : IBankProfileService
                         BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum),
                         BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum),
                         BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum),
+                        BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum),
                         BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum),
                         BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum),
                         BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum),
@@ -144,6 +149,7 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Lloyds_MbnaPersonal => BankGroupEnum.Lloyds,
             BankProfileEnum.Monzo_Monzo => BankGroupEnum.Monzo,
             BankProfileEnum.Monzo_Sandbox => BankGroupEnum.Monzo,
+            BankProfileEnum.Nationwide_Nationwide => BankGroupEnum.Nationwide,
             BankProfileEnum.NatWest_NatWestSandbox => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWest => BankGroupEnum.NatWest,
             BankProfileEnum.NatWest_NatWestBankline => BankGroupEnum.NatWest,

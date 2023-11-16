@@ -217,6 +217,7 @@ public class AccountAccessConsentSubtest
                     foreach (OBAccount6 account in accountsResp.ExternalApiResponse.Data.Account)
                     {
                         string externalAccountId = account.AccountId;
+                        OBExternalAccountSubType1CodeEnum? accountSubType = account.AccountSubType;
 
                         // GET /accounts/{accountId}
                         AccountsResponse accountsResp2 =
@@ -353,7 +354,8 @@ public class AccountAccessConsentSubtest
 
                         // GET /accounts/{AccountId}/direct-debits
                         bool testGetDirectDebits =
-                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadDirectDebits);
+                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadDirectDebits) &&
+                            accountSubType is not OBExternalAccountSubType1CodeEnum.CreditCard;
                         if (testGetDirectDebits)
                         {
                             DirectDebitsResponse directDebitsResp =
@@ -373,8 +375,10 @@ public class AccountAccessConsentSubtest
 
                         // GET /accounts/{AccountId}/standing-orders
                         bool testGetStandingOrders =
-                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic) ||
-                            requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersDetail);
+                            (requestedPermissions.Contains(OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic) ||
+                             requestedPermissions.Contains(
+                                 OBReadConsent1DataPermissionsEnum.ReadStandingOrdersDetail)) &&
+                            accountSubType is not OBExternalAccountSubType1CodeEnum.CreditCard;
                         if (testGetStandingOrders)
                         {
                             StandingOrdersResponse standingOrdersResp =

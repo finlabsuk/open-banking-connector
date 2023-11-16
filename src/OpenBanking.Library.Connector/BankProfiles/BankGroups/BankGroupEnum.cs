@@ -32,6 +32,9 @@ public enum BankGroupEnum
     [EnumMember(Value = "Monzo")]
     Monzo,
 
+    [EnumMember(Value = "Nationwide")]
+    Nationwide,
+
     [EnumMember(Value = "NatWest")]
     NatWest,
 
