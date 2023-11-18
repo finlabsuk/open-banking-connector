@@ -68,7 +68,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                             };
                         return externalApiRequest;
                     }
-                    : x => x
+                    : x => x,
+                UseReauth = bank is MonzoBank.Monzo
             },
             PaymentInitiationApiSettings = new PaymentInitiationApiSettings
             {

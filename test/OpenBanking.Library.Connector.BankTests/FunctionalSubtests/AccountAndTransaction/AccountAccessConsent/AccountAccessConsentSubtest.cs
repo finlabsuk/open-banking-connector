@@ -92,15 +92,27 @@ public class AccountAccessConsentSubtest
             // Delete AccountAccessConsent (includes external API delete)
             await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId1, true);
 
-            // Perform further testing with existing AccountAccessConsent (to avoid creating orphan object at bank if test terminates)
-
-            if (testData2.AccountAccessConsentExternalApiId is not null)
+            // Perform further testing with existing AccountAccessConsent
+            // (to avoid creating orphan object at bank if test terminates) unless re-auth not used
+            bool notUsingReAuth = !bankProfile.AccountAndTransactionApiSettings.UseReauth;
+            if (notUsingReAuth || testData2.AccountAccessConsentExternalApiId is not null)
             {
-                // Create AccountAccessConsent using existing external API consent
-                accountAccessConsentRequest.ExternalApiObject =
-                    GetRequiredExternalApiConsent(testData2, modifiedBy);
-                Guid accountAccessConsentId2 =
-                    await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
+                Guid accountAccessConsentId2;
+                if (notUsingReAuth)
+                {
+                    // Create fresh AccountAccessConsent
+                    accountAccessConsentId2 =
+                        await CreateAccountAccessConsent(accountAccessConsentRequest, requestBuilder);
+                }
+                else
+                {
+                    // Create AccountAccessConsent using existing external API consent
+                    accountAccessConsentRequest.ExternalApiObject =
+                        GetRequiredExternalApiConsent(testData2, modifiedBy);
+                    accountAccessConsentId2 = await CreateAccountAccessConsent(
+                        accountAccessConsentRequest,
+                        requestBuilder);
+                }
 
                 // Read account access consent
                 await ReadAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId2);
@@ -400,7 +412,11 @@ public class AccountAccessConsentSubtest
                 }
 
                 // Delete AccountAccessConsent (excludes external API delete)
-                await DeleteAccountAccessConsent(modifiedBy, requestBuilder, accountAccessConsentId2, false);
+                await DeleteAccountAccessConsent(
+                    modifiedBy,
+                    requestBuilder,
+                    accountAccessConsentId2,
+                    notUsingReAuth);
             }
         }
     }

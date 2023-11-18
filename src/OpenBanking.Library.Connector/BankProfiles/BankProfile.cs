@@ -130,6 +130,8 @@ public class AccountAndTransactionApiSettings
     /// </summary>
     public bool UseGetPartyEndpoint { get; set; } = true;
 
+    public bool UseReauth { get; set; } = true;
+
     public AccountAccessConsentExternalApiRequestAdjustments
         AccountAccessConsentExternalApiRequestAdjustments { get; set; } = x => x;
 }
