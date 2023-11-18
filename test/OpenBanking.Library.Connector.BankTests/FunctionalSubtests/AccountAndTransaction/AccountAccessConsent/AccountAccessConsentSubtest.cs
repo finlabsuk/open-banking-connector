@@ -379,6 +379,23 @@ public class AccountAccessConsentSubtest
                             standingOrdersResp.Warnings.Should().BeNull();
                             standingOrdersResp.ExternalApiResponse.Should().NotBeNull();
                         }
+
+                        if (bankProfile.BankProfileEnum is BankProfileEnum.Monzo_Sandbox or BankProfileEnum.Monzo_Monzo)
+                        {
+                            MonzoPotsResponse monzoPotsResp =
+                                await requestBuilderNew
+                                    .AccountAndTransaction
+                                    .MonzoPots
+                                    .ReadAsync(
+                                        accountAccessConsentId2,
+                                        null,
+                                        modifiedBy);
+
+                            // Checks
+                            monzoPotsResp.Should().NotBeNull();
+                            monzoPotsResp.Warnings.Should().BeNull();
+                            monzoPotsResp.ExternalApiResponse.Should().NotBeNull();
+                        }
                     }
                 }
 

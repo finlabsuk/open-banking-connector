@@ -53,6 +53,11 @@ public interface IAccountAndTransactionContext
     ///     API for Standing Order objects.
     /// </summary>
     IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders { get; }
+
+    /// <summary>
+    ///     API for Monzo pot objects.
+    /// </summary>
+    IReadOnlyExternalEntityContext<MonzoPotsResponse> MonzoPots { get; }
 }
 
 internal class AccountAndTransactionContext : IAccountAndTransactionContext
@@ -203,6 +208,28 @@ internal class AccountAndTransactionContext : IAccountAndTransactionContext
     public IReadOnlyExternalEntityContext<StandingOrdersResponse> StandingOrders =>
         new ReadOnlyExternalEntityContextInternal<StandingOrdersResponse>(
             new StandingOrderGet(
+                _sharedContext.Instrumentation,
+                _sharedContext.ApiVariantMapper,
+                new ConsentAccessTokenGet(
+                    _sharedContext.SoftwareStatementProfileCachedRepo,
+                    _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                    _sharedContext.TimeProvider,
+                    new GrantPost(
+                        _sharedContext.ApiClient,
+                        _sharedContext.Instrumentation,
+                        _sharedContext.MemoryCache,
+                        _sharedContext.TimeProvider),
+                    _sharedContext.Instrumentation,
+                    _sharedContext.MemoryCache,
+                    _sharedContext.EncryptionKeyInfo),
+                new AccountAccessConsentCommon(
+                    _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
+                    _sharedContext.SoftwareStatementProfileCachedRepo),
+                _sharedContext.BankProfileService));
+
+    public IReadOnlyExternalEntityContext<MonzoPotsResponse> MonzoPots =>
+        new ReadOnlyExternalEntityContextInternal<MonzoPotsResponse>(
+            new MonzoPotGet(
                 _sharedContext.Instrumentation,
                 _sharedContext.ApiVariantMapper,
                 new ConsentAccessTokenGet(
