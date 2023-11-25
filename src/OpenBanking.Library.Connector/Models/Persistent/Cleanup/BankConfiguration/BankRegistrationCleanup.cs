@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -75,28 +74,12 @@ public class BankRegistrationCleanup
             }
 
             // Prepare for removal of DbTransitionalDefault
-            if (bankRegistration.BankProfile is BankProfileEnum.DbTransitionalDefault)
+            if (bankRegistration.BankGroup is BankGroupEnum.DbTransitionalDefault)
             {
                 string message =
-                    $"No suitable BankProfile could be found for BankRegistration with ID {bankRegistration.Id} " +
+                    $"No suitable BankGroup could be found for BankRegistration with ID {bankRegistration.Id} " +
                     $"during database cleanup.";
                 throw new Exception(message);
-            }
-
-            // Update bank group
-            if (bankRegistration.BankGroup is BankGroupEnum.DbTransitionalDefault &&
-                bankRegistration.BankProfile is not BankProfileEnum.DbTransitionalDefault)
-            {
-                BankGroupEnum newBankGroup = BankProfileService.GetBankGroupEnum(bankRegistration.BankProfile);
-                string message =
-                    $"In its database record, BankRegistration with ID {bankRegistration.Id} specifies " +
-                    $"no BankGroup but a valid BankProfile. ";
-
-                bankRegistration.BankGroup = newBankGroup;
-                message +=
-                    $"This has been used to set {nameof(bankRegistration.BankGroup)} to " +
-                    $"{newBankGroup} as part of database cleanup.";
-                logger.LogInformation(message);
             }
         }
     }
