@@ -86,7 +86,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
             // Get URI
-            string bankApiId = entity.ExternalApiObject.ExternalApiId;
+            string bankApiId = entity.ExternalApiId;
             var apiRequestUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{bankApiId}");
 
             // Get appropriate token
@@ -94,7 +94,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             if (useRegistrationAccessTokenValue)
             {
                 accessToken =
-                    entity.ExternalApiObject.RegistrationAccessToken ??
+                    entity.RegistrationAccessToken ??
                     throw new InvalidOperationException("No registration access token available");
             }
             else
@@ -105,8 +105,8 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
                     processedSoftwareStatementProfile.OBSealKey,
                     tokenEndpointAuthMethod,
                     entity.TokenEndpoint,
-                    entity.ExternalApiObject.ExternalApiId,
-                    entity.ExternalApiObject.ExternalApiSecret,
+                    entity.ExternalApiId,
+                    entity.ExternalApiSecret,
                     entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,

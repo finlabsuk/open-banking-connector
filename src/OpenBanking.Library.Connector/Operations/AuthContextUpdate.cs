@@ -186,8 +186,8 @@ internal class AuthContextUpdate :
         string externalApiConsentId = consent.ExternalApiId;
         BankRegistration bankRegistration = consent.BankRegistrationNavigation;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
-        string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
-        string? externalApiSecret = bankRegistration.ExternalApiObject.ExternalApiSecret;
+        string externalApiClientId = bankRegistration.ExternalApiId;
+        string? externalApiSecret = bankRegistration.ExternalApiSecret;
         string jwksUri = bankRegistration.JwksUri;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
@@ -209,7 +209,7 @@ internal class AuthContextUpdate :
         string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
             defaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
-            null);
+            bankRegistration.DefaultQueryRedirectUri);
 
         // Validate redirect URL
         if (request.RedirectUrl is not null)

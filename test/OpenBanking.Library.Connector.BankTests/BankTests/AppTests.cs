@@ -297,8 +297,11 @@ public abstract class AppTests
         if (bankRegistrationOptions is BankRegistrationOptions.OnlyDeleteRegistration)
         {
             // Create BankRegistration using existing external API registration
-            bankRegistrationRequest.ExternalApiObject =
-                GetRequiredExternalApiBankRegistration(testData2);
+            bankRegistrationRequest.ExternalApiId =
+                testData2.BankRegistrationExternalApiId ??
+                throw new InvalidOperationException("No external API BankRegistration ID provided.");
+            bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
+            bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
             Guid bankRegistrationId =
                 await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
 
@@ -328,8 +331,11 @@ public abstract class AppTests
             }
 
             // Create BankRegistration using existing external API registration
-            bankRegistrationRequest.ExternalApiObject =
-                GetRequiredExternalApiBankRegistration(testData2);
+            bankRegistrationRequest.ExternalApiId =
+                testData2.BankRegistrationExternalApiId ??
+                throw new InvalidOperationException("No external API BankRegistration ID provided.");
+            bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
+            bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
             Guid bankRegistrationId =
                 await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
 
@@ -349,7 +355,7 @@ public abstract class AppTests
             string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
                 bankProfile.DefaultResponseMode,
                 bankRegistrationReadResponse.DefaultFragmentRedirectUri,
-                null);
+                bankRegistrationReadResponse.DefaultQueryRedirectUri);
             string authUrlLeftPart =
                 new Uri(redirectUri)
                     .GetLeftPart(UriPartial.Authority);
@@ -447,7 +453,7 @@ public abstract class AppTests
         // Checks and assignments
         registrationResp.Should().NotBeNull();
         registrationResp.Warnings.Should().BeNull();
-        if (bankRegistrationRequest.ExternalApiObject is not null)
+        if (bankRegistrationRequest.ExternalApiId is not null)
         {
             registrationResp.ExternalApiResponse.Should().BeNull();
         }
@@ -459,16 +465,6 @@ public abstract class AppTests
         Guid bankRegistrationId1 = registrationResp.Id;
         return bankRegistrationId1;
     }
-
-    private static ExternalApiBankRegistration GetRequiredExternalApiBankRegistration(BankTestData2 testData2) =>
-        new()
-        {
-            ExternalApiId =
-                testData2.BankRegistrationExternalApiId ??
-                throw new InvalidOperationException("No external API BankRegistration ID provided."),
-            ExternalApiSecret = testData2.BankRegistrationExternalApiSecret,
-            RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken
-        };
 
     private static async Task DeleteBankRegistration(
         IRequestBuilder requestBuilder,

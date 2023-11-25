@@ -82,7 +82,7 @@ internal class
         string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
             bankProfile.DefaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
-            null);
+            bankRegistration.DefaultQueryRedirectUri);
 
         // Create auth URL
         string consentAuthGetAudClaim =
@@ -93,7 +93,7 @@ internal class
             accountAccessConsent.ExternalApiId,
             processedSoftwareStatementProfile.OBSealKey,
             bankRegistration,
-            bankRegistration.ExternalApiObject.ExternalApiId,
+            bankRegistration.ExternalApiId,
             customBehaviour?.AccountAccessConsentAuthGet,
             authorizationEndpoint,
             consentAuthGetAudClaim,

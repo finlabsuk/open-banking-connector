@@ -2,31 +2,13 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
-
-internal class ExternalApiObject : IBankRegistrationExternalApiObjectPublicQuery
-{
-    public ExternalApiObject(string externalApiId, string? externalApiSecret, string? registrationAccessToken)
-    {
-        ExternalApiId = externalApiId;
-        ExternalApiSecret = externalApiSecret;
-        RegistrationAccessToken = registrationAccessToken;
-    }
-
-    public string? ExternalApiSecret { get; }
-
-    public string? RegistrationAccessToken { get; }
-
-    public string ExternalApiId { get; }
-}
 
 /// <summary>
 ///     Persisted type.
@@ -36,25 +18,6 @@ internal class BankRegistration :
     BaseEntity,
     IBankRegistrationPublicQuery
 {
-    /// <summary>
-    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-    /// </summary>
-    [Column("external_api_id")]
-    private readonly string _externalApiId;
-
-    /// <summary>
-    ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
-    /// </summary>
-    [Column("external_api_secret")]
-    private readonly string? _externalApiSecret;
-
-    /// <summary>
-    ///     External API registration access token. Sometimes used to support registration adjustments etc.
-    /// </summary>
-    [Column("registration_access_token")]
-    private readonly string? _registrationAccessToken;
-
     public BankRegistration(
         Guid id,
         string? reference,
@@ -63,20 +26,19 @@ internal class BankRegistration :
         string? isDeletedModifiedBy,
         DateTimeOffset created,
         string? createdBy,
-        string externalApiId,
         string? externalApiSecret,
         string? registrationAccessToken,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
-        OAuth2ResponseMode defaultResponseMode,
         BankGroupEnum bankGroup,
         bool useSimulatedBank,
+        string externalApiId,
         BankProfileEnum bankProfile,
         string jwksUri,
         string? registrationEndpoint,
         string tokenEndpoint,
         string authorizationEndpoint,
-        BankRegistrationGroup? bankRegistrationGroup,
         string defaultFragmentRedirectUri,
+        string defaultQueryRedirectUri,
         IList<string> redirectUris,
         string softwareStatementProfileId,
         string? softwareStatementProfileOverride,
@@ -89,21 +51,21 @@ internal class BankRegistration :
         created,
         createdBy)
     {
-        _externalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
-        _externalApiSecret = externalApiSecret;
-        _registrationAccessToken = registrationAccessToken;
+        ExternalApiSecret = externalApiSecret;
+        RegistrationAccessToken = registrationAccessToken;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
-        DefaultResponseMode = defaultResponseMode;
         BankGroup = bankGroup;
         UseSimulatedBank = useSimulatedBank;
+        ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         BankProfile = bankProfile;
         JwksUri = jwksUri ?? throw new ArgumentNullException(nameof(jwksUri));
         RegistrationEndpoint = registrationEndpoint;
         TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
         AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
-        BankRegistrationGroup = bankRegistrationGroup;
         DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
                                      throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
+        DefaultQueryRedirectUri =
+            defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
         SoftwareStatementProfileId = softwareStatementProfileId ??
                                      throw new ArgumentNullException(nameof(softwareStatementProfileId));
@@ -111,17 +73,20 @@ internal class BankRegistration :
         RegistrationScope = registrationScope;
     }
 
-    public ExternalApiObject ExternalApiObject => new(
-        _externalApiId,
-        _externalApiSecret,
-        _registrationAccessToken);
+    /// <summary>
+    ///     External API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes etc.
+    /// </summary>
+    public string? ExternalApiSecret { get; }
+
+    /// <summary>
+    ///     External API registration access token. Sometimes used to support registration adjustments etc.
+    /// </summary>
+    public string? RegistrationAccessToken { get; }
 
     /// <summary>
     ///     Token endpoint authorisation method
     /// </summary>
     public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
-
-    public OAuth2ResponseMode DefaultResponseMode { get; }
 
     /// <summary>
     ///     Bank group
@@ -134,9 +99,10 @@ internal class BankRegistration :
     public bool UseSimulatedBank { get; }
 
     /// <summary>
-    ///     Redirect URIs in addition to default one used for this registration.
+    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
     /// </summary>
-    public IList<string> OtherRedirectUris { get; set; } = new List<string>();
+    public string ExternalApiId { get; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -164,15 +130,14 @@ internal class BankRegistration :
     public string AuthorizationEndpoint { get; }
 
     /// <summary>
-    ///     Bank registration group. The same external API registration object is
-    ///     re-used by all members of a group.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup { get; }
-
-    /// <summary>
     ///     Default fragment redirect URI used for this registration.
     /// </summary>
     public string DefaultFragmentRedirectUri { get; set; }
+
+    /// <summary>
+    ///     Default query redirect URI used for this registration.
+    /// </summary>
+    public string DefaultQueryRedirectUri { get; set; }
 
     /// <summary>
     ///     Redirect URIs used for registration.
@@ -190,7 +155,4 @@ internal class BankRegistration :
     ///     Functional APIs used for bank registration.
     /// </summary>
     public RegistrationScopeEnum RegistrationScope { get; }
-
-    IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
-        ExternalApiObject;
 }

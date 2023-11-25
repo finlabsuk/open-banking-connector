@@ -46,6 +46,13 @@ public class BankRegistrationCleanup
                 logger.LogWarning(message);
             }
 
+            // Check for empty RedirectUris
+            if (!bankRegistration.RedirectUris.Any())
+            {
+                throw new Exception(
+                    $"Found non-empty RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
+            }
+
             // Check for empty DefaultFragmentRedirectUri
             if (string.IsNullOrEmpty(bankRegistration.DefaultFragmentRedirectUri))
             {
@@ -53,24 +60,33 @@ public class BankRegistrationCleanup
                     $"Null or empty DefaultFragmentRedirectUri found for BankRegistration with ID {bankRegistration.Id}.");
             }
 
-            // Check for empty RedirectUris
-            if (!bankRegistration.RedirectUris.Any())
+            // Check DefaultFragmentRedirectUri
+            if (!bankRegistration.RedirectUris.Contains(bankRegistration.DefaultFragmentRedirectUri))
             {
-                var newRedirectUris =
-                    new List<string>(bankRegistration.OtherRedirectUris)
-                    {
-                        bankRegistration.DefaultFragmentRedirectUri
-                    };
-                if (!newRedirectUris.Any())
+                throw new Exception(
+                    $"DefaultFragmentRedirectUri not included " +
+                    $"in RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
+            }
+
+            // Check for empty DefaultQueryRedirectUri
+            if (string.IsNullOrEmpty(bankRegistration.DefaultQueryRedirectUri))
+            {
+                if (processedSoftwareStatementProfile is not null)
                 {
-                    throw new Exception(
-                        $"Cannot create non-empty RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
+                    string defaultQueryRedirectUrl = processedSoftwareStatementProfile.DefaultQueryRedirectUrl;
+                    if (string.IsNullOrEmpty(defaultQueryRedirectUrl))
+                    {
+                        throw new Exception(
+                            $"Can't find DefaultQueryRedirectUrl for software statement profile {softwareStatementProfileId} ");
+                    }
+                    if (!bankRegistration.RedirectUris.Contains(defaultQueryRedirectUrl))
+                    {
+                        throw new Exception(
+                            $"DefaultQueryRedirectUrl for software statement profile {softwareStatementProfileId} " +
+                            $"not included in RedirectUris for BankRegistration with ID {bankRegistration.Id}.");
+                    }
+                    bankRegistration.DefaultQueryRedirectUri = defaultQueryRedirectUrl;
                 }
-                bankRegistration.RedirectUris = newRedirectUris;
-                string message =
-                    $"RedirectUris for BankRegistration with ID {bankRegistration.Id} has been populated " +
-                    $"as part of database cleanup.";
-                logger.LogInformation(message);
             }
 
             // Prepare for removal of DbTransitionalDefault

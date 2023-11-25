@@ -94,8 +94,8 @@ internal class ConsentAccessTokenGet
             string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
                 defaultResponseMode,
                 bankRegistration.DefaultFragmentRedirectUri,
-                null);
-            string externalApiClientId = bankRegistration.ExternalApiObject.ExternalApiId;
+                bankRegistration.DefaultQueryRedirectUri);
+            string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
                 await _grantPost.PostRefreshTokenGrantAsync(
@@ -103,7 +103,7 @@ internal class ConsentAccessTokenGet
                     bankRegistration.JwksUri,
                     bankIssuerUrl,
                     externalApiClientId,
-                    bankRegistration.ExternalApiObject.ExternalApiSecret,
+                    bankRegistration.ExternalApiSecret,
                     consent.ExternalApiId,
                     consent.ExternalApiUserId,
                     nonce,

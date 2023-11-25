@@ -76,6 +76,16 @@ public class BankRegistration : Base, ISupportsValidation
     public string? DefaultFragmentRedirectUri { get; set; }
 
     /// <summary>
+    ///     Default query redirect URI to use for this registration. This URI must
+    ///     be included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is
+    ///     null default to those specified in the software statement in software statement profile
+    ///     SoftwareStatementProfileId).
+    ///     If null, the default query redirect URI specified in the software statement profile
+    ///     will be used.
+    /// </summary>
+    public string? DefaultQueryRedirectUri { get; set; }
+
+    /// <summary>
     ///     Redirect URIs to use for this registration. Must be a subset of those specified in
     ///     the software statement in software statement profile SoftwareStatementProfileId.
     ///     If null, redirect URIs specified in the software statement will be used.
@@ -83,29 +93,26 @@ public class BankRegistration : Base, ISupportsValidation
     public IList<string>? RedirectUris { get; set; }
 
     /// <summary>
-    ///     Information about a previously-created external API (bank) registration (OAuth2 client) created at the bank either
+    ///     External (bank) API ID, i.e. ID of OAuth2 client at bank. This should be unique between objects created at the
+    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+    ///     Use this to supply information about a previously-created external API (bank) registration (OAuth2 client) created
+    ///     at the bank either
     ///     via API or the bank's developer portal.
     ///     When non-null, this external registration will re-used and Dynamic Client Registration (DCR) will not be performed.
     /// </summary>
-    public ExternalApiBankRegistration? ExternalApiObject { get; set; }
+    public string? ExternalApiId { get; set; }
 
     /// <summary>
-    ///     Forces Dynamic Client Registration (DCR) even when an external API (bank) registration (OAuth2 client) already
-    ///     exists
-    ///     for a member of the same BankRegistrationGroup. By default, for each BankRegistrationGroup, any existing external
-    ///     API registration is
-    ///     re-used and DCR will only be performed the first time the BankRegistrationGroup is used.
-    ///     This is to prevent unnecessary duplicate
-    ///     external API (bank) registrations which may disrupt/overwrite an
-    ///     existing such registration depending on bank behaviour.
-    ///     The safeguard of the re-using external API registrations within a BankRegistrationGroup can be removed, and the use
-    ///     of DCR forced, by setting this value to true.
-    ///     Please use this setting with care, and it is suggested to delete any
-    ///     unwanted external API
-    ///     registrations at the bank possibly via a support ticket if API support for this is not provided.
-    ///     When this setting is true and ExternalApiObject is non-null, an error will be produced.
+    ///     External (bank) API secret. Present to allow use of legacy token auth method "client_secret_basic" in sandboxes
+    ///     etc. Only relevant/used when <see cref="ExternalApiId" /> is non-null.
     /// </summary>
-    public bool ForceDynamicClientRegistration { get; set; } = false;
+    public string? ExternalApiSecret { get; set; }
+
+    /// <summary>
+    ///     External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only
+    ///     relevant/used when <see cref="ExternalApiId" /> is non-null.
+    /// </summary>
+    public string? RegistrationAccessToken { get; set; }
 
     /// <summary>
     ///     Use simulated bank (only supported for some bank profiles).

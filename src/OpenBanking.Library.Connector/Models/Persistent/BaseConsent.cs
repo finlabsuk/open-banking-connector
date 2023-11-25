@@ -190,7 +190,7 @@ internal abstract class BaseConsent : BaseEntity
         Id.ToString(),
         ExternalApiId,
         BankRegistrationId.ToString(),
-        bankRegistration.ExternalApiObject.ExternalApiId,
+        bankRegistration.ExternalApiId,
         bankRegistration.BankProfile.ToString());
 
     public abstract AccessTokenEntity AddNewAccessToken(

@@ -116,11 +116,13 @@ internal class
             softwareStatementProfileId);
 
         // Determine redirect URIs
-        (string defaultFragmentRedirectUri, IList<string> redirectUris) = GetRedirectUris(
-            processedSoftwareStatementProfile,
-            ssaPayload,
-            request.DefaultFragmentRedirectUri,
-            request.RedirectUris);
+        (IList<string> redirectUris, string defaultFragmentRedirectUri, string defaultQueryRedirectUri) =
+            GetRedirectUris(
+                processedSoftwareStatementProfile,
+                ssaPayload,
+                request.DefaultFragmentRedirectUri,
+                request.DefaultQueryRedirectUri,
+                request.RedirectUris);
 
         // Determine registration scope
         RegistrationScopeEnum registrationScope =
@@ -189,19 +191,10 @@ internal class
             supportsSca,
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
-        // Check setting of ForceDynamicClientRegistration
-        if (request.ExternalApiObject is not null &&
-            request.ForceDynamicClientRegistration)
-        {
-            throw new ArgumentException(
-                $"{nameof(request.ForceDynamicClientRegistration)} specified as true yet non-null {nameof(request.ExternalApiObject)} also specified.");
-        }
-
         // Get re-usable existing bank registration if possible
         BankRegistrationGroup? bankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
         BankRegistrationPersisted? existingGroupRegistration = null;
-        if (bankRegistrationGroup is not null &&
-            !request.ForceDynamicClientRegistration)
+        if (bankRegistrationGroup is not null)
         {
             // Get existing registrations with same bank group and SSA (ideally software ID)
             IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
@@ -226,7 +219,7 @@ internal class
                     CheckExistingRegistrationCompatible(
                         existingGroupRegistration,
                         existingRegBankProfile,
-                        request.ExternalApiObject,
+                        request.ExternalApiId,
                         bankRegistrationGroup.Value,
                         softwareStatementProfileOverrideCase,
                         tokenEndpointAuthMethod,
@@ -244,17 +237,17 @@ internal class
         if (existingGroupRegistration is not null)
         {
             // Re-use existing external (bank) API registration
-            externalApiId = existingGroupRegistration.ExternalApiObject.ExternalApiId;
-            externalApiSecret = existingGroupRegistration.ExternalApiObject.ExternalApiSecret;
-            registrationAccessToken = existingGroupRegistration.ExternalApiObject.RegistrationAccessToken;
+            externalApiId = existingGroupRegistration.ExternalApiId;
+            externalApiSecret = existingGroupRegistration.ExternalApiSecret;
+            registrationAccessToken = existingGroupRegistration.RegistrationAccessToken;
             externalApiResponse = null;
         }
-        else if (request.ExternalApiObject is not null)
+        else if (request.ExternalApiId is not null)
         {
             // Use supplied external (bank) API registration
-            externalApiId = request.ExternalApiObject.ExternalApiId;
-            externalApiSecret = request.ExternalApiObject.ExternalApiSecret;
-            registrationAccessToken = request.ExternalApiObject.RegistrationAccessToken;
+            externalApiId = request.ExternalApiId;
+            externalApiSecret = request.ExternalApiSecret;
+            registrationAccessToken = request.RegistrationAccessToken;
             externalApiResponse = null;
         }
         else
@@ -312,20 +305,19 @@ internal class
             request.CreatedBy,
             utcNow,
             request.CreatedBy,
-            externalApiId,
             externalApiSecret,
             registrationAccessToken,
             tokenEndpointAuthMethod,
-            bankProfile.DefaultResponseMode,
             bankGroup,
             useSimulatedBank,
+            externalApiId,
             bankProfile.BankProfileEnum,
             jwksUri,
             registrationEndpoint,
             tokenEndpoint,
             authorizationEndpoint,
-            bankRegistrationGroup,
             defaultFragmentRedirectUri,
+            defaultQueryRedirectUri,
             redirectUris,
             softwareStatementProfileId,
             softwareStatementProfileOverrideCase,
@@ -349,7 +341,6 @@ internal class
             entity.Created,
             entity.CreatedBy,
             entity.Reference,
-            new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
             entity.UseSimulatedBank,
@@ -362,8 +353,9 @@ internal class
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
+            entity.DefaultQueryRedirectUri,
             entity.RedirectUris,
-            entity.BankRegistrationGroup);
+            entity.ExternalApiId);
 
         return (response, nonErrorMessages);
     }
@@ -382,7 +374,7 @@ internal class
                 .DbSetNoTracking
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
             throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.ModifiedBy}.");
-        string externalApiId = entity.ExternalApiObject.ExternalApiId;
+        string externalApiId = entity.ExternalApiId;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
@@ -419,7 +411,7 @@ internal class
             if (useRegistrationAccessTokenValue)
             {
                 accessToken =
-                    entity.ExternalApiObject.RegistrationAccessToken ??
+                    entity.RegistrationAccessToken ??
                     throw new InvalidOperationException("No registration access token available");
             }
             else
@@ -430,8 +422,8 @@ internal class
                     processedSoftwareStatementProfile.OBSealKey,
                     tokenEndpointAuthMethod,
                     entity.TokenEndpoint,
-                    entity.ExternalApiObject.ExternalApiId,
-                    entity.ExternalApiObject.ExternalApiSecret,
+                    entity.ExternalApiId,
+                    entity.ExternalApiSecret,
                     entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
@@ -473,7 +465,6 @@ internal class
             entity.Created,
             entity.CreatedBy,
             entity.Reference,
-            new ExternalApiObjectResponse(entity.ExternalApiObject.ExternalApiId),
             externalApiResponse,
             null,
             entity.UseSimulatedBank,
@@ -486,8 +477,9 @@ internal class
             entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
+            entity.DefaultQueryRedirectUri,
             entity.RedirectUris,
-            entity.BankRegistrationGroup);
+            entity.ExternalApiId);
 
         return (response, nonErrorMessages);
     }
@@ -495,7 +487,7 @@ internal class
     private IList<IFluentResponseInfoOrWarningMessage> CheckExistingRegistrationCompatible(
         BankRegistrationPersisted existingRegistration,
         BankProfile existingRegistrationBankProfile,
-        ExternalApiBankRegistration? externalApiBankRegistration,
+        string? externalApiId,
         BankRegistrationGroup bankRegistrationGroup,
         string? softwareStatementProfileOverrideCase,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
@@ -505,22 +497,22 @@ internal class
         var nonErrorMessages =
             new List<IFluentResponseInfoOrWarningMessage>();
 
-        if (externalApiBankRegistration is not null)
+        if (externalApiId is not null)
         {
-            if (externalApiBankRegistration.ExternalApiId !=
-                existingRegistration.ExternalApiObject.ExternalApiId)
+            if (externalApiId !=
+                existingRegistration.ExternalApiId)
             {
                 throw new
                     InvalidOperationException(
                         $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
-                        $"used ExternalApiObject with ExternalApiId {existingRegistration.ExternalApiObject.ExternalApiId} " +
-                        $"which is different from expected {externalApiBankRegistration.ExternalApiId}.");
+                        $"used ExternalApiObject with ExternalApiId {existingRegistration.ExternalApiId} " +
+                        $"which is different from expected {externalApiId}.");
             }
 
             string warningMessage1 =
                 $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
                 "exists whose ExternalApiId matches ExternalApiId from " +
-                $"ExternalApiObject provided in request ({externalApiBankRegistration.ExternalApiId}). " +
+                $"ExternalApiObject provided in request ({externalApiId}). " +
                 "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
                 "previous registration re-used.";
             nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage1));
@@ -529,7 +521,7 @@ internal class
             string warningMessage2 =
                 $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
                 "exists whose ExternalApiId matches ExternalApiId from " +
-                $"ExternalApiObject provided in request ({externalApiBankRegistration.ExternalApiId}). " +
+                $"ExternalApiObject provided in request ({externalApiId}). " +
                 "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
                 "previous registration re-used.";
             nonErrorMessages.Add(new FluentResponseWarningMessage(warningMessage2));
@@ -772,11 +764,13 @@ internal class
         }
     }
 
-    private static (string defaultFragmentRedirectUri, IList<string> redirectUris) GetRedirectUris(
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-        SsaPayload ssaPayload,
-        string? requestDefaultFragmentRedirectUri,
-        IList<string>? requestRedirectUris)
+    private static (IList<string> redirectUris, string defaultFragmentRedirectUri, string defaultQueryRedirectUri)
+        GetRedirectUris(
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            SsaPayload ssaPayload,
+            string? requestDefaultFragmentRedirectUri,
+            string? requestDefaultQueryRedirectUri,
+            IList<string>? requestRedirectUris)
     {
         List<string> ssaRedirectUris = ssaPayload.SoftwareRedirectUris;
 
@@ -815,13 +809,40 @@ internal class
             if (!redirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
             {
                 throw new InvalidOperationException(
-                    $"Default fragment redirect URI {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} from software statement profile not included in specified RedirectUris. Please specify a different one or include this one in specified RedirectUris.");
+                    $"Default fragment redirect URI {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                    $"from software statement profile not included in specified RedirectUris. " +
+                    $"Please specify a different one or include this one in specified RedirectUris.");
             }
             defaultFragmentRedirectUri =
                 processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
         }
 
-        return (defaultFragmentRedirectUri, redirectUris);
+        // Determine default query redirect URI ensuring also contained in redirect URIs list
+        string defaultQueryRedirectUri;
+        if (requestDefaultQueryRedirectUri is not null)
+        {
+            if (!redirectUris.Contains(requestDefaultQueryRedirectUri))
+            {
+                throw new InvalidOperationException(
+                    $"Specified default query redirect URI {requestDefaultQueryRedirectUri} not included in specified RedirectUris.");
+            }
+            defaultQueryRedirectUri = requestDefaultQueryRedirectUri;
+        }
+        else
+        {
+            if (!redirectUris.Contains(processedSoftwareStatementProfile.DefaultQueryRedirectUrl))
+            {
+                throw new InvalidOperationException(
+                    $"Default query redirect URI {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
+                    $"from software statement profile not included in specified RedirectUris. " +
+                    $"Please specify a different one or include this one in specified RedirectUris.");
+            }
+            defaultQueryRedirectUri =
+                processedSoftwareStatementProfile.DefaultQueryRedirectUrl;
+        }
+
+
+        return (redirectUris, defaultFragmentRedirectUri, defaultQueryRedirectUri);
     }
 
     private static void CheckRedirectUris(

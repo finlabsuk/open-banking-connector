@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -31,25 +30,14 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
         // Top-level property info: read-only, JSON conversion, etc
         builder.Property(e => e.Id)
             .HasColumnOrder(1);
-        builder.Property("_externalApiId")
+        builder.Property(e => e.ExternalApiId)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property("_externalApiSecret")
+        builder.Property(e => e.ExternalApiSecret)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property("_registrationAccessToken")
+        builder.Property(e => e.RegistrationAccessToken)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.DefaultFragmentRedirectUri);
-        builder.Property(e => e.OtherRedirectUris)
-            .HasConversion(
-                v =>
-                    JsonConvert.SerializeObject(
-                        v,
-                        _jsonFormatting,
-                        new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
-                v => JsonConvert.DeserializeObject<List<string>>(v)!,
-                new ValueComparer<IList<string>>(
-                    (c1, c2) => c1!.SequenceEqual(c2!),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList()));
+        builder.Property(e => e.DefaultQueryRedirectUri);
         builder.Property(e => e.RedirectUris)
             .HasConversion(
                 v =>
@@ -72,18 +60,12 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
         builder.Property(e => e.TokenEndpointAuthMethod)
             .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
-        builder.Property(e => e.DefaultResponseMode)
-            .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankGroup)
             .HasConversion(new EnumToStringConverter<BankGroupEnum>());
         builder.Property(e => e.UseSimulatedBank)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankProfile)
             .HasConversion(new EnumToStringConverter<BankProfileEnum>());
-        builder.Property(e => e.BankRegistrationGroup)
-            .HasConversion(new EnumToStringConverter<BankRegistrationGroup>())
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.JwksUri)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.RegistrationEndpoint)
@@ -95,7 +77,6 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
 
         if (_dbProvider is DbProvider.PostgreSql)
         {
-            builder.Property(e => e.OtherRedirectUris).HasColumnType("jsonb");
             builder.Property(e => e.RedirectUris).HasColumnType("jsonb");
         }
     }

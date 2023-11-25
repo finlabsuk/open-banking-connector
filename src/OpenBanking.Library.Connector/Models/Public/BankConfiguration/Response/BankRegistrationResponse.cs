@@ -9,25 +9,6 @@ using ClientRegistrationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
-public interface IBankRegistrationExternalApiObjectPublicQuery
-{
-    /// <summary>
-    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-    /// </summary>
-    string ExternalApiId { get; }
-}
-
-public class ExternalApiObjectResponse : IBankRegistrationExternalApiObjectPublicQuery
-{
-    public ExternalApiObjectResponse(string externalApiId)
-    {
-        ExternalApiId = externalApiId;
-    }
-
-    public string ExternalApiId { get; }
-}
-
 public interface IBankRegistrationPublicQuery : IBaseQuery
 {
     /// <summary>
@@ -77,6 +58,8 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     /// </summary>
     public string DefaultFragmentRedirectUri { get; }
 
+    public string DefaultQueryRedirectUri { get; }
+
     /// <summary>
     ///     Redirect URIs to use for this registration. Must be a subset of those specified in
     ///     the software statement in software statement profile SoftwareStatementProfileId.
@@ -84,13 +67,7 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     /// </summary>
     public IList<string> RedirectUris { get; }
 
-    IBankRegistrationExternalApiObjectPublicQuery ExternalApiObject { get; }
-
-    /// <summary>
-    ///     Bank registration group. The same external API registration object is
-    ///     re-used by all members of a group.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup { get; }
+    public string ExternalApiId { get; }
 }
 
 /// <summary>
@@ -103,7 +80,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         DateTimeOffset created,
         string? createdBy,
         string? reference,
-        ExternalApiObjectResponse externalApiObject,
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
         IList<string>? warnings,
         bool useSimulatedBank,
@@ -116,27 +92,29 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope,
         string defaultFragmentRedirectUri,
+        string defaultQueryRedirectUri,
         IList<string> redirectUris,
-        BankRegistrationGroup? bankRegistrationGroup) : base(id, created, createdBy, reference)
+        string externalApiId) : base(id, created, createdBy, reference)
     {
-        ExternalApiObject = externalApiObject;
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
         UseSimulatedBank = useSimulatedBank;
         BankProfile = bankProfile;
-        JwksUri = jwksUri;
+        JwksUri = jwksUri ?? throw new ArgumentNullException(nameof(jwksUri));
         RegistrationEndpoint = registrationEndpoint;
-        TokenEndpoint = tokenEndpoint;
-        AuthorizationEndpoint = authorizationEndpoint;
-        SoftwareStatementProfileId = softwareStatementProfileId;
+        TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
+        AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
+        SoftwareStatementProfileId = softwareStatementProfileId ??
+                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
         SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
-        DefaultFragmentRedirectUri = defaultFragmentRedirectUri;
-        RedirectUris = redirectUris;
-        BankRegistrationGroup = bankRegistrationGroup;
+        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
+                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
+        DefaultQueryRedirectUri =
+            defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
+        RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
+        ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
     }
-
-    public ExternalApiObjectResponse ExternalApiObject { get; }
 
     public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
 
@@ -197,6 +175,8 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     /// </summary>
     public string DefaultFragmentRedirectUri { get; }
 
+    public string DefaultQueryRedirectUri { get; }
+
     /// <summary>
     ///     Redirect URIs to use for this registration. Must be a subset of those specified in
     ///     the software statement in software statement profile SoftwareStatementProfileId.
@@ -204,12 +184,5 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     /// </summary>
     public IList<string> RedirectUris { get; }
 
-    /// <summary>
-    ///     Bank registration group. The same external API registration object is
-    ///     re-used by all members of a group.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup { get; }
-
-    IBankRegistrationExternalApiObjectPublicQuery IBankRegistrationPublicQuery.ExternalApiObject =>
-        ExternalApiObject;
+    public string ExternalApiId { get; }
 }
