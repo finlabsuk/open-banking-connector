@@ -17,9 +17,9 @@ public class KeySecretTests
     [InlineData(null, "", null)]
     [InlineData("", null, null)]
     [InlineData(null, null, null)]
-    public void Ctor_NullParameters_ExceptionThrown(string vault, string key, string value)
+    public void Ctor_NullParameters_ExceptionThrown(string? vault, string? key, string? value)
     {
-        Func<KeySecret> a = () => new KeySecret(vault, key, value);
+        Func<KeySecret> a = () => new KeySecret(vault!, key!, value!);
 
         a.Should().Throw<ArgumentNullException>();
     }

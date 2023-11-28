@@ -19,7 +19,7 @@ public class CertificateExtensionsTests
     [InlineData("PEM")]
     [InlineData("begin CERTIFICATE")]
     [InlineData(" BEGIN CERTIFICATE")]
-    public void IsPemThumbprint_False(string tp)
+    public void IsPemThumbprint_False(string? tp)
     {
         bool result = tp.IsPemThumbprint();
 
