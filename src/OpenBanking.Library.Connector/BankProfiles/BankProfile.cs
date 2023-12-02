@@ -43,11 +43,6 @@ public class BankConfigurationApiSettings
     private readonly bool _useRegistrationGetEndpoint;
 
     /// <summary>
-    ///     Bank registration group.
-    /// </summary>
-    public BankRegistrationGroup? BankRegistrationGroup = null;
-
-    /// <summary>
     ///     Describes whether a registration scope should be used when testing with this bank.
     ///     By default, any registration scope can be used.
     /// </summary>

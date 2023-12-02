@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -16,7 +17,7 @@ public enum HsbcBank
     HsbcNetUk
 }
 
-public class Hsbc : BankGroupBase<HsbcBank>
+public class Hsbc : BankGroupBase<HsbcBank, HsbcRegistrationGroup>
 {
     public Hsbc(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
@@ -30,4 +31,8 @@ public class Hsbc : BankGroupBase<HsbcBank>
             [BankProfileEnum.Hsbc_UkPersonal] = HsbcBank.UkPersonal,
             [BankProfileEnum.Hsbc_HsbcNetUk] = HsbcBank.HsbcNetUk
         };
+
+    public override HsbcRegistrationGroup? GetRegistrationGroup(
+        HsbcBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank;
 }

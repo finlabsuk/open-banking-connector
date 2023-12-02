@@ -121,6 +121,17 @@ public class BankProfileService : IBankProfileService
         return bank;
     }
 
+    public IBankGroup<TBank, TRegistrationGroup> GetBankGroup<TBank, TRegistrationGroup>(BankGroupEnum bankGroupEnum)
+        where TBank : struct, Enum
+        where TRegistrationGroup : struct, Enum
+    {
+        IBankGroup<TBank, TRegistrationGroup> bankGroup =
+            _bankGroupsDictionary[bankGroupEnum] as IBankGroup<TBank, TRegistrationGroup> ??
+            throw new ArgumentException(
+                $"Bank group {nameof(bankGroupEnum)} not found with bank type {nameof(TBank)} and registration group type {nameof(TRegistrationGroup)}.");
+        return bankGroup;
+    }
+
     public static BankGroupEnum GetBankGroupEnum(BankProfileEnum bankProfileEnum) =>
         bankProfileEnum switch
         {

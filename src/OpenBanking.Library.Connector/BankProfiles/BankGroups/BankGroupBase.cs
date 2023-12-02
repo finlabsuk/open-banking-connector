@@ -3,11 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
-public abstract class BankGroupBase<TBank> : IBankGroup<TBank>
+public abstract class BankGroupBase<TBank, TRegistrationGroup> : IBankGroup<TBank, TRegistrationGroup>
     where TBank : struct, Enum
+    where TRegistrationGroup : struct, Enum
 {
     protected BankGroupBase(BankGroupEnum bankGroupEnum)
     {
@@ -15,6 +17,8 @@ public abstract class BankGroupBase<TBank> : IBankGroup<TBank>
     }
 
     protected abstract ConcurrentDictionary<BankProfileEnum, TBank> BankProfileToBank { get; }
+
+    public abstract TRegistrationGroup? GetRegistrationGroup(TBank bank, RegistrationScopeEnum registrationScopeEnum);
 
     public BankGroupEnum BankGroupEnum { get; }
 

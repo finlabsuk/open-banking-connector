@@ -139,10 +139,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             {
                 UseRegistrationDeleteEndpoint = true,
                 UseRegistrationGetEndpoint = true,
-                UseRegistrationAccessToken = bank is LloydsBank.Sandbox,
-                BankRegistrationGroup = bank is LloydsBank.Sandbox
-                    ? BankRegistrationGroup.Lloyds_Sandbox
-                    : BankRegistrationGroup.Lloyds_Production
+                UseRegistrationAccessToken = bank is LloydsBank.Sandbox
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {

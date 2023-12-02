@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -11,10 +12,14 @@ public enum RevolutBank
     Revolut
 }
 
-public class Revolut : BankGroupBase<RevolutBank>
+public class Revolut : BankGroupBase<RevolutBank, RevolutRegistrationGroup>
 {
     public Revolut(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, RevolutBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Revolut_Revolut] = RevolutBank.Revolut };
+
+    public override RevolutRegistrationGroup? GetRegistrationGroup(
+        RevolutBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank;
 }

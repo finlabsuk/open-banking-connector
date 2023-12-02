@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -26,7 +27,18 @@ public enum NatWestBank
     Coutts
 }
 
-public class NatWest : BankGroupBase<NatWestBank>
+public enum NatWestRegistrationGroup
+{
+    NatWestSandbox,
+    NatWestProduction,
+    RoyalBankOfScotlandSandbox,
+    RoyalBankOfScotlandProduction,
+    UlsterBankNiProduction,
+    MettleProduction,
+    CouttsProduction
+}
+
+public class NatWest : BankGroupBase<NatWestBank, NatWestRegistrationGroup>
 {
     public NatWest(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
@@ -50,4 +62,27 @@ public class NatWest : BankGroupBase<NatWestBank>
             [BankProfileEnum.NatWest_Mettle] = NatWestBank.Mettle,
             [BankProfileEnum.NatWest_Coutts] = NatWestBank.Coutts
         };
+
+    public override NatWestRegistrationGroup? GetRegistrationGroup(
+        NatWestBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank switch
+    {
+        NatWestBank.NatWestSandbox => NatWestRegistrationGroup.NatWestSandbox,
+        NatWestBank.NatWest
+            or NatWestBank.NatWestBankline
+            or NatWestBank.NatWestClearSpend => NatWestRegistrationGroup.NatWestProduction,
+        NatWestBank.RoyalBankOfScotlandSandbox => NatWestRegistrationGroup.RoyalBankOfScotlandSandbox,
+        NatWestBank.RoyalBankOfScotland
+            or NatWestBank.RoyalBankOfScotlandBankline
+            or NatWestBank.RoyalBankOfScotlandClearSpend
+            or NatWestBank.TheOne
+            or NatWestBank.NatWestOne
+            or NatWestBank.VirginOne => NatWestRegistrationGroup.RoyalBankOfScotlandProduction,
+        NatWestBank.UlsterBankNi
+            or NatWestBank.UlsterBankNiBankline
+            or NatWestBank.UlsterBankNiClearSpend => NatWestRegistrationGroup.UlsterBankNiProduction,
+        NatWestBank.Mettle => NatWestRegistrationGroup.MettleProduction,
+        NatWestBank.Coutts => NatWestRegistrationGroup.CouttsProduction,
+        _ => throw new ArgumentOutOfRangeException()
+    };
 }

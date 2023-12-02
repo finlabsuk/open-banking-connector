@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -11,10 +12,14 @@ public enum DanskeBank
     Danske
 }
 
-public class Danske : BankGroupBase<DanskeBank>
+public class Danske : BankGroupBase<DanskeBank, DanskeRegistrationGroup>
 {
     public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
         new() { [BankProfileEnum.Danske] = DanskeBank.Danske };
+
+    public override DanskeRegistrationGroup? GetRegistrationGroup(
+        DanskeBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank;
 }

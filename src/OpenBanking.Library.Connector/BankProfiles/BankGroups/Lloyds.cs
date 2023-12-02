@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -19,7 +20,13 @@ public enum LloydsBank
     MbnaPersonal
 }
 
-public class Lloyds : BankGroupBase<LloydsBank>
+public enum LloydsRegistrationGroup
+{
+    Sandbox,
+    Production
+}
+
+public class Lloyds : BankGroupBase<LloydsBank, LloydsRegistrationGroup>
 {
     public Lloyds(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
@@ -36,4 +43,10 @@ public class Lloyds : BankGroupBase<LloydsBank>
             [BankProfileEnum.Lloyds_BankOfScotlandCommerical] = LloydsBank.BankOfScotlandCommerical,
             [BankProfileEnum.Lloyds_MbnaPersonal] = LloydsBank.MbnaPersonal
         };
+
+    public override LloydsRegistrationGroup? GetRegistrationGroup(
+        LloydsBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank is LloydsBank.Sandbox
+        ? LloydsRegistrationGroup.Sandbox
+        : LloydsRegistrationGroup.Production;
 }

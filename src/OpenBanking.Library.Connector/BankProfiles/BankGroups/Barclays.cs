@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -17,7 +18,13 @@ public enum BarclaysBank
     BarclaycardCommercialPayments
 }
 
-public class Barclays : BankGroupBase<BarclaysBank>
+public enum BarclaysRegistrationGroup
+{
+    Sandbox,
+    Production
+}
+
+public class Barclays : BankGroupBase<BarclaysBank, BarclaysRegistrationGroup>
 {
     public Barclays(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
@@ -32,4 +39,11 @@ public class Barclays : BankGroupBase<BarclaysBank>
             [BankProfileEnum.Barclays_Corporate] = BarclaysBank.Corporate,
             [BankProfileEnum.Barclays_BarclaycardCommercialPayments] = BarclaysBank.BarclaycardCommercialPayments
         };
+
+    public override BarclaysRegistrationGroup? GetRegistrationGroup(
+        BarclaysBank bank,
+        RegistrationScopeEnum registrationScopeEnum) =>
+        bank is BarclaysBank.Sandbox
+            ? BarclaysRegistrationGroup.Sandbox
+            : BarclaysRegistrationGroup.Production;
 }

@@ -192,42 +192,34 @@ internal class
             openIdConfiguration?.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
-        BankRegistrationGroup? bankRegistrationGroup = bankProfile.BankConfigurationApiSettings.BankRegistrationGroup;
-        BankRegistrationPersisted? existingGroupRegistration = null;
-        if (bankRegistrationGroup is not null)
+        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, string, string?, TokenEndpointAuthMethod,
+            RegistrationScopeEnum, IBankProfileService, (BankRegistrationPersisted? existingRegistration,
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
-            // Get existing registrations with same bank group and SSA (ideally software ID)
-            IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
-                _entityMethods
-                    .DbSetNoTracking
-                    .Where(
-                        x => x.BankGroup == bankGroup &&
-                             x.SoftwareStatementProfileId == softwareStatementProfileId)
-                    .OrderByDescending(x => x.Created); // most recent first
-
-            // Search for first registration in same registration group and check compatible (error if not)
-            foreach (BankRegistrationPersisted existingReg in existingRegistrations)
-            {
-                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
-                if (existingRegBankProfile.BankConfigurationApiSettings.BankRegistrationGroup != bankRegistrationGroup)
-                {
-                    continue;
-                }
-
-                existingGroupRegistration = existingReg;
-                IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages =
-                    CheckExistingRegistrationCompatible(
-                        existingGroupRegistration,
-                        existingRegBankProfile,
-                        request.ExternalApiId,
-                        bankRegistrationGroup.Value,
-                        softwareStatementProfileOverrideCase,
-                        tokenEndpointAuthMethod,
-                        registrationScope);
-                nonErrorMessages.AddRange(newNonErrorMessages);
-                break;
-            }
-        }
+            BankGroupEnum.Barclays => GetExistingRegistration<BarclaysBank, BarclaysRegistrationGroup>,
+            BankGroupEnum.Danske => GetExistingRegistration<DanskeBank, DanskeRegistrationGroup>,
+            BankGroupEnum.Hsbc => GetExistingRegistration<HsbcBank, HsbcRegistrationGroup>,
+            BankGroupEnum.Lloyds => GetExistingRegistration<LloydsBank, LloydsRegistrationGroup>,
+            BankGroupEnum.Monzo => GetExistingRegistration<MonzoBank, MonzoRegistrationGroup>,
+            BankGroupEnum.Nationwide =>
+                GetExistingRegistration<NationwideBank, NationwideRegistrationGroup>,
+            BankGroupEnum.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
+            BankGroupEnum.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
+            BankGroupEnum.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
+            BankGroupEnum.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        (BankRegistrationPersisted? existingGroupRegistration,
+            IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2) = getExistingRegistration(
+            request,
+            bankProfile,
+            bankGroup,
+            softwareStatementProfileId,
+            softwareStatementProfileOverrideCase,
+            tokenEndpointAuthMethod,
+            registrationScope,
+            _bankProfileService);
+        nonErrorMessages.AddRange(nonErrorMessages2);
 
         // Obtain external (bank) API registration
         string externalApiId;
@@ -484,11 +476,78 @@ internal class
         return (response, nonErrorMessages);
     }
 
+    private (BankRegistrationPersisted? existingRegistration, IList<IFluentResponseInfoOrWarningMessage>
+        nonErrorMessages) GetExistingRegistration<TBank, TRegistrationGroup>(
+            BankRegistrationRequest request,
+            BankProfile bankProfile,
+            BankGroupEnum bankGroupEnum,
+            string softwareStatementProfileId,
+            string? softwareStatementProfileOverrideCase,
+            TokenEndpointAuthMethod tokenEndpointAuthMethod,
+            RegistrationScopeEnum registrationScope,
+            IBankProfileService bankProfileService)
+        where TBank : struct, Enum
+        where TRegistrationGroup : struct, Enum
+    {
+        // Create non-error list
+        var nonErrorMessages =
+            new List<IFluentResponseInfoOrWarningMessage>();
+
+        BankRegistrationPersisted? existingGroupRegistration = null;
+        IBankGroup<TBank, TRegistrationGroup> bankGroup =
+            bankProfileService.GetBankGroup<TBank, TRegistrationGroup>(bankGroupEnum);
+        TBank bank = bankGroup.GetBank(bankProfile.BankProfileEnum);
+        TRegistrationGroup? registrationGroup = bankGroup.GetRegistrationGroup(bank, registrationScope);
+        if (registrationGroup is not null)
+        {
+            // Get existing registrations with same bank group and SSA (ideally software ID)
+            IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
+                _entityMethods
+                    .DbSetNoTracking
+                    .Where(
+                        x => x.BankGroup == bankGroupEnum &&
+                             x.SoftwareStatementProfileId == softwareStatementProfileId)
+                    .OrderByDescending(x => x.Created); // most recent first
+
+            // Search for first registration in same registration group and check compatible (error if not)
+            foreach (BankRegistrationPersisted existingReg in existingRegistrations)
+            {
+                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
+                TBank existingRegBank = bankGroup.GetBank(existingRegBankProfile.BankProfileEnum);
+                TRegistrationGroup? existingRegRegistrationGroup =
+                    bankGroup.GetRegistrationGroup(existingRegBank, existingReg.RegistrationScope);
+
+                // Continue if reg group does not match
+                if (existingRegRegistrationGroup is null ||
+                    !EqualityComparer<TRegistrationGroup>.Default.Equals(
+                        existingRegRegistrationGroup.Value,
+                        registrationGroup.Value))
+                {
+                    continue;
+                }
+
+                existingGroupRegistration = existingReg;
+                IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages2 =
+                    CheckExistingRegistrationCompatible(
+                        existingGroupRegistration,
+                        existingRegBankProfile,
+                        request.ExternalApiId,
+                        registrationGroup.ToString()!,
+                        softwareStatementProfileOverrideCase,
+                        tokenEndpointAuthMethod,
+                        registrationScope);
+                nonErrorMessages.AddRange(nonErrorMessages2);
+                break;
+            }
+        }
+        return (existingGroupRegistration, nonErrorMessages);
+    }
+
     private IList<IFluentResponseInfoOrWarningMessage> CheckExistingRegistrationCompatible(
         BankRegistrationPersisted existingRegistration,
         BankProfile existingRegistrationBankProfile,
         string? externalApiId,
-        BankRegistrationGroup bankRegistrationGroup,
+        string registrationGroupString,
         string? softwareStatementProfileOverrideCase,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope)
@@ -504,13 +563,13 @@ internal class
             {
                 throw new
                     InvalidOperationException(
-                        $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                        $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                         $"used ExternalApiObject with ExternalApiId {existingRegistration.ExternalApiId} " +
                         $"which is different from expected {externalApiId}.");
             }
 
             string warningMessage1 =
-                $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                 "exists whose ExternalApiId matches ExternalApiId from " +
                 $"ExternalApiObject provided in request ({externalApiId}). " +
                 "Therefore this registration will be re-used and any ExternalApiSecret from ExternalApiObject provided in request will be ignored and value from " +
@@ -519,7 +578,7 @@ internal class
             _instrumentationClient.Warning(warningMessage1);
 
             string warningMessage2 =
-                $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                 "exists whose ExternalApiId matches ExternalApiId from " +
                 $"ExternalApiObject provided in request ({externalApiId}). " +
                 "Therefore this registration will be re-used and any RegistrationAccessToken from ExternalApiObject provided in request will be ignored and value from " +
@@ -534,7 +593,7 @@ internal class
         {
             throw new
                 InvalidOperationException(
-                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                     $"used software statement profile with override {existingRegistration.SoftwareStatementProfileOverride} " +
                     $"which is different from expected {softwareStatementProfileOverrideCase}.");
         }
@@ -544,7 +603,7 @@ internal class
         {
             throw new
                 InvalidOperationException(
-                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                     $"used TokenEndpointAuthMethod {existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod} " +
                     $"which is different from expected {tokenEndpointAuthMethod}.");
         }
@@ -553,7 +612,7 @@ internal class
         {
             throw new
                 InvalidOperationException(
-                    $"Previous registration for BankRegistrationGroup {bankRegistrationGroup} " +
+                    $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
                     $"used RegistrationScope {existingRegistration.RegistrationScope} " +
                     $"which is different from expected {registrationScope}.");
         }

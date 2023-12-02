@@ -96,26 +96,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     NatWestBank.Mettle => TokenEndpointAuthMethod.TlsClientAuth,
                     _ => TokenEndpointAuthMethod.PrivateKeyJwt
                 },
-                BankRegistrationGroup = bank switch
-                {
-                    NatWestBank.NatWestSandbox => BankRegistrationGroup.NatWest_NatWestSandbox,
-                    NatWestBank.NatWest
-                        or NatWestBank.NatWestBankline
-                        or NatWestBank.NatWestClearSpend => BankRegistrationGroup.NatWest_NatWestProduction,
-                    NatWestBank.RoyalBankOfScotlandSandbox => BankRegistrationGroup.NatWest_RoyalBankOfScotlandSandbox,
-                    NatWestBank.RoyalBankOfScotland
-                        or NatWestBank.RoyalBankOfScotlandBankline
-                        or NatWestBank.RoyalBankOfScotlandClearSpend
-                        or NatWestBank.TheOne
-                        or NatWestBank.NatWestOne
-                        or NatWestBank.VirginOne => BankRegistrationGroup.NatWest_RoyalBankOfScotlandProduction,
-                    NatWestBank.UlsterBankNi
-                        or NatWestBank.UlsterBankNiBankline
-                        or NatWestBank.UlsterBankNiClearSpend => BankRegistrationGroup.NatWest_UlsterBankNiProduction,
-                    NatWestBank.Mettle => BankRegistrationGroup.NatWest_MettleProduction,
-                    NatWestBank.Coutts => BankRegistrationGroup.NatWest_CouttsProduction,
-                    _ => throw new ArgumentOutOfRangeException()
-                },
                 TestTemporaryBankRegistration =
                     bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
             },

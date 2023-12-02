@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
@@ -12,7 +13,7 @@ public enum ObieBank
     Model2023
 }
 
-public class Obie : BankGroupBase<ObieBank>
+public class Obie : BankGroupBase<ObieBank, ObieRegistrationGroup>
 {
     public Obie(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
@@ -22,4 +23,8 @@ public class Obie : BankGroupBase<ObieBank>
             [BankProfileEnum.Obie_Modelo] = ObieBank.Modelo,
             [BankProfileEnum.Obie_Model2023] = ObieBank.Model2023
         };
+
+    public override ObieRegistrationGroup? GetRegistrationGroup(
+        ObieBank bank,
+        RegistrationScopeEnum registrationScopeEnum) => bank;
 }
