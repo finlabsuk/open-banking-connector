@@ -38,8 +38,8 @@ public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
 
 public class BankConfigurationApiSettings
 {
-    private readonly bool _allowNullRegistrationEndpoint;
     private readonly bool _useRegistrationDeleteEndpoint;
+    private readonly bool _useRegistrationEndpoint = true;
     private readonly bool _useRegistrationGetEndpoint;
 
     /// <summary>
@@ -51,20 +51,21 @@ public class BankConfigurationApiSettings
     /// <summary>
     ///     Describes whether registration endpoints used when testing with this bank.
     /// </summary>
-    public bool AllowNullRegistrationEndpoint
+    public bool UseRegistrationEndpoint
     {
-        get => _allowNullRegistrationEndpoint;
+        get => _useRegistrationEndpoint;
         init
         {
-            if (value && (UseRegistrationDeleteEndpoint || UseRegistrationGetEndpoint))
+            if (!value &&
+                (UseRegistrationDeleteEndpoint || UseRegistrationGetEndpoint))
             {
                 throw new InvalidOperationException(
-                    $"Can't set {nameof(AllowNullRegistrationEndpoint)} " +
-                    $"to true when either {nameof(UseRegistrationDeleteEndpoint)} " +
+                    $"Can't set {nameof(UseRegistrationEndpoint)} " +
+                    $"to false when either {nameof(UseRegistrationDeleteEndpoint)} " +
                     $"or {nameof(UseRegistrationGetEndpoint)} is true.");
             }
 
-            _allowNullRegistrationEndpoint = value;
+            _useRegistrationEndpoint = value;
         }
     }
 
@@ -76,11 +77,11 @@ public class BankConfigurationApiSettings
         get => _useRegistrationDeleteEndpoint;
         init
         {
-            if (value && AllowNullRegistrationEndpoint)
+            if (value && !UseRegistrationEndpoint)
             {
                 throw new InvalidOperationException(
                     $"Can't set {nameof(UseRegistrationDeleteEndpoint)} " +
-                    $"to true when {nameof(AllowNullRegistrationEndpoint)} is true.");
+                    $"to true when {nameof(UseRegistrationEndpoint)} is false.");
             }
 
             _useRegistrationDeleteEndpoint = value;
@@ -95,11 +96,11 @@ public class BankConfigurationApiSettings
         get => _useRegistrationGetEndpoint;
         init
         {
-            if (value && AllowNullRegistrationEndpoint)
+            if (value && !UseRegistrationEndpoint)
             {
                 throw new InvalidOperationException(
                     $"Can't set {nameof(UseRegistrationGetEndpoint)} " +
-                    $"to true when {nameof(AllowNullRegistrationEndpoint)} is true.");
+                    $"to true when {nameof(UseRegistrationEndpoint)} is false.");
             }
 
             _useRegistrationGetEndpoint = value;

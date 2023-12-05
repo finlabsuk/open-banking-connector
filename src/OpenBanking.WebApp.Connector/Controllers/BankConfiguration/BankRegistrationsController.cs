@@ -51,7 +51,6 @@ public class BankRegistrationsController : ControllerBase
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpGet("{bankRegistrationId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -60,9 +59,7 @@ public class BankRegistrationsController : ControllerBase
         BankRegistrationResponse>> GetAsync(
         Guid bankRegistrationId,
         [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation)
+        string? modifiedBy)
     {
         // Operation
         BankRegistrationResponse fluentResponse = await _requestBuilder
@@ -70,8 +67,7 @@ public class BankRegistrationsController : ControllerBase
             .BankRegistrations
             .ReadAsync(
                 bankRegistrationId,
-                modifiedBy,
-                includeExternalApiOperation);
+                modifiedBy);
 
         return Ok(fluentResponse);
     }
@@ -81,16 +77,13 @@ public class BankRegistrationsController : ControllerBase
     /// </summary>
     /// <param name="bankRegistrationId"></param>
     /// <param name="modifiedBy"></param>
-    /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
         Guid bankRegistrationId,
         [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy,
-        [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation)
+        string? modifiedBy)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
@@ -98,8 +91,7 @@ public class BankRegistrationsController : ControllerBase
             .BankRegistrations
             .DeleteAsync(
                 bankRegistrationId,
-                modifiedBy,
-                includeExternalApiOperation);
+                modifiedBy);
 
         return Ok(fluentResponse);
     }

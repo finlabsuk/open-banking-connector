@@ -68,6 +68,11 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
     public IList<string> RedirectUris { get; }
 
     public string ExternalApiId { get; }
+
+    /// <summary>
+    ///     Use simulated bank (only supported for some bank profiles).
+    /// </summary>
+    public bool UseSimulatedBank { get; }
 }
 
 /// <summary>
@@ -122,11 +127,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
     public IList<string>? Warnings { get; }
-
-    /// <summary>
-    ///     Use simulated bank (only supported for some bank profiles).
-    /// </summary>
-    public bool UseSimulatedBank { get; set; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -185,4 +185,9 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     public IList<string> RedirectUris { get; }
 
     public string ExternalApiId { get; }
+
+    /// <summary>
+    ///     Use simulated bank (only supported for some bank profiles).
+    /// </summary>
+    public bool UseSimulatedBank { get; }
 }

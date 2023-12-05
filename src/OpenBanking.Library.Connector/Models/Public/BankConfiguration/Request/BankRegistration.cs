@@ -22,29 +22,6 @@ public class BankRegistration : Base, ISupportsValidation
     public BankProfileEnum BankProfile { get; set; }
 
     /// <summary>
-    ///     JWK Set URI. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
-    /// </summary>
-    public string? JwksUri { get; set; }
-
-    /// <summary>
-    ///     Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl) if
-    ///     available.
-    ///     Used by operations that access bank registration endpoint(s), i.e. DCR and optional GET, PUT, DELETE
-    ///     endpoints for bank registration.
-    /// </summary>
-    public string? RegistrationEndpoint { get; set; }
-
-    /// <summary>
-    ///     Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
-    /// </summary>
-    public string? TokenEndpoint { get; set; }
-
-    /// <summary>
-    ///     Authorization endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).
-    /// </summary>
-    public string? AuthorizationEndpoint { get; set; }
-
-    /// <summary>
     ///     ID of software statement profile to use for registration. The ID must
     ///     correspond to a software statement profile provided via secrets/configuration.
     /// </summary>

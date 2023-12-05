@@ -145,43 +145,31 @@ internal class
         nonErrorMessages.AddRange(newNonErrorMessages1);
 
         // Determine registration endpoint
-        string? registrationEndpoint =
-            request.RegistrationEndpoint ??
-            openIdConfiguration?.RegistrationEndpoint;
-        bool allowNullRegistrationEndpoint =
-            bankProfile.BankConfigurationApiSettings.AllowNullRegistrationEndpoint;
-        if (registrationEndpoint is null &&
-            !allowNullRegistrationEndpoint)
+        string? registrationEndpoint = openIdConfiguration?.RegistrationEndpoint;
+        bool useRegistrationEndpoint = bankProfile.BankConfigurationApiSettings.UseRegistrationEndpoint;
+        if (useRegistrationEndpoint && registrationEndpoint is null)
         {
-            throw new ArgumentNullException(
-                nameof(request.RegistrationEndpoint),
-                $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
-                $"Additionally AllowNullRegistrationEndpoint from BankProfile is false.");
+            throw new InvalidOperationException(
+                "Registration endpoint required and not obtainable from OpenID Configuration for bank's IssuerUrl.");
         }
 
         // Determine token endpoint
         string tokenEndpoint =
-            request.TokenEndpoint ??
             openIdConfiguration?.TokenEndpoint ??
-            throw new ArgumentNullException(
-                nameof(request.TokenEndpoint),
-                $"{nameof(request.TokenEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+            throw new InvalidOperationException(
+                "Token endpoint not obtainable from OpenID Configuration for specified IssuerUrl.");
 
         // Determine auth endpoint
         string authorizationEndpoint =
-            request.AuthorizationEndpoint ??
-            openIdConfiguration?.AuthorizationEndpoint ??
-            throw new ArgumentNullException(
-                nameof(request.AuthorizationEndpoint),
-                $"{nameof(request.AuthorizationEndpoint)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+            openIdConfiguration.AuthorizationEndpoint ??
+            throw new InvalidOperationException(
+                "Authorisation endpoint not obtainable from OpenID Configuration for specified IssuerUrl.");
 
         // Determine JWKS URI
         string jwksUri =
-            request.JwksUri ??
-            openIdConfiguration?.JwksUri ??
-            throw new ArgumentNullException(
-                nameof(request.JwksUri),
-                $"{nameof(request.JwksUri)} specified as null and not obtainable from OpenID Configuration for specified IssuerUrl. ");
+            openIdConfiguration.JwksUri ??
+            throw new InvalidOperationException(
+                "JWKS URI not obtainable from OpenID Configuration for specified IssuerUrl.");
 
         // Determine TokenEndpointAuthMethod
         TokenEndpointAuthMethod tokenEndpointAuthMethod =
@@ -189,7 +177,7 @@ internal class
         CheckTokenEndpointAuthMethod(
             tokenEndpointAuthMethod,
             supportsSca,
-            openIdConfiguration?.TokenEndpointAuthMethodsSupported);
+            openIdConfiguration.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
         Func<BankRegistrationRequest, BankProfile, BankGroupEnum, string, string?, TokenEndpointAuthMethod,
@@ -247,13 +235,13 @@ internal class
             // Perform Dynamic Client Registration
 
             // Check endpoint
-            if (registrationEndpoint is null)
+            if (!useRegistrationEndpoint)
             {
                 throw new InvalidOperationException(
-                    $"{nameof(request.RegistrationEndpoint)} specified as null and not obtainable from OpenID Configuration for bank's IssuerUrl. " +
-                    "Thus DCR cannot be used. " +
-                    "Please create a registration e.g. using the bank's portal and then try again using " +
-                    "ExternalApiObject to specify the registration.");
+                    "DCR (dynamic client registration) via a registration endpoint is not used for this bank. " +
+                    "Please create a registration (client) manually (most likely using the bank's developer portal) and then try again supplying " +
+                    $"{nameof(request.ExternalApiId)} to specify the registration's client_id. If relevant, " +
+                    $"{nameof(request.ExternalApiSecret)} and {nameof(request.RegistrationAccessToken)} for the registration should also be supplied.");
             }
 
             // Check registration scope
@@ -275,7 +263,7 @@ internal class
                 dynamicClientRegistrationApiVersion,
                 processedSoftwareStatementProfile,
                 softwareStatementAssertion,
-                registrationEndpoint,
+                registrationEndpoint!, // useRegistrationEndpoint is true
                 tokenEndpointAuthMethod,
                 redirectUris,
                 registrationScope,

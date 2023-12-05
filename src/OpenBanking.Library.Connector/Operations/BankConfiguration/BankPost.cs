@@ -76,7 +76,7 @@ internal class BankPost : LocalEntityCreate<Bank, Models.Public.BankConfiguratio
 
         bool allowNullRegistrationEndpoint =
             request.AllowNullRegistrationEndpoint ??
-            bankProfile?.BankConfigurationApiSettings.AllowNullRegistrationEndpoint ??
+            !bankProfile?.BankConfigurationApiSettings.UseRegistrationEndpoint ??
             throw new InvalidOperationException(
                 $"{nameof(request.AllowNullRegistrationEndpoint)} specified as null and cannot be obtained using specified BankProfile.");
 
