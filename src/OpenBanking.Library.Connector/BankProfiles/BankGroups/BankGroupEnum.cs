@@ -44,6 +44,9 @@ public enum BankGroupEnum
     [EnumMember(Value = "Revolut")]
     Revolut,
 
+    [EnumMember(Value = "Santander")]
+    Santander,
+
     [EnumMember(Value = "Starling")]
     Starling
 }

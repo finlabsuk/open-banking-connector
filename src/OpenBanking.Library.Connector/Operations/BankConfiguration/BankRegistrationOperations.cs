@@ -194,6 +194,7 @@ internal class
             BankGroupEnum.NatWest => GetExistingRegistration<NatWestBank, NatWestRegistrationGroup>,
             BankGroupEnum.Obie => GetExistingRegistration<ObieBank, ObieRegistrationGroup>,
             BankGroupEnum.Revolut => GetExistingRegistration<RevolutBank, RevolutRegistrationGroup>,
+            BankGroupEnum.Santander => GetExistingRegistration<SantanderBank, SantanderRegistrationGroup>,
             BankGroupEnum.Starling => GetExistingRegistration<StarlingBank, StarlingRegistrationGroup>,
             _ => throw new ArgumentOutOfRangeException()
         };

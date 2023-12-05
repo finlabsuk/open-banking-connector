@@ -51,6 +51,7 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Nationwide] = new Nationwide(BankGroupEnum.Nationwide),
             [BankGroupEnum.NatWest] = new NatWest(BankGroupEnum.NatWest),
             [BankGroupEnum.Revolut] = new Revolut(BankGroupEnum.Revolut),
+            [BankGroupEnum.Santander] = new Santander(BankGroupEnum.Santander),
             [BankGroupEnum.Starling] = new Starling(BankGroupEnum.Starling)
         };
 
@@ -84,6 +85,9 @@ public class BankProfileService : IBankProfileService
             [BankGroupEnum.Revolut] = new RevolutGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<RevolutBank>(BankGroupEnum.Revolut)),
+            [BankGroupEnum.Santander] = new SantanderGenerator(
+                bankProfilesSettingsProvider,
+                GetBankGroup<SantanderBank>(BankGroupEnum.Santander)),
             [BankGroupEnum.Starling] = new StarlingGenerator(
                 bankProfilesSettingsProvider,
                 GetBankGroup<StarlingBank>(BankGroupEnum.Starling))
@@ -105,6 +109,7 @@ public class BankProfileService : IBankProfileService
                         BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum),
                         BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum),
                         BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum),
+                        BankGroupEnum.Santander => GetBankProfile<SantanderBank>(profileEnum),
                         BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum),
                         _ => throw new ArgumentOutOfRangeException()
                     },
@@ -180,6 +185,7 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Obie_Modelo => BankGroupEnum.Obie,
             BankProfileEnum.Obie_Model2023 => BankGroupEnum.Obie,
             BankProfileEnum.Revolut_Revolut => BankGroupEnum.Revolut,
+            BankProfileEnum.Santander_Santander => BankGroupEnum.Santander,
             BankProfileEnum.Starling_Starling => BankGroupEnum.Starling,
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };

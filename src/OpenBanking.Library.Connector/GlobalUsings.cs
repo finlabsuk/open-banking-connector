@@ -6,6 +6,8 @@ global using DanskeRegistrationGroup = FinnovationLabs.OpenBanking.Library.Conne
 global using HsbcRegistrationGroup = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.HsbcBank;
 global using NationwideRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.NationwideBank;
+global using SantanderRegistrationGroup =
+    FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.SantanderBank;
 global using ObieRegistrationGroup = FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.ObieBank;
 global using RevolutRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.RevolutBank;

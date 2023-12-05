@@ -93,8 +93,8 @@ public enum BankProfileEnum
     [EnumMember(Value = "VrpHackathon")]
     VrpHackathon,
 
-    [EnumMember(Value = "Santander")]
-    Santander,
+    [EnumMember(Value = "Santander_Santander")]
+    Santander_Santander,
 
     [EnumMember(Value = "NewDayAmazon")]
     NewDayAmazon,
