@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Bank Configuration API",
-    "description": "Bank Configuration API for Open Banking Connector Web App",
-    "version": "7.0.0"
+    "title": "Configuration API",
+    "description": "Configuration API for Open Banking Connector Web App",
+    "version": "9.0.0"
   },
   "paths": {
     "/config/bank-registrations": {
@@ -159,13 +159,433 @@
           }
         }
       }
+    },
+    "/config/obseal-certificates": {
+      "post": {
+        "tags": [
+          "OBSeal Signing Certificates"
+        ],
+        "summary": "Create OBSeal signing certificate",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObSealCertificate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/obseal-certificates/{obSealCertificateId}": {
+      "get": {
+        "tags": [
+          "OBSeal Signing Certificates"
+        ],
+        "summary": "Read OBSeal signing certificate",
+        "parameters": [
+          {
+            "name": "obSealCertificateId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObSealCertificateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OBSeal Signing Certificates"
+        ],
+        "summary": "Delete OBSeal signing certificate",
+        "parameters": [
+          {
+            "name": "obSealCertificateId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/obwac-certificates": {
+      "post": {
+        "tags": [
+          "OBWAC Transport Certificates"
+        ],
+        "summary": "Create OBWAC transport certificate",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObWacCertificate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/obwac-certificates/{obWacCertificateId}": {
+      "get": {
+        "tags": [
+          "OBWAC Transport Certificates"
+        ],
+        "summary": "Read OBWAC transport certificate",
+        "parameters": [
+          {
+            "name": "obWacCertificateId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObWacCertificateResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OBWAC Transport Certificates"
+        ],
+        "summary": "Delete OBWAC transport certificate",
+        "parameters": [
+          {
+            "name": "obWacCertificateId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/software-statements": {
+      "post": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Create software statement",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoftwareStatement"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/config/software-statements/{softwareStatementId}": {
+      "get": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Read software statement",
+        "parameters": [
+          {
+            "name": "softwareStatementId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SoftwareStatementResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Software Statements"
+        ],
+        "summary": "Delete software statement",
+        "parameters": [
+          {
+            "name": "softwareStatementId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "BankProfileEnum": {
         "enum": [
-          "DbTransitionalDefault",
+          "Barclays_Sandbox",
+          "Barclays_Personal",
+          "Barclays_Wealth",
+          "Barclays_Barclaycard",
+          "Barclays_Business",
+          "Barclays_Corporate",
+          "Barclays_BarclaycardCommercialPayments",
           "Obie_Modelo",
           "Obie_Model2023",
           "NatWest_NatWestSandbox",
@@ -185,16 +605,9 @@
           "NatWest_Mettle",
           "NatWest_Coutts",
           "VrpHackathon",
-          "Santander",
-          "Barclays_Sandbox",
-          "Barclays_Personal",
-          "Barclays_Wealth",
-          "Barclays_Barclaycard",
-          "Barclays_Business",
-          "Barclays_Corporate",
-          "Barclays_BarclaycardCommercialPayments",
+          "Santander_Santander",
           "NewDayAmazon",
-          "Nationwide",
+          "Nationwide_Nationwide",
           "Lloyds_Sandbox",
           "Lloyds_LloydsPersonal",
           "Lloyds_LloydsBusiness",
@@ -231,26 +644,6 @@
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
           },
-          "JwksUri": {
-            "type": "string",
-            "description": "JWK Set URI. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
-            "nullable": true
-          },
-          "RegistrationEndpoint": {
-            "type": "string",
-            "description": "Registration endpoint. Normally null which means value supplied by OpenID Provider Configuration (IssuerUrl) if\r\navailable.\r\nUsed by operations that access bank registration endpoint(s), i.e. DCR and optional GET, PUT, DELETE\r\nendpoints for bank registration.",
-            "nullable": true
-          },
-          "TokenEndpoint": {
-            "type": "string",
-            "description": "Token endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
-            "nullable": true
-          },
-          "AuthorizationEndpoint": {
-            "type": "string",
-            "description": "Authorization endpoint. Normally null which means value obtained from OpenID Configuration (IssuerUrl).",
-            "nullable": true
-          },
           "SoftwareStatementProfileId": {
             "minLength": 1,
             "type": "string",
@@ -269,6 +662,11 @@
             "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used.",
             "nullable": true
           },
+          "DefaultQueryRedirectUri": {
+            "type": "string",
+            "description": "Default query redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default query redirect URI specified in the software statement profile\r\nwill be used.",
+            "nullable": true
+          },
           "RedirectUris": {
             "type": "array",
             "items": {
@@ -277,12 +675,20 @@
             "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used.",
             "nullable": true
           },
-          "ExternalApiObject": {
-            "$ref": "#/components/schemas/ExternalApiBankRegistration"
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID, i.e. ID of OAuth2 client at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.\r\nUse this to supply information about a previously-created external API (bank) registration (OAuth2 client) created\r\nat the bank either\r\nvia API or the bank's developer portal.\r\nWhen non-null, this external registration will re-used and Dynamic Client Registration (DCR) will not be performed.",
+            "nullable": true
           },
-          "ForceDynamicClientRegistration": {
-            "type": "boolean",
-            "description": "Forces Dynamic Client Registration (DCR) even when an external API (bank) registration (OAuth2 client) already\r\nexists\r\nfor a member of the same BankRegistrationGroup. By default, for each BankRegistrationGroup, any existing external\r\nAPI registration is\r\nre-used and DCR will only be performed the first time the BankRegistrationGroup is used.\r\nThis is to prevent unnecessary duplicate\r\nexternal API (bank) registrations which may disrupt/overwrite an\r\nexisting such registration depending on bank behaviour.\r\nThe safeguard of the re-using external API registrations within a BankRegistrationGroup can be removed, and the use\r\nof DCR forced, by setting this value to true.\r\nPlease use this setting with care, and it is suggested to delete any\r\nunwanted external API\r\nregistrations at the bank possibly via a support ticket if API support for this is not provided.\r\nWhen this setting is true and ExternalApiObject is non-null, an error will be produced."
+          "ExternalApiSecret": {
+            "type": "string",
+            "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc. Only relevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankRegistration.ExternalApiId is non-null.",
+            "nullable": true
+          },
+          "RegistrationAccessToken": {
+            "type": "string",
+            "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only\r\nrelevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankRegistration.ExternalApiId is non-null.",
+            "nullable": true
           },
           "UseSimulatedBank": {
             "type": "boolean",
@@ -301,28 +707,9 @@
         },
         "additionalProperties": false
       },
-      "BankRegistrationGroup": {
-        "enum": [
-          "Barclays_Sandbox",
-          "Barclays_Production",
-          "NatWest_NatWestSandbox",
-          "NatWest_NatWestProduction",
-          "NatWest_RoyalBankOfScotlandSandbox",
-          "NatWest_RoyalBankOfScotlandProduction",
-          "NatWest_UlsterBankNiProduction",
-          "NatWest_MettleProduction",
-          "NatWest_CouttsProduction",
-          "Lloyds_Sandbox",
-          "Lloyds_Production"
-        ],
-        "type": "string"
-      },
       "BankRegistrationResponse": {
         "type": "object",
         "properties": {
-          "ExternalApiObject": {
-            "$ref": "#/components/schemas/ExternalApiObjectResponse"
-          },
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBClientRegistration1Response"
           },
@@ -386,6 +773,11 @@
             "nullable": true,
             "readOnly": true
           },
+          "DefaultQueryRedirectUri": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "RedirectUris": {
             "type": "array",
             "items": {
@@ -395,8 +787,10 @@
             "nullable": true,
             "readOnly": true
           },
-          "BankRegistrationGroup": {
-            "$ref": "#/components/schemas/BankRegistrationGroup"
+          "ExternalApiId": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
           },
           "Id": {
             "type": "string",
@@ -424,38 +818,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Response to BankRegistration Read and Create requests."
-      },
-      "ExternalApiBankRegistration": {
-        "type": "object",
-        "properties": {
-          "ExternalApiId": {
-            "type": "string",
-            "description": "External (bank) API ID, i.e. ID of object at bank. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
-            "nullable": true
-          },
-          "ExternalApiSecret": {
-            "type": "string",
-            "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc.",
-            "nullable": true
-          },
-          "RegistrationAccessToken": {
-            "type": "string",
-            "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ExternalApiObjectResponse": {
-        "type": "object",
-        "properties": {
-          "ExternalApiId": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
+        "description": "Response to BankRegistration read and create requests."
       },
       "OBClientRegistration1Response": {
         "type": "object",
@@ -655,6 +1018,154 @@
         "type": "string",
         "description": "Defines values for\r\nOBRegistrationProperties1tokenEndpointAuthMethodEnum."
       },
+      "ObSealCertificate": {
+        "required": [
+          "AssociatedKey",
+          "AssociatedKeyId",
+          "Certificate"
+        ],
+        "type": "object",
+        "properties": {
+          "AssociatedKeyId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Key ID of associated key (from UK Open Banking Directory) as string."
+          },
+          "AssociatedKey": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Certificate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ObSealCertificateResponse": {
+        "type": "object",
+        "properties": {
+          "AssociatedKeyId": {
+            "type": "string",
+            "description": "Key ID of associated key (from UK Open Banking Directory) as string.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "AssociatedKey": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Certificate": {
+            "type": "string",
+            "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to ObSealCertificate read and create requests."
+      },
+      "ObWacCertificate": {
+        "required": [
+          "AssociatedKey",
+          "Certificate"
+        ],
+        "type": "object",
+        "properties": {
+          "AssociatedKey": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Certificate": {
+            "minLength": 1,
+            "type": "string",
+            "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ObWacCertificateResponse": {
+        "type": "object",
+        "properties": {
+          "AssociatedKey": {
+            "$ref": "#/components/schemas/SecretDescription"
+          },
+          "Certificate": {
+            "type": "string",
+            "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to ObWacCertificate read and create requests."
+      },
       "ObjectDeleteResponse": {
         "type": "object",
         "properties": {
@@ -679,6 +1190,153 @@
         ],
         "type": "string",
         "description": "Registration scope used when creating a bank client.\r\nSet of FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.RegistrationScopeElementEnum."
+      },
+      "SecretDescription": {
+        "required": [
+          "Name",
+          "Source"
+        ],
+        "type": "object",
+        "properties": {
+          "Source": {
+            "$ref": "#/components/schemas/SecretSource"
+          },
+          "Name": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of secrete value."
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecretSource": {
+        "enum": [
+          "EnvironmentVariable"
+        ],
+        "type": "string"
+      },
+      "SoftwareStatement": {
+        "required": [
+          "DefaultFragmentRedirectUrl",
+          "DefaultObSealCertificateId",
+          "DefaultObWacCertificateId",
+          "DefaultQueryRedirectUrl",
+          "OrganisationId",
+          "SoftwareId"
+        ],
+        "type": "object",
+        "properties": {
+          "OrganisationId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Organisation ID from UK Open Banking directory as string."
+          },
+          "SoftwareId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Software statement ID from UK Open Banking directory as string."
+          },
+          "SandboxEnvironment": {
+            "type": "boolean",
+            "description": "When true, denotes software statement is defined in UK OB directory sandbox (not production) environment. Defaults\r\nto false."
+          },
+          "DefaultObWacCertificateId": {
+            "type": "string",
+            "description": "ID of default ObWacCertificate to use for mutual TLS with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultObSealCertificateId": {
+            "type": "string",
+            "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultQueryRedirectUrl": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query."
+          },
+          "DefaultFragmentRedirectUrl": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment."
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SoftwareStatementResponse": {
+        "type": "object",
+        "properties": {
+          "OrganisationId": {
+            "type": "string",
+            "description": "Organisation ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SoftwareId": {
+            "type": "string",
+            "description": "Software statement ID from UK Open Banking directory as string.",
+            "nullable": true
+          },
+          "SandboxEnvironment": {
+            "type": "boolean",
+            "description": "When true, denotes software statement is defined in UK OB directory sandbox (not production) environment."
+          },
+          "DefaultObWacCertificateId": {
+            "type": "string",
+            "description": "ID of default ObWacCertificate to use for mutual TLS with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultObSealCertificateId": {
+            "type": "string",
+            "description": "ID of default ObSealCertificate to use for signing JWTs etc with this software statement.",
+            "format": "uuid"
+          },
+          "DefaultQueryRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query.",
+            "nullable": true
+          },
+          "DefaultFragmentRedirectUrl": {
+            "type": "string",
+            "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid",
+            "readOnly": true
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true,
+            "readOnly": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to SoftwareStatement read and create requests."
       },
       "SupportedAlgorithmsEnum": {
         "enum": [
