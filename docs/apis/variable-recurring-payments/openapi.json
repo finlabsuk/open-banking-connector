@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "7.0.0"
+    "version": "9.0.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consents": {
@@ -294,7 +294,13 @@
       },
       "BankProfileEnum": {
         "enum": [
-          "DbTransitionalDefault",
+          "Barclays_Sandbox",
+          "Barclays_Personal",
+          "Barclays_Wealth",
+          "Barclays_Barclaycard",
+          "Barclays_Business",
+          "Barclays_Corporate",
+          "Barclays_BarclaycardCommercialPayments",
           "Obie_Modelo",
           "Obie_Model2023",
           "NatWest_NatWestSandbox",
@@ -314,16 +320,9 @@
           "NatWest_Mettle",
           "NatWest_Coutts",
           "VrpHackathon",
-          "Santander",
-          "Barclays_Sandbox",
-          "Barclays_Personal",
-          "Barclays_Wealth",
-          "Barclays_Barclaycard",
-          "Barclays_Business",
-          "Barclays_Corporate",
-          "Barclays_BarclaycardCommercialPayments",
+          "Santander_Santander",
           "NewDayAmazon",
-          "Nationwide",
+          "Nationwide_Nationwide",
           "Lloyds_Sandbox",
           "Lloyds_LloydsPersonal",
           "Lloyds_LloydsBusiness",

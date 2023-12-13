@@ -3,7 +3,7 @@
   "info": {
     "title": "Account and Transaction API",
     "description": "Account and Transaction API for Open Banking Connector Web App",
-    "version": "7.0.0"
+    "version": "9.0.0"
   },
   "paths": {
     "/aisp/account-access-consent-auth-contexts": {
@@ -558,6 +558,55 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DirectDebitsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aisp/monzo-pots": {
+      "get": {
+        "tags": [
+          "Monzo Pots"
+        ],
+        "summary": "Read Monzo pots",
+        "parameters": [
+          {
+            "name": "x-obc-account-access-consent-id",
+            "in": "header",
+            "description": "ID of AccountAccessConsent used for request (obtained when creating consent)",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-obc-modified-by",
+            "in": "header",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonzoPotsResponse"
                 }
               }
             }
@@ -1482,6 +1531,87 @@
         },
         "additionalProperties": false,
         "description": "Meta Data relevant to the payload."
+      },
+      "MonzoPot": {
+        "type": "object",
+        "properties": {
+          "PotId": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountId": {
+            "type": "string",
+            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to\r\nthe account owner.",
+            "nullable": true
+          },
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true
+          },
+          "CreditDebitIndicator": {
+            "$ref": "#/components/schemas/OBCreditDebitCode2Enum"
+          },
+          "Balance": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemAmount"
+          },
+          "Style": {
+            "type": "string",
+            "nullable": true
+          },
+          "Goal": {
+            "$ref": "#/components/schemas/OBReadBalance1DataBalanceItemAmount"
+          },
+          "Updated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time\r\nformat.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
+            "format": "date-time"
+          },
+          "Status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonzoPotData": {
+        "type": "object",
+        "properties": {
+          "Pot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonzoPot"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonzoPotsResponse": {
+        "type": "object",
+        "properties": {
+          "ExternalApiResponse": {
+            "$ref": "#/components/schemas/ReadMonzoPot"
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response to Monzo pot read requests"
       },
       "OBAccount6": {
         "type": "object",
@@ -3216,6 +3346,21 @@
         },
         "additionalProperties": false,
         "description": "Set of elements to fully identify a proprietary bank transaction code."
+      },
+      "ReadMonzoPot": {
+        "type": "object",
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/MonzoPotData"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "Meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "additionalProperties": false
       },
       "StandingOrdersResponse": {
         "type": "object",

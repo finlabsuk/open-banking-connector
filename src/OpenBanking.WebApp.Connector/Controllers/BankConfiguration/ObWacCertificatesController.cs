@@ -24,7 +24,7 @@ public class ObWacCertificatesController : ControllerBase
     }
 
     /// <summary>
-    ///     Create OBWAC transport certificate
+    ///     Add OBWAC transport certificate
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

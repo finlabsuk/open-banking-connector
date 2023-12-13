@@ -24,7 +24,7 @@ public class SoftwareStatementsController : ControllerBase
     }
 
     /// <summary>
-    ///     Create software statement
+    ///     Add software statement
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>

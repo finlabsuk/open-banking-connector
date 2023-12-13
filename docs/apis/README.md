@@ -2,13 +2,13 @@
 
 ## Overview
 
-Open Banking Connector provides a set of HTTP APIs. Mostly these act as *outer APIs* providing replacement endpoints for endpoints provided by [UK Open Banking APIs](https://standards.openbanking.org.uk/api-specifications/). These replacement endpoints wrap calls to *UK Open Banking API* endpoints as well as extra calls for token acquisition etc. Aside from the Bank Configuration and Auth Context APIs, Open Banking Connector APIs aim to mirror their UK Open Banking equivalents as much as possible.
+Open Banking Connector provides a set of HTTP APIs. Mostly these act as *outer APIs* providing replacement endpoints for endpoints provided by [UK Open Banking APIs](https://standards.openbanking.org.uk/api-specifications/). These replacement endpoints wrap calls to *UK Open Banking API* endpoints as well as extra calls for token acquisition etc. Aside from the Management and Auth Context APIs, Open Banking Connector APIs aim to mirror their UK Open Banking equivalents as much as possible.
 
 The APIs provided are as follows:
 
 | API | Description
 | - | -
-| [Bank Configuration](./bank-configuration/README.md) | This API provides endpoints for bank setup including replacement endpoints for endpoints provided in the UK Open Banking [Dynamic Client Registration API](https://openbankinguk.github.io/dcr-docs-pub/v3.3/dynamic-client-registration.html)
+| [Management](./bank-configuration/README.md) | This API provides endpoints for setup including replacement endpoints for endpoints provided in the UK Open Banking [Dynamic Client Registration API](https://openbankinguk.github.io/dcr-docs-pub/v3.3/dynamic-client-registration.html)
 | [Account and Transaction](./account-and-transaction/README.md) | This API aims to mirror the UK Open Banking [Account and Transaction API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/account-and-transaction-api-profile.html).
 | [Payment Initiation](./payment-initiation/README.md) | This API aims to mirror the UK Open Banking [Payment Initiation API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/payment-initiation-api-profile.html).
 | [Variable Recurring Payments](./variable-recurring-payments/README.md) | This API aims to mirror the UK Open Banking [Variable Recurring Payments API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/vrp-profile.html).

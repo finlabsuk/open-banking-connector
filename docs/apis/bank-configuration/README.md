@@ -1,10 +1,10 @@
-# Bank Configuration API
+# Management API
 
-The Bank Configuration API allows you to create, read, and delete configuration (setup) objects for a bank in Open Banking Connector.
+The Management API allows you to create, read, and delete management (setup) objects in Open Banking Connector.
 
 ## OpenAPI Spec
 
-An OpenAPI spec for the Bank Configuration API showing the endpoints and data types is provided [here](./openapi.md). This is a static capture of the API at a given release (see grey box at top right of OpenAPI spec for which release).
+An OpenAPI spec for the Management API showing the endpoints and data types is provided [here](./openapi.md). This is a static capture of the API at a given release (see grey box at top right of OpenAPI spec for which release).
 
 For any running version of Open Banking Connector, the OpenAPI spec for the currently-running software is provided at `GET /swagger/index.html`.
 

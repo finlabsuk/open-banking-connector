@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Configuration API",
-    "description": "Configuration API for Open Banking Connector Web App",
+    "title": "Management API",
+    "description": "Management API for Open Banking Connector Web App",
     "version": "9.0.0"
   },
   "paths": {
-    "/config/bank-registrations": {
+    "/manage/bank-registrations": {
       "post": {
         "tags": [
           "Bank Registrations"
@@ -46,7 +46,7 @@
         }
       }
     },
-    "/config/bank-registrations/{bankRegistrationId}": {
+    "/manage/bank-registrations/{bankRegistrationId}": {
       "get": {
         "tags": [
           "Bank Registrations"
@@ -69,14 +69,6 @@
             "description": "",
             "schema": {
               "type": "string"
-            }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -126,14 +118,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "x-obc-include-external-api-operation",
-            "in": "header",
-            "description": "",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -160,12 +144,12 @@
         }
       }
     },
-    "/config/obseal-certificates": {
+    "/manage/obseal-certificates": {
       "post": {
         "tags": [
           "OBSeal Signing Certificates"
         ],
-        "summary": "Create OBSeal signing certificate",
+        "summary": "Add OBSeal signing certificate",
         "requestBody": {
           "description": "",
           "content": {
@@ -200,7 +184,7 @@
         }
       }
     },
-    "/config/obseal-certificates/{obSealCertificateId}": {
+    "/manage/obseal-certificates/{obSealCertificateId}": {
       "get": {
         "tags": [
           "OBSeal Signing Certificates"
@@ -298,12 +282,12 @@
         }
       }
     },
-    "/config/obwac-certificates": {
+    "/manage/obwac-certificates": {
       "post": {
         "tags": [
           "OBWAC Transport Certificates"
         ],
-        "summary": "Create OBWAC transport certificate",
+        "summary": "Add OBWAC transport certificate",
         "requestBody": {
           "description": "",
           "content": {
@@ -338,7 +322,7 @@
         }
       }
     },
-    "/config/obwac-certificates/{obWacCertificateId}": {
+    "/manage/obwac-certificates/{obWacCertificateId}": {
       "get": {
         "tags": [
           "OBWAC Transport Certificates"
@@ -436,12 +420,12 @@
         }
       }
     },
-    "/config/software-statements": {
+    "/manage/software-statements": {
       "post": {
         "tags": [
           "Software Statements"
         ],
-        "summary": "Create software statement",
+        "summary": "Add software statement",
         "requestBody": {
           "description": "",
           "content": {
@@ -476,7 +460,7 @@
         }
       }
     },
-    "/config/software-statements/{softwareStatementId}": {
+    "/manage/software-statements/{softwareStatementId}": {
       "get": {
         "tags": [
           "Software Statements"
@@ -637,22 +621,17 @@
       "BankRegistration": {
         "required": [
           "BankProfile",
-          "SoftwareStatementProfileId"
+          "SoftwareStatementId"
         ],
         "type": "object",
         "properties": {
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
           },
-          "SoftwareStatementProfileId": {
-            "minLength": 1,
+          "SoftwareStatementId": {
             "type": "string",
-            "description": "ID of software statement profile to use for registration. The ID must\r\ncorrespond to a software statement profile provided via secrets/configuration."
-          },
-          "SoftwareStatementProfileOverrideCase": {
-            "type": "string",
-            "description": "Optional override case to use with software statement and certificate profiles. Override cases\r\ncan be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.\r\nWhen null no override case is specified.",
-            "nullable": true
+            "description": "ID of software statement to use for registration. The ID must\r\ncorrespond to a previously-added software statement.",
+            "format": "uuid"
           },
           "RegistrationScope": {
             "$ref": "#/components/schemas/RegistrationScopeEnum"
@@ -722,9 +701,11 @@
             "nullable": true,
             "readOnly": true
           },
-          "UseSimulatedBank": {
-            "type": "boolean",
-            "description": "Use simulated bank (only supported for some bank profiles)."
+          "SoftwareStatementId": {
+            "type": "string",
+            "description": "ID of software statement to use for registration. The ID must\r\ncorrespond to a previously-added software statement.",
+            "format": "uuid",
+            "readOnly": true
           },
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
@@ -750,17 +731,6 @@
           "AuthorizationEndpoint": {
             "type": "string",
             "description": "Authorization endpoint (normally supplied from OpenID Configuration)",
-            "nullable": true,
-            "readOnly": true
-          },
-          "SoftwareStatementProfileId": {
-            "type": "string",
-            "description": "ID of SoftwareStatementProfile to use in association with BankRegistration",
-            "nullable": true,
-            "readOnly": true
-          },
-          "SoftwareStatementProfileOverride": {
-            "type": "string",
             "nullable": true,
             "readOnly": true
           },
@@ -790,6 +760,11 @@
           "ExternalApiId": {
             "type": "string",
             "nullable": true,
+            "readOnly": true
+          },
+          "UseSimulatedBank": {
+            "type": "boolean",
+            "description": "Use simulated bank (only supported for some bank profiles).",
             "readOnly": true
           },
           "Id": {
@@ -1193,8 +1168,7 @@
       },
       "SecretDescription": {
         "required": [
-          "Name",
-          "Source"
+          "Name"
         ],
         "type": "object",
         "properties": {
@@ -1204,14 +1178,14 @@
           "Name": {
             "minLength": 1,
             "type": "string",
-            "description": "Name of secrete value."
+            "description": "Name of secret value."
           }
         },
         "additionalProperties": false
       },
       "SecretSource": {
         "enum": [
-          "EnvironmentVariable"
+          "Configuration"
         ],
         "type": "string"
       },

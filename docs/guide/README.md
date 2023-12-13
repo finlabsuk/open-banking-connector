@@ -14,7 +14,7 @@ Essentially Open Banking Connector runs as a micro-service in your back-end that
 
 #### Open Banking Connector provides simpler UK Open Banking APIs
 
-The [HTTP APIs](../apis/README.md) provided by Open Banking Connector to your back-end include several that aim to be "simpler" versions of their UK Open Banking equivalents such as the [Bank Configuration](../apis/bank-configuration/README.md) and [Account and Transaction](../apis/account-and-transaction/README.md) APIs.
+The [HTTP APIs](../apis/README.md) provided by Open Banking Connector to your back-end include several that aim to be "simpler" versions of their UK Open Banking equivalents such as the [Account and Transaction](../apis/account-and-transaction/README.md) API.
 
 The objective is not to re-design UK Open Banking but rather to simplify things by:
 

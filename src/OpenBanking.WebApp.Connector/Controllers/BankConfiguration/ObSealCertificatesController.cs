@@ -24,7 +24,7 @@ public class ObSealCertificatesController : ControllerBase
     }
 
     /// <summary>
-    ///     Create OBSeal signing certificate
+    ///     Add OBSeal signing certificate
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
