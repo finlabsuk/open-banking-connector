@@ -65,7 +65,7 @@ internal class DomesticPaymentConsentCommon
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
             await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementProfileId,
+                bankRegistration.SoftwareStatementId.ToString(),
                 bankRegistration.SoftwareStatementProfileOverride);
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,

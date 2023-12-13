@@ -4,7 +4,7 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 
-internal abstract class BaseEntity : IEntity
+public abstract class BaseEntity : IEntity
 {
     protected BaseEntity(
         Guid id,

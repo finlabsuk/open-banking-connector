@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -42,8 +41,7 @@ public class AccountAccessConsentSubtest
         ConsentAuth? consentAuth,
         string authUrlLeftPart,
         BankUser? bankUser,
-        AppTests.AccountAccessConsentOptions accountAccessConsentOptions,
-        IApiClient apiClient)
+        AppTests.AccountAccessConsentOptions accountAccessConsentOptions)
     {
         IRequestBuilder requestBuilder = requestBuilderIn;
 

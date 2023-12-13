@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
@@ -30,6 +31,7 @@ internal class BankRegistration :
         string? registrationAccessToken,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         BankGroupEnum bankGroup,
+        Guid? softwareStatementId,
         bool useSimulatedBank,
         string externalApiId,
         BankProfileEnum bankProfile,
@@ -41,7 +43,6 @@ internal class BankRegistration :
         string defaultQueryRedirectUri,
         IList<string> redirectUris,
         string softwareStatementProfileId,
-        string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope) : base(
         id,
         reference,
@@ -55,6 +56,7 @@ internal class BankRegistration :
         RegistrationAccessToken = registrationAccessToken;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         BankGroup = bankGroup;
+        SoftwareStatementId = softwareStatementId;
         UseSimulatedBank = useSimulatedBank;
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         BankProfile = bankProfile;
@@ -69,7 +71,6 @@ internal class BankRegistration :
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
         SoftwareStatementProfileId = softwareStatementProfileId ??
                                      throw new ArgumentNullException(nameof(softwareStatementProfileId));
-        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
     }
 
@@ -92,6 +93,18 @@ internal class BankRegistration :
     ///     Bank group
     /// </summary>
     public BankGroupEnum BankGroup { get; set; }
+
+    [ForeignKey(nameof(SoftwareStatementId))]
+    public SoftwareStatementEntity SoftwareStatementNavigation { get; private set; } = null!;
+
+    public Guid? SoftwareStatementId { get; set; }
+
+    /// <summary>
+    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
+    /// </summary>
+    public string SoftwareStatementProfileId { get; }
+
+    public string? SoftwareStatementProfileOverride { get; }
 
     /// <summary>
     ///     Use simulated bank.
@@ -143,13 +156,6 @@ internal class BankRegistration :
     ///     Redirect URIs used for registration.
     /// </summary>
     public IList<string> RedirectUris { get; set; }
-
-    /// <summary>
-    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
-    /// </summary>
-    public string SoftwareStatementProfileId { get; }
-
-    public string? SoftwareStatementProfileOverride { get; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.

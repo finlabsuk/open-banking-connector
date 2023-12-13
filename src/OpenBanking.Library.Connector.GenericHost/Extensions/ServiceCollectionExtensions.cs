@@ -129,7 +129,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static string GetConnectionString(DatabaseSettings settings, IConfiguration configuration)
+    private static string GetConnectionString(DatabaseSettings settings, IConfiguration configuration)
     {
         if (!settings.ConnectionStrings.TryGetValue(settings.Provider, out string? connectionString))
         {

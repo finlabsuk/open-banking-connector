@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -37,8 +36,7 @@ public class DomesticPaymentSubtest
         FilePathBuilder configFluentRequestLogging,
         FilePathBuilder pispFluentRequestLogging,
         ConsentAuth? consentAuth,
-        BankUser? bankUser,
-        IApiClient apiClient)
+        BankUser? bankUser)
     {
         bool subtestSkipped = subtestEnum switch
         {

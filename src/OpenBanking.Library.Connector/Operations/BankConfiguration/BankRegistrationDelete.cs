@@ -81,7 +81,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
             // Get API client
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    entity.SoftwareStatementProfileId,
+                    entity.SoftwareStatementId.ToString(),
                     entity.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 

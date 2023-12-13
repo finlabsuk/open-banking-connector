@@ -12,19 +12,19 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfigura
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "manage")]
-[Route("manage/bank-registrations")]
-[Tags("Bank Registrations")]
-public class BankRegistrationsController : ControllerBase
+[Route("manage/obwac-certificates")]
+[Tags("OBWAC Transport Certificates")]
+public class ObWacCertificatesController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public BankRegistrationsController(IRequestBuilder requestBuilder)
+    public ObWacCertificatesController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
 
     /// <summary>
-    ///     Create bank registration
+    ///     Create OBWAC transport certificate
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -32,65 +32,65 @@ public class BankRegistrationsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> PostAsync([FromBody] BankRegistration request)
+        ObWacCertificateResponse>> PostAsync([FromBody] ObWacCertificate request)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        ObWacCertificateResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .CreateAsync(request);
+            .ObWacCertificates
+            .CreateLocalAsync(request);
 
         return CreatedAtAction(
             nameof(GetAsync),
-            new { bankRegistrationId = fluentResponse.Id },
+            new { obWacCertificateId = fluentResponse.Id },
             fluentResponse);
     }
 
     /// <summary>
-    ///     Read bank registration
+    ///     Read OBWAC transport certificate
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="obWacCertificateId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpGet("{bankRegistrationId:guid}")]
+    [HttpGet("{obWacCertificateId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> GetAsync(
-        Guid bankRegistrationId,
+        ObWacCertificateResponse>> GetAsync(
+        Guid obWacCertificateId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        ObWacCertificateResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .ReadAsync(
-                bankRegistrationId,
+            .ObWacCertificates
+            .ReadLocalAsync(
+                obWacCertificateId,
                 modifiedBy);
 
         return Ok(fluentResponse);
     }
 
     /// <summary>
-    ///     Delete bank registration
+    ///     Delete OBWAC transport certificate
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="obWacCertificateId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpDelete("{bankRegistrationId:guid}")]
+    [HttpDelete("{obWacCertificateId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
-        Guid bankRegistrationId,
+        Guid obWacCertificateId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .DeleteAsync(
-                bankRegistrationId,
+            .ObWacCertificates
+            .DeleteLocalAsync(
+                obWacCertificateId,
                 modifiedBy);
 
         return Ok(fluentResponse);

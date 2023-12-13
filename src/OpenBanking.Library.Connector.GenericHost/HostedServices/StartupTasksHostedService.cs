@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
@@ -12,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,10 +25,16 @@ public class StartupTasksHostedService : IHostedService
     // Ensures this set up at application start-up
     private readonly IBankProfileService _bankProfileService;
 
+    private readonly IConfigurationRoot _configurationRoot;
+
     private readonly ISettingsProvider<DatabaseSettings> _databaseSettingsProvider;
 
     // Ensures this set up at application start-up
     private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+
+    private readonly HttpClientSettings _httpClientSettings;
+
+    private readonly IInstrumentationClient _instrumentationClient;
 
     private readonly ILogger<StartupTasksHostedService> _logger;
 
@@ -41,7 +49,10 @@ public class StartupTasksHostedService : IHostedService
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         IBankProfileService bankProfileService,
         ILogger<StartupTasksHostedService> logger,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyInfo encryptionKeyInfo,
+        IConfiguration configuration,
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
+        IInstrumentationClient instrumentationClient)
     {
         _databaseSettingsProvider =
             databaseSettingsProvider ??
@@ -51,10 +62,15 @@ public class StartupTasksHostedService : IHostedService
         _bankProfileService = bankProfileService;
         _logger = logger;
         _encryptionKeyInfo = encryptionKeyInfo;
+        _httpClientSettings = httpClientSettingsProvider.GetSettings();
+        _instrumentationClient = instrumentationClient;
+        _configurationRoot = (IConfigurationRoot) configuration;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        string x = _configurationRoot.GetDebugView();
+
         // Load database settings
         DatabaseSettings databaseSettings = _databaseSettingsProvider.GetSettings();
 
@@ -146,6 +162,16 @@ public class StartupTasksHostedService : IHostedService
                     _logger);
 
             //postgreSqlDbContext.ChangeTracker.DetectChanges();
+
+            await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
+
+            await new SoftwareStatementCleanup()
+                .Cleanup(
+                    postgreSqlDbContext,
+                    _processedSoftwareStatementProfileStore,
+                    _configurationRoot,
+                    _httpClientSettings,
+                    _instrumentationClient);
 
             await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
         }

@@ -71,6 +71,9 @@ public class ProcessedTransportCertificateProfile
             serverCertificateValidator = new DefaultServerCertificateValidator();
         }
 
+        TransportCertificate = transportCertificateProfile.Certificate;
+        TransportCertificateId = id;
+
         ApiClient = new ApiClient(
             instrumentationClient,
             pooledConnectionLifetimeSeconds,
@@ -90,6 +93,10 @@ public class ProcessedTransportCertificateProfile
     }
 
     public IApiClient ApiClient { get; }
+
+    public string TransportCertificate { get; } // pass-through for migration
+
+    public string TransportCertificateId { get; } // pass-through for migration
 
     public ConcurrentDictionary<SubjectDnOrgIdEncoding, string> SubjectDn { get; }
 

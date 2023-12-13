@@ -192,7 +192,7 @@ public class EntityMappingApplication
 
     private BankRegistration CreateClient() => new()
     {
-        SoftwareStatementProfileId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        SoftwareStatementId = Guid.NewGuid()
         //XFapiFinancialId = "xfapi"
     };
 

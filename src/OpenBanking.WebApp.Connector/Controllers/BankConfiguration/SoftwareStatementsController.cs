@@ -12,19 +12,19 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfigura
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "manage")]
-[Route("manage/bank-registrations")]
-[Tags("Bank Registrations")]
-public class BankRegistrationsController : ControllerBase
+[Route("manage/software-statements")]
+[Tags("Software Statements")]
+public class SoftwareStatementsController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public BankRegistrationsController(IRequestBuilder requestBuilder)
+    public SoftwareStatementsController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
 
     /// <summary>
-    ///     Create bank registration
+    ///     Create software statement
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -32,65 +32,65 @@ public class BankRegistrationsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> PostAsync([FromBody] BankRegistration request)
+        SoftwareStatementResponse>> PostAsync([FromBody] SoftwareStatement request)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        SoftwareStatementResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .CreateAsync(request);
+            .SoftwareStatements
+            .CreateLocalAsync(request);
 
         return CreatedAtAction(
             nameof(GetAsync),
-            new { bankRegistrationId = fluentResponse.Id },
+            new { softwareStatementId = fluentResponse.Id },
             fluentResponse);
     }
 
     /// <summary>
-    ///     Read bank registration
+    ///     Read software statement
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="softwareStatementId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpGet("{bankRegistrationId:guid}")]
+    [HttpGet("{softwareStatementId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> GetAsync(
-        Guid bankRegistrationId,
+        SoftwareStatementResponse>> GetAsync(
+        Guid softwareStatementId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        SoftwareStatementResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .ReadAsync(
-                bankRegistrationId,
+            .SoftwareStatements
+            .ReadLocalAsync(
+                softwareStatementId,
                 modifiedBy);
 
         return Ok(fluentResponse);
     }
 
     /// <summary>
-    ///     Delete bank registration
+    ///     Delete software statement
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="softwareStatementId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpDelete("{bankRegistrationId:guid}")]
+    [HttpDelete("{softwareStatementId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
-        Guid bankRegistrationId,
+        Guid softwareStatementId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .DeleteAsync(
-                bankRegistrationId,
+            .SoftwareStatements
+            .DeleteLocalAsync(
+                softwareStatementId,
                 modifiedBy);
 
         return Ok(fluentResponse);

@@ -22,19 +22,12 @@ public class BankRegistration : Base, ISupportsValidation
     public BankProfileEnum BankProfile { get; set; }
 
     /// <summary>
-    ///     ID of software statement profile to use for registration. The ID must
-    ///     correspond to a software statement profile provided via secrets/configuration.
+    ///     ID of software statement to use for registration. The ID must
+    ///     correspond to a previously-added software statement.
     /// </summary>
     [Required]
     [JsonProperty(Required = Required.Always)]
-    public string SoftwareStatementProfileId { get; set; } = null!;
-
-    /// <summary>
-    ///     Optional override case to use with software statement and certificate profiles. Override cases
-    ///     can be used for bank-specific customisations to profiles, e.g. different transport certificate DN string.
-    ///     When null no override case is specified.
-    /// </summary>
-    public string? SoftwareStatementProfileOverrideCase { get; set; }
+    public Guid SoftwareStatementId { get; set; }
 
     /// <summary>
     ///     Functional APIs specified in bank registration "scope".

@@ -12,19 +12,19 @@ namespace FinnovationLabs.OpenBanking.WebApp.Connector.Controllers.BankConfigura
 
 [ApiController]
 [ApiExplorerSettings(GroupName = "manage")]
-[Route("manage/bank-registrations")]
-[Tags("Bank Registrations")]
-public class BankRegistrationsController : ControllerBase
+[Route("manage/obseal-certificates")]
+[Tags("OBSeal Signing Certificates")]
+public class ObSealCertificatesController : ControllerBase
 {
     private readonly IRequestBuilder _requestBuilder;
 
-    public BankRegistrationsController(IRequestBuilder requestBuilder)
+    public ObSealCertificatesController(IRequestBuilder requestBuilder)
     {
         _requestBuilder = requestBuilder;
     }
 
     /// <summary>
-    ///     Create bank registration
+    ///     Create OBSeal signing certificate
     /// </summary>
     /// <param name="request"></param>
     /// <returns></returns>
@@ -32,65 +32,65 @@ public class BankRegistrationsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> PostAsync([FromBody] BankRegistration request)
+        ObSealCertificateResponse>> PostAsync([FromBody] ObSealCertificate request)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        ObSealCertificateResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .CreateAsync(request);
+            .ObSealCertificates
+            .CreateLocalAsync(request);
 
         return CreatedAtAction(
             nameof(GetAsync),
-            new { bankRegistrationId = fluentResponse.Id },
+            new { obSealCertificateId = fluentResponse.Id },
             fluentResponse);
     }
 
     /// <summary>
-    ///     Read bank registration
+    ///     Read OBSeal signing certificate
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="obSealCertificateId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpGet("{bankRegistrationId:guid}")]
+    [HttpGet("{obSealCertificateId:guid}")]
     [ActionName(nameof(GetAsync))]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
-        BankRegistrationResponse>> GetAsync(
-        Guid bankRegistrationId,
+        ObSealCertificateResponse>> GetAsync(
+        Guid obSealCertificateId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        BankRegistrationResponse fluentResponse = await _requestBuilder
+        ObSealCertificateResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .ReadAsync(
-                bankRegistrationId,
+            .ObSealCertificates
+            .ReadLocalAsync(
+                obSealCertificateId,
                 modifiedBy);
 
         return Ok(fluentResponse);
     }
 
     /// <summary>
-    ///     Delete bank registration
+    ///     Delete OBSeal signing certificate
     /// </summary>
-    /// <param name="bankRegistrationId"></param>
+    /// <param name="obSealCertificateId"></param>
     /// <param name="modifiedBy"></param>
     /// <returns></returns>
-    [HttpDelete("{bankRegistrationId:guid}")]
+    [HttpDelete("{obSealCertificateId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
-        Guid bankRegistrationId,
+        Guid obSealCertificateId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
         ObjectDeleteResponse fluentResponse = await _requestBuilder
             .Management
-            .BankRegistrations
-            .DeleteAsync(
-                bankRegistrationId,
+            .ObSealCertificates
+            .DeleteLocalAsync(
+                obSealCertificateId,
                 modifiedBy);
 
         return Ok(fluentResponse);

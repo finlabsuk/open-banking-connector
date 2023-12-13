@@ -89,7 +89,7 @@ internal class ConsentAccessTokenGet
             // Obtain new refresh and access tokens
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementProfileId,
+                    bankRegistration.SoftwareStatementId.ToString(),
                     bankRegistration.SoftwareStatementProfileOverride);
             string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
                 defaultResponseMode,

@@ -54,6 +54,7 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.SoftwareStatementProfileOverride)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.SoftwareStatementId);
         builder.Property(e => e.RegistrationScope)
             .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);

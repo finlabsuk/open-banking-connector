@@ -13,7 +13,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 
 public interface IProcessedSoftwareStatementProfileStore
 {
-    Task<ProcessedSoftwareStatementProfile> GetAsync(string id, string? overrideVariant = null);
+    Task<ProcessedSoftwareStatementProfile> GetAsync(string? id, string? overrideVariant = null);
+
+    void AddProfile(
+        ProcessedTransportCertificateProfile processedTransportCertificateProfile,
+        ProcessedSigningCertificateProfile processedSigningCertificateProfile,
+        SoftwareStatementProfile softwareStatementProfile,
+        string id,
+        IInstrumentationClient instrumentationClient);
 }
 
 public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatementProfileStore
@@ -249,8 +256,15 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         }
     }
 
-    public Task<ProcessedSoftwareStatementProfile> GetAsync(string id, string? overrideVariant)
+    public Task<ProcessedSoftwareStatementProfile> GetAsync(string? id, string? overrideVariant)
     {
+        // Check for null
+        if (id is null)
+        {
+            throw new KeyNotFoundException(
+                "Bank registration does not specify software statement which normally means it was not available at application startup.");
+        }
+
         // Load cache value
         if (!_cache.TryGetValue(id, out ProcessedSoftwareStatementProfiles? cacheValue))
         {
@@ -274,5 +288,29 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         }
 
         return processedSoftwareStatementProfile.ToTaskResult();
+    }
+
+    public void AddProfile(
+        ProcessedTransportCertificateProfile processedTransportCertificateProfile,
+        ProcessedSigningCertificateProfile processedSigningCertificateProfile,
+        SoftwareStatementProfile softwareStatementProfile,
+        string id,
+        IInstrumentationClient instrumentationClient)
+    {
+        // Create default variant
+        var defaultVariant =
+            new ProcessedSoftwareStatementProfile(
+                processedTransportCertificateProfile,
+                processedSigningCertificateProfile,
+                softwareStatementProfile,
+                id,
+                null,
+                instrumentationClient);
+
+        ConcurrentDictionary<string, ProcessedSoftwareStatementProfile> overrideVariants =
+            new(StringComparer.InvariantCultureIgnoreCase);
+
+        // Add to cache
+        _cache[id] = new ProcessedSoftwareStatementProfiles(defaultVariant, overrideVariants);
     }
 }

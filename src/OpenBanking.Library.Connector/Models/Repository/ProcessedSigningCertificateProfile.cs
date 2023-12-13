@@ -32,9 +32,16 @@ public class ProcessedSigningCertificateProfile
 
         AssociatedKey = signingCertificateProfile.AssociatedKey;
         AssociatedKeyId = signingCertificateProfile.AssociatedKeyId;
+
+        SigningCertificate = signingCertificateProfile.Certificate;
+        SigningCertificateId = id;
     }
 
     public string AssociatedKeyId { get; }
 
     public string AssociatedKey { get; }
+
+    public string SigningCertificate { get; } // pass-through for migration
+
+    public string SigningCertificateId { get; } // pass-through for migration
 }

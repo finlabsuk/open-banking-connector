@@ -26,7 +26,7 @@ public interface IRequestBuilder
     /// <summary>
     ///     API for setting up banks in Open Banking Connector including OAuth2 clients and functional APIs.
     /// </summary>
-    IBankConfigurationContext BankConfiguration { get; }
+    IManagementContext Management { get; }
 
     /// <summary>
     ///     API corresponding to UK Open Banking Payment Initiation functional API.
@@ -89,8 +89,8 @@ public class RequestBuilder : IRequestBuilder
         _memoryCache = memoryCache.ArgNotNull(nameof(memoryCache));
     }
 
-    public IBankConfigurationContext BankConfiguration =>
-        new BankConfigurationContext(CreateContext());
+    public IManagementContext Management =>
+        new ManagementContext(CreateContext());
 
     public IAccountAndTransactionContext AccountAndTransaction =>
         new AccountAndTransactionContext(CreateContext());

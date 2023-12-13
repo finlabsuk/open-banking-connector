@@ -12,7 +12,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
-using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -223,7 +222,6 @@ public abstract class AppTests
             await processedSoftwareStatementProfileStore.GetAsync(
                 testData1.SoftwareStatementProfileId,
                 testData1.SoftwareStatementAndCertificateProfileOverride);
-        IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
         // Get request builder
         using IRequestBuilderContainer requestBuilderContainer = requestBuilderGenerator();
@@ -281,13 +279,11 @@ public abstract class AppTests
 
         // CREATE and READ bank configuration objects
         // Create bankRegistration or use existing
-        string softwareStatementProfileId = testData1.SoftwareStatementProfileId;
-        string? statementProfileOverride = testData1.SoftwareStatementAndCertificateProfileOverride;
+        var softwareStatementProfileId = new Guid(testData1.SoftwareStatementProfileId);
         RegistrationScopeEnum registrationScope = testData2.RegistrationScope;
         BankRegistration bankRegistrationRequest = await GetBankRegistrationRequest(
             bankProfile,
             softwareStatementProfileId,
-            statementProfileOverride,
             registrationScope,
             testDataProcessorFluentRequestLogging,
             testNameUnique,
@@ -341,7 +337,7 @@ public abstract class AppTests
 
             // Read BankRegistration
             BankRegistrationResponse bankRegistrationReadResponse = await requestBuilder
-                .BankConfiguration
+                .Management
                 .BankRegistrations
                 .ReadAsync(
                     bankRegistrationId,
@@ -382,8 +378,7 @@ public abstract class AppTests
                         consentAuth,
                         authUrlLeftPart,
                         bankUser,
-                        accountAccessConsentOptions,
-                        apiClient);
+                        accountAccessConsentOptions);
                 }
             }
 
@@ -408,8 +403,7 @@ public abstract class AppTests
                             .AppendToPath("pisp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
-                        bankUser,
-                        apiClient);
+                        bankUser);
                 }
 
                 // Run domestic VRP consent subtests
@@ -446,7 +440,7 @@ public abstract class AppTests
         BankRegistration bankRegistrationRequest)
     {
         BankRegistrationResponse registrationResp = await requestBuilder
-            .BankConfiguration
+            .Management
             .BankRegistrations
             .CreateAsync(bankRegistrationRequest);
 
@@ -473,7 +467,7 @@ public abstract class AppTests
         bool? includeExternalApiOperation)
     {
         ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
-            .BankConfiguration
+            .Management
             .BankRegistrations
             .DeleteAsync(
                 bankRegistrationId,
@@ -487,8 +481,7 @@ public abstract class AppTests
 
     private static async Task<BankRegistration> GetBankRegistrationRequest(
         BankProfile bankProfile,
-        string softwareStatementProfileId,
-        string? statementProfileOverride,
+        Guid softwareStatementId,
         RegistrationScopeEnum registrationScope,
         FilePathBuilder testDataProcessorFluentRequestLogging,
         string testNameUnique,
@@ -497,9 +490,7 @@ public abstract class AppTests
         var registrationRequest = new BankRegistration
         {
             BankProfile = bankProfile.BankProfileEnum,
-            SoftwareStatementProfileId = softwareStatementProfileId,
-            SoftwareStatementProfileOverrideCase =
-                statementProfileOverride,
+            SoftwareStatementId = softwareStatementId,
             RegistrationScope = registrationScope
         };
         await testDataProcessorFluentRequestLogging

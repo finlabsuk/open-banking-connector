@@ -79,6 +79,11 @@ public class ProcessedSoftwareStatementProfile
         SoftwareId = softwareStatementProfile.SoftwareId;
         SandboxEnvironment = softwareStatementProfile.SandboxEnvironment;
 
+        TransportCertificate = processedTransportCertificateProfile.TransportCertificate;
+        TransportCertificateId = processedTransportCertificateProfile.TransportCertificateId;
+        SigningCertificate = processedSigningCertificateProfile.SigningCertificate;
+        SigningCertificateId = processedSigningCertificateProfile.SigningCertificateId;
+
         if (!string.IsNullOrEmpty(softwareStatementProfile.DefaultQueryRedirectUrl))
         {
             _defaultQueryRedirectUrl = softwareStatementProfile.DefaultQueryRedirectUrl;
@@ -131,6 +136,14 @@ public class ProcessedSoftwareStatementProfile
     public IApiClient ApiClient { get; }
 
     public string Id { get; }
+
+    public string SigningCertificate { get; } // pass-through for migration
+
+    public string SigningCertificateId { get; } // pass-through for migration
+
+    public string TransportCertificate { get; } // pass-through for migration
+
+    public string TransportCertificateId { get; } // pass-through for migration
 
     public string? OverrideCase { get; }
 

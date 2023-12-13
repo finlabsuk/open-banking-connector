@@ -101,19 +101,16 @@ internal class
         bool useSimulatedBank = request.UseSimulatedBank;
 
         // Load processed software statement profile
-        string softwareStatementProfileId = request.SoftwareStatementProfileId;
-        string? softwareStatementProfileOverrideCase = request.SoftwareStatementProfileOverrideCase;
+        Guid softwareStatementId = request.SoftwareStatementId;
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                softwareStatementProfileId,
-                softwareStatementProfileOverrideCase);
+            await _softwareStatementProfileRepo.GetAsync(softwareStatementId.ToString());
 
         // Get and process software statement assertion
         string softwareStatementAssertion = await GetSoftwareStatementAssertion(processedSoftwareStatementProfile);
         SsaPayload ssaPayload = ProcessSsa(
             softwareStatementAssertion,
             processedSoftwareStatementProfile,
-            softwareStatementProfileId);
+            softwareStatementId);
 
         // Determine redirect URIs
         (IList<string> redirectUris, string defaultFragmentRedirectUri, string defaultQueryRedirectUri) =
@@ -180,7 +177,7 @@ internal class
             openIdConfiguration.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
-        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, string, string?, TokenEndpointAuthMethod,
+        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethod,
             RegistrationScopeEnum, IBankProfileService, (BankRegistrationPersisted? existingRegistration,
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
@@ -203,8 +200,7 @@ internal class
             request,
             bankProfile,
             bankGroup,
-            softwareStatementProfileId,
-            softwareStatementProfileOverrideCase,
+            softwareStatementId,
             tokenEndpointAuthMethod,
             registrationScope,
             _bankProfileService);
@@ -290,6 +286,7 @@ internal class
             registrationAccessToken,
             tokenEndpointAuthMethod,
             bankGroup,
+            softwareStatementId,
             useSimulatedBank,
             externalApiId,
             bankProfile.BankProfileEnum,
@@ -300,8 +297,7 @@ internal class
             defaultFragmentRedirectUri,
             defaultQueryRedirectUri,
             redirectUris,
-            softwareStatementProfileId,
-            softwareStatementProfileOverrideCase,
+            "",
             registrationScope);
 
         // Save entity
@@ -324,19 +320,18 @@ internal class
             entity.Reference,
             externalApiResponse,
             null,
-            entity.UseSimulatedBank,
+            entity.SoftwareStatementId!.Value,
             entity.BankProfile,
             entity.JwksUri,
             entity.RegistrationEndpoint,
             entity.TokenEndpoint,
             entity.AuthorizationEndpoint,
-            entity.SoftwareStatementProfileId,
-            entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
             entity.DefaultQueryRedirectUri,
             entity.RedirectUris,
-            entity.ExternalApiId);
+            entity.ExternalApiId,
+            entity.UseSimulatedBank);
 
         return (response, nonErrorMessages);
     }
@@ -383,7 +378,7 @@ internal class
             // Get software statement profile
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
                 await _softwareStatementProfileRepo.GetAsync(
-                    entity.SoftwareStatementProfileId,
+                    entity.SoftwareStatementId.ToString(),
                     entity.SoftwareStatementProfileOverride);
             IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
 
@@ -448,19 +443,18 @@ internal class
             entity.Reference,
             externalApiResponse,
             null,
-            entity.UseSimulatedBank,
+            entity.SoftwareStatementId ?? Guid.Empty,
             entity.BankProfile,
             entity.JwksUri,
             entity.RegistrationEndpoint,
             entity.TokenEndpoint,
             entity.AuthorizationEndpoint,
-            entity.SoftwareStatementProfileId,
-            entity.SoftwareStatementProfileOverride,
             entity.RegistrationScope,
             entity.DefaultFragmentRedirectUri,
             entity.DefaultQueryRedirectUri,
             entity.RedirectUris,
-            entity.ExternalApiId);
+            entity.ExternalApiId,
+            entity.UseSimulatedBank);
 
         return (response, nonErrorMessages);
     }
@@ -470,8 +464,7 @@ internal class
             BankRegistrationRequest request,
             BankProfile bankProfile,
             BankGroupEnum bankGroupEnum,
-            string softwareStatementProfileId,
-            string? softwareStatementProfileOverrideCase,
+            Guid softwareStatementId,
             TokenEndpointAuthMethod tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
             IBankProfileService bankProfileService)
@@ -489,13 +482,13 @@ internal class
         TRegistrationGroup? registrationGroup = bankGroup.GetRegistrationGroup(bank, registrationScope);
         if (registrationGroup is not null)
         {
-            // Get existing registrations with same bank group and SSA (ideally software ID)
+            // Get existing registrations with same bank group and software statement (i.e. Software ID)
             IOrderedQueryable<BankRegistrationPersisted> existingRegistrations =
                 _entityMethods
                     .DbSetNoTracking
                     .Where(
                         x => x.BankGroup == bankGroupEnum &&
-                             x.SoftwareStatementProfileId == softwareStatementProfileId)
+                             x.SoftwareStatementId == softwareStatementId)
                     .OrderByDescending(x => x.Created); // most recent first
 
             // Search for first registration in same registration group and check compatible (error if not)
@@ -522,7 +515,6 @@ internal class
                         existingRegBankProfile,
                         request.ExternalApiId,
                         registrationGroup.ToString()!,
-                        softwareStatementProfileOverrideCase,
                         tokenEndpointAuthMethod,
                         registrationScope);
                 nonErrorMessages.AddRange(nonErrorMessages2);
@@ -537,7 +529,6 @@ internal class
         BankProfile existingRegistrationBankProfile,
         string? externalApiId,
         string registrationGroupString,
-        string? softwareStatementProfileOverrideCase,
         TokenEndpointAuthMethod tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope)
     {
@@ -577,15 +568,6 @@ internal class
         }
 
         // TODO: compare redirect URLs?
-
-        if (softwareStatementProfileOverrideCase != existingRegistration.SoftwareStatementProfileOverride)
-        {
-            throw new
-                InvalidOperationException(
-                    $"Previous registration for BankRegistrationGroup {registrationGroupString} " +
-                    $"used software statement profile with override {existingRegistration.SoftwareStatementProfileOverride} " +
-                    $"which is different from expected {softwareStatementProfileOverrideCase}.");
-        }
 
         if (tokenEndpointAuthMethod !=
             existingRegistrationBankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod)
@@ -651,7 +633,7 @@ internal class
     private SsaPayload ProcessSsa(
         string ssa,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
-        string id)
+        Guid id)
     {
         // Get parts of SSA and payload
         string[] ssaComponentsBase64 = ssa.Split(new[] { '.' });
@@ -675,7 +657,7 @@ internal class
             !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultQueryRedirectUrl))
         {
             throw new ArgumentException(
-                $"Software statement profile with ID {id} contains DefaultQueryRedirectUrl {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultQueryRedirectUrl {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 
@@ -684,7 +666,7 @@ internal class
             !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
         {
             throw new ArgumentException(
-                $"Software statement profile with ID {id} contains DefaultFragmentRedirectUrl {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultFragmentRedirectUrl {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 

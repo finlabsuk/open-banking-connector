@@ -11,12 +11,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfig
 
 public interface IBankRegistrationPublicQuery : IBaseQuery
 {
-    /// <summary>
-    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
-    /// </summary>
-    string SoftwareStatementProfileId { get; }
-
-    string? SoftwareStatementProfileOverride { get; }
+    // <summary>
+    //     ID of software statement to use for registration. The ID must
+    //     correspond to a previously-added software statement.
+    // </summary>
+    //public Guid SoftwareStatementId { get; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.
@@ -76,7 +75,7 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
 }
 
 /// <summary>
-///     Response to BankRegistration Read and Create requests.
+///     Response to BankRegistration read and create requests.
 /// </summary>
 public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrationPublicQuery
 {
@@ -87,31 +86,27 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
         string? reference,
         ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
         IList<string>? warnings,
-        bool useSimulatedBank,
+        Guid softwareStatementId,
         BankProfileEnum bankProfile,
         string jwksUri,
         string? registrationEndpoint,
         string tokenEndpoint,
         string authorizationEndpoint,
-        string softwareStatementProfileId,
-        string? softwareStatementProfileOverride,
         RegistrationScopeEnum registrationScope,
         string defaultFragmentRedirectUri,
         string defaultQueryRedirectUri,
         IList<string> redirectUris,
-        string externalApiId) : base(id, created, createdBy, reference)
+        string externalApiId,
+        bool useSimulatedBank) : base(id, created, createdBy, reference)
     {
         ExternalApiResponse = externalApiResponse;
         Warnings = warnings;
-        UseSimulatedBank = useSimulatedBank;
+        SoftwareStatementId = softwareStatementId;
         BankProfile = bankProfile;
         JwksUri = jwksUri ?? throw new ArgumentNullException(nameof(jwksUri));
         RegistrationEndpoint = registrationEndpoint;
         TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
         AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
-        SoftwareStatementProfileId = softwareStatementProfileId ??
-                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
-        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         RegistrationScope = registrationScope;
         DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
                                      throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
@@ -119,6 +114,7 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
             defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
+        UseSimulatedBank = useSimulatedBank;
     }
 
     public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
@@ -127,6 +123,12 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
     public IList<string>? Warnings { get; }
+
+    /// <summary>
+    ///     ID of software statement to use for registration. The ID must
+    ///     correspond to a previously-added software statement.
+    /// </summary>
+    public Guid SoftwareStatementId { get; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -152,13 +154,6 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     Authorization endpoint (normally supplied from OpenID Configuration)
     /// </summary>
     public string AuthorizationEndpoint { get; }
-
-    /// <summary>
-    ///     ID of SoftwareStatementProfile to use in association with BankRegistration
-    /// </summary>
-    public string SoftwareStatementProfileId { get; }
-
-    public string? SoftwareStatementProfileOverride { get; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.

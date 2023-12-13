@@ -9,10 +9,16 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.Bank;
 using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
+using ObSealCertificate =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.ObSealCertificate;
+using ObWacCertificate =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.ObWacCertificate;
+using SoftwareStatement =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.SoftwareStatement;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 
-public interface IBankConfigurationContext
+public interface IManagementContext
 {
     /// <summary>
     ///     API for Bank objects.
@@ -27,6 +33,18 @@ public interface IBankConfigurationContext
     ///     created for the same bank.
     /// </summary>
     IBankRegistrationsContext BankRegistrations { get; }
+
+    ILocalEntityContext<ObWacCertificate, IObWacCertificatePublicQuery,
+            ObWacCertificateResponse, ObWacCertificateResponse>
+        ObWacCertificates { get; }
+
+    ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery,
+            ObSealCertificateResponse, ObSealCertificateResponse>
+        ObSealCertificates { get; }
+
+    ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery,
+            SoftwareStatementResponse, SoftwareStatementResponse>
+        SoftwareStatements { get; }
 
     /// <summary>
     ///     API for AccountAndTransactionApi objects.
@@ -56,11 +74,11 @@ public interface IBankConfigurationContext
         VariableRecurringPaymentsApis { get; }
 }
 
-internal class BankConfigurationContext : IBankConfigurationContext
+internal class ManagementContext : IManagementContext
 {
     private readonly ISharedContext _sharedContext;
 
-    public BankConfigurationContext(ISharedContext sharedContext)
+    public ManagementContext(ISharedContext sharedContext)
     {
         _sharedContext = sharedContext;
     }
@@ -80,6 +98,42 @@ internal class BankConfigurationContext : IBankConfigurationContext
 
     public IBankRegistrationsContext
         BankRegistrations => new BankRegistrationsContextInternal(_sharedContext);
+
+    public ILocalEntityContext<ObWacCertificate, IObWacCertificatePublicQuery, ObWacCertificateResponse,
+        ObWacCertificateResponse> ObWacCertificates =>
+        new LocalEntityContextInternal<ObWacCertificateEntity, ObWacCertificate, IObWacCertificatePublicQuery,
+            ObWacCertificateResponse, ObWacCertificateResponse>(
+            _sharedContext,
+            new ObWacCertificatePost(
+                _sharedContext.DbService.GetDbEntityMethodsClass<ObWacCertificateEntity>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.Instrumentation));
+
+    public ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery, ObSealCertificateResponse,
+        ObSealCertificateResponse> ObSealCertificates =>
+        new LocalEntityContextInternal<ObSealCertificateEntity, ObSealCertificate, IObSealCertificatePublicQuery,
+            ObSealCertificateResponse, ObSealCertificateResponse>(
+            _sharedContext,
+            new ObSealCertificatePost(
+                _sharedContext.DbService.GetDbEntityMethodsClass<ObSealCertificateEntity>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.Instrumentation));
+
+    public ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery, SoftwareStatementResponse,
+        SoftwareStatementResponse> SoftwareStatements =>
+        new LocalEntityContextInternal<SoftwareStatementEntity, SoftwareStatement, ISoftwareStatementPublicQuery,
+            SoftwareStatementResponse, SoftwareStatementResponse>(
+            _sharedContext,
+            new SoftwareStatementPost(
+                _sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
+                _sharedContext.DbService.GetDbSaveChangesMethodClass(),
+                _sharedContext.TimeProvider,
+                _sharedContext.SoftwareStatementProfileCachedRepo,
+                _sharedContext.Instrumentation));
 
     public ILocalEntityContext<AccountAndTransactionApiRequest, IAccountAndTransactionApiQuery,
         AccountAndTransactionApiResponse, AccountAndTransactionApiResponse> AccountAndTransactionApis =>

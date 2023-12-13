@@ -43,9 +43,20 @@ public abstract class BaseDbContext : DbContext
     // Set DB Provider
     protected abstract DbProvider DbProvider { get; }
 
-    // Bank configuration
-    internal DbSet<Bank> Bank => Set<Bank>();
+    // Management objects
     internal DbSet<BankRegistration> BankRegistration => Set<BankRegistration>();
+
+    public DbSet<ObWacCertificateEntity> ObWacCertificate =>
+        Set<ObWacCertificateEntity>();
+
+    public DbSet<ObSealCertificateEntity> ObSealCertificate =>
+        Set<ObSealCertificateEntity>();
+
+    public DbSet<SoftwareStatementEntity> SoftwareStatement =>
+        Set<SoftwareStatementEntity>();
+
+    // Deprecated objects
+    internal DbSet<Bank> Bank => Set<Bank>();
 
     internal DbSet<AccountAndTransactionApiEntity> AccountAndTransactionApi =>
         Set<AccountAndTransactionApiEntity>();
@@ -55,6 +66,7 @@ public abstract class BaseDbContext : DbContext
 
     internal DbSet<VariableRecurringPaymentsApiEntity> VariableRecurringPaymentsApi =>
         Set<VariableRecurringPaymentsApiEntity>();
+
 
     // Auth contexts
     internal DbSet<AuthContext> AuthContext => Set<AuthContext>();
@@ -102,6 +114,9 @@ public abstract class BaseDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AccountAndTransactionApiConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new PaymentInitiationApiConfig(DbProvider, true, JsonFormatting));
         modelBuilder.ApplyConfiguration(new VariableRecurringPaymentsApiConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new ObWacCertificateConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new ObSealCertificateConfig(DbProvider, true, JsonFormatting));
+        modelBuilder.ApplyConfiguration(new SoftwareStatementConfig(DbProvider, true, JsonFormatting));
 
         // Auth contexts (note global query filter not supported for inherited types)
         // var x = new AuthContextConfig(DbProvider, true, JsonFormatting);

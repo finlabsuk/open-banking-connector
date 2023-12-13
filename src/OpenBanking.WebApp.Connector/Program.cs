@@ -44,12 +44,12 @@ builder.Services
         options =>
         {
             options.SwaggerDoc(
-                "config",
+                "manage",
                 new OpenApiInfo
                 {
-                    Title = "Bank Configuration API",
+                    Title = "Management API",
                     Version = serviceVersion,
-                    Description = "Bank Configuration API for Open Banking Connector Web App"
+                    Description = "Management API for Open Banking Connector Web App"
                 });
             options.SwaggerDoc(
                 "aisp",
@@ -154,7 +154,7 @@ app.UseSwagger();
 app.UseSwaggerUI(
     c =>
     {
-        c.SwaggerEndpoint("/swagger/config/swagger.json", "Bank Configuration API");
+        c.SwaggerEndpoint("/swagger/manage/swagger.json", "Management API");
         c.SwaggerEndpoint("/swagger/aisp/swagger.json", "Account and Transaction API");
         c.SwaggerEndpoint("/swagger/pisp/swagger.json", "Payment Initiation API");
         c.SwaggerEndpoint("/swagger/vrp/swagger.json", "Variable Recurring Payments API");
