@@ -37,7 +37,8 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new SigningCertificateProfile
             {
                 AssociatedKey = value,
-                AssociatedKeyId = "a"
+                AssociatedKeyId = "a",
+                Certificate = "a"
             };
 
             List<ValidationFailure> results =
@@ -58,7 +59,8 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new SigningCertificateProfile
             {
                 AssociatedKey = "a",
-                AssociatedKeyId = value
+                AssociatedKeyId = value,
+                Certificate = "a"
             };
 
             List<ValidationFailure> results =
@@ -78,7 +80,8 @@ public class SoftwareStatementProfileValidatorTests
             var profile = new SigningCertificateProfile
             {
                 AssociatedKey = "a",
-                AssociatedKeyId = "a"
+                AssociatedKeyId = "a",
+                Certificate = value
             };
 
             List<ValidationFailure> results =
