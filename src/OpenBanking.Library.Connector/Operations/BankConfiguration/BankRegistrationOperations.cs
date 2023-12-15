@@ -28,7 +28,6 @@ using Jose;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Bank = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using BankRegistrationRequest =
@@ -47,7 +46,6 @@ internal class
     IObjectCreate<BankRegistrationRequest, BankRegistrationResponse, BankRegistrationCreateParams>,
     IObjectRead<BankRegistrationResponse, BankRegistrationReadParams>
 {
-    private readonly IDbReadOnlyEntityMethods<Bank> _bankMethods;
     private readonly IBankProfileService _bankProfileService;
     private readonly IOpenIdConfigurationRead _configurationRead;
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
@@ -66,11 +64,9 @@ internal class
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
-        IDbReadOnlyEntityMethods<Bank> bankMethods,
         IBankProfileService bankProfileService,
         IGrantPost grantPost)
     {
-        _bankMethods = bankMethods;
         _bankProfileService = bankProfileService;
         _grantPost = grantPost;
         _configurationRead = configurationRead;

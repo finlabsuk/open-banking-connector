@@ -4,8 +4,6 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 
@@ -13,8 +11,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 ///     Persisted type for Bank API Set
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-internal partial class AccountAndTransactionApiEntity :
-    BaseEntity, IAccountAndTransactionApiQuery
+internal class AccountAndTransactionApiEntity :
+    BaseEntity
 {
     public AccountAndTransactionApiEntity(
         string? reference,
@@ -47,18 +45,4 @@ internal partial class AccountAndTransactionApiEntity :
     public AccountAndTransactionApiVersion ApiVersion { get; set; }
 
     public string BaseUrl { get; }
-}
-
-internal partial class AccountAndTransactionApiEntity :
-    ISupportsFluentLocalEntityGet<AccountAndTransactionApiResponse>
-{
-    public AccountAndTransactionApiResponse PublicGetLocalResponse =>
-        new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            BankId,
-            ApiVersion,
-            BaseUrl);
 }

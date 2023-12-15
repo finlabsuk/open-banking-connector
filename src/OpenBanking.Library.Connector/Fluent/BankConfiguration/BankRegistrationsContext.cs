@@ -10,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using BankRegistrationPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
-using BankPersisted = FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.Bank;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 
@@ -38,7 +37,6 @@ internal class BankRegistrationsContextInternal :
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new OpenIdConfigurationRead(sharedContext.ApiClient),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankPersisted>(),
             sharedContext.BankProfileService,
             new GrantPost(
                 sharedContext.ApiClient,

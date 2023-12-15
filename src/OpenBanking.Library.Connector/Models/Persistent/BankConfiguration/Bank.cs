@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 
@@ -13,9 +11,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 ///     Persisted type for Bank.
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-internal partial class Bank :
-    BaseEntity,
-    IBankPublicQuery
+internal class Bank :
+    BaseEntity
 {
     public Bank(
         Guid id,
@@ -96,25 +93,4 @@ internal partial class Bank :
     ///     For a well-behaved bank, normally this object should be null.
     /// </summary>
     public CustomBehaviourClass? CustomBehaviour { get; set; }
-}
-
-internal partial class Bank :
-    ISupportsFluentLocalEntityGet<BankResponse>
-{
-    public BankResponse PublicGetLocalResponse => new(
-        Id,
-        Created,
-        CreatedBy,
-        Reference,
-        null,
-        IdTokenSubClaimType,
-        JwksUri,
-        SupportsSca,
-        IssuerUrl,
-        FinancialId,
-        RegistrationEndpoint,
-        TokenEndpoint,
-        AuthorizationEndpoint,
-        DcrApiVersion,
-        CustomBehaviour);
 }

@@ -151,10 +151,6 @@ public class StartupTasksHostedService : IHostedService
                     _processedSoftwareStatementProfileStore,
                     _logger);
 
-            await new AccountAndTransactionApiCleanup().Cleanup(
-                postgreSqlDbContext,
-                _logger);
-
             await new AccountAccessConsentCleanup()
                 .Cleanup(
                     postgreSqlDbContext,

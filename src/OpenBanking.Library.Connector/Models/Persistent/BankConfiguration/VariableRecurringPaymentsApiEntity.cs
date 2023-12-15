@@ -3,9 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 
@@ -13,8 +11,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankCo
 ///     Persisted type for Bank API Set
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-internal partial class VariableRecurringPaymentsApiEntity :
-    BaseEntity, IVariableRecurringPaymentsApiQuery
+internal class VariableRecurringPaymentsApiEntity :
+    BaseEntity
 {
     public VariableRecurringPaymentsApiEntity(
         string? reference,
@@ -46,18 +44,4 @@ internal partial class VariableRecurringPaymentsApiEntity :
     public Guid BankId { get; }
     public VariableRecurringPaymentsApiVersion ApiVersion { get; }
     public string BaseUrl { get; }
-}
-
-internal partial class VariableRecurringPaymentsApiEntity :
-    ISupportsFluentLocalEntityGet<VariableRecurringPaymentsApiResponse>
-{
-    public VariableRecurringPaymentsApiResponse PublicGetLocalResponse =>
-        new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            BankId,
-            ApiVersion,
-            BaseUrl);
 }
