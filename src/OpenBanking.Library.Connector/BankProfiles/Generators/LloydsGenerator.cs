@@ -119,7 +119,11 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 },
                 AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
                     ? null
-                    : new ConsentAuthGetCustomBehaviour { IdTokenNonceClaimIsPreviousValue = true },
+                    : new ConsentAuthGetCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IdTokenNonceClaimIsPreviousValue = true }
+                    },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
                     : new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
@@ -130,7 +134,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                         PreviousPaymentDateTimeJsonConverter =
                             DateTimeOffsetConverterEnum.JsonInvalidStringBecomesNull
                     },
-                AuthCodeGrantPost = new GrantPostCustomBehaviour
+                AuthCodeGrantPost = new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
                 {
                     AllowNullResponseRefreshToken = true // required for PISP case
                 }

@@ -60,7 +60,7 @@ internal class ConsentAccessTokenGet
         bool supportsSca,
         OAuth2ResponseMode defaultResponseMode,
         IdTokenSubClaimType idTokenSubClaimType,
-        GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string? modifiedBy)
         where TConsentEntity : BaseConsent

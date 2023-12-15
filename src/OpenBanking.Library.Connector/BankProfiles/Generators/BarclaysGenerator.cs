@@ -136,10 +136,18 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 AccountAccessConsentPost =
                     new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
                 AccountAccessConsentAuthGet = bank is BarclaysBank.Sandbox
-                    ? new ConsentAuthGetCustomBehaviour { DoNotValidateIdToken = true }
+                    ? new ConsentAuthGetCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
+                    }
                     : null,
                 AuthCodeGrantPost = bank is BarclaysBank.Sandbox
-                    ? new GrantPostCustomBehaviour { DoNotValidateIdToken = true }
+                    ? new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdToken = true }
+                    }
                     : null,
                 BankRegistrationPost = new BankRegistrationPostCustomBehaviour
                 {

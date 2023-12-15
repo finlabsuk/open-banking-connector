@@ -21,7 +21,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
     public override BankProfile GetBankProfile(MonzoBank bank)
     {
         var grantPostCustomBehaviour =
-            new GrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
+            new AuthCodeAndRefreshTokenGrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
             bank switch
@@ -46,11 +46,12 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                         TransportCertificateSubjectDnOrgIdEncoding =
                             SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                     },
-                ClientCredentialsGrantPost = new GrantPostCustomBehaviour
-                {
-                    ScopeResponseIsEmptyString = true,
-                    TokenTypeResponseStartsWithLowerCaseLetter = true
-                },
+                ClientCredentialsGrantPost =
+                    new ClientCredentialsGrantPostCustomBehaviour
+                    {
+                        ScopeResponseIsEmptyString = true,
+                        TokenTypeResponseStartsWithLowerCaseLetter = true
+                    },
                 AuthCodeGrantPost = grantPostCustomBehaviour,
                 RefreshTokenGrantPost = grantPostCustomBehaviour
             },

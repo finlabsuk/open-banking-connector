@@ -173,9 +173,15 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                             NatWestBank.Coutts => null, // use default
                             _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                         },
-                        DoNotValidateIdTokenAcrClaim = true
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
                     },
-                    AuthCodeGrantPost = new GrantPostCustomBehaviour { DoNotValidateIdTokenAcrClaim = true },
+                    AuthCodeGrantPost =
+                        new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                        {
+                            IdTokenProcessingCustomBehaviour =
+                                new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
+                        },
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
                         ? new AccountAccessConsentPostCustomBehaviour
                         {

@@ -16,6 +16,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.Json
     {
         DcrRegClientIdIssuedAt,
         DcrRegScope,
+        IdTokenExpirationTimeClaim,
         DirectDebitPreviousPaymentDateTime
     }
 }

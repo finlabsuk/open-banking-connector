@@ -25,7 +25,7 @@ internal interface IGrantPost
         string? externalApiClientSecret,
         string cacheKeyId,
         JsonSerializerSettings? jsonSerializerSettings,
-        GrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
+        ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
         Dictionary<string, JsonNode?>? extraClaims = null,
         bool includeClientIdWithPrivateKeyJwt = false,
@@ -48,7 +48,7 @@ internal interface IGrantPost
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
-        GrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
+        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient matlsApiClient);
 
@@ -68,13 +68,13 @@ internal interface IGrantPost
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
-        GrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
+        AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         IApiClient mtlsApiClient);
 
     Task<string?> ValidateIdTokenAuthEndpoint(
         OAuth2RedirectData redirectData,
-        ConsentAuthGetCustomBehaviour? consentAuthGetCustomBehaviour,
+        IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
         string jwksUri,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
         string bankIssuerUrl,

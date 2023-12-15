@@ -4,10 +4,9 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
-public abstract class GrantPostCustomBehaviour
+public class AuthCodeAndRefreshTokenGrantPostCustomBehaviour : GrantPostCustomBehaviour
 {
-    public bool? ScopeResponseIsEmptyString { get; set; }
+    public bool? AllowNullResponseRefreshToken { get; set; }
 
-
-    public bool? TokenTypeResponseStartsWithLowerCaseLetter { get; set; }
+    public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
 }

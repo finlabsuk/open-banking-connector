@@ -51,9 +51,16 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                         OAuth2ResponseMode.Fragment
                     }
                 },
-                AuthCodeGrantPost = new GrantPostCustomBehaviour
+                DomesticPaymentConsentAuthGet = new ConsentAuthGetCustomBehaviour
                 {
-                    AllowNullResponseRefreshToken = true // required for PISP case
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                },
+                AuthCodeGrantPost = new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                {
+                    AllowNullResponseRefreshToken = true, // required for PISP case
+                    IdTokenProcessingCustomBehaviour =
+                        new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 }
             }
         };

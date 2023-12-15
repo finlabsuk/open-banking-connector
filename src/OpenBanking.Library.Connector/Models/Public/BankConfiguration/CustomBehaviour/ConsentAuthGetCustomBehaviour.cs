@@ -12,11 +12,11 @@ public class ConsentAuthGetCustomBehaviour
     // Override aud claim
     public string? AudClaim { get; set; }
 
-    public bool? DoNotValidateIdToken { get; set; }
+    //public bool? AddRedundantOAuth2RedirectUriRequestParameter { get; set; }
 
-    public bool? DoNotValidateIdTokenAcrClaim { get; set; }
+    public bool? AddRedundantOAuth2StateRequestParameter { get; set; }
 
-    public bool? IdTokenMayNotHaveAcrClaim { get; set; }
+    public bool? AddRedundantOAuth2NonceRequestParameter { get; set; }
 
-    public bool? IdTokenNonceClaimIsPreviousValue { get; set; }
+    public IdTokenProcessingCustomBehaviour? IdTokenProcessingCustomBehaviour { get; set; }
 }

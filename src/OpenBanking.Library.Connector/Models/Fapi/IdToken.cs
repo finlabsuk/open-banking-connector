@@ -95,7 +95,9 @@ public abstract class IdTokenBase
     ///     seconds since 1970-01-01T00:00:00Z as measured in UTC
     /// </summary>
     [JsonProperty(PropertyName = "exp", Required = Required.Always)]
-    [JsonConverter(typeof(DateTimeOffsetUnixConverter))]
+    [JsonConverter(
+        typeof(DateTimeOffsetUnixConverter),
+        JsonConverterLabel.IdTokenExpirationTimeClaim)]
     public DateTimeOffset Exp { get; set; }
 
     [JsonProperty(PropertyName = "sub", Required = Required.Always)]
@@ -122,8 +124,8 @@ public abstract class IdTokenBase
     [JsonProperty(PropertyName = "auth_time")]
     public string? AuthTime { get; set; }
 
-    [JsonProperty("openbanking_intent_id", Required = Required.Always)]
-    public string ConsentId { get; set; } = null!;
+    [JsonProperty("openbanking_intent_id")]
+    public string? ConsentId { get; set; }
 
     [JsonProperty("acr")]
     public Acr? Acr { get; set; }

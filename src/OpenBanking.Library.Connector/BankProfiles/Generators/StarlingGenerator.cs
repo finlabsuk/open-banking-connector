@@ -33,9 +33,19 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             CustomBehaviour = new CustomBehaviourClass
             {
                 BankRegistrationPut = new BankRegistrationPutCustomBehaviour { CustomTokenScope = "openid" },
-                AccountAccessConsentAuthGet = new ConsentAuthGetCustomBehaviour { IdTokenMayNotHaveAcrClaim = true },
+                AccountAccessConsentAuthGet =
+                    new ConsentAuthGetCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }
+                    },
                 AccountAccessConsentPost = new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
-                AuthCodeGrantPost = new GrantPostCustomBehaviour { IdTokenMayNotHaveAcrClaim = true },
+                AuthCodeGrantPost =
+                    new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                    {
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAcrClaim = true }
+                    },
                 OpenIdConfigurationGet = new OpenIdConfigurationGetCustomBehaviour
                 {
                     Url =

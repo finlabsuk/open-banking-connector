@@ -235,7 +235,7 @@ internal class AuthContextUpdate :
             _ => throw new ArgumentOutOfRangeException()
         };
         bool nonceClaimIsInitialValue =
-            consentAuthGetCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
+            consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.IdTokenNonceClaimIsPreviousValue ?? false;
         string nonce = nonceClaimIsInitialValue && consent.AuthContextNonce is not null
             ? consent.AuthContextNonce
             : authContextNonce;
@@ -246,12 +246,13 @@ internal class AuthContextUpdate :
             requestObjectAudClaim ??
             issuerUrl;
         DateTimeOffset modified = _timeProvider.GetUtcNow();
-        bool doNotValidateIdToken = consentAuthGetCustomBehaviour?.DoNotValidateIdToken ?? false;
+        bool doNotValidateIdToken =
+            consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour?.DoNotValidateIdToken ?? false;
         if (doNotValidateIdToken is false)
         {
             string? newExternalApiUserId = await _grantPost.ValidateIdTokenAuthEndpoint(
                 request.RedirectData,
-                consentAuthGetCustomBehaviour,
+                consentAuthGetCustomBehaviour?.IdTokenProcessingCustomBehaviour,
                 jwksUri,
                 customBehaviour?.JwksGet,
                 bankTokenIssuerClaim,

@@ -102,13 +102,24 @@ public static class CreateAuthUrl
         {
             { "response_type", oAuth2RequestObjectClaims.ResponseType },
             { "client_id", oAuth2RequestObjectClaims.ClientId },
-            { "redirect_uri", oAuth2RequestObjectClaims.RedirectUri }, // required by some banks but not by spec
             { "scope", oAuth2RequestObjectClaims.Scope },
-            { "request", requestObjectJwt }
-            //{ "nonce", oAuth2RequestObjectClaims.Nonce },
-            //{ "response_mode", "fragment"},
-            //{ "state", oAuth2RequestObjectClaims.State }
+            { "request", requestObjectJwt },
+            { "redirect_uri", oAuth2RequestObjectClaims.RedirectUri } // required by some banks but not by spec
         };
+        // if (customBehaviourConsentAuthGet?.AddRedundantOAuth2RedirectUriRequestParameter ?? false)
+        // {
+        //     keyValuePairs.Add(
+        //         "redirect_uri",
+        //         oAuth2RequestObjectClaims.RedirectUri); // required by some banks but not by spec
+        // }
+        if (customBehaviourConsentAuthGet?.AddRedundantOAuth2StateRequestParameter ?? false)
+        {
+            keyValuePairs.Add("state", oAuth2RequestObjectClaims.State); // required by some banks but not by spec
+        }
+        if (customBehaviourConsentAuthGet?.AddRedundantOAuth2NonceRequestParameter ?? false)
+        {
+            keyValuePairs.Add("nonce", oAuth2RequestObjectClaims.Nonce); // required by some banks but not by spec
+        }
         string queryString = keyValuePairs.ToUrlEncoded();
         string authUrl = authorisationEndpoint + "?" + queryString;
         StringBuilder authUrlTraceSb = new StringBuilder()

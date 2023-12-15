@@ -4,10 +4,4 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 
-public abstract class GrantPostCustomBehaviour
-{
-    public bool? ScopeResponseIsEmptyString { get; set; }
-
-
-    public bool? TokenTypeResponseStartsWithLowerCaseLetter { get; set; }
-}
+public class ClientCredentialsGrantPostCustomBehaviour : GrantPostCustomBehaviour { }
