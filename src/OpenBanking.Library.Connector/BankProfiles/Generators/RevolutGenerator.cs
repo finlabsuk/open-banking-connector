@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
@@ -34,7 +35,30 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                 {
                     Url =
                         "https://oba.revolut.com/openid-configuration" // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
-                }
+                },
+                AccountAccessConsentAuthGet =
+                    new ConsentAuthGetCustomBehaviour
+                    {
+                        //AddRedundantOAuth2RedirectUriRequestParameter = true,
+                        AddRedundantOAuth2StateRequestParameter = true,
+                        AddRedundantOAuth2NonceRequestParameter = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
+                    },
+                AuthCodeGrantPost =
+                    new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+                    {
+                        AllowNullResponseRefreshToken = true,
+                        IdTokenProcessingCustomBehaviour =
+                            new IdTokenProcessingCustomBehaviour
+                            {
+                                IdTokenMayNotHaveAuthTimeClaim = true,
+                                IdTokenMayNotHaveConsentIdClaim = true,
+                                IdTokenMayNotHaveAcrClaim = true,
+                                IdTokenExpirationTimeClaimJsonConverter =
+                                    DateTimeOffsetUnixConverterEnum.UnixMilliSecondsJsonFormat
+                            }
+                    }
             },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
