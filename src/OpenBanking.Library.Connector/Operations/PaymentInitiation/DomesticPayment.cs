@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
@@ -92,7 +92,7 @@ internal class DomesticPayment :
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
@@ -181,7 +181,7 @@ internal class DomesticPayment :
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId = bankProfile.FinancialId;

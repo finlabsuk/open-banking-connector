@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -89,7 +89,7 @@ internal class DomesticVrp :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
@@ -178,7 +178,7 @@ internal class DomesticVrp :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId = bankProfile.FinancialId;

@@ -2,11 +2,10 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using PaymentInitiationModelsPublic =
@@ -111,7 +110,8 @@ public class BankConfigurationApiSettings
 
     public bool UseRegistrationAccessToken { get; set; }
 
-    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethod.TlsClientAuth;
+    public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; set; } =
+        TokenEndpointAuthMethodSupportedValues.TlsClientAuth;
 
     /// <summary>
     ///     ID token "sub" claim type.

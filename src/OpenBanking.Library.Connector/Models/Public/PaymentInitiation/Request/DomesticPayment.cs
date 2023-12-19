@@ -5,8 +5,8 @@
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -44,7 +44,7 @@ public class DomesticPaymentTemplateRequest
     public DomesticPaymentTemplateParameters Parameters { get; set; } = null!;
 }
 
-public class DomesticPaymentRequest : Base, ISupportsValidation
+public class DomesticPaymentRequest : EntityBase, ISupportsValidation
 {
     /// <summary>
     ///     BankProfile used to apply transformations to external API requests.
@@ -71,5 +71,5 @@ public class DomesticPaymentRequest : Base, ISupportsValidation
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticPaymentValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

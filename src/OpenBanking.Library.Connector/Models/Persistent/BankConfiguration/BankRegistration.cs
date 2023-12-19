@@ -5,8 +5,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -29,7 +29,7 @@ internal class BankRegistration :
         string? createdBy,
         string? externalApiSecret,
         string? registrationAccessToken,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         BankGroupEnum bankGroup,
         Guid? softwareStatementId,
         bool useSimulatedBank,
@@ -87,7 +87,7 @@ internal class BankRegistration :
     /// <summary>
     ///     Token endpoint authorisation method
     /// </summary>
-    public TokenEndpointAuthMethod TokenEndpointAuthMethod { get; }
+    public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; }
 
     /// <summary>
     ///     Bank group

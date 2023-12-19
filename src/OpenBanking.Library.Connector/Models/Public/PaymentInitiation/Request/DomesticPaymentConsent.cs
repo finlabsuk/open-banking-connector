@@ -3,15 +3,15 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.PaymentInitialisation;
 using FluentValidation.Results;
 using PaymentInitiationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
-public class DomesticPaymentConsentRequest : ConsentRequestBase, ISupportsValidation
+public class DomesticPaymentConsentRequest : ConsentBase, ISupportsValidation
 {
     /// <summary>
     ///     Use external API request object created from template.
@@ -29,5 +29,5 @@ public class DomesticPaymentConsentRequest : ConsentRequestBase, ISupportsValida
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticPaymentConsentValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

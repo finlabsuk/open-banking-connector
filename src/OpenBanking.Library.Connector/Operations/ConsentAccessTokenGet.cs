@@ -2,12 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -55,7 +54,7 @@ internal class ConsentAccessTokenGet
         BankRegistration bankRegistration,
         AccessTokenEntity? storedAccessTokenEntity,
         RefreshTokenEntity? storedRefreshTokenEntity,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         OAuth2ResponseMode defaultResponseMode,

@@ -5,6 +5,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
@@ -192,8 +193,8 @@ public class EntityMappingApplication
 
     private BankRegistration CreateClient() => new()
     {
+        BankProfile = BankProfileEnum.Obie_Model2023,
         SoftwareStatementId = Guid.NewGuid()
-        //XFapiFinancialId = "xfapi"
     };
 
     private SoftwareStatementProfile CreateSoftwareStatement() => new()

@@ -2,11 +2,11 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -57,7 +57,7 @@ public class OpenIdConfigurationRead : IOpenIdConfigurationRead
             openIdConfiguration.ResponseModesSupported = responseModesSupportedOverride;
         }
 
-        IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupportedOverride =
+        IList<TokenEndpointAuthMethodOpenIdConfiguration>? tokenEndpointAuthMethodsSupportedOverride =
             openIdConfigurationGetCustomBehaviour?.TokenEndpointAuthMethodsSupportedResponse;
         if (!(tokenEndpointAuthMethodsSupportedOverride is null))
         {

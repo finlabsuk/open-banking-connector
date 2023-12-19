@@ -14,13 +14,13 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 internal class
     LocalEntityContextInternal<TEntity, TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
         TPublicReadLocalResponse> :
-        ILocalEntityContextInternal<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
-            TPublicReadLocalResponse>, IDeleteLocalContextInternal
+    ILocalEntityContextInternal<TPublicRequest, TPublicQuery, TPublicCreateLocalResponse,
+        TPublicReadLocalResponse>, IDeleteLocalContextInternal
     where TEntity : class, IEntity,
     ISupportsFluentLocalEntityGet<TPublicReadLocalResponse>
     where TPublicCreateLocalResponse : class
     where TPublicReadLocalResponse : class
-    where TPublicRequest : Base, ISupportsValidation
+    where TPublicRequest : EntityBase, ISupportsValidation
 {
     public LocalEntityContextInternal(
         ISharedContext sharedContext,

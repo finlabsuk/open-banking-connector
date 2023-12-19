@@ -14,9 +14,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal abstract class
     LocalEntityCreate<TEntity, TPublicRequest, TPublicResponse> : BaseCreate<TPublicRequest,
-        TPublicResponse, LocalCreateParams>
+    TPublicResponse, LocalCreateParams>
     where TEntity : class, IEntity
-    where TPublicRequest : Base
+    where TPublicRequest : EntityBase
 {
     protected readonly IDbReadWriteEntityMethods<TEntity> _entityMethods;
 

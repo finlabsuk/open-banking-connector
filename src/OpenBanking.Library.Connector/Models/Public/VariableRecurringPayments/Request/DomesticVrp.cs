@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Validators;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -46,7 +46,7 @@ public class DomesticVrpTemplateRequest
     public DomesticVrpTemplateParameters Parameters { get; set; } = null!;
 }
 
-public class DomesticVrpRequest : Base, ISupportsValidation
+public class DomesticVrpRequest : EntityBase, ISupportsValidation
 {
     /// <summary>
     ///     BankProfile used to apply transformations to external API requests.
@@ -73,5 +73,5 @@ public class DomesticVrpRequest : Base, ISupportsValidation
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticVrpValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

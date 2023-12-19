@@ -33,6 +33,6 @@ public class OpenIdConfiguration
     public string JwksUri { get; set; } = null!;
 
     [JsonProperty("token_endpoint_auth_methods_supported")]
-    public IList<OpenIdConfigurationTokenEndpointAuthMethodEnum> TokenEndpointAuthMethodsSupported { get; set; } =
-        new List<OpenIdConfigurationTokenEndpointAuthMethodEnum>();
+    public IList<TokenEndpointAuthMethodOpenIdConfiguration> TokenEndpointAuthMethodsSupported { get; set; } =
+        new List<TokenEndpointAuthMethodOpenIdConfiguration>();
 }

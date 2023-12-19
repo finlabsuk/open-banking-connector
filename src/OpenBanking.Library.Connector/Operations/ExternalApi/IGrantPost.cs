@@ -3,11 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.Json.Nodes;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using Jose;
 using Newtonsoft.Json;
@@ -19,7 +18,7 @@ internal interface IGrantPost
     Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,
@@ -43,7 +42,7 @@ internal interface IGrantPost
         string? requestScope,
         OBSealKey obSealKey,
         string jwksUri,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
@@ -63,7 +62,7 @@ internal interface IGrantPost
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,

@@ -18,7 +18,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal class
     ConsentCommon<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
     where TEntity : class, IEntity
-    where TPublicRequest : ConsentRequestBase
+    where TPublicRequest : ConsentBase
     where TApiRequest : class, ISupportsValidation
     where TApiResponse : class, ISupportsValidation
 {

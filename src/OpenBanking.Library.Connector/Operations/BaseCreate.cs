@@ -19,7 +19,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 /// <typeparam name="TCreateParams"></typeparam>
 internal abstract class BaseCreate<TPublicRequest, TPublicResponse, TCreateParams> :
     IObjectCreate<TPublicRequest, TPublicResponse, TCreateParams>
-    where TPublicRequest : Base
+    where TPublicRequest : EntityBase
     where TCreateParams : LocalCreateParams
 {
     protected readonly IDbSaveChangesMethod _dbSaveChangesMethod;

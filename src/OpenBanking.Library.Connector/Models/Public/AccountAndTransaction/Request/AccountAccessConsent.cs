@@ -4,8 +4,8 @@
 
 using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.AccountAndTransaction;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -26,19 +26,20 @@ public class AccountAccessConsentTemplateRequest
     /// <summary>
     ///     Template type to use.
     /// </summary>
-    public AccountAccessConsentTemplateType Type { get; set; }
+    [JsonProperty(Required = Required.Always)]
+    public required AccountAccessConsentTemplateType Type { get; init; }
 
     /// <summary>
     ///     Template parameters.
     /// </summary>
-    public AccountAccessConsentTemplateParameters Parameters { get; set; } = null!;
+    public AccountAccessConsentTemplateParameters? Parameters { get; init; }
 }
 
 /// <summary>
 ///     Request object used to create an AccountAccessConsent. Includes a UK Open Banking request object
 ///     plus information on the bank registration and bank functional API to use for the consent.
 /// </summary>
-public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidation
+public class AccountAccessConsentRequest : ConsentBase, ISupportsValidation
 {
     /// <summary>
     ///     Use external API request object created from template.
@@ -46,7 +47,7 @@ public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidati
     ///     and the others are ignored. At least one of these three must be non-null.
     ///     Specifies template used to create external API request object.
     /// </summary>
-    public AccountAccessConsentTemplateRequest? TemplateRequest { get; set; }
+    public AccountAccessConsentTemplateRequest? TemplateRequest { get; init; }
 
     /// <summary>
     ///     Use directly-specified external API request object.
@@ -62,5 +63,5 @@ public class AccountAccessConsentRequest : ConsentRequestBase, ISupportsValidati
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new AccountAccessConsentValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Validators;
@@ -12,28 +11,26 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 
-public class BankRegistration : Base, ISupportsValidation
+public class BankRegistration : EntityBase, ISupportsValidation
 {
     /// <summary>
     ///     BankProfile used to specify bank configuration and apply transformations to external API (bank) requests.
     /// </summary>
-    [Required]
     [JsonProperty(Required = Required.Always)]
-    public BankProfileEnum BankProfile { get; set; }
+    public required BankProfileEnum BankProfile { get; init; }
 
     /// <summary>
     ///     ID of software statement to use for registration. The ID must
     ///     correspond to a previously-added software statement.
     /// </summary>
-    [Required]
     [JsonProperty(Required = Required.Always)]
-    public Guid SoftwareStatementId { get; set; }
+    public required Guid SoftwareStatementId { get; init; }
 
     /// <summary>
     ///     Functional APIs specified in bank registration "scope".
     ///     If null, registration scope implied by software statement profile will be used.
     /// </summary>
-    public RegistrationScopeEnum? RegistrationScope { get; set; }
+    public RegistrationScopeEnum? RegistrationScope { get; init; }
 
     /// <summary>
     ///     Default fragment redirect URI to use for this registration. This URI must
@@ -43,7 +40,7 @@ public class BankRegistration : Base, ISupportsValidation
     ///     If null, the default fragment redirect URI specified in the software statement profile
     ///     will be used.
     /// </summary>
-    public string? DefaultFragmentRedirectUri { get; set; }
+    public string? DefaultFragmentRedirectUri { get; init; }
 
     /// <summary>
     ///     Default query redirect URI to use for this registration. This URI must
@@ -60,7 +57,7 @@ public class BankRegistration : Base, ISupportsValidation
     ///     the software statement in software statement profile SoftwareStatementProfileId.
     ///     If null, redirect URIs specified in the software statement will be used.
     /// </summary>
-    public IList<string>? RedirectUris { get; set; }
+    public IList<string>? RedirectUris { get; init; }
 
     /// <summary>
     ///     External (bank) API ID, i.e. ID of OAuth2 client at bank. This should be unique between objects created at the
@@ -87,9 +84,9 @@ public class BankRegistration : Base, ISupportsValidation
     /// <summary>
     ///     Use simulated bank (only supported for some bank profiles).
     /// </summary>
-    public bool UseSimulatedBank { get; set; } = false;
+    public bool UseSimulatedBank { get; init; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new BankRegistrationValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

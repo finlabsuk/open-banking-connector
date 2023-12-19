@@ -3,11 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
@@ -60,7 +60,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistration, BankRegistr
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;

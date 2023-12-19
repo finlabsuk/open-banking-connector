@@ -7,12 +7,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -126,7 +125,7 @@ internal class GrantPost : IGrantPost
     public async Task<string> PostClientCredentialsGrantAsync(
         string? scope,
         OBSealKey obSealKey,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,
@@ -147,7 +146,7 @@ internal class GrantPost : IGrantPost
                 keyValuePairs["scope"] = scope;
             }
 
-            if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.PrivateKeyJwt)
+            if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
             {
                 string jwt = CreateClientAssertionJwt(
                     obSealKey,
@@ -220,7 +219,7 @@ internal class GrantPost : IGrantPost
         string? requestScope,
         OBSealKey obSealKey,
         string jwksUri,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
@@ -237,7 +236,7 @@ internal class GrantPost : IGrantPost
         };
 
         if (tokenEndpointAuthMethod is
-            TokenEndpointAuthMethod.PrivateKeyJwt)
+            TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
                 obSealKey,
@@ -307,7 +306,7 @@ internal class GrantPost : IGrantPost
         string expectedNonce,
         string? requestScope,
         OBSealKey obSealKey,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
@@ -323,7 +322,7 @@ internal class GrantPost : IGrantPost
         };
 
         if (tokenEndpointAuthMethod is
-            TokenEndpointAuthMethod.PrivateKeyJwt)
+            TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt)
         {
             string jwt = CreateClientAssertionJwt(
                 obSealKey,
@@ -695,7 +694,7 @@ internal class GrantPost : IGrantPost
 
     private async Task<TokenEndpointResponse> PostGrantAsync<TokenEndpointResponse>(
         Dictionary<string, string> keyValuePairs,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         string externalApiClientId,
         string? externalApiClientSecret,

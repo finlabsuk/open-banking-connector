@@ -7,6 +7,8 @@ using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -15,8 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Obie;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.CustomBehaviour;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -165,7 +165,7 @@ internal class
                 "JWKS URI not obtainable from OpenID Configuration for specified IssuerUrl.");
 
         // Determine TokenEndpointAuthMethod
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         CheckTokenEndpointAuthMethod(
             tokenEndpointAuthMethod,
@@ -173,7 +173,7 @@ internal class
             openIdConfiguration.TokenEndpointAuthMethodsSupported);
 
         // Get re-usable existing bank registration if possible
-        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethod,
+        Func<BankRegistrationRequest, BankProfile, BankGroupEnum, Guid, TokenEndpointAuthMethodSupportedValues,
             RegistrationScopeEnum, IBankProfileService, (BankRegistrationPersisted? existingRegistration,
             IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> getExistingRegistration = bankGroup switch
         {
@@ -350,7 +350,7 @@ internal class
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
-        TokenEndpointAuthMethod tokenEndpointAuthMethod =
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
@@ -461,7 +461,7 @@ internal class
             BankProfile bankProfile,
             BankGroupEnum bankGroupEnum,
             Guid softwareStatementId,
-            TokenEndpointAuthMethod tokenEndpointAuthMethod,
+            TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
             RegistrationScopeEnum registrationScope,
             IBankProfileService bankProfileService)
         where TBank : struct, Enum
@@ -525,7 +525,7 @@ internal class
         BankProfile existingRegistrationBankProfile,
         string? externalApiId,
         string registrationGroupString,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         RegistrationScopeEnum registrationScope)
     {
         // Create non-error list
@@ -598,7 +598,7 @@ internal class
         string accessToken = await _grantPost.PostClientCredentialsGrantAsync(
             scope,
             processedSoftwareStatementProfile.OBSealKey,
-            TokenEndpointAuthMethod.PrivateKeyJwt,
+            TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
             tokenEndpoint,
             processedSoftwareStatementProfile.SoftwareId,
             null,
@@ -699,7 +699,7 @@ internal class
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
         string softwareStatementAssertion,
         string registrationEndpoint,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         IList<string> redirectUris,
         RegistrationScopeEnum registrationScope,
         string bankFinancialId,
@@ -750,35 +750,35 @@ internal class
     }
 
     private static void CheckTokenEndpointAuthMethod(
-        TokenEndpointAuthMethod tokenEndpointAuthMethod,
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         bool supportsSca,
-        IList<OpenIdConfigurationTokenEndpointAuthMethodEnum>? tokenEndpointAuthMethodsSupported)
+        IList<TokenEndpointAuthMethodOpenIdConfiguration>? tokenEndpointAuthMethodsSupported)
     {
-        if (tokenEndpointAuthMethod is TokenEndpointAuthMethod.ClientSecretBasic &&
+        if (tokenEndpointAuthMethod is TokenEndpointAuthMethodSupportedValues.ClientSecretBasic &&
             !supportsSca)
         {
             throw new InvalidOperationException(
                 $"TokenEndpointAuthMethod resolves to " +
-                $"{TokenEndpointAuthMethod.ClientSecretBasic} for bank supporting SCA which is not supported.");
+                $"{TokenEndpointAuthMethodSupportedValues.ClientSecretBasic} for bank supporting SCA which is not supported.");
         }
 
         if (tokenEndpointAuthMethodsSupported is { } methodsSupported)
         {
-            var methodsSupportedFilter = new List<TokenEndpointAuthMethod>();
-            if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.TlsClientAuth))
+            var methodsSupportedFilter = new List<TokenEndpointAuthMethodSupportedValues>();
+            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.TlsClientAuth))
             {
-                methodsSupportedFilter.Add(TokenEndpointAuthMethod.TlsClientAuth);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.TlsClientAuth);
             }
 
-            if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.PrivateKeyJwt))
+            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.PrivateKeyJwt))
             {
-                methodsSupportedFilter.Add(TokenEndpointAuthMethod.PrivateKeyJwt);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt);
             }
 
-            if (methodsSupported.Contains(OpenIdConfigurationTokenEndpointAuthMethodEnum.ClientSecretBasic) &&
+            if (methodsSupported.Contains(TokenEndpointAuthMethodOpenIdConfiguration.ClientSecretBasic) &&
                 !supportsSca)
             {
-                methodsSupportedFilter.Add(TokenEndpointAuthMethod.ClientSecretBasic);
+                methodsSupportedFilter.Add(TokenEndpointAuthMethodSupportedValues.ClientSecretBasic);
             }
 
             if (!methodsSupportedFilter.Contains(tokenEndpointAuthMethod))

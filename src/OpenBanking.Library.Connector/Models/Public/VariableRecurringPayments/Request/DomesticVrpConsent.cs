@@ -4,14 +4,14 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Validators;
 using FluentValidation.Results;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
-public class DomesticVrpConsentRequest : ConsentRequestBase, ISupportsValidation
+public class DomesticVrpConsentRequest : ConsentBase, ISupportsValidation
 {
     /// <summary>
     ///     Use external API request object created from template.
@@ -30,5 +30,5 @@ public class DomesticVrpConsentRequest : ConsentRequestBase, ISupportsValidation
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticVrpConsentValidator()
-            .ValidateAsync(this)!;
+            .ValidateAsync(this);
 }

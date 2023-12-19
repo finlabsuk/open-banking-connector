@@ -4,8 +4,8 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -59,7 +59,7 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
             .HasConversion(new EnumToStringConverter<RegistrationScopeEnum>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.TokenEndpointAuthMethod)
-            .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethod>())
+            .HasConversion(new EnumToStringConverter<TokenEndpointAuthMethodSupportedValues>())
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.BankGroup)
             .HasConversion(new EnumToStringConverter<BankGroupEnum>());

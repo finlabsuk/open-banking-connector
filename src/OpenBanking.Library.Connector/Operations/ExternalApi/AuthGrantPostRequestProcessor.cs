@@ -5,7 +5,7 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -15,12 +15,12 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
 {
     private readonly string _externalApiClientId;
     private readonly string? _externalApiClientSecret;
-    private readonly TokenEndpointAuthMethod _tokenEndpointAuthMethod;
+    private readonly TokenEndpointAuthMethodSupportedValues _tokenEndpointAuthMethod;
 
     public AuthGrantPostRequestProcessor(
         string externalApiClientId,
         string? externalApiClientSecret,
-        TokenEndpointAuthMethod tokenEndpointAuthMethod)
+        TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod)
     {
         _externalApiClientId = externalApiClientId;
         _externalApiClientSecret = externalApiClientSecret;
@@ -36,10 +36,10 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
         var headers = new List<HttpHeader>();
         switch (_tokenEndpointAuthMethod)
         {
-            case TokenEndpointAuthMethod.TlsClientAuth:
+            case TokenEndpointAuthMethodSupportedValues.TlsClientAuth:
                 variantRequest["client_id"] = _externalApiClientId;
                 break;
-            case TokenEndpointAuthMethod.ClientSecretBasic:
+            case TokenEndpointAuthMethodSupportedValues.ClientSecretBasic:
             {
                 string clientSecret =
                     _externalApiClientSecret ??
@@ -50,7 +50,7 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
                 headers.Add(new HttpHeader("Authorization", authHeader));
                 break;
             }
-            case TokenEndpointAuthMethod.PrivateKeyJwt:
+            case TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt:
                 break;
             default:
                 throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
