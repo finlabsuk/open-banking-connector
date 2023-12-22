@@ -121,7 +121,7 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                     return externalApiRequest;
                 }
             },
-            DefaultResponseMode = bank is HsbcBank.Sandbox
+            DefaultResponseMode = bank is HsbcBank.Sandbox or HsbcBank.UkBusiness
                 ? OAuth2ResponseMode.Query
                 : OAuth2ResponseMode.Fragment
         };
