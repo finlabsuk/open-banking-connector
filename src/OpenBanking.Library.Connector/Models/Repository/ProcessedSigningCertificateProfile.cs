@@ -17,12 +17,6 @@ public class ProcessedSigningCertificateProfile
         string id,
         IInstrumentationClient instrumentationClient)
     {
-        // Log processing message
-        string message =
-            "Configuration/secrets info: " +
-            $"Processing Signing Certificate Profile with ID {id}.";
-        instrumentationClient.Info(message);
-
         // Validate signing certificate profile
         ValidationResult validationResult3 = new OBSigningCertificateProfileValidator()
             .Validate(signingCertificateProfile);

@@ -82,5 +82,9 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.DbService.GetDbEntityMethodsClass<ObSealCertificateEntity>(),
+                _sharedContext.DbService.GetDbEntityMethodsClass<ObWacCertificateEntity>(),
+                _sharedContext.SecretProvider,
+                _sharedContext.HttpClientSettingsProvider));
 }

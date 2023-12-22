@@ -8,7 +8,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 ///     Default settings provider that simply validates settings on creation
 /// </summary>
 /// <typeparam name="TSettings"></typeparam>
-public class DefaultSettingsProvider<TSettings> : ISettingsProvider<TSettings>
+internal class DefaultSettingsProvider<TSettings> : ISettingsProvider<TSettings>
     where TSettings : ISettings<TSettings>, new()
 {
     private readonly TSettings _settings;

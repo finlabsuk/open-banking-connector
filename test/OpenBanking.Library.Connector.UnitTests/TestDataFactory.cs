@@ -3,10 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -28,7 +30,9 @@ internal static class TestDataFactory
             Substitute.For<IApiVariantMapper>(),
             Substitute.For<IBankProfileService>(),
             Substitute.For<IMemoryCache>(),
-            Substitute.For<IEncryptionKeyInfo>());
+            Substitute.For<IEncryptionKeyInfo>(),
+            Substitute.For<ISecretProvider>(),
+            Substitute.For<ISettingsProvider<HttpClientSettings>>());
 
 
     public static RequestBuilder CreateMockRequestBuilder() =>
@@ -41,5 +45,7 @@ internal static class TestDataFactory
             Substitute.For<IDbService>(),
             Substitute.For<IBankProfileService>(),
             Substitute.For<IMemoryCache>(),
-            Substitute.For<IEncryptionKeyInfo>());
+            Substitute.For<IEncryptionKeyInfo>(),
+            Substitute.For<ISecretProvider>(),
+            Substitute.For<ISettingsProvider<HttpClientSettings>>());
 }

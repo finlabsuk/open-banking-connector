@@ -34,7 +34,7 @@ public static class AppConfiguration
         Configuration = builder.Configuration;
     }
 
-    private static IConfiguration Configuration { get; }
+    public static IConfiguration Configuration { get; }
 
     public static TSettings GetSettings<TSettings>()
         where TSettings : class, ISettings<TSettings>, new() =>

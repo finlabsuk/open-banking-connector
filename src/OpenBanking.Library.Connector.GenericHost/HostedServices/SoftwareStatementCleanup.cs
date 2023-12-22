@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
@@ -9,7 +10,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 
@@ -18,91 +18,119 @@ public class SoftwareStatementCleanup
     public Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
-        IConfiguration configuration,
+        ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IInstrumentationClient instrumentationClient)
     {
-        List<SoftwareStatementEntity> entityList =
+        List<SoftwareStatementEntity> softwareStatementList =
             postgreSqlDbContext
                 .SoftwareStatement
                 .ToList();
 
-        DbSet<ObWacCertificateEntity> obwacList =
+        DbSet<ObWacCertificateEntity> obWacList =
             postgreSqlDbContext
                 .ObWacCertificate;
 
-        DbSet<ObSealCertificateEntity> obsealList =
+        DbSet<ObSealCertificateEntity> obSealList =
             postgreSqlDbContext
                 .ObSealCertificate;
 
-        var obWacProfiles = new Dictionary<Guid, ProcessedTransportCertificateProfile>();
-        foreach (ObWacCertificateEntity x in obwacList)
+        var obWacProfiles = new Dictionary<Guid, ProcessedTransportCertificateProfile?>();
+        foreach (ObWacCertificateEntity obWac in obWacList)
         {
-            var y = new TransportCertificateProfile
+            ProcessedTransportCertificateProfile? processedTransportCertificateProfile;
+            if (!secretProvider.TryGetSecret(obWac.AssociatedKey.Name, out string? associatedKey))
             {
-                Active = true,
-                DisableTlsCertificateVerification = false,
-                AssociatedKey = GetConfigurationValue(x.AssociatedKey.Name, configuration),
-                Certificate = x.Certificate
-            };
-            var z = new ProcessedTransportCertificateProfile(
-                y,
-                x.Id.ToString(),
-                null,
-                httpClientSettings.PooledConnectionLifetimeSeconds,
-                instrumentationClient);
-            obWacProfiles[x.Id] = z;
+                processedTransportCertificateProfile = null;
+                string message =
+                    $"OBWAC transport certificate with ID {obWac.Id} " +
+                    $"specifies AssociatedKey with name {obWac.AssociatedKey.Name} " +
+                    "but no such value can be found. Any software statement(s) depending " +
+                    "on this OBWAC transport certificate will not be able to be used.";
+                instrumentationClient.Warning(message);
+            }
+            else
+            {
+                processedTransportCertificateProfile = new ProcessedTransportCertificateProfile(
+                    new TransportCertificateProfile
+                    {
+                        Active = true,
+                        DisableTlsCertificateVerification = false,
+                        Certificate = obWac.Certificate,
+                        AssociatedKey = associatedKey
+                    },
+                    obWac.Id.ToString(),
+                    null,
+                    httpClientSettings.PooledConnectionLifetimeSeconds,
+                    instrumentationClient);
+            }
+            obWacProfiles[obWac.Id] = processedTransportCertificateProfile;
         }
 
-        var obSealProfiles = new Dictionary<Guid, ProcessedSigningCertificateProfile>();
-        foreach (ObSealCertificateEntity x in obsealList)
+        var obSealProfiles = new Dictionary<Guid, ProcessedSigningCertificateProfile?>();
+        foreach (ObSealCertificateEntity obSeal in obSealList)
         {
-            var y = new SigningCertificateProfile
+            ProcessedSigningCertificateProfile? processedSigningCertificateProfile;
+            if (!secretProvider.TryGetSecret(obSeal.AssociatedKey.Name, out string? associatedKey))
             {
-                Active = true,
-                AssociatedKey = GetConfigurationValue(x.AssociatedKey.Name, configuration),
-                AssociatedKeyId = x.AssociatedKeyId,
-                Certificate = x.Certificate
-            };
-            var z = new ProcessedSigningCertificateProfile(y, x.Id.ToString(), instrumentationClient);
-            obSealProfiles[x.Id] = z;
+                processedSigningCertificateProfile = null;
+                string message =
+                    $"OBSeal signing certificate with ID {obSeal.Id} " +
+                    $"specifies AssociatedKey with name {obSeal.AssociatedKey.Name} " +
+                    "but no such value can be found. Any software statement(s) depending " +
+                    "on this OBSeal signing certificate will not be able to be used.";
+                instrumentationClient.Warning(message);
+            }
+            else
+            {
+                processedSigningCertificateProfile = new ProcessedSigningCertificateProfile(
+                    new SigningCertificateProfile
+                    {
+                        Active = true,
+                        AssociatedKey = associatedKey,
+                        AssociatedKeyId = obSeal.AssociatedKeyId,
+                        Certificate = obSeal.Certificate
+                    },
+                    obSeal.Id.ToString(),
+                    instrumentationClient);
+            }
+            obSealProfiles[obSeal.Id] = processedSigningCertificateProfile;
         }
 
-        foreach (SoftwareStatementEntity x in entityList)
+        foreach (SoftwareStatementEntity softwareStatement in softwareStatementList)
         {
-            ProcessedTransportCertificateProfile obWacProfile = obWacProfiles[x.DefaultObWacCertificateId];
-            ProcessedSigningCertificateProfile obSealProfile = obSealProfiles[x.DefaultObSealCertificateId];
-            var old = new SoftwareStatementProfile
+            ProcessedTransportCertificateProfile? obWacProfile =
+                obWacProfiles[softwareStatement.DefaultObWacCertificateId];
+            ProcessedSigningCertificateProfile? obSealProfile =
+                obSealProfiles[softwareStatement.DefaultObSealCertificateId];
+            if (obWacProfile is null ||
+                obSealProfile is null)
             {
-                Active = true,
-                OrganisationId = x.OrganisationId,
-                SoftwareId = x.SoftwareId,
-                SandboxEnvironment = x.SandboxEnvironment,
-                TransportCertificateProfileId = x.DefaultObWacCertificateId.ToString(), // ignored
-                SigningCertificateProfileId = x.DefaultObSealCertificateId.ToString(), // ignored
-                DefaultQueryRedirectUrl = x.DefaultQueryRedirectUrl,
-                DefaultFragmentRedirectUrl = x.DefaultFragmentRedirectUrl
-            };
+                string message =
+                    $"Software statement with ID {softwareStatement.Id} " +
+                    $"cannot be used due to lack of suitable OBWAC transport " +
+                    $"or OBSeal signing certificate. See previous warnings for specific issues.";
+                instrumentationClient.Warning(message);
+                continue;
+            }
 
             processedSoftwareStatementProfileStore.AddProfile(
                 obWacProfile,
                 obSealProfile,
-                old,
-                x.Id.ToString(), // sets ID of profile added to store
+                new SoftwareStatementProfile
+                {
+                    Active = true,
+                    OrganisationId = softwareStatement.OrganisationId,
+                    SoftwareId = softwareStatement.SoftwareId,
+                    SandboxEnvironment = softwareStatement.SandboxEnvironment,
+                    TransportCertificateProfileId = softwareStatement.DefaultObWacCertificateId.ToString(), // ignored
+                    SigningCertificateProfileId = softwareStatement.DefaultObSealCertificateId.ToString(), // ignored
+                    DefaultQueryRedirectUrl = softwareStatement.DefaultQueryRedirectUrl,
+                    DefaultFragmentRedirectUrl = softwareStatement.DefaultFragmentRedirectUrl
+                },
+                softwareStatement.Id.ToString(), // sets ID of profile added to store
                 instrumentationClient);
         }
         return Task.CompletedTask;
-    }
-
-    private static string GetConfigurationValue(string name, IConfiguration configuration)
-    {
-        var value = configuration.GetValue<string>(name, "");
-        if (string.IsNullOrEmpty(value))
-        {
-            throw new ArgumentException($"Cannot get non-empty value from specified configuration setting {name}.");
-        }
-
-
-        return value;
     }
 }

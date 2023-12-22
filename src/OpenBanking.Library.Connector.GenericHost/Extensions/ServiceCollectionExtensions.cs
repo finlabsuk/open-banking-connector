@@ -37,6 +37,9 @@ public static class ServiceCollectionExtensions
             .AddSettingsGroup<KeysSettings>()
             .AddSettingsGroup<HttpClientSettings>();
 
+        // Add secret provider
+        services.AddSingleton<ISecretProvider, SecretProvider>();
+
         // Set up software statement store
         services
             .AddSingleton<IProcessedSoftwareStatementProfileStore,

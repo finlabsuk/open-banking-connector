@@ -41,6 +41,8 @@ public class StartupTasksHostedService : IHostedService
     // Ensures this set up at application start-up
     private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
 
+    private readonly ISecretProvider _secretProvider;
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     public StartupTasksHostedService(
@@ -52,7 +54,8 @@ public class StartupTasksHostedService : IHostedService
         IEncryptionKeyInfo encryptionKeyInfo,
         IConfiguration configuration,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        ISecretProvider secretProvider)
     {
         _databaseSettingsProvider =
             databaseSettingsProvider ??
@@ -64,6 +67,7 @@ public class StartupTasksHostedService : IHostedService
         _encryptionKeyInfo = encryptionKeyInfo;
         _httpClientSettings = httpClientSettingsProvider.GetSettings();
         _instrumentationClient = instrumentationClient;
+        _secretProvider = secretProvider;
         _configurationRoot = (IConfigurationRoot) configuration;
     }
 
@@ -165,7 +169,7 @@ public class StartupTasksHostedService : IHostedService
                 .Cleanup(
                     postgreSqlDbContext,
                     _processedSoftwareStatementProfileStore,
-                    _configurationRoot,
+                    _secretProvider,
                     _httpClientSettings,
                     _instrumentationClient);
 

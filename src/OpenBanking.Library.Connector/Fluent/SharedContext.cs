@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -24,7 +26,9 @@ internal class SharedContext : ISharedContext
         IApiVariantMapper apiVariantMapper,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyInfo encryptionKeyInfo,
+        ISecretProvider secretProvider,
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -35,6 +39,8 @@ internal class SharedContext : ISharedContext
         BankProfileService = bankProfileService;
         MemoryCache = memoryCache;
         EncryptionKeyInfo = encryptionKeyInfo;
+        SecretProvider = secretProvider;
+        HttpClientSettingsProvider = httpClientSettingsProvider;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -47,4 +53,6 @@ internal class SharedContext : ISharedContext
     public IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
     public IEncryptionKeyInfo EncryptionKeyInfo { get; }
     public IApiVariantMapper ApiVariantMapper { get; }
+    public ISecretProvider SecretProvider { get; }
+    public ISettingsProvider<HttpClientSettings> HttpClientSettingsProvider { get; }
 }

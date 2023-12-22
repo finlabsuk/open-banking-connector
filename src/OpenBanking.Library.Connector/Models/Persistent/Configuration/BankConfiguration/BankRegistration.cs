@@ -80,5 +80,10 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistration>
         {
             builder.Property(e => e.RedirectUris).HasColumnType("jsonb");
         }
+
+        if (_dbProvider is DbProvider.Sqlite)
+        {
+            builder.Property(e => e.Created).HasConversion(new DateTimeOffsetToBinaryConverter());
+        }
     }
 }

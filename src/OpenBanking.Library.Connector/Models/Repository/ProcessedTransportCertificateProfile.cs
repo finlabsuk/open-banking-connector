@@ -31,15 +31,6 @@ public class ProcessedTransportCertificateProfile
         int pooledConnectionLifetimeSeconds,
         IInstrumentationClient instrumentationClient)
     {
-        // Log processing message
-        string message =
-            "Configuration/secrets info: " +
-            $"Processing Transport Certificate Profile with ID {id}";
-        message += overrideCase is null
-            ? "."
-            : $" and override {overrideCase}.";
-        instrumentationClient.Info(message);
-
         // Validate transport certificate profile
         ValidationResult validationResult2 = new OBTransportCertificateProfileValidator()
             .Validate(transportCertificateProfile);

@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -31,7 +33,9 @@ public class RequestBuilderContainer : IRequestBuilderContainer
         IEncryptionKeyInfo encryptionKeyInfo,
         BaseDbContext dbContext,
         IBankProfileService bankProfileService,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        ISecretProvider secretProvider,
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
     {
         _dbContext = dbContext;
         RequestBuilder = new RequestBuilder(
@@ -43,7 +47,9 @@ public class RequestBuilderContainer : IRequestBuilderContainer
             new DbService(dbContext),
             bankProfileService,
             memoryCache,
-            encryptionKeyInfo);
+            encryptionKeyInfo,
+            secretProvider,
+            httpClientSettingsProvider);
     }
 
     public void Dispose()

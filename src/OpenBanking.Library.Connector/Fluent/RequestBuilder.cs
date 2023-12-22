@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.PaymentInitiation;
@@ -11,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurringPaym
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -62,8 +64,10 @@ public class RequestBuilder : IRequestBuilder
     private readonly IBankProfileService _bankProfileService;
     private readonly IDbService _dbService;
     private readonly IEncryptionKeyInfo _encryptionKeyInfo;
+    private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _logger;
     private readonly IMemoryCache _memoryCache;
+    private readonly ISecretProvider _secretProvider;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
     private readonly ITimeProvider _timeProvider;
 
@@ -76,7 +80,9 @@ public class RequestBuilder : IRequestBuilder
         IDbService dbService,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyInfo encryptionKeyInfo,
+        ISecretProvider secretProvider,
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
     {
         _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
@@ -84,6 +90,8 @@ public class RequestBuilder : IRequestBuilder
         _dbService = dbService;
         _bankProfileService = bankProfileService;
         _encryptionKeyInfo = encryptionKeyInfo;
+        _secretProvider = secretProvider;
+        _httpClientSettingsProvider = httpClientSettingsProvider;
         _logger = logger.ArgNotNull(nameof(logger));
         _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         _memoryCache = memoryCache.ArgNotNull(nameof(memoryCache));
@@ -118,7 +126,9 @@ public class RequestBuilder : IRequestBuilder
             _apiVariantMapper,
             _bankProfileService,
             _memoryCache,
-            _encryptionKeyInfo) { Created = _timeProvider.GetUtcNow() };
+            _encryptionKeyInfo,
+            _secretProvider,
+            _httpClientSettingsProvider) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

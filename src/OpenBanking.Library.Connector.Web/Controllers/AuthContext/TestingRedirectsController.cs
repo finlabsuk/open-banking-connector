@@ -87,7 +87,7 @@ public class TestingRedirectsController : ControllerBase
         // Check for cookie
         string cookieKey = TestingAccountAccessConsentsController.BrowserCookieKey;
         Request.Cookies.TryGetValue(cookieKey, out string? appSessionId);
-        
+
         // Parse response_mode (ASP.NET model binding will only do simple conversion)
         OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
         {

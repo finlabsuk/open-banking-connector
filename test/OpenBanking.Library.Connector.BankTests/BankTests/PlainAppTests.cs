@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
@@ -135,7 +136,9 @@ public class PlainAppTests : AppTests, IDisposable
                 encryptionKeyInfo,
                 GetDbContext(),
                 new BankProfileService(bankProfilesSettingsProvider),
-                memoryCache),
+                memoryCache,
+                new SecretProvider(AppConfiguration.Configuration),
+                httpClientSettingsProvider),
             false);
 
         UnsetTestLogging();
