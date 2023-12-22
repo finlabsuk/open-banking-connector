@@ -277,13 +277,18 @@ public abstract class AppTests
 
         var modifiedBy = "Automated bank tests";
 
+        // Create software statement
+        (Guid obWacCertificateId, Guid obSealCertificateId, Guid softwareStatementId) = await CreateSoftwareStatement(
+            processedSoftwareStatementProfile,
+            modifiedBy,
+            requestBuilder);
+
         // CREATE and READ bank configuration objects
         // Create bankRegistration or use existing
-        var softwareStatementProfileId = new Guid(testData1.SoftwareStatementProfileId);
         RegistrationScopeEnum registrationScope = testData2.RegistrationScope;
         BankRegistration bankRegistrationRequest = await GetBankRegistrationRequest(
             bankProfile,
-            softwareStatementProfileId,
+            softwareStatementId,
             registrationScope,
             testDataProcessorFluentRequestLogging,
             testNameUnique,
@@ -432,7 +437,153 @@ public abstract class AppTests
 
             // Delete BankRegistration (excludes external API delete)
             await DeleteBankRegistration(requestBuilder, bankRegistrationId, modifiedBy, false);
+
+            await DeleteSoftwareStatement(
+                requestBuilder,
+                obWacCertificateId,
+                obSealCertificateId,
+                softwareStatementId,
+                modifiedBy);
         }
+    }
+
+    private static async Task DeleteSoftwareStatement(
+        IRequestBuilder requestBuilder,
+        Guid obWacCertificateId,
+        Guid obSealCertificateId,
+        Guid softwareStatementId,
+        string modifiedBy)
+    {
+        BaseResponse obWacCertificateDeleteResponse = await requestBuilder
+            .Management
+            .ObWacCertificates
+            .DeleteLocalAsync(
+                obWacCertificateId,
+                modifiedBy);
+
+        // Checks
+        obWacCertificateDeleteResponse.Should().NotBeNull();
+        obWacCertificateDeleteResponse.Warnings.Should().BeNull();
+
+        BaseResponse obSealCertificateDeleteResponse = await requestBuilder
+            .Management
+            .ObSealCertificates
+            .DeleteLocalAsync(
+                obSealCertificateId,
+                modifiedBy);
+
+        // Checks
+        obSealCertificateDeleteResponse.Should().NotBeNull();
+        obSealCertificateDeleteResponse.Warnings.Should().BeNull();
+
+        BaseResponse softwareStatementDeleteResponse = await requestBuilder
+            .Management
+            .SoftwareStatements
+            .DeleteLocalAsync(
+                softwareStatementId,
+                modifiedBy);
+
+        // Checks
+        softwareStatementDeleteResponse.Should().NotBeNull();
+        softwareStatementDeleteResponse.Warnings.Should().BeNull();
+    }
+
+    private static async Task<(Guid obWacCertificateId, Guid obSealCertificateId, Guid softwareStatementId)>
+        CreateSoftwareStatement(
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            string modifiedBy,
+            IRequestBuilder requestBuilder)
+    {
+        // Create OBWAC certificate
+        string obWacReference = processedSoftwareStatementProfile.TransportCertificateId;
+        var obWacRequest = new ObWacCertificate
+        {
+            Reference = obWacReference,
+            CreatedBy = modifiedBy,
+            AssociatedKey = new SecretDescription
+            {
+                Name =
+                    $"OpenBankingConnector:TransportCertificateProfiles:{obWacReference}:AssociatedKey"
+            },
+            Certificate = processedSoftwareStatementProfile.TransportCertificate
+        };
+        ObWacCertificateResponse obWacCertificateResponse = await requestBuilder
+            .Management
+            .ObWacCertificates
+            .CreateLocalAsync(obWacRequest);
+        obWacCertificateResponse.Should().NotBeNull();
+        obWacCertificateResponse.Warnings.Should().BeNull();
+        Guid obWacCertificateId = obWacCertificateResponse.Id;
+
+        // Read OBWAC certificate
+        ObWacCertificateResponse obWacCertificateReadResponse = await requestBuilder
+            .Management
+            .ObWacCertificates
+            .ReadLocalAsync(obWacCertificateId, modifiedBy);
+        obWacCertificateReadResponse.Should().NotBeNull();
+        obWacCertificateReadResponse.Warnings.Should().BeNull();
+
+        // Create OBSeal certificate
+        string obSealReference = processedSoftwareStatementProfile.SigningCertificateId;
+        var obSealRequest = new ObSealCertificate
+        {
+            Reference = obSealReference,
+            CreatedBy = modifiedBy,
+            AssociatedKeyId = processedSoftwareStatementProfile.OBSealKey.KeyId,
+            AssociatedKey = new SecretDescription
+            {
+                Name =
+                    $"OpenBankingConnector:SigningCertificateProfiles:{obSealReference}:AssociatedKey"
+            },
+            Certificate = processedSoftwareStatementProfile.SigningCertificate
+        };
+        ObSealCertificateResponse obSealCertificateResponse = await requestBuilder
+            .Management
+            .ObSealCertificates
+            .CreateLocalAsync(obSealRequest);
+        obSealCertificateResponse.Should().NotBeNull();
+        obSealCertificateResponse.Warnings.Should().BeNull();
+        Guid obSealCertificateId = obSealCertificateResponse.Id;
+
+        // Read OBSeal certificate
+        ObSealCertificateResponse obSealCertificateReadResponse = await requestBuilder
+            .Management
+            .ObSealCertificates
+            .ReadLocalAsync(obSealCertificateId, modifiedBy);
+        obSealCertificateReadResponse.Should().NotBeNull();
+        obSealCertificateReadResponse.Warnings.Should().BeNull();
+
+        // Create software statement
+        string sReference = processedSoftwareStatementProfile.Id;
+        var softwareStatementRequest = new SoftwareStatement
+        {
+            Reference = sReference,
+            CreatedBy = modifiedBy,
+            OrganisationId = processedSoftwareStatementProfile.OrganisationId,
+            SoftwareId = processedSoftwareStatementProfile.SoftwareId,
+            SandboxEnvironment = processedSoftwareStatementProfile.SandboxEnvironment,
+            DefaultObWacCertificateId = obWacCertificateResponse.Id,
+            DefaultObSealCertificateId = obSealCertificateResponse.Id,
+            DefaultQueryRedirectUrl = processedSoftwareStatementProfile.DefaultQueryRedirectUrl,
+            DefaultFragmentRedirectUrl = processedSoftwareStatementProfile.DefaultFragmentRedirectUrl
+        };
+        SoftwareStatementResponse softwareStatementResponse = await requestBuilder
+            .Management
+            .SoftwareStatements
+            .CreateLocalAsync(softwareStatementRequest);
+        softwareStatementResponse.Should().NotBeNull();
+        softwareStatementResponse.Warnings.Should().BeNull();
+        Guid softwareStatementId = softwareStatementResponse.Id;
+
+        // Read software statement
+        SoftwareStatementResponse softwareStatementReadResponse = await requestBuilder
+            .Management
+            .SoftwareStatements
+            .ReadLocalAsync(softwareStatementId, modifiedBy);
+        softwareStatementReadResponse.Should().NotBeNull();
+        softwareStatementReadResponse.Warnings.Should().BeNull();
+
+        return (obWacCertificateId, obSealCertificateId, softwareStatementId);
     }
 
     private static async Task<Guid> CreateBankRegistration(
