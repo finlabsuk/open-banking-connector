@@ -24,7 +24,7 @@ public interface IDeleteBankRegistrationContext
     ///     BankProfile is used to set value.
     /// </param>
     /// <returns></returns>
-    Task<ObjectDeleteResponse> DeleteAsync(
+    Task<BaseResponse> DeleteAsync(
         Guid id,
         string? modifiedBy = null,
         bool? includeExternalApiOperation = null);
@@ -34,7 +34,7 @@ internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrat
 {
     IObjectDelete<BankRegistrationDeleteParams> DeleteObject { get; }
 
-    async Task<ObjectDeleteResponse> IDeleteBankRegistrationContext.DeleteAsync(
+    async Task<BaseResponse> IDeleteBankRegistrationContext.DeleteAsync(
         Guid id,
         string? modifiedBy,
         bool? includeExternalApiOperation)
@@ -46,6 +46,6 @@ internal interface IDeleteBankRegistrationContextInternal : IDeleteBankRegistrat
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
             await DeleteObject.DeleteAsync(bankRegistrationDeleteParams);
 
-        return new ObjectDeleteResponse();
+        return new BaseResponse();
     }
 }

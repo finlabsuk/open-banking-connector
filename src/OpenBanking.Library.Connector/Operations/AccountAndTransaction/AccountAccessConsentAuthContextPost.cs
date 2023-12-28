@@ -25,9 +25,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class
     AccountAccessConsentAuthContextPost : LocalEntityCreate<
-        AccountAccessConsentAuthContextPersisted,
-        AccountAccessConsentAuthContextRequest,
-        AccountAccessConsentAuthContextCreateResponse>
+    AccountAccessConsentAuthContextPersisted,
+    AccountAccessConsentAuthContextRequest,
+    AccountAccessConsentAuthContextCreateResponse>
 {
     protected readonly IDbReadOnlyEntityMethods<AccountAccessConsentPersisted> _accountAccessConsentMethods;
     private readonly IBankProfileService _bankProfileService;
@@ -121,16 +121,17 @@ internal class
         await _entityMethods.AddAsync(entity);
 
         var response =
-            new AccountAccessConsentAuthContextCreateResponse(
-                entity.Id,
-                entity.Created,
-                entity.CreatedBy,
-                entity.Reference,
-                null,
-                entity.AccountAccessConsentId,
-                state,
-                authUrl,
-                sessionId);
+            new AccountAccessConsentAuthContextCreateResponse
+            {
+                Id = entity.Id,
+                Created = entity.Created,
+                CreatedBy = entity.CreatedBy,
+                Reference = entity.Reference,
+                AccountAccessConsentId = entity.AccountAccessConsentId,
+                State = state,
+                AuthUrl = authUrl,
+                AppSessionId = sessionId
+            };
 
         return response;
     }

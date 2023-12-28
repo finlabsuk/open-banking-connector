@@ -222,7 +222,7 @@ public class DomesticPaymentSubtest
         }
 
         // DELETE domestic payment consent
-        ObjectDeleteResponse domesticPaymentConsentResp3 = await requestBuilder
+        BaseResponse domesticPaymentConsentResp3 = await requestBuilder
             .PaymentInitiation
             .DomesticPaymentConsents
             .DeleteLocalAsync(domesticPaymentConsentId, modifiedBy);

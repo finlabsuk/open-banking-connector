@@ -224,7 +224,7 @@ public class DomesticVrpSubtest
 
             // DELETE domestic payment consent
             var includeExternalApiOperation = true;
-            ObjectDeleteResponse domesticVrpConsentResp3 = await requestBuilderNew.VariableRecurringPayments
+            BaseResponse domesticVrpConsentResp3 = await requestBuilderNew.VariableRecurringPayments
                 .DomesticVrpConsents
                 .DeleteAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation);
 

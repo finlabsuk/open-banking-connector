@@ -24,9 +24,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitia
 
 internal class
     DomesticPaymentConsentAuthContextPost : LocalEntityCreate<
-        DomesticPaymentConsentAuthContextPersisted,
-        DomesticPaymentConsentAuthContextRequest,
-        DomesticPaymentConsentAuthContextCreateResponse>
+    DomesticPaymentConsentAuthContextPersisted,
+    DomesticPaymentConsentAuthContextRequest,
+    DomesticPaymentConsentAuthContextCreateResponse>
 {
     private readonly IBankProfileService _bankProfileService;
     protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
@@ -121,16 +121,17 @@ internal class
         await _entityMethods.AddAsync(entity);
 
         var response =
-            new DomesticPaymentConsentAuthContextCreateResponse(
-                entity.Id,
-                entity.Created,
-                entity.CreatedBy,
-                entity.Reference,
-                null,
-                entity.DomesticPaymentConsentId,
-                state,
-                authUrl,
-                sessionId);
+            new DomesticPaymentConsentAuthContextCreateResponse
+            {
+                Id = entity.Id,
+                Created = entity.Created,
+                CreatedBy = entity.CreatedBy,
+                Reference = entity.Reference,
+                State = state,
+                DomesticPaymentConsentId = entity.DomesticPaymentConsentId,
+                AuthUrl = authUrl,
+                AppSessionId = sessionId
+            };
 
         return response;
     }

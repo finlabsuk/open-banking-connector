@@ -25,9 +25,9 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
 internal class
     DomesticVrpConsentAuthContextPost : LocalEntityCreate<
-        DomesticVrpConsentAuthContextPersisted,
-        DomesticVrpConsentAuthContextRequest,
-        DomesticVrpConsentAuthContextCreateResponse>
+    DomesticVrpConsentAuthContextPersisted,
+    DomesticVrpConsentAuthContextRequest,
+    DomesticVrpConsentAuthContextCreateResponse>
 {
     private readonly IBankProfileService _bankProfileService;
     protected readonly IDbReadOnlyEntityMethods<DomesticVrpConsentPersisted> _domesticPaymentConsentMethods;
@@ -121,16 +121,17 @@ internal class
         await _entityMethods.AddAsync(entity);
 
         var response =
-            new DomesticVrpConsentAuthContextCreateResponse(
-                entity.Id,
-                entity.Created,
-                entity.CreatedBy,
-                entity.Reference,
-                null,
-                entity.DomesticVrpConsentId,
-                state,
-                authUrl,
-                sessionId);
+            new DomesticVrpConsentAuthContextCreateResponse
+            {
+                Id = entity.Id,
+                Created = entity.Created,
+                CreatedBy = entity.CreatedBy,
+                Reference = entity.Reference,
+                State = state,
+                DomesticVrpConsentId = entity.DomesticVrpConsentId,
+                AuthUrl = authUrl,
+                AppSessionId = sessionId
+            };
 
         return response;
     }

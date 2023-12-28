@@ -309,25 +309,26 @@ internal class
             externalApiResponse.RegistrationAccessToken = null;
         }
 
-        BankRegistrationResponse response = new(
-            entity.Id,
-            entity.Created,
-            entity.CreatedBy,
-            entity.Reference,
-            externalApiResponse,
-            null,
-            entity.SoftwareStatementId!.Value,
-            entity.BankProfile,
-            entity.JwksUri,
-            entity.RegistrationEndpoint,
-            entity.TokenEndpoint,
-            entity.AuthorizationEndpoint,
-            entity.RegistrationScope,
-            entity.DefaultFragmentRedirectUri,
-            entity.DefaultQueryRedirectUri,
-            entity.RedirectUris,
-            entity.ExternalApiId,
-            entity.UseSimulatedBank);
+        BankRegistrationResponse response = new()
+        {
+            Id = entity.Id,
+            Created = entity.Created,
+            CreatedBy = entity.CreatedBy,
+            Reference = entity.Reference,
+            ExternalApiResponse = externalApiResponse,
+            SoftwareStatementId = entity.SoftwareStatementId!.Value,
+            BankProfile = entity.BankProfile,
+            JwksUri = entity.JwksUri,
+            RegistrationEndpoint = entity.RegistrationEndpoint,
+            TokenEndpoint = entity.TokenEndpoint,
+            AuthorizationEndpoint = entity.AuthorizationEndpoint,
+            RegistrationScope = entity.RegistrationScope,
+            DefaultFragmentRedirectUri = entity.DefaultFragmentRedirectUri,
+            DefaultQueryRedirectUri = entity.DefaultQueryRedirectUri,
+            RedirectUris = entity.RedirectUris,
+            ExternalApiId = entity.ExternalApiId,
+            UseSimulatedBank = entity.UseSimulatedBank
+        };
 
         return (response, nonErrorMessages);
     }
@@ -432,25 +433,26 @@ internal class
             externalApiResponse.RegistrationAccessToken = null;
         }
 
-        BankRegistrationResponse response = new(
-            entity.Id,
-            entity.Created,
-            entity.CreatedBy,
-            entity.Reference,
-            externalApiResponse,
-            null,
-            entity.SoftwareStatementId ?? Guid.Empty,
-            entity.BankProfile,
-            entity.JwksUri,
-            entity.RegistrationEndpoint,
-            entity.TokenEndpoint,
-            entity.AuthorizationEndpoint,
-            entity.RegistrationScope,
-            entity.DefaultFragmentRedirectUri,
-            entity.DefaultQueryRedirectUri,
-            entity.RedirectUris,
-            entity.ExternalApiId,
-            entity.UseSimulatedBank);
+        BankRegistrationResponse response = new()
+        {
+            Id = entity.Id,
+            Created = entity.Created,
+            CreatedBy = entity.CreatedBy,
+            Reference = entity.Reference,
+            ExternalApiResponse = externalApiResponse,
+            SoftwareStatementId = entity.SoftwareStatementId ?? Guid.Empty,
+            BankProfile = entity.BankProfile,
+            JwksUri = entity.JwksUri,
+            RegistrationEndpoint = entity.RegistrationEndpoint,
+            TokenEndpoint = entity.TokenEndpoint,
+            AuthorizationEndpoint = entity.AuthorizationEndpoint,
+            RegistrationScope = entity.RegistrationScope,
+            DefaultFragmentRedirectUri = entity.DefaultFragmentRedirectUri,
+            DefaultQueryRedirectUri = entity.DefaultQueryRedirectUri,
+            RedirectUris = entity.RedirectUris,
+            ExternalApiId = entity.ExternalApiId,
+            UseSimulatedBank = entity.UseSimulatedBank
+        };
 
         return (response, nonErrorMessages);
     }

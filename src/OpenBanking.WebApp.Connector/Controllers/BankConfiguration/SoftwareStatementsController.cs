@@ -80,13 +80,13 @@ public class SoftwareStatementsController : ControllerBase
     /// <returns></returns>
     [HttpDelete("{softwareStatementId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
+    public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid softwareStatementId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        ObjectDeleteResponse fluentResponse = await _requestBuilder
+        BaseResponse fluentResponse = await _requestBuilder
             .Management
             .SoftwareStatements
             .DeleteLocalAsync(

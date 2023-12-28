@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
-public interface IObWacCertificatePublicQuery : IBaseQuery
+public interface IObWacCertificatePublicQuery : IEntityBaseQuery
 {
     /// <summary>
     ///     Associated key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
@@ -26,25 +26,13 @@ public interface IObWacCertificatePublicQuery : IBaseQuery
 /// <summary>
 ///     Response to ObWacCertificate read and create requests.
 /// </summary>
-public class ObWacCertificateResponse : LocalObjectBaseResponse, IObWacCertificatePublicQuery
+public class ObWacCertificateResponse : EntityBaseResponse, IObWacCertificatePublicQuery
 {
-    internal ObWacCertificateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        SecretDescription associatedKey,
-        string certificate) : base(id, created, createdBy, reference)
-    {
-        AssociatedKey = associatedKey ?? throw new ArgumentNullException(nameof(associatedKey));
-        Certificate = certificate ?? throw new ArgumentNullException(nameof(certificate));
-    }
-
     /// <summary>
     ///     Associated key (PKCS #8) as "stringified" PEM file with escaped newline characters ("\n") and "PRIVATE KEY" label.
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
-    public SecretDescription AssociatedKey { get; }
+    public required SecretDescription AssociatedKey { get; init; }
 
     /// <summary>
     ///     OB WAC (transport) certificate (X.509) as "stringified" PEM file with escaped newline characters ("\n") and
@@ -52,5 +40,5 @@ public class ObWacCertificateResponse : LocalObjectBaseResponse, IObWacCertifica
     ///     label.
     ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     /// </summary>
-    public string Certificate { get; }
+    public required string Certificate { get; init; }
 }

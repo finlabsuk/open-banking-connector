@@ -20,7 +20,7 @@ public interface IDeleteLocalContext
     /// <param name="id"></param>
     /// <param name="modifiedBy">Optional user name or comment for DB update when performing soft delete.</param>
     /// <returns></returns>
-    Task<ObjectDeleteResponse> DeleteLocalAsync(
+    Task<BaseResponse> DeleteLocalAsync(
         Guid id,
         string? modifiedBy = null);
 }
@@ -29,13 +29,13 @@ internal interface IDeleteLocalContextInternal : IDeleteLocalContext
 {
     IObjectDelete<LocalDeleteParams> DeleteLocalObject { get; }
 
-    async Task<ObjectDeleteResponse> IDeleteLocalContext.DeleteLocalAsync(
+    async Task<BaseResponse> IDeleteLocalContext.DeleteLocalAsync(
         Guid id,
         string? modifiedBy)
     {
         var localDeleteParams = new LocalDeleteParams(id, modifiedBy);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
             await DeleteLocalObject.DeleteAsync(localDeleteParams);
-        return new ObjectDeleteResponse();
+        return new BaseResponse();
     }
 }

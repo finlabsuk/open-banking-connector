@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 
-public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
+public interface IDomesticVrpConsentAuthContextPublicQuery : IEntityBaseQuery
 {
     public Guid DomesticVrpConsentId { get; }
 }
@@ -14,31 +14,12 @@ public interface IDomesticVrpConsentAuthContextPublicQuery : IBaseQuery
 /// <summary>
 ///     Response to DomesticVrpConsentAuthContext Read requests.
 /// </summary>
-public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse,
+public class DomesticVrpConsentAuthContextReadResponse : EntityBaseResponse,
     IDomesticVrpConsentAuthContextPublicQuery
 {
-    public DomesticVrpConsentAuthContextReadResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid domesticVrpConsentId,
-        string state) : base(id, created, createdBy, reference)
-    {
-        Warnings = warnings;
-        DomesticVrpConsentId = domesticVrpConsentId;
-        State = state;
-    }
+    public required string State { get; init; }
 
-    /// <summary>
-    ///     Optional list of warning messages from Open Banking Connector.
-    /// </summary>
-    public IList<string>? Warnings { get; }
-
-    public string State { get; }
-
-    public Guid DomesticVrpConsentId { get; }
+    public required Guid DomesticVrpConsentId { get; init; }
 }
 
 /// <summary>
@@ -46,29 +27,13 @@ public class DomesticVrpConsentAuthContextReadResponse : LocalObjectBaseResponse
 /// </summary>
 public class DomesticVrpConsentAuthContextCreateResponse : DomesticVrpConsentAuthContextReadResponse
 {
-    public DomesticVrpConsentAuthContextCreateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid domesticVrpConsentId,
-        string state,
-        string authUrl,
-        string appSessionId) : base(id, created, createdBy, reference, warnings, domesticVrpConsentId, state)
-    {
-        AuthUrl = authUrl;
-        AppSessionId = appSessionId;
-    }
-
-
     /// <summary>
     ///     Time-sensitive URL to enable end-user authentication via website or mobile app
     /// </summary>
-    public string AuthUrl { get; }
+    public required string AuthUrl { get; init; }
 
     /// <summary>
     ///     App session ID that can be checked when processing post-auth redirect
     /// </summary>
-    public string AppSessionId { get; }
+    public required string AppSessionId { get; init; }
 }

@@ -9,7 +9,7 @@ using ClientRegistrationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
-public interface IBankRegistrationPublicQuery : IBaseQuery
+public interface IBankRegistrationPublicQuery : IEntityBaseQuery
 {
     // <summary>
     //     ID of software statement to use for registration. The ID must
@@ -77,88 +77,45 @@ public interface IBankRegistrationPublicQuery : IBaseQuery
 /// <summary>
 ///     Response to BankRegistration read and create requests.
 /// </summary>
-public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrationPublicQuery
+public class BankRegistrationResponse : EntityBaseResponse, IBankRegistrationPublicQuery
 {
-    internal BankRegistrationResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        ClientRegistrationModelsPublic.OBClientRegistration1Response? externalApiResponse,
-        IList<string>? warnings,
-        Guid softwareStatementId,
-        BankProfileEnum bankProfile,
-        string jwksUri,
-        string? registrationEndpoint,
-        string tokenEndpoint,
-        string authorizationEndpoint,
-        RegistrationScopeEnum registrationScope,
-        string defaultFragmentRedirectUri,
-        string defaultQueryRedirectUri,
-        IList<string> redirectUris,
-        string externalApiId,
-        bool useSimulatedBank) : base(id, created, createdBy, reference)
-    {
-        ExternalApiResponse = externalApiResponse;
-        Warnings = warnings;
-        SoftwareStatementId = softwareStatementId;
-        BankProfile = bankProfile;
-        JwksUri = jwksUri ?? throw new ArgumentNullException(nameof(jwksUri));
-        RegistrationEndpoint = registrationEndpoint;
-        TokenEndpoint = tokenEndpoint ?? throw new ArgumentNullException(nameof(tokenEndpoint));
-        AuthorizationEndpoint = authorizationEndpoint ?? throw new ArgumentNullException(nameof(authorizationEndpoint));
-        RegistrationScope = registrationScope;
-        DefaultFragmentRedirectUri = defaultFragmentRedirectUri ??
-                                     throw new ArgumentNullException(nameof(defaultFragmentRedirectUri));
-        DefaultQueryRedirectUri =
-            defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
-        RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
-        ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
-        UseSimulatedBank = useSimulatedBank;
-    }
-
-    public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; }
-
-    /// <summary>
-    ///     Optional list of warning messages from Open Banking Connector.
-    /// </summary>
-    public IList<string>? Warnings { get; }
+    public ClientRegistrationModelsPublic.OBClientRegistration1Response? ExternalApiResponse { get; init; }
 
     /// <summary>
     ///     ID of software statement to use for registration. The ID must
     ///     correspond to a previously-added software statement.
     /// </summary>
-    public Guid SoftwareStatementId { get; }
+    public required Guid SoftwareStatementId { get; init; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
-    public BankProfileEnum BankProfile { get; }
+    public required BankProfileEnum BankProfile { get; init; }
 
     /// <summary>
     ///     JWK Set URI (normally supplied from OpenID Configuration)
     /// </summary>
-    public string JwksUri { get; }
+    public required string JwksUri { get; init; }
 
     /// <summary>
     ///     Registration endpoint (normally supplied from OpenID Configuration)
     /// </summary>
-    public string? RegistrationEndpoint { get; }
+    public string? RegistrationEndpoint { get; init; }
 
     /// <summary>
     ///     Token endpoint (normally supplied from OpenID Configuration)
     /// </summary>
-    public string TokenEndpoint { get; }
+    public required string TokenEndpoint { get; init; }
 
     /// <summary>
     ///     Authorization endpoint (normally supplied from OpenID Configuration)
     /// </summary>
-    public string AuthorizationEndpoint { get; }
+    public required string AuthorizationEndpoint { get; init; }
 
     /// <summary>
     ///     Functional APIs used for bank registration.
     /// </summary>
-    public RegistrationScopeEnum RegistrationScope { get; }
+    public required RegistrationScopeEnum RegistrationScope { get; init; }
 
     /// <summary>
     ///     Default fragment redirect URI to use for this registration. This URI must
@@ -168,21 +125,21 @@ public class BankRegistrationResponse : LocalObjectBaseResponse, IBankRegistrati
     ///     If null, the default fragment redirect URI specified in the software statement profile
     ///     will be used.
     /// </summary>
-    public string DefaultFragmentRedirectUri { get; }
+    public required string DefaultFragmentRedirectUri { get; init; }
 
-    public string DefaultQueryRedirectUri { get; }
+    public required string DefaultQueryRedirectUri { get; init; }
 
     /// <summary>
     ///     Redirect URIs to use for this registration. Must be a subset of those specified in
     ///     the software statement in software statement profile SoftwareStatementProfileId.
     ///     If null, redirect URIs specified in the software statement will be used.
     /// </summary>
-    public IList<string> RedirectUris { get; }
+    public required IList<string> RedirectUris { get; init; }
 
-    public string ExternalApiId { get; }
+    public required string ExternalApiId { get; init; }
 
     /// <summary>
     ///     Use simulated bank (only supported for some bank profiles).
     /// </summary>
-    public bool UseSimulatedBank { get; }
+    public required bool UseSimulatedBank { get; init; }
 }

@@ -4,10 +4,10 @@
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
-public class ObjectDeleteResponse
+public class BaseResponse
 {
     /// <summary>
     ///     Optional list of warning messages from Open Banking Connector.
     /// </summary>
-    public IList<string>? Warnings { get; set; }
+    public IList<string>? Warnings { get; init; }
 }

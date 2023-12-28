@@ -53,12 +53,13 @@ internal partial class DomesticVrpConsentAuthContext :
     ISupportsFluentLocalEntityGet<DomesticVrpConsentAuthContextReadResponse>
 {
     public DomesticVrpConsentAuthContextReadResponse PublicGetLocalResponse =>
-        new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            null,
-            DomesticVrpConsentId,
-            State);
+        new()
+        {
+            Id = Id,
+            Created = Created,
+            CreatedBy = CreatedBy,
+            Reference = Reference,
+            State = State,
+            DomesticVrpConsentId = DomesticVrpConsentId
+        };
 }

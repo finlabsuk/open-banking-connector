@@ -57,12 +57,14 @@ public partial class ObSealCertificateEntity :
 public partial class ObSealCertificateEntity :
     ISupportsFluentLocalEntityGet<ObSealCertificateResponse>
 {
-    public ObSealCertificateResponse PublicGetLocalResponse => new(
-        Id,
-        Created,
-        CreatedBy,
-        Reference,
-        AssociatedKeyId,
-        AssociatedKey,
-        Certificate);
+    public ObSealCertificateResponse PublicGetLocalResponse => new()
+    {
+        Id = Id,
+        Created = Created,
+        CreatedBy = CreatedBy,
+        Reference = Reference,
+        AssociatedKeyId = AssociatedKeyId,
+        AssociatedKey = AssociatedKey,
+        Certificate = Certificate
+    };
 }

@@ -80,13 +80,13 @@ public class ObWacCertificatesController : ControllerBase
     /// <returns></returns>
     [HttpDelete("{obWacCertificateId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
+    public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid obWacCertificateId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        ObjectDeleteResponse fluentResponse = await _requestBuilder
+        BaseResponse fluentResponse = await _requestBuilder
             .Management
             .ObWacCertificates
             .DeleteLocalAsync(

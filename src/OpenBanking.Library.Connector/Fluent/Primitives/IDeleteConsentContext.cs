@@ -21,7 +21,7 @@ public interface IDeleteConsentContext
     /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
-    Task<ObjectDeleteResponse> DeleteAsync(
+    Task<BaseResponse> DeleteAsync(
         Guid id,
         string? modifiedBy = null,
         bool includeExternalApiOperation = true);
@@ -31,7 +31,7 @@ internal interface IDeleteConsentContextInternal : IDeleteConsentContext
 {
     IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
 
-    async Task<ObjectDeleteResponse> IDeleteConsentContext.DeleteAsync(
+    async Task<BaseResponse> IDeleteConsentContext.DeleteAsync(
         Guid id,
         string? modifiedBy,
         bool includeExternalApiOperation)
@@ -40,6 +40,6 @@ internal interface IDeleteConsentContextInternal : IDeleteConsentContext
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
             await DeleteObject.DeleteAsync(consentDeleteParams);
 
-        return new ObjectDeleteResponse();
+        return new BaseResponse();
     }
 }

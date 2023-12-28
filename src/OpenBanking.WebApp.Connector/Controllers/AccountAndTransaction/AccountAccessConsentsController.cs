@@ -92,7 +92,7 @@ public class AccountAccessConsentsController : ControllerBase
     [HttpDelete("{accountAccessConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<
-        ObjectDeleteResponse>> DeleteAsync(
+        BaseResponse>> DeleteAsync(
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
@@ -100,7 +100,7 @@ public class AccountAccessConsentsController : ControllerBase
         bool? includeExternalApiOperation)
     {
         // Operation
-        ObjectDeleteResponse fluentResponse = await _requestBuilder
+        BaseResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true);

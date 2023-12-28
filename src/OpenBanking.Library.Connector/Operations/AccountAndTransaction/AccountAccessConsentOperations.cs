@@ -29,8 +29,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 
 internal class
     AccountAccessConsentOperations :
-        IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
-        IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
+    IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
+    IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
@@ -239,18 +239,20 @@ internal class
 
         // Create response (may involve additional processing based on entity)
         var response =
-            new AccountAccessConsentCreateResponse(
-                persistedConsent.Id,
-                persistedConsent.Created,
-                persistedConsent.CreatedBy,
-                persistedConsent.Reference,
-                null,
-                persistedConsent.BankRegistrationId,
-                persistedConsent.ExternalApiId,
-                persistedConsent.ExternalApiUserId,
-                persistedConsent.AuthContextModified,
-                persistedConsent.AuthContextModifiedBy,
-                externalApiResponse);
+            new AccountAccessConsentCreateResponse
+            {
+                Id = persistedConsent.Id,
+                Created = persistedConsent.Created,
+                CreatedBy = persistedConsent.CreatedBy,
+                Reference = persistedConsent.Reference,
+                BankRegistrationId = persistedConsent.BankRegistrationId,
+                ExternalApiId = persistedConsent.ExternalApiId,
+                ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextModified = persistedConsent.AuthContextModified,
+                AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
+                ExternalApiResponse = externalApiResponse
+            };
+
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();
@@ -345,18 +347,19 @@ internal class
 
         // Create response
         var response =
-            new AccountAccessConsentCreateResponse(
-                persistedConsent.Id,
-                persistedConsent.Created,
-                persistedConsent.CreatedBy,
-                persistedConsent.Reference,
-                null,
-                persistedConsent.BankRegistrationId,
-                persistedConsent.ExternalApiId,
-                persistedConsent.ExternalApiUserId,
-                persistedConsent.AuthContextModified,
-                persistedConsent.AuthContextModifiedBy,
-                externalApiResponse);
+            new AccountAccessConsentCreateResponse
+            {
+                Id = persistedConsent.Id,
+                Created = persistedConsent.Created,
+                CreatedBy = persistedConsent.CreatedBy,
+                Reference = persistedConsent.Reference,
+                BankRegistrationId = persistedConsent.BankRegistrationId,
+                ExternalApiId = persistedConsent.ExternalApiId,
+                ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextModified = persistedConsent.AuthContextModified,
+                AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
+                ExternalApiResponse = externalApiResponse
+            };
 
         return (response, nonErrorMessages);
     }

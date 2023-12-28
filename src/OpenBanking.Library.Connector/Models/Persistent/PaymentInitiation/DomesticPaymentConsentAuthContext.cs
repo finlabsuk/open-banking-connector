@@ -53,12 +53,13 @@ internal partial class DomesticPaymentConsentAuthContext :
     ISupportsFluentLocalEntityGet<DomesticPaymentConsentAuthContextReadResponse>
 {
     public DomesticPaymentConsentAuthContextReadResponse PublicGetLocalResponse =>
-        new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            null,
-            DomesticPaymentConsentId,
-            State);
+        new()
+        {
+            Id = Id,
+            Created = Created,
+            CreatedBy = CreatedBy,
+            Reference = Reference,
+            State = State,
+            DomesticPaymentConsentId = DomesticPaymentConsentId
+        };
 }

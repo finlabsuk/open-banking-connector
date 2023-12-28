@@ -32,10 +32,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecur
 
 internal class
     DomesticVrpConsentOperations :
-        IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>,
-        IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams>,
-        IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse,
-            ConsentBaseReadParams>
+    IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>,
+    IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams>,
+    IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse,
+        ConsentBaseReadParams>
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
@@ -229,18 +229,19 @@ internal class
 
         // Create response (may involve additional processing based on entity)
         var response =
-            new DomesticVrpConsentCreateResponse(
-                persistedConsent.Id,
-                persistedConsent.Created,
-                persistedConsent.CreatedBy,
-                persistedConsent.Reference,
-                null,
-                persistedConsent.BankRegistrationId,
-                persistedConsent.ExternalApiId,
-                persistedConsent.ExternalApiUserId,
-                persistedConsent.AuthContextModified,
-                persistedConsent.AuthContextModifiedBy,
-                externalApiResponse);
+            new DomesticVrpConsentCreateResponse
+            {
+                Id = persistedConsent.Id,
+                Created = persistedConsent.Created,
+                CreatedBy = persistedConsent.CreatedBy,
+                Reference = persistedConsent.Reference,
+                BankRegistrationId = persistedConsent.BankRegistrationId,
+                ExternalApiId = persistedConsent.ExternalApiId,
+                ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextModified = persistedConsent.AuthContextModified,
+                AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
+                ExternalApiResponse = externalApiResponse
+            };
 
         // Persist updates (this happens last so as not to happen if there are any previous errors)
         await _dbSaveChangesMethod.SaveChangesAsync();
@@ -331,18 +332,19 @@ internal class
 
         // Create response
         var response =
-            new DomesticVrpConsentCreateResponse(
-                persistedConsent.Id,
-                persistedConsent.Created,
-                persistedConsent.CreatedBy,
-                persistedConsent.Reference,
-                null,
-                persistedConsent.BankRegistrationId,
-                persistedConsent.ExternalApiId,
-                persistedConsent.ExternalApiUserId,
-                persistedConsent.AuthContextModified,
-                persistedConsent.AuthContextModifiedBy,
-                externalApiResponse);
+            new DomesticVrpConsentCreateResponse
+            {
+                Id = persistedConsent.Id,
+                Created = persistedConsent.Created,
+                CreatedBy = persistedConsent.CreatedBy,
+                Reference = persistedConsent.Reference,
+                BankRegistrationId = persistedConsent.BankRegistrationId,
+                ExternalApiId = persistedConsent.ExternalApiId,
+                ExternalApiUserId = persistedConsent.ExternalApiUserId,
+                AuthContextModified = persistedConsent.AuthContextModified,
+                AuthContextModifiedBy = persistedConsent.AuthContextModifiedBy,
+                ExternalApiResponse = externalApiResponse
+            };
 
         return (response, nonErrorMessages);
     }
@@ -417,18 +419,19 @@ internal class
 
         // Create response
         var response =
-            new DomesticVrpConsentReadFundsConfirmationResponse(
-                persistedObject.Id,
-                persistedObject.Created,
-                persistedObject.CreatedBy,
-                persistedObject.Reference,
-                null,
-                persistedObject.BankRegistrationId,
-                persistedObject.ExternalApiId,
-                persistedObject.ExternalApiUserId,
-                persistedObject.AuthContextModified,
-                persistedObject.AuthContextModifiedBy,
-                externalApiResponse);
+            new DomesticVrpConsentReadFundsConfirmationResponse
+            {
+                Id = persistedObject.Id,
+                Created = persistedObject.Created,
+                CreatedBy = persistedObject.CreatedBy,
+                Reference = persistedObject.Reference,
+                BankRegistrationId = persistedObject.BankRegistrationId,
+                ExternalApiId = persistedObject.ExternalApiId,
+                ExternalApiUserId = persistedObject.ExternalApiUserId,
+                AuthContextModified = persistedObject.AuthContextModified,
+                AuthContextModifiedBy = persistedObject.AuthContextModifiedBy,
+                ExternalApiResponse = externalApiResponse
+            };
 
         return (response, nonErrorMessages);
     }

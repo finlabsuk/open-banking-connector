@@ -80,13 +80,13 @@ public class BankRegistrationsController : ControllerBase
     /// <returns></returns>
     [HttpDelete("{bankRegistrationId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<ObjectDeleteResponse>> DeleteAsync(
+    public async Task<ActionResult<BaseResponse>> DeleteAsync(
         Guid bankRegistrationId,
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy)
     {
         // Operation
-        ObjectDeleteResponse fluentResponse = await _requestBuilder
+        BaseResponse fluentResponse = await _requestBuilder
             .Management
             .BankRegistrations
             .DeleteAsync(

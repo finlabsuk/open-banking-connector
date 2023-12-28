@@ -9,7 +9,7 @@ using PaymentInitiationModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 
-public interface IDomesticPaymentConsentPublicQuery : IBaseQuery
+public interface IDomesticPaymentConsentPublicQuery : IEntityBaseQuery
 {
     /// <summary>
     ///     Associated BankRegistration object
@@ -23,64 +23,15 @@ public interface IDomesticPaymentConsentPublicQuery : IBaseQuery
     string ExternalApiId { get; }
 }
 
-public abstract class DomesticPaymentConsentBaseResponse : ConsentResponseBase,
-    IDomesticPaymentConsentPublicQuery
-{
-    internal DomesticPaymentConsentBaseResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy) { }
-}
+public abstract class DomesticPaymentConsentBaseResponse : ConsentBaseResponse,
+    IDomesticPaymentConsentPublicQuery { }
 
 /// <summary>
 ///     Response to DomesticPaymentConsent Create and Read requests
 /// </summary>
 public class DomesticPaymentConsentCreateResponse : DomesticPaymentConsentBaseResponse
 {
-    internal DomesticPaymentConsentCreateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? externalApiResponse) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy)
-    {
-        ExternalApiResponse = externalApiResponse;
-    }
-
-    public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; }
+    public PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5? ExternalApiResponse { get; init; }
 }
 
 /// <summary>
@@ -88,31 +39,5 @@ public class DomesticPaymentConsentCreateResponse : DomesticPaymentConsentBaseRe
 /// </summary>
 public class DomesticPaymentConsentReadFundsConfirmationResponse : DomesticPaymentConsentBaseResponse
 {
-    internal DomesticPaymentConsentReadFundsConfirmationResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy)
-    {
-        ExternalApiResponse = externalApiResponse;
-    }
-
-    public PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 ExternalApiResponse { get; }
+    public required PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 ExternalApiResponse { get; init; }
 }

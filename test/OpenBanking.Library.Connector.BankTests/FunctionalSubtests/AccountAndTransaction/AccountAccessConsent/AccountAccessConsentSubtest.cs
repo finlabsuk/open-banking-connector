@@ -447,7 +447,7 @@ public class AccountAccessConsentSubtest
         bool includeExternalApiOperation)
     {
         // Delete AccountAccessConsent
-        ObjectDeleteResponse accountAccessConsentDeleteResp2 = await requestBuilder
+        BaseResponse accountAccessConsentDeleteResp2 = await requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
             .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation);

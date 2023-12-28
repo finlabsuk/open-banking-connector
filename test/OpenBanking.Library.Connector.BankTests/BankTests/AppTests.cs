@@ -466,7 +466,7 @@ public abstract class AppTests
         string modifiedBy,
         bool? includeExternalApiOperation)
     {
-        ObjectDeleteResponse bankRegistrationDeleteResponse = await requestBuilder
+        BaseResponse bankRegistrationDeleteResponse = await requestBuilder
             .Management
             .BankRegistrations
             .DeleteAsync(

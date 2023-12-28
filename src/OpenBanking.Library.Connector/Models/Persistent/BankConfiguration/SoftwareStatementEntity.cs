@@ -95,16 +95,18 @@ public partial class SoftwareStatementEntity :
 public partial class SoftwareStatementEntity :
     ISupportsFluentLocalEntityGet<SoftwareStatementResponse>
 {
-    public SoftwareStatementResponse PublicGetLocalResponse => new(
-        Id,
-        Created,
-        CreatedBy,
-        Reference,
-        OrganisationId,
-        SoftwareId,
-        SandboxEnvironment,
-        DefaultObWacCertificateId,
-        DefaultObSealCertificateId,
-        DefaultQueryRedirectUrl,
-        DefaultFragmentRedirectUrl);
+    public SoftwareStatementResponse PublicGetLocalResponse => new()
+    {
+        Id = Id,
+        Created = Created,
+        CreatedBy = CreatedBy,
+        Reference = Reference,
+        OrganisationId = OrganisationId,
+        SoftwareId = SoftwareId,
+        SandboxEnvironment = SandboxEnvironment,
+        DefaultObWacCertificateId = DefaultObWacCertificateId,
+        DefaultObSealCertificateId = DefaultObSealCertificateId,
+        DefaultQueryRedirectUrl = DefaultQueryRedirectUrl,
+        DefaultFragmentRedirectUrl = DefaultFragmentRedirectUrl
+    };
 }

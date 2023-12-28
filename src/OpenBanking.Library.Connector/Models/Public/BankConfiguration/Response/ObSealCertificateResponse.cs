@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
 
-public interface IObSealCertificatePublicQuery : IBaseQuery
+public interface IObSealCertificatePublicQuery : IEntityBaseQuery
 {
     /// <summary>
     ///     Key ID of associated key (from UK Open Banking Directory) as string.
@@ -32,33 +32,19 @@ public interface IObSealCertificatePublicQuery : IBaseQuery
 /// <summary>
 ///     Response to ObSealCertificate read and create requests.
 /// </summary>
-public class ObSealCertificateResponse : LocalObjectBaseResponse, IObSealCertificatePublicQuery
+public class ObSealCertificateResponse : EntityBaseResponse, IObSealCertificatePublicQuery
 {
-    internal ObSealCertificateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        string associatedKeyId,
-        SecretDescription associatedKey,
-        string certificate) : base(id, created, createdBy, reference)
-    {
-        AssociatedKeyId = associatedKeyId ?? throw new ArgumentNullException(nameof(associatedKeyId));
-        AssociatedKey = associatedKey ?? throw new ArgumentNullException(nameof(associatedKey));
-        Certificate = certificate ?? throw new ArgumentNullException(nameof(certificate));
-    }
-
     /// <summary>
     ///     Key ID of associated key (from UK Open Banking Directory) as string.
     /// </summary>
-    public string AssociatedKeyId { get; }
+    public required string AssociatedKeyId { get; init; }
 
     /// <summary>
     ///     Associated key (PKCS #8) provided as PEM file text (with "PRIVATE KEY" label).
     ///     Newlines in PEM file text should be replaced by "\n".
     ///     Example: "-----BEGIN PRIVATE KEY-----\nABC\n-----END PRIVATE KEY-----\n"
     /// </summary>
-    public SecretDescription AssociatedKey { get; }
+    public required SecretDescription AssociatedKey { get; init; }
 
     /// <summary>
     ///     OB Seal (signing) certificate (X.509) as "stringified" PEM file with escaped newline characters ("\n") and
@@ -66,5 +52,5 @@ public class ObSealCertificateResponse : LocalObjectBaseResponse, IObSealCertifi
     ///     label.
     ///     Example: "-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----\n"
     /// </summary>
-    public string Certificate { get; }
+    public required string Certificate { get; init; }
 }

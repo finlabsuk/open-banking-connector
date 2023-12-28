@@ -49,11 +49,13 @@ public partial class ObWacCertificateEntity :
 public partial class ObWacCertificateEntity :
     ISupportsFluentLocalEntityGet<ObWacCertificateResponse>
 {
-    public ObWacCertificateResponse PublicGetLocalResponse => new(
-        Id,
-        Created,
-        CreatedBy,
-        Reference,
-        AssociatedKey,
-        Certificate);
+    public ObWacCertificateResponse PublicGetLocalResponse => new()
+    {
+        Id = Id,
+        Created = Created,
+        CreatedBy = CreatedBy,
+        Reference = Reference,
+        AssociatedKey = AssociatedKey,
+        Certificate = Certificate
+    };
 }

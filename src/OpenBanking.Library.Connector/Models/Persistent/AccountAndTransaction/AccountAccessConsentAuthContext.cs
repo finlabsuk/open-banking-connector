@@ -52,12 +52,13 @@ internal partial class AccountAccessConsentAuthContext :
     ISupportsFluentLocalEntityGet<AccountAccessConsentAuthContextReadResponse>
 {
     public AccountAccessConsentAuthContextReadResponse PublicGetLocalResponse =>
-        new(
-            Id,
-            Created,
-            CreatedBy,
-            Reference,
-            null,
-            AccountAccessConsentId,
-            State);
+        new()
+        {
+            Id = Id,
+            Created = Created,
+            CreatedBy = CreatedBy,
+            Reference = Reference,
+            AccountAccessConsentId = AccountAccessConsentId,
+            State = State
+        };
 }

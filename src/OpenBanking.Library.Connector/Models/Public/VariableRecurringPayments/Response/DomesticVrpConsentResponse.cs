@@ -8,7 +8,7 @@ using VariableRecurringPaymentsModelsPublic =
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 
-public interface IDomesticVrpConsentPublicQuery : IBaseQuery
+public interface IDomesticVrpConsentPublicQuery : IEntityBaseQuery
 {
     /// <summary>
     ///     Associated BankRegistration object
@@ -22,63 +22,14 @@ public interface IDomesticVrpConsentPublicQuery : IBaseQuery
     public string ExternalApiId { get; }
 }
 
-public abstract class DomesticVrpConsentBaseResponse : ConsentResponseBase, IDomesticVrpConsentPublicQuery
-{
-    internal DomesticVrpConsentBaseResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy) { }
-}
+public abstract class DomesticVrpConsentBaseResponse : ConsentBaseResponse, IDomesticVrpConsentPublicQuery { }
 
 /// <summary>
 ///     Response to DomesticVrpConsent Create and Read requests.
 /// </summary>
 public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
 {
-    internal DomesticVrpConsentCreateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? externalApiResponse) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy)
-    {
-        ExternalApiResponse = externalApiResponse;
-    }
-
-    public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; }
+    public VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse? ExternalApiResponse { get; init; }
 }
 
 /// <summary>
@@ -87,31 +38,9 @@ public class DomesticVrpConsentCreateResponse : DomesticVrpConsentBaseResponse
 public class DomesticVrpConsentReadFundsConfirmationResponse : DomesticVrpConsentBaseResponse
 
 {
-    internal DomesticVrpConsentReadFundsConfirmationResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid bankRegistrationId,
-        string externalApiId,
-        string? externalApiUserId,
-        DateTimeOffset authContextModified,
-        string? authContextModifiedBy,
-        VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse externalApiResponse) : base(
-        id,
-        created,
-        createdBy,
-        reference,
-        warnings,
-        bankRegistrationId,
-        externalApiId,
-        externalApiUserId,
-        authContextModified,
-        authContextModifiedBy)
+    public required VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse
     {
-        ExternalApiResponse = externalApiResponse;
+        get;
+        init;
     }
-
-    public VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse { get; }
 }

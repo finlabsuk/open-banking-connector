@@ -15,7 +15,7 @@ internal static class TypeExtensions
 {
     public static IEnumerable<Type> GetPublicModelTypes()
     {
-        Type asmType = typeof(ObjectDeleteResponse);
+        Type asmType = typeof(BaseResponse);
         Assembly asm = asmType.Assembly;
 
         IEnumerable<Type> asmTypes = asm.GetTypes().Where(t => t.IsInNamespace(asmType));

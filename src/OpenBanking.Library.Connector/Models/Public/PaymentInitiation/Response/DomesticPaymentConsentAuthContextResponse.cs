@@ -6,7 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 
-public interface IDomesticPaymentConsentAuthContextPublicQuery : IBaseQuery
+public interface IDomesticPaymentConsentAuthContextPublicQuery : IEntityBaseQuery
 {
     public Guid DomesticPaymentConsentId { get; }
 }
@@ -14,31 +14,12 @@ public interface IDomesticPaymentConsentAuthContextPublicQuery : IBaseQuery
 /// <summary>
 ///     Response to Read requests.
 /// </summary>
-public class DomesticPaymentConsentAuthContextReadResponse : LocalObjectBaseResponse,
+public class DomesticPaymentConsentAuthContextReadResponse : EntityBaseResponse,
     IDomesticPaymentConsentAuthContextPublicQuery
 {
-    internal DomesticPaymentConsentAuthContextReadResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid domesticPaymentConsentId,
-        string state) : base(id, created, createdBy, reference)
-    {
-        Warnings = warnings;
-        DomesticPaymentConsentId = domesticPaymentConsentId;
-        State = state;
-    }
+    public required string State { get; init; }
 
-    /// <summary>
-    ///     Optional list of warning messages from Open Banking Connector.
-    /// </summary>
-    public IList<string>? Warnings { get; }
-
-    public string State { get; }
-
-    public Guid DomesticPaymentConsentId { get; }
+    public required Guid DomesticPaymentConsentId { get; init; }
 }
 
 /// <summary>
@@ -47,28 +28,13 @@ public class DomesticPaymentConsentAuthContextReadResponse : LocalObjectBaseResp
 public class
     DomesticPaymentConsentAuthContextCreateResponse : DomesticPaymentConsentAuthContextReadResponse
 {
-    internal DomesticPaymentConsentAuthContextCreateResponse(
-        Guid id,
-        DateTimeOffset created,
-        string? createdBy,
-        string? reference,
-        IList<string>? warnings,
-        Guid domesticPaymentConsentId,
-        string state,
-        string authUrl,
-        string appSessionId) : base(id, created, createdBy, reference, warnings, domesticPaymentConsentId, state)
-    {
-        AuthUrl = authUrl;
-        AppSessionId = appSessionId;
-    }
-
     /// <summary>
     ///     Time-sensitive URL to enable end-user authentication via website or mobile app
     /// </summary>
-    public string AuthUrl { get; }
+    public required string AuthUrl { get; init; }
 
     /// <summary>
     ///     App session ID that can be checked when processing post-auth redirect
     /// </summary>
-    public string AppSessionId { get; }
+    public required string AppSessionId { get; init; }
 }
