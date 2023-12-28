@@ -211,16 +211,15 @@ internal class AuthContextUpdate :
             bankRegistration.DefaultQueryRedirectUri);
 
         // Validate redirect URL
-        if (request.RedirectUrl is not null)
+        if (request.RedirectUrl is not null &&
+            !string.Equals(request.RedirectUrl, redirectUrl))
         {
-            if (!string.Equals(request.RedirectUrl, redirectUrl))
-            {
-                throw new Exception("Redirect URL supplied does not match that which was expected");
-            }
+            throw new Exception("Redirect URL supplied does not match that which was expected");
         }
 
         // Validate response mode
-        if (request.ResponseMode != defaultResponseMode)
+        if (request.ResponseMode is not null &&
+            request.ResponseMode != defaultResponseMode)
         {
             throw new Exception("Response mode supplied does not match that which was expected");
         }

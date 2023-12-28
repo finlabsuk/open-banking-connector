@@ -31,7 +31,7 @@ public class RedirectsController : ControllerBase
     /// <param name="idToken">ID token provided by post-auth redirect</param>
     /// <param name="code">code provided by post-auth redirect</param>
     /// <param name="state">state provided by post-auth redirect</param>
-    /// <param name="responseMode">response mode used by post-auth redirect (for checking)</param>
+    /// <param name="responseMode">response mode used by post-auth redirect (for checking), one of {"query", "fragment"}</param>
     /// <param name="modifiedBy">user or comment for any database updates</param>
     /// <param name="redirectUrl">redirect URL used by post-auth redirect (for checking)</param>
     /// <param name="appSessionId">app session ID associated with post-auth redirect (for checking)</param>
@@ -47,8 +47,8 @@ public class RedirectsController : ControllerBase
         string code,
         [Required] [FromForm(Name = "state")]
         string state,
-        [Required] [FromForm(Name = "response_mode")]
-        string responseMode,
+        [FromForm(Name = "response_mode")]
+        string? responseMode,
         [FromForm(Name = "modified_by")]
         string? modifiedBy,
         [FromForm(Name = "redirect_uri")]
@@ -56,9 +56,10 @@ public class RedirectsController : ControllerBase
         [FromForm(Name = "app_session_id")]
         string? appSessionId)
     {
-        // Operation
-        OAuth2ResponseMode oAuth2ResponseMode = responseMode switch
+        // Parse response_mode (ASP.NET model binding will only do simple conversion)
+        OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
         {
+            null => null,
             "query" => OAuth2ResponseMode.Query,
             "fragment" => OAuth2ResponseMode.Fragment,
             "form_post" => OAuth2ResponseMode.FormPost,
@@ -67,12 +68,16 @@ public class RedirectsController : ControllerBase
                 responseMode,
                 "Unknown value for response_mode.")
         };
+        
+        // Operation
         var authResult =
-            new AuthResult(
-                oAuth2ResponseMode,
-                redirectUrl,
-                appSessionId,
-                new OAuth2RedirectData(idToken, code, state));
+            new AuthResult
+            {
+                ResponseMode = oAuth2ResponseMode,
+                RedirectUrl = redirectUrl,
+                AppSessionId = appSessionId,
+                RedirectData = new OAuth2RedirectData(idToken, code, state)
+            };
         AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
             .AuthContexts
             .UpdateAuthResultAsync(authResult, modifiedBy);

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -34,20 +35,20 @@ public class TestingRedirectsController : ControllerBase
     /// <returns></returns>
     [HttpGet("query-redirect")]
     public async Task<ActionResult> QueryRedirectGetAsync(
-        [FromQuery(Name = "id_token")]
+        [Required] [FromQuery(Name = "id_token")]
         string idToken,
-        [FromQuery(Name = "code")]
+        [Required] [FromQuery(Name = "code")]
         string code,
-        [FromQuery(Name = "state")]
+        [Required] [FromQuery(Name = "state")]
         string state)
     {
         // Operation
         var authResult =
-            new AuthResult(
-                OAuth2ResponseMode.Query,
-                null,
-                null,
-                new OAuth2RedirectData(idToken, code, state));
+            new AuthResult
+            {
+                ResponseMode = OAuth2ResponseMode.Query,
+                RedirectData = new OAuth2RedirectData(idToken, code, state)
+            };
         _ = await _requestBuilder
             .AuthContexts
             .UpdateAuthResultAsync(authResult, "Redirect to /auth/query-redirect");
@@ -70,14 +71,14 @@ public class TestingRedirectsController : ControllerBase
     [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<AuthContextUpdateAuthResultResponse>> FragmentRedirectDelegatePostAsync(
-        [FromForm(Name = "id_token")]
+        [Required] [FromForm(Name = "id_token")]
         string idToken,
-        [FromForm(Name = "code")]
+        [Required] [FromForm(Name = "code")]
         string code,
-        [FromForm(Name = "state")]
+        [Required] [FromForm(Name = "state")]
         string state,
         [FromForm(Name = "response_mode")]
-        string responseMode,
+        string? responseMode,
         [FromForm(Name = "modified_by")]
         string? modifiedBy,
         [FromForm(Name = "redirect_uri")]
@@ -86,10 +87,11 @@ public class TestingRedirectsController : ControllerBase
         // Check for cookie
         string cookieKey = TestingAccountAccessConsentsController.BrowserCookieKey;
         Request.Cookies.TryGetValue(cookieKey, out string? appSessionId);
-
-        // Operation
-        OAuth2ResponseMode oAuth2ResponseMode = responseMode switch
+        
+        // Parse response_mode (ASP.NET model binding will only do simple conversion)
+        OAuth2ResponseMode? oAuth2ResponseMode = responseMode switch
         {
+            null => null,
             "query" => OAuth2ResponseMode.Query,
             "fragment" => OAuth2ResponseMode.Fragment,
             "form_post" => OAuth2ResponseMode.FormPost,
@@ -98,12 +100,16 @@ public class TestingRedirectsController : ControllerBase
                 responseMode,
                 "Unknown value for response_mode.")
         };
+
+        // Operation
         var authResult =
-            new AuthResult(
-                oAuth2ResponseMode,
-                redirectUrl,
-                appSessionId,
-                new OAuth2RedirectData(idToken, code, state));
+            new AuthResult
+            {
+                ResponseMode = oAuth2ResponseMode,
+                RedirectUrl = redirectUrl,
+                AppSessionId = appSessionId,
+                RedirectData = new OAuth2RedirectData(idToken, code, state)
+            };
         AuthContextUpdateAuthResultResponse fluentResponse = await _requestBuilder
             .AuthContexts
             .UpdateAuthResultAsync(authResult, modifiedBy);

@@ -1,6 +1,6 @@
 debugger
 (async () => {
-    const fragmentParams = window.location.hash.substr(1);
+    const fragmentParams = window.location.hash.substring(1);
     if (fragmentParams) {
         console.log('Fragment supplied.');
         const params = new URLSearchParams(fragmentParams);

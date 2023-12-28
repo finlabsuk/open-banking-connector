@@ -14,23 +14,15 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Validati
 public class AuthorisationCallbackDataValidatorTests
 {
     [Fact]
-    public void Validate_ModeIsNull()
-    {
-        var validator = new AuthorisationRedirectObjectValidator();
-
-        var data = new AuthResult(OAuth2ResponseMode.Fragment, null, null, null!);
-
-        IList<ValidationFailure>? results = validator.Validate(data).Errors;
-
-        results.Should().HaveCount(1);
-    }
-
-    [Fact]
     public void Validate_BodyIsNull()
     {
         var validator = new AuthorisationRedirectObjectValidator();
 
-        var data = new AuthResult(OAuth2ResponseMode.Fragment, null, null, null!);
+        var data = new AuthResult
+        {
+            ResponseMode = OAuth2ResponseMode.Fragment,
+            RedirectData = null!
+        };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -43,11 +35,11 @@ public class AuthorisationCallbackDataValidatorTests
     {
         var validator = new AuthorisationRedirectObjectValidator();
 
-        var data = new AuthResult(
-            OAuth2ResponseMode.Fragment,
-            null,
-            null,
-            new OAuth2RedirectData("", "", ""));
+        var data = new AuthResult
+        {
+            ResponseMode = OAuth2ResponseMode.Fragment,
+            RedirectData = new OAuth2RedirectData("", "", "")
+        };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
@@ -60,11 +52,11 @@ public class AuthorisationCallbackDataValidatorTests
     {
         var validator = new AuthorisationRedirectObjectValidator();
 
-        var data = new AuthResult(
-            OAuth2ResponseMode.Fragment,
-            null,
-            null,
-            new OAuth2RedirectData("a", "a", "a"));
+        var data = new AuthResult
+        {
+            ResponseMode = OAuth2ResponseMode.Fragment,
+            RedirectData = new OAuth2RedirectData("a", "a", "a")
+        };
 
         IList<ValidationFailure>? results = validator.Validate(data).Errors;
 
