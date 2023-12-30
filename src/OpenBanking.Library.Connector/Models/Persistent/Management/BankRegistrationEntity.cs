@@ -29,9 +29,12 @@ internal class BankRegistrationEntity :
         string? createdBy,
         string? externalApiSecret,
         string? registrationAccessToken,
+        OAuth2ResponseMode? defaultResponseModeOverride,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         BankGroupEnum bankGroup,
         Guid? softwareStatementId,
+        string softwareStatementProfileId,
+        string? softwareStatementProfileOverride,
         bool useSimulatedBank,
         string externalApiId,
         BankProfileEnum bankProfile,
@@ -42,7 +45,6 @@ internal class BankRegistrationEntity :
         string defaultFragmentRedirectUri,
         string defaultQueryRedirectUri,
         IList<string> redirectUris,
-        string softwareStatementProfileId,
         RegistrationScopeEnum registrationScope) : base(
         id,
         reference,
@@ -54,9 +56,13 @@ internal class BankRegistrationEntity :
     {
         ExternalApiSecret = externalApiSecret;
         RegistrationAccessToken = registrationAccessToken;
+        DefaultResponseModeOverride = defaultResponseModeOverride;
         TokenEndpointAuthMethod = tokenEndpointAuthMethod;
         BankGroup = bankGroup;
         SoftwareStatementId = softwareStatementId;
+        SoftwareStatementProfileId = softwareStatementProfileId ??
+                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
+        SoftwareStatementProfileOverride = softwareStatementProfileOverride;
         UseSimulatedBank = useSimulatedBank;
         ExternalApiId = externalApiId ?? throw new ArgumentNullException(nameof(externalApiId));
         BankProfile = bankProfile;
@@ -69,8 +75,6 @@ internal class BankRegistrationEntity :
         DefaultQueryRedirectUri =
             defaultQueryRedirectUri ?? throw new ArgumentNullException(nameof(defaultQueryRedirectUri));
         RedirectUris = redirectUris ?? throw new ArgumentNullException(nameof(redirectUris));
-        SoftwareStatementProfileId = softwareStatementProfileId ??
-                                     throw new ArgumentNullException(nameof(softwareStatementProfileId));
         RegistrationScope = registrationScope;
     }
 
@@ -85,6 +89,11 @@ internal class BankRegistrationEntity :
     public string? RegistrationAccessToken { get; }
 
     /// <summary>
+    ///     Default OAuth2 response_mode override.
+    /// </summary>
+    public OAuth2ResponseMode? DefaultResponseModeOverride { get; }
+
+    /// <summary>
     ///     Token endpoint authorisation method
     /// </summary>
     public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; }
@@ -95,7 +104,7 @@ internal class BankRegistrationEntity :
     public BankGroupEnum BankGroup { get; set; }
 
     [ForeignKey(nameof(SoftwareStatementId))]
-    public SoftwareStatementEntity SoftwareStatementNavigation { get; private set; } = null!;
+    public SoftwareStatementEntity? SoftwareStatementNavigation { get; private set; }
 
     public Guid? SoftwareStatementId { get; set; }
 

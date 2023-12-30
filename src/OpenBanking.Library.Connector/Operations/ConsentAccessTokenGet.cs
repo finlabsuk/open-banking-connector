@@ -56,7 +56,6 @@ internal class ConsentAccessTokenGet
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
-        OAuth2ResponseMode defaultResponseMode,
         IdTokenSubClaimType idTokenSubClaimType,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
@@ -89,10 +88,6 @@ internal class ConsentAccessTokenGet
                 await _softwareStatementProfileRepo.GetAsync(
                     bankRegistration.SoftwareStatementId.ToString(),
                     bankRegistration.SoftwareStatementProfileOverride);
-            string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
-                defaultResponseMode,
-                bankRegistration.DefaultFragmentRedirectUri,
-                bankRegistration.DefaultQueryRedirectUri);
             string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =

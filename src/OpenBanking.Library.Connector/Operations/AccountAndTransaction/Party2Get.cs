@@ -83,7 +83,6 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
-                bankProfile.DefaultResponseMode,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,

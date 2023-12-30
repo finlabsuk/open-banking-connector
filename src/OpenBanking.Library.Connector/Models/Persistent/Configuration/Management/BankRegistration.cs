@@ -35,6 +35,9 @@ internal class BankRegistrationConfig : BaseConfig<BankRegistrationEntity>
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.RegistrationAccessToken)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
+        builder.Property(e => e.DefaultResponseModeOverride)
+            .HasConversion(new EnumToStringConverter<OAuth2ResponseMode>())
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Throw);
         builder.Property(e => e.DefaultFragmentRedirectUri);
         builder.Property(e => e.DefaultQueryRedirectUri);
         builder.Property(e => e.RedirectUris)

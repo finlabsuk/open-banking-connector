@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using ClientRegistrationModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p3.Models;
@@ -11,16 +12,28 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management
 
 public interface IBankRegistrationPublicQuery : IEntityBaseQuery
 {
+    /// <summary>
+    ///     Default OAuth2 response_mode override.
+    /// </summary>
+    OAuth2ResponseMode? DefaultResponseModeOverride { get; }
+
+    /// <summary>
+    ///     Token endpoint authorisation method
+    /// </summary>
+    TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; }
+
     // <summary>
     //     ID of software statement to use for registration. The ID must
     //     correspond to a previously-added software statement.
     // </summary>
-    //public Guid SoftwareStatementId { get; }
+    //Guid? SoftwareStatementId { get; }
 
     /// <summary>
-    ///     Functional APIs used for bank registration.
+    ///     Use simulated bank (only supported for some bank profiles).
     /// </summary>
-    RegistrationScopeEnum RegistrationScope { get; }
+    public bool UseSimulatedBank { get; }
+
+    public string ExternalApiId { get; }
 
     /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
@@ -66,12 +79,10 @@ public interface IBankRegistrationPublicQuery : IEntityBaseQuery
     /// </summary>
     public IList<string> RedirectUris { get; }
 
-    public string ExternalApiId { get; }
-
     /// <summary>
-    ///     Use simulated bank (only supported for some bank profiles).
+    ///     Functional APIs used for bank registration.
     /// </summary>
-    public bool UseSimulatedBank { get; }
+    RegistrationScopeEnum RegistrationScope { get; }
 }
 
 /// <summary>
@@ -88,6 +99,16 @@ public class BankRegistrationResponse : EntityBaseResponse, IBankRegistrationPub
     public required Guid SoftwareStatementId { get; init; }
 
     /// <summary>
+    ///     Default OAuth2 response_mode override.
+    /// </summary>
+    public required OAuth2ResponseMode? DefaultResponseModeOverride { get; init; }
+
+    /// <summary>
+    ///     Token endpoint authorisation method
+    /// </summary>
+    public required TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; init; }
+
+    /// <summary>
     ///     Bank profile to use that specifies configuration for bank (OIDC Issuer).
     /// </summary>
     public required BankProfileEnum BankProfile { get; init; }
@@ -100,7 +121,7 @@ public class BankRegistrationResponse : EntityBaseResponse, IBankRegistrationPub
     /// <summary>
     ///     Registration endpoint (normally supplied from OpenID Configuration)
     /// </summary>
-    public string? RegistrationEndpoint { get; init; }
+    public required string? RegistrationEndpoint { get; init; }
 
     /// <summary>
     ///     Token endpoint (normally supplied from OpenID Configuration)

@@ -189,7 +189,6 @@ internal class MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 supportsSca,
-                bankProfile.DefaultResponseMode,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,

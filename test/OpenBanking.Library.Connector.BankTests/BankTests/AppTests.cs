@@ -13,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
@@ -303,7 +304,7 @@ public abstract class AppTests
                 throw new InvalidOperationException("No external API BankRegistration ID provided.");
             bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
             bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
-            Guid bankRegistrationId =
+            (Guid bankRegistrationId, _) =
                 await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
 
             // Delete BankRegistration (includes forced external API delete which may fail)
@@ -314,8 +315,7 @@ public abstract class AppTests
         else if (bankRegistrationOptions is BankRegistrationOptions.OnlyCreateRegistration)
         {
             // Create fresh BankRegistration
-            Guid _ =
-                await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+            _ = await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
         }
 
         // Handle "normal" case
@@ -324,7 +324,7 @@ public abstract class AppTests
             if (bankProfile.BankConfigurationApiSettings.TestTemporaryBankRegistration)
             {
                 // Create fresh BankRegistration
-                Guid bankRegistrationIdTmp =
+                (Guid bankRegistrationIdTmp, _) =
                     await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
 
                 // Delete BankRegistration (includes external API delete as appropriate)
@@ -337,8 +337,9 @@ public abstract class AppTests
                 throw new InvalidOperationException("No external API BankRegistration ID provided.");
             bankRegistrationRequest.ExternalApiSecret = testData2.BankRegistrationExternalApiSecret;
             bankRegistrationRequest.RegistrationAccessToken = testData2.BankRegistrationRegistrationAccessToken;
-            Guid bankRegistrationId =
+            (Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride) =
                 await CreateBankRegistration(requestBuilder, bankRegistrationRequest);
+            OAuth2ResponseMode defaultResponseMode = defaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
 
             // Read BankRegistration
             BankRegistrationResponse bankRegistrationReadResponse = await requestBuilder
@@ -354,7 +355,7 @@ public abstract class AppTests
 
             // Run account access consent subtests
             string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
-                bankProfile.DefaultResponseMode,
+                defaultResponseMode,
                 bankRegistrationReadResponse.DefaultFragmentRedirectUri,
                 bankRegistrationReadResponse.DefaultQueryRedirectUri);
             string authUrlLeftPart =
@@ -370,7 +371,7 @@ public abstract class AppTests
                         bankProfile,
                         testData2,
                         bankRegistrationId,
-                        bankProfile.AccountAndTransactionApiSettings,
+                        defaultResponseMode,
                         requestBuilder,
                         requestBuilderGenerator,
                         testNameUnique,
@@ -397,6 +398,7 @@ public abstract class AppTests
                         subTest,
                         bankProfile,
                         bankRegistrationId,
+                        defaultResponseMode,
                         bankProfile.PaymentInitiationApiSettings,
                         requestBuilder,
                         requestBuilderGenerator,
@@ -419,6 +421,7 @@ public abstract class AppTests
                         subTest,
                         bankProfile,
                         bankRegistrationId,
+                        defaultResponseMode,
                         bankProfile.VariableRecurringPaymentsApiSettings,
                         requestBuilder,
                         requestBuilderGenerator,
@@ -586,9 +589,10 @@ public abstract class AppTests
         return (obWacCertificateId, obSealCertificateId, softwareStatementId);
     }
 
-    private static async Task<Guid> CreateBankRegistration(
-        IRequestBuilder requestBuilder,
-        BankRegistration bankRegistrationRequest)
+    private static async Task<(Guid bankRegistrationId, OAuth2ResponseMode? defaultResponseModeOverride)>
+        CreateBankRegistration(
+            IRequestBuilder requestBuilder,
+            BankRegistration bankRegistrationRequest)
     {
         BankRegistrationResponse registrationResp = await requestBuilder
             .Management
@@ -607,8 +611,9 @@ public abstract class AppTests
             registrationResp.ExternalApiResponse.Should().NotBeNull();
         }
 
-        Guid bankRegistrationId1 = registrationResp.Id;
-        return bankRegistrationId1;
+        Guid bankRegistrationId = registrationResp.Id;
+        OAuth2ResponseMode? defaultResponseModeOverride = registrationResp.DefaultResponseModeOverride;
+        return (bankRegistrationId, defaultResponseModeOverride);
     }
 
     private static async Task DeleteBankRegistration(

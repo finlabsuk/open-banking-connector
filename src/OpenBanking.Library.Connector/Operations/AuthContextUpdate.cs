@@ -193,7 +193,8 @@ internal class AuthContextUpdate :
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-        OAuth2ResponseMode defaultResponseMode = bankProfile.DefaultResponseMode;
+        OAuth2ResponseMode defaultResponseMode =
+            bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode;
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;

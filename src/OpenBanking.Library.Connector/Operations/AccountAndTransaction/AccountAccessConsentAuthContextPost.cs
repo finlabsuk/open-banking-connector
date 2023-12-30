@@ -80,7 +80,7 @@ internal class
                 bankRegistration
                     .SoftwareStatementProfileOverride);
         string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
-            bankProfile.DefaultResponseMode,
+            bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
             bankRegistration.DefaultQueryRedirectUri);
 

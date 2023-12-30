@@ -3,7 +3,7 @@
   "info": {
     "title": "Management API",
     "description": "Management API for Open Banking Connector Web App",
-    "version": "9.0.0"
+    "version": "9.1.0"
   },
   "paths": {
     "/manage/bank-registrations": {
@@ -126,17 +126,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -264,17 +264,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -402,17 +402,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -540,17 +540,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -661,12 +661,12 @@
           },
           "ExternalApiSecret": {
             "type": "string",
-            "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc. Only relevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankRegistration.ExternalApiId is non-null.",
+            "description": "External (bank) API secret. Present to allow use of legacy token auth method \"client_secret_basic\" in sandboxes\r\netc. Only relevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.BankRegistration.ExternalApiId is non-null.",
             "nullable": true
           },
           "RegistrationAccessToken": {
             "type": "string",
-            "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only\r\nrelevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.BankRegistration.ExternalApiId is non-null.",
+            "description": "External (bank) API registration access token. Sometimes used to support registration adjustments etc. Only\r\nrelevant/used when FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.BankRegistration.ExternalApiId is non-null.",
             "nullable": true
           },
           "UseSimulatedBank": {
@@ -692,20 +692,16 @@
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBClientRegistration1Response"
           },
-          "Warnings": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          },
           "SoftwareStatementId": {
             "type": "string",
             "description": "ID of software statement to use for registration. The ID must\r\ncorrespond to a previously-added software statement.",
-            "format": "uuid",
-            "readOnly": true
+            "format": "uuid"
+          },
+          "DefaultResponseModeOverride": {
+            "$ref": "#/components/schemas/OAuth2ResponseMode"
+          },
+          "TokenEndpointAuthMethod": {
+            "$ref": "#/components/schemas/TokenEndpointAuthMethodSupportedValues"
           },
           "BankProfile": {
             "$ref": "#/components/schemas/BankProfileEnum"
@@ -713,26 +709,22 @@
           "JwksUri": {
             "type": "string",
             "description": "JWK Set URI (normally supplied from OpenID Configuration)",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "RegistrationEndpoint": {
             "type": "string",
             "description": "Registration endpoint (normally supplied from OpenID Configuration)",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "TokenEndpoint": {
             "type": "string",
             "description": "Token endpoint (normally supplied from OpenID Configuration)",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "AuthorizationEndpoint": {
             "type": "string",
             "description": "Authorization endpoint (normally supplied from OpenID Configuration)",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "RegistrationScope": {
             "$ref": "#/components/schemas/RegistrationScopeEnum"
@@ -740,13 +732,11 @@
           "DefaultFragmentRedirectUri": {
             "type": "string",
             "description": "Default fragment redirect URI to use for this registration. This URI must\r\nbe included in the redirect URIs used for this registration (these are specified by RedirectUris and if that is\r\nnull default to those specified in the software statement in software statement profile\r\nSoftwareStatementProfileId).\r\nIf null, the default fragment redirect URI specified in the software statement profile\r\nwill be used.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "DefaultQueryRedirectUri": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "RedirectUris": {
             "type": "array",
@@ -754,46 +744,69 @@
               "type": "string"
             },
             "description": "Redirect URIs to use for this registration. Must be a subset of those specified in\r\nthe software statement in software statement profile SoftwareStatementProfileId.\r\nIf null, redirect URIs specified in the software statement will be used.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "ExternalApiId": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "UseSimulatedBank": {
             "type": "boolean",
-            "description": "Use simulated bank (only supported for some bank profiles).",
-            "readOnly": true
+            "description": "Use simulated bank (only supported for some bank profiles)."
           },
           "Id": {
             "type": "string",
             "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
+            "format": "uuid"
           },
           "Created": {
             "type": "string",
             "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
+            "format": "date-time"
           },
           "CreatedBy": {
             "type": "string",
             "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Response to BankRegistration read and create requests."
+      },
+      "BaseResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OAuth2ResponseMode": {
+        "enum": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "type": "string"
       },
       "OBClientRegistration1Response": {
         "type": "object",
@@ -1002,7 +1015,6 @@
         "type": "object",
         "properties": {
           "AssociatedKeyId": {
-            "minLength": 1,
             "type": "string",
             "description": "Key ID of associated key (from UK Open Banking Directory) as string."
           },
@@ -1010,7 +1022,6 @@
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
             "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
           },
@@ -1033,8 +1044,7 @@
           "AssociatedKeyId": {
             "type": "string",
             "description": "Key ID of associated key (from UK Open Banking Directory) as string.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "AssociatedKey": {
             "$ref": "#/components/schemas/SecretDescription"
@@ -1042,32 +1052,35 @@
           "Certificate": {
             "type": "string",
             "description": "OB Seal (signing) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Id": {
             "type": "string",
             "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
+            "format": "uuid"
           },
           "Created": {
             "type": "string",
             "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
+            "format": "date-time"
           },
           "CreatedBy": {
             "type": "string",
             "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1084,7 +1097,6 @@
             "$ref": "#/components/schemas/SecretDescription"
           },
           "Certificate": {
-            "minLength": 1,
             "type": "string",
             "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\""
           },
@@ -1110,40 +1122,28 @@
           "Certificate": {
             "type": "string",
             "description": "OB WAC (transport) certificate (X.509) as \"stringified\" PEM file with escaped newline characters (\"\\n\") and\r\n\"CERTIFICATE\"\r\nlabel.\r\nExample: \"-----BEGIN CERTIFICATE-----\\nABC\\n-----END CERTIFICATE-----\\n\"",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Id": {
             "type": "string",
             "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
+            "format": "uuid"
           },
           "Created": {
             "type": "string",
             "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
+            "format": "date-time"
           },
           "CreatedBy": {
             "type": "string",
             "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Response to ObWacCertificate read and create requests."
-      },
-      "ObjectDeleteResponse": {
-        "type": "object",
-        "properties": {
+            "nullable": true
+          },
           "Warnings": {
             "type": "array",
             "items": {
@@ -1153,7 +1153,8 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Response to ObWacCertificate read and create requests."
       },
       "RegistrationScopeEnum": {
         "enum": [
@@ -1164,7 +1165,7 @@
           "All"
         ],
         "type": "string",
-        "description": "Registration scope used when creating a bank client.\r\nSet of FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.RegistrationScopeElementEnum."
+        "description": "Registration scope used when creating a bank client.\r\nSet of FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.RegistrationScopeElementEnum."
       },
       "SecretDescription": {
         "required": [
@@ -1176,7 +1177,6 @@
             "$ref": "#/components/schemas/SecretSource"
           },
           "Name": {
-            "minLength": 1,
             "type": "string",
             "description": "Name of secret value."
           }
@@ -1201,12 +1201,10 @@
         "type": "object",
         "properties": {
           "OrganisationId": {
-            "minLength": 1,
             "type": "string",
             "description": "Organisation ID from UK Open Banking directory as string."
           },
           "SoftwareId": {
-            "minLength": 1,
             "type": "string",
             "description": "Software statement ID from UK Open Banking directory as string."
           },
@@ -1225,12 +1223,10 @@
             "format": "uuid"
           },
           "DefaultQueryRedirectUrl": {
-            "minLength": 1,
             "type": "string",
             "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = query."
           },
           "DefaultFragmentRedirectUrl": {
-            "minLength": 1,
             "type": "string",
             "description": "Default redirect URL for consent authorisation when OAuth2 response_mode = fragment."
           },
@@ -1287,26 +1283,30 @@
           "Id": {
             "type": "string",
             "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
+            "format": "uuid"
           },
           "Created": {
             "type": "string",
             "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
+            "format": "date-time"
           },
           "CreatedBy": {
             "type": "string",
             "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "Reference": {
             "type": "string",
             "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
+          },
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1320,6 +1320,15 @@
         ],
         "type": "string",
         "description": "Defines values for SupportedAlgorithmsEnum."
+      },
+      "TokenEndpointAuthMethodSupportedValues": {
+        "enum": [
+          "ClientSecretBasic",
+          "PrivateKeyJwt",
+          "TlsClientAuth"
+        ],
+        "type": "string",
+        "description": "Token endpoint auth methods supported by Open Banking Connector"
       }
     }
   }

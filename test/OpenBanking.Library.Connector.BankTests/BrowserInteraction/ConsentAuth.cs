@@ -71,6 +71,7 @@ public class ConsentAuth
         BankProfile bankProfile,
         ConsentVariety consentVariety,
         BankUser bankUser,
+        OAuth2ResponseMode defaultResponseMode,
         Func<Task<bool>> authIsCompleteFcn)
     {
         IBankUiMethods bankUiMethods = GetBankGroupUiMethods(bankProfile.BankProfileEnum);
@@ -80,7 +81,7 @@ public class ConsentAuth
         await page.GotoAsync(authUrl);
         await bankUiMethods.PerformConsentAuthUiInteractions(consentVariety, page, bankUser);
 
-        bool isFragmentRedirect = bankProfile.DefaultResponseMode is OAuth2ResponseMode.Fragment;
+        bool isFragmentRedirect = defaultResponseMode is OAuth2ResponseMode.Fragment;
         if (isFragmentRedirect)
         {
             // Wait for redirect

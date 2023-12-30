@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -28,6 +29,7 @@ public class DomesticVrpSubtest
         DomesticVrpSubtestEnum subtestEnum,
         BankProfile bankProfile,
         Guid bankRegistrationId,
+        OAuth2ResponseMode defaultResponseMode,
         VariableRecurringPaymentsApiSettings variableRecurringPaymentsApiSettings,
         IRequestBuilder requestBuilderIn,
         Func<IRequestBuilderContainer> requestBuilderGenerator,
@@ -177,6 +179,7 @@ public class DomesticVrpSubtest
                 bankProfile,
                 ConsentVariety.DomesticVrpConsent,
                 bankUser,
+                defaultResponseMode,
                 AuthIsComplete);
 
             // Refresh scope to ensure user token acquired following consent is available

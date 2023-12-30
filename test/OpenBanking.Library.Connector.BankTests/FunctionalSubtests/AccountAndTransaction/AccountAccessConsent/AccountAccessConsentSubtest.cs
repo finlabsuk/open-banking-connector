@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
@@ -31,7 +32,7 @@ public class AccountAccessConsentSubtest
         BankProfile bankProfile,
         BankTestData2 testData2,
         Guid bankRegistrationId,
-        AccountAndTransactionApiSettings accountAndTransactionApiSettings,
+        OAuth2ResponseMode defaultResponseMode,
         IRequestBuilder requestBuilderIn,
         Func<IRequestBuilderContainer> requestBuilderGenerator,
         string testNameUnique,
@@ -190,6 +191,7 @@ public class AccountAccessConsentSubtest
                             bankProfile,
                             ConsentVariety.AccountAccessConsent,
                             bankUser,
+                            defaultResponseMode,
                             AuthIsComplete);
                     }
 

@@ -3,7 +3,7 @@
   "info": {
     "title": "Variable Recurring Payments API",
     "description": "Variable Recurring Payments API for Open Banking Connector Web App",
-    "version": "9.0.0"
+    "version": "9.1.0"
   },
   "paths": {
     "/vrp/domestic-vrp-consents": {
@@ -142,17 +142,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectDeleteResponse"
+                  "$ref": "#/components/schemas/BaseResponse"
                 }
               }
             }
@@ -349,11 +349,68 @@
         "type": "string",
         "description": "Banks for which bank profiles have been created. Called BankProfileEnum to avoid confusion with the associated\r\nclass BankProfile."
       },
+      "BaseResponse": {
+        "type": "object",
+        "properties": {
+          "Warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of warning messages from Open Banking Connector.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DomesticVrpConsentCreateResponse": {
         "type": "object",
         "properties": {
           "ExternalApiResponse": {
             "$ref": "#/components/schemas/OBDomesticVRPConsentResponse"
+          },
+          "BankRegistrationId": {
+            "type": "string",
+            "description": "ID of associated BankRegistration object",
+            "format": "uuid"
+          },
+          "ExternalApiId": {
+            "type": "string",
+            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
+            "nullable": true
+          },
+          "ExternalApiUserId": {
+            "type": "string",
+            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
+            "nullable": true
+          },
+          "AuthContextModified": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "AuthContextModifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "Id": {
+            "type": "string",
+            "description": "Unique Open Banking Connector ID (used in local database).",
+            "format": "uuid"
+          },
+          "Created": {
+            "type": "string",
+            "description": "Created timestamp in local database.",
+            "format": "date-time"
+          },
+          "CreatedBy": {
+            "type": "string",
+            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
+            "nullable": true
+          },
+          "Reference": {
+            "type": "string",
+            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
+            "nullable": true
           },
           "Warnings": {
             "type": "array",
@@ -361,60 +418,7 @@
               "type": "string"
             },
             "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "BankRegistrationId": {
-            "type": "string",
-            "description": "ID of associated BankRegistration object",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "ExternalApiId": {
-            "type": "string",
-            "description": "External (bank) API ID. This should be unique between objects created at the\r\nsame bank but we do not assume global uniqueness between objects created at multiple banks.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "ExternalApiUserId": {
-            "type": "string",
-            "description": "User ID at external API (bank) which may or may not be available via ID token \"sub\" claim. If retrieved from ID\r\ntoken or supplied on object creation, it will be stored here.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "AuthContextModified": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "AuthContextModifiedBy": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Id": {
-            "type": "string",
-            "description": "Unique Open Banking Connector ID (used in local database).",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "Created": {
-            "type": "string",
-            "description": "Created timestamp in local database.",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "CreatedBy": {
-            "type": "string",
-            "description": "Optional \"created by\" string in local database. Similar to \"modified by\" for mutable fields in local database, this\r\nfield\r\ncan be used to denote authorship.",
-            "nullable": true,
-            "readOnly": true
-          },
-          "Reference": {
-            "type": "string",
-            "description": "Optional reference for linking object to something else - e.g. a user ID in the client\r\napplication. This field is not used by Open Banking Connector.",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1269,20 +1273,6 @@
         },
         "additionalProperties": false,
         "description": "Information supplied to enable the matching of an entry with the items\r\nthat the transfer is intended to settle, such as commercial invoices in\r\nan accounts' receivable system."
-      },
-      "ObjectDeleteResponse": {
-        "type": "object",
-        "properties": {
-          "Warnings": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Optional list of warning messages from Open Banking Connector.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       }
     }
   }

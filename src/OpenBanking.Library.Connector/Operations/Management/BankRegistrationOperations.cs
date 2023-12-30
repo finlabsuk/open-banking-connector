@@ -279,9 +279,12 @@ internal class
             request.CreatedBy,
             externalApiSecret,
             registrationAccessToken,
+            null,
             tokenEndpointAuthMethod,
             bankGroup,
             softwareStatementId,
+            "",
+            null,
             useSimulatedBank,
             externalApiId,
             bankProfile.BankProfileEnum,
@@ -292,7 +295,6 @@ internal class
             defaultFragmentRedirectUri,
             defaultQueryRedirectUri,
             redirectUris,
-            "",
             registrationScope);
 
         // Save entity
@@ -326,7 +328,9 @@ internal class
             DefaultQueryRedirectUri = entity.DefaultQueryRedirectUri,
             RedirectUris = entity.RedirectUris,
             ExternalApiId = entity.ExternalApiId,
-            UseSimulatedBank = entity.UseSimulatedBank
+            UseSimulatedBank = entity.UseSimulatedBank,
+            DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
         };
 
         return (response, nonErrorMessages);
@@ -450,7 +454,9 @@ internal class
             DefaultQueryRedirectUri = entity.DefaultQueryRedirectUri,
             RedirectUris = entity.RedirectUris,
             ExternalApiId = entity.ExternalApiId,
-            UseSimulatedBank = entity.UseSimulatedBank
+            UseSimulatedBank = entity.UseSimulatedBank,
+            DefaultResponseModeOverride = entity.DefaultResponseModeOverride,
+            TokenEndpointAuthMethod = entity.TokenEndpointAuthMethod
         };
 
         return (response, nonErrorMessages);
