@@ -2,7 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FsCheck;
 using FsCheck.Xunit;
@@ -14,11 +14,11 @@ public class BankClientProfileDbRepoTests : DbTest
 {
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly ITestOutputHelper _output;
-    private readonly IDbEntityMethods<BankRegistration> _repo;
+    private readonly IDbEntityMethods<BankRegistrationEntity> _repo;
 
     public BankClientProfileDbRepoTests(ITestOutputHelper output)
     {
-        _repo = new DbEntityMethods<BankRegistration>(_dB);
+        _repo = new DbEntityMethods<BankRegistrationEntity>(_dB);
         _dbSaveChangesMethod = new DbSaveChangesMethod(_dB);
         _output = output;
     }

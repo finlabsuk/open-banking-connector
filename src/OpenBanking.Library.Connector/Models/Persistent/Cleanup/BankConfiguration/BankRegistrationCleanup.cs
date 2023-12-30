@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -20,7 +20,7 @@ public class BankRegistrationCleanup
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ILogger logger)
     {
-        List<BankRegistration> entityList =
+        List<BankRegistrationEntity> entityList =
             postgreSqlDbContext
                 .BankRegistration
                 .ToList();
@@ -41,7 +41,7 @@ public class BankRegistrationCleanup
         var databaseUser = "Automated database clean-up";
 
 
-        foreach (BankRegistration bankRegistration in entityList)
+        foreach (BankRegistrationEntity bankRegistration in entityList)
         {
             // Check if software statement profile available for un-migrated registrations
             ProcessedSoftwareStatementProfile? processedSoftwareStatementProfile = null;

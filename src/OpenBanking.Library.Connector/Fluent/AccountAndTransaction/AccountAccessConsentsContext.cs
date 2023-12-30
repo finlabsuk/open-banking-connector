@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -17,8 +18,6 @@ using AccountAccessConsentPersisted =
 using AccountAccessConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.
     AccountAccessConsentAuthContext;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using AccountAccessConsentAuthContext =
     FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction.AccountAccessConsentAuthContextPost;
 
@@ -67,7 +66,7 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.MemoryCache,
                 _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
             sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>());
         CreateObject = accountAccessConsentOperations;

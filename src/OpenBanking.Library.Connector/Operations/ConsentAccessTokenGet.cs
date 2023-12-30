@@ -6,7 +6,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -14,8 +15,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -51,7 +50,7 @@ internal class ConsentAccessTokenGet
         TConsentEntity consent,
         string bankIssuerUrl,
         string? requestScope,
-        BankRegistration bankRegistration,
+        BankRegistrationEntity bankRegistration,
         AccessTokenEntity? storedAccessTokenEntity,
         RefreshTokenEntity? storedRefreshTokenEntity,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,

@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using PaymentInitiationModelsPublic =

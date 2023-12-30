@@ -2,15 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 using ObSealCertificate =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.ObSealCertificate;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
 using ObWacCertificate =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.ObWacCertificate;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObWacCertificate;
 using SoftwareStatement =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request.SoftwareStatement;
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.SoftwareStatement;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 

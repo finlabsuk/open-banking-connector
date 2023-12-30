@@ -9,9 +9,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -22,8 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -183,7 +182,7 @@ internal class AuthContextUpdate :
             };
         Guid consentId = consent.Id;
         string externalApiConsentId = consent.ExternalApiId;
-        BankRegistration bankRegistration = consent.BankRegistrationNavigation;
+        BankRegistrationEntity bankRegistration = consent.BankRegistrationNavigation;
         string tokenEndpoint = bankRegistration.TokenEndpoint;
         string externalApiClientId = bankRegistration.ExternalApiId;
         string? externalApiSecret = bankRegistration.ExternalApiSecret;

@@ -8,8 +8,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
@@ -20,8 +21,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 using VariableRecurringPaymentsModelsPublic =
@@ -79,7 +78,7 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, true);
@@ -170,7 +169,7 @@ internal class DomesticVrp :
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, false);
 

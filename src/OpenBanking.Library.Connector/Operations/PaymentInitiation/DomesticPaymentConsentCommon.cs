@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -32,7 +32,7 @@ internal class DomesticPaymentConsentCommon
     }
 
     public async
-        Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             DomesticPaymentConsentAccessToken? storedAccessToken,
             DomesticPaymentConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
@@ -60,7 +60,7 @@ internal class DomesticPaymentConsentCommon
             persistedConsent
                 .DomesticPaymentConsentRefreshTokensNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
+        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =

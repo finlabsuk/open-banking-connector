@@ -4,12 +4,12 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.AccountAndTransaction;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Configuration.VariableRecurringPayments;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +44,7 @@ public abstract class BaseDbContext : DbContext
     protected abstract DbProvider DbProvider { get; }
 
     // Management objects
-    internal DbSet<BankRegistration> BankRegistration => Set<BankRegistration>();
+    internal DbSet<BankRegistrationEntity> BankRegistration => Set<BankRegistrationEntity>();
 
     public DbSet<ObWacCertificateEntity> ObWacCertificate =>
         Set<ObWacCertificateEntity>();

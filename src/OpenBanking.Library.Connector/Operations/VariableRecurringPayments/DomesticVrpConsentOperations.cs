@@ -8,8 +8,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
@@ -21,8 +22,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using VariableRecurringPaymentsModelsPublic =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 using DomesticVrpConsentPersisted =
@@ -64,7 +63,7 @@ internal class
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
-        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods)
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods)
     {
         _entityMethods = entityMethods;
         _grantPost = grantPost;
@@ -108,7 +107,7 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistration bankRegistration, string tokenEndpoint,
+            (BankRegistrationEntity bankRegistration, string tokenEndpoint,
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
@@ -258,7 +257,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
+        (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, false);
 
@@ -358,7 +357,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load DomesticVrpConsent and related
-        (DomesticVrpConsentPersisted persistedObject, BankRegistration bankRegistration,
+        (DomesticVrpConsentPersisted persistedObject, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(readParams.Id, true);

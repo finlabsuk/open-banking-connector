@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -22,8 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -62,7 +61,7 @@ internal class
         IApiVariantMapper mapper,
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
-        IDbReadOnlyEntityMethods<BankRegistration> bankRegistrationMethods,
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> accessTokenEntityMethods,
         IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> refreshTokenEntityMethods)
     {
@@ -110,7 +109,7 @@ internal class
         if (request.ExternalApiObject is null)
         {
             // Load BankRegistration and related
-            (BankRegistration bankRegistration, string tokenEndpoint,
+            (BankRegistrationEntity bankRegistration, string tokenEndpoint,
                     ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
@@ -269,7 +268,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Load AccountAccessConsent and related
-        (AccountAccessConsentPersisted persistedConsent, BankRegistration bankRegistration, _, _,
+        (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id, false);
 

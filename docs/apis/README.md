@@ -6,13 +6,13 @@ Open Banking Connector provides a set of HTTP APIs. Mostly these act as *outer A
 
 The APIs provided are as follows:
 
-| API | Description
-| - | -
-| [Management](./bank-configuration/README.md) | This API provides endpoints for setup including replacement endpoints for endpoints provided in the UK Open Banking [Dynamic Client Registration API](https://openbankinguk.github.io/dcr-docs-pub/v3.3/dynamic-client-registration.html)
-| [Account and Transaction](./account-and-transaction/README.md) | This API aims to mirror the UK Open Banking [Account and Transaction API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/account-and-transaction-api-profile.html).
-| [Payment Initiation](./payment-initiation/README.md) | This API aims to mirror the UK Open Banking [Payment Initiation API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/payment-initiation-api-profile.html).
-| [Variable Recurring Payments](./variable-recurring-payments/README.md) | This API aims to mirror the UK Open Banking [Variable Recurring Payments API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/vrp-profile.html).
-| [Auth Contexts API](./auth-contexts/README.md) | This API provides endpoints for handling bank OAuth2 redirects that occur following end-user auth
+| API                                                                    | Description                                                                                                                                                                                                                               |
+|------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Management](./management/README.md)                                   | This API provides endpoints for setup including replacement endpoints for endpoints provided in the UK Open Banking [Dynamic Client Registration API](https://openbankinguk.github.io/dcr-docs-pub/v3.3/dynamic-client-registration.html) |
+| [Account and Transaction](./account-and-transaction/README.md)         | This API aims to mirror the UK Open Banking [Account and Transaction API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/account-and-transaction-api-profile.html).                                                |
+| [Payment Initiation](./payment-initiation/README.md)                   | This API aims to mirror the UK Open Banking [Payment Initiation API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/payment-initiation-api-profile.html).                                                          |
+| [Variable Recurring Payments](./variable-recurring-payments/README.md) | This API aims to mirror the UK Open Banking [Variable Recurring Payments API](https://openbankinguk.github.io/read-write-api-site3/v3.1.10/profiles/vrp-profile.html).                                                                    |
+| [Auth Contexts API](./auth-contexts/README.md)                         | This API provides endpoints for handling bank OAuth2 redirects that occur following end-user auth                                                                                                                                         |
 
 ## Security
 

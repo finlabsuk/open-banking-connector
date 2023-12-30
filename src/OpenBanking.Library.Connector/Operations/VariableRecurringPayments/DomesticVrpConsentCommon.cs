@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -32,7 +32,7 @@ internal class DomesticVrpConsentCommon
     }
 
     public async
-        Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistration bankRegistration,
+        Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile
             processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId, bool dbTracking)
@@ -58,7 +58,7 @@ internal class DomesticVrpConsentCommon
             persistedConsent
                 .DomesticVrpConsentRefreshTokensNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        BankRegistration bankRegistration = persistedConsent.BankRegistrationNavigation;
+        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =

@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -16,8 +17,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
-using BankRegistration =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -66,7 +65,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
 
         if (deleteParams.IncludeExternalApiOperation)
         {
-            BankRegistration bankRegistration = persistedObject.BankRegistrationNavigation;
+            BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
 
             // Get bank profile

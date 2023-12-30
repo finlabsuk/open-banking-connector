@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -111,7 +111,7 @@ internal abstract class BaseConsent : BaseEntity
     }
 
     [ForeignKey(nameof(BankRegistrationId))]
-    public BankRegistration BankRegistrationNavigation { get; private set; } = null!;
+    public BankRegistrationEntity BankRegistrationNavigation { get; private set; } = null!;
 
     /// <summary>
     ///     Associated BankRegistration object
@@ -184,7 +184,7 @@ internal abstract class BaseConsent : BaseEntity
 
     public string GetCacheKey() => string.Join(":", "token", GetConsentTypeString(), Id.ToString());
 
-    public string GetAssociatedData(BankRegistration bankRegistration) => string.Join(
+    public string GetAssociatedData(BankRegistrationEntity bankRegistration) => string.Join(
         ":",
         GetConsentTypeString(),
         Id.ToString(),

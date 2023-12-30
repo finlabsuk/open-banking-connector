@@ -9,16 +9,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -52,7 +51,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get consent and associated data
-        (AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted bankRegistration,
+        (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 AccountAccessConsentAccessToken? storedAccessToken,
                 AccountAccessConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =

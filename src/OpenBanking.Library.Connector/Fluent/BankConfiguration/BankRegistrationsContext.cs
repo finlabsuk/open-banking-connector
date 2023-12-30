@@ -3,13 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Response;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
-using FinnovationLabs.OpenBanking.Library.Connector.Operations.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.BankConfiguration;
 
@@ -30,7 +29,7 @@ internal class BankRegistrationsContextInternal :
     public BankRegistrationsContextInternal(ISharedContext sharedContext)
     {
         var bankRegistrationOperations = new BankRegistrationOperations(
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.SoftwareStatementProfileCachedRepo,
@@ -45,7 +44,7 @@ internal class BankRegistrationsContextInternal :
                 sharedContext.TimeProvider));
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>(),
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.SoftwareStatementProfileCachedRepo,

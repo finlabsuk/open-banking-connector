@@ -5,13 +5,12 @@
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -22,12 +21,12 @@ internal class
     where TApiRequest : class, ISupportsValidation
     where TApiResponse : class, ISupportsValidation
 {
-    private readonly IDbReadOnlyEntityMethods<BankRegistrationPersisted> _bankRegistrationMethods;
+    private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
     public ConsentCommon(
-        IDbReadOnlyEntityMethods<BankRegistrationPersisted> bankRegistrationMethods,
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
         IInstrumentationClient instrumentationClient,
         IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
     {
@@ -37,12 +36,12 @@ internal class
     }
 
     public async
-        Task<(BankRegistrationPersisted bankRegistration, string tokenEndpoint,
+        Task<(BankRegistrationEntity bankRegistration, string tokenEndpoint,
             ProcessedSoftwareStatementProfile
             processedSoftwareStatementProfile)> GetBankRegistration(Guid bankRegistrationId)
     {
         // Load BankRegistration
-        BankRegistrationPersisted bankRegistration =
+        BankRegistrationEntity bankRegistration =
             await _bankRegistrationMethods
                 .DbSetNoTracking
                 .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??

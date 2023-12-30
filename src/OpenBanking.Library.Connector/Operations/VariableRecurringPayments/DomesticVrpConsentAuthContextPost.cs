@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -63,7 +63,7 @@ internal class
                 .SingleOrDefault(x => x.Id == request.DomesticVrpConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Domestic Payment Consent with ID {request.DomesticVrpConsentId}.");
-        BankRegistration bankRegistration = domesticVrpConsent.BankRegistrationNavigation;
+        BankRegistrationEntity bankRegistration = domesticVrpConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
 

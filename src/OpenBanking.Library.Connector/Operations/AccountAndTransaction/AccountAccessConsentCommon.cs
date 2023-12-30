@@ -4,14 +4,13 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTransaction;
 
@@ -29,7 +28,7 @@ internal class AccountAccessConsentCommon
     }
 
     public async
-        Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationPersisted bankRegistration,
+        Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             AccountAccessConsentAccessToken? storedAccessToken, AccountAccessConsentRefreshToken? storedRefreshToken,
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetAccountAccessConsent(
             Guid consentId,
@@ -55,7 +54,7 @@ internal class AccountAccessConsentCommon
             persistedConsent
                 .AccountAccessConsentRefreshTokensNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
-        BankRegistrationPersisted bankRegistration = persistedConsent.BankRegistrationNavigation;
+        BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
 
         // Get software statement profile
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =

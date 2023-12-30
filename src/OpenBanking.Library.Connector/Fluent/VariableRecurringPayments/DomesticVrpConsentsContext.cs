@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -14,8 +15,6 @@ using DomesticVrpConsentAuthContextRequest =
 using DomesticVrpConsentAuthContextPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.
     DomesticVrpConsentAuthContext;
-using BankRegistrationPersisted =
-    FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration.BankRegistration;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
 
@@ -78,7 +77,7 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.EncryptionKeyInfo),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationPersisted>());
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>());
         CreateObject = domesticVrpConsentOperations;
         ReadObject = domesticVrpConsentOperations;
         ReadFundsConfirmationObject = domesticVrpConsentOperations;

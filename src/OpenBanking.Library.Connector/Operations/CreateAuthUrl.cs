@@ -8,7 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.BankConfiguration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
@@ -51,7 +51,7 @@ public static class CreateAuthUrl
     internal static (string authUrl, string state, string nonce, string appSessionId) Create(
         string externalApiConsentId,
         OBSealKey obSealKey,
-        BankRegistration bankRegistration,
+        BankRegistrationEntity bankRegistration,
         string clientExternalApiId,
         ConsentAuthGetCustomBehaviour? customBehaviourConsentAuthGet,
         string authorisationEndpoint,

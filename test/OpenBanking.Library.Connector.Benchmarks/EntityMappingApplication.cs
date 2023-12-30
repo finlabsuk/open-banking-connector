@@ -8,7 +8,7 @@ using BenchmarkDotNet.Running;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.BankConfiguration.Request;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 using PaymentInitiationModelsPublic =
