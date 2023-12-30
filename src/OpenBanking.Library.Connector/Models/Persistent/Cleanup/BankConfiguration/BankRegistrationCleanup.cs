@@ -64,7 +64,7 @@ public class BankRegistrationCleanup
                         ? ". "
                         : $" and override {softwareStatementProfileOverride}. ";
                     message += "This software statement profile was not found in configuration/secrets.";
-                    logger.LogWarning(message);
+                    throw new Exception(message);
                 }
             }
 
