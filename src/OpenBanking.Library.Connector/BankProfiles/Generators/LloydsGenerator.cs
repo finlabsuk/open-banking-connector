@@ -121,11 +121,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 },
                 AccountAccessConsentAuthGet = bank is LloydsBank.Sandbox
                     ? null
-                    : new ConsentAuthGetCustomBehaviour
-                    {
-                        IdTokenProcessingCustomBehaviour =
-                            new IdTokenProcessingCustomBehaviour { IdTokenNonceClaimIsPreviousValue = true }
-                    },
+                    : new ConsentAuthGetCustomBehaviour { AddRedundantOAuth2NonceRequestParameter = true },
                 AccountAccessConsentPost = bank is LloydsBank.Sandbox
                     ? null
                     : new AccountAccessConsentPostCustomBehaviour { ResponseLinksOmitId = true },
