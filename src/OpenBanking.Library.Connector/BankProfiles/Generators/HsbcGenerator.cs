@@ -99,15 +99,15 @@ public class HsbcGenerator : BankProfileGeneratorBase<HsbcBank>
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
-                        new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                        new List<AccountAndTransactionModelsPublic.Permissions>
                         {
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                            AccountAndTransactionModelsPublic.Permissions.ReadOffers,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU,
+                            AccountAndTransactionModelsPublic.Permissions.ReadStatementsBasic,
+                            AccountAndTransactionModelsPublic.Permissions
                                 .ReadStatementsDetail
                         };
-                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                    foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);

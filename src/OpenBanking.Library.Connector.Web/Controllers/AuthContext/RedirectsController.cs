@@ -68,7 +68,7 @@ public class RedirectsController : ControllerBase
                 responseMode,
                 "Unknown value for response_mode.")
         };
-        
+
         // Operation
         var authResult =
             new AuthResult

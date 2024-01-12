@@ -377,8 +377,6 @@ public abstract class AppTests
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
-                        testDataProcessorFluentRequestLogging
                             .AppendToPath("aisp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,

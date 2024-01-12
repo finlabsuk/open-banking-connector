@@ -5,7 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;

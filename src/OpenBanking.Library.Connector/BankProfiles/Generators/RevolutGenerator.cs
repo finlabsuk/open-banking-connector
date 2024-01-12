@@ -65,18 +65,18 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
-                        new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                        new List<AccountAndTransactionModelsPublic.Permissions>
                         {
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                            AccountAndTransactionModelsPublic.Permissions.ReadPAN,
+                            AccountAndTransactionModelsPublic.Permissions.ReadOffers,
+                            AccountAndTransactionModelsPublic.Permissions.ReadParty,
+                            AccountAndTransactionModelsPublic.Permissions.ReadStatementsBasic,
+                            AccountAndTransactionModelsPublic.Permissions
                                 .ReadStatementsDetail,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadProducts,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU
+                            AccountAndTransactionModelsPublic.Permissions.ReadProducts,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU
                         };
-                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                    foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);

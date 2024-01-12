@@ -62,11 +62,14 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                     ? externalApiRequest =>
                     {
                         externalApiRequest.Data.SupplementaryData =
-                            new Dictionary<string, object>
+                            new AccountAndTransactionModelsPublic.OBSupplementaryData1
                             {
-                                ["DesiredStatus"] = "Authorised",
-                                ["UserID"] = "user_0000A4C4ZChWNMEvew2U77",
-                                ["AccountID"] = "acc_0000A4C4ZSskDOixqNPfpR"
+                                AdditionalProperties = new Dictionary<string, object>
+                                {
+                                    ["DesiredStatus"] = "Authorised",
+                                    ["UserID"] = "user_0000A4C4ZChWNMEvew2U77",
+                                    ["AccountID"] = "acc_0000A4C4ZSskDOixqNPfpR"
+                                }
                             };
                         return externalApiRequest;
                     }

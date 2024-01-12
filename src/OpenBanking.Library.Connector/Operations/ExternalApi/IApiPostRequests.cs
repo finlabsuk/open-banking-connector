@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal interface IApiPostRequests<in TApiRequest, TApiResponse>
-    where TApiRequest : class, ISupportsValidation
+    where TApiRequest : class
     where TApiResponse : class, ISupportsValidation
 {
     Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(

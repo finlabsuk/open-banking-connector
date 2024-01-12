@@ -176,11 +176,26 @@ internal class
                 true,
                 validQueryParameters);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            if (externalApiResponse.Links.First is not null)
+            {
+                externalApiResponse.Links.First =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            }
+            if (externalApiResponse.Links.Prev is not null)
+            {
+                externalApiResponse.Links.Prev =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            }
+            if (externalApiResponse.Links.Next is not null)
+            {
+                externalApiResponse.Links.Next =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            }
+            if (externalApiResponse.Links.Last is not null)
+            {
+                externalApiResponse.Links.Last =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            }
         }
         else
         {
@@ -318,11 +333,26 @@ internal class
                 true,
                 validQueryParameters);
             externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            if (externalApiResponse.Links.First is not null)
+            {
+                externalApiResponse.Links.First =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+            }
+            if (externalApiResponse.Links.Prev is not null)
+            {
+                externalApiResponse.Links.Prev =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+            }
+            if (externalApiResponse.Links.Next is not null)
+            {
+                externalApiResponse.Links.Next =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+            }
+            if (externalApiResponse.Links.Last is not null)
+            {
+                externalApiResponse.Links.Last =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+            }
         }
         else
         {

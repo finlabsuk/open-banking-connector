@@ -5,7 +5,7 @@
 using FluentValidation;
 using FluentValidation.Results;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 
 public class NullableValidator<TValidator> : IValidator<TValidator?>
     where TValidator : class

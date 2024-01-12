@@ -89,16 +89,6 @@ internal class BankRegistrationEntity :
     public string? RegistrationAccessToken { get; }
 
     /// <summary>
-    ///     Default OAuth2 response_mode override.
-    /// </summary>
-    public OAuth2ResponseMode? DefaultResponseModeOverride { get; }
-
-    /// <summary>
-    ///     Token endpoint authorisation method
-    /// </summary>
-    public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; }
-
-    /// <summary>
     ///     Bank group
     /// </summary>
     public BankGroupEnum BankGroup { get; set; }
@@ -114,6 +104,16 @@ internal class BankRegistrationEntity :
     public string SoftwareStatementProfileId { get; }
 
     public string? SoftwareStatementProfileOverride { get; }
+
+    /// <summary>
+    ///     Default OAuth2 response_mode override.
+    /// </summary>
+    public OAuth2ResponseMode? DefaultResponseModeOverride { get; }
+
+    /// <summary>
+    ///     Token endpoint authorisation method
+    /// </summary>
+    public TokenEndpointAuthMethodSupportedValues TokenEndpointAuthMethod { get; }
 
     /// <summary>
     ///     Use simulated bank.

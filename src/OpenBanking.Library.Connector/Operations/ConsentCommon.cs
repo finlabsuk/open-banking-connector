@@ -18,7 +18,7 @@ internal class
     ConsentCommon<TEntity, TPublicRequest, TPublicResponse, TApiRequest, TApiResponse>
     where TEntity : class, IEntity
     where TPublicRequest : ConsentBase
-    where TApiRequest : class, ISupportsValidation
+    where TApiRequest : class
     where TApiResponse : class, ISupportsValidation
 {
     private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;

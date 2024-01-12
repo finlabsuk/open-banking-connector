@@ -161,36 +161,55 @@ internal class
                     processedSoftwareStatementProfile.ApiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
-            externalApiId = externalApiResponse.Data.ConsentId;
-            bool responseLinksOmitId = customBehaviour?.AccountAccessConsentPost?.ResponseLinksOmitId ?? false;
-            bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentPost?.ResponseLinksAddSlash ?? false;
-            Uri expectedLinkUrlWithoutQuery = responseLinksOmitId
-                ? externalApiUrl
-                : new Uri(externalApiUrl + $"/{externalApiId}");
-            if (responseLinksAddSlash)
+            if (externalApiResponse.Links is not null)
             {
-                expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
-            }
+                bool responseLinksOmitId = customBehaviour?.AccountAccessConsentPost?.ResponseLinksOmitId ?? false;
+                bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentPost?.ResponseLinksAddSlash ?? false;
+                Uri expectedLinkUrlWithoutQuery = responseLinksOmitId
+                    ? externalApiUrl
+                    : new Uri(externalApiUrl + $"/{externalApiId}");
+                if (responseLinksAddSlash)
+                {
+                    expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
+                }
 
-            string? publicUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
-            {
-                { } x => x + $"/{entityId}",
-                null => null
-            };
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
-                expectedLinkUrlWithoutQuery,
-                publicUrlWithoutQuery,
-                true,
-                validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                string? publicUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
+                {
+                    { } x => x + $"/{entityId}",
+                    null => null
+                };
+                var validQueryParameters = new List<string>();
+                var linksUrlOperations = new LinksUrlOperations(
+                    expectedLinkUrlWithoutQuery,
+                    publicUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
+            }
         }
         else
         {
@@ -320,24 +339,43 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Transform links 
-            bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentGet?.ResponseLinksAddSlash ?? false;
-            Uri expectedLinkUrlWithoutQuery = externalApiUrl;
-            if (responseLinksAddSlash)
+            if (externalApiResponse.Links is not null)
             {
-                expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
+                bool responseLinksAddSlash = customBehaviour?.AccountAccessConsentGet?.ResponseLinksAddSlash ?? false;
+                Uri expectedLinkUrlWithoutQuery = externalApiUrl;
+                if (responseLinksAddSlash)
+                {
+                    expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
+                }
+                var validQueryParameters = new List<string>();
+                var linksUrlOperations = new LinksUrlOperations(
+                    expectedLinkUrlWithoutQuery,
+                    readParams.PublicRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
             }
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
-                expectedLinkUrlWithoutQuery,
-                readParams.PublicRequestUrlWithoutQuery,
-                true,
-                validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            externalApiResponse.Links.First =
-                linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            externalApiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            externalApiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            externalApiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
         }
         else
         {

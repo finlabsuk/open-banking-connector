@@ -4,7 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Validators;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;

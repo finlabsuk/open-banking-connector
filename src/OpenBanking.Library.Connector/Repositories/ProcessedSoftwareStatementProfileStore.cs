@@ -268,8 +268,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         // Load cache value
         if (!_cache.TryGetValue(id, out ProcessedSoftwareStatementProfiles? cacheValue))
         {
-            throw new KeyNotFoundException(
-                $"Configuration/secrets error: Software Statement with ID {id} not found.");
+            throw new KeyNotFoundException($"Configuration/secrets error: Software Statement with ID {id} not found.");
         }
 
         // Return default case where no override case

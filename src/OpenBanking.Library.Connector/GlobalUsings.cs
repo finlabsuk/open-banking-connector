@@ -24,3 +24,9 @@ global using StarlingBank =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
 global using StarlingRegistrationGroup =
     FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups.StarlingBank;
+
+// UK Open Banking API models
+global using AccountAndTransactionModelsV3p1p7 =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p7.Aisp.Models;
+global using AccountAndTransactionModelsPublic =
+    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwagAisp.Models;

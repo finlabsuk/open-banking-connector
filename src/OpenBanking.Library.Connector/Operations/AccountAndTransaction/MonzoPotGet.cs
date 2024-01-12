@@ -29,10 +29,10 @@ public class MonzoPot
         string accountId,
         string name,
         string type,
-        AccountAndTransactionModelsPublic.OBCreditDebitCode2Enum creditDebitIndicator,
-        AccountAndTransactionModelsPublic.OBReadBalance1DataBalanceItemAmount balance,
+        AccountAndTransactionModelsPublic.OBCreditDebitCode_2 creditDebitIndicator,
+        AccountAndTransactionModelsPublic.Amount3 balance,
         string style,
-        AccountAndTransactionModelsPublic.OBReadBalance1DataBalanceItemAmount goal,
+        AccountAndTransactionModelsPublic.Amount3 goal,
         DateTimeOffset updated,
         DateTimeOffset created,
         string status)
@@ -66,14 +66,14 @@ public class MonzoPot
     ///     Indicates whether the balance is a credit or a debit balance.
     ///     Usage: A zero balance is considered to be a credit balance.
     /// </summary>
-    public AccountAndTransactionModelsPublic.OBCreditDebitCode2Enum CreditDebitIndicator { get; }
+    public AccountAndTransactionModelsPublic.OBCreditDebitCode_2 CreditDebitIndicator { get; }
 
     /// <summary> Amount of money of the cash balance. </summary>
-    public AccountAndTransactionModelsPublic.OBReadBalance1DataBalanceItemAmount Balance { get; }
+    public AccountAndTransactionModelsPublic.Amount3 Balance { get; }
 
     public string Style { get; }
 
-    public AccountAndTransactionModelsPublic.OBReadBalance1DataBalanceItemAmount Goal { get; }
+    public AccountAndTransactionModelsPublic.Amount3 Goal { get; }
 
     public DateTimeOffset Updated { get; }
 
@@ -234,10 +234,22 @@ internal class MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse
             false,
             validQueryParameters);
         apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
-        apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
-        apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
-        apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
-        apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
+        if (apiResponse.Links.First is not null)
+        {
+            apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
+        }
+        if (apiResponse.Links.Prev is not null)
+        {
+            apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
+        }
+        if (apiResponse.Links.Next is not null)
+        {
+            apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
+        }
+        if (apiResponse.Links.Last is not null)
+        {
+            apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
+        }
         var response = new MonzoPotsResponse(apiResponse, null);
 
         return (response, nonErrorMessages);

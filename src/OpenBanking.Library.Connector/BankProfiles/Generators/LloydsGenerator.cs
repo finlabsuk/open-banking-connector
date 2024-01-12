@@ -147,11 +147,11 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
-                    var elementsToRemove = new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                    var elementsToRemove = new List<AccountAndTransactionModelsPublic.Permissions>
                     {
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN
+                        AccountAndTransactionModelsPublic.Permissions.ReadPAN
                     };
-                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                    foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);

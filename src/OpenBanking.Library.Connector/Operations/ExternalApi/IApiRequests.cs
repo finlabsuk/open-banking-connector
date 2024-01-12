@@ -10,4 +10,4 @@ internal interface IApiRequests<in TApiRequest, TApiResponse> :
     IApiGetRequests<TApiResponse>,
     IApiPostRequests<TApiRequest, TApiResponse>
     where TApiResponse : class, ISupportsValidation
-    where TApiRequest : class, ISupportsValidation { }
+    where TApiRequest : class { }

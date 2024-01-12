@@ -3,10 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Validators;
 
 public class AuthorisationRedirectObjectValidator : AbstractValidator<AuthResult>
 {

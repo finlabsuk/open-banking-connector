@@ -26,7 +26,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Mo
         /// <summary>
         /// Initializes a new instance of the Links class.
         /// </summary>
-        public Links(string self, string first = default(string), string prev = default(string), string next = default(string), string last = default(string))
+        public Links(Uri self, Uri first = default(Uri), Uri prev = default(Uri), Uri next = default(Uri), Uri last = default(Uri))
         {
             Self = self;
             First = first;
@@ -44,27 +44,27 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Mo
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "Self")]
-        public string Self { get; set; }
+        public Uri Self { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "First")]
-        public string First { get; set; }
+        public Uri First { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "Prev")]
-        public string Prev { get; set; }
+        public Uri Prev { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "Next")]
-        public string Next { get; set; }
+        public Uri Next { get; set; }
 
         /// <summary>
         /// </summary>
         [JsonProperty(PropertyName = "Last")]
-        public string Last { get; set; }
+        public Uri Last { get; set; }
 
         /// <summary>
         /// Validate the object.

@@ -4,10 +4,9 @@
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FluentValidation;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 
 public class OBSigningCertificateProfileValidator : AbstractValidator<SigningCertificateProfile>
 {

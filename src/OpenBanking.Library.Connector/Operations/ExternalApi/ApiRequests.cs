@@ -16,7 +16,7 @@ internal class
     ApiRequests<TApiRequest, TApiResponse, TVariantApiRequest, TVariantApiResponse> :
         ApiGetRequests<TApiResponse, TVariantApiResponse>,
         IApiRequests<TApiRequest, TApiResponse>
-    where TApiRequest : class, ISupportsValidation
+    where TApiRequest : class
     where TApiResponse : class, ISupportsValidation
     where TVariantApiRequest : class
     where TVariantApiResponse : class
@@ -52,12 +52,6 @@ internal class
             IApiVariantMapper mapper)
     {
         var nonErrorMessages = new List<IFluentResponseInfoOrWarningMessage>();
-
-        // Validate request
-        ValidationResult requestValidationResult = await request.ValidateAsync();
-        IEnumerable<IFluentResponseInfoOrWarningMessage> requestNonErrorMessages =
-            requestValidationResult.ProcessValidationResultsAndRaiseErrors("prefix");
-        nonErrorMessages.AddRange(requestNonErrorMessages);
 
         // Map request type if necessary
         if (!(request is TVariantApiRequest variantRequest))

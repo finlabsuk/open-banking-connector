@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Artbitraries;
 using FluentValidation.Results;
 using FsCheck;

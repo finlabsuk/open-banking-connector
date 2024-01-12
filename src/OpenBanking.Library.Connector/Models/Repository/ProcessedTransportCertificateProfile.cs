@@ -9,7 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentValidation.Results;
 

@@ -9,7 +9,7 @@ internal class LinksUrlOperations
     private readonly bool _allowValidQueryParametersOnly;
 
     private readonly Uri _expectedLinkUrlWithoutQuery;
-    private readonly string? _publicUrlWithoutQuery;
+    private readonly string _publicUrlWithoutQuery;
     private readonly IList<string> _validQueryParameters;
 
     public LinksUrlOperations(
@@ -19,20 +19,13 @@ internal class LinksUrlOperations
         IList<string> validQueryParameters)
     {
         _expectedLinkUrlWithoutQuery = expectedLinkUrlWithoutQuery;
-        _publicUrlWithoutQuery = publicUrlWithoutQuery;
+        _publicUrlWithoutQuery = publicUrlWithoutQuery ?? "https://localhost/placeholder";
         _allowValidQueryParametersOnly = allowValidQueryParametersOnly;
         _validQueryParameters = validQueryParameters;
     }
 
-    public string? ValidateAndTransformUrl(string? linkUrlString)
+    public Uri ValidateAndTransformUrl(Uri linkUrl)
     {
-        if (linkUrlString is null)
-        {
-            return null;
-        }
-
-        var linkUrl = new Uri(linkUrlString);
-
         int urlsMatch = Uri.Compare(
             linkUrl,
             _expectedLinkUrlWithoutQuery,
@@ -69,16 +62,10 @@ internal class LinksUrlOperations
             }
         }
 
-        // Return relative URL
-        if (_publicUrlWithoutQuery is null)
-        {
-            return linkUrl.Query;
-        }
-
         // Return absolute URL
         var uriBuilder = new UriBuilder(_publicUrlWithoutQuery);
         uriBuilder.Query = linkUrl.Query;
         Uri fullUri = uriBuilder.Uri;
-        return fullUri.ToString();
+        return fullUri;
     }
 }

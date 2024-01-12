@@ -12,41 +12,41 @@ public static class AccountAccessTemplates
         AccountAccessConsentTemplateType accountAccessConsentTemplateType) =>
         accountAccessConsentTemplateType switch
         {
-            AccountAccessConsentTemplateType.MaximumPermissions => new AccountAndTransactionModelsPublic.OBReadConsent1(
-                new AccountAndTransactionModelsPublic.OBReadConsent1Data(
-                    new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+            AccountAccessConsentTemplateType.MaximumPermissions => new AccountAndTransactionModelsPublic.OBReadConsent1
+            {
+                Data =
+                    new AccountAndTransactionModelsPublic.Data4
                     {
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadAccountsBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadAccountsDetail,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadBalances,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadBeneficiariesBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadBeneficiariesDetail,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadDirectDebits,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadProducts,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
-                            .ReadScheduledPaymentsBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
-                            .ReadScheduledPaymentsDetail,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStandingOrdersBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
-                            .ReadStandingOrdersDetail,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadStatementsDetail,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadTransactionsBasic,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadTransactionsCredits,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadTransactionsDebits,
-                        AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadTransactionsDetail
-                    })
-                {
-                    ExpirationDateTime = null,
-                    TransactionFromDateTime = null,
-                    TransactionToDateTime = null
-                },
-                new Dictionary<string, string>()),
+                        Permissions = new List<AccountAndTransactionModelsPublic.Permissions>
+                        {
+                            AccountAndTransactionModelsPublic.Permissions.ReadAccountsBasic,
+                            AccountAndTransactionModelsPublic.Permissions.ReadAccountsDetail,
+                            AccountAndTransactionModelsPublic.Permissions.ReadBalances,
+                            AccountAndTransactionModelsPublic.Permissions.ReadBeneficiariesBasic,
+                            AccountAndTransactionModelsPublic.Permissions.ReadBeneficiariesDetail,
+                            AccountAndTransactionModelsPublic.Permissions.ReadDirectDebits,
+                            AccountAndTransactionModelsPublic.Permissions.ReadOffers,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPAN,
+                            AccountAndTransactionModelsPublic.Permissions.ReadParty,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU,
+                            AccountAndTransactionModelsPublic.Permissions.ReadProducts,
+                            AccountAndTransactionModelsPublic.Permissions
+                                .ReadScheduledPaymentsBasic,
+                            AccountAndTransactionModelsPublic.Permissions
+                                .ReadScheduledPaymentsDetail,
+                            AccountAndTransactionModelsPublic.Permissions.ReadStandingOrdersBasic,
+                            AccountAndTransactionModelsPublic.Permissions
+                                .ReadStandingOrdersDetail,
+                            AccountAndTransactionModelsPublic.Permissions.ReadStatementsBasic,
+                            AccountAndTransactionModelsPublic.Permissions.ReadStatementsDetail,
+                            AccountAndTransactionModelsPublic.Permissions.ReadTransactionsBasic,
+                            AccountAndTransactionModelsPublic.Permissions.ReadTransactionsCredits,
+                            AccountAndTransactionModelsPublic.Permissions.ReadTransactionsDebits,
+                            AccountAndTransactionModelsPublic.Permissions.ReadTransactionsDetail
+                        }
+                    },
+                Risk = new AccountAndTransactionModelsPublic.OBRisk2()
+            },
             _ => throw new ArgumentOutOfRangeException(
                 nameof(accountAccessConsentTemplateType),
                 accountAccessConsentTemplateType,

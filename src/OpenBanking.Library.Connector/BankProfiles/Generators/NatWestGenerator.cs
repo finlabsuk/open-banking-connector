@@ -106,26 +106,26 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
                 {
                     var elementsToRemove =
-                        new List<AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum>
+                        new List<AccountAndTransactionModelsPublic.Permissions>
                         {
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadParty,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPartyPSU,
-                            AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadPAN
+                            AccountAndTransactionModelsPublic.Permissions.ReadParty,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPartyPSU,
+                            AccountAndTransactionModelsPublic.Permissions.ReadPAN
                         };
                     if (bank is NatWestBank.Coutts)
                     {
                         elementsToRemove.AddRange(
                             new[]
                             {
-                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum.ReadOffers,
-                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                AccountAndTransactionModelsPublic.Permissions.ReadOffers,
+                                AccountAndTransactionModelsPublic.Permissions
                                     .ReadStatementsBasic,
-                                AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum
+                                AccountAndTransactionModelsPublic.Permissions
                                     .ReadStatementsDetail
                             });
                     }
 
-                    foreach (AccountAndTransactionModelsPublic.OBReadConsent1DataPermissionsEnum element in
+                    foreach (AccountAndTransactionModelsPublic.Permissions element in
                              elementsToRemove)
                     {
                         externalApiRequest.Data.Permissions.Remove(element);

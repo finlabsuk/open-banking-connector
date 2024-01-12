@@ -131,11 +131,26 @@ internal class PartyGet : IAccountAccessConsentExternalRead<PartiesResponse, Ext
             readParams.PublicRequestUrlWithoutQuery,
             false,
             validQueryParameters);
-        apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
-        apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
-        apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
-        apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
-        apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
+        if (apiResponse.Links is not null)
+        {
+            apiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Self);
+            if (apiResponse.Links.First is not null)
+            {
+                apiResponse.Links.First = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.First);
+            }
+            if (apiResponse.Links.Prev is not null)
+            {
+                apiResponse.Links.Prev = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Prev);
+            }
+            if (apiResponse.Links.Next is not null)
+            {
+                apiResponse.Links.Next = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Next);
+            }
+            if (apiResponse.Links.Last is not null)
+            {
+                apiResponse.Links.Last = linksUrlOperations.ValidateAndTransformUrl(apiResponse.Links.Last);
+            }
+        }
         var response = new PartiesResponse(apiResponse, null);
 
         return (response, nonErrorMessages);
