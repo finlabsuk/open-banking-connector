@@ -5,11 +5,11 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Security;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
-using FinnovationLabs.OpenBanking.Library.Connector.Utility;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -51,7 +51,7 @@ public class ApiClient : IApiClient
             TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
             TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         };
-        if (OsPlatformEnumHelper.GetCurrentOsPlatform() is OsPlatformEnum.Linux)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
         }

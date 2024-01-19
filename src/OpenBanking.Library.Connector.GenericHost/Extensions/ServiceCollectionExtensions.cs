@@ -18,6 +18,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TimeProvider = FinnovationLabs.OpenBanking.Library.Connector.Services.TimeProvider;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Extensions;
 

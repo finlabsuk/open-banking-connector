@@ -127,16 +127,24 @@ internal class EncryptedObject : BaseEntity
     /// <summary>
     ///     Get plain text value.
     /// </summary>
-    protected string GetPlainText(string associatedData, byte[] encryptionKey) =>
-        Encoding.UTF8.GetString(
+    protected string GetPlainText(string associatedData, byte[] encryptionKey)
+    {
+        int tagLengthBytes = AesGcm.TagByteSizes.MaxSize;
+        if (tagLengthBytes != 16)
+        {
+            throw new InvalidOperationException();
+        }
+        return Encoding.UTF8.GetString(
             KeyId is not null
                 ? AesGcmDecrypt(
                     _nonce,
                     _text,
                     _tag,
+                    tagLengthBytes,
                     Encoding.UTF8.GetBytes(associatedData),
                     encryptionKey)
                 : _text);
+    }
 
     private static (byte[] cipherText, byte[] tag) AesGcmEncrypt(
         byte[] nonce,
@@ -145,7 +153,7 @@ internal class EncryptedObject : BaseEntity
         byte[] associatedData,
         byte[] encryptionKey)
     {
-        using var aesGcm = new AesGcm(encryptionKey);
+        using var aesGcm = new AesGcm(encryptionKey, tagLengthBytes);
 
         // Encrypt text
         var cipherText = new byte[plainText.Length];
@@ -159,10 +167,11 @@ internal class EncryptedObject : BaseEntity
         byte[] nonce,
         byte[] cipherText,
         byte[] tag,
+        int tagLengthBytes,
         byte[] associatedData,
         byte[] encryptionKey)
     {
-        using var aesGcm = new AesGcm(encryptionKey);
+        using var aesGcm = new AesGcm(encryptionKey, tagLengthBytes);
 
         // Decrypt text
         var plainText = new byte[cipherText.Length];
