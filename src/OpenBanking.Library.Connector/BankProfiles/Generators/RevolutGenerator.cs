@@ -40,8 +40,6 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                 AccountAccessConsentAuthGet =
                     new ConsentAuthGetCustomBehaviour
                     {
-                        //AddRedundantOAuth2RedirectUriRequestParameter = true,
-                        AddRedundantOAuth2StateRequestParameter = true,
                         AddRedundantOAuth2NonceRequestParameter = true,
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
@@ -61,6 +59,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                             }
                     }
             },
+            BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationDeleteEndpoint = true },
             AccountAndTransactionApiSettings = new AccountAndTransactionApiSettings
             {
                 AccountAccessConsentExternalApiRequestAdjustments = externalApiRequest =>
