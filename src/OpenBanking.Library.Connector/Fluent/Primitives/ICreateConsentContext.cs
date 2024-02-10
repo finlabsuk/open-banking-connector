@@ -31,7 +31,7 @@ public interface ICreateConsentContext<in TPublicRequest, TPublicResponse>
 
 internal interface
     ICreateConsentContextInternal<in TPublicRequest, TPublicResponse> :
-        ICreateConsentContext<TPublicRequest, TPublicResponse>
+    ICreateConsentContext<TPublicRequest, TPublicResponse>
     where TPublicRequest : class, ISupportsValidation
     where TPublicResponse : class
 {
@@ -51,7 +51,8 @@ internal interface
         }
 
         // Execute operation catching errors
-        var consentCreateParams = new ConsentCreateParams(publicRequestUrlWithoutQuery);
+        var consentCreateParams =
+            new ConsentCreateParams { PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await CreateObject.CreateAsync(publicRequest, consentCreateParams);
 

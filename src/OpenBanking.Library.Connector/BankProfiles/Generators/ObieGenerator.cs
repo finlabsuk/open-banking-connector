@@ -47,7 +47,6 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             },
             new PaymentInitiationApi
             {
-                ApiVersion = PaymentInitiationApiVersion.Version3p1p6,
                 BaseUrl = bank switch
                 {
                     ObieBank.Modelo =>

@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
-using PaymentInitiationValidatorsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Validators;
 
@@ -21,10 +19,10 @@ public class DomesticPaymentConsentValidator : AbstractValidator<DomesticPayment
     private void CreateRules()
     {
         // ExternalApiRequest
-        When(
-            x => x.ExternalApiRequest is not null,
-            () =>
-                RuleFor(x => x.ExternalApiRequest!)
-                    .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator()));
+        // When(
+        //     x => x.ExternalApiRequest is not null,
+        //     () =>
+        //         RuleFor(x => x.ExternalApiRequest!)
+        //             .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomesticConsent4Validator()));
     }
 }

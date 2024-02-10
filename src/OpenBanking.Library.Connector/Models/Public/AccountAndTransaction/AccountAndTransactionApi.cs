@@ -9,7 +9,7 @@ public class AccountAndTransactionApi
     private readonly string _baseUrl = null!;
     public AccountAndTransactionApiVersion ApiVersion { get; init; } = AccountAndTransactionApiVersion.VersionPublic;
 
-    public string BaseUrl
+    public required string BaseUrl
     {
         get => _baseUrl;
         init => _baseUrl = value.TrimEnd('/');

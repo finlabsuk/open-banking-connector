@@ -24,12 +24,11 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         string orgId,
         string accessToken,
         IInstrumentationClient instrumentationClient,
-        bool useB64,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
     {
         _instrumentationClient = instrumentationClient;
         _orgId = orgId;
-        _useB64 = useB64;
+        _useB64 = false; // was true before PISP v3.1.4 which is no longer supported
         _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
         _accessToken = accessToken;
     }

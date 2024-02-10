@@ -8,10 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-using VariableRecurringPaymentsModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
@@ -30,6 +26,10 @@ public delegate PaymentInitiationModelsPublic.OBWriteDomestic2
 public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest
     DomesticVrpConsentExternalApiRequestAdjustments(
         VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest externalApiRequest);
+
+public delegate VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest
+    DomesticVrpConsentExternalApiFundsConfirmationRequestAdjustments(
+        VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationRequest externalApiRequest);
 
 public delegate VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
     DomesticVrpExternalApiRequestAdjustments(
@@ -149,6 +149,9 @@ public class VariableRecurringPaymentsApiSettings
 
     public DomesticVrpConsentExternalApiRequestAdjustments
         DomesticVrpConsentExternalApiRequestAdjustments { get; set; } = x => x;
+
+    public DomesticVrpConsentExternalApiFundsConfirmationRequestAdjustments
+        DomesticVrpConsentExternalApiFundsConfirmationRequestAdjustments { get; set; } = x => x;
 
     public DomesticVrpExternalApiRequestAdjustments
         DomesticVrpExternalApiRequestAdjustments { get; set; } = x => x;

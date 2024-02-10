@@ -2,7 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -12,8 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Paymen
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
 internal class DomesticPaymentConsent :
-    BaseConsent,
-    IDomesticPaymentConsentPublicQuery
+    BaseConsent
 {
     public DomesticPaymentConsent(
         Guid id,

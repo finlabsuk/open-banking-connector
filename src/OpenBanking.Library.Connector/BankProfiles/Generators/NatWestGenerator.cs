@@ -88,7 +88,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
             bank is NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox
                 ? GetPaymentInitiationApi(bank)
                 : null,
-            null,
+            bank is NatWestBank.NatWestSandbox
+                ? GetVariableRecurringPaymentsApi(bank)
+                : null,
             bank is not (NatWestBank.NatWestSandbox or NatWestBank.RoyalBankOfScotlandSandbox))
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
@@ -199,13 +201,7 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     }
 
     private VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(NatWestBank bank) =>
-        new()
-        {
-            ApiVersion =
-                VariableRecurringPaymentsApiVersion
-                    .Version3p1p8, // from https://www.bankofapis.com/products/natwest-group-open-banking/vrp/documentation/nwb/3.1.8
-            BaseUrl = GetVariableRecurringPaymentsApiBaseUrl(bank)
-        };
+        new() { BaseUrl = GetPaymentInitiationApiBaseUrl(bank) };
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(NatWestBank bank)
     {
@@ -241,11 +237,5 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
     }
 
     private PaymentInitiationApi GetPaymentInitiationApi(NatWestBank bank) =>
-        new()
-        {
-            ApiVersion =
-                PaymentInitiationApiVersion
-                    .Version3p1p6, // from https://www.bankofapis.com/products/natwest-group-open-banking/payments/documentation/nwb/3.1.6
-            BaseUrl = GetPaymentInitiationApiBaseUrl(bank)
-        };
+        new() { BaseUrl = GetPaymentInitiationApiBaseUrl(bank) };
 }

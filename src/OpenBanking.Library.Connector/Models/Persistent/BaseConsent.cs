@@ -39,7 +39,7 @@ public class ConsentAccessToken
 ///     Persisted type.
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
-internal abstract class BaseConsent : BaseEntity
+internal abstract class BaseConsent : BaseEntity, IConsentPublicQuery
 {
     /// <summary>
     ///     Access token including "access_token" (value1) and "expires_in" (value2) fields. If value2 is null, indicates auth
@@ -114,17 +114,6 @@ internal abstract class BaseConsent : BaseEntity
     public BankRegistrationEntity BankRegistrationNavigation { get; private set; } = null!;
 
     /// <summary>
-    ///     Associated BankRegistration object
-    /// </summary>
-    public Guid BankRegistrationId { get; }
-
-    /// <summary>
-    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
-    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
-    /// </summary>
-    public string ExternalApiId { get; }
-
-    /// <summary>
     ///     OAuth2 "state". This is mutable as re-auth will generate a new value.
     /// </summary>
     public string? AuthContextState { get; private set; }
@@ -154,6 +143,17 @@ internal abstract class BaseConsent : BaseEntity
         _accessTokenRefreshToken,
         _accessTokenModified,
         _accessTokenModifiedBy);
+
+    /// <summary>
+    ///     Associated BankRegistration object
+    /// </summary>
+    public Guid BankRegistrationId { get; }
+
+    /// <summary>
+    ///     External API ID, i.e. ID of object at bank. This should be unique between objects created at the
+    ///     same bank but we do not assume global uniqueness between objects created at multiple banks.
+    /// </summary>
+    public string ExternalApiId { get; }
 
     public void UpdateAccessToken(
         string? accessTokenValue,

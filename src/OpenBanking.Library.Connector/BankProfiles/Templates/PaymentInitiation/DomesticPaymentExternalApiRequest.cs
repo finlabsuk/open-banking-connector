@@ -2,10 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.PaymentInitiation;
 
 public static partial class DomesticPaymentTemplates
@@ -19,68 +15,69 @@ public static partial class DomesticPaymentTemplates
             DomesticPaymentTemplateType.PersonToPersonExample => new
                 PaymentInitiationModelsPublic.OBWriteDomestic2
                 {
-                    Data = new PaymentInitiationModelsPublic.OBWriteDomestic2Data
+                    Data = new PaymentInitiationModelsPublic.Data
                     {
                         ConsentId = externalApiConsentId,
-                        Initiation = new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiation
+                        Initiation = new PaymentInitiationModelsPublic.Initiation
                         {
                             InstructionIdentification =
                                 domesticPaymentTemplateRequest.Parameters.InstructionIdentification,
                             EndToEndIdentification =
                                 domesticPaymentTemplateRequest.Parameters.EndToEndIdentification,
-                            LocalInstrument = "UK.OBIE.FPS",
                             InstructedAmount =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationInstructedAmount
+                                new PaymentInitiationModelsPublic.InstructedAmount
                                 {
-                                    Amount = "15.00",
+                                    Amount = "20.00",
                                     Currency = "GBP"
                                 },
                             DebtorAccount =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationDebtorAccount
+                                new PaymentInitiationModelsPublic.DebtorAccount
                                 {
                                     SchemeName = "UK.OBIE.SortCodeAccountNumber",
-                                    Identification = "08080021325645",
-                                    Name = "A Person"
+                                    Identification = "11280001234567",
+                                    Name = "Andrea Smith"
                                 },
                             CreditorAccount =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationCreditorAccount
+                                new PaymentInitiationModelsPublic.CreditorAccount
                                 {
                                     SchemeName = "UK.OBIE.SortCodeAccountNumber",
                                     Identification = "08080021325698",
-                                    Name = "Another Person"
+                                    Name = "Bob Clements"
                                 },
-                            CreditorPostalAddress = null,
                             RemittanceInformation =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationRemittanceInformation
+                                new PaymentInitiationModelsPublic.RemittanceInformation
                                 {
-                                    Unstructured = "Unstructured string",
-                                    Reference = "MyRef"
-                                },
-                            SupplementaryData = null
+                                    Reference = "FRESCO-037",
+                                    Unstructured = "Internal ops code 5120103"
+                                }
                         }
                     },
-                    Risk = null
+                    Risk =
+                    {
+                        PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCode
+                            .TransferToThirdParty
+                    }
                 },
             DomesticPaymentTemplateType.PersonToMerchantExample =>
                 new PaymentInitiationModelsPublic.OBWriteDomestic2
                 {
-                    Data = new PaymentInitiationModelsPublic.OBWriteDomestic2Data
+                    Data = new PaymentInitiationModelsPublic.Data
                     {
                         ConsentId = externalApiConsentId,
-                        Initiation = new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiation
+                        Initiation = new PaymentInitiationModelsPublic.Initiation
                         {
                             InstructionIdentification =
                                 domesticPaymentTemplateRequest.Parameters.InstructionIdentification,
                             EndToEndIdentification =
                                 domesticPaymentTemplateRequest.Parameters.EndToEndIdentification,
                             InstructedAmount =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationInstructedAmount
+                                new PaymentInitiationModelsPublic.InstructedAmount
                                 {
-                                    Amount = "5.00",
+                                    Amount = "165.88",
                                     Currency = "GBP"
                                 },
                             CreditorAccount =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationCreditorAccount
+                                new PaymentInitiationModelsPublic.CreditorAccount
                                 {
                                     SchemeName = "UK.OBIE.SortCodeAccountNumber",
                                     Identification = "08080021325698",
@@ -88,30 +85,35 @@ public static partial class DomesticPaymentTemplates
                                     SecondaryIdentification = "0002"
                                 },
                             RemittanceInformation =
-                                new PaymentInitiationModelsPublic.OBWriteDomestic2DataInitiationRemittanceInformation
+                                new PaymentInitiationModelsPublic.RemittanceInformation
                                 {
-                                    Unstructured = "Internal ops code 5120101",
-                                    Reference = "FRESCO-101"
+                                    Reference = "FRESCO-101",
+                                    Unstructured = "Internal ops code 5120101"
                                 }
                         }
                     },
                     Risk = new PaymentInitiationModelsPublic.OBRisk1
                     {
-                        PaymentContextCode = PaymentInitiationModelsPublic.OBRisk1PaymentContextCodeEnum
-                            .EcommerceGoods,
-                        MerchantCategoryCode = "5967",
+                        PaymentContextCode =
+                            PaymentInitiationModelsPublic.OBRisk1PaymentContextCode
+                                .EcommerceMerchantInitiatedPayment,
+                        //ContractPresentIndicator = false,
+                        PaymentPurposeCode = "EPAY",
+                        BeneficiaryPrepopulatedIndicator = false,
+                        BeneficiaryAccountType =
+                            PaymentInitiationModelsPublic.OBExternalExtendedAccountType1Code.Business,
                         MerchantCustomerIdentification = "053598653254",
-                        DeliveryAddress = new PaymentInitiationModelsPublic.OBRisk1DeliveryAddress
+                        DeliveryAddress = new PaymentInitiationModelsPublic.DeliveryAddress
                         {
                             AddressLine = new List<string>
                             {
                                 "Flat 7",
                                 "Acacia Lodge"
                             },
-                            BuildingNumber = "27",
                             StreetName = "Acacia Avenue",
-                            TownName = "Sparsholt",
+                            BuildingNumber = "27",
                             PostCode = "GU31 2ZZ",
+                            TownName = "Sparsholt",
                             CountrySubDivision = "Wessex",
                             Country = "UK"
                         }

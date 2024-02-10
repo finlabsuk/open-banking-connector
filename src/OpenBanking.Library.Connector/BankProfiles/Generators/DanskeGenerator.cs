@@ -28,9 +28,6 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
             null,
             new PaymentInitiationApi
             {
-                ApiVersion =
-                    PaymentInitiationApiVersion
-                        .Version3p1p6, // from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=documentation
                 BaseUrl =
                     "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
             },

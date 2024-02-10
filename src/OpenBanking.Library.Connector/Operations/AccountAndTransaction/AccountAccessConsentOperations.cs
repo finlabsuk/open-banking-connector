@@ -31,8 +31,8 @@ internal class
     IObjectCreate<AccountAccessConsentRequest, AccountAccessConsentCreateResponse, ConsentCreateParams>,
     IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams>
 {
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentAccessToken> _accessTokenEntityMethods;
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
+
 
     private readonly IBankProfileService _bankProfileService;
 
@@ -44,12 +44,11 @@ internal class
 
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
 
-    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
 
+    private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
-    private readonly IDbReadWriteEntityMethods<AccountAccessConsentRefreshToken> _refreshTokenEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public AccountAccessConsentOperations(
@@ -68,8 +67,6 @@ internal class
         _consentEntityMethods = consentEntityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
-        _accessTokenEntityMethods = accessTokenEntityMethods;
-        _refreshTokenEntityMethods = refreshTokenEntityMethods;
         _accountAccessConsentCommon =
             new AccountAccessConsentCommon(consentEntityMethods, softwareStatementProfileRepo);
         _mapper = mapper;
@@ -118,7 +115,6 @@ internal class
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
 
@@ -144,8 +140,7 @@ internal class
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
-                    ccGrantAccessToken,
-                    processedSoftwareStatementProfile);
+                    ccGrantAccessToken);
             var externalApiUrl = new Uri(accountAndTransactionApi.BaseUrl + RelativePathBeforeId);
             AccountAndTransactionModelsPublic.OBReadConsent1 externalApiRequest =
                 AccountAccessConsentPublicMethods.ResolveExternalApiRequest(
@@ -176,7 +171,7 @@ internal class
                     expectedLinkUrlWithoutQuery = new Uri(expectedLinkUrlWithoutQuery + "/");
                 }
 
-                string? publicUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
+                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
                 {
                     { } x => x + $"/{entityId}",
                     null => null
@@ -184,7 +179,7 @@ internal class
                 var validQueryParameters = new List<string>();
                 var linksUrlOperations = new LinksUrlOperations(
                     expectedLinkUrlWithoutQuery,
-                    publicUrlWithoutQuery,
+                    transformedLinkUrlWithoutQuery,
                     true,
                     validQueryParameters);
                 externalApiResponse.Links.Self =
@@ -290,6 +285,7 @@ internal class
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.Id, false);
+        string externalApiConsentId = persistedConsent.ExternalApiId;
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
@@ -301,7 +297,6 @@ internal class
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -325,9 +320,7 @@ internal class
                 ApiRequests(
                     accountAndTransactionApi.ApiVersion,
                     bankFinancialId,
-                    ccGrantAccessToken,
-                    processedSoftwareStatementProfile);
-            string externalApiConsentId = persistedConsent.ExternalApiId;
+                    ccGrantAccessToken);
             var externalApiUrl = new Uri(
                 accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
@@ -405,8 +398,7 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> ApiRequests(
         AccountAndTransactionApiVersion accountAndTransactionApiVersion,
         string bankFinancialId,
-        string accessToken,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =>
+        string accessToken) =>
         accountAndTransactionApiVersion switch
         {
             AccountAndTransactionApiVersion.Version3p1p7 => new ApiRequests<

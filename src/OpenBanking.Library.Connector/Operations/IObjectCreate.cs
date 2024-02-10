@@ -12,12 +12,12 @@ internal class BankRegistrationCreateParams : LocalCreateParams { }
 
 internal class ConsentCreateParams : LocalCreateParams
 {
-    public ConsentCreateParams(string? publicRequestUrlWithoutQuery)
-    {
-        PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
-    }
+    public string? PublicRequestUrlWithoutQuery { get; init; }
+}
 
-    public string? PublicRequestUrlWithoutQuery { get; }
+internal class VrpConsentFundsConfirmationCreateParams : ConsentCreateParams
+{
+    public required Guid Id { get; init; }
 }
 
 internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateParams>
@@ -26,4 +26,12 @@ internal interface IObjectCreate<in TPublicRequest, TPublicResponse, in TCreateP
     Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
         TPublicRequest request,
         TCreateParams createParams);
+}
+
+internal interface IVrpConsentFundsConfirmationCreate<in TPublicRequest, TPublicResponse>
+{
+    Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
+        CreateFundsConfirmationAsync(
+            TPublicRequest request,
+            VrpConsentFundsConfirmationCreateParams createParams);
 }

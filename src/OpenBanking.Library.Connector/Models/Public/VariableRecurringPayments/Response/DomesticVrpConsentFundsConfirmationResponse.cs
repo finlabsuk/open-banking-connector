@@ -7,9 +7,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 
 /// <summary>
-///     Response to Read and Create requests
+///     Response to DomesticVrpConsent ReadFundsConfirmation requests.
 /// </summary>
-public class DomesticVrpResponse : BaseResponse
+public class DomesticVrpConsentFundsConfirmationResponse : BaseResponse
+
 {
-    public required VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse ExternalApiResponse { get; init; }
+    public required VariableRecurringPaymentsModelsPublic.OBVRPFundsConfirmationResponse ExternalApiResponse
+    {
+        get;
+        init;
+    }
 }

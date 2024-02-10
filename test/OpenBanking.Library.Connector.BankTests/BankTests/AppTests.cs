@@ -403,8 +403,6 @@ public abstract class AppTests
                         testNameUnique,
                         modifiedBy,
                         testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
-                        testDataProcessorFluentRequestLogging
                             .AppendToPath("pisp")
                             .AppendToPath($"{subTest.ToString()}"),
                         consentAuth,
@@ -425,8 +423,6 @@ public abstract class AppTests
                         requestBuilderGenerator,
                         testNameUnique,
                         modifiedBy,
-                        testDataProcessorFluentRequestLogging
-                            .AppendToPath("config"),
                         testDataProcessorFluentRequestLogging
                             .AppendToPath("vrp")
                             .AppendToPath($"{subTest.ToString()}"),
@@ -644,14 +640,15 @@ public abstract class AppTests
         var registrationRequest = new BankRegistration
         {
             BankProfile = bankProfile.BankProfileEnum,
-            SoftwareStatementId = softwareStatementId,
+            SoftwareStatementId = default, // substitute logging placeholder
             RegistrationScope = registrationScope
         };
         await testDataProcessorFluentRequestLogging
-            .AppendToPath("config")
+            .AppendToPath("manage")
             .AppendToPath("bankRegistration")
             .AppendToPath("postRequest")
             .WriteFile(registrationRequest);
+        registrationRequest.SoftwareStatementId = softwareStatementId;
         registrationRequest.Reference = testNameUnique;
         registrationRequest.CreatedBy = modifiedBy;
         return registrationRequest;

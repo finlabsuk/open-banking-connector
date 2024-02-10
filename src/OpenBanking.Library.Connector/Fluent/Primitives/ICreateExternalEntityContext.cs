@@ -22,27 +22,21 @@ public interface ICreateExternalEntityContext<in TPublicRequest, TPublicResponse
     ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
     /// </summary>
     /// <param name="request"></param>
-    /// <param name="consentId"></param>
-    /// <param name="createdBy"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateAsync(
-        TPublicRequest request,
-        Guid consentId,
-        string? createdBy = null);
+        TPublicRequest request);
 }
 
 internal interface
     ICreateExternalEntityContextInternal<in TPublicRequest, TPublicResponse> :
-        ICreateExternalEntityContext<TPublicRequest, TPublicResponse>
+    ICreateExternalEntityContext<TPublicRequest, TPublicResponse>
     where TPublicRequest : class, ISupportsValidation
     where TPublicResponse : class
 {
     IExternalCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
 
     async Task<TPublicResponse> ICreateExternalEntityContext<TPublicRequest, TPublicResponse>.CreateAsync(
-        TPublicRequest request,
-        Guid consentId,
-        string? createdBy)
+        TPublicRequest request)
     {
         request.ArgNotNull(nameof(request));
 
@@ -55,10 +49,7 @@ internal interface
 
         // Execute operation catching errors 
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-            await CreateObject.CreateAsync(
-                request,
-                consentId,
-                createdBy);
+            await CreateObject.CreateAsync(request);
 
         return response;
     }

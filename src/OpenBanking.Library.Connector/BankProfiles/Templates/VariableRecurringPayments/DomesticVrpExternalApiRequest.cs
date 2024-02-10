@@ -2,10 +2,6 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
-using VariableRecurringPaymentsModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
-
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.VariableRecurringPayments;
 
 public static partial class DomesticVrpTemplates
@@ -16,109 +12,73 @@ public static partial class DomesticVrpTemplates
             string externalApiConsentId) =>
         domesticVrpConsentTemplateRequest.Type switch
         {
-            DomesticVrpTemplateType.VrpWithDebtorAccountSpecifiedByPisp => new
+            DomesticVrpTemplateType.SweepingVrp => new
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
                 {
-                    Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequestData
+                    Data = new VariableRecurringPaymentsModelsPublic.Data3
                     {
                         ConsentId = externalApiConsentId,
+                        PSUAuthenticationMethod = "UK.OBIE.SCA",
+                        PSUInteractionType = VariableRecurringPaymentsModelsPublic.OBVRPInteractionTypes.OffSession,
+                        VRPType = "UK.OBIE.VRPType.Sweeping",
                         Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
                         {
                             DebtorAccount =
-                                new VariableRecurringPaymentsModelsPublic.OBCashAccountDebtorWithName
-                                {
-                                    SchemeName = "UK.OBIE.IBAN",
-                                    Identification = "GB76LOYD30949301273801",
-                                    SecondaryIdentification = null,
-                                    Name = "Marcus Sweepimus"
-                                },
-                            CreditorAgent = null,
-                            CreditorAccount =
-                                new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
-                                {
-                                    SchemeName = "SortCodeAccountNumber",
-                                    Identification = "30949330000010",
-                                    SecondaryIdentification = "Roll 90210",
-                                    Name = "Marcus Sweepimus"
-                                },
-                            RemittanceInformation =
-                                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiationRemittanceInformation
-                                {
-                                    Unstructured = null,
-                                    Reference = "Sweepco"
-                                }
-                        }
-                    },
-                    Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
-                    {
-                        PaymentContextCode = VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCodeEnum
-                            .PartyToParty,
-                        MerchantCategoryCode = null,
-                        MerchantCustomerIdentification = null,
-                        DeliveryAddress = null
-                    }
-                },
-            DomesticVrpTemplateType
-                .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation => new
-                VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
-                {
-                    Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequestData
-                    {
-                        ConsentId = externalApiConsentId,
-                        Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
-                        {
-                            DebtorAccount = null,
-                            CreditorAgent = null,
-                            CreditorAccount =
-                                new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                                domesticVrpConsentTemplateRequest.Parameters.IncludeDebtorInInitiation
+                                    ? new VariableRecurringPaymentsModelsPublic.OBCashAccountDebtorWithName
+                                    {
+                                        SchemeName = "UK.OBIE.IBAN",
+                                        Identification = "GB76LOYD30949301273801",
+                                        Name = "Marcus Sweepimus"
+                                    }
+                                    : null,
+                            CreditorAccount = domesticVrpConsentTemplateRequest.Parameters.IncludeCreditorInInitiation
+                                ? new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
                                 {
                                     SchemeName = "SortCodeAccountNumber",
                                     Identification = "30949330000010",
                                     SecondaryIdentification = "Roll 90210",
                                     Name = "Marcus Sweepimus"
+                                }
+                                : null,
+                            RemittanceInformation =
+                                new VariableRecurringPaymentsModelsPublic.RemittanceInformation
+                                {
+                                    Reference = "Sweepco"
+                                }
+                        },
+                        Instruction = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInstruction
+                        {
+                            InstructionIdentification =
+                                domesticVrpConsentTemplateRequest.Parameters
+                                    .InstructionIdentification, // not found in usage examples
+                            EndToEndIdentification =
+                                domesticVrpConsentTemplateRequest.Parameters
+                                    .EndToEndIdentification, // not found in usage examples
+                            CreditorAccount = new VariableRecurringPaymentsModelsPublic.OBCashAccountCreditor3
+                            {
+                                SchemeName = "SortCodeAccountNumber",
+                                Identification = "30949330000010",
+                                SecondaryIdentification = "Roll 90210",
+                                Name = "Marcus Sweepimus"
+                            },
+                            InstructedAmount =
+                                new VariableRecurringPaymentsModelsPublic.OBActiveOrHistoricCurrencyAndAmount
+                                {
+                                    Amount = "10.00",
+                                    Currency = "GBP"
                                 },
                             RemittanceInformation =
-                                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiationRemittanceInformation
+                                new VariableRecurringPaymentsModelsPublic.OBVRPRemittanceInformation
                                 {
-                                    Unstructured = null,
                                     Reference = "Sweepco"
                                 }
                         }
                     },
                     Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
                     {
-                        PaymentContextCode = VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCodeEnum
-                            .PartyToParty,
-                        MerchantCategoryCode = null,
-                        MerchantCustomerIdentification = null,
-                        DeliveryAddress = null
-                    }
-                },
-            DomesticVrpTemplateType
-                    .VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation
-                =>
-                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest
-                {
-                    Data = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequestData
-                    {
-                        ConsentId = externalApiConsentId,
-                        Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation
-                        {
-                            RemittanceInformation =
-                                new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiationRemittanceInformation
-                                {
-                                    Unstructured = null,
-                                    Reference = "Sweepco"
-                                }
-                        }
-                    },
-                    Risk = new VariableRecurringPaymentsModelsPublic.OBRisk1
-                    {
-                        PaymentContextCode = VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCodeEnum
-                            .PartyToParty,
-                        MerchantCategoryCode = null,
-                        MerchantCustomerIdentification = null,
-                        DeliveryAddress = null
+                        PaymentContextCode = VariableRecurringPaymentsModelsPublic.OBRisk1PaymentContextCode
+                            .TransferToThirdParty
                     }
                 },
             _ => throw new ArgumentOutOfRangeException(

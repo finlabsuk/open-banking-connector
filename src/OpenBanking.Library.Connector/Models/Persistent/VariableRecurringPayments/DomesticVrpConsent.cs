@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 
@@ -12,8 +11,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Variab
 ///     Internal to help ensure public request and response types used on public API.
 /// </summary>
 internal class DomesticVrpConsent :
-    BaseConsent,
-    IDomesticVrpConsentPublicQuery
+    BaseConsent
 {
     public DomesticVrpConsent(
         Guid id,

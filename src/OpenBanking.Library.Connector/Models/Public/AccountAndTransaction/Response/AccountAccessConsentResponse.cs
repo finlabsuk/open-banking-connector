@@ -6,19 +6,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 
-public interface IAccountAccessConsentPublicQuery : IEntityBaseQuery
-{
-    Guid BankRegistrationId { get; }
-
-    public string ExternalApiId { get; }
-}
-
-public abstract class AccountAccessConsentBaseResponse : ConsentBaseResponse, IAccountAccessConsentPublicQuery { }
-
 /// <summary>
 ///     Response to AccountAccessConsent Create requests.
 /// </summary>
-public class AccountAccessConsentCreateResponse : AccountAccessConsentBaseResponse
+public class AccountAccessConsentCreateResponse : ConsentBaseResponse
 {
     /// <summary>
     ///     Response object OBReadConsentResponse1 from UK Open Banking Read-Write Account and Transaction API spec

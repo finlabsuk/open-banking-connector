@@ -23,7 +23,8 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.VariableRecurring
 
 public interface IDomesticVrpConsentsContext :
     IConsentContext<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, DomesticVrpConsentCreateResponse>,
-    IReadFundsConfirmationContext<DomesticVrpConsentReadFundsConfirmationResponse>,
+    ICreateVrpConsentFundsConfirmationContext<DomesticVrpConsentFundsConfirmationRequest,
+        DomesticVrpConsentFundsConfirmationResponse>,
     IDeleteConsentContext
 {
     /// <summary>
@@ -41,7 +42,8 @@ internal interface IDomesticVrpConsentsContextInternal :
     IDomesticVrpConsentsContext,
     IConsentContextInternal<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse,
         DomesticVrpConsentCreateResponse>,
-    IReadFundsConfirmationContextInternal<DomesticVrpConsentReadFundsConfirmationResponse>,
+    ICreateVrpConsentFundsConfirmationContextInternal<DomesticVrpConsentFundsConfirmationRequest,
+        DomesticVrpConsentFundsConfirmationResponse>,
     IDeleteConsentContextInternal { }
 
 internal class DomesticVrpConsentsContext :
@@ -80,7 +82,7 @@ internal class DomesticVrpConsentsContext :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>());
         CreateObject = domesticVrpConsentOperations;
         ReadObject = domesticVrpConsentOperations;
-        ReadFundsConfirmationObject = domesticVrpConsentOperations;
+        CreateVrpConsentFundsConfirmation = domesticVrpConsentOperations;
         DeleteObject =
             new DomesticVrpConsentDelete(
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
@@ -120,8 +122,8 @@ internal class DomesticVrpConsentsContext :
     public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }
 
-    public IObjectReadFundsConfirmation<DomesticVrpConsentReadFundsConfirmationResponse, ConsentBaseReadParams>
-        ReadFundsConfirmationObject { get; }
-
     public IObjectDelete<ConsentDeleteParams> DeleteObject { get; }
+
+    public IVrpConsentFundsConfirmationCreate<DomesticVrpConsentFundsConfirmationRequest,
+        DomesticVrpConsentFundsConfirmationResponse> CreateVrpConsentFundsConfirmation { get; }
 }

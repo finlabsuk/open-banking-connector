@@ -24,7 +24,7 @@ public class BankRegistration : EntityBase, ISupportsValidation
     ///     correspond to a previously-added software statement.
     /// </summary>
     [JsonProperty(Required = Required.Always)]
-    public required Guid SoftwareStatementId { get; init; }
+    public required Guid SoftwareStatementId { get; set; }
 
     /// <summary>
     ///     Functional APIs specified in bank registration "scope".

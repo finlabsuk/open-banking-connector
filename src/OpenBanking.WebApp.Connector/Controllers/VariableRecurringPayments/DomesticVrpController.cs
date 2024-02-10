@@ -25,22 +25,19 @@ public class DomesticVrpController : ControllerBase
     /// <summary>
     ///     Create domestic VRP
     /// </summary>
-    /// <param name="domesticVrpConsentId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticVrpResponse>> PostAsync(
-        [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
-        Guid domesticVrpConsentId,
         [FromBody]
         DomesticVrpRequest request)
     {
         DomesticVrpResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrps
-            .CreateAsync(request, domesticVrpConsentId);
+            .CreateAsync(request);
 
         return CreatedAtAction(
             nameof(GetAsync),

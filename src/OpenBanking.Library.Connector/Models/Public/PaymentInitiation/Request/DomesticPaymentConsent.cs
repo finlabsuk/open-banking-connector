@@ -6,26 +6,18 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FluentValidation.Results;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
+using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
 public class DomesticPaymentConsentRequest : ConsentBase, ISupportsValidation
 {
     /// <summary>
-    ///     Use external API request object created from template.
-    ///     The first non-null of ExternalApiObject, ExternalApiRequest, and TemplateRequest (in that order) is used
-    ///     and the others are ignored. At least one of these three must be non-null.
-    ///     Specifies template used to create external API request object.
-    /// </summary>
-    public DomesticPaymentTemplateRequest? TemplateRequest { get; set; }
-
-    /// <summary>
     ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
     ///     to translate this for banks supporting an earlier spec version.
     /// </summary>
-    public PaymentInitiationModelsPublic.OBWriteDomesticConsent4? ExternalApiRequest { get; set; }
+    [JsonProperty(Required = Required.Always)]
+    public required PaymentInitiationModelsPublic.OBWriteDomesticConsent4 ExternalApiRequest { get; init; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticPaymentConsentValidator()

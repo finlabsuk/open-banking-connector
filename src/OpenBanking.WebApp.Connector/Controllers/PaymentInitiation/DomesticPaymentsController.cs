@@ -25,22 +25,19 @@ public class DomesticPaymentsController : ControllerBase
     /// <summary>
     ///     Create domestic payment
     /// </summary>
-    /// <param name="domesticPaymentConsentId"></param>
     /// <param name="request"></param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticPaymentResponse>> PostAsync(
-        [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
-        Guid domesticPaymentConsentId,
         [FromBody]
         DomesticPaymentRequest request)
     {
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
-            .CreateAsync(request, domesticPaymentConsentId);
+            .CreateAsync(request);
 
         return CreatedAtAction(
             nameof(GetAsync),

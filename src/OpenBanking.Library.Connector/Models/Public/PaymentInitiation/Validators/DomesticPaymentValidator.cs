@@ -4,8 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FluentValidation;
-using PaymentInitiationValidatorsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Validators;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Validators;
 
@@ -25,11 +23,11 @@ public class DomesticPaymentValidator : AbstractValidator<DomesticPaymentRequest
         //     .WithMessage($"Missing or invalid {nameof(DomesticPayment.DomesticPaymentConsentId)}.");
 
         // ExternalApiRequest
-        When(
-            x => x.ExternalApiRequest is not null,
-            () =>
-                RuleFor(x => x.ExternalApiRequest!)
-                    .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator()));
+        // When(
+        //     x => x.ExternalApiRequest is not null,
+        //     () =>
+        //         RuleFor(x => x.ExternalApiRequest!)
+        //             .SetValidator(new PaymentInitiationValidatorsPublic.OBWriteDomestic2Validator()));
 
         // RuleFor(x => x.RedirectUrl)
         //     .Must(ValidationRules.IsNotNull)

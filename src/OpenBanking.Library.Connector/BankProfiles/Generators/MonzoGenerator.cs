@@ -23,6 +23,12 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
     {
         var grantPostCustomBehaviour =
             new AuthCodeAndRefreshTokenGrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
+        var pispSandboxAdditionalProperties = new Dictionary<string, object>
+        {
+            ["DesiredStatus"] = "Authorised",
+            ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
+            ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
+        };
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
             bank switch
@@ -82,11 +88,20 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                     ? externalApiRequest =>
                     {
                         externalApiRequest.Data.Initiation.SupplementaryData =
-                            new Dictionary<string, object>
+                            new PaymentInitiationModelsPublic.OBSupplementaryData1
                             {
-                                ["DesiredStatus"] = "Authorised",
-                                ["UserID"] = "user_0000A4C4nqORb7K9YYW3r0",
-                                ["AccountID"] = "acc_0000A4C4o66FCYJoERQhHN"
+                                AdditionalProperties = pispSandboxAdditionalProperties
+                            };
+                        return externalApiRequest;
+                    }
+                    : x => x,
+                DomesticPaymentExternalApiRequestAdjustments = bank is MonzoBank.Sandbox
+                    ? externalApiRequest =>
+                    {
+                        externalApiRequest.Data.Initiation.SupplementaryData =
+                            new PaymentInitiationModelsPublic.OBSupplementaryData1
+                            {
+                                AdditionalProperties = pispSandboxAdditionalProperties
                             };
                         return externalApiRequest;
                     }
@@ -116,7 +131,6 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         {
             MonzoBank.Sandbox => new PaymentInitiationApi
             {
-                ApiVersion = GetPaymentInitiationApiVersion(bank),
                 BaseUrl =
                     "https://openbanking.s101.nonprod-ffs.io/open-banking/v3.1/pisp" // from https://docs.monzo.com/#payment-initiation-services-api
             },

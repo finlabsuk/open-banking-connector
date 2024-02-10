@@ -2,64 +2,22 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Runtime.Serialization;
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
-using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Validators;
 using FluentValidation.Results;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using VariableRecurringPaymentsModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 
-[JsonConverter(typeof(StringEnumConverter))]
-public enum DomesticVrpTemplateType
-{
-    [EnumMember(Value = "VrpWithDebtorAccountSpecifiedByPisp")]
-    VrpWithDebtorAccountSpecifiedByPisp, // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
-
-    [EnumMember(Value = "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation")]
-    VrpWithDebtorAccountSpecifiedDuringConsentAuthorisation, // same as VrpWithDebtorAccountSpecifiedByPisp but no debtor account specified
-
-    [EnumMember(
-        Value =
-            "VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation")]
-    VrpWithDebtorAccountSpecifiedDuringConsentAuthorisationAndCreditorAccountSpecifiedDuringPaymentInitiation // OB example (https://openbankinguk.github.io/read-write-api-site3/v3.1.9/references/usage-examples/vrp-usage-examples.html)
-}
-
-public class DomesticVrpTemplateParameters
-{
-    public string InstructionIdentification { get; set; } = null!;
-    public string EndToEndIdentification { get; set; } = null!;
-}
-
-public class DomesticVrpTemplateRequest
+public class DomesticVrpRequest : ISupportsValidation
 {
     /// <summary>
-    ///     Template type to use.
+    ///     Specifies Domestic VRP Consent to use when creating payment.
+    ///     If domestic VRP consent has been successfully authorised, a token will be associated with the consent which can
+    ///     be used to create a VRP payment.
     /// </summary>
-    public DomesticVrpTemplateType Type { get; set; }
-
-    public DomesticVrpTemplateParameters Parameters { get; set; } = null!;
-}
-
-public class DomesticVrpRequest : EntityBase, ISupportsValidation
-{
-    /// <summary>
-    ///     BankProfile used to apply transformations to external API requests.
-    /// </summary>
-    public BankProfileEnum? BankProfile { get; set; }
-
-    /// <summary>
-    ///     Use external API request object created from template.
-    ///     The first non-null of ExternalApiRequest and TemplateRequest (in that order) is used
-    ///     and the others are ignored. At least one of these must be non-null.
-    ///     Specifies template used to create external API request object.
-    /// </summary>
-    public DomesticVrpTemplateRequest? TemplateRequest { get; set; }
+    [JsonProperty(Required = Required.Always)]
+    public required Guid DomesticVrpConsentId { get; set; }
 
     /// <summary>
     ///     Request object from recent version of UK Open Banking spec. Open Banking Connector can be configured
@@ -69,7 +27,10 @@ public class DomesticVrpRequest : EntityBase, ISupportsValidation
     ///     DomesticVrpConsent or simply
     ///     left set to null in which case the correct value will be substituted.
     /// </summary>
-    public VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest? ExternalApiRequest { get; set; } = null!;
+    [JsonProperty(Required = Required.Always)]
+    public required VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest ExternalApiRequest { get; init; }
+
+    public string? ModifiedBy { get; set; }
 
     public async Task<ValidationResult> ValidateAsync() =>
         await new DomesticVrpValidator()

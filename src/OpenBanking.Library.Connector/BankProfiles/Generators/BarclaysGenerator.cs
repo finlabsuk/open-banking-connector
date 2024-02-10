@@ -163,9 +163,6 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
     private PaymentInitiationApi GetPaymentInitiationApi(BarclaysBank bank) =>
         new()
         {
-            ApiVersion =
-                PaymentInitiationApiVersion
-                    .Version3p1p6, // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/998342986/Barclays+Bank+UK+Plc
             BaseUrl = bank is BarclaysBank.Sandbox
                 ? "https://sandbox.api.barclays:443/open-banking/v3.1/sandbox/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details
                 : "https://telesto.api.barclays:443/open-banking/v3.1/pisp" // from https://developer.barclays.com/apis/payment-initiation/1f6ad5c5-e397-41c0-8d3b-c35446491402.bdn/documentation#interface-details

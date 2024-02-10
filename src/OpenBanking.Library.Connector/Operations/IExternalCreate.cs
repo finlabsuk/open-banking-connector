@@ -9,7 +9,5 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 internal interface IExternalCreate<in TPublicRequest, TPublicResponse>
 {
     Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
-        TPublicRequest request,
-        Guid consentId,
-        string? createdBy);
+        TPublicRequest request);
 }

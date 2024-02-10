@@ -7,9 +7,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRe
 public class VariableRecurringPaymentsApi
 {
     private readonly string _baseUrl = null!;
-    public VariableRecurringPaymentsApiVersion ApiVersion { get; init; }
 
-    public string BaseUrl
+    public VariableRecurringPaymentsApiVersion ApiVersion { get; init; } =
+        VariableRecurringPaymentsApiVersion.VersionPublic;
+
+    public required string BaseUrl
     {
         get => _baseUrl;
         init => _baseUrl = value.TrimEnd('/');

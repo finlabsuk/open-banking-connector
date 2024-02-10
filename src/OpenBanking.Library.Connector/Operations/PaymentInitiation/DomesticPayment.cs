@@ -21,8 +21,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
 using PaymentInitiationModelsV3p1p4 =
@@ -74,7 +72,7 @@ internal class DomesticPayment :
 
     public async
         Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        CreateAsync(DomesticPaymentRequest request, Guid consentId, string? createdBy)
+        CreateAsync(DomesticPaymentRequest request)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -85,7 +83,7 @@ internal class DomesticPayment :
                 DomesticPaymentConsentAccessToken? storedAccessToken,
                 DomesticPaymentConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId, true);
+            await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(request.DomesticPaymentConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
@@ -117,7 +115,7 @@ internal class DomesticPayment :
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
-                createdBy);
+                request.ModifiedBy);
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -130,17 +128,11 @@ internal class DomesticPayment :
                 accessToken,
                 processedSoftwareStatementProfile);
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
-        PaymentInitiationModelsPublic.OBWriteDomestic2 externalApiRequest =
-            DomesticPaymentPublicMethods.ResolveExternalApiRequest(
-                request.ExternalApiRequest,
-                request.TemplateRequest,
-                externalApiConsentId,
-                bankProfile);
-        if (string.IsNullOrEmpty(externalApiRequest.Data.ConsentId))
+        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
         {
-            externalApiRequest.Data.ConsentId = externalApiConsentId;
+            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
         }
-        else if (externalApiRequest.Data.ConsentId != externalApiConsentId)
+        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
         {
             throw new ArgumentException(
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
@@ -151,7 +143,7 @@ internal class DomesticPayment :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
-                externalApiRequest,
+                request.ExternalApiRequest,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
                 processedSoftwareStatementProfile.ApiClient,
@@ -159,7 +151,7 @@ internal class DomesticPayment :
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Create response
-        var response = new DomesticPaymentResponse(externalApiResponse);
+        var response = new DomesticPaymentResponse { ExternalApiResponse = externalApiResponse };
         return (response, nonErrorMessages);
     }
 
@@ -218,7 +210,7 @@ internal class DomesticPayment :
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Create response
-        var response = new DomesticPaymentResponse(externalApiResponse);
+        var response = new DomesticPaymentResponse { ExternalApiResponse = externalApiResponse };
         return (response, nonErrorMessages);
     }
 
@@ -242,10 +234,8 @@ internal class DomesticPayment :
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    paymentInitiationApiVersion <
-                    PaymentInitiationApiVersion.Version3p1p4,
                     processedSoftwareStatementProfile)),
-            PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+            PaymentInitiationApiVersion.VersionPublic => new ApiRequests<
                 PaymentInitiationModelsPublic.OBWriteDomestic2,
                 PaymentInitiationModelsPublic.OBWriteDomesticResponse5,
                 PaymentInitiationModelsPublic.OBWriteDomestic2,
@@ -256,8 +246,6 @@ internal class DomesticPayment :
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    paymentInitiationApiVersion <
-                    PaymentInitiationApiVersion.Version3p1p4,
                     processedSoftwareStatementProfile)),
             _ => throw new ArgumentOutOfRangeException(
                 $"Payment Initiation API version {paymentInitiationApiVersion} not supported.")

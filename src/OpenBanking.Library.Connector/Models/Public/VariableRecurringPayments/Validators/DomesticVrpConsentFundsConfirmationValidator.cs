@@ -7,23 +7,15 @@ using FluentValidation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Validators;
 
-public class DomesticVrpConsentValidator : AbstractValidator<DomesticVrpConsentRequest>
+public class
+    DomesticVrpConsentFundsConfirmationValidator : AbstractValidator<DomesticVrpConsentFundsConfirmationRequest>
 {
-    public DomesticVrpConsentValidator()
+    public DomesticVrpConsentFundsConfirmationValidator()
     {
         ClassLevelCascadeMode = CascadeMode.Continue;
         RuleLevelCascadeMode = CascadeMode.Continue;
         CreateRules();
     }
 
-    private void CreateRules()
-    {
-        // ExternalApiRequest
-        // When(
-        //     x => x.ExternalApiRequest is not null,
-        //     () =>
-        //         RuleFor(x => x.ExternalApiRequest!)
-        //             .SetValidator(
-        //                 new VariableRecurringPaymentsValidatorsPublic.OBDomesticVRPConsentRequestValidator()));
-    }
+    private void CreateRules() { }
 }

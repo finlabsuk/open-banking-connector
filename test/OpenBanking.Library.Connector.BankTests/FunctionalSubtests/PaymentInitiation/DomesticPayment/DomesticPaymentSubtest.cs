@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.BrowserInteraction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -12,12 +13,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 using FluentAssertions;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests.PaymentInitiation.DomesticPayment;
 
-public class DomesticPaymentSubtest
+public static class DomesticPaymentSubtest
 {
     public static ISet<DomesticPaymentSubtestEnum> DomesticPaymentFunctionalSubtestsSupported(
         BankProfile bankProfile) =>
@@ -35,7 +34,6 @@ public class DomesticPaymentSubtest
         Func<IRequestBuilderContainer> requestBuilderGenerator,
         string testNameUnique,
         string modifiedBy,
-        FilePathBuilder configFluentRequestLogging,
         FilePathBuilder pispFluentRequestLogging,
         ConsentAuth? consentAuth,
         BankUser? bankUser)
@@ -55,45 +53,38 @@ public class DomesticPaymentSubtest
 
         IRequestBuilder requestBuilder = requestBuilderIn;
 
-        // Create DomesticPaymentConsent
-        var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
+        // Create DomesticPaymentConsent request
+        var domesticPaymentTemplateRequest = new DomesticPaymentTemplateRequest
         {
-            BankRegistrationId = default, // substitute logging placeholder
-            TemplateRequest = new DomesticPaymentTemplateRequest
+            Type = DomesticPaymentSubtestHelper
+                .GetDomesticPaymentTemplateType(subtestEnum),
+            Parameters = new DomesticPaymentTemplateParameters
             {
-                Type = DomesticPaymentSubtestHelper
-                    .GetDomesticPaymentTemplateType(subtestEnum),
-                Parameters = new DomesticPaymentTemplateParameters
-                {
-                    InstructionIdentification = "placeholder", // substitute logging placeholder
-                    EndToEndIdentification = "placeholder" // substitute logging placeholder
-                }
+                InstructionIdentification = "placeholder", // logging placeholder
+                EndToEndIdentification = "placeholder" // logging placeholder
             }
         };
-
-        domesticPaymentConsentRequest.ExternalApiRequest =
-            DomesticPaymentConsentPublicMethods.ResolveExternalApiRequest(
-                domesticPaymentConsentRequest.ExternalApiRequest,
-                domesticPaymentConsentRequest.TemplateRequest,
-                bankProfile); // Resolve for fuller logging
+        var domesticPaymentConsentRequest = new DomesticPaymentConsentRequest
+        {
+            BankRegistrationId = default, // logging placeholder
+            ExternalApiRequest = DomesticPaymentConsentPublicMethods.ResolveExternalApiRequest(
+                null,
+                domesticPaymentTemplateRequest,
+                bankProfile) // Resolve for fuller logging
+        };
 
         await pispFluentRequestLogging
             .AppendToPath("domesticPaymentConsent")
             .AppendToPath("postRequest")
             .WriteFile(domesticPaymentConsentRequest);
 
-        // Basic request object for domestic payment
-        requestBuilder.Utility.Map(
-            domesticPaymentConsentRequest.ExternalApiRequest,
-            out PaymentInitiationModelsPublic.OBWriteDomestic2 obWriteDomestic);
-        var domesticPaymentRequest =
-            new DomesticPaymentRequest { ExternalApiRequest = obWriteDomestic };
-
-        domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // remove logging placeholder
+        var initiationInstructionIdentification = Guid.NewGuid().ToString("N");
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
-            Guid.NewGuid().ToString("N"); // remove logging placeholder
+            initiationInstructionIdentification; // replace logging placeholder
+        var initiationEndToEndIdentification = Guid.NewGuid().ToString("N");
         domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
-            Guid.NewGuid().ToString("N"); // remove logging placeholder
+            initiationEndToEndIdentification; // replace logging placeholder
+        domesticPaymentConsentRequest.BankRegistrationId = bankRegistrationId; // replace logging placeholder
         domesticPaymentConsentRequest.Reference = testNameUnique;
         domesticPaymentConsentRequest.CreatedBy = modifiedBy;
         DomesticPaymentConsentCreateResponse domesticPaymentConsentResp =
@@ -134,7 +125,7 @@ public class DomesticPaymentSubtest
         authContextResponse.Warnings.Should().BeNull();
         authContextResponse.AuthUrl.Should().NotBeNull();
         Guid authContextId = authContextResponse.Id;
-        string authUrl = authContextResponse.AuthUrl!;
+        string authUrl = authContextResponse.AuthUrl;
 
         // GET auth context
         DomesticPaymentConsentAuthContextReadResponse authContextResponse2 =
@@ -192,20 +183,32 @@ public class DomesticPaymentSubtest
                 domesticPaymentConsentResp4.ExternalApiResponse.Should().NotBeNull();
             }
 
-            // POST domestic payment
+            // Create DomesticPayment request
+            var domesticPaymentRequest = new DomesticPaymentRequest
+            {
+                DomesticPaymentConsentId = default, // logging placeholder
+                ExternalApiRequest =
+                    DomesticPaymentPublicMethods.ResolveExternalApiRequest(
+                        null,
+                        domesticPaymentTemplateRequest,
+                        string.Empty, // logging placeholder
+                        bankProfile) // resolve for fuller logging
+            };
             await pispFluentRequestLogging
                 .AppendToPath("domesticPayment")
                 .AppendToPath("postRequest")
                 .WriteFile(domesticPaymentRequest);
-            domesticPaymentRequest.ExternalApiRequest.Data.ConsentId = "";
+
+            // POST domestic payment
             domesticPaymentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification =
-                domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.InstructionIdentification;
+                initiationInstructionIdentification; // replace logging placeholder
             domesticPaymentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification =
-                domesticPaymentConsentRequest.ExternalApiRequest.Data.Initiation.EndToEndIdentification;
-            domesticPaymentRequest.Reference = testNameUnique;
+                initiationEndToEndIdentification; // replace logging placeholder
+            domesticPaymentRequest.DomesticPaymentConsentId = domesticPaymentConsentId;
+            domesticPaymentRequest.ModifiedBy = modifiedBy;
             DomesticPaymentResponse domesticPaymentResp =
                 await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .CreateAsync(domesticPaymentRequest, domesticPaymentConsentId);
+                    .CreateAsync(domesticPaymentRequest);
 
             // Checks
             domesticPaymentResp.Should().NotBeNull();

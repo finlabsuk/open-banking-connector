@@ -2,26 +2,14 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 
 /// <summary>
 ///     Response to Read and Create requests
 /// </summary>
-public class DomesticPaymentResponse
+public class DomesticPaymentResponse : BaseResponse
 {
-    public DomesticPaymentResponse(PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse)
-    {
-        ExternalApiResponse = externalApiResponse;
-    }
-
-    public PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; }
-
-    /// <summary>
-    ///     Optional list of warning messages from Open Banking Connector.
-    /// </summary>
-    public IList<string>? Warnings { get; set; }
+    public required PaymentInitiationModelsPublic.OBWriteDomesticResponse5 ExternalApiResponse { get; init; }
 }

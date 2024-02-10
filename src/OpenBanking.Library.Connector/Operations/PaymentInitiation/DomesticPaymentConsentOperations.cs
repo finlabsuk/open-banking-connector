@@ -22,8 +22,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
 using DomesticPaymentConsentPersisted =
@@ -47,9 +45,10 @@ internal class
         PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
         PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5> _consentCommon;
 
+    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _consentEntityMethods;
+
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly DomesticPaymentConsentCommon _domesticPaymentConsentCommon;
-    private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
@@ -67,7 +66,7 @@ internal class
         ConsentAccessTokenGet consentAccessTokenGet,
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods)
     {
-        _entityMethods = entityMethods;
+        _consentEntityMethods = entityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
@@ -120,9 +119,8 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
-            string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
+            string bankFinancialId = bankProfile.FinancialId;
 
             // Get client credentials grant access token
             string ccGrantAccessToken =
@@ -149,55 +147,54 @@ internal class
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
             var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
-            PaymentInitiationModelsPublic.OBWriteDomesticConsent4 externalApiRequest =
-                DomesticPaymentConsentPublicMethods.ResolveExternalApiRequest(
-                    request.ExternalApiRequest,
-                    request.TemplateRequest,
-                    bankProfile);
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
-                    externalApiRequest,
+                    request.ExternalApiRequest,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     processedSoftwareStatementProfile.ApiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
+            externalApiId = externalApiResponse.Data.ConsentId;
 
             // Transform links
-            externalApiId = externalApiResponse.Data.ConsentId;
-            var apiGetRequestUrl = new Uri(externalApiUrl + $"/{externalApiId}");
-            string? publicGetRequestUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
+            if (externalApiResponse.Links is not null)
             {
-                { } x => x + $"/{entityId}",
-                null => null
-            };
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
-                apiGetRequestUrl,
-                publicGetRequestUrlWithoutQuery,
-                true,
-                validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            if (externalApiResponse.Links.First is not null)
-            {
-                externalApiResponse.Links.First =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            }
-            if (externalApiResponse.Links.Prev is not null)
-            {
-                externalApiResponse.Links.Prev =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            }
-            if (externalApiResponse.Links.Next is not null)
-            {
-                externalApiResponse.Links.Next =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            }
-            if (externalApiResponse.Links.Last is not null)
-            {
-                externalApiResponse.Links.Last =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                var expectedLinkUrlWithoutQuery = new Uri(externalApiUrl + $"/{externalApiId}");
+                string? transformedLinkUrlWithoutQuery = createParams.PublicRequestUrlWithoutQuery switch
+                {
+                    { } x => x + $"/{entityId}",
+                    null => null
+                };
+                var validQueryParameters = new List<string>();
+                var linksUrlOperations = new LinksUrlOperations(
+                    expectedLinkUrlWithoutQuery,
+                    transformedLinkUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
             }
         }
         else
@@ -242,7 +239,7 @@ internal class
         }
 
         // Save entity
-        await _entityMethods.AddAsync(persistedConsent);
+        await _consentEntityMethods.AddAsync(persistedConsent);
 
         // Create response (may involve additional processing based on entity)
         var response =
@@ -279,6 +276,7 @@ internal class
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
+        string externalApiConsentId = persistedConsent.ExternalApiId;
 
         bool includeExternalApiOperation =
             readParams.IncludeExternalApiOperation;
@@ -290,7 +288,6 @@ internal class
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -316,7 +313,6 @@ internal class
                     bankFinancialId,
                     ccGrantAccessToken,
                     processedSoftwareStatementProfile);
-            string externalApiConsentId = persistedConsent.ExternalApiId;
             var externalApiUrl = new Uri(
                 paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             (externalApiResponse,
@@ -329,32 +325,36 @@ internal class
             nonErrorMessages.AddRange(newNonErrorMessages);
 
             // Transform links 
-            var validQueryParameters = new List<string>();
-            var linksUrlOperations = new LinksUrlOperations(
-                externalApiUrl,
-                readParams.PublicRequestUrlWithoutQuery,
-                true,
-                validQueryParameters);
-            externalApiResponse.Links.Self = linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
-            if (externalApiResponse.Links.First is not null)
+            if (externalApiResponse.Links is not null)
             {
-                externalApiResponse.Links.First =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
-            }
-            if (externalApiResponse.Links.Prev is not null)
-            {
-                externalApiResponse.Links.Prev =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
-            }
-            if (externalApiResponse.Links.Next is not null)
-            {
-                externalApiResponse.Links.Next =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
-            }
-            if (externalApiResponse.Links.Last is not null)
-            {
-                externalApiResponse.Links.Last =
-                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                var validQueryParameters = new List<string>();
+                var linksUrlOperations = new LinksUrlOperations(
+                    externalApiUrl,
+                    readParams.PublicRequestUrlWithoutQuery,
+                    true,
+                    validQueryParameters);
+                externalApiResponse.Links.Self =
+                    linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Self);
+                if (externalApiResponse.Links.First is not null)
+                {
+                    externalApiResponse.Links.First =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.First);
+                }
+                if (externalApiResponse.Links.Prev is not null)
+                {
+                    externalApiResponse.Links.Prev =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Prev);
+                }
+                if (externalApiResponse.Links.Next is not null)
+                {
+                    externalApiResponse.Links.Next =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Next);
+                }
+                if (externalApiResponse.Links.Last is not null)
+                {
+                    externalApiResponse.Links.Last =
+                        linksUrlOperations.ValidateAndTransformUrl(externalApiResponse.Links.Last);
+                }
             }
         }
         else
@@ -435,8 +435,7 @@ internal class
             ApiRequestsFundsConfirmation(
                 paymentInitiationApi.ApiVersion,
                 bankFinancialId,
-                accessToken,
-                processedSoftwareStatementProfile);
+                accessToken);
         var externalApiUrl = new Uri(
             paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}" + "/funds-confirmation");
         (PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse,
@@ -450,19 +449,7 @@ internal class
 
         // Create response
         var response =
-            new DomesticPaymentConsentReadFundsConfirmationResponse
-            {
-                Id = persistedObject.Id,
-                Created = persistedObject.Created,
-                CreatedBy = persistedObject.CreatedBy,
-                Reference = persistedObject.Reference,
-                BankRegistrationId = persistedObject.BankRegistrationId,
-                ExternalApiId = persistedObject.ExternalApiId,
-                ExternalApiUserId = persistedObject.ExternalApiUserId,
-                AuthContextModified = persistedObject.AuthContextModified,
-                AuthContextModifiedBy = persistedObject.AuthContextModifiedBy,
-                ExternalApiResponse = externalApiResponse
-            };
+            new DomesticPaymentConsentReadFundsConfirmationResponse { ExternalApiResponse = externalApiResponse };
 
         return (response, nonErrorMessages);
     }
@@ -486,9 +473,8 @@ internal class
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    paymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
                     processedSoftwareStatementProfile)),
-            PaymentInitiationApiVersion.Version3p1p6 => new ApiRequests<
+            PaymentInitiationApiVersion.VersionPublic => new ApiRequests<
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
@@ -499,7 +485,6 @@ internal class
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    paymentInitiationApiVersion < PaymentInitiationApiVersion.Version3p1p4,
                     processedSoftwareStatementProfile)),
             _ => throw new ArgumentOutOfRangeException($"PISP API version {paymentInitiationApiVersion} not supported.")
         };
@@ -508,8 +493,7 @@ internal class
         ApiRequestsFundsConfirmation(
             PaymentInitiationApiVersion paymentInitiationApiVersion,
             string bankFinancialId,
-            string accessToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =>
+            string accessToken) =>
         paymentInitiationApiVersion switch
         {
             PaymentInitiationApiVersion.Version3p1p4 => new ApiGetRequests<
@@ -518,7 +502,7 @@ internal class
                 new ApiGetRequestProcessor(
                     bankFinancialId,
                     accessToken)),
-            PaymentInitiationApiVersion.Version3p1p6 => new ApiGetRequests<
+            PaymentInitiationApiVersion.VersionPublic => new ApiGetRequests<
                 PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1,
                 PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1>(
                 new ApiGetRequestProcessor(

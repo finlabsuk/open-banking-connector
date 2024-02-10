@@ -23,8 +23,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
-using VariableRecurringPaymentsModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p8.Vrp.Models;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.VariableRecurringPayments;
 
@@ -71,7 +69,7 @@ internal class DomesticVrp :
     private string RelativePathBeforeId => "/domestic-vrps";
 
     public async Task<(DomesticVrpResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        CreateAsync(DomesticVrpRequest request, Guid consentId, string? createdBy)
+        CreateAsync(DomesticVrpRequest request)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -81,7 +79,7 @@ internal class DomesticVrp :
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
                 ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
-            await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, true);
+            await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
@@ -114,7 +112,7 @@ internal class DomesticVrp :
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
-                createdBy);
+                request.ModifiedBy);
 
         // Create external object at bank API
         JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -127,17 +125,11 @@ internal class DomesticVrp :
                 accessToken,
                 processedSoftwareStatementProfile);
         var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
-        VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest externalApiRequest =
-            DomesticVrpPublicMethods.ResolveExternalApiRequest(
-                request.ExternalApiRequest,
-                request.TemplateRequest,
-                externalApiConsentId,
-                bankProfile);
-        if (string.IsNullOrEmpty(externalApiRequest.Data.ConsentId))
+        if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
         {
-            externalApiRequest.Data.ConsentId = externalApiConsentId;
+            request.ExternalApiRequest.Data.ConsentId = externalApiConsentId;
         }
-        else if (externalApiRequest.Data.ConsentId != externalApiConsentId)
+        else if (request.ExternalApiRequest.Data.ConsentId != externalApiConsentId)
         {
             throw new ArgumentException(
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
@@ -148,7 +140,7 @@ internal class DomesticVrp :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
-                externalApiRequest,
+                request.ExternalApiRequest,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
                 processedSoftwareStatementProfile.ApiClient,
@@ -156,7 +148,7 @@ internal class DomesticVrp :
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Create response
-        var response = new DomesticVrpResponse(externalApiResponse);
+        var response = new DomesticVrpResponse { ExternalApiResponse = externalApiResponse };
         return (response, nonErrorMessages);
     }
 
@@ -216,7 +208,7 @@ internal class DomesticVrp :
         nonErrorMessages.AddRange(newNonErrorMessages);
 
         // Create response
-        var response = new DomesticVrpResponse(externalApiResponse);
+        var response = new DomesticVrpResponse { ExternalApiResponse = externalApiResponse };
         return (response, nonErrorMessages);
     }
 
@@ -229,7 +221,7 @@ internal class DomesticVrp :
             ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =>
         variableRecurringPaymentsApiVersion switch
         {
-            VariableRecurringPaymentsApiVersion.Version3p1p8 => new ApiRequests<
+            VariableRecurringPaymentsApiVersion.VersionPublic => new ApiRequests<
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPRequest,
@@ -240,7 +232,6 @@ internal class DomesticVrp :
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    false,
                     processedSoftwareStatementProfile)),
             _ => throw new ArgumentOutOfRangeException(
                 $"Variable Recurring Payments API version {variableRecurringPaymentsApiVersion} not supported.")

@@ -2,23 +2,21 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Templates.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.PaymentInitiation;
 
 public static class DomesticPaymentPublicMethods
 {
-    public static OBWriteDomestic2 ResolveExternalApiRequest(
-        OBWriteDomestic2? externalApiRequest,
+    public static PaymentInitiationModelsPublic.OBWriteDomestic2 ResolveExternalApiRequest(
+        PaymentInitiationModelsPublic.OBWriteDomestic2? externalApiRequest,
         DomesticPaymentTemplateRequest? templateRequest,
         string externalApiConsentId,
         BankProfile? bankProfile)
     {
         // Resolve external API request
-        OBWriteDomestic2 resolvedExternalApiRequest =
+        PaymentInitiationModelsPublic.OBWriteDomestic2 resolvedExternalApiRequest =
             externalApiRequest ??
             DomesticPaymentTemplates.DomesticPaymentExternalApiRequest(
                 templateRequest ??
