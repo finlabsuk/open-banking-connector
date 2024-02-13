@@ -29,6 +29,7 @@
         <PackageReference Include="jose-jwt" Version="4.1.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.2"/>
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.4.0"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2"/>
     </ItemGroup>

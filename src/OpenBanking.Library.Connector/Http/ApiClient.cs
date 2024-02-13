@@ -8,8 +8,8 @@ using System.Net.Security;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using Microsoft.Extensions.Http.Logging;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
@@ -17,6 +17,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 public class ApiClient : IApiClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IHttpClientLogger _httpRequestLogger;
     private readonly IInstrumentationClient _instrumentation;
 
     public ApiClient(
@@ -73,12 +74,14 @@ public class ApiClient : IApiClient
         clientHandler.SslOptions = sslClientAuthenticationOptions;
 
         _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-        _httpClient = new HttpClient(new LoggingHandler(clientHandler));
+        _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
+        _httpClient = new HttpClient(clientHandler);
     }
 
-    public ApiClient(IInstrumentationClient instrumentation, HttpClient httpClient)
+    public ApiClient(IInstrumentationClient instrumentationClient, HttpClient httpClient)
     {
-        _instrumentation = instrumentation.ArgNotNull(nameof(instrumentation));
+        _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
+        _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
         _httpClient = httpClient.ArgNotNull(nameof(httpClient));
     }
 
@@ -159,47 +162,77 @@ public class ApiClient : IApiClient
     private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
         HttpRequestMessage request)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
+        // Make request and retrieve response body.
+        // Since logging requires request and response body, done at this level rather than in wrapping  DelegatingHandler as previously intended.
+        _httpRequestLogger.LogRequestStart(request);
         HttpResponseMessage? response = null;
-        int statusCode;
+        string? requestBody = null;
         string? responseBody = null;
-        string? xFapiInteractionId = null;
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
         try
         {
-            // Make HTTP call
+            // Make request
             response = await _httpClient.SendAsync(request);
+            stopWatch.Stop();
 
-            // Get selected response headers
-            if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
-            {
-                xFapiInteractionId = values.First();
-            }
-
-            // Get response body
+            // Get request and response bodies
+            requestBody = await GetStringRequestBodyAsync(request); // don't read before making request
             responseBody = await response.Content.ReadAsStringAsync();
 
-            // Check HTTP status code
-            statusCode = (int) response.StatusCode;
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ExternalApiHttpErrorException(
-                    statusCode,
-                    $"{request.Method}",
-                    $"{request.RequestUri}",
-                    responseBody ?? "",
-                    xFapiInteractionId);
-            }
+            // Log request
+            _httpRequestLogger.LogRequestStop(
+                new HttpRequestLoggerAdditionalData
+                {
+                    RequestBody = requestBody,
+                    ResponseBody = responseBody
+                },
+                request,
+                response,
+                stopWatch.Elapsed);
         }
         catch (Exception ex)
         {
-            _instrumentation.Exception(ex, request.RequestUri!.ToString());
+            stopWatch.Stop(); // no-op if not required
+
+            // Log request
+            _httpRequestLogger.LogRequestFailed(
+                new HttpRequestLoggerAdditionalData
+                {
+                    RequestBody = requestBody,
+                    ResponseBody = responseBody
+                },
+                request,
+                response,
+                ex,
+                stopWatch.Elapsed);
             throw;
         }
         finally
         {
-            await LogRequest(request, response, responseBody);
             response?.Dispose();
         }
 
+        // Get selected response headers
+        string? xFapiInteractionId = null;
+        if (response.Headers.TryGetValues("x-fapi-interaction-id", out IEnumerable<string>? values))
+        {
+            xFapiInteractionId = values.First();
+        }
+
+        // Check HTTP status code
+        var statusCode = (int) response.StatusCode;
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new ExternalApiHttpErrorException(
+                statusCode,
+                $"{request.Method}",
+                $"{request.RequestUri}",
+                responseBody,
+                xFapiInteractionId);
+        }
 
         return (statusCode, responseBody, xFapiInteractionId);
     }
@@ -218,81 +251,6 @@ public class ApiClient : IApiClient
 
             throw;
         }
-    }
-
-    private async Task LogRequest(
-        HttpRequestMessage request,
-        HttpResponseMessage? response,
-        string? responseBody)
-    {
-        string jsonFormatted;
-
-        // Generate HTTP request info trace
-        StringBuilder requestTraceSb = new StringBuilder()
-            .AppendLine("#### HTTP REQUEST")
-            .AppendLine("######## REQUEST")
-            .AppendLine($"{request}")
-            .AppendLine("######## REQUEST BODY");
-
-        // Get request body
-        string? requestBody = await GetStringRequestBodyAsync(request);
-
-        // Log request body
-        if (string.IsNullOrEmpty(requestBody))
-        {
-            requestTraceSb.AppendLine("<No Body>");
-        }
-        else
-        {
-            try
-            {
-                dynamic parsedJson =
-                    JsonConvert.DeserializeObject(requestBody) ??
-                    throw new NullReferenceException();
-                jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-            }
-            catch
-            {
-                jsonFormatted = requestBody;
-            }
-
-            requestTraceSb.AppendLine(jsonFormatted);
-        }
-
-        requestTraceSb.AppendLine("######## RESPONSE");
-        if (response is null)
-        {
-            requestTraceSb.AppendLine("<No Response>");
-        }
-        else
-        {
-            requestTraceSb
-                .AppendLine($"{response}")
-                .AppendLine("######## RESPONSE BODY");
-            if (string.IsNullOrEmpty(responseBody))
-            {
-                requestTraceSb.AppendLine("<No Body>");
-            }
-            else
-            {
-                try
-                {
-                    dynamic parsedJson =
-                        JsonConvert.DeserializeObject(responseBody) ??
-                        throw new NullReferenceException();
-                    jsonFormatted = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-                }
-                catch
-                {
-                    jsonFormatted = responseBody;
-                }
-
-                requestTraceSb.AppendLine(jsonFormatted);
-            }
-        }
-
-        requestTraceSb.AppendLine("####");
-        _instrumentation.Trace(requestTraceSb.ToString());
     }
 
     private static async Task<string?> GetStringRequestBodyAsync(HttpRequestMessage request)
