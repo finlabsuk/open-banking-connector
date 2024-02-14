@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -170,7 +172,8 @@ public class BankProfile
         AccountAndTransactionApi? accountAndTransactionApi,
         PaymentInitiationApi? paymentInitiationApi,
         VariableRecurringPaymentsApi? variableRecurringPaymentsApi,
-        bool supportsSca)
+        bool supportsSca,
+        IInstrumentationClient instrumentationClient)
     {
         BankProfileEnum = bankProfileEnum;
         IssuerUrl = issuerUrl;
@@ -179,6 +182,7 @@ public class BankProfile
         PaymentInitiationApi = paymentInitiationApi;
         VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
         SupportsSca = supportsSca;
+        ReplayApiClient = new ApiClient(instrumentationClient, new ReplayClient(this));
     }
 
     /// <summary>
@@ -246,6 +250,8 @@ public class BankProfile
     /// </summary>
     public VariableRecurringPaymentsApiSettings VariableRecurringPaymentsApiSettings { get; set; } =
         new();
+
+    public IApiClient ReplayApiClient { get; }
 
     public AccountAndTransactionApi GetRequiredAccountAndTransactionApi() =>
         AccountAndTransactionApi ??

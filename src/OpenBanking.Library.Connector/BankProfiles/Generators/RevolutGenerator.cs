@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -19,7 +20,7 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<RevolutBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(RevolutBank bank) =>
+    public override BankProfile GetBankProfile(RevolutBank bank, IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://oba.revolut.com", // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
@@ -27,7 +28,8 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
-            true)
+            true,
+            instrumentationClient)
         {
             CustomBehaviour = new CustomBehaviourClass
             {

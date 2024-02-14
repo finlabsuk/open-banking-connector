@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -26,7 +27,7 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<LloydsBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(LloydsBank bank)
+    public override BankProfile GetBankProfile(LloydsBank bank, IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -74,7 +75,8 @@ public class LloydsGenerator : BankProfileGeneratorBase<LloydsBank>
                 }
                 : null,
             null,
-            bank is not LloydsBank.Sandbox)
+            bank is not LloydsBank.Sandbox,
+            instrumentationClient)
         {
             DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion
                 .Version3p2, // from https://developer.lloydsbanking.com/sites/developer.lloydsbanking.com/files/support/technical_implementation_guide_dcr.pdf?v=1631615723

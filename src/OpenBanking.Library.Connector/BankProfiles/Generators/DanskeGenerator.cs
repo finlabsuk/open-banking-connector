@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -20,7 +21,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
         IBankGroup<DanskeBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
     //See https://developers.danskebank.com/documentation
-    public override BankProfile GetBankProfile(DanskeBank bank) =>
+    public override BankProfile GetBankProfile(DanskeBank bank, IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
@@ -32,7 +33,8 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/v3.1/pisp" //from https://developers.danskebank.com/api_products/danske_bank_apis/pi?view=reference
             },
             null,
-            false)
+            false,
+            instrumentationClient)
         {
             CustomBehaviour = new CustomBehaviourClass
             {

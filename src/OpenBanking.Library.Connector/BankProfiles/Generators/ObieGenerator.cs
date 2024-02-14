@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -21,7 +22,7 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<ObieBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(ObieBank bank)
+    public override BankProfile GetBankProfile(ObieBank bank, IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -57,7 +58,8 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 }
             },
             null,
-            false)
+            false,
+            instrumentationClient)
         {
             CustomBehaviour = bank is ObieBank.Modelo
                 ? new CustomBehaviourClass

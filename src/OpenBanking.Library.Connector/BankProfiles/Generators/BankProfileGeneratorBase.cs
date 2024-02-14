@@ -5,6 +5,7 @@
 using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -144,7 +145,7 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
         }
     }
 
-    public abstract BankProfile GetBankProfile(TBank bank);
+    public abstract BankProfile GetBankProfile(TBank bank, IInstrumentationClient instrumentationClient);
 
     private string? GetFirstNonemptyOrNullValue(string? value1, string? value2) =>
         (value1, value2) switch

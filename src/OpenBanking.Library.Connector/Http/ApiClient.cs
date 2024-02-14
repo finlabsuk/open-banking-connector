@@ -14,76 +14,31 @@ using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-public class ApiClient : IApiClient
+public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient httpClient)
+    : IApiClient, IDisposable
 {
-    private readonly HttpClient _httpClient;
-    private readonly IHttpClientLogger _httpRequestLogger;
-    private readonly IInstrumentationClient _instrumentation;
+    private readonly IHttpClient _httpClient = httpClient.ArgNotNull(nameof(httpClient));
+    private readonly IHttpClientLogger _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
+
+    private readonly IInstrumentationClient _instrumentation =
+        instrumentationClient.ArgNotNull(nameof(instrumentationClient));
 
     public ApiClient(
         IInstrumentationClient instrumentationClient,
         int pooledConnectionLifetimeSeconds,
         IList<X509Certificate2>? clientCertificates = null,
-        IServerCertificateValidator? serverCertificateValidator = null)
-    {
-        var clientHandler = new SocketsHttpHandler
-        {
-            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-            ActivityHeadersPropagator =
-                DistributedContextPropagator
-                    .CreateNoOutputPropagator(), // ensures no traceparent HTTP header when ActivityHeadersPropagator used 
-            PooledConnectionLifetime = TimeSpan.FromSeconds(pooledConnectionLifetimeSeconds)
-        };
+        IServerCertificateValidator? serverCertificateValidator = null) : this(
+        instrumentationClient,
+        new HttpClientWrapper(
+            new HttpClient(
+                CreatePrimaryHandler(
+                    pooledConnectionLifetimeSeconds,
+                    clientCertificates,
+                    serverCertificateValidator)))) { }
 
-        const int maxRedirects = 50;
-        clientHandler.AllowAutoRedirect = true;
-        clientHandler.MaxAutomaticRedirections = maxRedirects;
-
-        // SSL settings
-        var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
-        {
-            EnabledSslProtocols = SslProtocols.Tls12
-        };
-
-        // Limit cipher suites on Linux
-        var cipherSuites = new[]
-        {
-            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-            TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        };
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
-        }
-
-        // Add client certs
-        if (clientCertificates is not null &&
-            clientCertificates.Count > 0)
-        {
-            X509Certificate2[] y = clientCertificates.ToArray();
-            sslClientAuthenticationOptions.ClientCertificates = new X509Certificate2Collection(y);
-        }
-
-        // Add custom remote cert validation
-        if (serverCertificateValidator is not null)
-        {
-            sslClientAuthenticationOptions.RemoteCertificateValidationCallback = serverCertificateValidator.IsOk;
-        }
-
-        clientHandler.SslOptions = sslClientAuthenticationOptions;
-
-        _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-        _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
-        _httpClient = new HttpClient(clientHandler);
-    }
-
-    public ApiClient(IInstrumentationClient instrumentationClient, HttpClient httpClient)
-    {
-        _instrumentation = instrumentationClient.ArgNotNull(nameof(instrumentationClient));
-        _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
-        _httpClient = httpClient.ArgNotNull(nameof(httpClient));
-    }
+    public ApiClient(IInstrumentationClient instrumentationClient, HttpClient unwrappedHttpClient) : this(
+        instrumentationClient,
+        new HttpClientWrapper(unwrappedHttpClient)) { }
 
     public static JsonSerializerSettings GetDefaultJsonSerializerSettings => new()
     {
@@ -159,6 +114,65 @@ public class ApiClient : IApiClient
         return responseBody;
     }
 
+    public void Dispose()
+    {
+        _httpClient.Dispose();
+    }
+
+    private static SocketsHttpHandler CreatePrimaryHandler(
+        int pooledConnectionLifetimeSeconds,
+        IList<X509Certificate2>? clientCertificates,
+        IServerCertificateValidator? serverCertificateValidator)
+    {
+        var clientHandler = new SocketsHttpHandler
+        {
+            AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
+            ActivityHeadersPropagator =
+                DistributedContextPropagator
+                    .CreateNoOutputPropagator(), // ensures no traceparent HTTP header when ActivityHeadersPropagator used 
+            PooledConnectionLifetime = TimeSpan.FromSeconds(pooledConnectionLifetimeSeconds)
+        };
+
+        const int maxRedirects = 50;
+        clientHandler.AllowAutoRedirect = true;
+        clientHandler.MaxAutomaticRedirections = maxRedirects;
+
+        // SSL settings
+        var sslClientAuthenticationOptions = new SslClientAuthenticationOptions
+        {
+            EnabledSslProtocols = SslProtocols.Tls12
+        };
+
+        // Limit cipher suites on Linux
+        var cipherSuites = new[]
+        {
+            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+            TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            TlsCipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TlsCipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        };
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            sslClientAuthenticationOptions.CipherSuitesPolicy = new CipherSuitesPolicy(cipherSuites);
+        }
+
+        // Add client certs
+        if (clientCertificates is not null &&
+            clientCertificates.Count > 0)
+        {
+            X509Certificate2[] y = clientCertificates.ToArray();
+            sslClientAuthenticationOptions.ClientCertificates = new X509Certificate2Collection(y);
+        }
+
+        // Add custom remote cert validation
+        if (serverCertificateValidator is not null)
+        {
+            sslClientAuthenticationOptions.RemoteCertificateValidationCallback = serverCertificateValidator.IsOk;
+        }
+
+        clientHandler.SslOptions = sslClientAuthenticationOptions;
+        return clientHandler;
+    }
+
     private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
         HttpRequestMessage request)
     {
@@ -175,7 +189,10 @@ public class ApiClient : IApiClient
         try
         {
             // Make request
-            response = await _httpClient.SendAsync(request);
+            response = await _httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseContentRead,
+                CancellationToken.None);
             stopWatch.Stop();
 
             // Get request and response bodies
@@ -241,7 +258,10 @@ public class ApiClient : IApiClient
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            HttpResponseMessage response = await _httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseContentRead,
+                CancellationToken.None);
 
             return response;
         }

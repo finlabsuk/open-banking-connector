@@ -85,7 +85,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile, _instrumentationClient);
         BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
@@ -353,7 +353,7 @@ internal class
         string externalApiId = entity.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile, _instrumentationClient);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
@@ -497,7 +497,9 @@ internal class
             // Search for first registration in same registration group and check compatible (error if not)
             foreach (BankRegistrationEntity existingReg in existingRegistrations)
             {
-                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
+                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(
+                    existingReg.BankProfile,
+                    _instrumentationClient);
                 TBank existingRegBank = bankGroup.GetBank(existingRegBankProfile.BankProfileEnum);
                 TRegistrationGroup? existingRegRegistrationGroup =
                     bankGroup.GetRegistrationGroup(existingRegBank, existingReg.RegistrationScope);

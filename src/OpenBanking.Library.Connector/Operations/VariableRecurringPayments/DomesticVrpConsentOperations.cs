@@ -111,7 +111,9 @@ internal class
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(
+                bankRegistration.BankProfile,
+                _instrumentationClient);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
@@ -276,7 +278,9 @@ internal class
         if (includeExternalApiOperation)
         {
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(
+                bankRegistration.BankProfile,
+                _instrumentationClient);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
@@ -388,7 +392,9 @@ internal class
         string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =

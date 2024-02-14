@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -19,7 +20,9 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<SantanderRegistrationGroup> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(SantanderBank bank) =>
+    public override BankProfile GetBankProfile(
+        SantanderRegistrationGroup bank,
+        IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://openbanking.santander.co.uk/sanuk/external/open-banking/openid-connect-provider/v1/", // from https://developer.santander.co.uk/sanuk/external/faq-page#t4n553
@@ -27,7 +30,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             GetAccountAndTransactionApi(bank),
             null,
             null,
-            true)
+            true,
+            instrumentationClient)
         {
             CustomBehaviour = new CustomBehaviourClass
             {

@@ -115,7 +115,9 @@ internal class
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(
+                bankRegistration.BankProfile,
+                _instrumentationClient);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -284,7 +286,9 @@ internal class
         if (includeExternalApiOperation)
         {
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(
+                bankRegistration.BankProfile,
+                _instrumentationClient);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -399,7 +403,9 @@ internal class
         string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;

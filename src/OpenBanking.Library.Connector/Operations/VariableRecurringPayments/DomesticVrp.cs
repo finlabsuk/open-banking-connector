@@ -83,7 +83,9 @@ internal class DomesticVrp :
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
@@ -165,7 +167,9 @@ internal class DomesticVrp :
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, false);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =

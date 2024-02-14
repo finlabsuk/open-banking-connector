@@ -70,7 +70,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
 
             // Get bank profile
             BankProfile bankProfile =
-                _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+                _bankProfileService.GetBankProfile(bankRegistration.BankProfile, _instrumentationClient);
             AccountAndTransactionApi accountAndTransactionApi =
                 bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =

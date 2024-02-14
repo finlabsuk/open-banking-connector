@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
@@ -19,7 +20,7 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<MonzoBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(MonzoBank bank)
+    public override BankProfile GetBankProfile(MonzoBank bank, IInstrumentationClient instrumentationClient)
     {
         var grantPostCustomBehaviour =
             new AuthCodeAndRefreshTokenGrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
@@ -43,7 +44,8 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
             GetAccountAndTransactionApi(bank),
             GetPaymentInitiationApi(bank),
             null,
-            bank is not MonzoBank.Sandbox)
+            bank is not MonzoBank.Sandbox,
+            instrumentationClient)
         {
             CustomBehaviour = new CustomBehaviourClass
             {

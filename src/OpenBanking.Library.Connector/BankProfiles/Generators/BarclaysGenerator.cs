@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -22,7 +23,7 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<BarclaysBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(BarclaysBank bank)
+    public override BankProfile GetBankProfile(BarclaysBank bank, IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -50,7 +51,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
-            bank is not BarclaysBank.Sandbox)
+            bank is not BarclaysBank.Sandbox,
+            instrumentationClient)
         {
             BankConfigurationApiSettings = new BankConfigurationApiSettings
             {

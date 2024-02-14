@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -20,7 +21,7 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<StarlingBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(StarlingBank bank) =>
+    public override BankProfile GetBankProfile(StarlingBank bank, IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://api-openbanking.starlingbank.com/", // from https://developer.starlingbank.com/docs/open-banking#the-openid-connect-discovery-url-1
@@ -28,7 +29,8 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
-            true)
+            true,
+            instrumentationClient)
         {
             DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
             BankConfigurationApiSettings = new BankConfigurationApiSettings { UseRegistrationGetEndpoint = true },

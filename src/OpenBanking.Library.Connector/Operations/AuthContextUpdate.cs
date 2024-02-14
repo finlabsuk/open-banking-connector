@@ -190,7 +190,9 @@ internal class AuthContextUpdate :
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         OAuth2ResponseMode defaultResponseMode =

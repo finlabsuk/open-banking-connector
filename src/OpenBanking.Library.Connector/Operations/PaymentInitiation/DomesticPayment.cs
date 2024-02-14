@@ -87,7 +87,9 @@ internal class DomesticPayment :
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -169,7 +171,9 @@ internal class DomesticPayment :
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId, false);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;

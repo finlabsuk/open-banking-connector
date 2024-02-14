@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankTests.FunctionalSubtests
 using FinnovationLabs.OpenBanking.Library.Connector.BankTests.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -146,14 +147,8 @@ public abstract class AppTests
                 string? authUiInputUserName = authData?.UiInput?.UserName; // can only be null when UiInput null
                 string? authUiInputPassword = authData?.UiInput?.Password; // can only be null when UiInput null
 
-                // Determine whether test case should be skipped based on registration scope
-                BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(bankProfileEnum);
-                bool registrationScopeValid =
-                    bankProfile.BankConfigurationApiSettings.RegistrationScopeIsValid(testGroup.RegistrationScope);
-                bool testCaseShouldBeSkipped = !registrationScopeValid;
-
                 // Add test case to theory data if skip status matches that of theory data
-                if (testCaseShouldBeSkipped == skippedNotUnskipped)
+                if (!skippedNotUnskipped)
                 {
                     data.Add(
                         new BankTestData1
@@ -202,10 +197,14 @@ public abstract class AppTests
         BankTestSettings bankTestSettings =
             _serviceProvider.GetRequiredService<ISettingsProvider<BankTestSettings>>().GetSettings();
 
+        // Get logger
+        var instrumentationClient = _serviceProvider.GetRequiredService<IInstrumentationClient>();
+
         // Get bank profile definitions
         var bankProfileDefinitions =
             _serviceProvider.GetRequiredService<IBankProfileService>();
-        BankProfile bankProfile = bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
+        BankProfile bankProfile =
+            bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum, instrumentationClient);
 
         // Get bank user
         BankUser? bankUser = testData2.AuthUiInputUserName is not null

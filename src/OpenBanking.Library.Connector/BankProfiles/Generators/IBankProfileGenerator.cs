@@ -2,6 +2,8 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
 public interface IBankProfileGenerator { }
@@ -9,5 +11,5 @@ public interface IBankProfileGenerator { }
 public interface IBankProfileGenerator<TBank> : IBankProfileGenerator
     where TBank : struct, Enum
 {
-    BankProfile GetBankProfile(TBank bank);
+    BankProfile GetBankProfile(TBank bank, IInstrumentationClient instrumentationClient);
 }

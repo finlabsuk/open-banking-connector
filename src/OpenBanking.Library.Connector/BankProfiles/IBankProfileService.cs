@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
 public interface IBankProfileService
 {
-    BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
+    BankProfile GetBankProfile(BankProfileEnum bankProfileEnum, IInstrumentationClient instrumentationClient);
 
     TBank GetBank<TBank>(BankProfileEnum bankProfileEnum)
         where TBank : struct, Enum;

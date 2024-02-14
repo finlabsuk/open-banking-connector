@@ -70,7 +70,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
 
             // Get bank profile
             BankProfile bankProfile =
-                _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+                _bankProfileService.GetBankProfile(bankRegistration.BankProfile, _instrumentationClient);
             VariableRecurringPaymentsApi variableRecurringPaymentsApi =
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =

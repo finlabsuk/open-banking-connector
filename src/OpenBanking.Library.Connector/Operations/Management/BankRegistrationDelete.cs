@@ -58,7 +58,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile, _instrumentationClient);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;

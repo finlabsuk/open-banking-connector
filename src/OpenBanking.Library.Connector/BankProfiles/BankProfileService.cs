@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
@@ -94,23 +95,23 @@ public class BankProfileService : IBankProfileService
         };
     }
 
-    public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum) =>
+    public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum, IInstrumentationClient instrumentationClient) =>
         _bankProfilesDictionary.GetOrAdd(
                 bankProfileEnum,
                 profileEnum => new Lazy<BankProfile>(
                     () => GetBankGroupEnum(profileEnum) switch
                     {
-                        BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum),
-                        BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum),
-                        BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum),
-                        BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum),
-                        BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum),
-                        BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum),
-                        BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum),
-                        BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum),
-                        BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum),
-                        BankGroupEnum.Santander => GetBankProfile<SantanderBank>(profileEnum),
-                        BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum),
+                        BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Santander => GetBankProfile<SantanderBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum, instrumentationClient),
                         _ => throw new ArgumentOutOfRangeException()
                     },
                     LazyThreadSafetyMode.ExecutionAndPublication))
@@ -190,7 +191,9 @@ public class BankProfileService : IBankProfileService
             _ => throw new ArgumentOutOfRangeException(nameof(bankProfileEnum), bankProfileEnum, null)
         };
 
-    private BankProfile GetBankProfile<TBank>(BankProfileEnum bankProfileEnum)
+    private BankProfile GetBankProfile<TBank>(
+        BankProfileEnum bankProfileEnum,
+        IInstrumentationClient instrumentationClient)
         where TBank : struct, Enum
     {
         BankGroupEnum bankGroupEnum = GetBankGroupEnum(bankProfileEnum);
@@ -199,7 +202,7 @@ public class BankProfileService : IBankProfileService
                 .GetBank(bankProfileEnum);
         BankProfile bankProfile =
             GetBankProfileGenerator<TBank>(bankGroupEnum)
-                .GetBankProfile(bank);
+                .GetBankProfile(bank, instrumentationClient);
         return bankProfile;
     }
 

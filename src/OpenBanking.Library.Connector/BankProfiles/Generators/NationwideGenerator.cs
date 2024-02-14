@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
@@ -21,7 +22,7 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<NationwideBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(NationwideBank bank) =>
+    public override BankProfile GetBankProfile(NationwideBank bank, IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
@@ -29,7 +30,8 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
             GetAccountAndTransactionApi(bank),
             null,
             null,
-            true)
+            true,
+            instrumentationClient)
         {
             DynamicClientRegistrationApiVersion = DynamicClientRegistrationApiVersion.Version3p3,
             CustomBehaviour = new CustomBehaviourClass

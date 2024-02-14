@@ -68,7 +68,9 @@ internal class
         string authorizationEndpoint = bankRegistration.AuthorizationEndpoint;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(
+            bankRegistration.BankProfile,
+            _instrumentationClient);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
