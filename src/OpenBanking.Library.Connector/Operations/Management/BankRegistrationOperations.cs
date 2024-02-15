@@ -443,7 +443,7 @@ internal class
             CreatedBy = entity.CreatedBy,
             Reference = entity.Reference,
             ExternalApiResponse = externalApiResponse,
-            SoftwareStatementId = entity.SoftwareStatementId ?? Guid.Empty,
+            SoftwareStatementId = entity.SoftwareStatementId!.Value,
             BankProfile = entity.BankProfile,
             JwksUri = entity.JwksUri,
             RegistrationEndpoint = entity.RegistrationEndpoint,
