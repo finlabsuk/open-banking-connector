@@ -330,7 +330,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public partial class OBBranchAndFinancialInstitutionIdentification6
     {
         [Newtonsoft.Json.JsonProperty("SchemeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string SchemeName { get; set; } = default!;
+        public string? SchemeName { get; set; } = default!;
 
         /// <summary>
         /// ^ Unique and unambiguous identification of a financial institution or a branch of a financial institution.
@@ -587,7 +587,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public OBVRPRemittanceInformation? RemittanceInformation { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("LocalInstrument", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string LocalInstrument { get; set; } = default!;
+        public string? LocalInstrument { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("InstructedAmount", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
@@ -770,35 +770,35 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("Department", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string Department { get; set; } = default!;
+        public string? Department { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("SubDepartment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string SubDepartment { get; set; } = default!;
+        public string? SubDepartment { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StreetName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string StreetName { get; set; } = default!;
+        public string? StreetName { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BuildingNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string BuildingNumber { get; set; } = default!;
+        public string? BuildingNumber { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("PostCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string PostCode { get; set; } = default!;
+        public string? PostCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("TownName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string TownName { get; set; } = default!;
+        public string? TownName { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("CountrySubDivision", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string CountrySubDivision { get; set; } = default!;
+        public string? CountrySubDivision { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Country", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.RegularExpression(@"^[A-Z]{2,2}$")]
-        public string Country { get; set; } = default!;
+        public string? Country { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("AddressLine", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.MaxLength(7)]
@@ -1213,7 +1213,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public Data4Status Status { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("StatusReason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string StatusReason { get; set; } = default!;
+        public string? StatusReason { get; set; } = default!;
 
         /// <summary>
         /// Description related to provided Status/StatusReason
@@ -1443,15 +1443,15 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("StreetName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-        public string StreetName { get; set; } = default!;
+        public string? StreetName { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("BuildingNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string BuildingNumber { get; set; } = default!;
+        public string? BuildingNumber { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("PostCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(16, MinimumLength = 1)]
-        public string PostCode { get; set; } = default!;
+        public string? PostCode { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("TownName", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -1460,7 +1460,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
         [Newtonsoft.Json.JsonProperty("CountrySubDivision", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.StringLength(35, MinimumLength = 1)]
-        public string CountrySubDivision { get; set; } = default!;
+        public string? CountrySubDivision { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("Country", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -1725,7 +1725,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
     public partial class StatusDetail
     {
         [Newtonsoft.Json.JsonProperty("LocalInstrument", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string LocalInstrument { get; set; } = default!;
+        public string? LocalInstrument { get; set; } = default!;
 
         /// <summary>
         /// Status of a transfer, as assigned by the transaction administrator.

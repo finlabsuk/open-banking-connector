@@ -58,10 +58,10 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public int? TotalPages { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("FirstAvailableDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset FirstAvailableDateTime { get; set; } = default!;
+        public System.DateTimeOffset? FirstAvailableDateTime { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("LastAvailableDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset LastAvailableDateTime { get; set; } = default!;
+        public System.DateTimeOffset? LastAvailableDateTime { get; set; } = default!;
 
     }
 
