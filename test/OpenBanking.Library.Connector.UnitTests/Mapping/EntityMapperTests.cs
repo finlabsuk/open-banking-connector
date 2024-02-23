@@ -20,7 +20,7 @@ using OBRegistrationProperties1tokenEndpointAuthMethodEnum =
     OBRegistrationProperties1tokenEndpointAuthMethodEnum;
 using PaymentInitiationModelsV3p1p4 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p4.Pisp.Models;
-using PaymentInitiationModelsPublic =
+using PaymentInitiationModelsV3p1p6 =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
 using SupportedAlgorithmsEnum =
     FinnovationLabs.OpenBanking.Library.BankApiModels.UKObDcr.V3p1.Models.SupportedAlgorithmsEnum;
@@ -60,7 +60,7 @@ public class EntityMapperTests
                     country,
                     addressLine);
 
-            mapper.Map(value, out PaymentInitiationModelsPublic.OBPostalAddress6 r1);
+            mapper.Map(value, out PaymentInitiationModelsV3p1p6.OBPostalAddress6 r1);
 
             return r1.AddressLine.SequenceEqual(value.AddressLine) &&
                    r1.BuildingNumber == value.BuildingNumber &&
@@ -172,7 +172,7 @@ public class EntityMapperTests
             TotalPages = 123
         };
 
-        mapper.Map(m1, out PaymentInitiationModelsPublic.Meta r1);
+        mapper.Map(m1, out PaymentInitiationModelsV3p1p6.Meta r1);
 
         r1.Should().NotBeNull();
 

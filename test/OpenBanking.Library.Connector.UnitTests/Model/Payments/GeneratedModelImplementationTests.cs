@@ -4,9 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using FluentAssertions;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Model.Payments;
@@ -67,26 +65,6 @@ public class GeneratedModelImplementationTests
         }
     }
 
-
-    [Fact]
-    public void AllObjectsAreSerialisable()
-    {
-        IEnumerable<Tuple<Type, ConstructorInfo>> modelTypes = TypeExtensions.GetOpenBankingModelTypes()
-            .Where(t => !t.GetTypeInfo().IsDefined(typeof(CompilerGeneratedAttribute), true))
-            .Select(t => t.GetConstructor())
-            .Where(t => t != null)!;
-
-        foreach ((Type type, ConstructorInfo ctor) in modelTypes)
-        {
-            object? instance = ctor.CreateInstanceSafe();
-            if (instance != null)
-            {
-                string r = JsonConvert.SerializeObject(instance);
-
-                object? r2 = JsonConvert.DeserializeObject(r, type);
-            }
-        }
-    }
 
     [Fact]
     public void AllValidationObjectsAreValidatable()

@@ -5,9 +5,6 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FluentAssertions;
 using Xunit;
-using PaymentInitiationModelsPublic =
-    FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p6.Pisp.Models;
-
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.UnitTests.Mapping;
 
@@ -18,7 +15,7 @@ public class EntityTypeFinderTests
     {
         var finder = new ApiVariantMappingConfiguration();
 
-        Type publicType = typeof(PaymentInitiationModelsPublic.Meta);
+        Type publicType = typeof(PaymentInitiationModelsPublic.Data);
 
         List<TypeMapping> typePairs = finder.GetTypesWithSourceApiEquivalent(publicType).ToList();
 

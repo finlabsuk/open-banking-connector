@@ -1150,6 +1150,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         public string PSUAuthenticationMethod { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("PSUInteractionType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public OBVRPInteractionTypes? PSUInteractionType { get; set; } = default!;
 
         [Newtonsoft.Json.JsonProperty("VRPType", Required = Newtonsoft.Json.Required.Always)]

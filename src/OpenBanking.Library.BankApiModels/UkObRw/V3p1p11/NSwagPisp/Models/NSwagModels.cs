@@ -433,8 +433,8 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
         /// <summary>
         /// Indicates if Payee has a contractual relationship with the PISP.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("ContractPresentInidicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? ContractPresentInidicator { get; set; } = default!;
+        [Newtonsoft.Json.JsonProperty("ContractPresentIndicator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? ContractPresentIndicator { get; set; } = default!;
 
         /// <summary>
         /// Indicates if PISP has immutably prepopulated payment details in for the PSU.
@@ -520,6 +520,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(OBWriteDomesticConsent4))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class OBWriteDomestic2
     {
@@ -1083,6 +1084,21 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(
+        typeof(Data2),
+        ValueMappingSourceMembers = new[]
+        {
+            (string?) null
+        },
+        ValueMappingDestinationMembers = new[]
+        {
+            "ConsentId"
+        },
+        ValueMappings = new[]
+        {
+            ValueMapping.SetNull
+        })
+    ]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Data
     {
@@ -2664,6 +2680,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(Initiation2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Initiation
     {
@@ -7142,6 +7159,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(InstructedAmount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class InstructedAmount
     {
@@ -7157,6 +7175,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(DebtorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DebtorAccount
     {
@@ -7183,6 +7202,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(CreditorAccount2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CreditorAccount
     {
@@ -7211,6 +7231,7 @@ namespace FinnovationLabs.OpenBanking.Library.BankApiModels.UkObRw.V3p1p11.NSwag
 
     }
 
+    [SourceApiEquivalent(typeof(RemittanceInformation2))]
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class RemittanceInformation
     {
