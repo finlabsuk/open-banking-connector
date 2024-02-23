@@ -36,6 +36,9 @@ public enum BankProfileEnum
     [EnumMember(Value = "Barclays_BarclaycardCommercialPayments")]
     Barclays_BarclaycardCommercialPayments,
 
+    [EnumMember(Value = "Danske_Sandbox")]
+    Danske_Sandbox,
+
     [EnumMember(Value = "Obie_Modelo")]
     Obie_Modelo,
 
@@ -147,11 +150,6 @@ public enum BankProfileEnum
     [EnumMember(Value = "Hsbc_HsbcNetUk")]
     Hsbc_HsbcNetUk,
 
-    [EnumMember(Value = "Danske")]
-    Danske,
-
-    [EnumMember(Value = "AlliedIrish")]
-    AlliedIrish,
 
     [EnumMember(Value = "Monzo_Monzo")]
     Monzo_Monzo,
@@ -163,8 +161,5 @@ public enum BankProfileEnum
     Revolut_Revolut,
 
     [EnumMember(Value = "Starling_Starling")]
-    Starling_Starling,
-
-    [EnumMember(Value = "Tsb")]
-    Tsb
+    Starling_Starling
 }

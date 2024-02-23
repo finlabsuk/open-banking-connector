@@ -9,7 +9,7 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 
 public enum DanskeBank
 {
-    Danske
+    Sandbox
 }
 
 public class Danske : BankGroupBase<DanskeBank, DanskeRegistrationGroup>
@@ -17,7 +17,7 @@ public class Danske : BankGroupBase<DanskeBank, DanskeRegistrationGroup>
     public Danske(BankGroupEnum bankGroupEnum) : base(bankGroupEnum) { }
 
     protected override ConcurrentDictionary<BankProfileEnum, DanskeBank> BankProfileToBank { get; } =
-        new() { [BankProfileEnum.Danske] = DanskeBank.Danske };
+        new() { [BankProfileEnum.Danske_Sandbox] = DanskeBank.Sandbox };
 
     public override DanskeRegistrationGroup? GetRegistrationGroup(
         DanskeBank bank,

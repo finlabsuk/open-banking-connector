@@ -147,7 +147,7 @@ public class BankProfileService : IBankProfileService
             BankProfileEnum.Barclays_Business => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_Corporate => BankGroupEnum.Barclays,
             BankProfileEnum.Barclays_BarclaycardCommercialPayments => BankGroupEnum.Barclays,
-            BankProfileEnum.Danske => BankGroupEnum.Danske,
+            BankProfileEnum.Danske_Sandbox => BankGroupEnum.Danske,
             BankProfileEnum.Hsbc_FirstDirect => BankGroupEnum.Hsbc,
             BankProfileEnum.Hsbc_Sandbox => BankGroupEnum.Hsbc,
             BankProfileEnum.Hsbc_UkBusiness => BankGroupEnum.Hsbc,

@@ -22,29 +22,14 @@ public class DanskeUiMethods : IBankUiMethods
         IPage page,
         BankUser bankUser)
     {
-        // Enter user ID and password
-        await page.FillAsync("#FakeLogonUserID", bankUser.UserNameOrNumber);
-        await page.FillAsync("#FakeLogonPassword", bankUser.Password);
+        await page.GetByLabel("User ID").FillAsync(bankUser.UserNameOrNumber);
+        await page.GetByLabel("Password").FillAsync(bankUser.Password);
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Continue" }).ClickAsync();
 
-        await page.WaitForTimeoutAsync(400); // workaround for clicks not registering sometimes
-        await page.ClickAsync("#FakeLogonContinueButton");
+        await page.Locator(".Radio__label").First.ClickAsync();
+        await page.GetByTestId("ContinueButton").ClickAsync();
 
-        // Seems necessary to ensure next selector found
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Select account
-        await page.ClickAsync(
-            "#\\31 55173-12471731 > .Account__controls > .Account__controls__control > .RadioButton > .RadioButton__label");
-
-        await page.WaitForTimeoutAsync(400); // workaround for clicks not registering sometimes
-        await page.ClickAsync("#confirm");
-
-        // Confirm consent
-        await page.WaitForTimeoutAsync(400); // workaround for clicks not registering sometimes
-        await page.ClickAsync("#ASHESignatureConfirmButton");
-
-        // Transfer back
-        await page.WaitForTimeoutAsync(400); // workaround for clicks not registering sometimes
-        await page.ClickAsync("#transfer");
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Confirm" }).ClickAsync();
+        await page.GetByTestId("ContinueButton").ClickAsync();
     }
 }
