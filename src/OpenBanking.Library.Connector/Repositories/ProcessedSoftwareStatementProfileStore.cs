@@ -15,12 +15,16 @@ public interface IProcessedSoftwareStatementProfileStore
 {
     Task<ProcessedSoftwareStatementProfile> GetAsync(string? id, string? overrideVariant = null);
 
-    void AddProfile(
+    ProcessedSoftwareStatementProfile GetProfile(
         ProcessedTransportCertificateProfile processedTransportCertificateProfile,
         ProcessedSigningCertificateProfile processedSigningCertificateProfile,
         SoftwareStatementProfile softwareStatementProfile,
         string id,
         IInstrumentationClient instrumentationClient);
+
+    void AddProfile(
+        ProcessedSoftwareStatementProfile defaultVariant,
+        string id);
 }
 
 public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatementProfileStore
@@ -289,23 +293,26 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         return processedSoftwareStatementProfile.ToTaskResult();
     }
 
-    public void AddProfile(
+    public ProcessedSoftwareStatementProfile GetProfile(
         ProcessedTransportCertificateProfile processedTransportCertificateProfile,
         ProcessedSigningCertificateProfile processedSigningCertificateProfile,
         SoftwareStatementProfile softwareStatementProfile,
         string id,
-        IInstrumentationClient instrumentationClient)
-    {
+        IInstrumentationClient instrumentationClient) =>
         // Create default variant
-        var defaultVariant =
-            new ProcessedSoftwareStatementProfile(
-                processedTransportCertificateProfile,
-                processedSigningCertificateProfile,
-                softwareStatementProfile,
-                id,
-                null,
-                instrumentationClient);
+        new(
+            processedTransportCertificateProfile,
+            processedSigningCertificateProfile,
+            softwareStatementProfile,
+            id,
+            null,
+            instrumentationClient);
 
+
+    public void AddProfile(
+        ProcessedSoftwareStatementProfile defaultVariant,
+        string id)
+    {
         ConcurrentDictionary<string, ProcessedSoftwareStatementProfile> overrideVariants =
             new(StringComparer.InvariantCultureIgnoreCase);
 

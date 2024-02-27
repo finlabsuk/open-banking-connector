@@ -13,6 +13,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,6 +39,8 @@ public class StartupTasksHostedService : IHostedService
 
     private readonly ILogger<StartupTasksHostedService> _logger;
 
+    private readonly IMemoryCache _memoryCache;
+
     // Ensures this set up at application start-up
     private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
 
@@ -55,7 +58,8 @@ public class StartupTasksHostedService : IHostedService
         IConfiguration configuration,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
-        ISecretProvider secretProvider)
+        ISecretProvider secretProvider,
+        IMemoryCache memoryCache)
     {
         _databaseSettingsProvider =
             databaseSettingsProvider ??
@@ -68,6 +72,7 @@ public class StartupTasksHostedService : IHostedService
         _httpClientSettings = httpClientSettingsProvider.GetSettings();
         _instrumentationClient = instrumentationClient;
         _secretProvider = secretProvider;
+        _memoryCache = memoryCache;
         _configurationRoot = (IConfigurationRoot) configuration;
     }
 
@@ -171,6 +176,7 @@ public class StartupTasksHostedService : IHostedService
                     _processedSoftwareStatementProfileStore,
                     _secretProvider,
                     _httpClientSettings,
+                    _memoryCache,
                     _instrumentationClient);
 
             await postgreSqlDbContext.SaveChangesAsync(cancellationToken);

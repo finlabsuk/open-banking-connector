@@ -13,7 +13,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ObSealCertificateCache = FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache.ObSealCertificate;
+using ObWacCertificateCache = FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache.ObWacCertificate;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
@@ -23,6 +25,7 @@ internal class SoftwareStatementPost : IObjectCreate<SoftwareStatement, Software
     private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _entityMethods;
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly IMemoryCache _memoryCache;
     private readonly IDbReadWriteEntityMethods<ObSealCertificateEntity> _obSealMethods;
     private readonly IDbReadWriteEntityMethods<ObWacCertificateEntity> _obWacMethods;
     private readonly ISecretProvider _secretProvider;
@@ -38,7 +41,8 @@ internal class SoftwareStatementPost : IObjectCreate<SoftwareStatement, Software
         IDbReadWriteEntityMethods<ObSealCertificateEntity> obSealMethods,
         IDbReadWriteEntityMethods<ObWacCertificateEntity> obWacMethods,
         ISecretProvider secretProvider,
-        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
+        IMemoryCache memoryCache)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _instrumentationClient = instrumentationClient;
@@ -46,6 +50,7 @@ internal class SoftwareStatementPost : IObjectCreate<SoftwareStatement, Software
         _obWacMethods = obWacMethods;
         _secretProvider = secretProvider;
         _httpClientSettingsProvider = httpClientSettingsProvider;
+        _memoryCache = memoryCache;
         _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _timeProvider = timeProvider;
         _entityMethods = entityMethods;
@@ -79,46 +84,27 @@ internal class SoftwareStatementPost : IObjectCreate<SoftwareStatement, Software
             request.DefaultFragmentRedirectUrl);
 
         // Load related OBWAC
-        HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
-        ObWacCertificateEntity obWac =
-            await _obWacMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == entity.DefaultObWacCertificateId) ??
-            throw new KeyNotFoundException(
-                $"No record found for ObWacCertificate with ID {entity.DefaultObWacCertificateId}.");
-        var processedTransportCertificateProfile = new ProcessedTransportCertificateProfile(
-            new TransportCertificateProfile
-            {
-                Active = true,
-                DisableTlsCertificateVerification = false,
-                AssociatedKey = _secretProvider.GetSecret(obWac.AssociatedKey.Name),
-                Certificate = obWac.Certificate
-            },
-            obWac.Id.ToString(),
-            null,
-            httpClientSettings.PooledConnectionLifetimeSeconds,
-            _instrumentationClient);
+        ProcessedTransportCertificateProfile processedTransportCertificateProfile =
+            await ObWacCertificateCache.GetValue(
+                entity.DefaultObWacCertificateId,
+                _httpClientSettingsProvider.GetSettings(),
+                _instrumentationClient,
+                _secretProvider,
+                _obWacMethods,
+                _memoryCache);
 
         // Load related OBSeal
-        ObSealCertificateEntity obSeal =
-            await _obSealMethods
-                .DbSetNoTracking
-                .SingleOrDefaultAsync(x => x.Id == entity.DefaultObSealCertificateId) ??
-            throw new KeyNotFoundException(
-                $"No record found for ObSealCertificate with ID {entity.DefaultObSealCertificateId}.");
-        var processedSigningCertificateProfile = new ProcessedSigningCertificateProfile(
-            new SigningCertificateProfile
-            {
-                Active = true,
-                AssociatedKey = _secretProvider.GetSecret(obSeal.AssociatedKey.Name),
-                AssociatedKeyId = obSeal.AssociatedKeyId,
-                Certificate = obSeal.Certificate
-            },
-            obSeal.Id.ToString(),
-            _instrumentationClient);
+        Guid obSealId = entity.DefaultObSealCertificateId;
+        ProcessedSigningCertificateProfile processedSigningCertificateProfile = await ObSealCertificateCache.GetValue(
+            obSealId,
+            _instrumentationClient,
+            _secretProvider,
+            _obSealMethods,
+            _memoryCache);
 
         // Add software statement to cache
-        _softwareStatementProfileRepo.AddProfile(
+        var softwareStatementIdString = entity.Id.ToString();
+        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile = _softwareStatementProfileRepo.GetProfile(
             processedTransportCertificateProfile,
             processedSigningCertificateProfile,
             new SoftwareStatementProfile
@@ -132,8 +118,10 @@ internal class SoftwareStatementPost : IObjectCreate<SoftwareStatement, Software
                 DefaultQueryRedirectUrl = entity.DefaultQueryRedirectUrl,
                 DefaultFragmentRedirectUrl = entity.DefaultFragmentRedirectUrl
             },
-            entity.Id.ToString(), // sets ID of profile added to store
+            softwareStatementIdString, // sets ID of profile added to store
             _instrumentationClient);
+
+        _softwareStatementProfileRepo.AddProfile(processedSoftwareStatementProfile, softwareStatementIdString);
 
         // Add entity
         await _entityMethods.AddAsync(entity);

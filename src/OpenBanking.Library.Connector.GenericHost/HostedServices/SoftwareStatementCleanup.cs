@@ -10,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServices;
 
@@ -20,6 +21,7 @@ public class SoftwareStatementCleanup
         IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
+        IMemoryCache memoryCache,
         IInstrumentationClient instrumentationClient)
     {
         List<SoftwareStatementEntity> softwareStatementList =
@@ -38,63 +40,50 @@ public class SoftwareStatementCleanup
         var obWacProfiles = new Dictionary<Guid, ProcessedTransportCertificateProfile?>();
         foreach (ObWacCertificateEntity obWac in obWacList)
         {
-            ProcessedTransportCertificateProfile? processedTransportCertificateProfile;
-            if (!secretProvider.TryGetSecret(obWac.AssociatedKey.Name, out string? associatedKey))
+            ProcessedTransportCertificateProfile? processedTransportCertificateProfile = null;
+            try
             {
-                processedTransportCertificateProfile = null;
-                string message =
-                    $"OBWAC transport certificate with ID {obWac.Id} " +
-                    $"specifies AssociatedKey with name {obWac.AssociatedKey.Name} " +
-                    "but no such value can be found. Any software statement(s) depending " +
-                    "on this OBWAC transport certificate will not be able to be used.";
-                instrumentationClient.Warning(message);
+                processedTransportCertificateProfile = ProcessedTransportCertificateProfile.GetProcessedObWac(
+                    secretProvider,
+                    httpClientSettings,
+                    instrumentationClient,
+                    obWac);
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                processedTransportCertificateProfile = new ProcessedTransportCertificateProfile(
-                    new TransportCertificateProfile
-                    {
-                        Active = true,
-                        DisableTlsCertificateVerification = false,
-                        Certificate = obWac.Certificate,
-                        AssociatedKey = associatedKey
-                    },
-                    obWac.Id.ToString(),
-                    null,
-                    httpClientSettings.PooledConnectionLifetimeSeconds,
-                    instrumentationClient);
+                instrumentationClient.Warning(ex.Message);
             }
             obWacProfiles[obWac.Id] = processedTransportCertificateProfile;
+            if (processedTransportCertificateProfile is not null)
+            {
+                memoryCache.Set(
+                    ProcessedTransportCertificateProfile.GetCacheKey(obWac.Id),
+                    processedTransportCertificateProfile);
+            }
         }
 
         var obSealProfiles = new Dictionary<Guid, ProcessedSigningCertificateProfile?>();
         foreach (ObSealCertificateEntity obSeal in obSealList)
         {
-            ProcessedSigningCertificateProfile? processedSigningCertificateProfile;
-            if (!secretProvider.TryGetSecret(obSeal.AssociatedKey.Name, out string? associatedKey))
+            ProcessedSigningCertificateProfile? processedSigningCertificateProfile = null;
+            try
             {
-                processedSigningCertificateProfile = null;
-                string message =
-                    $"OBSeal signing certificate with ID {obSeal.Id} " +
-                    $"specifies AssociatedKey with name {obSeal.AssociatedKey.Name} " +
-                    "but no such value can be found. Any software statement(s) depending " +
-                    "on this OBSeal signing certificate will not be able to be used.";
-                instrumentationClient.Warning(message);
+                processedSigningCertificateProfile = ProcessedSigningCertificateProfile.GetProcessedObSeal(
+                    secretProvider,
+                    instrumentationClient,
+                    obSeal);
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                processedSigningCertificateProfile = new ProcessedSigningCertificateProfile(
-                    new SigningCertificateProfile
-                    {
-                        Active = true,
-                        AssociatedKey = associatedKey,
-                        AssociatedKeyId = obSeal.AssociatedKeyId,
-                        Certificate = obSeal.Certificate
-                    },
-                    obSeal.Id.ToString(),
-                    instrumentationClient);
+                instrumentationClient.Warning(ex.Message);
             }
             obSealProfiles[obSeal.Id] = processedSigningCertificateProfile;
+            if (processedSigningCertificateProfile is not null)
+            {
+                memoryCache.Set(
+                    ProcessedSigningCertificateProfile.GetCacheKey(obSeal.Id),
+                    processedSigningCertificateProfile);
+            }
         }
 
         foreach (SoftwareStatementEntity softwareStatement in softwareStatementList)
@@ -114,22 +103,31 @@ public class SoftwareStatementCleanup
                 continue;
             }
 
+            // Add software statement to cache
+            var softwareStatementIdString = softwareStatement.Id.ToString(); // sets ID of profile added to store
+            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
+                processedSoftwareStatementProfileStore.GetProfile(
+                    obWacProfile,
+                    obSealProfile,
+                    new SoftwareStatementProfile
+                    {
+                        Active = true,
+                        OrganisationId = softwareStatement.OrganisationId,
+                        SoftwareId = softwareStatement.SoftwareId,
+                        SandboxEnvironment = softwareStatement.SandboxEnvironment,
+                        TransportCertificateProfileId =
+                            softwareStatement.DefaultObWacCertificateId.ToString(), // ignored
+                        SigningCertificateProfileId =
+                            softwareStatement.DefaultObSealCertificateId.ToString(), // ignored
+                        DefaultQueryRedirectUrl = softwareStatement.DefaultQueryRedirectUrl,
+                        DefaultFragmentRedirectUrl = softwareStatement.DefaultFragmentRedirectUrl
+                    },
+                    softwareStatementIdString, // sets ID of profile added to store
+                    instrumentationClient);
+
             processedSoftwareStatementProfileStore.AddProfile(
-                obWacProfile,
-                obSealProfile,
-                new SoftwareStatementProfile
-                {
-                    Active = true,
-                    OrganisationId = softwareStatement.OrganisationId,
-                    SoftwareId = softwareStatement.SoftwareId,
-                    SandboxEnvironment = softwareStatement.SandboxEnvironment,
-                    TransportCertificateProfileId = softwareStatement.DefaultObWacCertificateId.ToString(), // ignored
-                    SigningCertificateProfileId = softwareStatement.DefaultObSealCertificateId.ToString(), // ignored
-                    DefaultQueryRedirectUrl = softwareStatement.DefaultQueryRedirectUrl,
-                    DefaultFragmentRedirectUrl = softwareStatement.DefaultFragmentRedirectUrl
-                },
-                softwareStatement.Id.ToString(), // sets ID of profile added to store
-                instrumentationClient);
+                processedSoftwareStatementProfile,
+                softwareStatementIdString);
         }
         return Task.CompletedTask;
     }

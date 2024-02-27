@@ -57,8 +57,10 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbEntityMethodsClass<ObWacCertificateEntity>(),
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.HttpClientSettingsProvider,
+                _sharedContext.MemoryCache,
+                _sharedContext.SecretProvider));
 
     public ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery, ObSealCertificateResponse,
         ObSealCertificateResponse> ObSealCertificates =>
@@ -69,8 +71,9 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbEntityMethodsClass<ObSealCertificateEntity>(),
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation));
+                _sharedContext.Instrumentation,
+                _sharedContext.MemoryCache,
+                _sharedContext.SecretProvider));
 
     public ILocalEntityContext<SoftwareStatement, ISoftwareStatementPublicQuery, SoftwareStatementResponse,
         SoftwareStatementResponse> SoftwareStatements =>
@@ -86,5 +89,6 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbEntityMethodsClass<ObSealCertificateEntity>(),
                 _sharedContext.DbService.GetDbEntityMethodsClass<ObWacCertificateEntity>(),
                 _sharedContext.SecretProvider,
-                _sharedContext.HttpClientSettingsProvider));
+                _sharedContext.HttpClientSettingsProvider,
+                _sharedContext.MemoryCache));
 }

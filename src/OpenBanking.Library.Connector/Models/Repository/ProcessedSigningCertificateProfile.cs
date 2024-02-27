@@ -2,10 +2,12 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FluentValidation.Results;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -38,4 +40,33 @@ public class ProcessedSigningCertificateProfile
     public string SigningCertificate { get; } // pass-through for migration
 
     public string SigningCertificateId { get; } // pass-through for migration
+
+    public static ProcessedSigningCertificateProfile GetProcessedObSeal(
+        ISecretProvider secretProvider,
+        IInstrumentationClient instrumentationClient,
+        ObSealCertificateEntity obSeal)
+    {
+        if (!secretProvider.TryGetSecret(obSeal.AssociatedKey.Name, out string? associatedKey))
+        {
+            string message =
+                $"OBSeal signing certificate with ID {obSeal.Id} " +
+                $"specifies AssociatedKey with name {obSeal.AssociatedKey.Name} " +
+                "but no such value can be found. Any software statement(s) depending " +
+                "on this OBSeal signing certificate will not be able to be used.";
+            throw new KeyNotFoundException(message);
+        }
+        var processedSigningCertificateProfile = new ProcessedSigningCertificateProfile(
+            new SigningCertificateProfile
+            {
+                Active = true,
+                AssociatedKey = associatedKey,
+                AssociatedKeyId = obSeal.AssociatedKeyId,
+                Certificate = obSeal.Certificate
+            },
+            obSeal.Id.ToString(),
+            instrumentationClient);
+        return processedSigningCertificateProfile;
+    }
+
+    public static string GetCacheKey(Guid obSealId) => string.Join(":", "ob_seal_certificate", obSealId);
 }
