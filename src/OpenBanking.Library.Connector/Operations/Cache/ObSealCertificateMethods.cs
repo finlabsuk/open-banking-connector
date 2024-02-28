@@ -4,35 +4,35 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 
-public static class ObSealCertificate
+public class ObSealCertificateMethods(
+    IMemoryCache memoryCache,
+    ISecretProvider secretProvider,
+    IInstrumentationClient instrumentationClient,
+    IDbReadWriteEntityMethods<ObSealCertificateEntity> entityMethods)
 {
-    public static async Task<ProcessedSigningCertificateProfile> GetValue(
-        Guid obSealId,
-        IInstrumentationClient instrumentationClient,
-        ISecretProvider secretProvider,
-        IDbReadWriteEntityMethods<ObSealCertificateEntity> dbReadWriteEntityMethods,
-        IMemoryCache memoryCache)
+    public async Task<ObSealCertificate> GetValue(
+        Guid obSealId)
     {
-        string obSealCacheId = ProcessedSigningCertificateProfile.GetCacheKey(obSealId);
+        string obSealCacheId = ObSealCertificate.GetCacheKey(obSealId);
         var processedSigningCertificateProfile =
-            (await memoryCache.GetOrCreateAsync<ProcessedSigningCertificateProfile>(
+            (await memoryCache.GetOrCreateAsync<ObSealCertificate>(
                 obSealCacheId,
                 async cacheEntry =>
                 {
                     ObSealCertificateEntity obSeal =
-                        await dbReadWriteEntityMethods
+                        await entityMethods
                             .DbSetNoTracking
                             .SingleOrDefaultAsync(x => x.Id == obSealId) ??
                         throw new KeyNotFoundException($"No record found for ObSealCertificate with ID {obSealId}.");
-                    return ProcessedSigningCertificateProfile.GetProcessedObSeal(
+                    return ObSealCertificate.GetProcessedObSeal(
                         secretProvider,
                         instrumentationClient,
                         obSeal);

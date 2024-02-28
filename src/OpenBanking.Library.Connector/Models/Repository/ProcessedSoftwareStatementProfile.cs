@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -39,8 +40,8 @@ public class ProcessedSoftwareStatementProfile
     private readonly string? _defaultQueryRedirectUrl;
 
     public ProcessedSoftwareStatementProfile(
-        ProcessedTransportCertificateProfile processedTransportCertificateProfile,
-        ProcessedSigningCertificateProfile processedSigningCertificateProfile,
+        ObWacCertificate processedTransportCertificateProfile,
+        ObSealCertificate processedSigningCertificateProfile,
         SoftwareStatementProfile softwareStatementProfile,
         string id,
         string? overrideCase,

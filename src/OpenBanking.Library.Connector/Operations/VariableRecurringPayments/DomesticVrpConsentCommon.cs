@@ -6,9 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DomesticVrpConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments.DomesticVrpConsent;
@@ -19,23 +17,19 @@ internal class DomesticVrpConsentCommon
 {
     private readonly IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
     public DomesticVrpConsentCommon(
         IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
-        IInstrumentationClient instrumentationClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
+        IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
     }
 
     public async
         Task<(DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
-            ProcessedSoftwareStatementProfile
-            processedSoftwareStatementProfile)> GetDomesticVrpConsent(Guid consentId, bool dbTracking)
+            SoftwareStatementEntity softwareStatement)> GetDomesticVrpConsent(Guid consentId, bool dbTracking)
     {
         IQueryable<DomesticVrpConsent> db = dbTracking
             ? _entityMethods.DbSet
@@ -44,7 +38,7 @@ internal class DomesticVrpConsentCommon
         // Load DomesticVrpConsent and related
         DomesticVrpConsentPersisted persistedConsent =
             await db
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(o => o.DomesticVrpConsentAccessTokensNavigation)
                 .Include(o => o.DomesticVrpConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -59,15 +53,11 @@ internal class DomesticVrpConsentCommon
                 .DomesticVrpConsentRefreshTokensNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
-
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration.SoftwareStatementProfileOverride);
+        SoftwareStatementEntity softwareStatementEntity =
+            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            processedSoftwareStatementProfile);
+            softwareStatementEntity);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

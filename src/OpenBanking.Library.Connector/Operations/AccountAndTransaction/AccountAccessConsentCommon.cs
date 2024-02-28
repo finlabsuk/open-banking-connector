@@ -5,9 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using AccountAccessConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction.AccountAccessConsent;
@@ -17,20 +15,17 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.AccountAndTra
 internal class AccountAccessConsentCommon
 {
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _entityMethods;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
     public AccountAccessConsentCommon(
-        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
+        IDbReadWriteEntityMethods<AccountAccessConsentPersisted> entityMethods)
     {
         _entityMethods = entityMethods;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
     }
 
     public async
         Task<(AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             AccountAccessConsentAccessToken? storedAccessToken, AccountAccessConsentRefreshToken? storedRefreshToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetAccountAccessConsent(
+            SoftwareStatementEntity softwareStatement)> GetAccountAccessConsent(
             Guid consentId,
             bool dbTracking)
     {
@@ -40,7 +35,7 @@ internal class AccountAccessConsentCommon
 
         AccountAccessConsentPersisted persistedConsent =
             await db
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(o => o.AccountAccessConsentAccessTokensNavigation)
                 .Include(o => o.AccountAccessConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -56,14 +51,10 @@ internal class AccountAccessConsentCommon
                 .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
 
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration.SoftwareStatementProfileOverride);
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            processedSoftwareStatementProfile);
+            softwareStatement);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

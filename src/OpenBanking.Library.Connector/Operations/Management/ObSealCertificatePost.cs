@@ -8,14 +8,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
+using ObSealCertificateCached = FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management.ObSealCertificate;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
-internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate, ObSealCertificateResponse, LocalCreateParams>
+internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate,
+    ObSealCertificateResponse, LocalCreateParams>
 {
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IDbReadWriteEntityMethods<ObSealCertificateEntity> _entityMethods;
@@ -64,13 +65,13 @@ internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate, ObSealCe
             request.Certificate);
 
         // Add cache entry
-        ProcessedSigningCertificateProfile processedSigningCertificateProfile =
-            ProcessedSigningCertificateProfile.GetProcessedObSeal(
+        ObSealCertificateCached processedSigningCertificateProfile =
+            ObSealCertificateCached.GetProcessedObSeal(
                 _secretProvider,
                 _instrumentationClient,
                 entity);
         _memoryCache.Set(
-            ProcessedSigningCertificateProfile.GetCacheKey(entity.Id),
+            ObSealCertificateCached.GetCacheKey(entity.Id),
             processedSigningCertificateProfile);
 
         // Add entity

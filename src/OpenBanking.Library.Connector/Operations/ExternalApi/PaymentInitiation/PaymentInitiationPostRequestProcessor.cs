@@ -5,6 +5,7 @@
 using System.Text;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using Newtonsoft.Json;
@@ -16,20 +17,23 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
 {
     private readonly string _accessToken;
     private readonly IInstrumentationClient _instrumentationClient;
+    private readonly OBSealKey _obSealKey;
     private readonly string _orgId;
-    private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
+    private readonly SoftwareStatementEntity _softwareStatementEntity;
     private readonly bool _useB64;
 
     public PaymentInitiationPostRequestProcessor(
         string orgId,
         string accessToken,
         IInstrumentationClient instrumentationClient,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
+        SoftwareStatementEntity softwareStatement,
+        OBSealKey obSealKey)
     {
         _instrumentationClient = instrumentationClient;
         _orgId = orgId;
         _useB64 = false; // was true before PISP v3.1.4 which is no longer supported
-        _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
+        _softwareStatementEntity = softwareStatement;
+        _obSealKey = obSealKey;
         _accessToken = accessToken;
     }
 
@@ -47,12 +51,12 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
             GetJoseHeaders(
-                _processedSoftwareStatementProfile.OrganisationId,
-                _processedSoftwareStatementProfile.SoftwareId,
-                _processedSoftwareStatementProfile.OBSealKey.KeyId,
+                _softwareStatementEntity.OrganisationId,
+                _softwareStatementEntity.SoftwareId,
+                _obSealKey.KeyId,
                 _useB64),
             payloadJson,
-            _processedSoftwareStatementProfile.OBSealKey.Key,
+            _obSealKey.Key,
             null);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### JWT ({requestDescription})")

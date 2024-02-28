@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -28,7 +29,9 @@ internal class SharedContext : ISharedContext
         IMemoryCache memoryCache,
         IEncryptionKeyInfo encryptionKeyInfo,
         ISecretProvider secretProvider,
-        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
+        ObSealCertificateMethods obSealCertificateMethods,
+        ObWacCertificateMethods obWacCertificateMethods)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -41,6 +44,8 @@ internal class SharedContext : ISharedContext
         EncryptionKeyInfo = encryptionKeyInfo;
         SecretProvider = secretProvider;
         HttpClientSettingsProvider = httpClientSettingsProvider;
+        ObSealCertificateMethods = obSealCertificateMethods;
+        ObWacCertificateMethods = obWacCertificateMethods;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -55,4 +60,8 @@ internal class SharedContext : ISharedContext
     public IApiVariantMapper ApiVariantMapper { get; }
     public ISecretProvider SecretProvider { get; }
     public ISettingsProvider<HttpClientSettings> HttpClientSettingsProvider { get; }
+
+    public ObSealCertificateMethods ObSealCertificateMethods { get; }
+
+    public ObWacCertificateMethods ObWacCertificateMethods { get; }
 }

@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -14,6 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTran
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
@@ -29,19 +31,25 @@ internal class
     private readonly ConsentAccessTokenGet _consentAccessTokenGet;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public TransactionGet(
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         ConsentAccessTokenGet consentAccessTokenGet,
         AccountAccessConsentCommon accountAccessConsentCommon,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
         _consentAccessTokenGet = consentAccessTokenGet;
         _accountAccessConsentCommon = accountAccessConsentCommon;
         _bankProfileService = bankProfileService;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
     }
 
     public async Task<(TransactionsResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
@@ -55,7 +63,7 @@ internal class
         (AccountAccessConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 AccountAccessConsentAccessToken? storedAccessToken,
                 AccountAccessConsentRefreshToken? storedRefreshToken,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                SoftwareStatementEntity softwareStatement) =
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
         // Get bank profile
@@ -71,6 +79,15 @@ internal class
         string bankFinancialId = bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
         // Get access token
         string bankTokenIssuerClaim = AccountAccessConsentCommon.GetBankTokenIssuerClaim(
             customBehaviour,
@@ -85,6 +102,8 @@ internal class
                 storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
+                apiClient,
+                obSealKey,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
@@ -125,7 +144,7 @@ internal class
             await apiRequests.GetAsync(
                 apiRequestUrl,
                 jsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
+                apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 

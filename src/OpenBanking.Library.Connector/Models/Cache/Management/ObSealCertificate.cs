@@ -8,13 +8,14 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FluentValidation.Results;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 
-public class ProcessedSigningCertificateProfile
+public class ObSealCertificate
 {
-    public ProcessedSigningCertificateProfile(
+    public ObSealCertificate(
         SigningCertificateProfile signingCertificateProfile,
         string id,
         IInstrumentationClient instrumentationClient)
@@ -41,7 +42,9 @@ public class ProcessedSigningCertificateProfile
 
     public string SigningCertificateId { get; } // pass-through for migration
 
-    public static ProcessedSigningCertificateProfile GetProcessedObSeal(
+    public OBSealKey ObSealKey => new(AssociatedKeyId, AssociatedKey);
+
+    public static ObSealCertificate GetProcessedObSeal(
         ISecretProvider secretProvider,
         IInstrumentationClient instrumentationClient,
         ObSealCertificateEntity obSeal)
@@ -55,7 +58,7 @@ public class ProcessedSigningCertificateProfile
                 "on this OBSeal signing certificate will not be able to be used.";
             throw new KeyNotFoundException(message);
         }
-        var processedSigningCertificateProfile = new ProcessedSigningCertificateProfile(
+        var processedSigningCertificateProfile = new ObSealCertificate(
             new SigningCertificateProfile
             {
                 Active = true,

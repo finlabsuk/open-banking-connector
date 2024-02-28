@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -16,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiat
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -52,6 +54,8 @@ internal class
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ITimeProvider _timeProvider;
 
     public DomesticPaymentConsentOperations(
@@ -64,16 +68,19 @@ internal class
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
         ConsentAccessTokenGet consentAccessTokenGet,
-        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods)
+        IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods)
     {
         _consentEntityMethods = entityMethods;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _consentAccessTokenGet = consentAccessTokenGet;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
         _domesticPaymentConsentCommon = new DomesticPaymentConsentCommon(
             entityMethods,
-            instrumentationClient,
-            softwareStatementProfileRepo);
+            instrumentationClient);
         _mapper = mapper;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
@@ -111,7 +118,7 @@ internal class
         {
             // Load BankRegistration and related
             (BankRegistrationEntity bankRegistration, string tokenEndpoint,
-                    ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                    SoftwareStatementEntity softwareStatement) =
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
@@ -124,11 +131,20 @@ internal class
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
             string bankFinancialId = bankProfile.FinancialId;
 
+            // Get IApiClient
+            IApiClient apiClient = bankRegistration.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     bankRegistration.ExternalApiId,
@@ -136,7 +152,7 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient);
+                    apiClient);
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -147,7 +163,8 @@ internal class
                     paymentInitiationApi.ApiVersion,
                     bankFinancialId,
                     ccGrantAccessToken,
-                    processedSoftwareStatementProfile);
+                    softwareStatement,
+                    obSealKey);
             var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
@@ -155,7 +172,7 @@ internal class
                     request.ExternalApiRequest,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
-                    processedSoftwareStatementProfile.ApiClient,
+                    apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
             externalApiId = externalApiResponse.Data.ConsentId;
@@ -276,7 +293,7 @@ internal class
 
         // Load DomesticPaymentConsent and related
         (DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                SoftwareStatementEntity softwareStatement) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, false);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -295,11 +312,20 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
+            // Get IApiClient
+            IApiClient apiClient = bankRegistration.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
             // Get client credentials grant access token
             string ccGrantAccessToken =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     ClientCredentialsGrantScope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     bankRegistration.TokenEndpoint,
                     bankRegistration.ExternalApiId,
@@ -307,7 +333,7 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    processedSoftwareStatementProfile.ApiClient);
+                    apiClient);
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -316,7 +342,8 @@ internal class
                     paymentInitiationApi.ApiVersion,
                     bankFinancialId,
                     ccGrantAccessToken,
-                    processedSoftwareStatementProfile);
+                    softwareStatement,
+                    obSealKey);
             var externalApiUrl = new Uri(
                 paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
             (externalApiResponse,
@@ -324,7 +351,7 @@ internal class
                 await apiRequests.GetAsync(
                     externalApiUrl,
                     responseJsonSerializerSettings,
-                    processedSoftwareStatementProfile.ApiClient,
+                    apiClient,
                     _mapper);
             nonErrorMessages.AddRange(newNonErrorMessages);
 
@@ -398,7 +425,7 @@ internal class
         (DomesticPaymentConsentPersisted persistedObject, BankRegistrationEntity bankRegistration,
                 DomesticPaymentConsentAccessToken? storedAccessToken,
                 DomesticPaymentConsentRefreshToken? storedRefreshToken,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                SoftwareStatementEntity softwareStatement) =
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(readParams.Id, true);
         string externalApiConsentId = persistedObject.ExternalApiId;
 
@@ -415,6 +442,15 @@ internal class
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
         // Get access token
         string bankTokenIssuerClaim = DomesticPaymentConsentCommon.GetBankTokenIssuerClaim(
             customBehaviour,
@@ -429,6 +465,8 @@ internal class
                 storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedObject.BankRegistrationNavigation.TokenEndpoint,
+                apiClient,
+                obSealKey,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
@@ -449,7 +487,7 @@ internal class
             await apiRequests.GetAsync(
                 externalApiUrl,
                 responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
+                apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
@@ -465,7 +503,8 @@ internal class
         PaymentInitiationApiVersion paymentInitiationApiVersion,
         string bankFinancialId,
         string accessToken,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =>
+        SoftwareStatementEntity softwareStatement,
+        OBSealKey obSealKey) =>
         paymentInitiationApiVersion switch
         {
             PaymentInitiationApiVersion.Version3p1p4 => new ApiRequests<
@@ -479,7 +518,8 @@ internal class
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    processedSoftwareStatementProfile)),
+                    softwareStatement,
+                    obSealKey)),
             PaymentInitiationApiVersion.VersionPublic => new ApiRequests<
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5,
@@ -491,7 +531,8 @@ internal class
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    processedSoftwareStatementProfile)),
+                    softwareStatement,
+                    obSealKey)),
             _ => throw new ArgumentOutOfRangeException($"PISP API version {paymentInitiationApiVersion} not supported.")
         };
 

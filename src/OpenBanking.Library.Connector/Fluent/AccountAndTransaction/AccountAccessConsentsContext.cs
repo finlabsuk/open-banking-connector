@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
@@ -67,8 +66,8 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentAccessToken>(),
-            sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentRefreshToken>());
+            _sharedContext.ObWacCertificateMethods,
+            _sharedContext.ObSealCertificateMethods);
         CreateObject = accountAccessConsentOperations;
         ReadObject = accountAccessConsentOperations;
         DeleteObject =

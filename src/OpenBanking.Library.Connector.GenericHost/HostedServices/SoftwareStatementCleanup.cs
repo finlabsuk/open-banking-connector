@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -37,13 +38,13 @@ public class SoftwareStatementCleanup
             postgreSqlDbContext
                 .ObSealCertificate;
 
-        var obWacProfiles = new Dictionary<Guid, ProcessedTransportCertificateProfile?>();
+        var obWacProfiles = new Dictionary<Guid, ObWacCertificate?>();
         foreach (ObWacCertificateEntity obWac in obWacList)
         {
-            ProcessedTransportCertificateProfile? processedTransportCertificateProfile = null;
+            ObWacCertificate? processedTransportCertificateProfile = null;
             try
             {
-                processedTransportCertificateProfile = ProcessedTransportCertificateProfile.GetProcessedObWac(
+                processedTransportCertificateProfile = ObWacCertificate.GetProcessedObWac(
                     secretProvider,
                     httpClientSettings,
                     instrumentationClient,
@@ -57,18 +58,18 @@ public class SoftwareStatementCleanup
             if (processedTransportCertificateProfile is not null)
             {
                 memoryCache.Set(
-                    ProcessedTransportCertificateProfile.GetCacheKey(obWac.Id),
+                    ObWacCertificate.GetCacheKey(obWac.Id),
                     processedTransportCertificateProfile);
             }
         }
 
-        var obSealProfiles = new Dictionary<Guid, ProcessedSigningCertificateProfile?>();
+        var obSealProfiles = new Dictionary<Guid, ObSealCertificate?>();
         foreach (ObSealCertificateEntity obSeal in obSealList)
         {
-            ProcessedSigningCertificateProfile? processedSigningCertificateProfile = null;
+            ObSealCertificate? processedSigningCertificateProfile = null;
             try
             {
-                processedSigningCertificateProfile = ProcessedSigningCertificateProfile.GetProcessedObSeal(
+                processedSigningCertificateProfile = ObSealCertificate.GetProcessedObSeal(
                     secretProvider,
                     instrumentationClient,
                     obSeal);
@@ -81,16 +82,16 @@ public class SoftwareStatementCleanup
             if (processedSigningCertificateProfile is not null)
             {
                 memoryCache.Set(
-                    ProcessedSigningCertificateProfile.GetCacheKey(obSeal.Id),
+                    ObSealCertificate.GetCacheKey(obSeal.Id),
                     processedSigningCertificateProfile);
             }
         }
 
         foreach (SoftwareStatementEntity softwareStatement in softwareStatementList)
         {
-            ProcessedTransportCertificateProfile? obWacProfile =
+            ObWacCertificate? obWacProfile =
                 obWacProfiles[softwareStatement.DefaultObWacCertificateId];
-            ProcessedSigningCertificateProfile? obSealProfile =
+            ObSealCertificate? obSealProfile =
                 obSealProfiles[softwareStatement.DefaultObSealCertificateId];
             if (obWacProfile is null ||
                 obSealProfile is null)

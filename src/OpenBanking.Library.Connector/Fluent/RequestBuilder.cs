@@ -13,6 +13,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -67,6 +69,8 @@ public class RequestBuilder : IRequestBuilder
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _logger;
     private readonly IMemoryCache _memoryCache;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ISecretProvider _secretProvider;
     private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
     private readonly ITimeProvider _timeProvider;
@@ -95,6 +99,17 @@ public class RequestBuilder : IRequestBuilder
         _logger = logger.ArgNotNull(nameof(logger));
         _apiClient = apiClient.ArgNotNull(nameof(apiClient));
         _memoryCache = memoryCache.ArgNotNull(nameof(memoryCache));
+        _obSealCertificateMethods = new ObSealCertificateMethods(
+            memoryCache,
+            secretProvider,
+            _logger,
+            dbService.GetDbEntityMethodsClass<ObSealCertificateEntity>());
+        _obWacCertificateMethods = new ObWacCertificateMethods(
+            httpClientSettingsProvider.GetSettings(),
+            memoryCache,
+            secretProvider,
+            logger,
+            dbService.GetDbEntityMethodsClass<ObWacCertificateEntity>());
     }
 
     public IManagementContext Management =>
@@ -128,7 +143,9 @@ public class RequestBuilder : IRequestBuilder
             _memoryCache,
             _encryptionKeyInfo,
             _secretProvider,
-            _httpClientSettingsProvider) { Created = _timeProvider.GetUtcNow() };
+            _httpClientSettingsProvider,
+            _obSealCertificateMethods,
+            _obWacCertificateMethods) { Created = _timeProvider.GetUtcNow() };
         return context;
     }
 }

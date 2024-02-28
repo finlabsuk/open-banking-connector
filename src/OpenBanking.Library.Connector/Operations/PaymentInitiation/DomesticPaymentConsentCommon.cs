@@ -6,9 +6,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DomesticPaymentConsentPersisted =
     FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation.DomesticPaymentConsent;
@@ -19,23 +17,20 @@ internal class DomesticPaymentConsentCommon
 {
     private readonly IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> _entityMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
     public DomesticPaymentConsentCommon(
         IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
-        IInstrumentationClient instrumentationClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
+        IInstrumentationClient instrumentationClient)
     {
         _entityMethods = entityMethods;
         _instrumentationClient = instrumentationClient;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
     }
 
     public async
         Task<(DomesticPaymentConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
             DomesticPaymentConsentAccessToken? storedAccessToken,
             DomesticPaymentConsentRefreshToken? storedRefreshToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)> GetDomesticPaymentConsent(
+            SoftwareStatementEntity softwareStatement)> GetDomesticPaymentConsent(
             Guid consentId,
             bool dbTracking)
     {
@@ -46,7 +41,7 @@ internal class DomesticPaymentConsentCommon
         // Load DomesticPaymentConsent and related
         DomesticPaymentConsentPersisted persistedConsent =
             await db
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(o => o.DomesticPaymentConsentAccessTokensNavigation)
                 .Include(o => o.DomesticPaymentConsentRefreshTokensNavigation)
                 .AsSplitQuery() // Load collections in separate SQL queries
@@ -61,15 +56,11 @@ internal class DomesticPaymentConsentCommon
                 .DomesticPaymentConsentRefreshTokensNavigation
                 .SingleOrDefault(x => !x.IsDeleted);
         BankRegistrationEntity bankRegistration = persistedConsent.BankRegistrationNavigation;
-
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration.SoftwareStatementProfileOverride);
+        SoftwareStatementEntity softwareStatementEntity =
+            persistedConsent.BankRegistrationNavigation.SoftwareStatementNavigation!;
 
         return (persistedConsent, bankRegistration, storedAccessToken, storedRefreshToken,
-            processedSoftwareStatementProfile);
+            softwareStatementEntity);
     }
 
     public static string GetBankTokenIssuerClaim(CustomBehaviourClass? customBehaviour, string issuerUrl) =>

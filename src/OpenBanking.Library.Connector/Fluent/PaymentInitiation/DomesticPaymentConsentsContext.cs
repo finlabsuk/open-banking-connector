@@ -64,7 +64,6 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             new ConsentAccessTokenGet(
-                _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 new GrantPost(
@@ -75,7 +74,9 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.Instrumentation,
                 _sharedContext.MemoryCache,
                 _sharedContext.EncryptionKeyInfo),
-            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>());
+            sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
+            _sharedContext.ObWacCertificateMethods,
+            _sharedContext.ObSealCertificateMethods);
         CreateObject = domesticPaymentConsentOperations;
         ReadObject = domesticPaymentConsentOperations;
         ReadFundsConfirmationObject = domesticPaymentConsentOperations;

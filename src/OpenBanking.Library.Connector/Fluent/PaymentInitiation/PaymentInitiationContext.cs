@@ -48,7 +48,6 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
             var domesticPayment = new DomesticPaymentOperations(
                 _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsentPersisted>(),
                 _sharedContext.Instrumentation,
-                _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.ApiVariantMapper,
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
@@ -58,7 +57,6 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                     _sharedContext.MemoryCache,
                     _sharedContext.TimeProvider),
                 new ConsentAccessTokenGet(
-                    _sharedContext.SoftwareStatementProfileCachedRepo,
                     _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                     _sharedContext.TimeProvider,
                     new GrantPost(
@@ -69,7 +67,9 @@ internal class PaymentInitiationContext : IPaymentInitiationContext
                     _sharedContext.Instrumentation,
                     _sharedContext.MemoryCache,
                     _sharedContext.EncryptionKeyInfo),
-                _sharedContext.BankProfileService);
+                _sharedContext.BankProfileService,
+                _sharedContext.ObWacCertificateMethods,
+                _sharedContext.ObSealCertificateMethods);
             return new ExternalEntityContextInternal<DomesticPaymentRequest, DomesticPaymentResponse>(
                 domesticPayment,
                 domesticPayment);

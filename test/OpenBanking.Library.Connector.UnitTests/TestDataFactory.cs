@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -32,7 +33,9 @@ internal static class TestDataFactory
             Substitute.For<IMemoryCache>(),
             Substitute.For<IEncryptionKeyInfo>(),
             Substitute.For<ISecretProvider>(),
-            Substitute.For<ISettingsProvider<HttpClientSettings>>());
+            Substitute.For<ISettingsProvider<HttpClientSettings>>(),
+            Substitute.For<ObSealCertificateMethods>(),
+            Substitute.For<ObWacCertificateMethods>());
 
 
     public static RequestBuilder CreateMockRequestBuilder() =>

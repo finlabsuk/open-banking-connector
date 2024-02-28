@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
@@ -33,4 +34,8 @@ public interface ISharedContext
     IMemoryCache MemoryCache { get; }
     ISecretProvider SecretProvider { get; }
     ISettingsProvider<HttpClientSettings> HttpClientSettingsProvider { get; }
+
+    ObSealCertificateMethods ObSealCertificateMethods { get; }
+
+    ObWacCertificateMethods ObWacCertificateMethods { get; }
 }

@@ -9,14 +9,15 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.Extensions.Caching.Memory;
+using ObWacCertificateCached = FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management.ObWacCertificate;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
-internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate, ObWacCertificateResponse, LocalCreateParams>
+internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
+    ObWacCertificateResponse, LocalCreateParams>
 {
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IDbReadWriteEntityMethods<ObWacCertificateEntity> _entityMethods;
@@ -68,14 +69,14 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate, ObWacCerti
 
         // Add cache entry
         HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
-        ProcessedTransportCertificateProfile processedTransportCertificateProfile =
-            ProcessedTransportCertificateProfile.GetProcessedObWac(
+        ObWacCertificateCached processedTransportCertificateProfile =
+            ObWacCertificateCached.GetProcessedObWac(
                 _secretProvider,
                 httpClientSettings,
                 _instrumentationClient,
                 entity);
         _memoryCache.Set(
-            ProcessedTransportCertificateProfile.GetCacheKey(entity.Id),
+            ObWacCertificateCached.GetCacheKey(entity.Id),
             processedTransportCertificateProfile);
 
         // Add entity

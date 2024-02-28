@@ -4,37 +4,37 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 
-public static class ObWacCertificate
+public class ObWacCertificateMethods(
+    HttpClientSettings httpClientSettings,
+    IMemoryCache memoryCache,
+    ISecretProvider secretProvider,
+    IInstrumentationClient instrumentationClient,
+    IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods)
 {
-    public static async Task<ProcessedTransportCertificateProfile> GetValue(
-        Guid obWacId,
-        HttpClientSettings httpClientSettings,
-        IInstrumentationClient instrumentationClient,
-        ISecretProvider secretProvider,
-        IDbReadWriteEntityMethods<ObWacCertificateEntity> dbReadWriteEntityMethods,
-        IMemoryCache memoryCache)
+    public async Task<ObWacCertificate> GetValue(
+        Guid obWacId)
     {
-        string obWacCacheId = ProcessedTransportCertificateProfile.GetCacheKey(obWacId);
+        string obWacCacheId = ObWacCertificate.GetCacheKey(obWacId);
         var processedTransportCertificateProfile =
-            (await memoryCache.GetOrCreateAsync<ProcessedTransportCertificateProfile>(
+            (await memoryCache.GetOrCreateAsync<ObWacCertificate>(
                 obWacCacheId,
                 async cacheEntry =>
                 {
                     ObWacCertificateEntity obWac =
-                        await dbReadWriteEntityMethods
+                        await entityMethods
                             .DbSetNoTracking
                             .SingleOrDefaultAsync(x => x.Id == obWacId) ??
                         throw new KeyNotFoundException($"No record found for ObWacCertificate with ID {obWacId}.");
-                    return ProcessedTransportCertificateProfile.GetProcessedObWac(
+                    return ObWacCertificate.GetProcessedObWac(
                         secretProvider,
                         httpClientSettings,
                         instrumentationClient,

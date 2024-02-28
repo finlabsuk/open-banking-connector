@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 
@@ -16,8 +17,8 @@ public interface IProcessedSoftwareStatementProfileStore
     Task<ProcessedSoftwareStatementProfile> GetAsync(string? id, string? overrideVariant = null);
 
     ProcessedSoftwareStatementProfile GetProfile(
-        ProcessedTransportCertificateProfile processedTransportCertificateProfile,
-        ProcessedSigningCertificateProfile processedSigningCertificateProfile,
+        ObWacCertificate processedTransportCertificateProfile,
+        ObSealCertificate processedSigningCertificateProfile,
         SoftwareStatementProfile softwareStatementProfile,
         string id,
         IInstrumentationClient instrumentationClient);
@@ -45,7 +46,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         SigningCertificateProfilesSettings signingCertificateProfilesSettings =
             signingCertificateProfilesSettingsProvider.GetSettings();
         signingCertificateProfilesSettings.ArgNotNull(nameof(signingCertificateProfilesSettings));
-        ConcurrentDictionary<string, ProcessedSigningCertificateProfile> scpCache =
+        ConcurrentDictionary<string, ObSealCertificate> scpCache =
             new(StringComparer.InvariantCultureIgnoreCase);
         foreach ((string scpId, SigningCertificateProfile inputSigningProfile) in
                  signingCertificateProfilesSettings)
@@ -65,7 +66,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
             // Get default variant (no overrides)
             SigningCertificateProfile defaultTransportCertificateProfile =
                 inputSigningProfile;
-            var defaultVariant = new ProcessedSigningCertificateProfile(
+            var defaultVariant = new ObSealCertificate(
                 defaultTransportCertificateProfile,
                 scpId,
                 instrumentationClient);
@@ -98,7 +99,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
             // Get default variant
             TransportCertificateProfile defaultTransportCertificateProfile =
                 unresolvedProfile.ApplyOverrides(null);
-            var defaultVariant = new ProcessedTransportCertificateProfile(
+            var defaultVariant = new ObWacCertificate(
                 defaultTransportCertificateProfile,
                 tcpId,
                 null,
@@ -110,13 +111,13 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 new HashSet<string>(unresolvedProfile.DisableTlsCertificateVerificationOverrides.Keys);
 
             // Get override variants
-            ConcurrentDictionary<string, ProcessedTransportCertificateProfile> overrideVariants =
+            ConcurrentDictionary<string, ObWacCertificate> overrideVariants =
                 new(StringComparer.InvariantCultureIgnoreCase);
             foreach (string overrideCase in overrideCases)
             {
                 TransportCertificateProfile overrideTransportCertificateProfile = unresolvedProfile
                     .ApplyOverrides(overrideCase);
-                overrideVariants[overrideCase] = new ProcessedTransportCertificateProfile(
+                overrideVariants[overrideCase] = new ObWacCertificate(
                     overrideTransportCertificateProfile,
                     tcpId,
                     overrideCase,
@@ -165,13 +166,13 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 throw new KeyNotFoundException(message1);
             }
 
-            ProcessedTransportCertificateProfile defaultProcessedTransportCertificateProfile =
+            ObWacCertificate defaultProcessedTransportCertificateProfile =
                 defaultProcessedTransportCertificateProfiles.DefaultVariant;
 
             // Get signing cert profile
             if (!scpCache.TryGetValue(
                     defaultSoftwareStatementProfile.SigningCertificateProfileId,
-                    out ProcessedSigningCertificateProfile? defaultProcessedSigningCertificateProfile))
+                    out ObSealCertificate? defaultProcessedSigningCertificateProfile))
             {
                 string message1 =
                     "Configuration/secrets error: " +
@@ -224,7 +225,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
 
                 if (!overrideResolvedTransportCertificateProfiles.OverrideVariants.TryGetValue(
                         overrideCase,
-                        out ProcessedTransportCertificateProfile? overrideTransportCertificateProfile))
+                        out ObWacCertificate? overrideTransportCertificateProfile))
                 {
                     overrideTransportCertificateProfile =
                         overrideResolvedTransportCertificateProfiles.DefaultVariant;
@@ -233,7 +234,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 // Get signing cert profile
                 if (!scpCache.TryGetValue(
                         overrideSoftwareStatementProfile.SigningCertificateProfileId,
-                        out ProcessedSigningCertificateProfile? overrideProcessedSigningCertificateProfile))
+                        out ObSealCertificate? overrideProcessedSigningCertificateProfile))
                 {
                     string message1 =
                         "Configuration/secrets error: " +
@@ -294,8 +295,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
     }
 
     public ProcessedSoftwareStatementProfile GetProfile(
-        ProcessedTransportCertificateProfile processedTransportCertificateProfile,
-        ProcessedSigningCertificateProfile processedSigningCertificateProfile,
+        ObWacCertificate processedTransportCertificateProfile,
+        ObSealCertificate processedSigningCertificateProfile,
         SoftwareStatementProfile softwareStatementProfile,
         string id,
         IInstrumentationClient instrumentationClient) =>

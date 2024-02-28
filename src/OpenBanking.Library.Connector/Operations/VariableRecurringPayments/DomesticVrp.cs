@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -15,10 +16,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurr
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using DomesticVrpConsentPersisted =
@@ -39,18 +40,21 @@ internal class DomesticVrp :
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ITimeProvider _timeProvider;
 
     public DomesticVrp(
         IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
         IInstrumentationClient instrumentationClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IApiVariantMapper mapper,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IGrantPost grantPost,
         ConsentAccessTokenGet consentAccessTokenGet,
-        IBankProfileService bankProfileService)
+        IBankProfileService bankProfileService,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods)
     {
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
@@ -58,10 +62,11 @@ internal class DomesticVrp :
         _grantPost = grantPost;
         _consentAccessTokenGet = consentAccessTokenGet;
         _bankProfileService = bankProfileService;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
         _domesticVrpConsentCommon = new DomesticVrpConsentCommon(
             entityMethods,
-            instrumentationClient,
-            softwareStatementProfileRepo);
+            instrumentationClient);
     }
 
     private string ClientCredentialsGrantScope => "payments";
@@ -78,7 +83,7 @@ internal class DomesticVrp :
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration,
                 DomesticVrpConsentAccessToken? storedAccessToken, DomesticVrpConsentRefreshToken? storedRefreshToken,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                SoftwareStatementEntity softwareStatement) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(request.DomesticVrpConsentId, true);
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
@@ -96,6 +101,15 @@ internal class DomesticVrp :
         string bankFinancialId = bankProfile.FinancialId;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
 
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
         // Get access token
         string bankTokenIssuerClaim = DomesticVrpConsentCommon.GetBankTokenIssuerClaim(
             customBehaviour,
@@ -110,6 +124,8 @@ internal class DomesticVrp :
                 storedRefreshToken,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
+                apiClient,
+                obSealKey,
                 supportsSca,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
@@ -125,7 +141,8 @@ internal class DomesticVrp :
                 variableRecurringPaymentsApi.ApiVersion,
                 bankFinancialId,
                 accessToken,
-                processedSoftwareStatementProfile);
+                softwareStatement,
+                obSealKey);
         var externalApiUrl = new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId);
         if (string.IsNullOrEmpty(request.ExternalApiRequest.Data.ConsentId))
         {
@@ -145,7 +162,7 @@ internal class DomesticVrp :
                 request.ExternalApiRequest,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
+                apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
@@ -163,7 +180,7 @@ internal class DomesticVrp :
 
         // Load DomesticVrpConsent and related
         (DomesticVrpConsentPersisted persistedConsent, BankRegistrationEntity bankRegistration, _, _,
-                ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =
+                SoftwareStatementEntity softwareStatement) =
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, false);
 
         // Get bank profile
@@ -178,11 +195,20 @@ internal class DomesticVrp :
         string bankFinancialId = bankProfile.FinancialId;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
         // Get client credentials grant access token
         string ccGrantAccessToken =
             await _grantPost.PostClientCredentialsGrantAsync(
                 ClientCredentialsGrantScope,
-                processedSoftwareStatementProfile.OBSealKey,
+                obSealKey,
                 tokenEndpointAuthMethod,
                 persistedConsent.BankRegistrationNavigation.TokenEndpoint,
                 persistedConsent.BankRegistrationNavigation.ExternalApiId,
@@ -190,7 +216,7 @@ internal class DomesticVrp :
                 persistedConsent.BankRegistrationNavigation.Id.ToString(),
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
-                processedSoftwareStatementProfile.ApiClient);
+                apiClient);
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -199,7 +225,8 @@ internal class DomesticVrp :
                 variableRecurringPaymentsApi.ApiVersion,
                 bankFinancialId,
                 ccGrantAccessToken,
-                processedSoftwareStatementProfile);
+                softwareStatement,
+                obSealKey);
         var externalApiUrl =
             new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalId}");
         (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
@@ -207,7 +234,7 @@ internal class DomesticVrp :
             await apiRequests.GetAsync(
                 externalApiUrl,
                 responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
+                apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
 
@@ -222,7 +249,8 @@ internal class DomesticVrp :
             VariableRecurringPaymentsApiVersion variableRecurringPaymentsApiVersion,
             string bankFinancialId,
             string accessToken,
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile) =>
+            SoftwareStatementEntity softwareStatement,
+            OBSealKey obSealKey) =>
         variableRecurringPaymentsApiVersion switch
         {
             VariableRecurringPaymentsApiVersion.VersionPublic => new ApiRequests<
@@ -236,7 +264,8 @@ internal class DomesticVrp :
                     bankFinancialId,
                     accessToken,
                     _instrumentationClient,
-                    processedSoftwareStatementProfile)),
+                    softwareStatement,
+                    obSealKey)),
             _ => throw new ArgumentOutOfRangeException(
                 $"Variable Recurring Payments API version {variableRecurringPaymentsApiVersion} not supported.")
         };

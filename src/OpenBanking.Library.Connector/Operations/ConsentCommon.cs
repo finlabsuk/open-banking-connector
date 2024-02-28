@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
-using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -37,24 +36,19 @@ internal class
 
     public async
         Task<(BankRegistrationEntity bankRegistration, string tokenEndpoint,
-            ProcessedSoftwareStatementProfile
-            processedSoftwareStatementProfile)> GetBankRegistration(Guid bankRegistrationId)
+            SoftwareStatementEntity softwareStatement)> GetBankRegistration(Guid bankRegistrationId)
     {
         // Load BankRegistration
         BankRegistrationEntity bankRegistration =
             await _bankRegistrationMethods
                 .DbSetNoTracking
+                .Include(o => o.SoftwareStatementNavigation)
                 .SingleOrDefaultAsync(x => x.Id == bankRegistrationId) ??
             throw new KeyNotFoundException(
                 $"No record found for BankRegistrationId {bankRegistrationId} specified by request.");
         string tokenEndpoint = bankRegistration.TokenEndpoint;
+        SoftwareStatementEntity softwareStatementEntity = bankRegistration.SoftwareStatementNavigation!;
 
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration.SoftwareStatementProfileOverride);
-
-        return (bankRegistration, tokenEndpoint, processedSoftwareStatementProfile);
+        return (bankRegistration, tokenEndpoint, softwareStatementEntity);
     }
 }

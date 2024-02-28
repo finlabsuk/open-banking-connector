@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -25,11 +26,9 @@ internal class ConsentAccessTokenGet
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     private readonly ITimeProvider _timeProvider;
 
     public ConsentAccessTokenGet(
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IGrantPost grantPost,
@@ -37,7 +36,6 @@ internal class ConsentAccessTokenGet
         IMemoryCache memoryCache,
         IEncryptionKeyInfo encryptionKeyInfo)
     {
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _grantPost = grantPost;
@@ -55,6 +53,8 @@ internal class ConsentAccessTokenGet
         RefreshTokenEntity? storedRefreshTokenEntity,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
+        IApiClient apiClient,
+        OBSealKey obSealKey,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
@@ -84,10 +84,6 @@ internal class ConsentAccessTokenGet
                     .GetRefreshToken(consentAssociatedData, encryptionKey);
 
             // Obtain new refresh and access tokens
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementId.ToString(),
-                    bankRegistration.SoftwareStatementProfileOverride);
             string externalApiClientId = bankRegistration.ExternalApiId;
             JsonSerializerSettings? jsonSerializerSettings = null;
             TokenEndpointResponseRefreshTokenGrant tokenEndpointResponse =
@@ -101,7 +97,7 @@ internal class ConsentAccessTokenGet
                     consent.ExternalApiUserId,
                     nonce,
                     requestScope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
@@ -109,7 +105,7 @@ internal class ConsentAccessTokenGet
                     jsonSerializerSettings,
                     refreshTokenGrantPostCustomBehaviour,
                     jwksGetCustomBehaviour,
-                    processedSoftwareStatementProfile.ApiClient);
+                    apiClient);
 
             // Delete old access token (is expired else would have been used)
             DateTimeOffset modified = _timeProvider.GetUtcNow();

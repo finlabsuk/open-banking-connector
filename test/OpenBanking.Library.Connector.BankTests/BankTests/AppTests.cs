@@ -26,6 +26,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Xunit;
 using Xunit.Abstractions;
+using ObSealCertificateRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObSealCertificate;
+using ObWacCertificateRequest =
+    FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request.ObWacCertificate;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankTests.BankTests;
 
@@ -492,7 +496,7 @@ public abstract class AppTests
     {
         // Create OBWAC certificate
         string obWacReference = processedSoftwareStatementProfile.TransportCertificateId;
-        var obWacRequest = new ObWacCertificate
+        var obWacRequest = new ObWacCertificateRequest
         {
             Reference = obWacReference,
             CreatedBy = modifiedBy,
@@ -521,7 +525,7 @@ public abstract class AppTests
 
         // Create OBSeal certificate
         string obSealReference = processedSoftwareStatementProfile.SigningCertificateId;
-        var obSealRequest = new ObSealCertificate
+        var obSealRequest = new ObSealCertificateRequest
         {
             Reference = obSealReference,
             CreatedBy = modifiedBy,

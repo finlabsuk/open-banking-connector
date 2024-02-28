@@ -15,7 +15,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Security;
 using FluentValidation.Results;
 
-namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 
 public enum SubjectDnOrgIdEncoding
 {
@@ -24,9 +24,9 @@ public enum SubjectDnOrgIdEncoding
     DottedDecimalAttributeTypeWithStringValue
 }
 
-public class ProcessedTransportCertificateProfile
+public class ObWacCertificate
 {
-    public ProcessedTransportCertificateProfile(
+    public ObWacCertificate(
         TransportCertificateProfile transportCertificateProfile,
         string id,
         string? overrideCase,
@@ -140,7 +140,7 @@ public class ProcessedTransportCertificateProfile
         return subjectDn;
     }
 
-    public static ProcessedTransportCertificateProfile GetProcessedObWac(
+    public static ObWacCertificate GetProcessedObWac(
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IInstrumentationClient instrumentationClient,
@@ -156,7 +156,7 @@ public class ProcessedTransportCertificateProfile
             throw new KeyNotFoundException(message);
         }
 
-        var processedTransportCertificateProfile = new ProcessedTransportCertificateProfile(
+        var processedTransportCertificateProfile = new ObWacCertificate(
             new TransportCertificateProfile
             {
                 Active = true,
