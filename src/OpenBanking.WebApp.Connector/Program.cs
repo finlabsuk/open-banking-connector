@@ -130,6 +130,10 @@ builder.Services
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         });
 
+builder
+    .Logging
+    .AddWebHostLogging(builder.Configuration, serviceVersion);
+
 // Build app
 WebApplication app = builder.Build();
 

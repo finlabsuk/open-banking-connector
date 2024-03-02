@@ -24,7 +24,9 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<NatWestBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(NatWestBank bank, IInstrumentationClient instrumentationClient)
+    public override BankProfile GetBankProfile(
+        NatWestBank bank,
+        IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -177,7 +179,10 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                                 "https://secure1.ulsterbank.co.uk",
                             NatWestBank.Mettle => null, // use default
                             NatWestBank.Coutts => null, // use default
-                            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
+                            _ => throw new ArgumentOutOfRangeException(
+                                nameof(bank),
+                                bank,
+                                null)
                         },
                         IdTokenProcessingCustomBehaviour =
                             new IdTokenProcessingCustomBehaviour { DoNotValidateIdTokenAcrClaim = true }
@@ -198,7 +203,28 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     AccountAccessConsentGet = bank is NatWestBank.Coutts
                         ? new AccountAccessConsentGetCustomBehaviour { ResponseLinksAddSlash = true }
                         : null
-                }
+                },
+            AspspBrandId = bank switch
+            {
+                NatWestBank.NatWestSandbox => 100001, // sandbox
+                NatWestBank.NatWest
+                    or NatWestBank.NatWestBankline
+                    or NatWestBank.NatWestClearSpend
+                    or NatWestBank.Mettle => 13,
+                NatWestBank.RoyalBankOfScotlandSandbox => 100002, // sandbox
+                NatWestBank.RoyalBankOfScotland
+                    or NatWestBank.RoyalBankOfScotlandBankline
+                    or NatWestBank.RoyalBankOfScotlandClearSpend
+                    or NatWestBank.TheOne
+                    or NatWestBank.NatWestOne
+                    or NatWestBank.VirginOne => 14,
+                NatWestBank.UlsterBankNi
+                    or NatWestBank.UlsterBankNiBankline
+                    or NatWestBank.UlsterBankNiClearSpend =>
+                    13,
+                NatWestBank.Coutts => 13,
+                _ => throw new ArgumentOutOfRangeException()
+            }
         };
     }
 

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
@@ -56,6 +57,7 @@ internal class ConsentAccessTokenGet
         IApiClient apiClient,
         OBSealKey obSealKey,
         bool supportsSca,
+        BankProfileEnum bankProfile,
         IdTokenSubClaimType idTokenSubClaimType,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour,
@@ -101,6 +103,7 @@ internal class ConsentAccessTokenGet
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
+                    bankProfile,
                     idTokenSubClaimType,
                     jsonSerializerSettings,
                     refreshTokenGrantPostCustomBehaviour,

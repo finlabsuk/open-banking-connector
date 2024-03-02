@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -70,12 +71,11 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
 
             // Get bank profile
             BankProfile bankProfile =
-                _bankProfileService.GetBankProfile(bankRegistration.BankProfile, _instrumentationClient);
+                _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi =
                 bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -102,12 +102,21 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                     persistedObject.BankRegistrationNavigation.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
             IDeleteRequestProcessor deleteRequestProcessor =
                 new ApiDeleteRequestProcessor(ccGrantAccessToken, bankFinancialId);
 
             // Delete at API
-            await deleteRequestProcessor.DeleteAsync(endpointUrl, apiClient);
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription =
+                    $$"""
+                      DELETE {AispBaseUrl}{{RelativePathBeforeId}}/{ConsentId}
+                      """,
+                BankProfile = bankProfile.BankProfileEnum
+            };
+            await deleteRequestProcessor.DeleteAsync(endpointUrl, tppReportingRequestInfo, apiClient);
         }
 
         return (persistedObject, nonErrorMessages);

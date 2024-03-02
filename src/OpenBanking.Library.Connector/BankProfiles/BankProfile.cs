@@ -182,7 +182,7 @@ public class BankProfile
         PaymentInitiationApi = paymentInitiationApi;
         VariableRecurringPaymentsApi = variableRecurringPaymentsApi;
         SupportsSca = supportsSca;
-        ReplayApiClient = new ApiClient(instrumentationClient, new ReplayClient(this));
+        ReplayApiClient = new ApiClient(new ReplayClient(this), instrumentationClient, null);
     }
 
     /// <summary>
@@ -252,6 +252,8 @@ public class BankProfile
         new();
 
     public IApiClient ReplayApiClient { get; }
+
+    public required int AspspBrandId { get; init; }
 
     public AccountAndTransactionApi GetRequiredAccountAndTransactionApi() =>
         AccountAndTransactionApi ??

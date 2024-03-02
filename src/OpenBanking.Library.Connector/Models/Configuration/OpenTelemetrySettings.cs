@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using OpenTelemetry.Metrics;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 
@@ -19,9 +20,12 @@ public class TracingSettings
 {
     public string OtlpExporterUrl { get; set; } = string.Empty;
 
-    public bool UseConsoleExporter { get; set; } = false;
-
     public ProviderFilter ProviderFilter { get; set; } = ProviderFilter.AspNetCore | ProviderFilter.HttpClient;
+}
+
+public class LoggingSettings
+{
+    public string OtlpExporterUrl { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -29,11 +33,31 @@ public class TracingSettings
 /// </summary>
 public class OpenTelemetrySettings : ISettings<OpenTelemetrySettings>
 {
-    public string ServiceName { get; set; } = "FinnovationLabs.OpenBanking.Connector";
+    public string ServiceName { get; set; } = "OpenBankingConnector";
+
+    public string ServiceNamespace { get; set; } = "FinnovationLabs";
+
+    public string ServiceInstanceId { get; set; } = "Default";
+
+    public bool UseConsoleExporter { get; set; } = false;
+
+    public LoggingSettings Logging { get; set; } = new();
 
     public TracingSettings Tracing { get; set; } = new();
+
+    public MetricsSettings Metrics { get; set; } = new();
 
     public string SettingsGroupName => "OpenBankingConnector:OpenTelemetry";
 
     public OpenTelemetrySettings Validate() => this;
+}
+
+public class MetricsSettings
+{
+    public string OtlpExporterUrl { get; set; } = string.Empty;
+
+    public int MetricReaderExportIntervalMilliseconds { get; set; } = 30000;
+
+    public MetricReaderTemporalityPreference MetricReaderTemporality { get; set; } =
+        MetricReaderTemporalityPreference.Cumulative;
 }

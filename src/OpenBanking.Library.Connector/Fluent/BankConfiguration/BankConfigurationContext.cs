@@ -59,7 +59,7 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.HttpClientSettingsProvider,
-                _sharedContext.MemoryCache,
+                _sharedContext.MemoryCache, _sharedContext.TppReportingMetrics,
                 _sharedContext.SecretProvider));
 
     public ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery, ObSealCertificateResponse,

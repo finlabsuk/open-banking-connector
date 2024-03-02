@@ -113,6 +113,7 @@ public class ApiClientTests
                 http);
             var result = await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                null,
                 null);
 
             result.Message.Should().Be(entity.Message);
@@ -142,6 +143,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                null,
                 null);
 
         await a.Should().ThrowAsync<HttpRequestException>();
@@ -177,6 +179,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                null,
                 null);
 
         await a.Should().ThrowAsync<ExternalApiHttpErrorException>();
@@ -212,6 +215,7 @@ public class ApiClientTests
         Func<Task> a = async () =>
             await api.SendExpectingJsonResponseAsync<SerialisedEntity>(
                 req,
+                null,
                 null);
 
         await a.Should().ThrowAsync<ExternalApiHttpErrorException>();

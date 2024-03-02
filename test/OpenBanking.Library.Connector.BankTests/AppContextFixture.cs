@@ -67,6 +67,10 @@ public class AppContextFixture : ITestOutputHelperAccessor, IDisposable
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
+        builder
+            .Logging
+            .AddWebHostLogging(builder.Configuration, null);
+
         // Add test logging
         builder.Logging.AddXUnit(this);
 

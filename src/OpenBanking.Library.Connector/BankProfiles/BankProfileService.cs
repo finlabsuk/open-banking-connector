@@ -36,10 +36,14 @@ public class BankProfileService : IBankProfileService
     /// </summary>
     private readonly BankProfilesDictionary _bankProfilesDictionary = new();
 
+    private readonly IInstrumentationClient _instrumentationClient;
+
     public BankProfileService(
         ISettingsProvider<BankProfilesSettings>
-            bankProfilesSettingsProvider)
+            bankProfilesSettingsProvider,
+        IInstrumentationClient instrumentationClient)
     {
+        _instrumentationClient = instrumentationClient;
         // Populate dictionary of bank groups
         _bankGroupsDictionary = new BankGroupsDictionary
         {
@@ -95,23 +99,23 @@ public class BankProfileService : IBankProfileService
         };
     }
 
-    public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum, IInstrumentationClient instrumentationClient) =>
+    public BankProfile GetBankProfile(BankProfileEnum bankProfileEnum) =>
         _bankProfilesDictionary.GetOrAdd(
                 bankProfileEnum,
                 profileEnum => new Lazy<BankProfile>(
                     () => GetBankGroupEnum(profileEnum) switch
                     {
-                        BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Santander => GetBankProfile<SantanderBank>(profileEnum, instrumentationClient),
-                        BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum, instrumentationClient),
+                        BankGroupEnum.Barclays => GetBankProfile<BarclaysBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Danske => GetBankProfile<DanskeBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Hsbc => GetBankProfile<HsbcBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Lloyds => GetBankProfile<LloydsBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Obie => GetBankProfile<ObieBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Monzo => GetBankProfile<MonzoBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Nationwide => GetBankProfile<NationwideBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.NatWest => GetBankProfile<NatWestBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Revolut => GetBankProfile<RevolutBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Santander => GetBankProfile<SantanderBank>(profileEnum, _instrumentationClient),
+                        BankGroupEnum.Starling => GetBankProfile<StarlingBank>(profileEnum, _instrumentationClient),
                         _ => throw new ArgumentOutOfRangeException()
                     },
                     LazyThreadSafetyMode.ExecutionAndPublication))

@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
@@ -40,6 +41,7 @@ public class StartupTasksHostedService : IHostedService
     private readonly ILogger<StartupTasksHostedService> _logger;
 
     private readonly IMemoryCache _memoryCache;
+    private readonly TppReportingMetrics _tppReportingMetrics;
 
     // Ensures this set up at application start-up
     private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
@@ -59,7 +61,7 @@ public class StartupTasksHostedService : IHostedService
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
         ISecretProvider secretProvider,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache, TppReportingMetrics tppReportingMetrics)
     {
         _databaseSettingsProvider =
             databaseSettingsProvider ??
@@ -73,6 +75,7 @@ public class StartupTasksHostedService : IHostedService
         _instrumentationClient = instrumentationClient;
         _secretProvider = secretProvider;
         _memoryCache = memoryCache;
+        _tppReportingMetrics = tppReportingMetrics;
         _configurationRoot = (IConfigurationRoot) configuration;
     }
 
@@ -177,7 +180,7 @@ public class StartupTasksHostedService : IHostedService
                     _secretProvider,
                     _httpClientSettings,
                     _memoryCache,
-                    _instrumentationClient);
+                    _instrumentationClient, _tppReportingMetrics);
 
             await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
         }

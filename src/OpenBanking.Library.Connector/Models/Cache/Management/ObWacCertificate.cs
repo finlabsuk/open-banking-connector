@@ -9,6 +9,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration.Validators;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -30,8 +31,9 @@ public class ObWacCertificate
         TransportCertificateProfile transportCertificateProfile,
         string id,
         string? overrideCase,
-        int pooledConnectionLifetimeSeconds,
-        IInstrumentationClient instrumentationClient)
+        HttpClientSettings httpClientSettings,
+        IInstrumentationClient instrumentationClient,
+        TppReportingMetrics tppReportingMetrics)
     {
         // Validate transport certificate profile
         ValidationResult validationResult2 = new OBTransportCertificateProfileValidator()
@@ -69,7 +71,8 @@ public class ObWacCertificate
 
         ApiClient = new ApiClient(
             instrumentationClient,
-            pooledConnectionLifetimeSeconds,
+            httpClientSettings.PooledConnectionLifetimeSeconds,
+            tppReportingMetrics,
             transportCerts,
             serverCertificateValidator);
 
@@ -84,6 +87,26 @@ public class ObWacCertificate
                 SubjectDnOrgIdEncoding.DottedDecimalAttributeTypeWithStringValue)
         };
     }
+
+    public ObWacCertificate(
+        ObWacCertificateEntity obWac,
+        ISecretProvider secretProvider,
+        HttpClientSettings httpClientSettings,
+        IInstrumentationClient instrumentationClient,
+        TppReportingMetrics tppReportingMetrics)
+        : this(
+            new TransportCertificateProfile
+            {
+                Active = true,
+                DisableTlsCertificateVerification = false,
+                Certificate = obWac.Certificate,
+                AssociatedKey = GetAssociatedKey(obWac, secretProvider)
+            },
+            obWac.Id.ToString(),
+            null,
+            httpClientSettings,
+            instrumentationClient,
+            tppReportingMetrics) { }
 
     public IApiClient ApiClient { get; }
 
@@ -140,35 +163,18 @@ public class ObWacCertificate
         return subjectDn;
     }
 
-    public static ObWacCertificate GetProcessedObWac(
-        ISecretProvider secretProvider,
-        HttpClientSettings httpClientSettings,
-        IInstrumentationClient instrumentationClient,
-        ObWacCertificateEntity obWac)
+    private static string GetAssociatedKey(ObWacCertificateEntity obWac, ISecretProvider secretProvider)
     {
-        if (!secretProvider.TryGetSecret(obWac.AssociatedKey.Name, out string? associatedKey))
+        if (secretProvider.TryGetSecret(obWac.AssociatedKey.Name, out string? associatedKey))
         {
-            string message =
-                $"OBWAC transport certificate with ID {obWac.Id} " +
-                $"specifies AssociatedKey with name {obWac.AssociatedKey.Name} " +
-                "but no such value can be found. Any software statement(s) depending " +
-                "on this OBWAC transport certificate will not be able to be used.";
-            throw new KeyNotFoundException(message);
+            return associatedKey;
         }
-
-        var processedTransportCertificateProfile = new ObWacCertificate(
-            new TransportCertificateProfile
-            {
-                Active = true,
-                DisableTlsCertificateVerification = false,
-                Certificate = obWac.Certificate,
-                AssociatedKey = associatedKey
-            },
-            obWac.Id.ToString(),
-            null,
-            httpClientSettings.PooledConnectionLifetimeSeconds,
-            instrumentationClient);
-        return processedTransportCertificateProfile;
+        string message =
+            $"OBWAC transport certificate with ID {obWac.Id} " +
+            $"specifies AssociatedKey with name {obWac.AssociatedKey.Name} " +
+            "but no such value can be found. Any software statement(s) depending " +
+            "on this OBWAC transport certificate will not be able to be used.";
+        throw new KeyNotFoundException(message);
     }
 
     public static string GetCacheKey(Guid obWacId) => string.Join(":", "ob_wac_certificate", obWacId);

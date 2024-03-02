@@ -65,11 +65,8 @@ internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate,
             request.Certificate);
 
         // Add cache entry
-        ObSealCertificateCached processedSigningCertificateProfile =
-            ObSealCertificateCached.GetProcessedObSeal(
-                _secretProvider,
-                _instrumentationClient,
-                entity);
+        var processedSigningCertificateProfile =
+            new ObSealCertificateCached(entity, _secretProvider, _instrumentationClient);
         _memoryCache.Set(
             ObSealCertificateCached.GetCacheKey(entity.Id),
             processedSigningCertificateProfile);

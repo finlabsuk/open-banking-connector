@@ -21,7 +21,9 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
         IBankGroup<DanskeBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
     //See https://developers.danskebank.com/documentation
-    public override BankProfile GetBankProfile(DanskeBank bank, IInstrumentationClient instrumentationClient) =>
+    public override BankProfile GetBankProfile(
+        DanskeBank bank,
+        IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://sandbox-obp-api.danskebank.com/sandbox-open-banking/private", //from https://developers.danskebank.com/documentation#endpoints
@@ -62,6 +64,7 @@ public class DanskeGenerator : BankProfileGeneratorBase<DanskeBank>
                     IdTokenProcessingCustomBehaviour =
                         new IdTokenProcessingCustomBehaviour { IdTokenMayNotHaveAuthTimeClaim = true }
                 }
-            }
+            },
+            AspspBrandId = 10007 // sandbox
         };
 }

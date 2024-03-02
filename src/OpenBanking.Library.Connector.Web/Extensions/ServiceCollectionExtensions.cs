@@ -2,13 +2,15 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Web.HostedServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -23,7 +25,7 @@ public static class ServiceCollectionExtensions
     {
         var openTelemetrySettings =
             GenericHost.Extensions.ServiceCollectionExtensions.GetSettings<OpenTelemetrySettings>(configuration);
-        AddOpenTelemetry(services, serviceVersion, openTelemetrySettings);
+        services.AddOpenTelemetry(serviceVersion, openTelemetrySettings);
 
         // Startup tasks
         services.AddHostedService<WebAppInformationHostedService>();
@@ -31,42 +33,80 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static ILoggingBuilder AddWebHostLogging(
+        this ILoggingBuilder loggingBuilder,
+        IConfiguration configuration,
+        string? serviceVersion)
+    {
+        var openTelemetrySettings =
+            GenericHost.Extensions.ServiceCollectionExtensions.GetSettings<OpenTelemetrySettings>(configuration);
+        loggingBuilder.AddOpenTelemetry(serviceVersion, openTelemetrySettings);
+
+        return loggingBuilder;
+    }
+
     private static void AddOpenTelemetry(
-        IServiceCollection services,
+        this ILoggingBuilder loggingBuilder,
+        string? serviceVersion,
+        OpenTelemetrySettings openTelemetrySettings)
+    {
+        string? otlpExporterUrl = openTelemetrySettings.Logging.OtlpExporterUrl.Length > 0
+            ? openTelemetrySettings.Logging.OtlpExporterUrl
+            : null;
+
+        if (otlpExporterUrl is not null)
+        {
+            loggingBuilder.AddOpenTelemetry(
+                options =>
+                {
+                    options
+                        .SetResourceBuilder(
+                            ResourceBuilder.CreateDefault()
+                                .AddService(
+                                    openTelemetrySettings.ServiceName,
+                                    openTelemetrySettings.ServiceNamespace,
+                                    serviceVersion,
+                                    false,
+                                    openTelemetrySettings.ServiceInstanceId))
+                        .AddOtlpExporter(otlpExporterOptions => otlpExporterOptions.Endpoint = new Uri(otlpExporterUrl));
+                });
+        }
+    }
+
+    private static void AddOpenTelemetry(
+        this IServiceCollection services,
         string? serviceVersion,
         OpenTelemetrySettings openTelemetrySettings)
     {
         Sdk.SetDefaultTextMapPropagator(
             new CompositeTextMapPropagator(
                 Array.Empty<TextMapPropagator>())); // See https://github.com/dotnet/runtime/issues/90407
+        
+        bool useConsoleExporter = openTelemetrySettings.UseConsoleExporter;
 
-        string serviceName = openTelemetrySettings.ServiceName;
-        string? otlpExporterUrl = openTelemetrySettings.Tracing.OtlpExporterUrl.Length > 0
+        ProviderFilter tracingProviderFilter = openTelemetrySettings.Tracing.ProviderFilter;
+
+        string? tracingOtlpExporterUrl = openTelemetrySettings.Tracing.OtlpExporterUrl.Length > 0
             ? openTelemetrySettings.Tracing.OtlpExporterUrl
             : null;
-        bool useConsoleExporter = openTelemetrySettings.Tracing.UseConsoleExporter;
-        ProviderFilter providerFilter = openTelemetrySettings.Tracing.ProviderFilter;
+
+        string? metricsOtlpExporterUrl = openTelemetrySettings.Metrics.OtlpExporterUrl.Length > 0
+            ? openTelemetrySettings.Metrics.OtlpExporterUrl
+            : null;
 
         void ConfigureTracing(TracerProviderBuilder builder)
         {
-            builder
-                .AddSource(new ActivitySource(serviceName, serviceVersion).Name)
-                .ConfigureResource(
-                    resource => resource.AddService(
-                        serviceName,
-                        serviceVersion: serviceVersion));
-
-            if (providerFilter.HasFlag(ProviderFilter.AspNetCore))
+            if (tracingProviderFilter.HasFlag(ProviderFilter.AspNetCore))
             {
                 builder.AddAspNetCoreInstrumentation();
             }
 
-            if (providerFilter.HasFlag(ProviderFilter.HttpClient))
+            if (tracingProviderFilter.HasFlag(ProviderFilter.HttpClient))
             {
                 builder.AddHttpClientInstrumentation();
             }
 
-            if (providerFilter.HasFlag(ProviderFilter.EfCore))
+            if (tracingProviderFilter.HasFlag(ProviderFilter.EfCore))
             {
                 builder.AddEntityFrameworkCoreInstrumentation();
             }
@@ -76,16 +116,72 @@ public static class ServiceCollectionExtensions
                 builder.AddConsoleExporter();
             }
 
-            if (otlpExporterUrl is not null)
+            if (tracingOtlpExporterUrl is not null)
             {
-                builder.AddOtlpExporter(opt => opt.Endpoint = new Uri(otlpExporterUrl));
+                builder.AddOtlpExporter(opt => opt.Endpoint = new Uri(tracingOtlpExporterUrl));
             }
         }
 
-        if (otlpExporterUrl is not null || useConsoleExporter)
+        void ConfigureMetrics(MeterProviderBuilder builder)
         {
-            services.AddOpenTelemetry()
-                .WithTracing(ConfigureTracing);
+            //builder.AddMeter("System.Net.Http");
+            builder.AddMeter("TppReportingMetrics");
+
+            if (useConsoleExporter)
+            {
+                builder.AddConsoleExporter(
+                    (_, metricReaderOptions) =>
+                    {
+                        metricReaderOptions.PeriodicExportingMetricReaderOptions =
+                            new PeriodicExportingMetricReaderOptions
+                            {
+                                ExportIntervalMilliseconds = openTelemetrySettings.Metrics
+                                    .MetricReaderExportIntervalMilliseconds
+                            };
+                        metricReaderOptions.TemporalityPreference =
+                            openTelemetrySettings.Metrics.MetricReaderTemporality;
+                    });
+            }
+
+            if (metricsOtlpExporterUrl is not null)
+            {
+                builder.AddOtlpExporter(
+                    (otlpExporterOptions, metricReaderOptions) =>
+                    {
+                        otlpExporterOptions.Endpoint = new Uri(metricsOtlpExporterUrl);
+                        metricReaderOptions.PeriodicExportingMetricReaderOptions =
+                            new PeriodicExportingMetricReaderOptions
+                            {
+                                ExportIntervalMilliseconds = openTelemetrySettings.Metrics
+                                    .MetricReaderExportIntervalMilliseconds
+                            };
+                        metricReaderOptions.TemporalityPreference =
+                            openTelemetrySettings.Metrics.MetricReaderTemporality;
+                    });
+            }
+        }
+
+        bool useTracing = tracingOtlpExporterUrl is not null || useConsoleExporter;
+        bool useMetrics = metricsOtlpExporterUrl is not null || useConsoleExporter;
+
+        if (useTracing || useMetrics)
+        {
+            OpenTelemetryBuilder builder = services.AddOpenTelemetry()
+                .ConfigureResource(
+                    resource => resource.AddService(
+                        openTelemetrySettings.ServiceName,
+                        openTelemetrySettings.ServiceNamespace,
+                        serviceVersion,
+                        false,
+                        openTelemetrySettings.ServiceInstanceId));
+            if (useTracing)
+            {
+                builder.WithTracing(ConfigureTracing);
+            }
+            if (useMetrics)
+            {
+                builder.WithMetrics(ConfigureMetrics);
+            }
         }
     }
 }

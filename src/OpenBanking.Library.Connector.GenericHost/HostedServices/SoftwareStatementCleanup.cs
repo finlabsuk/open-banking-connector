@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -23,7 +24,8 @@ public class SoftwareStatementCleanup
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IMemoryCache memoryCache,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient,
+        TppReportingMetrics tppReportingMetrics)
     {
         List<SoftwareStatementEntity> softwareStatementList =
             postgreSqlDbContext
@@ -44,11 +46,12 @@ public class SoftwareStatementCleanup
             ObWacCertificate? processedTransportCertificateProfile = null;
             try
             {
-                processedTransportCertificateProfile = ObWacCertificate.GetProcessedObWac(
+                processedTransportCertificateProfile = new ObWacCertificate(
+                    obWac,
                     secretProvider,
                     httpClientSettings,
                     instrumentationClient,
-                    obWac);
+                    tppReportingMetrics);
             }
             catch (KeyNotFoundException ex)
             {
@@ -69,10 +72,10 @@ public class SoftwareStatementCleanup
             ObSealCertificate? processedSigningCertificateProfile = null;
             try
             {
-                processedSigningCertificateProfile = ObSealCertificate.GetProcessedObSeal(
+                processedSigningCertificateProfile = new ObSealCertificate(
+                    obSeal,
                     secretProvider,
-                    instrumentationClient,
-                    obSeal);
+                    instrumentationClient);
             }
             catch (KeyNotFoundException ex)
             {

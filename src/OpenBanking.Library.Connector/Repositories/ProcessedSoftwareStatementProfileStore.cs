@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -38,7 +39,7 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         ISettingsProvider<TransportCertificateProfilesSettings> transportCertificateProfilesSettingsProvider,
         ISettingsProvider<SigningCertificateProfilesSettings> signingCertificateProfilesSettingsProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
-        IInstrumentationClient instrumentationClient)
+        IInstrumentationClient instrumentationClient, TppReportingMetrics tppReportingMetrics)
     {
         HttpClientSettings httpClientSettings = httpClientSettingsProvider.GetSettings();
 
@@ -103,8 +104,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 defaultTransportCertificateProfile,
                 tcpId,
                 null,
-                httpClientSettings.PooledConnectionLifetimeSeconds,
-                instrumentationClient);
+                httpClientSettings,
+                instrumentationClient, tppReportingMetrics);
 
             // Get override cases (keys)
             var overrideCases =
@@ -121,8 +122,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                     overrideTransportCertificateProfile,
                     tcpId,
                     overrideCase,
-                    httpClientSettings.PooledConnectionLifetimeSeconds,
-                    instrumentationClient);
+                    httpClientSettings,
+                    instrumentationClient, tppReportingMetrics);
             }
 
             // Add to cache

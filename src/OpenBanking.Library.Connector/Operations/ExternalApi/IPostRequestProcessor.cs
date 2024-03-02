@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -25,6 +26,7 @@ internal interface IPostRequestProcessor<in TRequest>
     public async Task<TResponse> PostAsync<TResponse>(
         Uri uri,
         TRequest request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? requestJsonSerializerSettings,
         JsonSerializerSettings? responseJsonSerializerSettings,
         IApiClient apiClient)
@@ -44,6 +46,7 @@ internal interface IPostRequestProcessor<in TRequest>
             .Create()
             .SendExpectingJsonResponseAsync<TResponse>(
                 apiClient,
+                tppReportingRequestInfo,
                 responseJsonSerializerSettings);
 
         return response;

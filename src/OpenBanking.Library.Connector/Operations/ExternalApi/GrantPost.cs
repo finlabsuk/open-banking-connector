@@ -7,9 +7,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
 using FinnovationLabs.OpenBanking.Library.BankApiModels.Json;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -54,6 +56,7 @@ internal class GrantPost : IGrantPost
         string externalApiConsentId,
         string expectedNonce,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
     {
@@ -62,6 +65,7 @@ internal class GrantPost : IGrantPost
             redirectData.IdToken,
             idTokenProcessingCustomBehaviour,
             jwksUri,
+            bankProfileForTppReportingMetrics,
             jwksGetCustomBehaviour);
 
         ValidateIdTokenCommon(
@@ -133,6 +137,7 @@ internal class GrantPost : IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         Dictionary<string, JsonNode?>? extraClientAssertionClaims = null,
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null)
@@ -174,6 +179,7 @@ internal class GrantPost : IGrantPost
                     externalApiClientId,
                     externalApiClientSecret,
                     jsonSerializerSettings,
+                    bankProfileForTppReportingMetrics,
                     mtlsApiClient,
                     scope,
                     clientCredentialsGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
@@ -222,6 +228,7 @@ internal class GrantPost : IGrantPost
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
@@ -258,6 +265,7 @@ internal class GrantPost : IGrantPost
             externalApiClientId,
             externalApiClientSecret,
             jsonSerializerSettings,
+            bankProfileForTppReportingMetrics,
             matlsApiClient,
             requestScope,
             authCodeGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
@@ -287,6 +295,7 @@ internal class GrantPost : IGrantPost
                 externalApiClientId,
                 externalApiConsentId,
                 expectedNonce,
+                bankProfileForTppReportingMetrics,
                 supportsSca,
                 idTokenSubClaimType,
                 externalApiUserId);
@@ -309,6 +318,7 @@ internal class GrantPost : IGrantPost
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
@@ -344,6 +354,7 @@ internal class GrantPost : IGrantPost
             externalApiClientId,
             externalApiClientSecret,
             jsonSerializerSettings,
+            bankProfileForTppReportingMetrics,
             mtlsApiClient,
             requestScope,
             refreshTokenGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
@@ -367,6 +378,7 @@ internal class GrantPost : IGrantPost
                 externalApiClientId,
                 externalApiConsentId,
                 expectedNonce,
+                bankProfileForTppReportingMetrics,
                 supportsSca,
                 idTokenSubClaimType,
                 externalApiUserId);
@@ -493,7 +505,10 @@ internal class GrantPost : IGrantPost
         }
     }
 
-    private async Task<Jwks> GetJwksAsync(string jwksUrl, bool responseHasNoRootProperty)
+    private async Task<Jwks> GetJwksAsync(
+        string jwksUrl,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
+        bool responseHasNoRootProperty)
     {
         var uri = new Uri(jwksUrl);
 
@@ -502,9 +517,22 @@ internal class GrantPost : IGrantPost
             .SetUri(uri)
             .Create();
 
+        TppReportingRequestInfo? tppReportingRequestInfo = bankProfileForTppReportingMetrics is not null
+            ? new TppReportingRequestInfo
+            {
+                EndpointDescription = "GET {JwksUri}",
+                BankProfile = bankProfileForTppReportingMetrics.Value
+            }
+            : null;
+
         Jwks jwks = responseHasNoRootProperty
-            ? new Jwks { Keys = await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(_apiClient) }
-            : await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient);
+            ? new Jwks
+            {
+                Keys = await message.SendExpectingJsonResponseAsync<List<JsonWebKey>>(
+                    _apiClient,
+                    tppReportingRequestInfo)
+            }
+            : await message.SendExpectingJsonResponseAsync<Jwks>(_apiClient, tppReportingRequestInfo);
 
         return jwks;
     }
@@ -519,6 +547,7 @@ internal class GrantPost : IGrantPost
         string externalApiClientId,
         string externalApiConsentId,
         string expectedNonce,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         bool supportsSca,
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId)
@@ -528,6 +557,7 @@ internal class GrantPost : IGrantPost
             idTokenEncoded,
             idTokenProcessingCustomBehaviour,
             jwksUri,
+            bankProfileForTppReportingMetrics,
             jwksGetCustomBehaviour);
 
         ValidateIdTokenCommon(
@@ -579,12 +609,17 @@ internal class GrantPost : IGrantPost
         string idTokenEncoded,
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour,
         string jwksUri,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         JwksGetCustomBehaviour? jwksGetCustomBehaviour)
     {
         // Decode ID token
         bool jwksGetResponseHasNoRootProperty =
             jwksGetCustomBehaviour?.ResponseHasNoRootProperty ?? false;
-        string idTokenDecoded = await DecodeIdTokenAsync(jwksUri, jwksGetResponseHasNoRootProperty, idTokenEncoded);
+        string idTokenDecoded = await DecodeIdTokenAsync(
+            jwksUri,
+            jwksGetResponseHasNoRootProperty,
+            idTokenEncoded,
+            bankProfileForTppReportingMetrics);
 
         // Deserialise IT token claims
         var optionsDict = new Dictionary<JsonConverterLabel, int>();
@@ -616,7 +651,8 @@ internal class GrantPost : IGrantPost
     private async Task<string> DecodeIdTokenAsync(
         string jwksUri,
         bool jwksGetResponseHasNoRootProperty,
-        string idTokenEncoded)
+        string idTokenEncoded,
+        BankProfileEnum? bankProfileForTppReportingMetrics)
     {
         string idTokenDecoded;
         // Get and validate ID token headers
@@ -649,6 +685,7 @@ internal class GrantPost : IGrantPost
         // Get and validate Json Web Key
         Jwks jwks = await GetJwksAsync(
             jwksUri,
+            bankProfileForTppReportingMetrics,
             jwksGetResponseHasNoRootProperty);
         JsonWebKey jsonWebKey =
             jwks.Keys.SingleOrDefault(x => x.KId == kId) ??
@@ -699,6 +736,7 @@ internal class GrantPost : IGrantPost
         string externalApiClientId,
         string? externalApiClientSecret,
         JsonSerializerSettings? responseJsonSerializerSettings,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IApiClient mtlsApiClient,
         string? requestScope,
         bool tokenTypeResponseStartsWithLowerCaseLetter,
@@ -712,9 +750,18 @@ internal class GrantPost : IGrantPost
                 externalApiClientId,
                 externalApiClientSecret,
                 tokenEndpointAuthMethod);
+        TppReportingRequestInfo? tppReportingRequestInfo = bankProfileForTppReportingMetrics is not null
+            ? new TppReportingRequestInfo
+            {
+                EndpointDescription = "POST {TokenEndpoint}",
+                BankProfile = bankProfileForTppReportingMetrics.Value
+            }
+            : null;
+
         var response = await postRequestProcessor.PostAsync<TokenEndpointResponse>(
             uri,
             keyValuePairs,
+            tppReportingRequestInfo,
             null,
             responseJsonSerializerSettings,
             mtlsApiClient);

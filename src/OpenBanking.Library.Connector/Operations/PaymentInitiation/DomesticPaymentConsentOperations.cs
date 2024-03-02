@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -122,9 +123,7 @@ internal class
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(
-                bankRegistration.BankProfile,
-                _instrumentationClient);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -152,7 +151,8 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -166,10 +166,20 @@ internal class
                     softwareStatement,
                     obSealKey);
             var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId);
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription =
+                    $$"""
+                      POST {PispBaseUrl}{{RelativePathBeforeId}}
+                      """,
+                BankProfile = bankProfile.BankProfileEnum
+            };
+
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     request.ExternalApiRequest,
+                    tppReportingRequestInfo,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     apiClient,
@@ -303,9 +313,7 @@ internal class
         if (includeExternalApiOperation)
         {
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(
-                bankRegistration.BankProfile,
-                _instrumentationClient);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -333,7 +341,8 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -346,10 +355,20 @@ internal class
                     obSealKey);
             var externalApiUrl = new Uri(
                 paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription =
+                    $$"""
+                      GET {PispBaseUrl}{{RelativePathBeforeId}}/{ConsentId}
+                      """,
+                BankProfile = bankProfile.BankProfileEnum
+            };
+
             (externalApiResponse,
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
+                    tppReportingRequestInfo,
                     responseJsonSerializerSettings,
                     apiClient,
                     _mapper);
@@ -430,9 +449,7 @@ internal class
         string externalApiConsentId = persistedObject.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -468,6 +485,7 @@ internal class
                 apiClient,
                 obSealKey,
                 supportsSca,
+                bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
@@ -482,10 +500,19 @@ internal class
                 accessToken);
         var externalApiUrl = new Uri(
             paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}" + "/funds-confirmation");
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  GET {PispBaseUrl}{{RelativePathBeforeId}}/{ConsentId}/funds-confirmation
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         (PaymentInitiationModelsPublic.OBWriteFundsConfirmationResponse1 externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
+                tppReportingRequestInfo,
                 responseJsonSerializerSettings,
                 apiClient,
                 _mapper);

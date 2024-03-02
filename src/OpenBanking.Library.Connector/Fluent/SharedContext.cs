@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -31,7 +32,8 @@ internal class SharedContext : ISharedContext
         ISecretProvider secretProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         ObSealCertificateMethods obSealCertificateMethods,
-        ObWacCertificateMethods obWacCertificateMethods)
+        ObWacCertificateMethods obWacCertificateMethods,
+        TppReportingMetrics tppReportingMetrics)
     {
         TimeProvider = timeProvider;
         ApiClient = apiClient;
@@ -46,6 +48,7 @@ internal class SharedContext : ISharedContext
         HttpClientSettingsProvider = httpClientSettingsProvider;
         ObSealCertificateMethods = obSealCertificateMethods;
         ObWacCertificateMethods = obWacCertificateMethods;
+        TppReportingMetrics = tppReportingMetrics;
     }
 
     public ITimeProvider TimeProvider { get; }
@@ -64,4 +67,6 @@ internal class SharedContext : ISharedContext
     public ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     public ObWacCertificateMethods ObWacCertificateMethods { get; }
+    
+    public TppReportingMetrics TppReportingMetrics { get; }
 }

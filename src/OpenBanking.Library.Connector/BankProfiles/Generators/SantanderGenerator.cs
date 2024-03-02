@@ -52,7 +52,8 @@ public class SantanderGenerator : BankProfileGeneratorBase<SantanderRegistration
             {
                 UseRegistrationEndpoint = false,
                 IdTokenSubClaimType = IdTokenSubClaimType.EndUserId
-            }
+            },
+            AspspBrandId = 15
         };
 
     private AccountAndTransactionApi? GetAccountAndTransactionApi(SantanderBank bank) =>

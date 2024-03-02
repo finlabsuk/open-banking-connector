@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
@@ -18,6 +19,7 @@ internal interface IDeleteRequestProcessor
 
     public async Task DeleteAsync(
         Uri uri,
+        TppReportingRequestInfo? tppReportingRequestInfo,
         IApiClient apiClient)
     {
         // Process request
@@ -30,6 +32,6 @@ internal interface IDeleteRequestProcessor
             .SetUri(uri)
             .SetHeaders(headers)
             .Create()
-            .SendExpectingNoResponseAsync(apiClient);
+            .SendExpectingNoResponseAsync(tppReportingRequestInfo, apiClient);
     }
 }

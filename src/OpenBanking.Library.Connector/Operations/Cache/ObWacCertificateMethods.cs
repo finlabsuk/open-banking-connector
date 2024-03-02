@@ -4,6 +4,7 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -18,6 +19,7 @@ public class ObWacCertificateMethods(
     IMemoryCache memoryCache,
     ISecretProvider secretProvider,
     IInstrumentationClient instrumentationClient,
+    TppReportingMetrics tppReportingMetrics,
     IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods)
 {
     public async Task<ObWacCertificate> GetValue(
@@ -34,11 +36,11 @@ public class ObWacCertificateMethods(
                             .DbSetNoTracking
                             .SingleOrDefaultAsync(x => x.Id == obWacId) ??
                         throw new KeyNotFoundException($"No record found for ObWacCertificate with ID {obWacId}.");
-                    return ObWacCertificate.GetProcessedObWac(
+                    return new ObWacCertificate(
+                        obWac,
                         secretProvider,
                         httpClientSettings,
-                        instrumentationClient,
-                        obWac);
+                        instrumentationClient,tppReportingMetrics);
                 }))!;
         return processedTransportCertificateProfile;
     }

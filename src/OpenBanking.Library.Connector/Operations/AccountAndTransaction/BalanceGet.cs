@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
@@ -66,9 +67,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
             await _accountAccessConsentCommon.GetAccountAccessConsent(readParams.ConsentId, true);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -104,6 +103,7 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
                 apiClient,
                 obSealKey,
                 supportsSca,
+                bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
@@ -133,10 +133,18 @@ internal class BalanceGet : IAccountAccessConsentExternalRead<BalancesResponse, 
                 _ => throw new ArgumentOutOfRangeException(
                     $"AISP API version {accountAndTransactionApi.ApiVersion} not supported.")
             };
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription = readParams.ExternalApiAccountId is null
+                ? "GET {AispBaseUrl}/balances"
+                : "GET {AispBaseUrl}/accounts/{AccountId}/balances",
+            BankProfile = bankProfile.BankProfileEnum
+        };
         (AccountAndTransactionModelsPublic.OBReadBalance1 apiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,
                 _mapper);

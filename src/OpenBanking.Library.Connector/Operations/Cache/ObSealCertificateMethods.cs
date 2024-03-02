@@ -32,10 +32,7 @@ public class ObSealCertificateMethods(
                             .DbSetNoTracking
                             .SingleOrDefaultAsync(x => x.Id == obSealId) ??
                         throw new KeyNotFoundException($"No record found for ObSealCertificate with ID {obSealId}.");
-                    return ObSealCertificate.GetProcessedObSeal(
-                        secretProvider,
-                        instrumentationClient,
-                        obSeal);
+                    return new ObSealCertificate(obSeal, secretProvider, instrumentationClient);
                 }))!;
         return processedSigningCertificateProfile;
     }

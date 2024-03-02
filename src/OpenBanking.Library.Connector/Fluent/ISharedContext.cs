@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
@@ -38,4 +39,5 @@ public interface ISharedContext
     ObSealCertificateMethods ObSealCertificateMethods { get; }
 
     ObWacCertificateMethods ObWacCertificateMethods { get; }
+    TppReportingMetrics TppReportingMetrics { get; }
 }

@@ -23,7 +23,9 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<BarclaysBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(BarclaysBank bank, IInstrumentationClient instrumentationClient)
+    public override BankProfile GetBankProfile(
+        BarclaysBank bank,
+        IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -77,7 +79,8 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                         elementsToRemove.Add(AccountAndTransactionModelsPublic.Permissions.ReadStatementsDetail);
                     }
 
-                    if (bank is BarclaysBank.Barclaycard or BarclaysBank.BarclaycardCommercialPayments
+                    if (bank is BarclaysBank.Barclaycard
+                        or BarclaysBank.BarclaycardCommercialPayments
                         or BarclaysBank.Corporate)
                     {
                         elementsToRemove.Add(AccountAndTransactionModelsPublic.Permissions.ReadParty);
@@ -150,7 +153,10 @@ public class BarclaysGenerator : BankProfileGeneratorBase<BarclaysBank>
                 {
                     TransportCertificateSubjectDnOrgIdEncoding = SubjectDnOrgIdEncoding.DottedDecimalAttributeType
                 }
-            }
+            },
+            AspspBrandId = bank is BarclaysBank.Sandbox
+                ? 10006 // sandbox
+                : 5
         };
     }
 

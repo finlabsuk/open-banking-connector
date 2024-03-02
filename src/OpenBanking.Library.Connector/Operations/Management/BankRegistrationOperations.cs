@@ -14,6 +14,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Obie;
@@ -86,7 +87,7 @@ internal class
             new List<IFluentResponseInfoOrWarningMessage>();
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile, _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(request.BankProfile);
         BankGroupEnum bankGroup = BankProfileService.GetBankGroupEnum(bankProfile.BankProfileEnum);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
@@ -134,6 +135,7 @@ internal class
                 IEnumerable<IFluentResponseInfoOrWarningMessage> newNonErrorMessages1) =
             await _configurationRead.GetOpenIdConfigurationAsync(
                 issuerUrl,
+                bankProfile.BankProfileEnum,
                 customBehaviour?.OpenIdConfigurationGet);
         nonErrorMessages.AddRange(newNonErrorMessages1);
 
@@ -255,6 +257,7 @@ internal class
                 bankRegistrationPostCustomBehaviour,
                 dynamicClientRegistrationApiVersion,
                 processedSoftwareStatementProfile,
+                bankProfile.BankProfileEnum,
                 softwareStatementAssertion,
                 registrationEndpoint!, // useRegistrationEndpoint is true
                 tokenEndpointAuthMethod,
@@ -354,7 +357,7 @@ internal class
         string externalApiId = entity.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile, _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         bool supportsSca = bankProfile.SupportsSca;
@@ -404,7 +407,8 @@ internal class
                     entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
             }
 
             // Read object from external API
@@ -417,9 +421,16 @@ internal class
                     false, // not used for GET
                     accessToken);
             var externalApiUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{externalApiId}");
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription = "GET {RegistrationEndpoint}/{ClientId}",
+                BankProfile = bankProfile.BankProfileEnum
+            };
+
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
+                    tppReportingRequestInfo,
                     responseJsonSerializerSettings,
                     apiClient,
                     _mapper);
@@ -498,9 +509,7 @@ internal class
             // Search for first registration in same registration group and check compatible (error if not)
             foreach (BankRegistrationEntity existingReg in existingRegistrations)
             {
-                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(
-                    existingReg.BankProfile,
-                    _instrumentationClient);
+                BankProfile existingRegBankProfile = _bankProfileService.GetBankProfile(existingReg.BankProfile);
                 TBank existingRegBank = bankGroup.GetBank(existingRegBankProfile.BankProfileEnum);
                 TRegistrationGroup? existingRegRegistrationGroup =
                     bankGroup.GetRegistrationGroup(existingRegBank, existingReg.RegistrationScope);
@@ -616,6 +625,7 @@ internal class
             null,
             null,
             processedSoftwareStatementProfile.ApiClient,
+            null,
             new Dictionary<string, JsonNode?> { ["scope"] = scope },
             true,
             JwsAlgorithm.RS256);
@@ -631,7 +641,7 @@ internal class
             .SetHeaders(headers)
             .SetAccept("application/jws+json")
             .Create()
-            .SendExpectingStringResponseAsync(processedSoftwareStatementProfile.ApiClient);
+            .SendExpectingStringResponseAsync(null, processedSoftwareStatementProfile.ApiClient);
 
         return response;
     }
@@ -707,6 +717,7 @@ internal class
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
         ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        BankProfileEnum bankProfile,
         string softwareStatementAssertion,
         string registrationEndpoint,
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
@@ -747,10 +758,17 @@ internal class
                 registrationScope,
                 bankRegistrationPostCustomBehaviour,
                 bankFinancialId);
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription = "POST {RegistrationEndpoint}",
+            BankProfile = bankProfile
+        };
+
         (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
                 externalApiRequest,
+                tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
                 processedSoftwareStatementProfile.ApiClient,

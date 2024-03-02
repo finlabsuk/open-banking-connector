@@ -145,7 +145,9 @@ public abstract class BankProfileGeneratorBase<TBank> : IBankProfileGenerator<TB
         }
     }
 
-    public abstract BankProfile GetBankProfile(TBank bank, IInstrumentationClient instrumentationClient);
+    public abstract BankProfile GetBankProfile(
+        TBank bank,
+        IInstrumentationClient instrumentationClient);
 
     private string? GetFirstNonemptyOrNullValue(string? value1, string? value2) =>
         (value1, value2) switch

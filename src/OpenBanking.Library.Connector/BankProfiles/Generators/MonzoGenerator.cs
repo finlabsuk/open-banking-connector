@@ -20,7 +20,9 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<MonzoBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(MonzoBank bank, IInstrumentationClient instrumentationClient)
+    public override BankProfile GetBankProfile(
+        MonzoBank bank,
+        IInstrumentationClient instrumentationClient)
     {
         var grantPostCustomBehaviour =
             new AuthCodeAndRefreshTokenGrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
@@ -108,6 +110,12 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
                         return externalApiRequest;
                     }
                     : x => x
+            },
+            AspspBrandId = bank switch
+            {
+                MonzoBank.Sandbox => 10003, // sandbox
+                MonzoBank.Monzo => 1430,
+                _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
             }
         };
     }

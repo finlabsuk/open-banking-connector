@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.PaymentInitiation;
@@ -92,9 +93,7 @@ internal class DomesticPayment :
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -130,6 +129,7 @@ internal class DomesticPayment :
                 apiClient,
                 obSealKey,
                 supportsSca,
+                bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
@@ -157,12 +157,20 @@ internal class DomesticPayment :
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
                 "inferred from specified DomesticPaymentConsent.");
         }
-
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  POST {PispBaseUrl}{{RelativePathBeforeId}}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
                 request.ExternalApiRequest,
+                tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
                 apiClient,
@@ -188,9 +196,7 @@ internal class DomesticPayment :
             await _domesticPaymentConsentCommon.GetDomesticPaymentConsent(consentId, false);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         PaymentInitiationApi paymentInitiationApi = bankProfile.GetRequiredPaymentInitiationApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -218,7 +224,8 @@ internal class DomesticPayment :
                 persistedConsent.BankRegistrationNavigation.Id.ToString(),
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
-                apiClient);
+                apiClient,
+                bankProfile.BankProfileEnum);
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -230,10 +237,20 @@ internal class DomesticPayment :
                 softwareStatement,
                 obSealKey);
         var externalApiUrl = new Uri(paymentInitiationApi.BaseUrl + RelativePathBeforeId + $"/{externalId}");
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  GET {PispBaseUrl}{{RelativePathBeforeId}}/{DomesticPaymentId}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
+
         (PaymentInitiationModelsPublic.OBWriteDomesticResponse5 externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
+                tppReportingRequestInfo,
                 responseJsonSerializerSettings,
                 apiClient,
                 _mapper);

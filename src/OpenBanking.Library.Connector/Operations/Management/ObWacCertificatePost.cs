@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Request;
@@ -24,6 +25,7 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
+    private readonly TppReportingMetrics _tppReportingMetrics;
     private readonly ISecretProvider _secretProvider;
     private readonly ITimeProvider _timeProvider;
 
@@ -34,12 +36,14 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
         IInstrumentationClient instrumentationClient,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IMemoryCache memoryCache,
+        TppReportingMetrics tppReportingMetrics,
         ISecretProvider secretProvider)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _instrumentationClient = instrumentationClient;
         _httpClientSettingsProvider = httpClientSettingsProvider;
         _memoryCache = memoryCache;
+        _tppReportingMetrics = tppReportingMetrics;
         _secretProvider = secretProvider;
         _timeProvider = timeProvider;
         _entityMethods = entityMethods;
@@ -70,11 +74,11 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
         // Add cache entry
         HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
         ObWacCertificateCached processedTransportCertificateProfile =
-            ObWacCertificateCached.GetProcessedObWac(
+            new ObWacCertificateCached(
+                entity,
                 _secretProvider,
                 httpClientSettings,
-                _instrumentationClient,
-                entity);
+                _instrumentationClient, _tppReportingMetrics);
         _memoryCache.Set(
             ObWacCertificateCached.GetCacheKey(entity.Id),
             processedTransportCertificateProfile);

@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
@@ -88,9 +89,7 @@ internal class DomesticVrp :
         string externalApiConsentId = persistedConsent.ExternalApiId;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
@@ -127,6 +126,7 @@ internal class DomesticVrp :
                 apiClient,
                 obSealKey,
                 supportsSca,
+                bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
                 customBehaviour?.RefreshTokenGrantPost,
                 customBehaviour?.JwksGet,
@@ -154,12 +154,20 @@ internal class DomesticVrp :
                 $"ExternalApiRequest contains consent ID that differs from {externalApiConsentId} " +
                 "inferred from specified DomesticVrpConsent.");
         }
-
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  POST {VrpBaseUrl}{{RelativePathBeforeId}}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
                 request.ExternalApiRequest,
+                tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
                 apiClient,
@@ -184,9 +192,7 @@ internal class DomesticVrp :
             await _domesticVrpConsentCommon.GetDomesticVrpConsent(consentId, false);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         VariableRecurringPaymentsApi variableRecurringPaymentsApi =
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
@@ -216,7 +222,8 @@ internal class DomesticVrp :
                 persistedConsent.BankRegistrationNavigation.Id.ToString(),
                 null,
                 customBehaviour?.ClientCredentialsGrantPost,
-                apiClient);
+                apiClient,
+                bankProfile.BankProfileEnum);
 
         // Read object from external API
         JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -229,10 +236,19 @@ internal class DomesticVrp :
                 obSealKey);
         var externalApiUrl =
             new Uri(variableRecurringPaymentsApi.BaseUrl + RelativePathBeforeId + $"/{externalId}");
+        var tppReportingRequestInfo = new TppReportingRequestInfo
+        {
+            EndpointDescription =
+                $$"""
+                  GET {VrpBaseUrl}{{RelativePathBeforeId}}/{DomesticVrpId}
+                  """,
+            BankProfile = bankProfile.BankProfileEnum
+        };
         (VariableRecurringPaymentsModelsPublic.OBDomesticVRPResponse externalApiResponse,
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
+                tppReportingRequestInfo,
                 responseJsonSerializerSettings,
                 apiClient,
                 _mapper);

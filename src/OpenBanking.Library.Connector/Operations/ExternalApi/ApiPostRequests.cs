@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 
@@ -35,6 +36,7 @@ internal class
     /// </summary>
     /// <param name="uri"></param>
     /// <param name="request"></param>
+    /// <param name="tppReportingRequestInfo"></param>
     /// <param name="requestJsonSerializerSettings"></param>
     /// <param name="responseJsonSerializerSettings"></param>
     /// <param name="apiClient"></param>
@@ -44,6 +46,7 @@ internal class
         PostAsync(
             Uri uri,
             TApiRequest request,
+            TppReportingRequestInfo? tppReportingRequestInfo,
             JsonSerializerSettings? requestJsonSerializerSettings,
             JsonSerializerSettings? responseJsonSerializerSettings,
             IApiClient apiClient,
@@ -61,6 +64,7 @@ internal class
         var variantResponse = await _postRequestProcessor.PostAsync<TVariantApiResponse>(
             uri,
             variantRequest,
+            tppReportingRequestInfo,
             requestJsonSerializerSettings,
             responseJsonSerializerSettings,
             apiClient);

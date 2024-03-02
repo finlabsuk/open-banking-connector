@@ -190,9 +190,7 @@ internal class AuthContextUpdate :
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile,
-            _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
         OAuth2ResponseMode defaultResponseMode =
@@ -260,6 +258,7 @@ internal class AuthContextUpdate :
                 externalApiConsentId,
                 nonce,
                 supportsSca,
+                bankProfile.BankProfileEnum,
                 idTokenSubClaimType,
                 consent.ExternalApiUserId);
             if (newExternalApiUserId != consent.ExternalApiUserId)
@@ -295,6 +294,7 @@ internal class AuthContextUpdate :
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
                     supportsSca,
+                    bankProfile.BankProfileEnum,
                     idTokenSubClaimType,
                     jsonSerializerSettings,
                     customBehaviour?.AuthCodeGrantPost,

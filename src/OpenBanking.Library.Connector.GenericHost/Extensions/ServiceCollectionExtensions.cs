@@ -11,6 +11,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -85,6 +86,9 @@ public static class ServiceCollectionExtensions
         // Set up logging
         services.AddSingleton<IInstrumentationClient, LoggerInstrumentationClient<RequestBuilder>>();
 
+        // Set up TPP reporting metrics
+        services.AddSingleton<TppReportingMetrics>();
+
         // Set up API client not associated with software statement profile
         var httpClientSettings = GetSettings<HttpClientSettings>(configuration);
         services.AddSingleton<IApiClient>(
@@ -92,7 +96,8 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<
                     IInstrumentationClient>(),
                 httpClientSettings
-                    .PooledConnectionLifetimeSeconds));
+                    .PooledConnectionLifetimeSeconds,
+                sp.GetRequiredService<TppReportingMetrics>()));
 
         // Configure Request Builder
         services.AddScoped<IRequestBuilder, RequestBuilder>();

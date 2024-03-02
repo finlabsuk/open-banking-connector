@@ -89,11 +89,6 @@ public abstract class AppTests
         //var env = AppConfiguration.EnvironmentName;
 
         // Get bank profile definitions
-        var bankProfilesSettings = AppConfiguration.GetSettings<BankProfilesSettings>();
-        var bankProfilesSettingsProvider =
-            new DefaultSettingsProvider<BankProfilesSettings>(bankProfilesSettings);
-        var bankProfileDefinitions =
-            new BankProfileService(bankProfilesSettingsProvider);
         var data =
             new TheoryData<BankTestData1, BankTestData2>();
 
@@ -208,7 +203,7 @@ public abstract class AppTests
         var bankProfileDefinitions =
             _serviceProvider.GetRequiredService<IBankProfileService>();
         BankProfile bankProfile =
-            bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum, instrumentationClient);
+            bankProfileDefinitions.GetBankProfile(testData2.BankProfileEnum);
 
         // Get bank user
         BankUser? bankUser = testData2.AuthUiInputUserName is not null

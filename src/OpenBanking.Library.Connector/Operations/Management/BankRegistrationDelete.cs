@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
@@ -58,10 +59,9 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile, _instrumentationClient);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-        bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
         bool includeExternalApiOperationValue =
@@ -109,13 +109,19 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                     entity.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
             }
 
             // Delete at API
             IDeleteRequestProcessor deleteRequestProcessor =
                 new BankRegistrationDeleteRequestProcessor(accessToken);
-            await deleteRequestProcessor.DeleteAsync(apiRequestUrl, apiClient);
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription = "DELETE {RegistrationEndpoint}/{ClientId}",
+                BankProfile = bankProfile.BankProfileEnum
+            };
+            await deleteRequestProcessor.DeleteAsync(apiRequestUrl, tppReportingRequestInfo, apiClient);
         }
 
         return (entity, nonErrorMessages);

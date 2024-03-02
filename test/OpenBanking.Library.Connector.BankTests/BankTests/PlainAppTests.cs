@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
@@ -9,6 +10,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -109,7 +111,11 @@ public class PlainAppTests : AppTests, IDisposable
         // Connect output to logging
         SetTestLogging();
 
-        var apiClient = new ApiClient(instrumentationClient, httpClientSettings.PooledConnectionLifetimeSeconds);
+        var tppReportingMetrics = _serviceProvider.GetRequiredService<TppReportingMetrics>();
+        var apiClient = new ApiClient(
+            instrumentationClient,
+            httpClientSettings.PooledConnectionLifetimeSeconds,
+            tppReportingMetrics);
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
 
         // Set up software statement store
@@ -118,7 +124,8 @@ public class PlainAppTests : AppTests, IDisposable
             obTransportCertificateProfilesSettingsProvider,
             obSigningCertificateProfilesSettingsProvider,
             httpClientSettingsProvider,
-            instrumentationClient);
+            instrumentationClient,
+            tppReportingMetrics);
         var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
 
         var apiVariantMapper = new ApiVariantMapper();
@@ -135,10 +142,11 @@ public class PlainAppTests : AppTests, IDisposable
                 processedSoftwareStatementProfileStore,
                 encryptionKeyInfo,
                 GetDbContext(),
-                new BankProfileService(bankProfilesSettingsProvider),
+                new BankProfileService(bankProfilesSettingsProvider, instrumentationClient),
                 memoryCache,
                 new SecretProvider(AppConfiguration.Configuration),
-                httpClientSettingsProvider),
+                httpClientSettingsProvider,
+                tppReportingMetrics),
             false);
 
         UnsetTestLogging();

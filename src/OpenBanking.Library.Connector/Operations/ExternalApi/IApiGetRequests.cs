@@ -6,6 +6,7 @@ using FinnovationLabs.OpenBanking.Library.BankApiModels;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
@@ -16,6 +17,7 @@ internal interface IApiGetRequests<TApiResponse>
     Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         GetAsync(
             Uri uri,
+            TppReportingRequestInfo? tppReportingRequestInfo,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient,
             IApiVariantMapper mapper);

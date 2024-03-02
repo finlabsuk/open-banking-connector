@@ -22,7 +22,9 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<NationwideBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(NationwideBank bank, IInstrumentationClient instrumentationClient) =>
+    public override BankProfile GetBankProfile(
+        NationwideBank bank,
+        IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://obonline.nationwide.co.uk/open-banking/", // from https://openbanking.atlassian.net/wiki/spaces/AD/pages/110101211/Implementation+Guide+Nationwide
@@ -70,7 +72,8 @@ public class NationwideGenerator : BankProfileGeneratorBase<NationwideBank>
                     return externalApiRequest;
                 },
                 UseGetPartyEndpoint = false
-            }
+            },
+            AspspBrandId = 12
         };
 
     private AccountAndTransactionApi? GetAccountAndTransactionApi(NationwideBank bank) =>

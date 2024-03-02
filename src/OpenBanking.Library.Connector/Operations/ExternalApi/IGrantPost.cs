@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.Json.Nodes;
+using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
@@ -26,6 +27,7 @@ internal interface IGrantPost
         JsonSerializerSettings? jsonSerializerSettings,
         ClientCredentialsGrantPostCustomBehaviour? clientCredentialsGrantPostCustomBehaviour,
         IApiClient mtlsApiClient,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         Dictionary<string, JsonNode?>? extraClaims = null,
         bool includeClientIdWithPrivateKeyJwt = false,
         JwsAlgorithm? jwsAlgorithm = null);
@@ -45,6 +47,7 @@ internal interface IGrantPost
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? authCodeGrantPostCustomBehaviour,
@@ -65,6 +68,7 @@ internal interface IGrantPost
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         string tokenEndpoint,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         JsonSerializerSettings? jsonSerializerSettings,
         AuthCodeAndRefreshTokenGrantPostCustomBehaviour? refreshTokenGrantPostCustomBehaviour,
@@ -81,6 +85,7 @@ internal interface IGrantPost
         string externalApiConsentId,
         string expectedNonce,
         bool supportsSca,
+        BankProfileEnum? bankProfileForTppReportingMetrics,
         IdTokenSubClaimType idTokenSubClaimType,
         string? externalApiUserId);
 

@@ -8,6 +8,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
@@ -116,9 +117,7 @@ internal class
                 await _consentCommon.GetBankRegistration(request.BankRegistrationId);
 
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(
-                bankRegistration.BankProfile,
-                _instrumentationClient);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -146,7 +145,8 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
 
             // Create new object at external API
             JsonSerializerSettings? requestJsonSerializerSettings = null;
@@ -163,10 +163,19 @@ internal class
                     request.ExternalApiRequest,
                     request.TemplateRequest,
                     bankProfile);
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription =
+                    $$"""
+                      POST {AispBaseUrl}{{RelativePathBeforeId}}
+                      """,
+                BankProfile = bankProfile.BankProfileEnum
+            };
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
                     externalApiRequest,
+                    tppReportingRequestInfo,
                     requestJsonSerializerSettings,
                     responseJsonSerializerSettings,
                     apiClient,
@@ -309,9 +318,7 @@ internal class
         if (includeExternalApiOperation)
         {
             // Get bank profile
-            BankProfile bankProfile = _bankProfileService.GetBankProfile(
-                bankRegistration.BankProfile,
-                _instrumentationClient);
+            BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
             AccountAndTransactionApi accountAndTransactionApi = bankProfile.GetRequiredAccountAndTransactionApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
@@ -339,7 +346,8 @@ internal class
                     bankRegistration.Id.ToString(),
                     null,
                     customBehaviour?.ClientCredentialsGrantPost,
-                    apiClient);
+                    apiClient,
+                    bankProfile.BankProfileEnum);
 
             // Read object from external API
             JsonSerializerSettings? responseJsonSerializerSettings = null;
@@ -350,9 +358,18 @@ internal class
                     ccGrantAccessToken);
             var externalApiUrl = new Uri(
                 accountAndTransactionApi.BaseUrl + RelativePathBeforeId + $"/{externalApiConsentId}");
+            var tppReportingRequestInfo = new TppReportingRequestInfo
+            {
+                EndpointDescription =
+                    $$"""
+                      GET {AispBaseUrl}{{RelativePathBeforeId}}/{ConsentId}
+                      """,
+                BankProfile = bankProfile.BankProfileEnum
+            };
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
+                    tppReportingRequestInfo,
                     responseJsonSerializerSettings,
                     apiClient,
                     _mapper);

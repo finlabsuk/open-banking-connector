@@ -21,7 +21,9 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<StarlingBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(StarlingBank bank, IInstrumentationClient instrumentationClient) =>
+    public override BankProfile GetBankProfile(
+        StarlingBank bank,
+        IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://api-openbanking.starlingbank.com/", // from https://developer.starlingbank.com/docs/open-banking#the-openid-connect-discovery-url-1
@@ -56,7 +58,8 @@ public class StarlingGenerator : BankProfileGeneratorBase<StarlingBank>
                         "https://openbanking.starlingbank.com/.well-known/openid-configuration" // from https://developer.starlingbank.com/docs/open-banking#the-openid-connect-discovery-url-1
                 }
             },
-            DefaultResponseMode = OAuth2ResponseMode.Query
+            DefaultResponseMode = OAuth2ResponseMode.Query,
+            AspspBrandId = 1510
         };
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(StarlingBank bank) =>

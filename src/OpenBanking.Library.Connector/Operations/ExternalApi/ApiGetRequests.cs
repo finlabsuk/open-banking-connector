@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 
@@ -28,6 +29,7 @@ internal class
     public async Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         GetAsync(
             Uri uri,
+            TppReportingRequestInfo? tppReportingRequestInfo,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient,
             IApiVariantMapper mapper)
@@ -37,6 +39,7 @@ internal class
         // Process request
         var variantResponse = await _getRequestProcessor.GetAsync<TVariantApiResponse>(
             uri,
+            tppReportingRequestInfo,
             jsonSerializerSettings,
             apiClient);
 

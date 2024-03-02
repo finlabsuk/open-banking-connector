@@ -7,6 +7,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Mapping;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -35,7 +36,8 @@ public class RequestBuilderContainer : IRequestBuilderContainer
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
         ISecretProvider secretProvider,
-        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider)
+        ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
+        TppReportingMetrics ttpReportingMetrics)
     {
         _dbContext = dbContext;
         RequestBuilder = new RequestBuilder(
@@ -49,7 +51,8 @@ public class RequestBuilderContainer : IRequestBuilderContainer
             memoryCache,
             encryptionKeyInfo,
             secretProvider,
-            httpClientSettingsProvider);
+            httpClientSettingsProvider,
+            ttpReportingMetrics);
     }
 
     public void Dispose()

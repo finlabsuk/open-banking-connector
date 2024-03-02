@@ -20,7 +20,9 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<RevolutBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(RevolutBank bank, IInstrumentationClient instrumentationClient) =>
+    public override BankProfile GetBankProfile(
+        RevolutBank bank,
+        IInstrumentationClient instrumentationClient) =>
         new(
             _bankGroup.GetBankProfile(bank),
             "https://oba.revolut.com", // from https://developer.revolut.com/docs/guides/build-banking-apps/register-your-application-using-dcr/open-id-configuration-urls
@@ -87,7 +89,8 @@ public class RevolutGenerator : BankProfileGeneratorBase<RevolutBank>
                     return externalApiRequest;
                 }
             },
-            DefaultResponseMode = OAuth2ResponseMode.Query
+            DefaultResponseMode = OAuth2ResponseMode.Query,
+            AspspBrandId = 1470
         };
 
     private AccountAndTransactionApi GetAccountAndTransactionApi(RevolutBank bank) =>

@@ -4,12 +4,13 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.BankGroups;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 
 public interface IBankProfileService
 {
-    BankProfile GetBankProfile(BankProfileEnum bankProfileEnum, IInstrumentationClient instrumentationClient);
+    BankProfile GetBankProfile(BankProfileEnum bankProfileEnum);
 
     TBank GetBank<TBank>(BankProfileEnum bankProfileEnum)
         where TBank : struct, Enum;

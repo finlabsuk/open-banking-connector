@@ -22,7 +22,9 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
         ISettingsProvider<BankProfilesSettings> bankProfilesSettingsProvider,
         IBankGroup<ObieBank> bankGroup) : base(bankProfilesSettingsProvider, bankGroup) { }
 
-    public override BankProfile GetBankProfile(ObieBank bank, IInstrumentationClient instrumentationClient)
+    public override BankProfile GetBankProfile(
+        ObieBank bank,
+        IInstrumentationClient instrumentationClient)
     {
         return new BankProfile(
             _bankGroup.GetBankProfile(bank),
@@ -87,7 +89,8 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
             {
                 UseRegistrationDeleteEndpoint = true,
                 TestTemporaryBankRegistration = bank is ObieBank.Modelo
-            }
+            },
+            AspspBrandId = 10000 // sandbox
         };
     }
 }

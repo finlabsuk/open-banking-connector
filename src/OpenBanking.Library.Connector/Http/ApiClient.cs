@@ -3,42 +3,59 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Net;
 using System.Net.Security;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
+using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using Microsoft.Extensions.Http.Logging;
 using Newtonsoft.Json;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Http;
 
-public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient httpClient)
+public class ApiClient(
+    IHttpClient httpClient,
+    IInstrumentationClient instrumentationClient,
+    TppReportingMetrics? tppReportingMetrics)
     : IApiClient, IDisposable
 {
     private readonly IHttpClient _httpClient = httpClient.ArgNotNull(nameof(httpClient));
+
     private readonly IHttpClientLogger _httpRequestLogger = new HttpRequestLogger(instrumentationClient);
 
     private readonly IInstrumentationClient _instrumentation =
         instrumentationClient.ArgNotNull(nameof(instrumentationClient));
 
+    /// <summary>
+    ///     Constructor used for external (bank) API requests
+    /// </summary>
+    /// <param name="instrumentationClient"></param>
+    /// <param name="pooledConnectionLifetimeSeconds"></param>
+    /// <param name="tppReportingMetrics"></param>
+    /// <param name="clientCertificates"></param>
+    /// <param name="serverCertificateValidator"></param>
     public ApiClient(
         IInstrumentationClient instrumentationClient,
         int pooledConnectionLifetimeSeconds,
+        TppReportingMetrics tppReportingMetrics,
         IList<X509Certificate2>? clientCertificates = null,
         IServerCertificateValidator? serverCertificateValidator = null) : this(
-        instrumentationClient,
         new HttpClientWrapper(
             new HttpClient(
                 CreatePrimaryHandler(
                     pooledConnectionLifetimeSeconds,
                     clientCertificates,
-                    serverCertificateValidator)))) { }
+                    serverCertificateValidator))),
+        instrumentationClient,
+        tppReportingMetrics) { }
 
     public ApiClient(IInstrumentationClient instrumentationClient, HttpClient unwrappedHttpClient) : this(
+        new HttpClientWrapper(unwrappedHttpClient),
         instrumentationClient,
-        new HttpClientWrapper(unwrappedHttpClient)) { }
+        null) { }
 
     public static JsonSerializerSettings GetDefaultJsonSerializerSettings => new()
     {
@@ -48,12 +65,14 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
 
     public async Task<T> SendExpectingJsonResponseAsync<T>(
         HttpRequestMessage request,
+        TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings)
         where T : class
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+        (int statusCode, string? responseBody, string? xFapiInteractionId) =
+            await SendInnerAsync(request, tppReportingRequestInfo);
 
         // Check body not null
         if (responseBody is null)
@@ -86,11 +105,14 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
         return responseBodyTyped;
     }
 
-    public async Task SendExpectingNoResponseAsync(HttpRequestMessage request)
+    public async Task SendExpectingNoResponseAsync(
+        HttpRequestMessage request,
+        TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+        (int statusCode, string? responseBody, string? xFapiInteractionId) =
+            await SendInnerAsync(request, tppReportingRequestInfo);
 
         // Check body null
         if (!string.IsNullOrEmpty(responseBody))
@@ -99,11 +121,14 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
         }
     }
 
-    public async Task<string> SendExpectingStringResponseAsync(HttpRequestMessage request)
+    public async Task<string> SendExpectingStringResponseAsync(
+        HttpRequestMessage request,
+        TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        (int statusCode, string? responseBody, string? xFapiInteractionId) = await SendInnerAsync(request);
+        (int statusCode, string? responseBody, string? xFapiInteractionId) =
+            await SendInnerAsync(request, tppReportingRequestInfo);
 
         // Check body not null
         if (string.IsNullOrEmpty(responseBody))
@@ -174,7 +199,8 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
     }
 
     private async Task<(int statusCode, string? responseBody, string? xFapiInteractionId)> SendInnerAsync(
-        HttpRequestMessage request)
+        HttpRequestMessage request,
+        TppReportingRequestInfo? tppReportingRequestInfo)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -214,6 +240,24 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
         {
             stopWatch.Stop(); // no-op if not required
 
+            // Update TPP reporting metric
+            if (tppReportingRequestInfo is not null) // removed ex is TaskCanceledException { InnerException: TimeoutException })
+            {
+                if (response is null)
+                {
+                    tppReportingMetrics?.RequestNoResponseCount.Add(
+                        1,
+                        new KeyValuePair<string, object?>("bank_profile", tppReportingRequestInfo.BankProfile),
+                        new KeyValuePair<string, object?>(
+                            "external_api_endpoint",
+                            tppReportingRequestInfo.EndpointDescription));
+                }
+                else
+                {
+                    UpdateTppReportingMetrics(tppReportingRequestInfo, (int) response.StatusCode);
+                }
+            }
+
             // Log request
             _httpRequestLogger.LogRequestFailed(
                 new HttpRequestLoggerAdditionalData
@@ -230,6 +274,12 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
         finally
         {
             response?.Dispose();
+        }
+
+        // Update TPP reporting metric
+        if (tppReportingRequestInfo is not null)
+        {
+            UpdateTppReportingMetrics(tppReportingRequestInfo, (int) response.StatusCode);
         }
 
         // Get selected response headers
@@ -252,6 +302,29 @@ public class ApiClient(IInstrumentationClient instrumentationClient, IHttpClient
         }
 
         return (statusCode, responseBody, xFapiInteractionId);
+    }
+
+    private void UpdateTppReportingMetrics(
+        TppReportingRequestInfo tppReportingRequestInfo,
+        int statusCodeInt)
+    {
+        if (tppReportingMetrics is null)
+        {
+            return;
+        }
+        Counter<int>? count = statusCodeInt switch
+        {
+            (>= 200) and (<= 299) => tppReportingMetrics.Request2xxResponseCount,
+            (>= 400) and (<= 499) => tppReportingMetrics.Request4xxResponseCount,
+            (>= 500) and (<= 599) => tppReportingMetrics.Request5xxResponseCount,
+            _ => null
+        };
+        count?.Add(
+            1,
+            new KeyValuePair<string, object?>("bank_profile", tppReportingRequestInfo.BankProfile),
+            new KeyValuePair<string, object?>(
+                "external_api_endpoint",
+                tppReportingRequestInfo.EndpointDescription));
     }
 
     public async Task<HttpResponseMessage> LowLevelSendAsync(HttpRequestMessage request)
