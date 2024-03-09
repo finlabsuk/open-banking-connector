@@ -22,7 +22,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using DomesticVrpConsentPersisted =
@@ -61,7 +60,6 @@ internal class
         IDbReadWriteEntityMethods<DomesticVrpConsentPersisted> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
@@ -89,8 +87,7 @@ internal class
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentRequest,
                 VariableRecurringPaymentsModelsPublic.OBDomesticVRPConsentResponse>(
                 bankRegistrationMethods,
-                instrumentationClient,
-                softwareStatementProfileRepo);
+                instrumentationClient);
     }
 
     private string ClientCredentialsGrantScope => "payments";

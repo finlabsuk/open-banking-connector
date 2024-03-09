@@ -7,7 +7,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,12 +21,10 @@ internal class
         IDbReadWriteEntityMethods<TEntity> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient) { }
 
     public async

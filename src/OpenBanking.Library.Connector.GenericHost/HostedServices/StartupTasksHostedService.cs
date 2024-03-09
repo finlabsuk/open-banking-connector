@@ -160,13 +160,11 @@ public class StartupTasksHostedService : IHostedService
             await new BankRegistrationCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
-                    _processedSoftwareStatementProfileStore,
                     _logger);
 
             await new AccountAccessConsentCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
-                    _processedSoftwareStatementProfileStore,
                     _logger);
 
             //postgreSqlDbContext.ChangeTracker.DetectChanges();

@@ -16,15 +16,15 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
     where TVariantApiRequest : class
 {
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly ProcessedSoftwareStatementProfile _processedSoftwareStatementProfile;
+    private readonly OBSealKey _obSealKey;
     private readonly bool _useApplicationJoseNotApplicationJwtContentTypeHeader;
 
     public BankRegistrationPostRequestProcessor(
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         IInstrumentationClient instrumentationClient,
         bool useApplicationJoseNotApplicationJwtContentTypeHeader)
     {
-        _processedSoftwareStatementProfile = processedSoftwareStatementProfile;
+        _obSealKey = obSealKey;
         _instrumentationClient = instrumentationClient;
         _useApplicationJoseNotApplicationJwtContentTypeHeader =
             useApplicationJoseNotApplicationJwtContentTypeHeader;
@@ -44,9 +44,9 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             variantRequest,
             jsonSerializerSettings);
         string jwt = JwtFactory.CreateJwt(
-            JwtFactory.DefaultJwtHeadersIncludingTyp(_processedSoftwareStatementProfile.OBSealKey.KeyId),
+            JwtFactory.DefaultJwtHeadersIncludingTyp(_obSealKey.KeyId),
             payloadJson,
-            _processedSoftwareStatementProfile.OBSealKey.Key,
+            _obSealKey.Key,
             null);
         StringBuilder requestTraceSb = new StringBuilder()
             .AppendLine($"#### Claims ({requestDescription})")

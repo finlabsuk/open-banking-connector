@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.BankConfiguration;
@@ -13,7 +12,6 @@ public class BankRegistrationCleanup
 {
     public Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
-        IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ILogger logger)
     {
         List<BankRegistrationEntity> entityList =

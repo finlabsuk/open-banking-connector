@@ -13,9 +13,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,22 +25,26 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly IGrantPost _grantPost;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public DomesticVrpConsentDelete(
         IDbReadWriteEntityMethods<DomesticVrpConsent> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost) : base(
+        IGrantPost grantPost,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient)
     {
         _grantPost = grantPost;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
         _bankProfileService = bankProfileService;
     }
 
@@ -60,7 +64,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         DomesticVrpConsent persistedObject =
             await _entityMethods
                 .DbSet
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Domestic VRP Consent with ID {deleteParams.Id}.");
 
@@ -68,6 +72,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
         {
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
+            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
             // Get bank profile
             BankProfile bankProfile =
@@ -76,16 +81,17 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
                 bankProfile.GetRequiredVariableRecurringPaymentsApi();
             TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
                 bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-            bool supportsSca = bankProfile.SupportsSca;
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
-            // Get software statement profile
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementId.ToString(),
-                    bankRegistration.SoftwareStatementProfileOverride);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            // Get IApiClient
+            IApiClient apiClient = bankRegistration.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
             // Determine endpoint URL
             string baseUrl = variableRecurringPaymentsApi.BaseUrl;
@@ -95,7 +101,7 @@ internal class DomesticVrpConsentDelete : BaseDelete<DomesticVrpConsent, Consent
             string ccGrantAccessToken =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "payments",
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
                     persistedObject.BankRegistrationNavigation.ExternalApiId,

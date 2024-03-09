@@ -24,7 +24,6 @@ internal class SharedContext : ISharedContext
         IApiClient apiClient,
         IInstrumentationClient instrumentation,
         IDbService dbService,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IApiVariantMapper apiVariantMapper,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
@@ -39,7 +38,6 @@ internal class SharedContext : ISharedContext
         ApiClient = apiClient;
         Instrumentation = instrumentation;
         DbService = dbService;
-        SoftwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
         ApiVariantMapper = apiVariantMapper;
         BankProfileService = bankProfileService;
         MemoryCache = memoryCache;
@@ -58,7 +56,6 @@ internal class SharedContext : ISharedContext
     public IInstrumentationClient Instrumentation { get; }
     public IBankProfileService BankProfileService { get; }
     public IDbService DbService { get; }
-    public IProcessedSoftwareStatementProfileStore SoftwareStatementProfileCachedRepo { get; }
     public IEncryptionKeyInfo EncryptionKeyInfo { get; }
     public IApiVariantMapper ApiVariantMapper { get; }
     public ISecretProvider SecretProvider { get; }

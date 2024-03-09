@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -24,19 +23,16 @@ internal abstract class BaseCreate<TPublicRequest, TPublicResponse, TCreateParam
 {
     protected readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     protected readonly IInstrumentationClient _instrumentationClient;
-    protected readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
     protected readonly ITimeProvider _timeProvider;
 
 
     public BaseCreate(
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
     }
 

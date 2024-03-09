@@ -54,7 +54,6 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new GrantPost(
@@ -84,7 +83,6 @@ internal class DomesticPaymentConsentsConsentContext :
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation);
     }
 
@@ -103,9 +101,9 @@ internal class DomesticPaymentConsentsConsentContext :
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<DomesticPaymentConsent>(),
-                _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService));
+                _sharedContext.BankProfileService,
+                _sharedContext.ObSealCertificateMethods));
 
     public IObjectRead<DomesticPaymentConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 

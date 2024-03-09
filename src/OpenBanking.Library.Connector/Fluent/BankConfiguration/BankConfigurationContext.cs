@@ -59,7 +59,8 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.TimeProvider,
                 _sharedContext.Instrumentation,
                 _sharedContext.HttpClientSettingsProvider,
-                _sharedContext.MemoryCache, _sharedContext.TppReportingMetrics,
+                _sharedContext.MemoryCache,
+                _sharedContext.TppReportingMetrics,
                 _sharedContext.SecretProvider));
 
     public ILocalEntityContext<ObSealCertificate, IObSealCertificatePublicQuery, ObSealCertificateResponse,
@@ -84,8 +85,5 @@ internal class ManagementContext : IManagementContext
                 _sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
-                _sharedContext.SoftwareStatementProfileCachedRepo,
-                _sharedContext.Instrumentation,
-                _sharedContext.ObWacCertificateMethods,
-                _sharedContext.ObSealCertificateMethods));
+                _sharedContext.Instrumentation));
 }

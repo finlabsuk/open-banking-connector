@@ -73,7 +73,6 @@ public class RequestBuilder : IRequestBuilder
     private readonly ObSealCertificateMethods _obSealCertificateMethods;
     private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ISecretProvider _secretProvider;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileCachedRepo;
     private readonly ITimeProvider _timeProvider;
     private readonly TppReportingMetrics _tppReportingMetrics;
 
@@ -82,7 +81,6 @@ public class RequestBuilder : IRequestBuilder
         IApiVariantMapper apiVariantMapper,
         IInstrumentationClient logger,
         IApiClient apiClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileCachedRepo,
         IDbService dbService,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
@@ -93,7 +91,6 @@ public class RequestBuilder : IRequestBuilder
     {
         _timeProvider = timeProvider.ArgNotNull(nameof(timeProvider));
         _apiVariantMapper = apiVariantMapper.ArgNotNull(nameof(apiVariantMapper));
-        _softwareStatementProfileCachedRepo = softwareStatementProfileCachedRepo;
         _dbService = dbService;
         _bankProfileService = bankProfileService;
         _encryptionKeyInfo = encryptionKeyInfo;
@@ -142,7 +139,6 @@ public class RequestBuilder : IRequestBuilder
             _apiClient,
             _logger,
             _dbService,
-            _softwareStatementProfileCachedRepo,
             _apiVariantMapper,
             _bankProfileService,
             _memoryCache,

@@ -8,8 +8,8 @@ using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 using DomesticPaymentConsentAuthContextRequest =
@@ -30,6 +30,7 @@ internal class
 {
     private readonly IBankProfileService _bankProfileService;
     protected readonly IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> _domesticPaymentConsentMethods;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
 
     public DomesticPaymentConsentAuthContextPost(
         IDbReadWriteEntityMethods<DomesticPaymentConsentAuthContextPersisted>
@@ -37,17 +38,17 @@ internal class
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
         IDbReadOnlyEntityMethods<DomesticPaymentConsentPersisted> domesticPaymentConsentMethods,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
-        IBankProfileService bankProfileService) : base(
+        IBankProfileService bankProfileService,
+        ObSealCertificateMethods obSealCertificateMethods) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient)
     {
         _domesticPaymentConsentMethods = domesticPaymentConsentMethods;
         _bankProfileService = bankProfileService;
+        _obSealCertificateMethods = obSealCertificateMethods;
     }
 
     protected override async Task<DomesticPaymentConsentAuthContextCreateResponse> AddEntity(
@@ -58,31 +59,29 @@ internal class
         DomesticPaymentConsentPersisted domesticPaymentConsent =
             _domesticPaymentConsentMethods
                 .DbSetNoTracking
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .SingleOrDefault(x => x.Id == request.DomesticPaymentConsentId) ??
             throw new KeyNotFoundException(
                 $"No record found for Domestic Payment Consent with ID {request.DomesticPaymentConsentId}.");
         BankRegistrationEntity bankRegistration = domesticPaymentConsent.BankRegistrationNavigation;
         string authorizationEndpoint =
             bankRegistration.AuthorizationEndpoint;
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
         // Get bank profile
-        BankProfile bankProfile = _bankProfileService.GetBankProfile(
-            bankRegistration.BankProfile);
+        BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
         bool supportsSca = bankProfile.SupportsSca;
         string issuerUrl = bankProfile.IssuerUrl;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration
-                    .SoftwareStatementProfileOverride);
-        string redirectUri = processedSoftwareStatementProfile.GetRedirectUri(
+        string redirectUri = softwareStatement.GetRedirectUri(
             bankRegistration.DefaultResponseModeOverride ?? bankProfile.DefaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
             bankRegistration.DefaultQueryRedirectUri);
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Create auth URL
         string consentAuthGetAudClaim =
@@ -91,7 +90,7 @@ internal class
 
         (string authUrl, string state, string nonce, string sessionId) = CreateAuthUrl.Create(
             domesticPaymentConsent.ExternalApiId,
-            processedSoftwareStatementProfile.OBSealKey,
+            obSealKey,
             bankRegistration,
             bankRegistration.ExternalApiId,
             customBehaviour?.DomesticPaymentConsentAuthGet,

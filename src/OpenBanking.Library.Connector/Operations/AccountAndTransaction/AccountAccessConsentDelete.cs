@@ -13,9 +13,9 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAnd
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,23 +25,27 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly IGrantPost _grantPost;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public AccountAccessConsentDelete(
         IDbReadWriteEntityMethods<AccountAccessConsent> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IGrantPost grantPost,
-        IBankProfileService bankProfileService) : base(
+        IBankProfileService bankProfileService,
+        ObSealCertificateMethods obSealCertificateMethods,
+        ObWacCertificateMethods obWacCertificateMethods) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient)
     {
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
+        _obSealCertificateMethods = obSealCertificateMethods;
+        _obWacCertificateMethods = obWacCertificateMethods;
     }
 
     protected string RelativePathBeforeId => "/account-access-consents";
@@ -60,7 +64,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         AccountAccessConsent persistedObject =
             await _entityMethods
                 .DbSet
-                .Include(o => o.BankRegistrationNavigation)
+                .Include(o => o.BankRegistrationNavigation.SoftwareStatementNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Account Access Consent with ID {deleteParams.Id}.");
 
@@ -68,6 +72,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
         {
             BankRegistrationEntity bankRegistration = persistedObject.BankRegistrationNavigation;
             string bankApiId = persistedObject.ExternalApiId;
+            SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
             // Get bank profile
             BankProfile bankProfile =
@@ -79,12 +84,15 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             string bankFinancialId = bankProfile.FinancialId;
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
-            // Get software statement profile
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    bankRegistration.SoftwareStatementId.ToString(),
-                    bankRegistration.SoftwareStatementProfileOverride);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            // Get IApiClient
+            IApiClient apiClient = bankRegistration.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
+
 
             // Determine endpoint URL
             string baseUrl = accountAndTransactionApi.BaseUrl;
@@ -94,7 +102,7 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             string ccGrantAccessToken =
                 await _grantPost.PostClientCredentialsGrantAsync(
                     "accounts",
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     persistedObject.BankRegistrationNavigation.TokenEndpoint,
                     persistedObject.BankRegistrationNavigation.ExternalApiId,

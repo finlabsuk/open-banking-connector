@@ -119,13 +119,6 @@ public class PlainAppTests : AppTests, IDisposable
         var memoryCache = new MemoryCache(new MemoryCacheOptions());
 
         // Set up software statement store
-        var processedSoftwareStatementProfileStore = new ProcessedSoftwareStatementProfileStore(
-            softwareStatementProfilesSettingsProvider,
-            obTransportCertificateProfilesSettingsProvider,
-            obSigningCertificateProfilesSettingsProvider,
-            httpClientSettingsProvider,
-            instrumentationClient,
-            tppReportingMetrics);
         var encryptionKeyInfo = new EncryptionKeyInfo(keySettingsProvider);
 
         var apiVariantMapper = new ApiVariantMapper();
@@ -139,7 +132,6 @@ public class PlainAppTests : AppTests, IDisposable
                 apiVariantMapper,
                 instrumentationClient,
                 apiClient,
-                processedSoftwareStatementProfileStore,
                 encryptionKeyInfo,
                 GetDbContext(),
                 new BankProfileService(bankProfilesSettingsProvider, instrumentationClient),

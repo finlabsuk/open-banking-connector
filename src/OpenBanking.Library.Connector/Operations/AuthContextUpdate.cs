@@ -5,6 +5,7 @@
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles;
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
@@ -16,6 +17,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
@@ -36,7 +38,8 @@ internal class AuthContextUpdate :
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
     private readonly ITimeProvider _timeProvider;
 
     public AuthContextUpdate(
@@ -44,22 +47,24 @@ internal class AuthContextUpdate :
         ITimeProvider timeProvider,
         IDbReadWriteEntityMethods<AuthContext>
             authContextMethods,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IGrantPost grantPost,
         IBankProfileService bankProfileService,
         IMemoryCache memoryCache,
-        IEncryptionKeyInfo encryptionKeyInfo)
+        IEncryptionKeyInfo encryptionKeyInfo,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods)
     {
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
         _authContextMethods = authContextMethods;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
         _grantPost = grantPost;
         _bankProfileService = bankProfileService;
         _memoryCache = memoryCache;
         _encryptionKeyInfo = encryptionKeyInfo;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
     }
 
     public async
@@ -85,7 +90,7 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
                         .AccountAccessConsentNavigation
-                        .BankRegistrationNavigation)
+                        .BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(
                     o => ((AccountAccessConsentAuthContext) o)
                         .AccountAccessConsentNavigation
@@ -97,7 +102,7 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
-                        .BankRegistrationNavigation)
+                        .BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(
                     o => ((DomesticPaymentConsentAuthContext) o)
                         .DomesticPaymentConsentNavigation
@@ -109,7 +114,7 @@ internal class AuthContextUpdate :
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
-                        .BankRegistrationNavigation)
+                        .BankRegistrationNavigation.SoftwareStatementNavigation)
                 .Include(
                     o => ((DomesticVrpConsentAuthContext) o)
                         .DomesticVrpConsentNavigation
@@ -188,6 +193,7 @@ internal class AuthContextUpdate :
         string? externalApiSecret = bankRegistration.ExternalApiSecret;
         string jwksUri = bankRegistration.JwksUri;
         string consentAssociatedData = consent.GetAssociatedData(bankRegistration);
+        SoftwareStatementEntity softwareStatement = bankRegistration.SoftwareStatementNavigation!;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(bankRegistration.BankProfile);
@@ -199,16 +205,19 @@ internal class AuthContextUpdate :
         string issuerUrl = bankProfile.IssuerUrl;
         IdTokenSubClaimType idTokenSubClaimType = bankProfile.BankConfigurationApiSettings.IdTokenSubClaimType;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
-
-        // Get software statement profile
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(
-                bankRegistration.SoftwareStatementId.ToString(),
-                bankRegistration.SoftwareStatementProfileOverride);
-        string redirectUrl = processedSoftwareStatementProfile.GetRedirectUri(
+        string redirectUrl = softwareStatement.GetRedirectUri(
             defaultResponseMode,
             bankRegistration.DefaultFragmentRedirectUri,
             bankRegistration.DefaultQueryRedirectUri);
+
+        // Get IApiClient
+        IApiClient apiClient = bankRegistration.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Validate redirect URL
         if (request.RedirectUrl is not null &&
@@ -289,7 +298,7 @@ internal class AuthContextUpdate :
                     consent.ExternalApiUserId,
                     nonce,
                     requestScope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     jwksUri,
                     tokenEndpointAuthMethod,
                     tokenEndpoint,
@@ -299,7 +308,7 @@ internal class AuthContextUpdate :
                     jsonSerializerSettings,
                     customBehaviour?.AuthCodeGrantPost,
                     customBehaviour?.JwksGet,
-                    processedSoftwareStatementProfile.ApiClient);
+                    apiClient);
 
             // Update consent with nonce, token
             consent.UpdateAuthContext(

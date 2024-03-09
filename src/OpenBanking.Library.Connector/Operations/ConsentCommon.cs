@@ -8,7 +8,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
@@ -22,16 +21,13 @@ internal class
 {
     private readonly IDbReadOnlyEntityMethods<BankRegistrationEntity> _bankRegistrationMethods;
     private readonly IInstrumentationClient _instrumentationClient;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
 
     public ConsentCommon(
         IDbReadOnlyEntityMethods<BankRegistrationEntity> bankRegistrationMethods,
-        IInstrumentationClient instrumentationClient,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo)
+        IInstrumentationClient instrumentationClient)
     {
         _bankRegistrationMethods = bankRegistrationMethods;
         _instrumentationClient = instrumentationClient;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
     }
 
     public async

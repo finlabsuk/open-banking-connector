@@ -32,7 +32,6 @@ internal class BankRegistrationsContextInternal :
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new OpenIdConfigurationRead(sharedContext.ApiClient),
@@ -41,20 +40,24 @@ internal class BankRegistrationsContextInternal :
                 sharedContext.ApiClient,
                 sharedContext.Instrumentation,
                 sharedContext.MemoryCache,
-                sharedContext.TimeProvider));
+                sharedContext.TimeProvider),
+            sharedContext.DbService.GetDbEntityMethodsClass<SoftwareStatementEntity>(),
+            sharedContext.ObWacCertificateMethods,
+            sharedContext.ObSealCertificateMethods);
         ReadObject = bankRegistrationOperations;
         DeleteObject = new BankRegistrationDelete(
             sharedContext.DbService.GetDbEntityMethodsClass<BankRegistrationEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.BankProfileService,
             new GrantPost(
                 sharedContext.ApiClient,
                 sharedContext.Instrumentation,
                 sharedContext.MemoryCache,
-                sharedContext.TimeProvider));
+                sharedContext.TimeProvider),
+            sharedContext.ObWacCertificateMethods,
+            sharedContext.ObSealCertificateMethods);
         CreateObject = bankRegistrationOperations;
     }
 

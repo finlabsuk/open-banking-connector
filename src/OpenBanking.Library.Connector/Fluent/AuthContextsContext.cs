@@ -32,7 +32,6 @@ internal class AuthContextsContext : IAuthContextsContext
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
             sharedContext.DbService.GetDbEntityMethodsClass<AuthContextPersisted>(),
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             new GrantPost(
                 sharedContext.ApiClient,
@@ -41,7 +40,9 @@ internal class AuthContextsContext : IAuthContextsContext
                 sharedContext.TimeProvider),
             sharedContext.BankProfileService,
             sharedContext.MemoryCache,
-            sharedContext.EncryptionKeyInfo);
+            sharedContext.EncryptionKeyInfo,
+            sharedContext.ObWacCertificateMethods,
+            sharedContext.ObSealCertificateMethods);
     }
 
     public IObjectUpdate<AuthResult, AuthContextUpdateAuthResultResponse> UpdateLocalObject { get; }

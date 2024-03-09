@@ -20,7 +20,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using AccountAccessConsentPersisted =
@@ -59,7 +58,6 @@ internal class
         IDbReadWriteEntityMethods<AccountAccessConsentPersisted> consentEntityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
@@ -85,8 +83,7 @@ internal class
                 AccountAndTransactionModelsPublic.OBReadConsent1,
                 AccountAndTransactionModelsPublic.OBReadConsentResponse1>(
                 bankRegistrationMethods,
-                instrumentationClient,
-                softwareStatementProfileRepo);
+                instrumentationClient);
     }
 
     private string ClientCredentialsGrantScope => "accounts";

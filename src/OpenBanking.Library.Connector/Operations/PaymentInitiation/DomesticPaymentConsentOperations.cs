@@ -22,7 +22,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.PaymentInitiation;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Newtonsoft.Json;
 using PaymentInitiationModelsV3p1p4 =
@@ -63,7 +62,6 @@ internal class
         IDbReadWriteEntityMethods<DomesticPaymentConsentPersisted> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IGrantPost grantPost,
@@ -92,8 +90,7 @@ internal class
                 PaymentInitiationModelsPublic.OBWriteDomesticConsent4,
                 PaymentInitiationModelsPublic.OBWriteDomesticConsentResponse5>(
                 bankRegistrationMethods,
-                instrumentationClient,
-                softwareStatementProfileRepo);
+                instrumentationClient);
     }
 
     private string ClientCredentialsGrantScope => "payments";

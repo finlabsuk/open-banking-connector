@@ -6,7 +6,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
 using FinnovationLabs.OpenBanking.Library.Connector.Instrumentation;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,18 +21,15 @@ internal class LocalEntityDelete<TEntity, TDeleteParams> : BaseDelete<TEntity, T
     /// <param name="entityMethods"></param>
     /// <param name="dbSaveChangesMethod"></param>
     /// <param name="timeProvider"></param>
-    /// <param name="softwareStatementProfileRepo"></param>
     /// <param name="instrumentationClient"></param>
     public LocalEntityDelete(
         IDbReadWriteEntityMethods<TEntity> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient) { }
 
     protected override async

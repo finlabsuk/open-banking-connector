@@ -4,7 +4,6 @@
 
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Cleanup.AccountAndTransaction;
@@ -13,7 +12,6 @@ public class AccountAccessConsentCleanup
 {
     public async Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
-        IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ILogger logger)
     {
         IQueryable<AccountAccessConsent> entityList =

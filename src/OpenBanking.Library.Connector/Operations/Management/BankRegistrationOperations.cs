@@ -22,10 +22,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Jose;
 using Microsoft.EntityFrameworkCore;
@@ -54,27 +54,33 @@ internal class
     private readonly IGrantPost _grantPost;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IApiVariantMapper _mapper;
-    private readonly IProcessedSoftwareStatementProfileStore _softwareStatementProfileRepo;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
+    private readonly IDbReadWriteEntityMethods<SoftwareStatementEntity> _softwareStatementEntityMethods;
     private readonly ITimeProvider _timeProvider;
 
     public BankRegistrationOperations(
         IDbReadWriteEntityMethods<BankRegistrationEntity> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IApiVariantMapper mapper,
         IOpenIdConfigurationRead configurationRead,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost)
+        IGrantPost grantPost,
+        IDbReadWriteEntityMethods<SoftwareStatementEntity> softwareStatementEntityMethods,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods)
     {
         _bankProfileService = bankProfileService;
         _grantPost = grantPost;
+        _softwareStatementEntityMethods = softwareStatementEntityMethods;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
         _configurationRead = configurationRead;
         _entityMethods = entityMethods;
         _dbSaveChangesMethod = dbSaveChangesMethod;
         _timeProvider = timeProvider;
-        _softwareStatementProfileRepo = softwareStatementProfileRepo;
         _instrumentationClient = instrumentationClient;
         _mapper = mapper;
     }
@@ -97,22 +103,37 @@ internal class
             bankProfile.DynamicClientRegistrationApiVersion;
         bool useSimulatedBank = request.UseSimulatedBank;
 
-        // Load processed software statement profile
+        // Load software statement
         Guid softwareStatementId = request.SoftwareStatementId;
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-            await _softwareStatementProfileRepo.GetAsync(softwareStatementId.ToString());
+        SoftwareStatementEntity softwareStatement =
+            await _softwareStatementEntityMethods
+                .DbSetNoTracking
+                .SingleOrDefaultAsync(x => x.Id == softwareStatementId) ??
+            throw new KeyNotFoundException($"No record found for SoftwareStatement with ID {softwareStatementId}.");
+
+        // Get IApiClient
+        ObWacCertificate obWacCertificate =
+            await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId);
+        IApiClient apiClient = request.UseSimulatedBank
+            ? bankProfile.ReplayApiClient
+            : obWacCertificate.ApiClient;
+
+        // Get OBSeal key
+        OBSealKey obSealKey =
+            (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
         // Get and process software statement assertion
-        string softwareStatementAssertion = await GetSoftwareStatementAssertion(processedSoftwareStatementProfile);
+        string softwareStatementAssertion =
+            await GetSoftwareStatementAssertion(softwareStatement, obSealKey, apiClient);
         SsaPayload ssaPayload = ProcessSsa(
             softwareStatementAssertion,
-            processedSoftwareStatementProfile,
+            softwareStatement,
             softwareStatementId);
 
         // Determine redirect URIs
         (IList<string> redirectUris, string defaultFragmentRedirectUri, string defaultQueryRedirectUri) =
             GetRedirectUris(
-                processedSoftwareStatementProfile,
+                softwareStatement,
                 ssaPayload,
                 request.DefaultFragmentRedirectUri,
                 request.DefaultQueryRedirectUri,
@@ -253,10 +274,18 @@ internal class
 
             BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour =
                 customBehaviour?.BankRegistrationPost;
+            SubjectDnOrgIdEncoding transportCertificateSubjectDnOrgIdEncoding =
+                bankRegistrationPostCustomBehaviour?.TransportCertificateSubjectDnOrgIdEncoding ??
+                SubjectDnOrgIdEncoding.StringAttributeType;
+            string tlsClientAuthSubjectDn = obWacCertificate.SubjectDn[
+                transportCertificateSubjectDnOrgIdEncoding];
             externalApiResponse = await PerformDynamicClientRegistration(
                 bankRegistrationPostCustomBehaviour,
                 dynamicClientRegistrationApiVersion,
-                processedSoftwareStatementProfile,
+                softwareStatement,
+                apiClient,
+                obSealKey,
+                tlsClientAuthSubjectDn,
                 bankProfile.BankProfileEnum,
                 softwareStatementAssertion,
                 registrationEndpoint!, // useRegistrationEndpoint is true
@@ -352,15 +381,16 @@ internal class
         BankRegistrationEntity entity =
             await _entityMethods
                 .DbSetNoTracking
+                .Include(o => o.SoftwareStatementNavigation)
                 .SingleOrDefaultAsync(x => x.Id == readParams.Id) ??
-            throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.ModifiedBy}.");
+            throw new KeyNotFoundException($"No record found for BankRegistration with ID {readParams.Id}.");
         string externalApiId = entity.ExternalApiId;
+        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-        bool supportsSca = bankProfile.SupportsSca;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion =
             bankProfile.DynamicClientRegistrationApiVersion;
@@ -379,12 +409,14 @@ internal class
             bool useRegistrationAccessTokenValue =
                 bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
-            // Get software statement profile
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    entity.SoftwareStatementId.ToString(),
-                    entity.SoftwareStatementProfileOverride);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            // Get IApiClient
+            IApiClient apiClient = entity.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
             // Get client credentials grant access token if necessary
             string accessToken;
@@ -399,7 +431,7 @@ internal class
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
                 accessToken = await _grantPost.PostClientCredentialsGrantAsync(
                     scope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     entity.TokenEndpoint,
                     entity.ExternalApiId,
@@ -417,7 +449,7 @@ internal class
             IApiGetRequests<ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
                 ApiRequests(
                     dynamicClientRegistrationApiVersion,
-                    processedSoftwareStatementProfile,
+                    obSealKey,
                     false, // not used for GET
                     accessToken);
             var externalApiUrl = new Uri(registrationEndpoint.TrimEnd('/') + $"/{externalApiId}");
@@ -607,24 +639,26 @@ internal class
     }
 
     private async Task<string> GetSoftwareStatementAssertion(
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile)
+        SoftwareStatementEntity softwareStatement,
+        OBSealKey obSealKey,
+        IApiClient apiClient)
     {
         // Get access token
         var scope = "ASPSPReadAccess TPPReadAccess AuthoritiesReadAccess";
-        string tokenEndpoint = processedSoftwareStatementProfile.SandboxEnvironment
+        string tokenEndpoint = softwareStatement.SandboxEnvironment
             ? "https://matls-sso.openbankingtest.org.uk/as/token.oauth2"
             : "https://matls-sso.openbanking.org.uk/as/token.oauth2";
         string accessToken = await _grantPost.PostClientCredentialsGrantAsync(
             scope,
-            processedSoftwareStatementProfile.OBSealKey,
+            obSealKey,
             TokenEndpointAuthMethodSupportedValues.PrivateKeyJwt,
             tokenEndpoint,
-            processedSoftwareStatementProfile.SoftwareId,
+            softwareStatement.SoftwareId,
             null,
-            processedSoftwareStatementProfile.SoftwareId,
+            softwareStatement.SoftwareId,
             null,
             null,
-            processedSoftwareStatementProfile.ApiClient,
+            apiClient,
             null,
             new Dictionary<string, JsonNode?> { ["scope"] = scope },
             true,
@@ -632,23 +666,23 @@ internal class
 
         // Get software statement assertion
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + accessToken) };
-        string url = processedSoftwareStatementProfile.SandboxEnvironment
+        string url = softwareStatement.SandboxEnvironment
             ? "https://matls-ssaapi.openbankingtest.org.uk/api/v2/tpp/"
             : "https://matls-ssaapi.openbanking.org.uk/api/v2/tpp/";
-        url += $"{processedSoftwareStatementProfile.OrganisationId}/ssa/{processedSoftwareStatementProfile.SoftwareId}";
+        url += $"{softwareStatement.OrganisationId}/ssa/{softwareStatement.SoftwareId}";
         string response = await new HttpRequestBuilder()
             .SetUri(url)
             .SetHeaders(headers)
             .SetAccept("application/jws+json")
             .Create()
-            .SendExpectingStringResponseAsync(null, processedSoftwareStatementProfile.ApiClient);
+            .SendExpectingStringResponseAsync(null, apiClient);
 
         return response;
     }
 
     private SsaPayload ProcessSsa(
         string ssa,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        SoftwareStatementEntity softwareStatement,
         Guid id)
     {
         // Get parts of SSA and payload
@@ -669,20 +703,20 @@ internal class
             SoftwareStatementPayloadFromBase64(ssaComponentsBase64[1]);
 
         // Check DefaultQueryRedirectUrl
-        if (processedSoftwareStatementProfile.DefaultQueryRedirectUrl is not null &&
-            !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultQueryRedirectUrl))
+        if (softwareStatement.DefaultQueryRedirectUrl is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultQueryRedirectUrl))
         {
             throw new ArgumentException(
-                $"Software statement with ID {id} contains DefaultQueryRedirectUrl {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultQueryRedirectUrl {softwareStatement.DefaultQueryRedirectUrl} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 
         // Check DefaultFragmentRedirectUrl
-        if (processedSoftwareStatementProfile.DefaultFragmentRedirectUrl is not null &&
-            !ssaPayload.SoftwareRedirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
+        if (softwareStatement.DefaultFragmentRedirectUrl is not null &&
+            !ssaPayload.SoftwareRedirectUris.Contains(softwareStatement.DefaultFragmentRedirectUrl))
         {
             throw new ArgumentException(
-                $"Software statement with ID {id} contains DefaultFragmentRedirectUrl {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                $"Software statement with ID {id} contains DefaultFragmentRedirectUrl {softwareStatement.DefaultFragmentRedirectUrl} " +
                 "which is not included in software statement assertion software_redirect_uris field.");
         }
 
@@ -716,7 +750,10 @@ internal class
     private async Task<ClientRegistrationModelsPublic.OBClientRegistration1Response> PerformDynamicClientRegistration(
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        SoftwareStatementEntity softwareStatement,
+        IApiClient apiClient,
+        OBSealKey obSealKey,
+        string tlsClientAuthSubjectDn,
         BankProfileEnum bankProfile,
         string softwareStatementAssertion,
         string registrationEndpoint,
@@ -739,21 +776,17 @@ internal class
             ClientRegistrationModelsPublic.OBClientRegistration1Response> apiRequests =
             ApiRequests(
                 dynamicClientRegistrationApiVersion,
-                processedSoftwareStatementProfile,
+                obSealKey,
                 useApplicationJoseNotApplicationJwtContentTypeHeader,
                 string.Empty // not used for POST
             );
         var externalApiUrl = new Uri(registrationEndpoint);
-        SubjectDnOrgIdEncoding transportCertificateSubjectDnOrgIdEncoding =
-            bankRegistrationPostCustomBehaviour?.TransportCertificateSubjectDnOrgIdEncoding ??
-            SubjectDnOrgIdEncoding.StringAttributeType;
         ClientRegistrationModelsPublic.OBClientRegistration1 externalApiRequest =
             RegistrationClaimsFactory.CreateRegistrationClaims(
                 tokenEndpointAuthMethod,
                 redirectUris,
-                processedSoftwareStatementProfile.SoftwareId,
-                processedSoftwareStatementProfile.TransportCertificateSubjectDn[
-                    transportCertificateSubjectDnOrgIdEncoding],
+                softwareStatement.SoftwareId,
+                tlsClientAuthSubjectDn,
                 softwareStatementAssertion,
                 registrationScope,
                 bankRegistrationPostCustomBehaviour,
@@ -771,7 +804,7 @@ internal class
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
                 responseJsonSerializerSettings,
-                processedSoftwareStatementProfile.ApiClient,
+                apiClient,
                 _mapper);
         nonErrorMessages.AddRange(newNonErrorMessages);
         return externalApiResponse;
@@ -820,7 +853,7 @@ internal class
 
     private static (IList<string> redirectUris, string defaultFragmentRedirectUri, string defaultQueryRedirectUri)
         GetRedirectUris(
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+            SoftwareStatementEntity softwareStatement,
             SsaPayload ssaPayload,
             string? requestDefaultFragmentRedirectUri,
             string? requestDefaultQueryRedirectUri,
@@ -860,15 +893,15 @@ internal class
         }
         else
         {
-            if (!redirectUris.Contains(processedSoftwareStatementProfile.DefaultFragmentRedirectUrl))
+            if (!redirectUris.Contains(softwareStatement.DefaultFragmentRedirectUrl))
             {
                 throw new InvalidOperationException(
-                    $"Default fragment redirect URI {processedSoftwareStatementProfile.DefaultFragmentRedirectUrl} " +
+                    $"Default fragment redirect URI {softwareStatement.DefaultFragmentRedirectUrl} " +
                     $"from software statement profile not included in specified RedirectUris. " +
                     $"Please specify a different one or include this one in specified RedirectUris.");
             }
             defaultFragmentRedirectUri =
-                processedSoftwareStatementProfile.DefaultFragmentRedirectUrl;
+                softwareStatement.DefaultFragmentRedirectUrl;
         }
 
         // Determine default query redirect URI ensuring also contained in redirect URIs list
@@ -884,15 +917,15 @@ internal class
         }
         else
         {
-            if (!redirectUris.Contains(processedSoftwareStatementProfile.DefaultQueryRedirectUrl))
+            if (!redirectUris.Contains(softwareStatement.DefaultQueryRedirectUrl))
             {
                 throw new InvalidOperationException(
-                    $"Default query redirect URI {processedSoftwareStatementProfile.DefaultQueryRedirectUrl} " +
+                    $"Default query redirect URI {softwareStatement.DefaultQueryRedirectUrl} " +
                     $"from software statement profile not included in specified RedirectUris. " +
                     $"Please specify a different one or include this one in specified RedirectUris.");
             }
             defaultQueryRedirectUri =
-                processedSoftwareStatementProfile.DefaultQueryRedirectUrl;
+                softwareStatement.DefaultQueryRedirectUrl;
         }
 
 
@@ -980,7 +1013,7 @@ internal class
     private IApiRequests<ClientRegistrationModelsPublic.OBClientRegistration1,
         ClientRegistrationModelsPublic.OBClientRegistration1Response> ApiRequests(
         DynamicClientRegistrationApiVersion dynamicClientRegistrationApiVersion,
-        ProcessedSoftwareStatementProfile processedSoftwareStatementProfile,
+        OBSealKey obSealKey,
         bool useApplicationJoseNotApplicationJwtContentTypeHeader,
         string accessToken)
     {
@@ -996,7 +1029,7 @@ internal class
                         new BankRegistrationGetRequestProcessor(accessToken),
                         new BankRegistrationPostRequestProcessor<
                             ClientRegistrationModelsV3p1.OBClientRegistration1>(
-                            processedSoftwareStatementProfile,
+                            obSealKey,
                             _instrumentationClient,
                             useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 DynamicClientRegistrationApiVersion.Version3p2 =>
@@ -1007,7 +1040,7 @@ internal class
                         new BankRegistrationGetRequestProcessor(accessToken),
                         new BankRegistrationPostRequestProcessor<
                             ClientRegistrationModelsV3p2.OBClientRegistration1>(
-                            processedSoftwareStatementProfile,
+                            obSealKey,
                             _instrumentationClient,
                             useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 DynamicClientRegistrationApiVersion.Version3p3 =>
@@ -1018,7 +1051,7 @@ internal class
                         new BankRegistrationGetRequestProcessor(accessToken),
                         new BankRegistrationPostRequestProcessor<
                             ClientRegistrationModelsPublic.OBClientRegistration1>(
-                            processedSoftwareStatementProfile,
+                            obSealKey,
                             _instrumentationClient,
                             useApplicationJoseNotApplicationJwtContentTypeHeader)),
                 _ => throw new ArgumentOutOfRangeException(

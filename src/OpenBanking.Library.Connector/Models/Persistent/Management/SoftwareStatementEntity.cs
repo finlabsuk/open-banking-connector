@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel.DataAnnotations.Schema;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
 
@@ -90,6 +91,18 @@ public partial class SoftwareStatementEntity :
     ///     Default redirect URL for consent authorisation when OAuth2 response_mode = fragment.
     /// </summary>
     public string DefaultFragmentRedirectUrl { get; }
+
+    public string GetRedirectUri(
+        OAuth2ResponseMode responseMode,
+        string? registrationFragmentRedirectUrl,
+        string? registrationQueryRedirectUrl) =>
+        responseMode switch
+        {
+            OAuth2ResponseMode.Query => registrationQueryRedirectUrl ?? DefaultQueryRedirectUrl,
+            OAuth2ResponseMode.Fragment => registrationFragmentRedirectUrl ?? DefaultFragmentRedirectUrl,
+            //OAuth2ResponseMode.FormPost => expr,
+            _ => throw new ArgumentOutOfRangeException(nameof(responseMode), responseMode, null)
+        };
 }
 
 public partial class SoftwareStatementEntity :

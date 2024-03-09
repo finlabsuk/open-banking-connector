@@ -32,13 +32,11 @@ internal class
                 sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation);
         DeleteLocalObject = new LocalEntityDelete<TEntity, LocalDeleteParams>(
             sharedContext.DbService.GetDbEntityMethodsClass<TEntity>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation);
     }
 

@@ -11,10 +11,10 @@ using FinnovationLabs.OpenBanking.Library.Connector.Metrics;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Repository;
+using FinnovationLabs.OpenBanking.Library.Connector.Operations.Cache;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi.BankConfiguration;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using FinnovationLabs.OpenBanking.Library.Connector.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,23 +24,27 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
 {
     private readonly IBankProfileService _bankProfileService;
     private readonly IGrantPost _grantPost;
+    private readonly ObSealCertificateMethods _obSealCertificateMethods;
+    private readonly ObWacCertificateMethods _obWacCertificateMethods;
 
     public BankRegistrationDelete(
         IDbReadWriteEntityMethods<BankRegistrationEntity> entityMethods,
         IDbSaveChangesMethod dbSaveChangesMethod,
         ITimeProvider timeProvider,
-        IProcessedSoftwareStatementProfileStore softwareStatementProfileRepo,
         IInstrumentationClient instrumentationClient,
         IBankProfileService bankProfileService,
-        IGrantPost grantPost) : base(
+        IGrantPost grantPost,
+        ObWacCertificateMethods obWacCertificateMethods,
+        ObSealCertificateMethods obSealCertificateMethods) : base(
         entityMethods,
         dbSaveChangesMethod,
         timeProvider,
-        softwareStatementProfileRepo,
         instrumentationClient)
     {
         _bankProfileService = bankProfileService;
         _grantPost = grantPost;
+        _obWacCertificateMethods = obWacCertificateMethods;
+        _obSealCertificateMethods = obSealCertificateMethods;
     }
 
     protected override async
@@ -55,8 +59,10 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
         BankRegistrationEntity entity =
             await _entityMethods
                 .DbSet
+                .Include(o => o.SoftwareStatementNavigation)
                 .SingleOrDefaultAsync(x => x.Id == deleteParams.Id) ??
             throw new KeyNotFoundException($"No record found for Bank Registration with ID {deleteParams.Id}.");
+        SoftwareStatementEntity softwareStatement = entity.SoftwareStatementNavigation!;
 
         // Get bank profile
         BankProfile bankProfile = _bankProfileService.GetBankProfile(entity.BankProfile);
@@ -78,11 +84,14 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 bankProfile.BankConfigurationApiSettings.UseRegistrationAccessToken;
 
             // Get API client
-            ProcessedSoftwareStatementProfile processedSoftwareStatementProfile =
-                await _softwareStatementProfileRepo.GetAsync(
-                    entity.SoftwareStatementId.ToString(),
-                    entity.SoftwareStatementProfileOverride);
-            IApiClient apiClient = processedSoftwareStatementProfile.ApiClient;
+            // Get IApiClient
+            IApiClient apiClient = entity.UseSimulatedBank
+                ? bankProfile.ReplayApiClient
+                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+
+            // Get OBSeal key
+            OBSealKey obSealKey =
+                (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
 
             // Get URI
             string bankApiId = entity.ExternalApiId;
@@ -101,7 +110,7 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 string? scope = customBehaviour?.BankRegistrationPut?.CustomTokenScope;
                 accessToken = await _grantPost.PostClientCredentialsGrantAsync(
                     scope,
-                    processedSoftwareStatementProfile.OBSealKey,
+                    obSealKey,
                     tokenEndpointAuthMethod,
                     entity.TokenEndpoint,
                     entity.ExternalApiId,

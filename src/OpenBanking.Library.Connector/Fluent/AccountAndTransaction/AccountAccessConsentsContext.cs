@@ -56,7 +56,6 @@ internal class AccountAccessConsentsConsentContext :
             sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new GrantPost(
@@ -75,14 +74,15 @@ internal class AccountAccessConsentsConsentContext :
                 sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 new GrantPost(
                     _sharedContext.ApiClient,
                     _sharedContext.Instrumentation,
                     _sharedContext.MemoryCache,
                     _sharedContext.TimeProvider),
-                _sharedContext.BankProfileService);
+                _sharedContext.BankProfileService,
+                sharedContext.ObSealCertificateMethods,
+                sharedContext.ObWacCertificateMethods);
     }
 
     public ILocalEntityContext<AccountAccessConsentAuthContextRequest,
@@ -100,9 +100,9 @@ internal class AccountAccessConsentsConsentContext :
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<AccountAccessConsentPersisted>(),
-                _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService));
+                _sharedContext.BankProfileService,
+                _sharedContext.ObSealCertificateMethods));
 
     public IObjectRead<AccountAccessConsentCreateResponse, ConsentReadParams> ReadObject { get; }
 

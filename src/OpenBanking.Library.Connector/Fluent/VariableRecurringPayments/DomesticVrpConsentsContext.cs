@@ -58,7 +58,6 @@ internal class DomesticVrpConsentsContext :
             sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
             sharedContext.DbService.GetDbSaveChangesMethodClass(),
             sharedContext.TimeProvider,
-            sharedContext.SoftwareStatementProfileCachedRepo,
             sharedContext.Instrumentation,
             sharedContext.ApiVariantMapper,
             new GrantPost(
@@ -89,14 +88,15 @@ internal class DomesticVrpConsentsContext :
                 sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
                 sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 sharedContext.TimeProvider,
-                sharedContext.SoftwareStatementProfileCachedRepo,
                 sharedContext.Instrumentation,
                 sharedContext.BankProfileService,
                 new GrantPost(
                     _sharedContext.ApiClient,
                     _sharedContext.Instrumentation,
                     _sharedContext.MemoryCache,
-                    _sharedContext.TimeProvider));
+                    _sharedContext.TimeProvider),
+                sharedContext.ObWacCertificateMethods,
+                sharedContext.ObSealCertificateMethods);
     }
 
     public IObjectRead<DomesticVrpConsentCreateResponse, ConsentReadParams> ReadObject { get; }
@@ -116,9 +116,9 @@ internal class DomesticVrpConsentsContext :
                 _sharedContext.DbService.GetDbSaveChangesMethodClass(),
                 _sharedContext.TimeProvider,
                 _sharedContext.DbService.GetDbEntityMethodsClass<DomesticVrpConsentPersisted>(),
-                _sharedContext.SoftwareStatementProfileCachedRepo,
                 _sharedContext.Instrumentation,
-                _sharedContext.BankProfileService));
+                _sharedContext.BankProfileService,
+                _sharedContext.ObSealCertificateMethods));
 
     public IObjectCreate<DomesticVrpConsentRequest, DomesticVrpConsentCreateResponse, ConsentCreateParams>
         CreateObject { get; }
