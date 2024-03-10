@@ -211,9 +211,11 @@ internal class AuthContextUpdate :
             bankRegistration.DefaultQueryRedirectUri);
 
         // Get IApiClient
-        IApiClient apiClient = bankRegistration.UseSimulatedBank
-            ? bankProfile.ReplayApiClient
-            : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+        // IApiClient apiClient = bankRegistration.UseSimulatedBank
+        //     ? bankProfile.ReplayApiClient
+        //     : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+        IApiClient apiClient = (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId))
+            .ApiClient;
 
         // Get OBSeal key
         OBSealKey obSealKey =

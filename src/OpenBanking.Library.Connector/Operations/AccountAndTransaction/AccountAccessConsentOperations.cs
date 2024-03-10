@@ -34,7 +34,6 @@ internal class
 {
     private readonly AccountAccessConsentCommon _accountAccessConsentCommon;
 
-
     private readonly IBankProfileService _bankProfileService;
 
     private readonly ConsentCommon<AccountAccessConsentPersisted,
@@ -44,7 +43,6 @@ internal class
         AccountAndTransactionModelsPublic.OBReadConsentResponse1> _consentCommon;
 
     private readonly IDbReadWriteEntityMethods<AccountAccessConsentPersisted> _consentEntityMethods;
-
 
     private readonly IDbSaveChangesMethod _dbSaveChangesMethod;
     private readonly IGrantPost _grantPost;
@@ -122,9 +120,11 @@ internal class
             string bankFinancialId = bankProfile.FinancialId;
 
             // Get IApiClient
-            IApiClient apiClient = bankRegistration.UseSimulatedBank
-                ? bankProfile.ReplayApiClient
-                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            // IApiClient apiClient = bankRegistration.UseSimulatedBank
+            //     ? bankProfile.ReplayApiClient
+            //     : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            IApiClient apiClient =
+                (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
 
             // Get OBSeal key
             OBSealKey obSealKey =
@@ -323,9 +323,11 @@ internal class
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
-            IApiClient apiClient = bankRegistration.UseSimulatedBank
-                ? bankProfile.ReplayApiClient
-                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            // IApiClient apiClient = bankRegistration.UseSimulatedBank
+            //     ? bankProfile.ReplayApiClient
+            //     : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            IApiClient apiClient =
+                (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
 
             // Get OBSeal key
             OBSealKey obSealKey =

@@ -114,9 +114,10 @@ internal class
         // Get IApiClient
         ObWacCertificate obWacCertificate =
             await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId);
-        IApiClient apiClient = request.UseSimulatedBank
-            ? bankProfile.ReplayApiClient
-            : obWacCertificate.ApiClient;
+        // IApiClient apiClient = request.UseSimulatedBank
+        //     ? bankProfile.ReplayApiClient
+        //     : obWacCertificate.ApiClient;
+        IApiClient apiClient = obWacCertificate.ApiClient;
 
         // Get OBSeal key
         OBSealKey obSealKey =

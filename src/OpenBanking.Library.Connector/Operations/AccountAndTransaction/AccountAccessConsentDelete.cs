@@ -85,14 +85,15 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
             CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
             // Get IApiClient
-            IApiClient apiClient = bankRegistration.UseSimulatedBank
-                ? bankProfile.ReplayApiClient
-                : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            // IApiClient apiClient = bankRegistration.UseSimulatedBank
+            //     ? bankProfile.ReplayApiClient
+            //     : (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
+            IApiClient apiClient =
+                (await _obWacCertificateMethods.GetValue(softwareStatement.DefaultObWacCertificateId)).ApiClient;
 
             // Get OBSeal key
             OBSealKey obSealKey =
                 (await _obSealCertificateMethods.GetValue(softwareStatement.DefaultObSealCertificateId)).ObSealKey;
-
 
             // Determine endpoint URL
             string baseUrl = accountAndTransactionApi.BaseUrl;
