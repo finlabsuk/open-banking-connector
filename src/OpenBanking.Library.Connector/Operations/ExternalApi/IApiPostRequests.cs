@@ -17,6 +17,7 @@ internal interface IApiPostRequests<in TApiRequest, TApiResponse>
 {
     Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
         Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
         TApiRequest request,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? requestJsonSerializerSettings,

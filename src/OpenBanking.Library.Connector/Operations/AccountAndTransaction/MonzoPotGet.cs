@@ -247,6 +247,7 @@ internal class MonzoPotGet : IAccountAccessConsentExternalRead<MonzoPotsResponse
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,

@@ -145,6 +145,7 @@ internal class Party2Get : IAccountAccessConsentExternalRead<Parties2Response, E
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,

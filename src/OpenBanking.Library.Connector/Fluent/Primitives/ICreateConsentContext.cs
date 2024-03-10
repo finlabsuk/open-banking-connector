@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FluentValidation;
 using FluentValidation.Results;
@@ -23,10 +24,12 @@ public interface ICreateConsentContext<in TPublicRequest, TPublicResponse>
     /// </summary>
     /// <param name="publicRequest">Request object</param>
     /// <param name="publicRequestUrlWithoutQuery"></param>
+    /// <param name="extraHeaders"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateAsync(
         TPublicRequest publicRequest,
-        string? publicRequestUrlWithoutQuery = null);
+        string? publicRequestUrlWithoutQuery = null,
+        IEnumerable<HttpHeader>? extraHeaders = null);
 }
 
 internal interface
@@ -39,7 +42,8 @@ internal interface
 
     async Task<TPublicResponse> ICreateConsentContext<TPublicRequest, TPublicResponse>.CreateAsync(
         TPublicRequest publicRequest,
-        string? publicRequestUrlWithoutQuery)
+        string? publicRequestUrlWithoutQuery,
+        IEnumerable<HttpHeader>? extraHeaders)
     {
         publicRequest.ArgNotNull(nameof(publicRequest));
 
@@ -52,7 +56,11 @@ internal interface
 
         // Execute operation catching errors
         var consentCreateParams =
-            new ConsentCreateParams { PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery };
+            new ConsentCreateParams
+            {
+                PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery,
+                ExtraHeaders = extraHeaders
+            };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await CreateObject.CreateAsync(publicRequest, consentCreateParams);
 

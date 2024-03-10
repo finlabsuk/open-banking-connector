@@ -41,7 +41,8 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
         HttpPostRequestData(
             TVariantApiRequest variantRequest,
             JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription)
+            string requestDescription,
+            IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create JWT and log
         var jsonSerializerSettings =
@@ -71,6 +72,14 @@ internal class PaymentInitiationPostRequestProcessor<TVariantApiRequest> : IPost
             new("x-idempotency-key", Guid.NewGuid().ToString()),
             CreateJwsSignatureHeader(jwt)
         };
+        if (extraHeaders is not null)
+        {
+            foreach (HttpHeader header in extraHeaders)
+            {
+                headers.Add(header);
+            }
+        }
+
         JsonSerializerSettings jsonSerializerSettings2 =
             requestJsonSerializerSettings ?? new JsonSerializerSettings();
         jsonSerializerSettings2.NullValueHandling = NullValueHandling.Ignore;

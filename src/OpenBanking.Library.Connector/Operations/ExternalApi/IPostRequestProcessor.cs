@@ -21,10 +21,12 @@ internal interface IPostRequestProcessor<in TRequest>
     protected (List<HttpHeader> headers, string body, string contentType) HttpPostRequestData(
         TRequest variantRequest,
         JsonSerializerSettings? requestJsonSerializerSettings,
-        string requestDescription);
+        string requestDescription,
+        IEnumerable<HttpHeader>? extraHeaders);
 
     public async Task<TResponse> PostAsync<TResponse>(
         Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
         TRequest request,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? requestJsonSerializerSettings,
@@ -34,7 +36,7 @@ internal interface IPostRequestProcessor<in TRequest>
     {
         // Process request
         (List<HttpHeader> headers, string content, string contentType) =
-            HttpPostRequestData(request, requestJsonSerializerSettings, $"POST {uri})");
+            HttpPostRequestData(request, requestJsonSerializerSettings, $"POST {uri})", extraHeaders);
 
         // POST request
         var response = await new HttpRequestBuilder()

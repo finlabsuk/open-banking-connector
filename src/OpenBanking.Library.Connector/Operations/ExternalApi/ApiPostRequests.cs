@@ -35,6 +35,7 @@ internal class
     ///     Response type is mapped from variant type if necessary after response received.
     /// </summary>
     /// <param name="uri"></param>
+    /// <param name="extraHeaders"></param>
     /// <param name="request"></param>
     /// <param name="tppReportingRequestInfo"></param>
     /// <param name="requestJsonSerializerSettings"></param>
@@ -45,6 +46,7 @@ internal class
     public async Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         PostAsync(
             Uri uri,
+            IEnumerable<HttpHeader>? extraHeaders,
             TApiRequest request,
             TppReportingRequestInfo? tppReportingRequestInfo,
             JsonSerializerSettings? requestJsonSerializerSettings,
@@ -63,6 +65,7 @@ internal class
         // Process request
         var variantResponse = await _postRequestProcessor.PostAsync<TVariantApiResponse>(
             uri,
+            extraHeaders,
             variantRequest,
             tppReportingRequestInfo,
             requestJsonSerializerSettings,

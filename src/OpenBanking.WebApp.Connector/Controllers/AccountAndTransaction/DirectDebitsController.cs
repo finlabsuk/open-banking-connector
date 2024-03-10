@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ public class DirectDebitsController : ControllerBase
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/direct-debits")]
@@ -39,7 +41,9 @@ public class DirectDebitsController : ControllerBase
         [FromHeader(Name = "x-obc-account-access-consent-id")]
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -52,6 +56,17 @@ public class DirectDebitsController : ControllerBase
             queryString = HttpContext.Request.QueryString.Value;
         }
 
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         DirectDebitsResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -60,6 +75,7 @@ public class DirectDebitsController : ControllerBase
                 accountAccessConsentId,
                 externalApiAccountId,
                 modifiedBy,
+                extraHeaders,
                 queryString,
                 requestUrlWithoutQuery);
 

@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
@@ -19,12 +20,12 @@ public interface IReadExternalEntityContext<TPublicResponse>
     /// </summary>
     /// <param name="externalId"></param>
     /// <param name="consentId"></param>
-    /// <param name="modifiedBy"></param>
+    /// <param name="extraHeaders"></param>
     /// <returns></returns>
     Task<TPublicResponse> ReadAsync(
         string externalId,
         Guid consentId,
-        string? modifiedBy = null);
+        IEnumerable<HttpHeader>? extraHeaders);
 }
 
 internal interface
@@ -36,13 +37,13 @@ internal interface
     async Task<TPublicResponse> IReadExternalEntityContext<TPublicResponse>.ReadAsync(
         string externalId,
         Guid consentId,
-        string? modifiedBy)
+        IEnumerable<HttpHeader>? extraHeaders)
     {
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadObject.ReadAsync(
                 externalId,
                 consentId,
-                modifiedBy);
+                extraHeaders);
 
         return response;
     }

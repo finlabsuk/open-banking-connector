@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FluentValidation;
 using FluentValidation.Results;
@@ -23,11 +24,13 @@ public interface ICreateVrpConsentFundsConfirmationContext<in TPublicRequest, TP
     /// <param name="request"></param>
     /// <param name="id"></param>
     /// <param name="publicRequestUrlWithoutQuery"></param>
+    /// <param name="extraHeaders"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateFundsConfirmationAsync(
         TPublicRequest request,
         Guid id,
-        string? publicRequestUrlWithoutQuery = null);
+        string? publicRequestUrlWithoutQuery = null,
+        IEnumerable<HttpHeader>? extraHeaders = null);
 }
 
 internal interface
@@ -42,7 +45,8 @@ internal interface
         CreateFundsConfirmationAsync(
             TPublicRequest request,
             Guid id,
-            string? publicRequestUrlWithoutQuery)
+            string? publicRequestUrlWithoutQuery,
+            IEnumerable<HttpHeader>? extraHeaders)
     {
         request.ArgNotNull(nameof(request));
 
@@ -58,7 +62,8 @@ internal interface
             new VrpConsentFundsConfirmationCreateParams
             {
                 PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery,
-                Id = id
+                Id = id,
+                ExtraHeaders = extraHeaders
             };
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await CreateVrpConsentFundsConfirmation.CreateFundsConfirmationAsync(

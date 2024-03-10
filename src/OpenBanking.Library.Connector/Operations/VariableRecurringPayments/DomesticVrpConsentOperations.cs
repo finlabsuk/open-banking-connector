@@ -171,6 +171,7 @@ internal class
             (externalApiResponse, IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.PostAsync(
                     externalApiUrl,
+                    createParams.ExtraHeaders,
                     request.ExternalApiRequest,
                     tppReportingRequestInfo,
                     requestJsonSerializerSettings,
@@ -356,6 +357,7 @@ internal class
                     IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
                 await apiRequests.GetAsync(
                     externalApiUrl,
+                    readParams.ExtraHeaders,
                     tppReportingRequestInfo,
                     responseJsonSerializerSettings,
                     apiClient,
@@ -514,6 +516,7 @@ internal class
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
+                createParams.ExtraHeaders,
                 request.ExternalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,

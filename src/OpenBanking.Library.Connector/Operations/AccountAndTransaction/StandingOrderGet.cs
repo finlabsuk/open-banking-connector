@@ -142,6 +142,7 @@ internal class StandingOrderGet : IAccountAccessConsentExternalRead<StandingOrde
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,

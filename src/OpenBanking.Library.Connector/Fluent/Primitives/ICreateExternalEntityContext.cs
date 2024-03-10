@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.BankApiModels;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 using FluentValidation;
 using FluentValidation.Results;
@@ -22,9 +23,11 @@ public interface ICreateExternalEntityContext<in TPublicRequest, TPublicResponse
     ///     Object will be created at bank and also in local database if it is a Bank Registration or Consent.
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="extraHeaders"></param>
     /// <returns></returns>
     Task<TPublicResponse> CreateAsync(
-        TPublicRequest request);
+        TPublicRequest request,
+        IEnumerable<HttpHeader>? extraHeaders);
 }
 
 internal interface
@@ -36,7 +39,8 @@ internal interface
     IExternalCreate<TPublicRequest, TPublicResponse> CreateObject { get; }
 
     async Task<TPublicResponse> ICreateExternalEntityContext<TPublicRequest, TPublicResponse>.CreateAsync(
-        TPublicRequest request)
+        TPublicRequest request,
+        IEnumerable<HttpHeader>? extraHeaders)
     {
         request.ArgNotNull(nameof(request));
 
@@ -49,7 +53,7 @@ internal interface
 
         // Execute operation catching errors 
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
-            await CreateObject.CreateAsync(request);
+            await CreateObject.CreateAsync(request, extraHeaders);
 
         return response;
     }

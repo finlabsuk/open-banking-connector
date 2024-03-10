@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -26,18 +27,32 @@ public class DomesticPaymentsController : ControllerBase
     ///     Create domestic payment
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticPaymentResponse>> PostAsync(
         [FromBody]
-        DomesticPaymentRequest request)
+        DomesticPaymentRequest request,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
-            .CreateAsync(request);
+            .CreateAsync(request, extraHeaders);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -51,7 +66,7 @@ public class DomesticPaymentsController : ControllerBase
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic Payment</param>
     /// <param name="domesticPaymentConsentId"></param>
-    /// <param name="modifiedBy"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
     [ActionName(nameof(GetAsync))]
@@ -60,14 +75,25 @@ public class DomesticPaymentsController : ControllerBase
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-payment-consent-id")]
         Guid domesticPaymentConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         DomesticPaymentResponse fluentResponse = await _requestBuilder
             .PaymentInitiation
             .DomesticPayments
-            .ReadAsync(externalApiId, domesticPaymentConsentId, modifiedBy);
+            .ReadAsync(externalApiId, domesticPaymentConsentId, extraHeaders);
 
         return Ok(fluentResponse);
     }

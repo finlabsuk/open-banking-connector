@@ -14,11 +14,11 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 internal interface IApiGetRequests<TApiResponse>
     where TApiResponse : class, ISupportsValidation
 {
-    Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        GetAsync(
-            Uri uri,
-            TppReportingRequestInfo? tppReportingRequestInfo,
-            JsonSerializerSettings? jsonSerializerSettings,
-            IApiClient apiClient,
-            IApiVariantMapper mapper);
+    Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> GetAsync(
+        Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
+        TppReportingRequestInfo? tppReportingRequestInfo,
+        JsonSerializerSettings? jsonSerializerSettings,
+        IApiClient apiClient,
+        IApiVariantMapper mapper);
 }

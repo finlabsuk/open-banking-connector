@@ -36,11 +36,13 @@ internal class
 
     public Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> GetAsync(
         Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings,
         IApiClient apiClient,
         IApiVariantMapper mapper) => _apiGetRequests.GetAsync(
         uri,
+        extraHeaders,
         tppReportingRequestInfo,
         jsonSerializerSettings,
         apiClient,
@@ -48,6 +50,7 @@ internal class
 
     public Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> PostAsync(
         Uri uri,
+        IEnumerable<HttpHeader>? extraHeaders,
         TApiRequest request,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? requestJsonSerializerSettings,
@@ -56,6 +59,7 @@ internal class
         IApiVariantMapper mapper) =>
         _apiPostRequests.PostAsync(
             uri,
+            extraHeaders,
             request,
             tppReportingRequestInfo,
             requestJsonSerializerSettings,

@@ -29,6 +29,7 @@ internal class
     public async Task<(TApiResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
         GetAsync(
             Uri uri,
+            IEnumerable<HttpHeader>? extraHeaders,
             TppReportingRequestInfo? tppReportingRequestInfo,
             JsonSerializerSettings? jsonSerializerSettings,
             IApiClient apiClient,
@@ -41,7 +42,8 @@ internal class
             uri,
             tppReportingRequestInfo,
             jsonSerializerSettings,
-            apiClient);
+            apiClient,
+            extraHeaders);
 
         // Map response type if necessary
         if (!(variantResponse is TApiResponse response))

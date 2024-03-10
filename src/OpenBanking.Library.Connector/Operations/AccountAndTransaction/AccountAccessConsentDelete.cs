@@ -125,7 +125,11 @@ internal class AccountAccessConsentDelete : BaseDelete<AccountAccessConsent, Con
                       """,
                 BankProfile = bankProfile.BankProfileEnum
             };
-            await deleteRequestProcessor.DeleteAsync(endpointUrl, tppReportingRequestInfo, apiClient);
+            await deleteRequestProcessor.DeleteAsync(
+                endpointUrl,
+                deleteParams.ExtraHeaders,
+                tppReportingRequestInfo,
+                apiClient);
         }
 
         return (persistedObject, nonErrorMessages);

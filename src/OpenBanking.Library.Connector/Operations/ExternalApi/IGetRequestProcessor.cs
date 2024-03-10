@@ -10,17 +10,20 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.ExternalApi;
 
 internal interface IGetRequestProcessor
 {
-    protected (List<HttpHeader> headers, string acceptType) HttpGetRequestData(string requestDescription);
+    protected (List<HttpHeader> headers, string acceptType) HttpGetRequestData(
+        string requestDescription,
+        IEnumerable<HttpHeader>? extraHeaders);
 
     public async Task<TResponse> GetAsync<TResponse>(
         Uri uri,
         TppReportingRequestInfo? tppReportingRequestInfo,
         JsonSerializerSettings? jsonSerializerSettings,
-        IApiClient apiClient)
+        IApiClient apiClient,
+        IEnumerable<HttpHeader>? extraHeaders)
         where TResponse : class
     {
         // Process request
-        (List<HttpHeader> headers, string acceptType) = HttpGetRequestData($"GET {uri})");
+        (List<HttpHeader> headers, string acceptType) = HttpGetRequestData($"GET {uri})", extraHeaders);
 
         // POST request
         var response = await new HttpRequestBuilder()

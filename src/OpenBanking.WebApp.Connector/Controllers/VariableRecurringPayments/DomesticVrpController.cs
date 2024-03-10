@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -26,18 +27,32 @@ public class DomesticVrpController : ControllerBase
     ///     Create domestic VRP
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<DomesticVrpResponse>> PostAsync(
         [FromBody]
-        DomesticVrpRequest request)
+        DomesticVrpRequest request,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         DomesticVrpResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrps
-            .CreateAsync(request);
+            .CreateAsync(request, extraHeaders);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -50,7 +65,7 @@ public class DomesticVrpController : ControllerBase
     /// </summary>
     /// <param name="externalApiId">External (bank) API ID of Domestic VRP</param>
     /// <param name="domesticVrpConsentId"></param>
-    /// <param name="modifiedBy"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{externalApiId}")]
     [ActionName(nameof(GetAsync))]
@@ -59,14 +74,25 @@ public class DomesticVrpController : ControllerBase
         string externalApiId,
         [FromHeader(Name = "x-obc-domestic-vrp-consent-id")]
         Guid domesticVrpConsentId,
-        [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         DomesticVrpResponse fluentResponse = await _requestBuilder
             .VariableRecurringPayments
             .DomesticVrps
-            .ReadAsync(externalApiId, domesticVrpConsentId, modifiedBy);
+            .ReadAsync(externalApiId, domesticVrpConsentId, extraHeaders);
 
         return Ok(fluentResponse);
     }

@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +30,7 @@ public class PartiesController : ControllerBase
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/party")]
@@ -40,7 +42,9 @@ public class PartiesController : ControllerBase
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -53,6 +57,17 @@ public class PartiesController : ControllerBase
             queryString = HttpContext.Request.QueryString.Value;
         }
 
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         PartiesResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -61,6 +76,7 @@ public class PartiesController : ControllerBase
                 accountAccessConsentId,
                 externalApiAccountId,
                 modifiedBy,
+                extraHeaders,
                 queryString,
                 requestUrlWithoutQuery);
 
@@ -73,6 +89,7 @@ public class PartiesController : ControllerBase
     /// <param name="externalApiAccountId">External (bank) API ID of Account</param>
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent used for request (obtained when creating consent)</param>
     /// <param name="modifiedBy"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/accounts/{externalApiAccountId}/parties")]
@@ -83,7 +100,9 @@ public class PartiesController : ControllerBase
         [FromHeader(Name = "x-obc-account-access-consent-id")] [Required]
         Guid accountAccessConsentId,
         [FromHeader(Name = "x-obc-modified-by")]
-        string? modifiedBy)
+        string? modifiedBy,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -91,6 +110,17 @@ public class PartiesController : ControllerBase
 
         // Support pass-through of all query parameters
         string queryString = HttpContext.Request.QueryString.Value ?? string.Empty;
+
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
 
         // Operation
         Parties2Response fluentResponse = await _requestBuilder
@@ -100,6 +130,7 @@ public class PartiesController : ControllerBase
                 accountAccessConsentId,
                 externalApiAccountId,
                 modifiedBy,
+                extraHeaders,
                 queryString,
                 requestUrlWithoutQuery);
 

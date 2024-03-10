@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Request;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
@@ -29,21 +30,36 @@ public class AccountAccessConsentsController : ControllerBase
     ///     Create account access consent
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpPost]
     [Consumes("application/json")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<
-        AccountAccessConsentCreateResponse>> PostAsync([FromBody] AccountAccessConsentRequest request)
+        AccountAccessConsentCreateResponse>> PostAsync(
+        [FromBody] AccountAccessConsentRequest request,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         AccountAccessConsentCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .CreateAsync(request, requestUrlWithoutQuery);
+            .CreateAsync(request, requestUrlWithoutQuery, extraHeaders);
 
         return CreatedAtAction(
             nameof(GetAsync),
@@ -57,6 +73,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpGet("{accountAccessConsentId:guid}")]
     [ActionName(nameof(GetAsync))]
@@ -67,17 +84,35 @@ public class AccountAccessConsentsController : ControllerBase
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation)
+        bool? includeExternalApiOperation,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
             throw new InvalidOperationException("Can't generate calling URL.");
 
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         AccountAccessConsentCreateResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .ReadAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true, requestUrlWithoutQuery);
+            .ReadAsync(
+                accountAccessConsentId,
+                modifiedBy,
+                extraHeaders,
+                includeExternalApiOperation ?? true,
+                requestUrlWithoutQuery);
 
         return Ok(fluentResponse);
     }
@@ -88,6 +123,7 @@ public class AccountAccessConsentsController : ControllerBase
     /// <param name="accountAccessConsentId">ID of AccountAccessConsent</param>
     /// <param name="modifiedBy"></param>
     /// <param name="includeExternalApiOperation"></param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     [HttpDelete("{accountAccessConsentId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -97,13 +133,26 @@ public class AccountAccessConsentsController : ControllerBase
         [FromHeader(Name = "x-obc-modified-by")]
         string? modifiedBy,
         [FromHeader(Name = "x-obc-include-external-api-operation")]
-        bool? includeExternalApiOperation)
+        bool? includeExternalApiOperation,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         BaseResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation ?? true);
+            .DeleteAsync(accountAccessConsentId, modifiedBy, extraHeaders, includeExternalApiOperation ?? true);
 
         return Ok(fluentResponse);
     }

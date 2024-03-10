@@ -78,7 +78,7 @@ internal class DomesticPayment :
 
     public async
         Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        CreateAsync(DomesticPaymentRequest request)
+        CreateAsync(DomesticPaymentRequest request, IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -169,6 +169,7 @@ internal class DomesticPayment :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
+                extraHeaders,
                 request.ExternalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
@@ -183,8 +184,10 @@ internal class DomesticPayment :
     }
 
     public async
-        Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(string externalId, Guid consentId, string? modifiedBy)
+        Task<(DomesticPaymentResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> ReadAsync(
+            string externalId,
+            Guid consentId,
+            IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -250,6 +253,7 @@ internal class DomesticPayment :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
+                extraHeaders,
                 tppReportingRequestInfo,
                 responseJsonSerializerSettings,
                 apiClient,

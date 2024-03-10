@@ -144,6 +144,7 @@ internal class AccountGet : IAccountAccessConsentExternalRead<AccountsResponse, 
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,

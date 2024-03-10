@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -12,7 +13,9 @@ internal class BankRegistrationCreateParams : LocalCreateParams { }
 
 internal class ConsentCreateParams : LocalCreateParams
 {
-    public string? PublicRequestUrlWithoutQuery { get; init; }
+    public required string? PublicRequestUrlWithoutQuery { get; init; }
+
+    public required IEnumerable<HttpHeader>? ExtraHeaders { get; init; }
 }
 
 internal class VrpConsentFundsConfirmationCreateParams : ConsentCreateParams

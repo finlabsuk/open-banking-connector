@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
@@ -18,11 +19,13 @@ public interface IReadFundsConfirmationContext<TPublicResponse>
     /// </summary>
     /// <param name="id"></param>
     /// <param name="modifiedBy"></param>
+    /// <param name="extraHeaders"></param>
     /// <param name="publicRequestUrlWithoutQuery"></param>
     /// <returns></returns>
     Task<TPublicResponse> ReadFundsConfirmationAsync(
         Guid id,
         string? modifiedBy = null,
+        IEnumerable<HttpHeader>? extraHeaders = null,
         string? publicRequestUrlWithoutQuery = null);
 }
 
@@ -36,9 +39,10 @@ internal interface
         ReadFundsConfirmationAsync(
             Guid id,
             string? modifiedBy,
+            IEnumerable<HttpHeader>? extraHeaders,
             string? publicRequestUrlWithoutQuery)
     {
-        var readParams = new ConsentBaseReadParams(id, modifiedBy, publicRequestUrlWithoutQuery);
+        var readParams = new ConsentBaseReadParams(id, modifiedBy, extraHeaders, publicRequestUrlWithoutQuery);
         (TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages) =
             await ReadFundsConfirmationObject.ReadFundsConfirmationAsync(readParams);
         return response;

@@ -165,6 +165,7 @@ internal class DirectDebitGet : IAccountAccessConsentExternalRead<DirectDebitsRe
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 apiRequestUrl,
+                readParams.ExtraHeaders,
                 tppReportingRequestInfo,
                 jsonSerializerSettings,
                 apiClient,

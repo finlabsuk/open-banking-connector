@@ -3,11 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 internal interface IExternalCreate<in TPublicRequest, TPublicResponse>
 {
     Task<(TPublicResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)> CreateAsync(
-        TPublicRequest request);
+        TPublicRequest request,
+        IEnumerable<HttpHeader>? extraHeaders);
 }

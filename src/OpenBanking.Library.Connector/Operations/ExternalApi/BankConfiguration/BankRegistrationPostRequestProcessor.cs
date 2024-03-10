@@ -34,7 +34,8 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
         HttpPostRequestData(
             TVariantApiRequest variantRequest,
             JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription)
+            string requestDescription,
+            IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create JWT and log
         JsonSerializerSettings jsonSerializerSettings =
@@ -59,7 +60,16 @@ internal class BankRegistrationPostRequestProcessor<TVariantApiRequest> :
             .Append(jwt);
         _instrumentationClient.Trace(requestTraceSb.ToString());
 
-        return (new List<HttpHeader>(), jwt,
+        var headers = new List<HttpHeader>();
+        if (extraHeaders is not null)
+        {
+            foreach (HttpHeader header in extraHeaders)
+            {
+                headers.Add(header);
+            }
+        }
+
+        return (headers, jwt,
             _useApplicationJoseNotApplicationJwtContentTypeHeader ? "application/jose" : "application/jwt");
     }
 }

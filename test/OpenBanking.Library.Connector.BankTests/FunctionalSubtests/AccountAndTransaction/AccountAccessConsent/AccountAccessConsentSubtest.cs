@@ -130,6 +130,7 @@ public static class AccountAccessConsentSubtest
                                 .ReadAsync(
                                     accountAccessConsentId2,
                                     modifiedBy,
+                                    null,
                                     false);
                         return consentResponse.Created < consentResponse.AuthContextModified;
                     }
@@ -287,6 +288,7 @@ public static class AccountAccessConsentSubtest
                                                 externalAccountId,
                                                 null,
                                                 modifiedBy,
+                                                null,
                                                 queryString);
 
                                     // Checks
@@ -467,7 +469,7 @@ public static class AccountAccessConsentSubtest
         BaseResponse accountAccessConsentDeleteResp2 = await requestBuilder
             .AccountAndTransaction
             .AccountAccessConsents
-            .DeleteAsync(accountAccessConsentId, modifiedBy, includeExternalApiOperation);
+            .DeleteAsync(accountAccessConsentId, modifiedBy, null, includeExternalApiOperation);
 
         // Checks
         accountAccessConsentDeleteResp2.Should().NotBeNull();

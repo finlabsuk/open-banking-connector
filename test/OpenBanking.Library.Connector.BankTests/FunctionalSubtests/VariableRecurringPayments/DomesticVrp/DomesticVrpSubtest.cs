@@ -162,6 +162,7 @@ public static class DomesticVrpSubtest
                         .ReadAsync(
                             domesticVrpConsentId,
                             modifiedBy,
+                            null,
                             false);
                 return consentResponse.Created < consentResponse.AuthContextModified;
             }
@@ -240,7 +241,7 @@ public static class DomesticVrpSubtest
             domesticVrpRequest.ModifiedBy = modifiedBy;
             DomesticVrpResponse domesticVrpResp =
                 await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                    .CreateAsync(domesticVrpRequest);
+                    .CreateAsync(domesticVrpRequest, null);
 
             // Checks
             domesticVrpResp.Should().NotBeNull();
@@ -251,7 +252,7 @@ public static class DomesticVrpSubtest
             // GET domestic payment
             DomesticVrpResponse domesticVrpResp2 =
                 await requestBuilderNew.VariableRecurringPayments.DomesticVrps
-                    .ReadAsync(domesticVrpExternalId, domesticVrpConsentId);
+                    .ReadAsync(domesticVrpExternalId, domesticVrpConsentId, null);
 
             // Checks
             domesticVrpResp2.Should().NotBeNull();
@@ -262,7 +263,7 @@ public static class DomesticVrpSubtest
             var includeExternalApiOperation = true;
             BaseResponse domesticVrpConsentResp3 = await requestBuilderNew.VariableRecurringPayments
                 .DomesticVrpConsents
-                .DeleteAsync(domesticVrpConsentId, modifiedBy, includeExternalApiOperation);
+                .DeleteAsync(domesticVrpConsentId, modifiedBy, null, includeExternalApiOperation);
 
             // Checks
             domesticVrpConsentResp3.Should().NotBeNull();

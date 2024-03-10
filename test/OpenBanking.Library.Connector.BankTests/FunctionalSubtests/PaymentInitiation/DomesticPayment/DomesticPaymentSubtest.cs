@@ -148,6 +148,7 @@ public static class DomesticPaymentSubtest
                         .ReadAsync(
                             domesticPaymentConsentId,
                             modifiedBy,
+                            null,
                             false);
                 return consentResponse.Created < consentResponse.AuthContextModified;
             }
@@ -208,7 +209,7 @@ public static class DomesticPaymentSubtest
             domesticPaymentRequest.ModifiedBy = modifiedBy;
             DomesticPaymentResponse domesticPaymentResp =
                 await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .CreateAsync(domesticPaymentRequest);
+                    .CreateAsync(domesticPaymentRequest, null);
 
             // Checks
             domesticPaymentResp.Should().NotBeNull();
@@ -219,7 +220,7 @@ public static class DomesticPaymentSubtest
             // GET domestic payment
             DomesticPaymentResponse domesticPaymentResp2 =
                 await requestBuilderNew.PaymentInitiation.DomesticPayments
-                    .ReadAsync(domesticPaymentExternalId, domesticPaymentConsentId);
+                    .ReadAsync(domesticPaymentExternalId, domesticPaymentConsentId, null);
 
             // Checks
             domesticPaymentResp2.Should().NotBeNull();

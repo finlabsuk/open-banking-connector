@@ -4,6 +4,7 @@
 
 using System.Linq.Expressions;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -34,13 +35,19 @@ internal class BankRegistrationReadParams : LocalReadParams
 
 internal class ConsentBaseReadParams : LocalReadParams
 {
-    public ConsentBaseReadParams(Guid id, string? modifiedBy, string? publicRequestUrlWithoutQuery) : base(
+    public ConsentBaseReadParams(
+        Guid id,
+        string? modifiedBy,
+        IEnumerable<HttpHeader>? extraHeaders,
+        string? publicRequestUrlWithoutQuery) : base(
         id,
         modifiedBy)
     {
+        ExtraHeaders = extraHeaders;
         PublicRequestUrlWithoutQuery = publicRequestUrlWithoutQuery;
     }
 
+    public IEnumerable<HttpHeader>? ExtraHeaders { get; }
     public string? PublicRequestUrlWithoutQuery { get; }
 }
 
@@ -49,8 +56,9 @@ internal class ConsentReadParams : ConsentBaseReadParams
     public ConsentReadParams(
         Guid id,
         string? modifiedBy,
+        IEnumerable<HttpHeader>? extraHeaders,
         string? publicRequestUrlWithoutQuery,
-        bool includeExternalApiOperation) : base(id, modifiedBy, publicRequestUrlWithoutQuery)
+        bool includeExternalApiOperation) : base(id, modifiedBy, extraHeaders, publicRequestUrlWithoutQuery)
     {
         IncludeExternalApiOperation = includeExternalApiOperation;
     }

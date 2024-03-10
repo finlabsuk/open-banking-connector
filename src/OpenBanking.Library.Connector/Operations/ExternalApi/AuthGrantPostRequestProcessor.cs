@@ -30,7 +30,8 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
     (List<HttpHeader> headers, string body, string contentType) IPostRequestProcessor<TRequest>.HttpPostRequestData(
         TRequest variantRequest,
         JsonSerializerSettings? requestJsonSerializerSettings,
-        string requestDescription)
+        string requestDescription,
+        IEnumerable<HttpHeader>? extraHeaders)
     {
         // Assemble headers and body
         var headers = new List<HttpHeader>();
@@ -54,6 +55,13 @@ internal class AuthGrantPostRequestProcessor<TRequest> : IPostRequestProcessor<T
                 break;
             default:
                 throw new InvalidOperationException("Found unsupported TokenEndpointAuthMethod");
+        }
+        if (extraHeaders is not null)
+        {
+            foreach (HttpHeader header in extraHeaders)
+            {
+                headers.Add(header);
+            }
         }
 
         string content = variantRequest.ToUrlEncoded();

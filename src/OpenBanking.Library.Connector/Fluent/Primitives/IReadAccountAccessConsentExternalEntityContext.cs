@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Fluent.Primitives;
@@ -20,6 +21,7 @@ public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
     /// <param name="consentId"></param>
     /// <param name="externalApiAccountId"></param>
     /// <param name="modifiedBy"></param>
+    /// <param name="extraHeaders"></param>
     /// <param name="queryString"></param>
     /// <param name="requestUrlWithoutQuery"></param>
     /// <returns></returns>
@@ -27,6 +29,7 @@ public interface IReadAccountAccessConsentExternalEntityContext<TPublicResponse>
         Guid consentId,
         string? externalApiAccountId = null,
         string? modifiedBy = null,
+        IEnumerable<HttpHeader>? extraHeaders = null,
         string? queryString = null,
         string? requestUrlWithoutQuery = null);
 }
@@ -42,12 +45,14 @@ internal interface
         Guid consentId,
         string? externalApiAccountId,
         string? modifiedBy,
+        IEnumerable<HttpHeader>? extraHeaders,
         string? queryString,
         string? requestUrlWithoutQuery)
     {
         var externalEntityReadParams = new ExternalEntityReadParams(
             consentId,
             modifiedBy,
+            extraHeaders,
             externalApiAccountId,
             requestUrlWithoutQuery,
             queryString);

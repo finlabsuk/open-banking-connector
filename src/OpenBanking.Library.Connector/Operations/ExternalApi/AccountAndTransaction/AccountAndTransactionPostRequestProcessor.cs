@@ -30,7 +30,8 @@ internal class
         HttpPostRequestData(
             TVariantApiRequest variantRequest,
             JsonSerializerSettings? requestJsonSerializerSettings,
-            string requestDescription)
+            string requestDescription,
+            IEnumerable<HttpHeader>? extraHeaders)
     {
         // Assemble headers and body
         var headers = new List<HttpHeader>
@@ -39,6 +40,14 @@ internal class
             new("Authorization", "Bearer " + _accessToken),
             new("x-idempotency-key", Guid.NewGuid().ToString())
         };
+        if (extraHeaders is not null)
+        {
+            foreach (HttpHeader header in extraHeaders)
+            {
+                headers.Add(header);
+            }
+        }
+
         JsonSerializerSettings jsonSerializerSettings =
             requestJsonSerializerSettings ?? new JsonSerializerSettings();
         jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;

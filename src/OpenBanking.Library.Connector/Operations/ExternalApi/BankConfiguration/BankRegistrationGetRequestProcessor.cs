@@ -15,10 +15,19 @@ internal class BankRegistrationGetRequestProcessor : IGetRequestProcessor
         _accessToken = accessToken;
     }
 
-    (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(string requestDescription)
+    (List<HttpHeader> headers, string acceptType) IGetRequestProcessor.HttpGetRequestData(
+        string requestDescription,
+        IEnumerable<HttpHeader>? extraHeaders)
     {
         // Assemble headers and body
         var headers = new List<HttpHeader> { new("Authorization", "Bearer " + _accessToken) };
+        if (extraHeaders is not null)
+        {
+            foreach (HttpHeader header in extraHeaders)
+            {
+                headers.Add(header);
+            }
+        }
 
         return (headers, "application/json");
     }

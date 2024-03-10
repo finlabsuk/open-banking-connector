@@ -75,7 +75,7 @@ internal class DomesticVrp :
     private string RelativePathBeforeId => "/domestic-vrps";
 
     public async Task<(DomesticVrpResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        CreateAsync(DomesticVrpRequest request)
+        CreateAsync(DomesticVrpRequest request, IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -166,6 +166,7 @@ internal class DomesticVrp :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.PostAsync(
                 externalApiUrl,
+                extraHeaders,
                 request.ExternalApiRequest,
                 tppReportingRequestInfo,
                 requestJsonSerializerSettings,
@@ -180,7 +181,7 @@ internal class DomesticVrp :
     }
 
     public async Task<(DomesticVrpResponse response, IList<IFluentResponseInfoOrWarningMessage> nonErrorMessages)>
-        ReadAsync(string externalId, Guid consentId, string? modifiedBy)
+        ReadAsync(string externalId, Guid consentId, IEnumerable<HttpHeader>? extraHeaders)
     {
         // Create non-error list
         var nonErrorMessages =
@@ -197,7 +198,6 @@ internal class DomesticVrp :
             bankProfile.GetRequiredVariableRecurringPaymentsApi();
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod =
             bankProfile.BankConfigurationApiSettings.TokenEndpointAuthMethod;
-        bool supportsSca = bankProfile.SupportsSca;
         string bankFinancialId = bankProfile.FinancialId;
         CustomBehaviourClass? customBehaviour = bankProfile.CustomBehaviour;
 
@@ -248,6 +248,7 @@ internal class DomesticVrp :
                 IList<IFluentResponseInfoOrWarningMessage> newNonErrorMessages) =
             await apiRequests.GetAsync(
                 externalApiUrl,
+                extraHeaders,
                 tppReportingRequestInfo,
                 responseJsonSerializerSettings,
                 apiClient,

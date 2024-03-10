@@ -130,7 +130,11 @@ internal class BankRegistrationDelete : BaseDelete<BankRegistrationEntity, BankR
                 EndpointDescription = "DELETE {RegistrationEndpoint}/{ClientId}",
                 BankProfile = bankProfile.BankProfileEnum
             };
-            await deleteRequestProcessor.DeleteAsync(apiRequestUrl, tppReportingRequestInfo, apiClient);
+            await deleteRequestProcessor.DeleteAsync(
+                apiRequestUrl,
+                null,
+                tppReportingRequestInfo,
+                apiClient);
         }
 
         return (entity, nonErrorMessages);

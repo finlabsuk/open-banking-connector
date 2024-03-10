@@ -4,6 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction.Response;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,7 @@ public class TransactionsController : ControllerBase
     ///     End date and time for filtering of the Transaction records on the
     ///     Transaction/BookingDateTime field
     /// </param>
+    /// <param name="xFapiCustomerIpAddress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     [Route("aisp/transactions")]
@@ -55,7 +57,9 @@ public class TransactionsController : ControllerBase
         [FromQuery]
         string? fromBookingDateTime,
         [FromQuery]
-        string? toBookingDateTime)
+        string? toBookingDateTime,
+        [FromHeader(Name = "x-fapi-customer-ip-address")]
+        string? xFapiCustomerIpAddress)
     {
         string requestUrlWithoutQuery =
             _linkGenerator.GetUriByAction(HttpContext) ??
@@ -68,6 +72,17 @@ public class TransactionsController : ControllerBase
             queryString = HttpContext.Request.QueryString.Value;
         }
 
+        // Determine extra headers
+        IEnumerable<HttpHeader>? extraHeaders;
+        if (xFapiCustomerIpAddress is not null)
+        {
+            extraHeaders = [new HttpHeader("x-fapi-customer-ip-address", xFapiCustomerIpAddress)];
+        }
+        else
+        {
+            extraHeaders = null;
+        }
+
         // Operation
         TransactionsResponse fluentResponse = await _requestBuilder
             .AccountAndTransaction
@@ -77,6 +92,7 @@ public class TransactionsController : ControllerBase
                 externalApiAccountId,
                 externalApiStatementId,
                 modifiedBy,
+                extraHeaders,
                 queryString,
                 requestUrlWithoutQuery);
 

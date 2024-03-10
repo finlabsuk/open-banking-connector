@@ -2,6 +2,7 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Response;
 using FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -19,11 +20,13 @@ public interface IDeleteConsentContext
     /// </summary>
     /// <param name="id"> </param>
     /// <param name="modifiedBy">Optional user name or comment for local DB update when performing soft delete.</param>
+    /// <param name="extraHeaders"></param>
     /// <param name="includeExternalApiOperation"></param>
     /// <returns></returns>
     Task<BaseResponse> DeleteAsync(
         Guid id,
         string? modifiedBy = null,
+        IEnumerable<HttpHeader>? extraHeaders = null,
         bool includeExternalApiOperation = true);
 }
 
@@ -34,9 +37,10 @@ internal interface IDeleteConsentContextInternal : IDeleteConsentContext
     async Task<BaseResponse> IDeleteConsentContext.DeleteAsync(
         Guid id,
         string? modifiedBy,
+        IEnumerable<HttpHeader>? extraHeaders,
         bool includeExternalApiOperation)
     {
-        var consentDeleteParams = new ConsentDeleteParams(id, modifiedBy, includeExternalApiOperation);
+        var consentDeleteParams = new ConsentDeleteParams(id, modifiedBy, extraHeaders, includeExternalApiOperation);
         IList<IFluentResponseInfoOrWarningMessage> postEntityNonErrorMessages =
             await DeleteObject.DeleteAsync(consentDeleteParams);
 

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.Fluent;
+using FinnovationLabs.OpenBanking.Library.Connector.Http;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.Operations;
 
@@ -36,11 +37,14 @@ internal class ConsentDeleteParams : LocalDeleteParams
     public ConsentDeleteParams(
         Guid id,
         string? modifiedBy,
+        IEnumerable<HttpHeader>? extraHeaders,
         bool includeExternalApiOperation) : base(id, modifiedBy)
     {
+        ExtraHeaders = extraHeaders;
         IncludeExternalApiOperation = includeExternalApiOperation;
     }
 
+    public IEnumerable<HttpHeader>? ExtraHeaders { get; }
     public bool IncludeExternalApiOperation { get; }
 }
 
