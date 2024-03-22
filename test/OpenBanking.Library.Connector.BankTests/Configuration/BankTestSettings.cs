@@ -20,8 +20,6 @@ public class PlaywrightLaunchOptions
 
     public float TimeOut { get; set; } = 0;
 
-    public bool DevTools { get; set; } = false;
-
     /// <summary>
     ///     Extra parameter allowing to toggle user-specified executable path and args without constant addition/removal.
     ///     This allows for example easy switching between the user's Chrome installation plus extension(s) and

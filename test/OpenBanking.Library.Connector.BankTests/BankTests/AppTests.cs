@@ -257,7 +257,6 @@ public abstract class AppTests
             var browserTypeLaunchOptions = new BrowserTypeLaunchOptions
             {
                 Args = launchOptions.ProcessedArgs,
-                Devtools = launchOptions.DevTools,
                 ExecutablePath = launchOptions.ProcessedExecutablePath,
                 Headless = launchOptions.Headless,
                 SlowMo = launchOptions.ProcessedSlowMo,

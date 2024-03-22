@@ -68,7 +68,8 @@ public static class ServiceCollectionExtensions
                                     serviceVersion,
                                     false,
                                     openTelemetrySettings.ServiceInstanceId))
-                        .AddOtlpExporter(otlpExporterOptions => otlpExporterOptions.Endpoint = new Uri(otlpExporterUrl));
+                        .AddOtlpExporter(
+                            otlpExporterOptions => otlpExporterOptions.Endpoint = new Uri(otlpExporterUrl));
                 });
         }
     }
@@ -81,7 +82,7 @@ public static class ServiceCollectionExtensions
         Sdk.SetDefaultTextMapPropagator(
             new CompositeTextMapPropagator(
                 Array.Empty<TextMapPropagator>())); // See https://github.com/dotnet/runtime/issues/90407
-        
+
         bool useConsoleExporter = openTelemetrySettings.UseConsoleExporter;
 
         ProviderFilter tracingProviderFilter = openTelemetrySettings.Tracing.ProviderFilter;
@@ -166,7 +167,7 @@ public static class ServiceCollectionExtensions
 
         if (useTracing || useMetrics)
         {
-            OpenTelemetryBuilder builder = services.AddOpenTelemetry()
+            IOpenTelemetryBuilder builder = services.AddOpenTelemetry()
                 .ConfigureResource(
                     resource => resource.AddService(
                         openTelemetrySettings.ServiceName,
