@@ -42,11 +42,6 @@ public static class ServiceCollectionExtensions
         // Add secret provider
         services.AddSingleton<ISecretProvider, SecretProvider>();
 
-        // Set up software statement store
-        services
-            .AddSingleton<IProcessedSoftwareStatementProfileStore,
-                ProcessedSoftwareStatementProfileStore>();
-
         // Set up encryption key
         services
             .AddSingleton<IEncryptionKeyInfo, EncryptionKeyInfo>();
