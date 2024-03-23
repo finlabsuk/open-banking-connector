@@ -12,7 +12,10 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management
 public enum SecretSource
 {
     [EnumMember(Value = "Configuration")]
-    Configuration
+    Configuration,
+
+    [EnumMember(Value = "AwsSsmParameterStore")]
+    AwsSsmParameterStore
 }
 
 public class SecretDescription

@@ -41,42 +41,41 @@ public class StartupTasksHostedService : IHostedService
     private readonly ILogger<StartupTasksHostedService> _logger;
 
     private readonly IMemoryCache _memoryCache;
-    private readonly TppReportingMetrics _tppReportingMetrics;
-
-    // Ensures this set up at application start-up
-    private readonly IProcessedSoftwareStatementProfileStore _processedSoftwareStatementProfileStore;
 
     private readonly ISecretProvider _secretProvider;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly TppReportingMetrics _tppReportingMetrics;
 
     public StartupTasksHostedService(
-        ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
-        IServiceScopeFactory serviceScopeFactory,
-        IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         IBankProfileService bankProfileService,
-        ILogger<StartupTasksHostedService> logger,
-        IEncryptionKeyInfo encryptionKeyInfo,
         IConfiguration configuration,
+        ISettingsProvider<DatabaseSettings> databaseSettingsProvider,
+        IEncryptionKeyInfo encryptionKeyInfo,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
         IInstrumentationClient instrumentationClient,
+        ILogger<StartupTasksHostedService> logger,
+        IMemoryCache memoryCache,
         ISecretProvider secretProvider,
-        IMemoryCache memoryCache, TppReportingMetrics tppReportingMetrics)
+        IServiceScopeFactory serviceScopeFactory,
+        TppReportingMetrics tppReportingMetrics)
     {
-        _databaseSettingsProvider =
-            databaseSettingsProvider ??
-            throw new ArgumentNullException(nameof(databaseSettingsProvider));
+        _bankProfileService = bankProfileService ?? throw new ArgumentNullException(nameof(bankProfileService));
+        _configurationRoot =
+            (IConfigurationRoot) (configuration ?? throw new ArgumentNullException(nameof(configuration)));
+        _databaseSettingsProvider = databaseSettingsProvider ??
+                                    throw new ArgumentNullException(nameof(databaseSettingsProvider));
+        _encryptionKeyInfo = encryptionKeyInfo ?? throw new ArgumentNullException(nameof(encryptionKeyInfo));
+        _httpClientSettings =
+            (httpClientSettingsProvider ?? throw new ArgumentNullException(nameof(httpClientSettingsProvider)))
+            .GetSettings();
+        _instrumentationClient =
+            instrumentationClient ?? throw new ArgumentNullException(nameof(instrumentationClient));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        _secretProvider = secretProvider ?? throw new ArgumentNullException(nameof(secretProvider));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-        _processedSoftwareStatementProfileStore = processedSoftwareStatementProfileStore;
-        _bankProfileService = bankProfileService;
-        _logger = logger;
-        _encryptionKeyInfo = encryptionKeyInfo;
-        _httpClientSettings = httpClientSettingsProvider.GetSettings();
-        _instrumentationClient = instrumentationClient;
-        _secretProvider = secretProvider;
-        _memoryCache = memoryCache;
-        _tppReportingMetrics = tppReportingMetrics;
-        _configurationRoot = (IConfigurationRoot) configuration;
+        _tppReportingMetrics = tppReportingMetrics ?? throw new ArgumentNullException(nameof(tppReportingMetrics));
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -174,11 +173,11 @@ public class StartupTasksHostedService : IHostedService
             await new SoftwareStatementCleanup()
                 .Cleanup(
                     postgreSqlDbContext,
-                    _processedSoftwareStatementProfileStore,
                     _secretProvider,
                     _httpClientSettings,
                     _memoryCache,
-                    _instrumentationClient, _tppReportingMetrics);
+                    _instrumentationClient,
+                    _tppReportingMetrics);
 
             await postgreSqlDbContext.SaveChangesAsync(cancellationToken);
         }

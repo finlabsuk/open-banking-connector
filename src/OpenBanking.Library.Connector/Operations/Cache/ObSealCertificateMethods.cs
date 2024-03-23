@@ -19,21 +19,36 @@ public class ObSealCertificateMethods(
     IDbReadWriteEntityMethods<ObSealCertificateEntity> entityMethods)
 {
     public async Task<ObSealCertificate> GetValue(
-        Guid obSealId)
-    {
-        string obSealCacheId = ObSealCertificate.GetCacheKey(obSealId);
-        var processedSigningCertificateProfile =
-            (await memoryCache.GetOrCreateAsync<ObSealCertificate>(
-                obSealCacheId,
-                async cacheEntry =>
+        Guid obSealId) =>
+        (await memoryCache.GetOrCreateAsync<ObSealCertificate>(
+            ObSealCertificate.GetCacheKey(obSealId),
+            async cacheEntry =>
+            {
+                ObSealCertificateEntity obSeal =
+                    await entityMethods
+                        .DbSetNoTracking
+                        .SingleOrDefaultAsync(x => x.Id == obSealId) ??
+                    throw new KeyNotFoundException($"No record found for ObSealCertificate with ID {obSealId}.");
+
+                ObSealCertificate obSealCertificate;
+                try
                 {
-                    ObSealCertificateEntity obSeal =
-                        await entityMethods
-                            .DbSetNoTracking
-                            .SingleOrDefaultAsync(x => x.Id == obSealId) ??
-                        throw new KeyNotFoundException($"No record found for ObSealCertificate with ID {obSealId}.");
-                    return new ObSealCertificate(obSeal, secretProvider, instrumentationClient);
-                }))!;
-        return processedSigningCertificateProfile;
-    }
+                    obSealCertificate = await ObSealCertificate.CreateInstance(
+                        obSeal,
+                        secretProvider,
+                        instrumentationClient);
+                }
+                catch (GetSecretException ex)
+                {
+                    string fullMessage =
+                        $"ObSealCertificate record with ID {obSeal.Id} " +
+                        $"specifies AssociatedKey with Source {obSeal.AssociatedKey.Source} " +
+                        $"and Name {obSeal.AssociatedKey.Name}. {ex.Message} " +
+                        "Any SoftwareStatement records depending " +
+                        "on this ObSealCertificate will not be able to be used.";
+                    throw new KeyNotFoundException(fullMessage);
+                }
+
+                return obSealCertificate;
+            }))!;
 }

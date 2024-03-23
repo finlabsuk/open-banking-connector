@@ -2,41 +2,46 @@
 // Finnovation Labs Limited licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics.CodeAnalysis;
+using Amazon.Runtime;
+using Amazon.SimpleSystemsManagement;
+using Amazon.SimpleSystemsManagement.Model;
 using FinnovationLabs.OpenBanking.Library.Connector.Configuration;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using Microsoft.Extensions.Configuration;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.Configuration;
 
-public class SecretProvider : ISecretProvider
+public class SecretProvider(IConfiguration configuration) : ISecretProvider
 {
-    private readonly IConfiguration _configuration;
-
-    public SecretProvider(IConfiguration configuration)
+    public async Task<string> GetSecretAsync(
+        SecretDescription secretDescription)
     {
-        _configuration = configuration;
-    }
-
-    public string GetSecret(string name)
-    {
-        var value = _configuration.GetValue<string>(name, "");
-        if (string.IsNullOrEmpty(value))
+        if (secretDescription.Source is SecretSource.AwsSsmParameterStore)
         {
-            throw new ArgumentException($"Cannot get non-empty value from specified configuration setting {name}.");
+            try
+            {
+                using var client = new AmazonSimpleSystemsManagementClient();
+                GetParameterResponse? response =
+                    await client.GetParameterAsync(
+                        new GetParameterRequest
+                        {
+                            Name = secretDescription.Name,
+                            WithDecryption = true
+                        });
+                return response.Parameter.Value;
+            }
+            catch (AmazonClientException ex)
+            {
+                throw new GetSecretException($"The following Amazon SDK exception occurred: {ex.Message}.");
+            }
+            catch (ParameterNotFoundException)
+            {
+                throw new GetSecretException($"No value with key {secretDescription.Name} can be found.");
+            }
         }
-
-        return value;
-    }
-
-    public bool TryGetSecret(string name, [MaybeNullWhen(false)] out string value)
-    {
-        var tmp = _configuration.GetValue<string>(name, "");
-        if (string.IsNullOrEmpty(tmp))
-        {
-            value = default;
-            return false;
-        }
-        value = tmp;
-        return true;
+        var tmp = configuration.GetValue<string>(secretDescription.Name, "");
+        return !string.IsNullOrEmpty(tmp)
+            ? tmp
+            : throw new GetSecretException($"No value with key {secretDescription.Name} can be found.");
     }
 }

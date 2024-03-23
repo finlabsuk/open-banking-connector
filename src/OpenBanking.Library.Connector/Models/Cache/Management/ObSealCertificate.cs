@@ -34,21 +34,6 @@ public class ObSealCertificate
         SigningCertificateId = id;
     }
 
-    public ObSealCertificate(
-        ObSealCertificateEntity obSeal,
-        ISecretProvider secretProvider,
-        IInstrumentationClient instrumentationClient)
-        : this(
-            new SigningCertificateProfile
-            {
-                Active = true,
-                AssociatedKey = GetAssociatedKey(secretProvider, obSeal),
-                AssociatedKeyId = obSeal.AssociatedKeyId,
-                Certificate = obSeal.Certificate
-            },
-            obSeal.Id.ToString(),
-            instrumentationClient) { }
-
     public string AssociatedKeyId { get; }
 
     public string AssociatedKey { get; }
@@ -59,19 +44,20 @@ public class ObSealCertificate
 
     public OBSealKey ObSealKey => new(AssociatedKeyId, AssociatedKey);
 
-    private static string GetAssociatedKey(ISecretProvider secretProvider, ObSealCertificateEntity obSeal)
-    {
-        if (secretProvider.TryGetSecret(obSeal.AssociatedKey.Name, out string? associatedKey))
-        {
-            return associatedKey;
-        }
-        string message =
-            $"OBSeal signing certificate with ID {obSeal.Id} " +
-            $"specifies AssociatedKey with name {obSeal.AssociatedKey.Name} " +
-            "but no such value can be found. Any software statement(s) depending " +
-            "on this OBSeal signing certificate will not be able to be used.";
-        throw new KeyNotFoundException(message);
-    }
+    public static async Task<ObSealCertificate> CreateInstance(
+        ObSealCertificateEntity obSeal,
+        ISecretProvider secretProvider,
+        IInstrumentationClient instrumentationClient) =>
+        new(
+            new SigningCertificateProfile
+            {
+                Active = true,
+                AssociatedKey = await secretProvider.GetSecretAsync(obSeal.AssociatedKey),
+                AssociatedKeyId = obSeal.AssociatedKeyId,
+                Certificate = obSeal.Certificate
+            },
+            obSeal.Id.ToString(),
+            instrumentationClient);
 
     public static string GetCacheKey(Guid obSealId) => string.Join(":", "ob_seal_certificate", obSealId);
 }

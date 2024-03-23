@@ -88,26 +88,6 @@ public class ObWacCertificate
         };
     }
 
-    public ObWacCertificate(
-        ObWacCertificateEntity obWac,
-        ISecretProvider secretProvider,
-        HttpClientSettings httpClientSettings,
-        IInstrumentationClient instrumentationClient,
-        TppReportingMetrics tppReportingMetrics)
-        : this(
-            new TransportCertificateProfile
-            {
-                Active = true,
-                DisableTlsCertificateVerification = false,
-                Certificate = obWac.Certificate,
-                AssociatedKey = GetAssociatedKey(obWac, secretProvider)
-            },
-            obWac.Id.ToString(),
-            null,
-            httpClientSettings,
-            instrumentationClient,
-            tppReportingMetrics) { }
-
     public IApiClient ApiClient { get; }
 
     public string TransportCertificate { get; } // pass-through for migration
@@ -115,6 +95,26 @@ public class ObWacCertificate
     public string TransportCertificateId { get; } // pass-through for migration
 
     public ConcurrentDictionary<SubjectDnOrgIdEncoding, string> SubjectDn { get; }
+
+    public static async Task<ObWacCertificate> CreateInstance(
+        ObWacCertificateEntity obWac,
+        ISecretProvider secretProvider,
+        HttpClientSettings httpClientSettings,
+        IInstrumentationClient instrumentationClient,
+        TppReportingMetrics tppReportingMetrics) =>
+        new(
+            new TransportCertificateProfile
+            {
+                Active = true,
+                DisableTlsCertificateVerification = false,
+                Certificate = obWac.Certificate,
+                AssociatedKey = await secretProvider.GetSecretAsync(obWac.AssociatedKey)
+            },
+            obWac.Id.ToString(),
+            null,
+            httpClientSettings,
+            instrumentationClient,
+            tppReportingMetrics);
 
     private static string GetSubjectDn(X509Certificate2 transportCert, SubjectDnOrgIdEncoding subjectDnOrgIdEncoding)
     {
@@ -161,20 +161,6 @@ public class ObWacCertificate
         }
 
         return subjectDn;
-    }
-
-    private static string GetAssociatedKey(ObWacCertificateEntity obWac, ISecretProvider secretProvider)
-    {
-        if (secretProvider.TryGetSecret(obWac.AssociatedKey.Name, out string? associatedKey))
-        {
-            return associatedKey;
-        }
-        string message =
-            $"OBWAC transport certificate with ID {obWac.Id} " +
-            $"specifies AssociatedKey with name {obWac.AssociatedKey.Name} " +
-            "but no such value can be found. Any software statement(s) depending " +
-            "on this OBWAC transport certificate will not be able to be used.";
-        throw new KeyNotFoundException(message);
     }
 
     public static string GetCacheKey(Guid obWacId) => string.Join(":", "ob_wac_certificate", obWacId);

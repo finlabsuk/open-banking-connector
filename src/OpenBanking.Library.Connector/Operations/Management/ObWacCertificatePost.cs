@@ -25,9 +25,9 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
     private readonly ISettingsProvider<HttpClientSettings> _httpClientSettingsProvider;
     private readonly IInstrumentationClient _instrumentationClient;
     private readonly IMemoryCache _memoryCache;
-    private readonly TppReportingMetrics _tppReportingMetrics;
     private readonly ISecretProvider _secretProvider;
     private readonly ITimeProvider _timeProvider;
+    private readonly TppReportingMetrics _tppReportingMetrics;
 
     public ObWacCertificatePost(
         IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods,
@@ -73,15 +73,27 @@ internal class ObWacCertificatePost : IObjectCreate<ObWacCertificate,
 
         // Add cache entry
         HttpClientSettings httpClientSettings = _httpClientSettingsProvider.GetSettings();
-        ObWacCertificateCached processedTransportCertificateProfile =
-            new ObWacCertificateCached(
+        ObWacCertificateCached obWacCertificate;
+        try
+        {
+            obWacCertificate = await ObWacCertificateCached.CreateInstance(
                 entity,
                 _secretProvider,
                 httpClientSettings,
-                _instrumentationClient, _tppReportingMetrics);
+                _instrumentationClient,
+                _tppReportingMetrics);
+        }
+        catch (GetSecretException ex)
+        {
+            string fullMessage =
+                $"Request property AssociatedKey specifies Source {entity.AssociatedKey.Source} " +
+                $"and Name {entity.AssociatedKey.Name}. {ex.Message} " +
+                "ObWacCertificate record will therefore not be created.";
+            throw new KeyNotFoundException(fullMessage);
+        }
         _memoryCache.Set(
             ObWacCertificateCached.GetCacheKey(entity.Id),
-            processedTransportCertificateProfile);
+            obWacCertificate);
 
         // Add entity
         await _entityMethods.AddAsync(entity);

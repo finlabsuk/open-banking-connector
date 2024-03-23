@@ -23,25 +23,38 @@ public class ObWacCertificateMethods(
     IDbReadWriteEntityMethods<ObWacCertificateEntity> entityMethods)
 {
     public async Task<ObWacCertificate> GetValue(
-        Guid obWacId)
-    {
-        string obWacCacheId = ObWacCertificate.GetCacheKey(obWacId);
-        var processedTransportCertificateProfile =
-            (await memoryCache.GetOrCreateAsync<ObWacCertificate>(
-                obWacCacheId,
-                async cacheEntry =>
+        Guid obWacId) =>
+        (await memoryCache.GetOrCreateAsync<ObWacCertificate>(
+            ObWacCertificate.GetCacheKey(obWacId),
+            async cacheEntry =>
+            {
+                ObWacCertificateEntity obWac =
+                    await entityMethods
+                        .DbSetNoTracking
+                        .SingleOrDefaultAsync(x => x.Id == obWacId) ??
+                    throw new KeyNotFoundException($"No record found for ObWacCertificate with ID {obWacId}.");
+
+                ObWacCertificate obWacCertificate;
+                try
                 {
-                    ObWacCertificateEntity obWac =
-                        await entityMethods
-                            .DbSetNoTracking
-                            .SingleOrDefaultAsync(x => x.Id == obWacId) ??
-                        throw new KeyNotFoundException($"No record found for ObWacCertificate with ID {obWacId}.");
-                    return new ObWacCertificate(
+                    obWacCertificate = await ObWacCertificate.CreateInstance(
                         obWac,
                         secretProvider,
                         httpClientSettings,
-                        instrumentationClient,tppReportingMetrics);
-                }))!;
-        return processedTransportCertificateProfile;
-    }
+                        instrumentationClient,
+                        tppReportingMetrics);
+                }
+                catch (GetSecretException ex)
+                {
+                    string fullMessage =
+                        $"ObWacCertificate record with ID {obWac.Id} " +
+                        $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
+                        $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " +
+                        "Any SoftwareStatement records depending " +
+                        "on this ObWacCertificate will not be able to be used.";
+                    throw new KeyNotFoundException(fullMessage);
+                }
+
+                return obWacCertificate;
+            }))!;
 }

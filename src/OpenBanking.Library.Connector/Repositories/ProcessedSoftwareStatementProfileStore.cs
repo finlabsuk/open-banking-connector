@@ -16,17 +16,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 public interface IProcessedSoftwareStatementProfileStore
 {
     Task<ProcessedSoftwareStatementProfile> GetAsync(string? id, string? overrideVariant = null);
-
-    ProcessedSoftwareStatementProfile GetProfile(
-        ObWacCertificate processedTransportCertificateProfile,
-        ObSealCertificate processedSigningCertificateProfile,
-        SoftwareStatementProfile softwareStatementProfile,
-        string id,
-        IInstrumentationClient instrumentationClient);
-
-    void AddProfile(
-        ProcessedSoftwareStatementProfile defaultVariant,
-        string id);
 }
 
 public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatementProfileStore
@@ -39,7 +28,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         ISettingsProvider<TransportCertificateProfilesSettings> transportCertificateProfilesSettingsProvider,
         ISettingsProvider<SigningCertificateProfilesSettings> signingCertificateProfilesSettingsProvider,
         ISettingsProvider<HttpClientSettings> httpClientSettingsProvider,
-        IInstrumentationClient instrumentationClient, TppReportingMetrics tppReportingMetrics)
+        IInstrumentationClient instrumentationClient,
+        TppReportingMetrics tppReportingMetrics)
     {
         HttpClientSettings httpClientSettings = httpClientSettingsProvider.GetSettings();
 
@@ -105,7 +95,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                 tcpId,
                 null,
                 httpClientSettings,
-                instrumentationClient, tppReportingMetrics);
+                instrumentationClient,
+                tppReportingMetrics);
 
             // Get override cases (keys)
             var overrideCases =
@@ -123,7 +114,8 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
                     tcpId,
                     overrideCase,
                     httpClientSettings,
-                    instrumentationClient, tppReportingMetrics);
+                    instrumentationClient,
+                    tppReportingMetrics);
             }
 
             // Add to cache
@@ -293,32 +285,5 @@ public class ProcessedSoftwareStatementProfileStore : IProcessedSoftwareStatemen
         }
 
         return processedSoftwareStatementProfile.ToTaskResult();
-    }
-
-    public ProcessedSoftwareStatementProfile GetProfile(
-        ObWacCertificate processedTransportCertificateProfile,
-        ObSealCertificate processedSigningCertificateProfile,
-        SoftwareStatementProfile softwareStatementProfile,
-        string id,
-        IInstrumentationClient instrumentationClient) =>
-        // Create default variant
-        new(
-            processedTransportCertificateProfile,
-            processedSigningCertificateProfile,
-            softwareStatementProfile,
-            id,
-            null,
-            instrumentationClient);
-
-
-    public void AddProfile(
-        ProcessedSoftwareStatementProfile defaultVariant,
-        string id)
-    {
-        ConcurrentDictionary<string, ProcessedSoftwareStatementProfile> overrideVariants =
-            new(StringComparer.InvariantCultureIgnoreCase);
-
-        // Add to cache
-        _cache[id] = new ProcessedSoftwareStatementProfiles(defaultVariant, overrideVariants);
     }
 }

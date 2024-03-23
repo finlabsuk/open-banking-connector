@@ -65,11 +65,25 @@ internal class ObSealCertificatePost : IObjectCreate<ObSealCertificate,
             request.Certificate);
 
         // Add cache entry
-        var processedSigningCertificateProfile =
-            new ObSealCertificateCached(entity, _secretProvider, _instrumentationClient);
+        ObSealCertificateCached obSealCertificate;
+        try
+        {
+            obSealCertificate = await ObSealCertificateCached.CreateInstance(
+                entity,
+                _secretProvider,
+                _instrumentationClient);
+        }
+        catch (GetSecretException ex)
+        {
+            string fullMessage =
+                $"Request property AssociatedKey specifies Source {entity.AssociatedKey.Source} " +
+                $"and Name {entity.AssociatedKey.Name}. {ex.Message} " +
+                "ObSealCertificate record will therefore not be created.";
+            throw new KeyNotFoundException(fullMessage);
+        }
         _memoryCache.Set(
             ObSealCertificateCached.GetCacheKey(entity.Id),
-            processedSigningCertificateProfile);
+            obSealCertificate);
 
         // Add entity
         await _entityMethods.AddAsync(entity);

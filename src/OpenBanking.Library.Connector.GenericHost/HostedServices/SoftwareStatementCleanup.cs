@@ -9,7 +9,6 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Persistent.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Persistence;
-using FinnovationLabs.OpenBanking.Library.Connector.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -17,20 +16,14 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.GenericHost.HostedServic
 
 public class SoftwareStatementCleanup
 {
-    public Task Cleanup(
+    public async Task Cleanup(
         PostgreSqlDbContext postgreSqlDbContext,
-        IProcessedSoftwareStatementProfileStore processedSoftwareStatementProfileStore,
         ISecretProvider secretProvider,
         HttpClientSettings httpClientSettings,
         IMemoryCache memoryCache,
         IInstrumentationClient instrumentationClient,
         TppReportingMetrics tppReportingMetrics)
     {
-        List<SoftwareStatementEntity> softwareStatementList =
-            postgreSqlDbContext
-                .SoftwareStatement
-                .ToList();
-
         DbSet<ObWacCertificateEntity> obWacList =
             postgreSqlDbContext
                 .ObWacCertificate;
@@ -41,50 +34,51 @@ public class SoftwareStatementCleanup
 
         foreach (ObWacCertificateEntity obWac in obWacList)
         {
-            ObWacCertificate? processedTransportCertificateProfile = null;
             try
             {
-                processedTransportCertificateProfile = new ObWacCertificate(
+                var obWacCertificate = await ObWacCertificate.CreateInstance(
                     obWac,
                     secretProvider,
                     httpClientSettings,
                     instrumentationClient,
                     tppReportingMetrics);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                instrumentationClient.Warning(ex.Message);
-            }
-            if (processedTransportCertificateProfile is not null)
-            {
                 memoryCache.Set(
                     ObWacCertificate.GetCacheKey(obWac.Id),
-                    processedTransportCertificateProfile);
+                    obWacCertificate);
+            }
+            catch (GetSecretException ex)
+            {
+                string fullMessage =
+                    $"ObWacCertificate record with ID {obWac.Id} " +
+                    $"specifies AssociatedKey with Source {obWac.AssociatedKey.Source} " +
+                    $"and Name {obWac.AssociatedKey.Name}. {ex.Message} " + "Any SoftwareStatement records depending " +
+                    "on this ObWacCertificate will not be able to be used.";
+                instrumentationClient.Warning(fullMessage);
             }
         }
 
         foreach (ObSealCertificateEntity obSeal in obSealList)
         {
-            ObSealCertificate? processedSigningCertificateProfile = null;
             try
             {
-                processedSigningCertificateProfile = new ObSealCertificate(
+                var obSealCertificate = await ObSealCertificate.CreateInstance(
                     obSeal,
                     secretProvider,
                     instrumentationClient);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                instrumentationClient.Warning(ex.Message);
-            }
-            if (processedSigningCertificateProfile is not null)
-            {
                 memoryCache.Set(
                     ObSealCertificate.GetCacheKey(obSeal.Id),
-                    processedSigningCertificateProfile);
+                    obSealCertificate);
+            }
+            catch (GetSecretException ex)
+            {
+                string fullMessage =
+                    $"ObSealCertificate record with ID {obSeal.Id} " +
+                    $"specifies AssociatedKey with Source {obSeal.AssociatedKey.Source} " +
+                    $"and Name {obSeal.AssociatedKey.Name}. {ex.Message} " +
+                    "Any SoftwareStatement records depending " +
+                    "on this ObSealCertificate will not be able to be used.";
+                instrumentationClient.Warning(fullMessage);
             }
         }
-
-        return Task.CompletedTask;
     }
 }
