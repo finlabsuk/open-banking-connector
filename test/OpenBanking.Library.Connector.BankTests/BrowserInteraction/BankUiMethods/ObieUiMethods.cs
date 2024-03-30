@@ -22,48 +22,19 @@ public class ObieUiMethods : IBankUiMethods
         IPage page,
         BankUser bankUser)
     {
-        if (_obieBank is ObieBank.Modelo)
+        await page.GetByPlaceholder("username").FillAsync(bankUser.UserNameOrNumber);
+        await page.GetByPlaceholder("**********").FillAsync(bankUser.Password);
+
+
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" }).ClickAsync();
+
+        if (consentVariety is ConsentVariety.AccountAccessConsent)
         {
-            await page.GetByLabel("* User Name").ClickAsync();
-
-            await page.GetByLabel("* User Name").FillAsync(bankUser.UserNameOrNumber);
-
-            await page.GetByLabel("* Password").ClickAsync();
-
-            await page.GetByLabel("* Password").FillAsync(bankUser.Password);
-
-            await page.GetByRole(
-                AriaRole.Link,
-                new PageGetByRoleOptions { NameString = "Login" }).ClickAsync();
-
-            if (consentVariety == ConsentVariety.AccountAccessConsent)
-            {
-                await page.GetByRole(
-                        AriaRole.Listbox,
-                        new PageGetByRoleOptions { NameString = "* Accounts" })
-                    .SelectOptionAsync(new[] { "700004000000000000000003" });
-
-                // Seems necessary for next click to register
-                await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-                await page.GetByRole(
-                    AriaRole.Link,
-                    new PageGetByRoleOptions { NameString = "Confirm" }).ClickAsync();
-            }
-            else
-            {
-                await page.GetByRole(
-                        AriaRole.Combobox,
-                        new PageGetByRoleOptions { NameString = "* Select debtor account" })
-                    .SelectOptionAsync(new[] { "700004000000000000000002" });
-
-                // Seems necessary for next click to register
-                await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-                await page.GetByRole(
-                    AriaRole.Link,
-                    new PageGetByRoleOptions { NameString = "Confirm" }).ClickAsync();
-            }
+            await page.GetByText("10000109010103").ClickAsync();
+            await page.GetByText("Foreign Currency Account").ClickAsync();
         }
+
+        await page.GetByText("10000109010102").ClickAsync();
+        await page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Confirm" }).ClickAsync();
     }
 }

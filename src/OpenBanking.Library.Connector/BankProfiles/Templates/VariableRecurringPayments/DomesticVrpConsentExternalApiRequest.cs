@@ -51,7 +51,7 @@ public static partial class DomesticVrpTemplates
                         ControlParameters =
                             new VariableRecurringPaymentsModelsPublic.OBDomesticVRPControlParameters
                             {
-                                PSUAuthenticationMethods = new List<string> { "UK.OBIE.SCA" },
+                                PSUAuthenticationMethods = new List<string> { "UK.OBIE.SCANotRequired" },
                                 PSUInteractionTypes =
                                     new List<VariableRecurringPaymentsModelsPublic.OBVRPInteractionTypes>
                                     {

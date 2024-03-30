@@ -18,7 +18,7 @@ public static partial class DomesticVrpTemplates
                     Data = new VariableRecurringPaymentsModelsPublic.Data3
                     {
                         ConsentId = externalApiConsentId,
-                        PSUAuthenticationMethod = "UK.OBIE.SCA",
+                        PSUAuthenticationMethod = "UK.OBIE.SCANotRequired",
                         PSUInteractionType = VariableRecurringPaymentsModelsPublic.OBVRPInteractionTypes.OffSession,
                         VRPType = "UK.OBIE.VRPType.Sweeping",
                         Initiation = new VariableRecurringPaymentsModelsPublic.OBDomesticVRPInitiation

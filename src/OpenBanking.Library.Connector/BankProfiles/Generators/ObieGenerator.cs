@@ -12,6 +12,7 @@ using FinnovationLabs.OpenBanking.Library.Connector.Models.Cache.Management;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Configuration;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.AccountAndTransaction;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.PaymentInitiation;
+using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.VariableRecurringPayments;
 
 namespace FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.Generators;
 
@@ -48,18 +49,8 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                     _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
                 }
             },
-            new PaymentInitiationApi
-            {
-                BaseUrl = bank switch
-                {
-                    ObieBank.Modelo =>
-                        "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
-                    ObieBank.Model2023 =>
-                        "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/pisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
-                    _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
-                }
-            },
-            null,
+            GetPaymentInitiationApi(bank),
+            GetVariableRecurringPaymentsApi(bank),
             false,
             instrumentationClient)
         {
@@ -91,6 +82,24 @@ public class ObieGenerator : BankProfileGeneratorBase<ObieBank>
                 TestTemporaryBankRegistration = bank is ObieBank.Modelo
             },
             AspspBrandId = 10000 // sandbox
+        };
+    }
+
+    private static PaymentInitiationApi GetPaymentInitiationApi(ObieBank bank) =>
+        new() { BaseUrl = GetPaymentInitiationBaseUrl(bank) };
+
+    private static VariableRecurringPaymentsApi GetVariableRecurringPaymentsApi(ObieBank bank) =>
+        new() { BaseUrl = GetPaymentInitiationBaseUrl(bank) };
+
+    private static string GetPaymentInitiationBaseUrl(ObieBank bank)
+    {
+        return bank switch
+        {
+            ObieBank.Modelo =>
+                "https://ob19-rs1.o3bank.co.uk:4501/open-banking/v3.1/pisp", //from https://openbanking.atlassian.net/wiki/spaces/DZ/pages/313918598/Integrating+a+TPP+with+Ozone+Model+Banks+Using+Postman+on+Directory+Sandbox#3.1-Dynamic-Client-Registration-(TPP)
+            ObieBank.Model2023 =>
+                "https://rs1.obie.uk.ozoneapi.io/open-banking/v3.1/pisp", // from https://github.com/OpenBankingUK/OBL-ModelBank-Integration
+            _ => throw new ArgumentOutOfRangeException(nameof(bank), bank, null)
         };
     }
 }
