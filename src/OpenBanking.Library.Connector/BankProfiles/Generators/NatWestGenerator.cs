@@ -196,7 +196,6 @@ public class NatWestGenerator : BankProfileGeneratorBase<NatWestBank>
                     AccountAccessConsentPost = bank is NatWestBank.Coutts
                         ? new AccountAccessConsentPostCustomBehaviour
                         {
-                            ResponseLinksOmitId = true,
                             ResponseLinksAddSlash = true
                         }
                         : null,
