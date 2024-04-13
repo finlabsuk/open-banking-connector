@@ -39,8 +39,16 @@ public class Monzo : BankGroupBase<MonzoBank, MonzoRegistrationGroup>
         {
             (MonzoBank.Sandbox, RegistrationScopeEnum.AccountAndTransaction) => MonzoRegistrationGroup.Sandbox_Aisp,
             (MonzoBank.Sandbox, RegistrationScopeEnum.PaymentInitiation) => MonzoRegistrationGroup.Sandbox_Pisp,
+            (MonzoBank.Sandbox, RegistrationScopeEnum.AccountAndTransaction | RegistrationScopeEnum.PaymentInitiation)
+                => throw new ArgumentException(
+                    "A combined AISP/PISP registration scope was specified. " +
+                    "For Monzo, use separate bank registrations for AISP and PISP."),
             (MonzoBank.Monzo, RegistrationScopeEnum.AccountAndTransaction) => MonzoRegistrationGroup.Production_Aisp,
             (MonzoBank.Monzo, RegistrationScopeEnum.PaymentInitiation) => MonzoRegistrationGroup.Production_Pisp,
-            _ => throw new ArgumentOutOfRangeException()
+            (MonzoBank.Monzo, RegistrationScopeEnum.AccountAndTransaction | RegistrationScopeEnum.PaymentInitiation) =>
+                throw new ArgumentException(
+                    "A combined AISP/PISP registration scope was specified. " +
+                    "For Monzo, use separate bank registrations for AISP and PISP."),
+            _ => throw new ArgumentException("Specified registration scope not suitable for use with Monzo.")
         };
 }
