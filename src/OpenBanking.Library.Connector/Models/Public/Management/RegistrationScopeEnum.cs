@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Runtime.Serialization;
+using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -51,5 +52,22 @@ public static class RegistrationScopeExtensions
             RegistrationScopeEnum.All => "All",
             _ => throw new ArgumentOutOfRangeException(nameof(registrationScope), registrationScope, null)
         };
+    }
+
+    /// <summary>
+    ///     Convert API types to scope string
+    /// </summary>
+    /// <param name="registrationScope"></param>
+    /// <returns></returns>
+    public static string GetScopeString(this RegistrationScopeEnum registrationScope)
+    {
+        // Combine scope words for individual API types prepending "openid"
+        IEnumerable<string> scopeWordsIEnumerable = RegistrationScopeApiHelper.AllApiTypes
+            .Where(x => registrationScope.HasFlag(RegistrationScopeApiHelper.ApiTypeSetWithSingleApiType(x)))
+            .Select(RegistrationScopeApiHelper.ScopeWord)
+            .Prepend("openid")
+            .Distinct(); // for safety
+
+        return scopeWordsIEnumerable.JoinString(" ");
     }
 }

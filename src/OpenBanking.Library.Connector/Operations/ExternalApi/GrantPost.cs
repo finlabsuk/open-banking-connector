@@ -182,8 +182,7 @@ internal class GrantPost : IGrantPost
                     bankProfileForTppReportingMetrics,
                     mtlsApiClient,
                     scope,
-                    clientCredentialsGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
-                    clientCredentialsGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
+                    clientCredentialsGrantPostCustomBehaviour);
 
             if (response.IdToken is not null)
             {
@@ -268,8 +267,7 @@ internal class GrantPost : IGrantPost
             bankProfileForTppReportingMetrics,
             matlsApiClient,
             requestScope,
-            authCodeGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
-            authCodeGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
+            authCodeGrantPostCustomBehaviour);
 
         // Check for refresh token
         bool allowNullRefreshTokenResponse = authCodeGrantPostCustomBehaviour?.AllowNullResponseRefreshToken ?? false;
@@ -357,8 +355,7 @@ internal class GrantPost : IGrantPost
             bankProfileForTppReportingMetrics,
             mtlsApiClient,
             requestScope,
-            refreshTokenGrantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false,
-            refreshTokenGrantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false);
+            refreshTokenGrantPostCustomBehaviour);
 
         IdTokenProcessingCustomBehaviour? idTokenProcessingCustomBehaviour =
             refreshTokenGrantPostCustomBehaviour?.IdTokenProcessingCustomBehaviour;
@@ -739,8 +736,7 @@ internal class GrantPost : IGrantPost
         BankProfileEnum? bankProfileForTppReportingMetrics,
         IApiClient mtlsApiClient,
         string? requestScope,
-        bool tokenTypeResponseStartsWithLowerCaseLetter,
-        bool expectedScopeResponseIsEmptyString)
+        GrantPostCustomBehaviour? grantPostCustomBehaviour)
         where TokenEndpointResponse : TokenEndpointResponseBase
     {
         // POST request
@@ -768,6 +764,8 @@ internal class GrantPost : IGrantPost
             mtlsApiClient);
 
         // Check token endpoint response
+        bool tokenTypeResponseStartsWithLowerCaseLetter =
+            grantPostCustomBehaviour?.TokenTypeResponseStartsWithLowerCaseLetter ?? false;
         string expectedTokenTypeResponse = tokenTypeResponseStartsWithLowerCaseLetter ? "bearer" : "Bearer";
 
         if (!string.Equals(response.TokenType, expectedTokenTypeResponse, StringComparison.Ordinal))
@@ -776,6 +774,7 @@ internal class GrantPost : IGrantPost
         }
 
         // Ensure received token scope when provided matches that requested
+        bool expectedScopeResponseIsEmptyString = grantPostCustomBehaviour?.ScopeResponseIsEmptyString ?? false;
         if (requestScope is not null)
         {
             if (response.Scope is not null)
@@ -789,11 +788,31 @@ internal class GrantPost : IGrantPost
                 }
                 else
                 {
+                    // accounts openid
+                    // accounts openid payments
+
                     IOrderedEnumerable<string> requestScopeOrdered = requestScope.Split(" ").OrderBy(t => t);
                     IOrderedEnumerable<string> responseScopeOrdered = response.Scope.Split(" ").OrderBy(t => t);
-                    if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered))
+
+                    bool scopeResponseMayIncludeExtraValues =
+                        grantPostCustomBehaviour?.ScopeResponseMayIncludeExtraValues ?? false;
+
+                    if (scopeResponseMayIncludeExtraValues)
                     {
-                        throw new Exception("Requested and received scope for access token differ.");
+                        foreach (string requestScopeValue in requestScopeOrdered)
+                        {
+                            if (!responseScopeOrdered.Contains(requestScopeValue))
+                            {
+                                throw new Exception($"Requested scope {requestScopeValue} for access token not obtained.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!requestScopeOrdered.SequenceEqual(responseScopeOrdered))
+                        {
+                            throw new Exception("Requested and received scope for access token differ.");
+                        }
                     }
                 }
             }

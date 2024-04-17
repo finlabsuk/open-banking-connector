@@ -8,6 +8,7 @@ public abstract class GrantPostCustomBehaviour
 {
     public bool? ScopeResponseIsEmptyString { get; set; }
 
+    public bool? ScopeResponseMayIncludeExtraValues { get; set; }
 
     public bool? TokenTypeResponseStartsWithLowerCaseLetter { get; set; }
 }

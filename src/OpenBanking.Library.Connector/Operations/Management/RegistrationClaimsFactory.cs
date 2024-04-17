@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using FinnovationLabs.OpenBanking.Library.Connector.BankProfiles.CustomBehaviour.Management;
-using FinnovationLabs.OpenBanking.Library.Connector.Extensions;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Fapi;
 using FinnovationLabs.OpenBanking.Library.Connector.Models.Public.Management;
 using ClientRegistrationModelsPublic =
@@ -13,23 +12,6 @@ namespace FinnovationLabs.OpenBanking.Library.Connector.Operations.Management;
 
 internal static class RegistrationClaimsFactory
 {
-    /// <summary>
-    ///     Convert API types to scope string
-    /// </summary>
-    /// <param name="registrationScope"></param>
-    /// <returns></returns>
-    private static string ApiTypesToScope(RegistrationScopeEnum registrationScope)
-    {
-        // Combine scope words for individual API types prepending "openid"
-        IEnumerable<string> scopeWordsIEnumerable = RegistrationScopeApiHelper.AllApiTypes
-            .Where(x => registrationScope.HasFlag(RegistrationScopeApiHelper.ApiTypeSetWithSingleApiType(x)))
-            .Select(RegistrationScopeApiHelper.ScopeWord)
-            .Prepend("openid")
-            .Distinct(); // for safety
-
-        return scopeWordsIEnumerable.JoinString(" ");
-    }
-
     public static ClientRegistrationModelsPublic.OBClientRegistration1 CreateRegistrationClaims(
         TokenEndpointAuthMethodSupportedValues tokenEndpointAuthMethod,
         IList<string> redirectUris,
@@ -40,7 +22,7 @@ internal static class RegistrationClaimsFactory
         BankRegistrationPostCustomBehaviour? bankRegistrationPostCustomBehaviour,
         string bankFinancialId)
     {
-        string scope = ApiTypesToScope(registrationScope);
+        string scope = registrationScope.GetScopeString();
 
         // Convert tokenEndpointAuthMethod to spec type
         ClientRegistrationModelsPublic.OBRegistrationProperties1tokenEndpointAuthMethodEnum

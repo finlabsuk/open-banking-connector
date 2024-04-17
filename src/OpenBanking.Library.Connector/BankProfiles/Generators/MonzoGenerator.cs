@@ -25,7 +25,11 @@ public class MonzoGenerator : BankProfileGeneratorBase<MonzoBank>
         IInstrumentationClient instrumentationClient)
     {
         var grantPostCustomBehaviour =
-            new AuthCodeAndRefreshTokenGrantPostCustomBehaviour { TokenTypeResponseStartsWithLowerCaseLetter = true };
+            new AuthCodeAndRefreshTokenGrantPostCustomBehaviour
+            {
+                TokenTypeResponseStartsWithLowerCaseLetter = true,
+                ScopeResponseMayIncludeExtraValues = true
+            };
         var pispSandboxAdditionalProperties = new Dictionary<string, object>
         {
             ["DesiredStatus"] = "Authorised",
